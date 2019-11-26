@@ -1,4 +1,4 @@
-name: .NET Core
+name: .NET CoreTest
 
 on: [push]
 
@@ -15,3 +15,6 @@ jobs:
         dotnet-version: 3.1.100-preview1-014459
     - name: Build with dotnet
       run: dotnet build --configuration Release
+    - name: Start Tests
+      run: dotnet test
+
