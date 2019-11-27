@@ -21,7 +21,7 @@ jobs:
     - name: Install Angular-CLI
       run: npm install -g @angular/cli        
     - name: Try some stuff
-      run: cd ./MUNityAngular/ClientApp
+      run: cd ./MUNityAngular/ClientApp && ls -a
     - name: Get files
       run: ls -a
     
