@@ -26,7 +26,10 @@ jobs:
       run: npm install -g @angular/cli        
     - name: Install dependencies
       run: cd ./MUNityAngular/ClientApp && npm install
-    - name: Angular Test
-      run: cd ./MUNityAngular/ClientApp && ng test
+    - name: Build Angular
+      run: cd ./MUNityAngular/ClientApp && ng build
+    # Tests bring Actions into a loop
+    #- name: Angular Test
+    #  run: cd ./MUNityAngular/ClientApp && ng test
     
 
