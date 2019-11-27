@@ -15,7 +15,24 @@ namespace MUNityAngular.Models
 
         public string TargetResolutionID { get; set; }
 
-        public ResolutionModel TargetResolution { get; set; }
+        private ResolutionModel _targetResolution;
+        public ResolutionModel TargetResolution { get => _targetResolution;
+            set
+            {
+                _targetResolution = value;
+                if (value != null)
+                {
+                    if (!value.Amendments.Contains(this))
+                    {
+                        value.Amendments.Add(this);
+                    }
+                }
+                else
+                {
+                    _targetResolution?.Amendments.Remove(this);
+                }
+            }
+        }
 
         [JsonIgnore]
         public override string ViewValue => "Hinzufügen";
@@ -33,6 +50,7 @@ namespace MUNityAngular.Models
                 }
 
                 TargetSection.Text = NewText;
+                TargetSection.IsVirtual = true;
                 TargetSection.ViewModus = OperativeParagraphModel.EViewModus.Add;
             }
             else
@@ -58,6 +76,7 @@ namespace MUNityAngular.Models
                     TargetResolution.RemoveOperativeSection(TargetSection);
                     TargetSection = null;
                 }
+                
 
             }
             base.Deactivate();
@@ -72,15 +91,17 @@ namespace MUNityAngular.Models
                 if (TargetSection != null)
                 {
                     TargetSection.Text = NewText;
+                    TargetSection.IsVirtual = false;
                     TargetSection.ViewModus = OperativeParagraphModel.EViewModus.Normal;
                 }
             }
             else
             {
                 TargetSection.AmendmentParagraph = false;
+                TargetSection.IsVirtual = false;
                 TargetSection.ViewModus = OperativeParagraphModel.EViewModus.Normal;
             }
-            base.Submit();
+            TargetResolution.Amendments.Remove(this);
         }
 
         public AddAmendmentModel(string id = null)

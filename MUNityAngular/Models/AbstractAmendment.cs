@@ -63,8 +63,10 @@ namespace MUNityAngular.Models
             if (TargetSection != null)
             {
                 TargetSection.ViewModus = OperativeParagraphModel.EViewModus.Normal;
+                TargetSection.ActiveAmendment = null;
             }
             Activated = false;
+            
         }
 
         public virtual void Remove()

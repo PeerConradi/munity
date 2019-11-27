@@ -81,5 +81,68 @@ namespace MUNityTest.Resolution
             Assert.AreEqual(sectionOne, resolution.OperativeSections[1]);
             Assert.AreEqual(sectionTwo, resolution.OperativeSections[0]);
         }
+
+        [Test]
+        public void TestMoveOperativeSectionRightLeft()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            Assert.AreEqual(resolution.OperativeSections[1], sectionTwo);
+            sectionTwo.MoveRight();
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            Assert.AreEqual(sectionOne, sectionTwo.Parent);
+            sectionTwo.MoveLeft();
+            Assert.IsNull(sectionTwo.Parent);
+        }
+
+        [Test]
+        public void TestMoveOperativeSectionLeftNotMoveable()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            sectionOne.MoveLeft();
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            Assert.IsNull(sectionOne.Parent);
+        }
+
+        [Test]
+        public void TestMoveOperativeSectionRightNotMoveable()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            sectionOne.MoveRight();
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            Assert.IsNull(sectionOne.Parent);
+        }
+
+        [Test]
+        public void TestMoveUpNotMoveable()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            Assert.AreEqual(resolution.OperativeSections[1], sectionTwo);
+            sectionOne.MoveUp();
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            Assert.AreEqual(resolution.OperativeSections[1], sectionTwo);
+        }
+
+        [Test]
+        public void TestMoveDownNotMoveable()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            Assert.AreEqual(resolution.OperativeSections[1], sectionTwo);
+            sectionTwo.MoveDown();
+            Assert.AreEqual(resolution.OperativeSections[0], sectionOne);
+            Assert.AreEqual(resolution.OperativeSections[1], sectionTwo);
+        }
     }
 }
