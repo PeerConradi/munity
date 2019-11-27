@@ -15,12 +15,13 @@ jobs:
         dotnet-version: 3.1.100-preview1-014459
     - name: Build with dotnet
       run: dotnet build --configuration Release
-    - name: Start NUnit Tests
+    - name: Run NUnit Tests
       run: dotnet test
     - name: Use Node.js 12.8
       uses: actions/setup-node@v1
       with:
         node-version: 12.8
+        working-directory: ./MUNityAngular/ClientApp
     - name: Install dependencies
       run: npm install
     - name: Lint
