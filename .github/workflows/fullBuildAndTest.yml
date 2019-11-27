@@ -23,14 +23,14 @@ jobs:
         node-version: 12.8
         working-directory: ./MUNityAngular/ClientApp
     - name: Install dependencies
-      run: npm install ./MUNityAngular/ClientApp
+      run: npm --prefix ./MUNityAngular/ClientApp install ./MUNityAngular/ClientApp
     - name: Lint
-      run: npm run lint ./MUNityAngular/ClientApp
+      run: npm --prefix ./MUNityAngular/ClientApp run lint ./MUNityAngular/ClientApp
     - name: Build
-      run: npm run build ./MUNityAngular/ClientApp --prod
+      run: npm --prefix ./MUNityAngular/ClientApp run build ./MUNityAngular/ClientApp --prod
     - name: Test
-      run: npm test ./MUNityAngular/ClientApp --configuration=ci
+      run: npm --prefix ./MUNityAngular/ClientApp test ./MUNityAngular/ClientApp --configuration=ci
     - name: E2E
-      run: npm run e2e ./MUNityAngular/ClientApp --configuration=ci
+      run: npm --prefix ./MUNityAngular/ClientApp run e2e ./MUNityAngular/ClientApp --configuration=ci
     
 
