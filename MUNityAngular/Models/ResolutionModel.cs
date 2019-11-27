@@ -46,7 +46,19 @@ namespace MUNityAngular.Models
             }
         }
 
-        public ObservableCollection<OperativeParagraphModel> OperativeSections { get; set; }
+        private ObservableCollection<OperativeParagraphModel> _operativeSections;
+        public ObservableCollection<OperativeParagraphModel> OperativeSections 
+        { 
+            get => _operativeSections;
+            set
+            {
+                _operativeSections = value;
+                foreach (var item in value)
+                {
+                    item.Resolution = this;
+                }
+            }
+        }
 
         [JsonIgnore]
         public IEnumerable<OperativeParagraphModel> OperativeSectionsNoVirtual
@@ -138,10 +150,12 @@ namespace MUNityAngular.Models
                 foreach(var item in e.NewItems.OfType<OperativeParagraphModel>().Where(n => n.AmendmentParagraph == false))
                 {
                     item.Amendments.CollectionChanged += AmendmentsInOperativeSectionChanged;
+                    item.Resolution = this;
                 }
             }
             foreach(var os in OperativeSections)
             {
+                os.Resolution = this;
                 os.UpdatePath();
             }
         }
@@ -279,8 +293,6 @@ namespace MUNityAngular.Models
 
         public void AddAmendment(AbstractAmendment amendment)
         {
-            //Clear the list so it can be reordered
-            Amendments.Clear();
 
             //Add the Amendment to its Target Section if its not already inside
             if (amendment.TargetSection != null)
@@ -341,7 +353,7 @@ namespace MUNityAngular.Models
             Amendments.Remove(amendment);
         }
 
-        public IEnumerable<Models.ChangeAmendmentModel> ChangeAmendments
+        public IEnumerable<ChangeAmendmentModel> ChangeAmendments
         {
             get
             {
@@ -351,9 +363,8 @@ namespace MUNityAngular.Models
             {
                 foreach(var v in value)
                 {
-                    //Amendments.Add(v);
-                    //Managers.ResolutionManager.GetInstance().FindParagraph(v.TargetSectionID)?.Amendments.Add(v);
-                    AddAmendment(v);
+                    Amendments.Add(v);
+                    //AddAmendment(v);
                 }
             }
         }
@@ -365,9 +376,8 @@ namespace MUNityAngular.Models
             {
                 foreach (var v in value)
                 {
-                    //Amendments.Add(v);
-                    //Managers.ResolutionManager.GetInstance().FindParagraph(v.TargetSectionID)?.Amendments.Add(v);
-                    AddAmendment(v);
+                    Amendments.Add(v);
+                    //AddAmendment(v);
                 }
             }
         }
@@ -379,8 +389,8 @@ namespace MUNityAngular.Models
             {
                 foreach (var v in value)
                 {
-                    //Managers.ResolutionManager.GetInstance().FindParagraph(v.TargetSectionID)?.Amendments.Add(v);
-                    AddAmendment(v);
+                    Amendments.Add(v);
+                    //AddAmendment(v);
                 }
             }
         }
@@ -391,8 +401,45 @@ namespace MUNityAngular.Models
             set {
                 foreach (var v in value)
                 {
-                    AddAmendment(v);
+                    Amendments.Add(v);
+                    //AddAmendment(v);
                 }
+            }
+        }
+
+        public void Autofix()
+        {
+            foreach (var item in OperativeSections)
+            {
+                item.Resolution = this;
+                
+            }
+
+            foreach (var item in DeleteAmendments)
+            {
+                if (!Amendments.Contains(item))
+                    Amendments.Add(item);
+                item.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == item.TargetSectionID);
+            }
+
+            foreach (var item in ChangeAmendments)
+            {
+                if (!Amendments.Contains(item))
+                    Amendments.Add(item);
+                item.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == item.TargetSectionID);
+            }
+
+            foreach (var item in MoveAmendments)
+            {
+                if (!Amendments.Contains(item))
+                    Amendments.Add(item);
+                item.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == item.TargetSectionID);
+            }
+
+            foreach (var item in AddAmendments)
+            {
+                if (!Amendments.Contains(item))
+                    Amendments.Add(item);
             }
         }
 

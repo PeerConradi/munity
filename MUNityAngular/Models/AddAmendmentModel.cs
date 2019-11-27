@@ -16,6 +16,7 @@ namespace MUNityAngular.Models
         public string TargetResolutionID { get; set; }
 
         private ResolutionModel _targetResolution;
+        [JsonIgnore]
         public ResolutionModel TargetResolution { get => _targetResolution;
             set
             {

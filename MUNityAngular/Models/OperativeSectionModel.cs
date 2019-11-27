@@ -47,6 +47,7 @@ namespace MUNityAngular.Models
         public bool IsVirtual { get; set; }
         public string Text { get; set; }
 
+        [JsonIgnore]
         public ResolutionModel Resolution { get; set; }
 
         /// <summary>
@@ -60,13 +61,13 @@ namespace MUNityAngular.Models
             get => _parentid;
             set
             {
+                _parentid = value;
+
                 if (value == null)
                 {
                     if (this.Parent != null)
                         this.Parent.Children.Remove(this.ID);
                 }
-
-                _parentid = value;
 
                 if (this.Parent != null)
                 {
@@ -74,12 +75,7 @@ namespace MUNityAngular.Models
                         this.Parent.Children.Add(this.ID);
                 }
 
-
-
-                if (!string.IsNullOrEmpty(this.ParentID))
-                    CanMoveLeft = true;
-                else
-                    CanMoveLeft = false;
+                
             }
         }
 
@@ -94,11 +90,7 @@ namespace MUNityAngular.Models
         public string Operator { get; set; }
         public string ContentText { get; set; }
 
-        private string _endOperator = "";
-        public string EndOperator
-        {
-            get => _endOperator;
-        }
+        public string EndOperator { get; set; }
 
         public AbstractAmendment ActiveAmendment { get; set; }
 
@@ -110,7 +102,6 @@ namespace MUNityAngular.Models
                 if (ParentID == null) return null;
                 if (Resolution!= null)
                     return Resolution.OperativeSections.FirstOrDefault(n => n.ID == ParentID);
-
                 return null;
             }
         }
@@ -174,7 +165,7 @@ namespace MUNityAngular.Models
         public void UpdatePath()
         {
             //Get the Index of this In Context to All the parents
-            if (string.IsNullOrEmpty(this.ParentID))
+            if (string.IsNullOrEmpty(this.ParentID) || Parent == null)
             {
                 Path = (Resolution.OperativeSections.Where(n =>
                     string.IsNullOrEmpty(n.ParentID)).ToList().IndexOf(this) + 1).ToString();
