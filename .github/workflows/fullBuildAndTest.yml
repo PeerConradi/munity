@@ -13,6 +13,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.100-preview1-014459
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+    - name: Run NUnit Tests
+      run: dotnet test
     - name: Use Node.js 12.8
       uses: actions/setup-node@v1
       with:
@@ -20,9 +24,9 @@ jobs:
         working-directory: ./MUNityAngular/ClientApp
     - name: Install Angular-CLI
       run: npm install -g @angular/cli        
-    - name: Try some stuff
-      run: cd ./MUNityAngular/ClientApp && ls -a
-    - name: Get files
-      run: ls -a
+    - name: Install dependencies
+      run: cd ./MUNityAngular/ClientApp && npm install
+    - name: Angular Test
+      run: cd ./MUNityAngular/ClientApp && ng test --codeCoverage=true
     
 
