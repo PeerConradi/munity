@@ -1,4 +1,4 @@
-name: .NET CoreTest
+name: .NET Core Full Build and Test
 
 on: [push]
 
@@ -23,14 +23,14 @@ jobs:
         node-version: 12.8
         working-directory: ./MUNityAngular/ClientApp
     - name: Install dependencies
-      run: npm install
+      run: npm install ./MUNityAngular/ClientApp
     - name: Lint
-      run: npm run lint
+      run: npm run lint ./MUNityAngular/ClientApp
     - name: Build
-      run: npm run build -- --prod
+      run: npm run build ./MUNityAngular/ClientApp --prod
     - name: Test
-      run: npm test -- --configuration=ci
+      run: npm test ./MUNityAngular/ClientApp --configuration=ci
     - name: E2E
-      run: npm run e2e -- --configuration=ci
+      run: npm run e2e ./MUNityAngular/ClientApp --configuration=ci
     
 
