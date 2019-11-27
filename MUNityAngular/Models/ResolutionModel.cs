@@ -95,7 +95,6 @@ namespace MUNityAngular.Models
         [JsonIgnore]
         public CommitteeModel Committee { get; set; } 
 
-        private CommitteeModel _resolutlyCommittee;
         [JsonIgnore]
         public CommitteeModel ResolutelyCommittee { get => DataHandlers.Database.CommitteeHandler.GetCommittee(ResolutlyCommitteeID); }
 

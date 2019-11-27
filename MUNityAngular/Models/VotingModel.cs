@@ -19,7 +19,6 @@ namespace MUNityAngular.Models
             Withdraw,
         }
 
-        private bool _votingDone;
         public bool VotingDone { get; private set; }
 
         public ObservableCollection<DelegationModel> Positiv { get; set; }
@@ -86,7 +85,6 @@ namespace MUNityAngular.Models
 
         public bool AbsolutMajority { get; set; }
 
-        private bool _twothirdsMajority;
         public bool TwoThirdsMajority { get; set; }
 
         public bool Valid { get; set; }

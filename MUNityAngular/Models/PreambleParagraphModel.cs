@@ -11,7 +11,6 @@ namespace MUNityAngular.Models
     {
         public string ID { get; set; }
 
-        private string _text;
         public string Text { get; set; }
 
         [JsonIgnore]

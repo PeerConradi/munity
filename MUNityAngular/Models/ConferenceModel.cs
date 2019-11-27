@@ -23,21 +23,18 @@ namespace MUNityAngular.Models
 
         public string FullName { get; set; }
 
-        private string _abbreviation;
         public string Abbreviation { get; set; }
 
         public ObservableCollection<CommitteeModel> Committees { get; set; }
 
         public DateTime StartDate { get; set; }
 
-        private DateTime _endDate;
         public DateTime EndDate { get; set; }
 
         public string SecretaryGeneralTitle { get; set; }
 
         public string SecretaryGerneralName { get; set; }
 
-        private ObservableCollection<DelegationModel> _ngos;
         public ObservableCollection<DelegationModel> NGOs { get; set; }
 
         /// <summary>
