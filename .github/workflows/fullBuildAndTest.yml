@@ -25,6 +25,6 @@ jobs:
     - name: Install dependencies
       run: npm --prefix ./MUNityAngular/ClientApp install ./MUNityAngular/ClientApp
     - name: Angular Test
-      run: ng --prefix ./MUNityAngular/ClientApp test ./MUNityAngular/ClientApp --configuration=ci
+      run: ng test ./MUNityAngular/ClientApp --codeCoverage=true
     
 
