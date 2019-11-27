@@ -27,6 +27,6 @@ jobs:
     - name: Install dependencies
       run: cd ./MUNityAngular/ClientApp && npm install
     - name: Angular Test
-      run: cd ./MUNityAngular/ClientApp && ng test --codeCoverage=true
+      run: cd ./MUNityAngular/ClientApp && ng test
     
 
