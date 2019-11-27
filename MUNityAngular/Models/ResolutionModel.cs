@@ -96,6 +96,7 @@ namespace MUNityAngular.Models
         }
 
         [JsonIgnore]
+        [Obsolete("Shpuld use the AddAmendmentsSave")]
         public ObservableCollection<AddAmendmentModel> AddAmendments { get; set; } = new ObservableCollection<AddAmendmentModel>();
 
         public string Filepath { get; set; } = null;
@@ -412,7 +413,6 @@ namespace MUNityAngular.Models
             foreach (var item in OperativeSections)
             {
                 item.Resolution = this;
-                
             }
 
             foreach (var item in DeleteAmendments)

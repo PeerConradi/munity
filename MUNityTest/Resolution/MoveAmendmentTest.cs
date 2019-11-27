@@ -32,6 +32,7 @@ namespace MUNityTest.Resolution
             amendment.NewPosition = 0;
             Assert.IsTrue(resolution.Amendments.Contains(amendment));
             Assert.AreEqual(1, sectionTwo.MoveAmendmentCount);
+            Assert.AreEqual(sectionTwo.ID, amendment.TargetSectionID);
         }
 
         [Test]

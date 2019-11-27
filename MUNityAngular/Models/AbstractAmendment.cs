@@ -33,12 +33,19 @@ namespace MUNityAngular.Models
             get => _targetSection;
             set
             {
+
                 if (value == null && _targetSection != null)
                     _targetSection.Amendments.Remove(this);
+
                 _targetSection = value;
+
                 if (value != null)
+                {
                     if (!_targetSection.Amendments.Contains(this))
                         _targetSection.Amendments.Add(this);
+                    TargetSectionID = value.ID;
+                }
+                    
 
             }
         }

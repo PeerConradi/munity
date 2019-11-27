@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using MUNityAngular.Models;
 using NUnit.Framework;
@@ -28,6 +29,8 @@ namespace MUNityTest.Resolution
             Assert.IsTrue(section.Amendments.Contains(amendment));
             Assert.IsTrue(section.Resolution.Amendments.Contains(amendment));
             Assert.AreEqual(1, section.ChangeAmendmentCount);
+            Assert.IsTrue(resolution.ChangeAmendments.Contains(amendment));
+            Assert.AreEqual(section.ID, amendment.TargetSectionID);
         }
 
         [Test]

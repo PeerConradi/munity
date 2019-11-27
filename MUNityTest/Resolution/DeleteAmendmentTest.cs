@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using MUNityAngular.Models;
+using System.Linq;
 
 namespace MUNityTest.Resolution
 {
@@ -27,6 +28,8 @@ namespace MUNityTest.Resolution
             amendment.TargetSection = section;
             Assert.AreEqual(amendment, resolution.Amendments[0]);
             Assert.AreEqual(1, section.DeleteAmendmentCount);
+            Assert.IsTrue(resolution.DeleteAmendments.Contains(amendment));
+            Assert.AreEqual(section.ID, amendment.TargetSectionID);
         }
 
         [Test]

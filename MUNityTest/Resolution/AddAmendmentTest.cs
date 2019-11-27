@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using MUNityAngular.Models;
 using NUnit.Framework;
@@ -29,7 +30,7 @@ namespace MUNityTest.Resolution
             Assert.IsTrue(section.Resolution.Amendments.Contains(amendment), "Amendment List does not contain this Amendment");
             Assert.AreEqual(section, resolution.OperativeSections[0]);
             Assert.AreEqual(1, resolution.OperativeSections.Count);
-            Assert.IsTrue(resolution.AddAmendments.Contains(amendment));
+            Assert.IsTrue(resolution.AddAmendmentsSave.Contains(amendment));
         }
 
         [Test]
