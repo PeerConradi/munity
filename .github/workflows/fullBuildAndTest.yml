@@ -22,6 +22,8 @@ jobs:
       with:
         node-version: 12.8
         working-directory: ./MUNityAngular/ClientApp
+    - name: Install Angular-CLI
+      run: npm install -g @angular/cli        
     - name: Install dependencies
       run: npm --prefix ./MUNityAngular/ClientApp install ./MUNityAngular/ClientApp
     - name: Angular Test
