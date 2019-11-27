@@ -24,13 +24,7 @@ jobs:
         working-directory: ./MUNityAngular/ClientApp
     - name: Install dependencies
       run: npm --prefix ./MUNityAngular/ClientApp install ./MUNityAngular/ClientApp
-    - name: Lint
-      run: npm --prefix ./MUNityAngular/ClientApp run lint ./MUNityAngular/ClientApp
-    - name: Build
-      run: npm --prefix ./MUNityAngular/ClientApp run build ./MUNityAngular/ClientApp --prod
-    - name: Test
-      run: npm --prefix ./MUNityAngular/ClientApp test ./MUNityAngular/ClientApp --configuration=ci
-    - name: E2E
-      run: npm --prefix ./MUNityAngular/ClientApp run e2e ./MUNityAngular/ClientApp --configuration=ci
+    - name: Angular Test
+      run: ng --prefix ./MUNityAngular/ClientApp test ./MUNityAngular/ClientApp --configuration=ci
     
 
