@@ -10,6 +10,10 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { EditorComponent } from './resedit/editor/editor.component';
+import { OperativeParagraphComponent } from './resedit/operative-paragraph/operative-paragraph.component';
+import { PreambleParagraphComponent } from './resedit/preamble-paragraph/preamble-paragraph.component';
+import { ResOptionsComponent } from './resedit/res-options/res-options.component';
+import { AmendmentControllerComponent } from './resedit/amendment-controller/amendment-controller.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +21,13 @@ import { EditorComponent } from './resedit/editor/editor.component';
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
-    FetchDataComponent
+    FetchDataComponent,
+    EditorComponent,
+    //Todo: Auslagerung der ohnehin nur mit der EditorComponent genutzten Components in ein eigenes Module.
+    OperativeParagraphComponent,
+    PreambleParagraphComponent,
+    ResOptionsComponent,
+    AmendmentControllerComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
