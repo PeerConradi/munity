@@ -34,7 +34,7 @@ namespace MUNityTest.Resolution
             Assert.AreEqual(1, sectionTwo.MoveAmendmentCount);
         }
 
-        //[Test]
+        [Test]
         public void TestActivateMoveAmendment()
         {
             var resolution = new ResolutionModel();
@@ -50,6 +50,57 @@ namespace MUNityTest.Resolution
             Assert.AreEqual(amendment.NewSection, resolution.OperativeSections[0]);
             Assert.AreEqual(sectionOne, resolution.OperativeSections[1]);
             Assert.AreEqual(sectionTwo, resolution.OperativeSections[2]);
+            Assert.IsTrue(amendment.TargetSection.IsLocked);
+        }
+
+        [Test]
+        public void TestSubmitMoveAmendment()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            var amendment = new MoveAmendment();
+            amendment.TargetSection = sectionTwo;
+            amendment.NewPosition = 0;
+            amendment.Submit();
+            Assert.AreEqual(2, resolution.OperativeSections.Count);
+            Assert.AreEqual(sectionTwo, resolution.OperativeSections[0]);
+            Assert.AreEqual(sectionOne, resolution.OperativeSections[1]);
+            Assert.IsFalse(sectionTwo.IsLocked);
+            Assert.IsFalse(sectionTwo.IsVirtual);
+            Assert.IsFalse(resolution.Amendments.Contains(amendment));
+        }
+
+        [Test]
+        public void TestSubmitAfterActivate()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            var amendment = new MoveAmendment();
+            amendment.TargetSection = sectionTwo;
+            amendment.NewPosition = 0;
+            amendment.Activate();
+            amendment.Submit();
+            Assert.AreEqual(2, resolution.OperativeSections.Count);
+            Assert.AreEqual(sectionTwo, resolution.OperativeSections[0]);
+            Assert.AreEqual(sectionOne, resolution.OperativeSections[1]);
+            Assert.IsFalse(sectionTwo.IsLocked);
+            Assert.IsFalse(sectionTwo.IsVirtual);
+            Assert.IsFalse(resolution.Amendments.Contains(amendment));
+        }
+
+        [Test]
+        public void TestRemoveAddAmendment()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            var amendment = new MoveAmendment();
+            amendment.TargetSection = sectionTwo;
+            amendment.NewPosition = 0;
+            amendment.Remove();
+            Assert.IsFalse(resolution.Amendments.Contains(amendment));
         }
     }
 }

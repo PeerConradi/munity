@@ -105,6 +105,5 @@ namespace MUNityTest.Resolution
             Assert.IsFalse(resolution.OperativeSections[1].IsVirtual);
             Assert.AreEqual(expectedText, resolution.OperativeSections[1].Text);
         }
-
     }
 }

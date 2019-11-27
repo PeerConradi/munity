@@ -24,7 +24,7 @@ namespace MUNityAngular.Models
         {
             TargetSection.ViewModus = OperativeParagraphModel.EViewModus.Remove;
             TargetSection.IsLocked = true;
-            NewSection = TargetSection.Resolution.AddOperativeParagraph(NewPosition + 1, true);
+            NewSection = TargetSection.Resolution.AddOperativeParagraph(NewPosition, true);
             NewSection.Text = TargetSection.Text;
             NewSection.ViewModus = OperativeParagraphModel.EViewModus.Add;
             NewSection.IsVirtual = true;
