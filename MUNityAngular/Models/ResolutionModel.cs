@@ -188,6 +188,11 @@ namespace MUNityAngular.Models
                 paragraph.Text = "";
                 this.OperativeSections.Insert(position, paragraph);
                 OnOperativeParagraphAdded?.Invoke(paragraph);
+                foreach (var item in MoveAmendments.Where(n => n.TargetSection.Parent == null && 
+                OperativeSections.Where(n => n.Parent == null).ToList().IndexOf(n.TargetSection) < position))
+                {
+                    item.NewPosition += 1;
+                }
                 return paragraph;
             }
 

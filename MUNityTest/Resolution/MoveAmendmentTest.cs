@@ -103,5 +103,32 @@ namespace MUNityTest.Resolution
             amendment.Remove();
             Assert.IsFalse(resolution.Amendments.Contains(amendment));
         }
+
+        //In this case everything should stay te same!
+        [Test]
+        public void TestUpdateMoveAmendmentPositionOnOperativeSectionAdded()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("section One");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            var amendment = new MoveAmendment();
+            amendment.TargetSection = sectionOne;
+            amendment.NewPosition = 1;
+            var sectionThree = resolution.AddOperativeParagraph("section Three");
+            Assert.AreEqual(1, amendment.NewPosition);
+        }
+
+        [Test]
+        public void TestUpdateMoveAmendmentPositionOnOperativeSectionInsert()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("section One");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            var amendment = new MoveAmendment();
+            amendment.TargetSection = sectionOne;
+            amendment.NewPosition = 1;
+            var sectionThree = resolution.AddOperativeParagraph(0);
+            Assert.AreEqual(1, amendment.NewPosition);
+        }
     }
 }
