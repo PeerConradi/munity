@@ -31,7 +31,7 @@ namespace MUNityTest.Resolution
         public void TestConferenceGetter()
         {
             var resolution = new ResolutionModel();
-            resolution.ConferenceID = "Test";
+            resolution.ConferenceID = MUNityAngular.DataHandlers.Database.ConferenceHandler.TestConference.ID;
             Assert.AreEqual(resolution.Conference, ConferenceHandler.TestConference);
         }
 
