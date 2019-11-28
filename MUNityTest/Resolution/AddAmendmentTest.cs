@@ -37,7 +37,7 @@ namespace MUNityTest.Resolution
         public void TestActivateAddAmendment()
         {
             var resolution = new ResolutionModel();
-            var section = resolution.AddOperativeParagraph();
+            resolution.AddOperativeParagraph("first paragraph");
             var amendment = new AddAmendmentModel();
             amendment.TargetPosition = 1;
             amendment.TargetResolution = resolution;
@@ -82,7 +82,7 @@ namespace MUNityTest.Resolution
             amendment.TargetResolution = resolution;
             amendment.NewText = expectedText;
             amendment.Submit();
-            Assert.IsFalse(resolution.Amendments.Contains(amendment));
+            Assert.IsTrue(resolution.Amendments.Contains(amendment));
             Assert.AreEqual(2, resolution.OperativeSections.Count);
             Assert.AreEqual(amendment.TargetSection, resolution.OperativeSections[1]);
             Assert.IsFalse(resolution.OperativeSections[1].IsVirtual);
@@ -101,7 +101,7 @@ namespace MUNityTest.Resolution
             amendment.NewText = expectedText;
             amendment.Activate();
             amendment.Submit();
-            Assert.IsFalse(resolution.Amendments.Contains(amendment));
+            Assert.IsTrue(resolution.Amendments.Contains(amendment));
             Assert.AreEqual(2, resolution.OperativeSections.Count);
             Assert.AreEqual(amendment.TargetSection, resolution.OperativeSections[1]);
             Assert.IsFalse(resolution.OperativeSections[1].IsVirtual);

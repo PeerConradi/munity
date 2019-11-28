@@ -96,7 +96,7 @@ namespace MUNityAngular.Models
         }
 
         [JsonIgnore]
-        [Obsolete("Shpuld use the AddAmendmentsSave")]
+        [Obsolete("Should use the AddAmendmentsSave")]
         public ObservableCollection<AddAmendmentModel> AddAmendments { get; set; } = new ObservableCollection<AddAmendmentModel>();
 
         public string Filepath { get; set; } = null;
@@ -150,7 +150,6 @@ namespace MUNityAngular.Models
             {
                 foreach(var item in e.NewItems.OfType<OperativeParagraphModel>().Where(n => n.AmendmentParagraph == false))
                 {
-                    item.Amendments.CollectionChanged += AmendmentsInOperativeSectionChanged;
                     item.Resolution = this;
                 }
             }
@@ -165,29 +164,6 @@ namespace MUNityAngular.Models
         {
             SupporterIDs.Clear();
             Supporters.ToList().ForEach(n => SupporterIDs.Add(n.ID));
-        }
-
-        private void AmendmentsInOperativeSectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-                    foreach(var newItem in e.NewItems.OfType<AbstractAmendment>())
-                    {
-                        AddAmendment(newItem);
-                    }
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
-                    break;
-                default:
-                    break;
-            }
         }
 
         public OperativeParagraphModel AddOperativeParagraph(string text = "")
@@ -292,65 +268,8 @@ namespace MUNityAngular.Models
             return DataHandlers.FileSystem.ResolutionHandler.SaveResolutionToLocalFile(this);
         }
 
-        public void AddAmendment(AbstractAmendment amendment)
-        {
-
-            //Add the Amendment to its Target Section if its not already inside
-            if (amendment.TargetSection != null)
-            {
-                if (amendment.TargetSection.Amendments.FirstOrDefault(n => n.ID == amendment.ID) == null &&
-                    !amendment.TargetSection.Amendments.Contains(amendment) &&
-                    !amendment.TargetSection.AmendmentParagraph)
-                {
-                    amendment.TargetSection.Amendments.Add(amendment);
-                }
-            }
-            else
-            {
-                //If it is an Add Amendment add it to the AddAmendments
-                if (amendment is Models.AddAmendmentModel amend)
-                {
-                    if (!AddAmendments.Contains(amend))
-                    {
-                        AddAmendments.Add(amend);
-                        if (amend.TargetResolution != this)
-                            amend.TargetResolution = this;
-                    }
-                }
-            }
-            
-            
-            //Hotfixxed to be redone
-
-            //Go through all the Amendments that are connected to a section and add them in the ORDER that
-            //they supposed to have
-            OperativeSections.Where(n => n.AmendmentParagraph == false).ToList().ForEach(n => {
-                foreach(var am in n.Amendments.OrderBy(a => a.ORDER_LEVEL))
-                {
-                    if (!Amendments.Contains(am))
-                    {
-                        Amendments.Add(am);
-                    }
-                        
-                }
-            });
-
-            //Add all the Add Amendments
-            foreach (var am in AddAmendments)
-            {
-                if (!Amendments.Contains(am))
-                    Amendments.Add(am);
-            }
-        }
-
         public void RemoveAmendment(AbstractAmendment amendment)
         {
-            if (amendment is Models.AddAmendmentModel a)
-            {
-                AddAmendments.Remove(a);
-            }
-
-            OperativeSections.ToList().ForEach(n => n.Amendments.Remove(amendment));
             Amendments.Remove(amendment);
         }
 
@@ -364,8 +283,8 @@ namespace MUNityAngular.Models
             {
                 foreach(var v in value)
                 {
-                    Amendments.Add(v);
-                    //AddAmendment(v);
+                    v.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == v.TargetSectionID);
+                    v.Resolution = this;
                 }
             }
         }
@@ -377,8 +296,8 @@ namespace MUNityAngular.Models
             {
                 foreach (var v in value)
                 {
-                    Amendments.Add(v);
-                    //AddAmendment(v);
+                    v.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == v.TargetSectionID);
+                    v.Resolution = this;
                 }
             }
         }
@@ -390,8 +309,7 @@ namespace MUNityAngular.Models
             {
                 foreach (var v in value)
                 {
-                    Amendments.Add(v);
-                    //AddAmendment(v);
+                    v.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == v.TargetSectionID);
                 }
             }
         }
@@ -402,44 +320,9 @@ namespace MUNityAngular.Models
             set {
                 foreach (var v in value)
                 {
-                    Amendments.Add(v);
-                    //AddAmendment(v);
+                    v.TargetResolution = this;
+                    v.Resolution = this;
                 }
-            }
-        }
-
-        public void Autofix()
-        {
-            foreach (var item in OperativeSections)
-            {
-                item.Resolution = this;
-            }
-
-            foreach (var item in DeleteAmendments)
-            {
-                if (!Amendments.Contains(item))
-                    Amendments.Add(item);
-                item.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == item.TargetSectionID);
-            }
-
-            foreach (var item in ChangeAmendments)
-            {
-                if (!Amendments.Contains(item))
-                    Amendments.Add(item);
-                item.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == item.TargetSectionID);
-            }
-
-            foreach (var item in MoveAmendments)
-            {
-                if (!Amendments.Contains(item))
-                    Amendments.Add(item);
-                item.TargetSection = OperativeSections.FirstOrDefault(n => n.ID == item.TargetSectionID);
-            }
-
-            foreach (var item in AddAmendments)
-            {
-                if (!Amendments.Contains(item))
-                    Amendments.Add(item);
             }
         }
 

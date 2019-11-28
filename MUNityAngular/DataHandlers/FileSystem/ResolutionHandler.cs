@@ -21,7 +21,6 @@ namespace MUNityAngular.DataHandlers.FileSystem
         public static Models.ResolutionModel GetResolutionFromJson(string json)
         {
             var resolution = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ResolutionModel>(json);
-            resolution.Autofix();
             return resolution;
         }
     }

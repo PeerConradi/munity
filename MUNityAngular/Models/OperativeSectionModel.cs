@@ -15,6 +15,9 @@ namespace MUNityAngular.Models
     public class OperativeParagraphModel
     {
 
+        public delegate void AmendmentAdded(AbstractAmendment amendment);
+        public event AmendmentAdded OnAmendmentAdded;
+
         public enum EViewModus
         {
             Normal,
@@ -92,6 +95,7 @@ namespace MUNityAngular.Models
 
         public string EndOperator { get; set; }
 
+        [JsonIgnore]
         public AbstractAmendment ActiveAmendment { get; set; }
 
         [JsonIgnore]
@@ -129,6 +133,7 @@ namespace MUNityAngular.Models
                 return level;
             }
         }
+
 
         public ObservableCollection<string> Children { get; set; }
 
@@ -212,16 +217,8 @@ namespace MUNityAngular.Models
             
         }
 
-        /// <summary>
-        /// The Paragraph can have Amendments Pointed at it.
-        /// The Amendments itself are stored inside the Resolution Document.
-        /// The List only links to the Amendment.
-        /// The reason that it is an own list and not only a get function ist that
-        /// the observable List allows to update the interface whenever something was added
-        /// You may not add Amendments directly into this list.
-        /// </summary>
         [JsonIgnore]
-        public ObservableCollection<AbstractAmendment> Amendments { get; internal set; }
+        public IEnumerable<AbstractAmendment> Amendments { get => Resolution?.Amendments.Where(n => n.TargetSection == this); }
 
 
         public OperativeParagraphModel(string id = null, bool amendmentParagraph = false)
@@ -229,33 +226,6 @@ namespace MUNityAngular.Models
             this.AmendmentParagraph = amendmentParagraph;
             this.ID = id ?? Guid.NewGuid().ToString();
             Children = new ObservableCollection<string>();
-            Amendments = new ObservableCollection<AbstractAmendment>();
-            Amendments.CollectionChanged += Amendments_CollectionChanged;
-        }
-
-        private void Amendments_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-                    IEnumerable<Models.AbstractAmendment> list = e.NewItems.OfType<Models.AbstractAmendment>();
-                    foreach(var itm in list)
-                    {
-                        Resolution?.AddAmendment(itm);
-                    }
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
-                    break;
-                default:
-                    break;
-            }
-
         }
 
         public OperativeParagraphModel AddSubSection(string text = "")

@@ -23,30 +23,42 @@ namespace MUNityAngular.Models
 
         public List<DelegationModel> Supporters { get; set; }
 
-        public ResolutionModel Resolution { get;  }
+        [JsonIgnore]
+        public ResolutionModel Resolution { get; set; }
 
         public DateTime SubmitTime { get; set; }
 
         private OperativeParagraphModel _targetSection;
+        [JsonIgnore]
         public OperativeParagraphModel TargetSection
         {
-            get => _targetSection;
+            get
+            {
+                if (string.IsNullOrEmpty(TargetSectionID))
+                    return null;
+
+                if (_targetSection == null && !string.IsNullOrEmpty(TargetSectionID))
+                    _targetSection = Resolution?.OperativeSections.FirstOrDefault(n => n.ID == TargetSectionID);
+                return _targetSection;
+            }
             set
             {
-
-                if (value == null && _targetSection != null)
-                    _targetSection.Amendments.Remove(this);
-
                 _targetSection = value;
 
                 if (value != null)
                 {
-                    if (!_targetSection.Amendments.Contains(this))
-                        _targetSection.Amendments.Add(this);
                     TargetSectionID = value.ID;
+                    _targetSection.Resolution.Amendments.Add(this);
+                    Resolution = _targetSection.Resolution;
                 }
-                    
-
+                else
+                {
+                    TargetSectionID = null;
+                    if (Resolution != null)
+                    {
+                        Resolution.Amendments.Add(this);
+                    }
+                }
             }
         }
 
