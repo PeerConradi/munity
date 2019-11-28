@@ -45,9 +45,8 @@ namespace MUNityAngular.Models
         {
             get
             {
-
-                if (ConferenceID == null)
-                    throw new NullReferenceException("This Committee is not inside an Conference");
+                //if (ConferenceID == null)
+                //    throw new NullReferenceException("This Committee is not inside an Conference");
 
                 Models.ConferenceModel conference =
                     DataHandlers.Database.ConferenceHandler.GetConference(this.ConferenceID);

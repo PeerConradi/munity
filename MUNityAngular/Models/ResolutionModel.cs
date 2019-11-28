@@ -34,7 +34,6 @@ namespace MUNityAngular.Models
         {
             get
             {
-                //Get Conference from Service
                 var res = DataHandlers.Database.ConferenceHandler.GetConference(ConferenceID);
 
                 if (res == null)
@@ -43,6 +42,10 @@ namespace MUNityAngular.Models
                 }
 
                 return res;
+            }
+            set
+            {
+                ConferenceID = value?.ID ?? null;
             }
         }
 
@@ -60,18 +63,7 @@ namespace MUNityAngular.Models
             }
         }
 
-        [JsonIgnore]
-        public IEnumerable<OperativeParagraphModel> OperativeSectionsNoVirtual
-        {
-            get
-            {
-                return OperativeSections.Where(n => n.AmendmentParagraph == false);
-            }
-        }
-
         public DocumentTypeModel DocumentType { get; set; }
-
-        public string CommitteeID { get; set; }
 
         public string ResolutlyCommitteeID { get; set; }
         public int DocumentNumber { get; set; }
@@ -95,21 +87,12 @@ namespace MUNityAngular.Models
             }
         }
 
-        [JsonIgnore]
-        [Obsolete("Should use the AddAmendmentsSave")]
-        public ObservableCollection<AddAmendmentModel> AddAmendments { get; set; } = new ObservableCollection<AddAmendmentModel>();
-
-        public string Filepath { get; set; } = null;
-
         public DelegationModel Submitter { get; set; }
 
         public PreambleModel Preamble { get; set; }
 
         [JsonIgnore]
-        public CommitteeModel Committee { get; set; } 
-
-        [JsonIgnore]
-        public CommitteeModel ResolutelyCommittee { get => DataHandlers.Database.CommitteeHandler.GetCommittee(ResolutlyCommitteeID); }
+        public CommitteeModel ResolutelyCommittee { get => DataHandlers.Database.CommitteeHandler.GetCommittee(ResolutlyCommitteeID); set => ResolutlyCommitteeID = value?.ID ?? null; }
 
         //Make this an read only Observable Collection (only get internal set)
         //And edit its value by just Adding from the different Amendment lists!! 
@@ -188,8 +171,7 @@ namespace MUNityAngular.Models
                 paragraph.Text = "";
                 this.OperativeSections.Insert(position, paragraph);
                 OnOperativeParagraphAdded?.Invoke(paragraph);
-                foreach (var item in MoveAmendments.Where(n => n.TargetSection.Parent == null && 
-                OperativeSections.Where(n => n.Parent == null).ToList().IndexOf(n.TargetSection) < position))
+                foreach (var item in MoveAmendments.Where(n => n.TargetSection.Parent == null && OperativeSections.Where(a => a.Parent == null).ToList().IndexOf(n.TargetSection) < position))
                 {
                     item.NewPosition += 1;
                 }

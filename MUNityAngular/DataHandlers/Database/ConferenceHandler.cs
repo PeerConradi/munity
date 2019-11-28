@@ -11,7 +11,7 @@ namespace MUNityAngular.DataHandlers.Database
 
         public static Models.ConferenceModel GetConference(string id)
         {
-            if (id == "Test")
+            if (id == TestConference.ID)
                 return TestConference;
             return null;
 
@@ -27,7 +27,7 @@ namespace MUNityAngular.DataHandlers.Database
                     _testConference.ID = "TESTCONFERENCE";
                     _testConference.Name = "Test";
                     _testConference.FullName = "Test Conference";
-                    
+                    _testConference.AddCommittee(CommitteeHandler.TestCommittee);
                 }
 
                 return _testConference;

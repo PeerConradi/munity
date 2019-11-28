@@ -88,13 +88,6 @@ namespace MUNityAngular.Models
 
         public bool AmendmentParagraph { get; set; }
 
-        public string Pretext { get; set; }
-
-        public string Operator { get; set; }
-        public string ContentText { get; set; }
-
-        public string EndOperator { get; set; }
-
         [JsonIgnore]
         public AbstractAmendment ActiveAmendment { get; set; }
 
