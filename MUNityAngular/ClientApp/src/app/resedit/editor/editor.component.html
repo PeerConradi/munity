@@ -1,10 +1,21 @@
-<h3>Resolution Name</h3>
+<div class="row">
+  <div class="alert alert-danger" role="alert">
+    Beispiel für eine Resolution abrufbar bei: /api/resolution
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <h3>Resolution Name</h3>
+  </div>
+  <div class="col">
+    <p>Last Saved: LAST_SAVE_DATE <span class="badge badge-success">Saved</span>   <a href="#">Verlauf</a></p>
+  </div>
+</div>
+
 <app-res-options></app-res-options>
 <h4>Präambel</h4>
-<ul>
-  <li><app-preamble-paragraph></app-preamble-paragraph></li>
-  <li><app-preamble-paragraph></app-preamble-paragraph></li>
-</ul>
+  <app-preamble-paragraph></app-preamble-paragraph>
+  <app-preamble-paragraph></app-preamble-paragraph>
 <h4>Operativer Abschnitt</h4>
 <ul>
   <li><app-operative-paragraph></app-operative-paragraph></li>

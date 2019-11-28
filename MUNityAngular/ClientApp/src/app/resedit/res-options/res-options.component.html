@@ -1,13 +1,23 @@
-<p>Name</p><input type="text" />
-<p>Beschlussfassendes Gremium</p>
-<select>
-  <option>Gremium 1</option>
-  <option>Gremium 2</option>
-  <option>Gremium 3</option>
-</select>
-<p>Version</p><input type="text" />
-<p>Art</p>
-<select>
-  <option>Resolutionsentwurf</option>
-  <option>Resolution</option>
-</select>
+<form>
+  <div class="form-group">
+    <label for="inputName">Name</label>
+    <input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" placeholder="Name der Resolution">
+    <small id="emailHelp" class="form-text text-muted">Dieser Name wird als Titel für die Resolution verwendet.</small>
+  </div>
+  <div class="form-group">
+    <label for="resolultyCommittee">Beschlussfassendes Gremium</label>
+    <select class="form-control" id="resolultyCommittee">
+      <option>Gremium 1</option>
+      <option>Gremium 2</option>
+      <option>Gremium 3</option>
+      <option>Gremium 4</option>
+      <option>Gremium 5</option>
+    </select>
+  </div>
+  <div class="form-group form-check">
+    <input type="checkbox" class="form-check-input" id="display">
+    <label class="form-check-label" for="exampleCheck1">Ansicht erlauben</label>
+    <small id="emailHelp" class="form-text text-muted">Die ID für die Ansicht lautet: 1234567</small>
+  </div>
+  
+</form>
