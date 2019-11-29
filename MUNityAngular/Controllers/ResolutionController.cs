@@ -15,16 +15,39 @@ namespace MUNityAngular.Controllers
         [HttpGet]
         public string Get()
         {
-            var json = DataHandlers.FileSystem.ResolutionHandler.GetJsonFromResolution(
-                DataHandlers.FileSystem.ResolutionHandler.ExampleResolution);
-            return json;
+            string description = "";
+            description += "To create a new Resolution Call: /Create?auth=[AUTH_CODE]\n";
+            description += "To get the Current Version of a Resolution call Get?auth=[AUTH_CODE]&id=[RESOLUTION_ID]\n";
+            description += "The default AUTH_CODE is 'default'\n";
+            description += "If you want an example call /Example\n";
+            description += "\n";
+            return description;
         }
 
-        // GET: api/Resolution/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [Route("[action]")]
+        [HttpGet]
+        public string Create(string auth)
         {
-            return "value";
+            return DataHandlers.FileSystem.ResolutionHandler.GetJsonFromResolution(new Models.ResolutionModel());
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public string Example()
+        {
+            return DataHandlers.FileSystem.ResolutionHandler.GetJsonFromResolution(DataHandlers.FileSystem.ResolutionHandler.ExampleResolution);
+        }
+
+
+        // GET: api/Resolution/5
+        [Route("[action]")]
+        [HttpGet]
+        public string Get(string auth, string id)
+        {
+            if (auth.ToLower() == "default")
+                return "access granted to " + id;
+            else
+                return "access denied";
         }
 
         // POST: api/Resolution

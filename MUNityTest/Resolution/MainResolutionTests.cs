@@ -226,6 +226,12 @@ namespace MUNityTest.Resolution
             Assert.AreEqual(changeAmendment.TargetSectionID, loadedChangeAmendment.TargetSectionID);
             Assert.AreEqual(loadedResolution.OperativeSections[0], loadedChangeAmendment.TargetSection);
 
+            var loadedDeleteAmendment = loadedResolution.Amendments[1] as DeleteAmendmentModel;
+            Assert.NotNull(loadedDeleteAmendment);
+            Assert.AreEqual(loadedDeleteAmendment.ID, deleteAmendment.ID);
+            Assert.AreEqual(loadedDeleteAmendment.TargetSectionID, deleteAmendment.TargetSectionID);
+            Assert.AreEqual(loadedResolution.OperativeSections[0], loadedDeleteAmendment.TargetSection);
+
         }
     }
 }

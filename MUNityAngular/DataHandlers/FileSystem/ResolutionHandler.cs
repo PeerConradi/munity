@@ -55,18 +55,26 @@ namespace MUNityAngular.DataHandlers.FileSystem
 
                 var changeAmendment = new Models.ChangeAmendmentModel();
                 changeAmendment.TargetSection = secionOne;
+                changeAmendment.SubmitTime = new DateTime(1995, 11, 7, 22, 32, 40);
+                changeAmendment.SubmitterID = Database.DelegationHandler.AllDefaultDelegations()[0].ID;
                 changeAmendment.NewText = "Das ist der neue Text";
 
                 var deleteAmendment = new Models.DeleteAmendmentModel();
                 deleteAmendment.TargetSection = secionOne;
+                deleteAmendment.SubmitterID = Database.DelegationHandler.AllDefaultDelegations()[0].ID;
+                deleteAmendment.SubmitTime = new DateTime(1995, 11, 7, 22, 31, 32);
 
                 var moveAmendment = new Models.MoveAmendment();
                 moveAmendment.TargetSection = secionOne;
                 moveAmendment.NewPosition = 1;
+                moveAmendment.SubmitterID = Database.DelegationHandler.AllDefaultDelegations()[0].ID;
+                moveAmendment.SubmitTime = new DateTime(1995, 11, 7, 22, 32, 30);
 
                 var addAmendment = new Models.AddAmendmentModel();
                 addAmendment.TargetResolution = resolution;
                 addAmendment.TargetPosition = 0;
+                addAmendment.SubmitterID = Database.DelegationHandler.AllDefaultDelegations()[0].ID;
+                addAmendment.SubmitTime = new DateTime(1995, 11, 7, 22, 33, 44);
                 addAmendment.NewText = "Text welcher in dem neuen Absatz stehen soll.";
                 
                 return resolution;

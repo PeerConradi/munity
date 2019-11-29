@@ -18,8 +18,8 @@ namespace MUNityAngular.Models
 
         public string SubmitterID { get; set; }
 
-        //TODO: Get the Submitter from the Delegation Service!
-        public DelegationModel Submitter { get; }
+        [JsonIgnore]
+        public DelegationModel Submitter { get => DataHandlers.Database.DelegationHandler.GetDelegation(SubmitterID); }
 
         public List<DelegationModel> Supporters { get; set; }
 
