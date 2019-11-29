@@ -7,6 +7,19 @@ namespace MUNityAngular.DataHandlers.FileSystem
 {
     public class ResolutionHandler
     {
+
+        public static Models.ResolutionModel GetResolution(string id)
+        {
+            if (id == ExampleResolution.ID)
+            {
+                return ExampleResolution;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static string SaveResolutionToLocalFile(Models.ResolutionModel resolution)
         {
             return string.Empty;

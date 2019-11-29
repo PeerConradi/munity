@@ -21,28 +21,16 @@ namespace MUNityAngular.Models
             ANSWER
         }
 
-        public IEnumerable<DelegationModel> Delegations
-        {
-            get
-            {
-                return DataHandlers.Database.DelegationHandler.AllDefaultDelegations();
-            }
-        }
-
         public string ID { get; set; }
 
         public string Name { get; set; }
 
-        private TimeSpan _speakertime = new TimeSpan(0, 3, 00);
         public TimeSpan Speakertime { get; set; }
 
-        private TimeSpan _questiontime = new TimeSpan(0, 0, 30);
         public TimeSpan Questiontime { get; set; }
 
-        private TimeSpan _remainingspeakertime = new TimeSpan(0, 3, 0);
         public TimeSpan RemainingSpeakerTime { get; set; }
 
-        private TimeSpan _remainingquestiontime = new TimeSpan(0, 0, 30);
         public TimeSpan RemainingQuestionTime { get; set; }
 
         public ObservableCollection<DelegationModel> Speakers { get; set; }
