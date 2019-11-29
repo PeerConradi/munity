@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29505.145
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityAngular", "MUNityAngular\MUNityAngular.csproj", "{5FC8AD2A-CF67-4917-B486-9CE6F8350099}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MUNityTest", "MUNityTest\MUNityTest.csproj", "{05FA67D6-3712-41EE-B871-FF4E0BCD1FA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityTest", "MUNityTest\MUNityTest.csproj", "{05FA67D6-3712-41EE-B871-FF4E0BCD1FA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
