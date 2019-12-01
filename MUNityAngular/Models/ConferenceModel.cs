@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityAngular.Models
 {
@@ -17,22 +18,31 @@ namespace MUNityAngular.Models
     public class ConferenceModel
     {
 
+        [DatabaseSave("id")]
         public string ID { get; set; }
 
+        [DatabaseSave("name")]
         public string Name { get; set; }
 
+
+        [DatabaseSave("fullname")]
         public string FullName { get; set; }
 
+        [DatabaseSave("abbreviation")]
         public string Abbreviation { get; set; }
 
         public ObservableCollection<CommitteeModel> Committees { get; set; }
 
+        [DatabaseSave("startdate")]
         public DateTime StartDate { get; set; }
 
+        [DatabaseSave("enddate")]
         public DateTime EndDate { get; set; }
 
+        [DatabaseSave("secretarygeneraltitle")]
         public string SecretaryGeneralTitle { get; set; }
 
+        [DatabaseSave("secretarygeneralname")]
         public string SecretaryGerneralName { get; set; }
 
         public ObservableCollection<DelegationModel> NGOs { get; set; }

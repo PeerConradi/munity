@@ -1,11 +1,13 @@
-﻿using System;
+﻿using MUNityAngular.Models;
+using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MUNityAngular.DataHandlers.Database
 {
-    public class ConferenceHandler
+    public class ConferenceHandler : IDatabaseHandler
     {
         private static Models.ConferenceModel _testConference;
 
@@ -32,6 +34,28 @@ namespace MUNityAngular.DataHandlers.Database
 
                 return _testConference;
             }
+        }
+
+        public DatabaseInformation.ETableStatus TableStatus
+        {
+            get
+            {
+                var v = Connector.DoesTableExists("conference");
+                if (v)
+                {
+                    return DatabaseInformation.ETableStatus.Ready;
+                }
+                else
+                {
+                    return DatabaseInformation.ETableStatus.NotExisting;
+                }
+            }
+        }
+
+        public bool CreateTables()
+        {
+            Connector.CreateTable("conference", typeof(ConferenceModel));
+            return true;
         }
     }
 }

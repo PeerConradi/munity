@@ -1,0 +1,113 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
+
+namespace MUNityAngular.DataHandlers.Database
+{
+
+    /// <summary>
+    /// The Connector Class handles every connection to the Database itself
+    /// and has some functionality to allow quick checks for tables etc.
+    /// </summary>
+    public class Connector
+    {
+        private const string DATABASE_NAME = "munity";
+        private const string DATABASE_USER = "root";
+        private const string DATABASE_PASSWORD = "";
+
+        private static List<IDatabaseHandler> databaseHandlers;
+
+        public static void RegisterDatabaseHandler(IDatabaseHandler handler)
+        {
+            if (databaseHandlers == null)
+                databaseHandlers = new List<IDatabaseHandler>();
+            databaseHandlers.Add(handler);
+        }
+
+        
+
+        private static string connectionString { get; set; }
+
+        public static bool InitializeConnection()
+        {
+            connectionString = @"server=localhost;userid=" + DATABASE_USER + ";password=" + DATABASE_PASSWORD;
+            using (var connection = Connection)
+            {
+                connection.Open();
+                //Create Database if not exists (AddWithValue failed here)
+                string s0 = "CREATE DATABASE IF NOT EXISTS `" + DATABASE_NAME + "`;";
+                var cmd = new MySqlCommand(s0, connection);
+                cmd.ExecuteNonQuery();
+            }
+            connectionString += ";database=" + DATABASE_NAME + ";";
+            return true;
+        }
+
+        public static void CreateOrUpdateTables()
+        {
+            databaseHandlers.ForEach(n => n.CreateTables());
+        }
+
+        public static void ClearHandlers()
+        {
+            databaseHandlers.Clear();
+        }
+
+        public static MySqlConnection Connection
+        {
+            get => new MySqlConnection(connectionString);
+        }
+
+        public static bool DoesTableExists(string tablename)
+        {
+            var val = false;
+            using (var connection = Connection)
+            {
+                
+                var cmdStr = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + DATABASE_NAME +  "' AND table_name = @tablename";
+
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@tablename", tablename);
+                connection.Open();
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int count = reader.GetInt32(0);
+                    if (count == 1) val = true;
+                }
+            }
+            return val;
+        }
+
+        public static bool CreateTable(string tablename, Type sourceObject)
+        {
+
+            using (var connection = Connection)
+            {
+                connection.Open();
+                string cmdStr = "CREATE TABLE IF NOT EXISTS `" + tablename + "` (";
+                string primarykeyfieldname = string.Empty;
+                foreach (var prep in sourceObject.GetProperties())
+                {
+                    var databaseAttr = (DatabaseSaveAttribute)prep.GetCustomAttribute(typeof(DatabaseSaveAttribute));
+                    if (databaseAttr != null)
+                    {
+                        cmdStr += "`" + databaseAttr.ColumnName + "` " + DatabaseInformation.GetDatabaseType(prep.PropertyType) + ",";
+                    }
+                }
+                if (cmdStr.EndsWith(','))
+                    cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+                cmdStr += ");";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.ExecuteNonQuery();
+                
+            }
+            return true;
+            
+        }
+    }
+}

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityAngular
 {
@@ -70,6 +71,12 @@ namespace MUNityAngular
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+            //Initialize the Database
+            Connector.InitializeConnection();
+            Connector.RegisterDatabaseHandler(new ConferenceHandler());
+            Connector.CreateOrUpdateTables();
+            Connector.ClearHandlers();
         }
     }
 }
