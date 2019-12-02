@@ -18,7 +18,8 @@ namespace MUNityAngular.Models
     public class ConferenceModel
     {
 
-        [DatabaseSave("id")]
+        [PrimaryKey]
+        [DatabaseSave("id", DatabaseSaveAttribute.EFieldType.VARCHAR)]
         public string ID { get; set; }
 
         [DatabaseSave("name")]
@@ -45,6 +46,9 @@ namespace MUNityAngular.Models
         [DatabaseSave("secretarygeneralname")]
         public string SecretaryGerneralName { get; set; }
 
+        [DatabaseSave("createdate")]
+        public string CreationDate { get; set; }
+
         public ObservableCollection<DelegationModel> NGOs { get; set; }
 
         /// <summary>
@@ -52,18 +56,11 @@ namespace MUNityAngular.Models
         /// </summary>
         public ObservableCollection<string> ResolutionIDs { get; set; }
 
-        /// <summary>
-        /// DO NOT TOUCH, DO NOT ADD ITEMS OUTSIDE OF THE RESOLUTION MANAGER TO THIS!
-        /// </summary>
-        [JsonIgnore]
-        public ObservableCollection<ResolutionModel> AvailableResolutions { get; set; }
-
         public ConferenceModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();
             Committees = new ObservableCollection<CommitteeModel>();
             ResolutionIDs = new ObservableCollection<string>();
-            AvailableResolutions = new ObservableCollection<ResolutionModel>();
             Delegations = new ObservableCollection<DelegationModel>();
             NGOs = new ObservableCollection<DelegationModel>();
         }

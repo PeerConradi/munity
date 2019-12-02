@@ -83,28 +83,55 @@ namespace MUNityAngular.DataHandlers.Database
             return val;
         }
 
+        public static bool AddColumnIfNotExists()
+        {
+            throw new NotImplementedException();
+        }
+
         public static bool CreateTable(string tablename, Type sourceObject)
         {
-
             using (var connection = Connection)
             {
                 connection.Open();
                 string cmdStr = "CREATE TABLE IF NOT EXISTS `" + tablename + "` (";
-                string primarykeyfieldname = string.Empty;
+                var primarykeys = new List<string>();
                 foreach (var prep in sourceObject.GetProperties())
                 {
                     var databaseAttr = (DatabaseSaveAttribute)prep.GetCustomAttribute(typeof(DatabaseSaveAttribute));
                     if (databaseAttr != null)
                     {
-                        cmdStr += "`" + databaseAttr.ColumnName + "` " + DatabaseInformation.GetDatabaseType(prep.PropertyType) + ",";
+                        if (databaseAttr.FieldType == DatabaseSaveAttribute.EFieldType.AUTO)
+                        {
+                            cmdStr += "`" + databaseAttr.ColumnName + "` " + DatabaseInformation.GetDatabaseType(prep.PropertyType) + ",";
+                        }
+                        else
+                        {
+                            cmdStr += "`" + databaseAttr.ColumnName + "` " + DatabaseInformation.GetDatabaseType(databaseAttr.FieldType) + ",";
+                        }
+                        
+                        var pkAttr = (PrimaryKeyAttribute)prep.GetCustomAttribute(typeof(PrimaryKeyAttribute));
+                        if (pkAttr != null)
+                            primarykeys.Add(databaseAttr.ColumnName);
                     }
                 }
+                //PRIMARY KEYS
+                if (primarykeys.Count > 0)
+                    cmdStr += "PRIMARY KEY (";
+
+                primarykeys.ForEach(key =>
+                {
+                    cmdStr += key + ",";
+                });
+                //delete last ,
                 if (cmdStr.EndsWith(','))
                     cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+
+                if (primarykeys.Count > 0)
+                    cmdStr += ")";
+
                 cmdStr += ");";
                 var cmd = new MySqlCommand(cmdStr, connection);
                 cmd.ExecuteNonQuery();
-                
             }
             return true;
             
