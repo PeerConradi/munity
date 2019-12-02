@@ -72,11 +72,6 @@ namespace MUNityAngular
                 }
             });
 
-            //Initialize the Database
-            Connector.InitializeConnection();
-            Connector.RegisterDatabaseHandler(new ConferenceHandler());
-            Connector.CreateOrUpdateTables();
-            Connector.ClearHandlers();
         }
     }
 }
