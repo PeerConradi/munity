@@ -48,7 +48,10 @@ namespace MUNityAngular.DataHandlers.Database
 
         public static void CreateOrUpdateTables()
         {
-            databaseHandlers.ForEach(n => n.CreateTables());
+            databaseHandlers.ForEach(n => {
+                if (n.TableStatus == DatabaseInformation.ETableStatus.NotExisting)
+                    n.CreateTables();
+            });
         }
 
         public static void ClearHandlers()
@@ -88,6 +91,11 @@ namespace MUNityAngular.DataHandlers.Database
             throw new NotImplementedException();
         }
 
+        public static DatabaseSaveAttribute GetAttributeForProperty(PropertyInfo property)
+        {
+            return (DatabaseSaveAttribute)property.GetCustomAttribute(typeof(DatabaseSaveAttribute));
+        }
+
         public static bool CreateTable(string tablename, Type sourceObject)
         {
             using (var connection = Connection)
@@ -97,7 +105,7 @@ namespace MUNityAngular.DataHandlers.Database
                 var primarykeys = new List<string>();
                 foreach (var prep in sourceObject.GetProperties())
                 {
-                    var databaseAttr = (DatabaseSaveAttribute)prep.GetCustomAttribute(typeof(DatabaseSaveAttribute));
+                    var databaseAttr = GetAttributeForProperty(prep);
                     if (databaseAttr != null)
                     {
                         if (databaseAttr.FieldType == DatabaseSaveAttribute.EFieldType.AUTO)
@@ -135,6 +143,82 @@ namespace MUNityAngular.DataHandlers.Database
             }
             return true;
             
+        }
+
+        public static bool CreateConnectionTable(string tablename, Type wrapperObject, Type ListObject)
+        {
+            using (var connection = Connection)
+            {
+                connection.Open();
+                string cmdStr = "CREATE TABLE IF NOT EXISTS `" + tablename + "` (";
+                var primarykeys = new List<string>();
+                var wrapperPrimaryKeys = wrapperObject.GetProperties().Where(n => n.GetCustomAttribute(typeof(PrimaryKeyAttribute)) != null);
+                if (wrapperPrimaryKeys.Count() == 0)
+                    throw new ArgumentException("wrapper object does not have any PrmiaryKey");
+
+
+                wrapperObject.Name.ToLower();
+                //PRIMARY KEYS
+                if (primarykeys.Count > 0)
+                    cmdStr += "PRIMARY KEY (";
+
+                primarykeys.ForEach(key =>
+                {
+                    cmdStr += key + ",";
+                });
+                //delete last ,
+                if (cmdStr.EndsWith(','))
+                    cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+
+                if (primarykeys.Count > 0)
+                    cmdStr += ")";
+
+                cmdStr += ");";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.ExecuteNonQuery();
+            }
+            return true;
+        }
+
+        public static bool Insert(string tablename, object model)
+        {
+            var cmdStr = "INSERT INTO " + tablename + " (";
+            var paramList = new List<string>();
+            var valList = new Dictionary<string, object>();
+            var t = model.GetType();
+            foreach (var prep in t.GetProperties())
+            {
+                var attr = Connector.GetAttributeForProperty(prep);
+                if (attr != null)
+                {
+                    if (prep.GetValue(model) != null)
+                    {
+                        paramList.Add(attr.ColumnName);
+                        valList.Add("@" + attr.ColumnName, prep.GetValue(model));
+                    }
+
+                }
+            }
+            paramList.ForEach(n => cmdStr += n + ",");
+            if (cmdStr.EndsWith(',')) cmdStr.Remove(cmdStr.Length - 1);
+            cmdStr += ") VALUES (";
+            foreach (var item in valList)
+            {
+                cmdStr += item.Key;
+            }
+            if (cmdStr.EndsWith(',')) cmdStr.Remove(cmdStr.Length - 1);
+            cmdStr += ")";
+            using (var connection = Connector.Connection)
+            {
+                var cmd = new MySqlCommand(cmdStr, connection);
+                foreach (var item in valList)
+                {
+                    cmd.Parameters.AddWithValue(item.Key, item.Value.ToString());
+                }
+                connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+            return true;
         }
     }
 }

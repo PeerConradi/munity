@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO;
 using System.Net;
+using MUNityAngular.DataHandlers.Database;
+
 
 namespace MUNityAngular.Models
 {
+
     public class DelegationModel
     {
         public enum EDelegationTypes
@@ -20,18 +23,15 @@ namespace MUNityAngular.Models
             MEDIA
         }
 
-        
-
+        [PrimaryKey]
+        [DatabaseSave("id", DatabaseSaveAttribute.EFieldType.VARCHAR)]
         public string ID { get; set; }
 
+        [DatabaseSave("name")]
         public string Name { get; set; }
 
+        [DatabaseSave("iso")]
         public string ISO { get; set; }
-
-        public string ImageFilename { get; set; } = "";
-
-        public Uri ImageLink { get; set; }
-
 
         public DelegationModel(string id = null)
         {
@@ -41,16 +41,6 @@ namespace MUNityAngular.Models
         public override string ToString()
         {
             return Name;
-        }
-
-        public bool Search(string keyword)
-        {
-            return Name.ToLower().Contains(keyword.ToLower());
-        }
-
-        public bool DeepSearch(string keyword)
-        {
-            return Name.ToLower().Contains(keyword.ToLower());
         }
     }
 }

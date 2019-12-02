@@ -47,8 +47,9 @@ namespace MUNityAngular.Models
         public string SecretaryGerneralName { get; set; }
 
         [DatabaseSave("createdate")]
-        public string CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
 
+        [ConnectionTable("conference_ngo")]
         public ObservableCollection<DelegationModel> NGOs { get; set; }
 
         /// <summary>

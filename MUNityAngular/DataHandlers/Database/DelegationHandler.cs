@@ -1,18 +1,21 @@
-﻿using System;
+﻿using MUNityAngular.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MUNityAngular.DataHandlers.Database
 {
-    public class DelegationHandler
+    public class DelegationHandler : IDatabaseHandler
     {
-        private static Models.DelegationModel _delegationAF = new Models.DelegationModel() { ID = "default_af", Name = "Afghanistan", ISO = "AF" };
-        private static Models.DelegationModel _delegationEG = new Models.DelegationModel() { ID = "default_eg", Name = "Ägypten", ISO = "EQ" };
-        private static Models.DelegationModel _delegationAL = new Models.DelegationModel() { ID = "default_al", Name = "Albanien", ISO = "AL" };
-        private static List<Models.DelegationModel> _defaultDelegations;
+        private const string delegation_table_name = "delegation";
 
-        public static Models.DelegationModel GetDelegation(string id)
+        private static DelegationModel _delegationAF = new Models.DelegationModel() { ID = "default_af", Name = "Afghanistan", ISO = "AF" };
+        private static DelegationModel _delegationEG = new Models.DelegationModel() { ID = "default_eg", Name = "Ägypten", ISO = "EQ" };
+        private static DelegationModel _delegationAL = new Models.DelegationModel() { ID = "default_al", Name = "Albanien", ISO = "AL" };
+        private static List<DelegationModel> _defaultDelegations;
+
+        public static DelegationModel GetDelegation(string id)
         {
             var inDefault = AllDefaultDelegations().FirstOrDefault(n => n.ID == id);
             if (inDefault != null) return inDefault;
@@ -24,7 +27,7 @@ namespace MUNityAngular.DataHandlers.Database
         {
             if (_defaultDelegations == null)
             {
-                _defaultDelegations = new List<Models.DelegationModel>();
+                _defaultDelegations = new List<DelegationModel>();
                 _defaultDelegations.Add(_delegationAF);
                 _defaultDelegations.Add(_delegationEG);
                 _defaultDelegations.Add(_delegationAL);
@@ -32,6 +35,26 @@ namespace MUNityAngular.DataHandlers.Database
             return _defaultDelegations;
         }
 
+        public DatabaseInformation.ETableStatus TableStatus
+        {
+            get
+            {
+                var v = Connector.DoesTableExists(delegation_table_name);
+                if (v)
+                {
+                    return DatabaseInformation.ETableStatus.Ready;
+                }
+                else
+                {
+                    return DatabaseInformation.ETableStatus.NotExisting;
+                }
+            }
+        }
 
+        public bool CreateTables()
+        {
+            Connector.CreateTable(delegation_table_name, typeof(DelegationModel));
+            return true;
+        }
     }
 }

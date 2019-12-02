@@ -70,6 +70,47 @@ namespace MUNityAngular.DataHandlers.Database
         {
             get { return positionalString; }
         }
+    }
 
+    [System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    sealed class ConnectionTableAttribute : Attribute
+    {
+        // See the attribute guidelines at 
+        //  http://go.microsoft.com/fwlink/?LinkId=85236
+        readonly string tablename;
+
+        // This is a positional argument
+        public ConnectionTableAttribute(string tablename)
+        {
+            this.tablename = tablename;
+        }
+
+        public string TableName
+        {
+            get { return tablename; }
+        }
+    }
+
+    [System.AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
+    sealed class DatabaseTableAttribute : Attribute
+    {
+        // See the attribute guidelines at 
+        //  http://go.microsoft.com/fwlink/?LinkId=85236
+        readonly string positionalString;
+
+        // This is a positional argument
+        public DatabaseTableAttribute(string positionalString)
+        {
+            this.positionalString = positionalString;
+
+            // TODO: Implement code here
+
+            throw new NotImplementedException();
+        }
+
+        public string PositionalString
+        {
+            get { return positionalString; }
+        }
     }
 }

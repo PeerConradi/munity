@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\src\app\resedit\" />
+    <Folder Include="Util\Extenstions\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

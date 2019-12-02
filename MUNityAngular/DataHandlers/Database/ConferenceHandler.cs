@@ -10,13 +10,25 @@ namespace MUNityAngular.DataHandlers.Database
     public class ConferenceHandler : IDatabaseHandler
     {
         private static Models.ConferenceModel _testConference;
+        private const string conference_table_name = "conference";
 
         public static Models.ConferenceModel GetConference(string id)
         {
             if (id == TestConference.ID)
                 return TestConference;
             return null;
+        }
 
+        public static bool CreateConference(ConferenceModel model)
+        {
+            model.CreationDate = DateTime.Now;
+            Connector.Insert(conference_table_name, model);
+            return true;
+        }
+
+        public static bool UpdateConference(Models.ConferenceModel model)
+        {
+            throw new NotImplementedException();
         }
 
         public static Models.ConferenceModel TestConference
@@ -54,7 +66,7 @@ namespace MUNityAngular.DataHandlers.Database
 
         public bool CreateTables()
         {
-            Connector.CreateTable("conference", typeof(ConferenceModel));
+            Connector.CreateTable(conference_table_name, typeof(ConferenceModel));
             return true;
         }
     }
