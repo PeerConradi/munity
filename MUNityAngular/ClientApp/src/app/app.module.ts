@@ -14,6 +14,10 @@ import { OperativeParagraphComponent } from './resedit/operative-paragraph/opera
 import { PreambleParagraphComponent } from './resedit/preamble-paragraph/preamble-paragraph.component';
 import { ResOptionsComponent } from './resedit/res-options/res-options.component';
 import { AmendmentControllerComponent } from './resedit/amendment-controller/amendment-controller.component';
+import { ResolutionHomeComponent } from './resedit/resolution-home/resolution-home.component';
+import { SecondaryNavComponent } from './secondary-nav/secondary-nav.component';
+import { DashboardComponent } from './loggedIn/dashboard/dashboard.component';
+import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +31,11 @@ import { AmendmentControllerComponent } from './resedit/amendment-controller/ame
     OperativeParagraphComponent,
     PreambleParagraphComponent,
     ResOptionsComponent,
-    AmendmentControllerComponent
+    AmendmentControllerComponent,
+    ResolutionHomeComponent,
+    SecondaryNavComponent,
+    DashboardComponent,
+    ConferenceBoxComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -38,6 +46,8 @@ import { AmendmentControllerComponent } from './resedit/amendment-controller/ame
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'resedit', component: EditorComponent },
+      { path: 'reshome', component: ResolutionHomeComponent },
+      { path: 'dashboard', component: DashboardComponent }
     ])
   ],
   providers: [],
