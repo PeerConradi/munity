@@ -2,41 +2,53 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using MUNityAngular.DataHandlers.Database;
 using Newtonsoft.Json;
 
 namespace MUNityAngular.Models
 {
+
+    [DataContract]
     public class CommitteeModel
     {
+
+        [DataMember]
+        [PrimaryKey]
+        [DatabaseSave("id", DatabaseSaveAttribute.EFieldType.VARCHAR)]
         public string ID { get; set; }
 
+        [DataMember]
+        [DatabaseSave("name")]
         public string Name { get; set; }
 
+        [DataMember]
+        [DatabaseSave("fullname")]
         public string FullName { get; set; }
 
+        [DataMember]
+        [DatabaseSave("abbreviation")]
         public string Abbreviation { get; set; }
 
+        [DataMember]
+        [DatabaseSave("article")]
         public string Article { get; set; }
 
-        public ObservableCollection<Models.SubjectModel> Subjects;
-
-
-
-        [JsonIgnore]
-        public PresenceModel Presents { get; set; }
-
+        [DataMember]
+        [DatabaseSave("conferenceid")]
         public string ConferenceID { get; set; }
-
-        [JsonIgnore]
-        public SpeakerlistModel Speakerlist { get; set; }
 
         public CommitteeModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();
-            Speakerlist = new SpeakerlistModel();
-            Subjects = new ObservableCollection<SubjectModel>();
+            DelegationList = new List<string>();
+        }
+
+        public CommitteeModel()
+        {
+            this.ID = Guid.NewGuid().ToString();
             DelegationList = new List<string>();
         }
 
@@ -101,14 +113,6 @@ namespace MUNityAngular.Models
             if (this.DelegationList.FirstOrDefault(n => n == delegation.ID) == null)
                 this.DelegationList.Add(delegation.ID);
         }
-
-        public void AddSubject(string subjectName)
-        {
-            Models.SubjectModel newSubject = new SubjectModel();
-            newSubject.Name = subjectName;
-            Subjects.Add(newSubject);
-        }
-
 
         public override string ToString()
         {

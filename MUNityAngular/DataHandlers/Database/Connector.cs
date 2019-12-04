@@ -31,7 +31,7 @@ namespace MUNityAngular.DataHandlers.Database
 
         private static string connectionString { get; set; }
 
-        public static bool CreateDatabase()
+        public static bool EnsureDatabaseExists()
         {
             connectionString = @"server=localhost;userid=" + DATABASE_USER + ";password=" + DATABASE_PASSWORD;
             using (var connection = Connection)

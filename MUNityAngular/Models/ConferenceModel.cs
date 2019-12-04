@@ -32,7 +32,7 @@ namespace MUNityAngular.Models
         [DatabaseSave("abbreviation")]
         public string Abbreviation { get; set; }
 
-        public ObservableCollection<CommitteeModel> Committees { get; set; }
+        public List<CommitteeModel> Committees { get; set; }
 
         [DatabaseSave("startdate")]
         public DateTime StartDate { get; set; }
@@ -52,16 +52,18 @@ namespace MUNityAngular.Models
         [ConnectionTable("conference_ngo")]
         public ObservableCollection<DelegationModel> NGOs { get; set; }
 
-        /// <summary>
-        /// The conference holds a List of Resolution that it expects to be loaded
-        /// </summary>
-        public ObservableCollection<string> ResolutionIDs { get; set; }
-
         public ConferenceModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();
-            Committees = new ObservableCollection<CommitteeModel>();
-            ResolutionIDs = new ObservableCollection<string>();
+            Committees = new List<CommitteeModel>();
+            Delegations = new ObservableCollection<DelegationModel>();
+            NGOs = new ObservableCollection<DelegationModel>();
+        }
+
+        public ConferenceModel()
+        {
+            this.ID = Guid.NewGuid().ToString();
+            Committees = new List<CommitteeModel>();
             Delegations = new ObservableCollection<DelegationModel>();
             NGOs = new ObservableCollection<DelegationModel>();
         }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MUNityAngular.Models;
+using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +9,7 @@ namespace MUNityAngular.DataHandlers.Database
 {
     public class CommitteeHandler
     {
-        public static Models.CommitteeModel GetCommittee(string id)
+        public static CommitteeModel GetCommittee(string id)
         {
             if (id == TestCommittee.ID)
                 return TestCommittee;
@@ -15,11 +17,31 @@ namespace MUNityAngular.DataHandlers.Database
             return null;
         }
 
-        public static Models.CommitteeModel TestCommittee
+        public static List<CommitteeModel> GetCommitteesOfConference(ConferenceModel conference)
+        {
+            var list = new List<CommitteeModel>();
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT * FROM committee WHERE conferenceid = @conferenceid";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@conferenceid", conference.ID);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(DataReaderConverter.ObjectFromReader<CommitteeModel>(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public static CommitteeModel TestCommittee
         {
             get
             {
-                var committee = new Models.CommitteeModel();
+                var committee = new CommitteeModel();
                 committee.ID = "test_committee";
                 committee.Name = "Test Committee";
                 committee.FullName = "A Committee to Test";

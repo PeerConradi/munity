@@ -101,21 +101,7 @@ namespace MUNityAngular.Models
             Abstention.CollectionChanged += VoteChanged;
             RemainingVotes.CollectionChanged += VoteChanged;
 
-            if (committee.Presents != null)
-            {
-                foreach (var delegation in Committee.Presents.Present)
-                {
-                    RemainingVotes.Add(delegation);
-                }
-            }
-            else
-            {
-                foreach (var delegation in Committee.MyDelegations)
-                {
-                    RemainingVotes.Add(delegation);
-                }
-            }
-            
+
             ID = id ?? Guid.NewGuid().ToString();
 
             TotalVoters = RemainingVotes.Count;

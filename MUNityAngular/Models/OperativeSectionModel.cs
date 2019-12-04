@@ -15,8 +15,8 @@ namespace MUNityAngular.Models
     public class OperativeParagraphModel
     {
 
-        public delegate void AmendmentAdded(AbstractAmendment amendment);
-        public event AmendmentAdded OnAmendmentAdded;
+        //public delegate void AmendmentAdded(AbstractAmendment amendment);
+        //public event AmendmentAdded OnAmendmentAdded;
 
         public enum EViewModus
         {

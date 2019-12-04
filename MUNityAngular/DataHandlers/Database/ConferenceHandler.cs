@@ -26,6 +26,47 @@ namespace MUNityAngular.DataHandlers.Database
             return true;
         }
 
+        public static List<string> GetNameOfAllConferences()
+        {
+            var list = new List<string>();
+            using (var connection = Connector.Connection)
+            {
+                string cmdStr = "SELECT name FROM conference";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(reader.GetString(0));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public static List<ConferenceModel> GetAllConferences()
+        {
+            var list = new List<ConferenceModel>();
+            using (var connection = Connector.Connection)
+            {
+                string cmdStr = "SELECT * FROM conference";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var conferece = DataReaderConverter.ObjectFromReader<ConferenceModel>(reader);
+                        conferece.Committees = CommitteeHandler.GetCommitteesOfConference(conferece);
+                        list.Add(conferece);
+                    }
+                }
+            }
+            return list;
+        }
+
+
         public static bool UpdateConference(Models.ConferenceModel model)
         {
             throw new NotImplementedException();

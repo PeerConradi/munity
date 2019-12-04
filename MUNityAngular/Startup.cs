@@ -72,6 +72,7 @@ namespace MUNityAngular
                 }
             });
 
+            Connector.EnsureDatabaseExists();
         }
     }
 }
