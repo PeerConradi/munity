@@ -56,7 +56,7 @@ namespace MUNityAngular.Models
         {
             this.ID = id ?? Guid.NewGuid().ToString();
             Committees = new List<CommitteeModel>();
-            Delegations = new ObservableCollection<DelegationModel>();
+            Delegations = new List<DelegationModel>();
             NGOs = new ObservableCollection<DelegationModel>();
         }
 
@@ -64,7 +64,7 @@ namespace MUNityAngular.Models
         {
             this.ID = Guid.NewGuid().ToString();
             Committees = new List<CommitteeModel>();
-            Delegations = new ObservableCollection<DelegationModel>();
+            Delegations = new List<DelegationModel>();
             NGOs = new ObservableCollection<DelegationModel>();
         }
 
@@ -73,7 +73,7 @@ namespace MUNityAngular.Models
         /// inside the Committees. The Committees only hold a list of IDs that represents the Committees inside them
         /// this way the file will get a lot smaller
         /// </summary>
-        public ObservableCollection<DelegationModel> Delegations { get; set; }
+        public List<DelegationModel> Delegations { get; set; }
 
         [JsonIgnore]
         public List<DelegationModel> DelegationsAndNGOs

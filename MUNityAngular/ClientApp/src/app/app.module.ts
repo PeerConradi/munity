@@ -18,6 +18,7 @@ import { ResolutionHomeComponent } from './resedit/resolution-home/resolution-ho
 import { SecondaryNavComponent } from './secondary-nav/secondary-nav.component';
 import { DashboardComponent } from './loggedIn/dashboard/dashboard.component';
 import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box.component';
+import { CreateConferenceComponent } from './loggedIn/conference/create-conference/create-conference.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box
     ResolutionHomeComponent,
     SecondaryNavComponent,
     DashboardComponent,
-    ConferenceBoxComponent
+    ConferenceBoxComponent,
+    CreateConferenceComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -47,7 +49,8 @@ import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'resedit', component: EditorComponent },
       { path: 'reshome', component: ResolutionHomeComponent },
-      { path: 'dashboard', component: DashboardComponent }
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'conference/create', component: CreateConferenceComponent }
     ])
   ],
   providers: [],

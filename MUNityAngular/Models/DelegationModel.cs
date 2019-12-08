@@ -16,7 +16,7 @@ namespace MUNityAngular.Models
     {
         public enum EDelegationTypes
         {
-            STATE,
+            COUNTRY,
             NGO,
             PERSON,
             TEAM,
@@ -30,12 +30,25 @@ namespace MUNityAngular.Models
         [DatabaseSave("name")]
         public string Name { get; set; }
 
-        [DatabaseSave("iso")]
+        [DatabaseSave("abbreviation")]
+        public string Abbreviation { get; set; }
+
+        [DatabaseSave("type")]
+        public string TypeName { get; set; }
+
+        [DatabaseSave("countryid")]
+        public string CountryId { get; set; }
+
         public string ISO { get; set; }
 
         public DelegationModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();
+        }
+
+        public DelegationModel()
+        {
+            this.ID = Guid.NewGuid().ToString();
         }
 
         public override string ToString()
