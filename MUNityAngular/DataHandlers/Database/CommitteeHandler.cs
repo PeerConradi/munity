@@ -17,6 +17,29 @@ namespace MUNityAngular.DataHandlers.Database
             return null;
         }
 
+        public static List<string> GetDelegationIdsOfCommittee(CommitteeModel committee)
+        {
+            var list = new List<string>();
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT conference_delegation.delegation_id FROM delegation_in_committee ";
+                cmdStr += "INNER JOIN committee ON delegation_in_committee.committeeid = committee.id ";
+                cmdStr += "INNER JOIN conference_delegation ON delegation_in_committee.linkid = conference_delegation.linkid ";
+                cmdStr += "WHERE delegation_in_committee.committeeid = @committeeid";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@committeeid", committee.ID);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(reader.GetString(0));
+                    }
+                }
+            }
+            return list;
+        }
+
         public static List<CommitteeModel> GetCommitteesOfConference(ConferenceModel conference)
         {
             var list = new List<CommitteeModel>();

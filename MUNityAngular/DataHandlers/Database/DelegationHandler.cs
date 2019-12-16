@@ -29,11 +29,13 @@ namespace MUNityAngular.DataHandlers.Database
             var list = new List<DelegationModel>();
             using (var connection = Connector.Connection)
             {
-                var cmdStr = "SELECT delegation.id, delegation.name, delegation.abbreviation, ";
-                cmdStr += "delegation.type, delegation.countryid FROM delegation ";
-                cmdStr += "INNER JOIN delegation_user ON delegation_user.delegationid = delegation.id ";
-                cmdStr += "INNER JOIN committee ON delegation_user.committeeid = committee.id ";
-                cmdStr += "INNER JOIN conference ON committee.conferenceid = conference.id ";
+                var cmdStr = "SELECT delegation.id, delegation.`name`, delegation.abbreviation, ";
+                cmdStr += "delegation.type, delegation.countryid, ";
+                cmdStr += "conference.`name` as 'conferencename', conference.fullname, conference.id as 'conferenceid', ";
+                cmdStr += "delegation_in_committee.committeeid FROM conference ";
+                cmdStr += "INNER JOIN conference_delegation ON conference_delegation.conference_id = conference.id ";
+                cmdStr += "INNER JOIN delegation ON conference_delegation.delegation_id = delegation.id ";
+                cmdStr += "INNER JOIN delegation_in_committee ON delegation_in_committee.linkid = conference_delegation.linkid ";
                 cmdStr += "WHERE conference.id = @conferenceid GROUP BY delegation.id";
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);

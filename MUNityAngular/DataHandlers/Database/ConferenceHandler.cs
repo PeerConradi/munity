@@ -60,6 +60,7 @@ namespace MUNityAngular.DataHandlers.Database
                         var conference = DataReaderConverter.ObjectFromReader<ConferenceModel>(reader);
                         conference.Committees = CommitteeHandler.GetCommitteesOfConference(conference);
                         conference.Delegations = DelegationHandler.GetDelegationsOfConference(conference);
+                        conference.Committees.ForEach(n => n.DelegationList = CommitteeHandler.GetDelegationIdsOfCommittee(n));
                         list.Add(conference);
                     }
                 }

@@ -40,6 +40,9 @@ namespace MUNityAngular.Models
         [DatabaseSave("conferenceid")]
         public string ConferenceID { get; set; }
 
+        [DataMember]
+        public List<string> DelegationList { get; set; }
+
         public CommitteeModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();
@@ -72,7 +75,7 @@ namespace MUNityAngular.Models
             }
         }
 
-        public List<string> DelegationList { get; set; }
+        
 
         [JsonIgnore]
         public List<DelegationModel> MyDelegations
@@ -86,7 +89,7 @@ namespace MUNityAngular.Models
                 if (conf == null)
                     return tempList;
 
-                DelegationList.ForEach(n =>
+                DelegationList.ToList().ForEach(n =>
                 {
                     var d = Conference.Delegations.FirstOrDefault(a => a.ID == n);
                     if (d != null)
@@ -110,8 +113,7 @@ namespace MUNityAngular.Models
             }
 
            //TODO: Handle douplicate Delegates
-            if (this.DelegationList.FirstOrDefault(n => n == delegation.ID) == null)
-                this.DelegationList.Add(delegation.ID);
+            
         }
 
         public override string ToString()

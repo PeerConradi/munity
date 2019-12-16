@@ -19,6 +19,8 @@ import { SecondaryNavComponent } from './secondary-nav/secondary-nav.component';
 import { DashboardComponent } from './loggedIn/dashboard/dashboard.component';
 import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box.component';
 import { CreateConferenceComponent } from './loggedIn/conference/create-conference/create-conference.component';
+import { ConferenceListComponent } from './components/admin/conference-list/conference-list.component';
+import { FooterComponent } from './components/default/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,9 @@ import { CreateConferenceComponent } from './loggedIn/conference/create-conferen
     SecondaryNavComponent,
     DashboardComponent,
     ConferenceBoxComponent,
-    CreateConferenceComponent
+    CreateConferenceComponent,
+    ConferenceListComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -50,7 +54,8 @@ import { CreateConferenceComponent } from './loggedIn/conference/create-conferen
       { path: 'resedit', component: EditorComponent },
       { path: 'reshome', component: ResolutionHomeComponent },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'conference/create', component: CreateConferenceComponent }
+      { path: 'conference/create', component: CreateConferenceComponent },
+      { path: 'admin/conferences', component: ConferenceListComponent}
     ])
   ],
   providers: [],
