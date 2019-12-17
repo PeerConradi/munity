@@ -1,0 +1,13 @@
+<p>SignalR Services: </p>
+<button (click)="sendMessage()">Send Default Message</button>
+<button (click)="subscribe()">Subscribe</button>
+<button (click)="messageGroup()">Message Group</button>
+<p *ngIf="!signalRService.msgs">Wait for messages</p>
+<div *ngIf="signalRService.msgs">
+  <div *ngFor="let message of signalRService.msgs">
+    <p>
+      <b>{{ message.name }}: </b>
+      {{ message.content }}
+    </p>
+  </div>
+</div>

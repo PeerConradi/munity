@@ -21,6 +21,7 @@ import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box
 import { CreateConferenceComponent } from './loggedIn/conference/create-conference/create-conference.component';
 import { ConferenceListComponent } from './components/admin/conference-list/conference-list.component';
 import { FooterComponent } from './components/default/footer/footer.component';
+import { SignalrtestComponent } from './components/signalr/signalrtest/signalrtest.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { FooterComponent } from './components/default/footer/footer.component';
     ConferenceBoxComponent,
     CreateConferenceComponent,
     ConferenceListComponent,
-    FooterComponent
+    FooterComponent,
+    SignalrtestComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -55,7 +57,8 @@ import { FooterComponent } from './components/default/footer/footer.component';
       { path: 'reshome', component: ResolutionHomeComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'conference/create', component: CreateConferenceComponent },
-      { path: 'admin/conferences', component: ConferenceListComponent}
+      { path: 'admin/conferences', component: ConferenceListComponent },
+      { path: 'test/signalr', component: SignalrtestComponent}
     ])
   ],
   providers: [],

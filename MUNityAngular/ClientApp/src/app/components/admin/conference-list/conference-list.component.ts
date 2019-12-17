@@ -20,4 +20,6 @@ export class ConferenceListComponent implements OnInit {
     });
   }
 
+  
+
 }

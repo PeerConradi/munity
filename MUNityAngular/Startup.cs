@@ -27,6 +27,18 @@ namespace MUNityAngular
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            /*
+            services.AddCors(o => o.AddPolicy("CorsPolicy", builder => {
+                builder
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .WithOrigins("http://localhost:4200");
+            }));
+            */
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +69,7 @@ namespace MUNityAngular
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=index}/{id?}");
+                endpoints.MapHub<Hubs.TestHub>("/signalrtest");
             });
 
             app.UseSpa(spa =>
@@ -71,6 +84,8 @@ namespace MUNityAngular
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+           
 
             Connector.EnsureDatabaseExists();
         }
