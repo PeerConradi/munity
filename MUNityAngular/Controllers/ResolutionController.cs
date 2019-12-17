@@ -133,7 +133,10 @@ namespace MUNityAngular.Controllers
         public string Get(string auth, string id)
         {
             if (auth.ToLower() == "default")
-                return "access granted to " + id;
+                if (id == "test")
+                    return DataHandlers.FileSystem.ResolutionHandler.GetJsonFromResolution(DataHandlers.FileSystem.ResolutionHandler.ExampleResolution);
+                else
+                    return "Not implemented yet";
             else
                 return "access denied";
         }

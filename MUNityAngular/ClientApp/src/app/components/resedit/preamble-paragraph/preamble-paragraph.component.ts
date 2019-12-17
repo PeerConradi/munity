@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-preamble-paragraph',
@@ -7,7 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PreambleParagraphComponent implements OnInit {
 
+  @Input() paragraph: any;
+
+  @Input() index: number;
+
   constructor() { }
+
 
   ngOnInit() {
   }

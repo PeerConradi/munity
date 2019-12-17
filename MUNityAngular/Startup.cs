@@ -70,6 +70,7 @@ namespace MUNityAngular
                     name: "default",
                     pattern: "{controller}/{action=index}/{id?}");
                 endpoints.MapHub<Hubs.TestHub>("/signalrtest");
+                endpoints.MapHub<Hubs.ResolutionHub>("/resasocket");
             });
 
             app.UseSpa(spa =>

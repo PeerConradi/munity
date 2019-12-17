@@ -1,0 +1,55 @@
+.pfield {
+  margin-top: 20px;
+  position: absolute;
+  left: 0px;
+  width: 90%;
+  margin-right: 40px;
+  height: 100px;
+}
+
+textarea {
+  width: 100%;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box; /* Firefox, other Gecko */
+  box-sizing: border-box; /* Opera/IE 8+ */
+}
+
+.paragraph-index {
+    position: absolute;
+}
+
+.btn-move {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    padding: 0px;
+    border-radius: 50%;
+}
+
+.btn-up {
+    top: 35px;
+    right: 10px;
+}
+
+.btn-down {
+    top: 65px;
+    right: 10px;
+}
+
+.btn-delete {
+    position: absolute;
+    border-radius: 50%;
+    top: 5px;
+    right: 10px;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    padding: 0px;
+}
+
+.preamble-box {
+    border-style: solid;
+    height: 130px;
+    position: relative;
+    margin-bottom: 10px;
+}

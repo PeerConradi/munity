@@ -31,8 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\src\app\components\" />
-    <Folder Include="ClientApp\src\app\resedit\" />
+    <Folder Include="ClientApp\src\app\components\resedit\" />
     <Folder Include="Util\Extenstions\" />
   </ItemGroup>
 

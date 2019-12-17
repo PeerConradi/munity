@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="alert alert-danger" role="alert">
+    Beispiel für eine Resolution abrufbar bei: /api/resolution
+  </div>
+</div>
+<p *ngIf="!model">Resolution wird geladen</p>
+<div *ngIf="model">
+  <div class="row">
+    <div class="col">
+      <h3>{{ model.Topic }}</h3>
+    </div>
+    <div class="col">
+      <p>Last Saved: LAST_SAVE_DATE <span class="badge badge-success">Saved</span> | <a href="#">Verlauf</a></p>
+    </div>
+  </div>
+
+  <app-res-options></app-res-options>
+  <h4>Präambel</h4>
+  <div *ngFor="let pp of model.Preamble.Paragraphs; let i = index" [attr.data-index]="i">
+    <app-preamble-paragraph [paragraph]=pp [index]=i+1></app-preamble-paragraph>
+  </div>
+  <h4>Operativer Abschnitt</h4>
+  <div *ngFor="let pa of model.OperativeSections">
+    <app-operative-paragraph></app-operative-paragraph>
+  </div>
+  <h4>Änderungsanträge</h4>
+  <ul>
+    <li><app-amendment-controller></app-amendment-controller></li>
+  </ul>
+
+</div>
