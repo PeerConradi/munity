@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
 
 @Injectable({
@@ -8,10 +8,14 @@ export class SignalrtestService {
   private _hubConnection: signalR.HubConnection;
   msgs: Message[] = [];
 
-  constructor() { }
+  private baseUrl: string;
+
+  constructor(@Inject('BASE_URL') baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
 
   public startConnection = () => {
-    this._hubConnection = new signalR.HubConnectionBuilder().withUrl('https://localhost:44395/signalrtest').build();
+    this._hubConnection = new signalR.HubConnectionBuilder().withUrl(this.baseUrl + 'signalrtest').build();
     this._hubConnection
       .start()
       .then(() => console.log('Connection started!'))

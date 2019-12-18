@@ -12,5 +12,8 @@ namespace MUNityAngular.Hubs
         Task PreambleParagraphAdded(int position, string id, string text);
 
         Task OperativeParagraphChanged(string id, string newText);
+
+        Task PreambleParagraphChanged(string id, string newText);
+
     }
 }

@@ -8,11 +8,15 @@ import { Observable } from 'rxjs';
 })
 export class ConferenceServiceService {
 
-  constructor(private http: HttpClient) { }
+  private baseUrl: string;
+  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
 
   public getAllConferences() : Observable<Conference[]> {
-    return this.http.get<Conference[]>('https://localhost:44395/api/conference/GetConferences');
+    return this.http.get<Conference[]>(this.baseUrl + 'api/conference/GetConferences');
   }
+
 
 }
 

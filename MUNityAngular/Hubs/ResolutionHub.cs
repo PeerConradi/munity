@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace MUNityAngular.Hubs
 {
-    public class ResolutionHub : Hub
+    public class ResolutionHub : Hub<ITypedResolutionHub>
     {
-        public Task SubscribeToGroup()
+        public Task SubscribeToResolution(string id)
         {
-            return Groups.AddToGroupAsync(Context.ConnectionId, "test");
+            return Groups.AddToGroupAsync(Context.ConnectionId, id);
         }
-
     }
 }

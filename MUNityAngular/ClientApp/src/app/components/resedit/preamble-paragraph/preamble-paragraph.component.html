@@ -5,7 +5,8 @@
       <button type="button" class="btn btn-danger btn-delete">X</button>
     
   <div class="form-group pfield">
-    <textarea class="form-control" id="preambleTextArea" rows="3">{{ paragraph.Text }}</textarea>
+    <textarea class="form-control" id="preambleTextArea" rows="3" (keyup)="onKey($event)">{{ paragraph.Text }}</textarea>
+    
   </div>
 </div>
 

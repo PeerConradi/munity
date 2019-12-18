@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,34 +9,7 @@ namespace MUNityAngular.DataHandlers.FileSystem
     public class ResolutionHandler
     {
 
-        public static Models.ResolutionModel GetResolution(string id)
-        {
-            if (id == ExampleResolution.ID)
-            {
-                return ExampleResolution;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public static string SaveResolutionToLocalFile(Models.ResolutionModel resolution)
-        {
-            return string.Empty;
-        }
-
-        public static string GetJsonFromResolution(Models.ResolutionModel resolution)
-        {
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(resolution, Newtonsoft.Json.Formatting.Indented);
-            return json;
-        }
-
-        public static Models.ResolutionModel GetResolutionFromJson(string json)
-        {
-            var resolution = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ResolutionModel>(json);
-            return resolution;
-        }
+        
 
         public static Models.ResolutionModel ExampleResolution
         {

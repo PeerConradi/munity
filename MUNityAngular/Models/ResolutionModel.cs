@@ -250,11 +250,6 @@ namespace MUNityAngular.Models
             return this.Topic;
         }
 
-        public string SaveToLocal()
-        {
-            return DataHandlers.FileSystem.ResolutionHandler.SaveResolutionToLocalFile(this);
-        }
-
         public void RemoveAmendment(AbstractAmendment amendment)
         {
             Amendments.Remove(amendment);

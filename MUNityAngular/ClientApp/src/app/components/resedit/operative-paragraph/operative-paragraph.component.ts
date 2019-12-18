@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, ElementRef, ViewChild } from '@angular/core';
+import { ResolutionService } from '../../../services/resolution.service';
 
 @Component({
   selector: 'app-operative-paragraph',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OperativeParagraphComponent implements OnInit {
 
-  constructor() { }
+  @Input() paragraph: any;
+
+  constructor(private renderer: Renderer2, private service: ResolutionService) { }
 
   ngOnInit() {
+  }
+
+  delete() {
+    console.log('Delete: ' + this.paragraph.ID);
   }
 
 }

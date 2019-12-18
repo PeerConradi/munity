@@ -42,6 +42,7 @@ namespace MUNityAngular.Models
         public PreambleParagraphModel(PreambleModel preamble)
         {
             Preamble = preamble;
+            ID = Guid.NewGuid().ToString();
         }
 
         public override string ToString()

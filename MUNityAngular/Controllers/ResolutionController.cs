@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using MUNityAngular.Services;
 
 namespace MUNityAngular.Controllers
 {
@@ -11,6 +13,14 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class ResolutionController : ControllerBase
     {
+        IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> _hubContext;
+
+        public ResolutionController(IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> hubContext, Services.ResolutionService service)
+        {
+            _hubContext = hubContext;
+            service.RegisterAtService();
+        }
+
         /// <summary>
         /// Gives an overview of thats possible inside the resolution Controller
         /// </summary>
@@ -38,31 +48,22 @@ namespace MUNityAngular.Controllers
         /// <returns>The new created Resolution in a json format.</returns>
         [Route("[action]")]
         [HttpGet]
-        public string Create(string auth)
+        public string Create(string auth, [FromServices]Services.ResolutionService resolutionService)
         {
-            return DataHandlers.FileSystem.ResolutionHandler.GetJsonFromResolution(new Models.ResolutionModel());
-        }
-
-        /// <summary>
-        /// Returns an example of a finished Resolution Document.
-        /// </summary>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpGet]
-        public string Example()
-        {
-            return DataHandlers.FileSystem.ResolutionHandler.GetJsonFromResolution(DataHandlers.FileSystem.ResolutionHandler.ExampleResolution);
+            return resolutionService.CreateResolution().ToJson();
         }
 
         [Route("[action]")]
         [HttpGet]
-        public string AddPreambleParagraph(string auth, string resolutionid)
+        public string AddPreambleParagraph(string auth, string resolutionid, [FromServices]Services.ResolutionService resolutionService)
         {
-            var resolution = DataHandlers.FileSystem.ResolutionHandler.GetResolution(resolutionid);
+            var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution != null)
             {
                 var newPP = resolution.Preamble.AddParagraph();
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
+                resolutionService.Save(resolution);
+                _hubContext.Clients.Group(resolutionid).PreambleParagraphAdded(resolution.Preamble.Paragraphs.IndexOf(newPP), newPP.ID, newPP.Text);
                 return json;
             }
             else
@@ -79,9 +80,9 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public string AddOperativeParagraph(string auth, string resolutionid)
+        public string AddOperativeParagraph(string auth, string resolutionid, [FromServices]ResolutionService resolutionService)
         {
-            var resolution = DataHandlers.FileSystem.ResolutionHandler.GetResolution(resolutionid);
+            var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution != null)
             {
                 var newPP = resolution.AddOperativeParagraph();
@@ -94,19 +95,42 @@ namespace MUNityAngular.Controllers
             }
         }
 
-        /// <summary>
-        /// Adds an Operative Paragraph to the Resolution!
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="resolutionid"></param>
-        /// <param name="paragraphid"></param>
-        /// <param name="newtext"></param>
-        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public string ChangeOperativeParagraph(string auth, string resolutionid, string paragraphid, string newtext)
+        public string ChangePreambleParagraph(string auth, string resolutionid, string paragraphid, [FromHeader]string newtext, [FromServices]Services.ResolutionService resolutionService)
         {
-            var resolution = DataHandlers.FileSystem.ResolutionHandler.GetResolution(resolutionid);
+            var re = Request;
+            var headers = re.Headers;
+
+
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution != null)
+            {
+                var newPP = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
+                if (newPP != null)
+                {
+                    newPP.Text = newtext;
+                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
+                    resolutionService.Save(resolution);
+                    _hubContext.Clients.Group(resolutionid).PreambleParagraphChanged(newPP.ID, newPP.Text);
+                    return json;
+                }
+                else
+                {
+                    return "error: Parahraph not found";
+                }
+            }
+            else
+            {
+                return "error: Resolution Not Found!";
+            }
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public string ChangeOperativeParagraph(string auth, string resolutionid, string paragraphid, [FromHeader]string newtext, [FromServices]ResolutionService resolutionService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution != null)
             {
                 var newPP = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
@@ -130,21 +154,15 @@ namespace MUNityAngular.Controllers
         
         [Route("[action]")]
         [HttpGet]
-        public string Get(string auth, string id)
+        public string Get(string auth, string id, [FromServices]Services.ResolutionService resolutionService)
         {
             if (auth.ToLower() == "default")
-                if (id == "test")
-                    return DataHandlers.FileSystem.ResolutionHandler.GetJsonFromResolution(DataHandlers.FileSystem.ResolutionHandler.ExampleResolution);
+                if (id == "test" || id == DataHandlers.FileSystem.ResolutionHandler.ExampleResolution.ID)
+                    return DataHandlers.FileSystem.ResolutionHandler.ExampleResolution.ToJson();
                 else
-                    return "Not implemented yet";
+                    return resolutionService.GetResolution(id).ToJson();
             else
                 return "access denied";
-        }
-
-        // POST: api/Resolution
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
         }
 
         // PUT: api/Resolution/5

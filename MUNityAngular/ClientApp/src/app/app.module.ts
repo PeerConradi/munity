@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -22,6 +22,7 @@ import { CreateConferenceComponent } from './loggedIn/conference/create-conferen
 import { ConferenceListComponent } from './components/admin/conference-list/conference-list.component';
 import { FooterComponent } from './components/default/footer/footer.component';
 import { SignalrtestComponent } from './components/signalr/signalrtest/signalrtest.component';
+import { ResViewComponent } from './components/resedit/res-view/res-view.component';
 
 @NgModule({
   declarations: [
@@ -43,9 +44,11 @@ import { SignalrtestComponent } from './components/signalr/signalrtest/signalrte
     CreateConferenceComponent,
     ConferenceListComponent,
     FooterComponent,
-    SignalrtestComponent
+    SignalrtestComponent,
+    ResViewComponent
   ],
   imports: [
+    NgbModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
