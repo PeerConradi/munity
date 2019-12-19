@@ -34,7 +34,19 @@ namespace MUNityAngular.DataHandlers.Database
                         else if (propType == typeof(Int64))
                             setPropertySuccess = element.SetProperty(property.Name, reader.GetInt64(columnname));
                         else if (propType == typeof(string) || propType == typeof(String))
-                            setPropertySuccess = element.SetProperty(property.Name, reader.GetString(columnname));
+                        {
+                            try
+                            {
+                                setPropertySuccess = element.SetProperty(property.Name, reader.GetString(columnname));
+                            }
+                            catch (Exception)
+                            {
+                                setPropertySuccess = element.SetProperty(property.Name, string.Empty);
+                            }
+
+                                
+                        }
+                            
                         else if (propType == typeof(DateTime))
                             setPropertySuccess = element.SetProperty(property.Name, reader.GetDateTime(columnname));
                         else if (propType == typeof(double))

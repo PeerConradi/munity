@@ -1,0 +1,49 @@
+<form [formGroup]="createForm" (ngSubmit)="onSubmit(createForm.value)" *ngIf="!requested">
+  <div class="form-group">
+    <label for="inputName">Name</label>
+    <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" formControlName="name">
+    <small id="nameHelp" class="form-text text-muted">Der Anzeigename der Konferenz zum Beispiel: MUN Schleswig-Holstein 2020</small>
+  </div>
+  <div class="form-group">
+    <label for="inputFullName">Full Name</label>
+    <input type="text" class="form-control" id="inputFullName" aria-describedby="fullnameHelp" formControlName="fullname">
+    <small id="fullnameHelp" class="form-text text-muted">Der vollständige Name der Konferenz zum Beispiel: Model United Nations Schleswig-Holstein 2020</small>
+  </div>
+  <div class="form-group">
+    <label for="inputAbbreviation">Abkürzung</label>
+    <input type="text" class="form-control" id="inputAbbreviation" aria-describedby="abbreviationHelp" formControlName="abbreviation">
+    <small id="abbreviationHelp" class="form-text text-muted">Die Abkürzung der Konferenz zum Beispiel: MUN-SH 2020</small>
+  </div>
+  <div class="form-group">
+    <label>Startdatum</label>
+    <input class="form-control" placeholder="yyyy-mm-dd"
+           name="sd" [(ngModel)]="startdatemodel" ngbDatepicker #d="ngbDatepicker" [ngModelOptions]="{standalone: true}">
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Enddatum</label>
+    <input class="form-control" placeholder="yyyy-mm-dd"
+           name="ed" [(ngModel)]="enddatemodel" ngbDatepicker #e="ngbDatepicker" [ngModelOptions]="{standalone: true}">
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary calendar" (click)="e.toggle()" type="button"></button>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword">Password</label>
+    <input type="password" class="form-control" id="inputPassword" placeholder="Password" aria-describedby="passwordHelp" formControlName="password">
+    <small id="passwordHelp" class="form-text text-muted">Das Passwort wird benötigt um später Änderungen vornehmen zu können</small>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<div *ngIf="requested && !createdConference">
+  <p>Konferenz wird angelegt, einen Moment bitte. </p>
+</div>
+
+<div *ngIf="createdConference">
+  <h2>Hallo {{ createdConference.Name }}</h2>
+  <p>Willkommen auf MUNity. Hoffentlich können wir dir dabei helfen deine Konferenz zu digitalisieren.</p>
+  <p>Du kannst dich nun im Loginbereich anmelden um deine Konferenz zu verwalten.</p>
+</div>

@@ -44,10 +44,11 @@ namespace MUNityAngular.Models
             Remaining = new ObservableCollection<DelegationModel>();
             ID = id ?? Guid.NewGuid().ToString();
             Date = DateTime.Now;
-            foreach (var delegation in Committee.MyDelegations.OrderBy(n => n.Name))
-            {
-                Remaining.Add(delegation);
-            }
+            //TODO: Full refactoring
+            //foreach (var delegation in Committee.MyDelegations.OrderBy(n => n.Name))
+            //{
+            //    Remaining.Add(delegation);
+            //}
 
             //Committee.Delegations.CollectionChanged += Delegations_CollectionChanged;
             Total = (uint)(Present.Count + Absent.Count + Remaining.Count);
@@ -132,10 +133,11 @@ namespace MUNityAngular.Models
             Present.Clear();
             Absent.Clear();
             Remaining.Clear();
-            foreach (var delegation in Committee.MyDelegations)
-            {
-                Remaining.Add(delegation);
-            }
+            //TODO: Full refactoring
+            //foreach (var delegation in Committee.MyDelegations)
+            //{
+            //    Remaining.Add(delegation);
+            //}
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MUNityAngular.DataHandlers.Database;
 using MUNityAngular.Models;
+using MUNityAngular.Services;
 using Newtonsoft.Json;
 
 namespace MUNityAngular.Controllers
@@ -24,23 +25,23 @@ namespace MUNityAngular.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IEnumerable<string> GetNameOfAllConferences()
+        public IEnumerable<string> GetNameOfAllConferences([FromServices]ConferenceService service)
         {
-            return ConferenceHandler.GetNameOfAllConferences();
+            return service.GetNameOfAllConferences();
         }
 
         [HttpGet]
         [Route("[action]")]
-        public IEnumerable<ConferenceModel> GetConferences()
+        public IEnumerable<ConferenceModel> GetConferences([FromServices]ConferenceService service)
         {
-            return ConferenceHandler.GetAllConferences();
+            return service.GetAllConferences();
         }
 
         [HttpGet]
         [Route("[action]")]
-        public string GetConferencesFormatted()
+        public string GetConferencesFormatted([FromServices]ConferenceService service)
         {
-            var text = JsonConvert.SerializeObject(ConferenceHandler.GetAllConferences(), Newtonsoft.Json.Formatting.Indented);
+            var text = JsonConvert.SerializeObject(service.GetAllConferences(), Newtonsoft.Json.Formatting.Indented);
             return text;
         }
 
@@ -48,9 +49,17 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public string Create(string auth)
+        public string Create(string auth, [FromHeader]string Name, [FromHeader]string FullName, 
+            [FromHeader]string Abbreviation, [FromHeader]string password, [FromHeader]DateTime StartDate, [FromHeader]DateTime EndDate, [FromServices]ConferenceService service)
         {
             var model = new ConferenceModel();
+            model.CreationDate = DateTime.Now;
+            model.Name = Name;
+            model.FullName = FullName;
+            model.Abbreviation = Abbreviation;
+            model.StartDate = StartDate;
+            model.EndDate = EndDate;
+            service.CreateConference(model, password);
             return JsonConvert.SerializeObject(model);
         }
     }

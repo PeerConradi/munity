@@ -29,26 +29,6 @@ namespace MUNityAngular.Models
 
         public string ConferenceID { get; set; }
 
-        [JsonIgnore]
-        public ConferenceModel Conference
-        {
-            get
-            {
-                var res = DataHandlers.Database.ConferenceHandler.GetConference(ConferenceID);
-
-                if (res == null)
-                {
-                    Console.WriteLine("Fehler beim suchen der Konferenz mit der ID: " + ConferenceID);
-                }
-
-                return res;
-            }
-            set
-            {
-                ConferenceID = value?.ID ?? null;
-            }
-        }
-
         private ObservableCollection<OperativeParagraphModel> _operativeSections;
         public ObservableCollection<OperativeParagraphModel> OperativeSections 
         { 
@@ -65,35 +45,16 @@ namespace MUNityAngular.Models
 
         public DocumentTypeModel DocumentType { get; set; }
 
-        public string ResolutlyCommitteeID { get; set; }
+        public BaseCommitteeModel ResolutlyCommittee { get; set; }
         public int DocumentNumber { get; set; }
 
-        [JsonIgnore]
         public ObservableCollection<DelegationModel> Supporters { get; set; }
 
-        private List<string> _supporterIDs;
-        public List<string> SupporterIDs
-        {
-            get => Supporters.Select(n => n.ID).ToList();
-            set
-            {
-                _supporterIDs = value;
-                value.ForEach(n =>
-                {
-                    Models.DelegationModel delegation = DataHandlers.Database.DelegationHandler.GetDelegation(n);
-                    if (delegation != null)
-                        Supporters.Add(delegation);
-                });
-            }
-        }
-
-        public DelegationModel Submitter { get; set; }
+        public string SubmitterID { get; set; }
 
         public PreambleModel Preamble { get; set; }
 
-        [JsonIgnore]
-        public CommitteeModel ResolutelyCommittee { get => DataHandlers.Database.CommitteeHandler.GetCommittee(ResolutlyCommitteeID); set => ResolutlyCommitteeID = value?.ID ?? null; }
-
+        
         //Make this an read only Observable Collection (only get internal set)
         //And edit its value by just Adding from the different Amendment lists!! 
         [JsonIgnore]
@@ -107,10 +68,8 @@ namespace MUNityAngular.Models
             OperativeSections = new ObservableCollection<OperativeParagraphModel>();
             Supporters = new ObservableCollection<DelegationModel>();
             Amendments = new ObservableCollection<AbstractAmendment>();
-            SupporterIDs = new List<string>();
             Preamble = new PreambleModel();
             OperativeSections.CollectionChanged += OperativeSections_CollectionChanged;
-            Supporters.CollectionChanged += Supporters_CollectionChanged;
             Amendments.CollectionChanged += Amendments_CollectionChanged;
 
         }
@@ -141,12 +100,6 @@ namespace MUNityAngular.Models
                 os.Resolution = this;
                 os.UpdatePath();
             }
-        }
-
-        private void Supporters_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            SupporterIDs.Clear();
-            Supporters.ToList().ForEach(n => SupporterIDs.Add(n.ID));
         }
 
         public OperativeParagraphModel AddOperativeParagraph(string text = "")

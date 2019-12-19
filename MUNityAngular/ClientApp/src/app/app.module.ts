@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -18,7 +18,7 @@ import { ResolutionHomeComponent } from './components/resedit/resolution-home/re
 import { SecondaryNavComponent } from './secondary-nav/secondary-nav.component';
 import { DashboardComponent } from './loggedIn/dashboard/dashboard.component';
 import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box.component';
-import { CreateConferenceComponent } from './loggedIn/conference/create-conference/create-conference.component';
+import { CreateConferenceComponent } from './components/conference/create-conference/create-conference.component';
 import { ConferenceListComponent } from './components/admin/conference-list/conference-list.component';
 import { FooterComponent } from './components/default/footer/footer.component';
 import { SignalrtestComponent } from './components/signalr/signalrtest/signalrtest.component';
@@ -52,6 +52,7 @@ import { ResViewComponent } from './components/resedit/res-view/res-view.compone
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },

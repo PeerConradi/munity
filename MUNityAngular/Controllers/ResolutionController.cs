@@ -157,10 +157,7 @@ namespace MUNityAngular.Controllers
         public string Get(string auth, string id, [FromServices]Services.ResolutionService resolutionService)
         {
             if (auth.ToLower() == "default")
-                if (id == "test" || id == DataHandlers.FileSystem.ResolutionHandler.ExampleResolution.ID)
-                    return DataHandlers.FileSystem.ResolutionHandler.ExampleResolution.ToJson();
-                else
-                    return resolutionService.GetResolution(id).ToJson();
+                return resolutionService.GetResolution(id).ToJson();
             else
                 return "access denied";
         }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -17,10 +17,21 @@ export class ConferenceServiceService {
     return this.http.get<Conference[]>(this.baseUrl + 'api/conference/GetConferences');
   }
 
-
+  public createConference(conference: Conference, password: string): Observable<Conference> {
+    let headers = new HttpHeaders();
+    headers = headers.set('Name', conference.Name);
+    headers = headers.set('FullName', conference.FullName);
+    headers = headers.set('Abbreviation', conference.Abbreviation);
+    headers = headers.set('StartDate', conference.StartDate.toUTCString());
+    headers = headers.set('EndDate', conference.EndDate.toUTCString());
+    headers = headers.set('Password', password);
+    let options = { headers: headers };
+    return this.http.get<Conference>(this.baseUrl + 'api/Conference/Create?auth=default',
+      options);
+  }
 }
 
-interface Conference {
+export class Conference {
   ID: string;
   Name: string;
   FullName: string;
@@ -33,7 +44,7 @@ interface Conference {
   SecretaryGeneralName: string;
 }
 
-interface Committee {
+export class Committee {
   ID: string;
   Abbreviation: string;
   Article: string;
@@ -43,7 +54,7 @@ interface Committee {
   Name: string;
 }
 
-interface Delegation {
+export class Delegation {
   Abbreviation: string;
   CountryId: string;
   ID: string;

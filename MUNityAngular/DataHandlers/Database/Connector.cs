@@ -18,16 +18,6 @@ namespace MUNityAngular.DataHandlers.Database
         private const string DATABASE_USER = "root";
         private const string DATABASE_PASSWORD = "";
 
-        private static List<IDatabaseHandler> databaseHandlers;
-
-        public static void RegisterDatabaseHandler(IDatabaseHandler handler)
-        {
-            if (databaseHandlers == null)
-                databaseHandlers = new List<IDatabaseHandler>();
-            databaseHandlers.Add(handler);
-        }
-
-        
 
         private static string connectionString { get; set; }
 
@@ -44,19 +34,6 @@ namespace MUNityAngular.DataHandlers.Database
             }
             connectionString += ";database=" + DATABASE_NAME + ";";
             return true;
-        }
-
-        public static void CreateOrUpdateTables()
-        {
-            databaseHandlers.ForEach(n => {
-                if (n.TableStatus == DatabaseInformation.ETableStatus.NotExisting)
-                    n.CreateTables();
-            });
-        }
-
-        public static void ClearHandlers()
-        {
-            databaseHandlers.Clear();
         }
 
         public static MySqlConnection Connection
@@ -200,20 +177,20 @@ namespace MUNityAngular.DataHandlers.Database
                 }
             }
             paramList.ForEach(n => cmdStr += n + ",");
-            if (cmdStr.EndsWith(',')) cmdStr.Remove(cmdStr.Length - 1);
+            if (cmdStr.EndsWith(',')) cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
             cmdStr += ") VALUES (";
             foreach (var item in valList)
             {
-                cmdStr += item.Key;
+                cmdStr += item.Key + ",";
             }
-            if (cmdStr.EndsWith(',')) cmdStr.Remove(cmdStr.Length - 1);
+            if (cmdStr.EndsWith(',')) cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
             cmdStr += ")";
             using (var connection = Connector.Connection)
             {
                 var cmd = new MySqlCommand(cmdStr, connection);
                 foreach (var item in valList)
                 {
-                    cmd.Parameters.AddWithValue(item.Key, item.Value.ToString());
+                    cmd.Parameters.AddWithValue(item.Key, item.Value);
                 }
                 connection.Open();
                 cmd.ExecuteNonQuery();

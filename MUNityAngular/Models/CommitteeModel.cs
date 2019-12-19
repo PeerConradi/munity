@@ -12,29 +12,8 @@ namespace MUNityAngular.Models
 {
 
     [DataContract]
-    public class CommitteeModel
+    public class CommitteeModel : BaseCommitteeModel
     {
-
-        [DataMember]
-        [PrimaryKey]
-        [DatabaseSave("id", DatabaseSaveAttribute.EFieldType.VARCHAR)]
-        public string ID { get; set; }
-
-        [DataMember]
-        [DatabaseSave("name")]
-        public string Name { get; set; }
-
-        [DataMember]
-        [DatabaseSave("fullname")]
-        public string FullName { get; set; }
-
-        [DataMember]
-        [DatabaseSave("abbreviation")]
-        public string Abbreviation { get; set; }
-
-        [DataMember]
-        [DatabaseSave("article")]
-        public string Article { get; set; }
 
         [DataMember]
         [DatabaseSave("conferenceid")]
@@ -55,6 +34,7 @@ namespace MUNityAngular.Models
             DelegationList = new List<string>();
         }
 
+        /*
         [JsonIgnore]
         public ConferenceModel Conference
         {
@@ -62,7 +42,7 @@ namespace MUNityAngular.Models
             {
                 //if (ConferenceID == null)
                 //    throw new NullReferenceException("This Committee is not inside an Conference");
-
+                GetServices()
                 Models.ConferenceModel conference =
                     DataHandlers.Database.ConferenceHandler.GetConference(this.ConferenceID);
 
@@ -74,9 +54,10 @@ namespace MUNityAngular.Models
                 return null;
             }
         }
+        */
 
         
-
+            /*
         [JsonIgnore]
         public List<DelegationModel> MyDelegations
         {
@@ -99,8 +80,9 @@ namespace MUNityAngular.Models
                 return tempList;
             }
         }
+        */
         
-
+        /*
         public void AddDelegation(DelegationModel delegation)
         {
             //the new way:
@@ -115,6 +97,7 @@ namespace MUNityAngular.Models
            //TODO: Handle douplicate Delegates
             
         }
+        */
 
         public override string ToString()
         {

@@ -16,10 +16,7 @@ namespace MUNityAngular.Models
 
         public bool Activated { get; set; }
 
-        public string SubmitterID { get; set; }
-
-        [JsonIgnore]
-        public DelegationModel Submitter { get => DataHandlers.Database.DelegationHandler.GetDelegation(SubmitterID); }
+        public DelegationModel Submitter { get; set; }
 
         public List<DelegationModel> Supporters { get; set; }
 

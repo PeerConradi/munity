@@ -143,6 +143,7 @@ namespace MUNityAngular.Models
             Valid = (ProCount + ContraCount + AbstentionCount <= TotalVoters);
         }
 
+        /*
         public void Vote(DelegationModel delegation, EVotingOptions option)
         {
             if (Committee.MyDelegations.Contains(delegation))
@@ -174,6 +175,6 @@ namespace MUNityAngular.Models
                 CalculatePercentages();
             }
         }
-
+        */
     }
 }
