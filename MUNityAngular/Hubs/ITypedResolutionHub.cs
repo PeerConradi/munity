@@ -15,5 +15,8 @@ namespace MUNityAngular.Hubs
 
         Task PreambleParagraphChanged(string id, string newText);
 
+        Task PreambleSectionOrderChanged(IEnumerable<string> newOrder);
+
+        Task OperativeSectionOrderChanged(IEnumerable<string> newOrder);
     }
 }

@@ -73,11 +73,6 @@ namespace MUNityAngular.Services
             }
         }
 
-        public void RegisterAtService()
-        {
-            Console.WriteLine("I have registered here!");
-        }
-
         public bool SaveResolutionInDatabase(Models.ResolutionModel resolution)
         {
             using (var connection = DataHandlers.Database.Connector.Connection)

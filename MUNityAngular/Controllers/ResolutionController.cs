@@ -15,10 +15,9 @@ namespace MUNityAngular.Controllers
     {
         IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> _hubContext;
 
-        public ResolutionController(IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> hubContext, Services.ResolutionService service)
+        public ResolutionController(IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> hubContext)
         {
             _hubContext = hubContext;
-            service.RegisterAtService();
         }
 
         /// <summary>
@@ -48,15 +47,25 @@ namespace MUNityAngular.Controllers
         /// <returns>The new created Resolution in a json format.</returns>
         [Route("[action]")]
         [HttpGet]
-        public string Create(string auth, [FromServices]Services.ResolutionService resolutionService)
+        public IActionResult Create(string auth, [FromServices]Services.ResolutionService resolutionService,
+            [FromServices]AuthService authService)
         {
-            return resolutionService.CreateResolution().ToJson();
+            if (!authService.ValidateAuthKey(auth))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            return StatusCode(StatusCodes.Status200OK, resolutionService.CreateResolution().ToJson());
         }
 
         [Route("[action]")]
         [HttpGet]
-        public string AddPreambleParagraph(string auth, string resolutionid, [FromServices]Services.ResolutionService resolutionService)
+        public IActionResult AddPreambleParagraph(string auth, string resolutionid, 
+            [FromServices]Services.ResolutionService resolutionService,
+            [FromServices]AuthService authService)
         {
+
+            if (!authService.ValidateAuthKey(auth))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution != null)
             {
@@ -64,11 +73,11 @@ namespace MUNityAngular.Controllers
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
                 resolutionService.Save(resolution);
                 _hubContext.Clients.Group(resolutionid).PreambleParagraphAdded(resolution.Preamble.Paragraphs.IndexOf(newPP), newPP.ID, newPP.Text);
-                return json;
+                return StatusCode(StatusCodes.Status200OK, json);
             }
             else
             {
-                return "error: Resolution Not Found!";
+                return StatusCode(StatusCodes.Status404NotFound, "Resolution not found");
             }
         }
 
@@ -80,27 +89,38 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public string AddOperativeParagraph(string auth, string resolutionid, [FromServices]ResolutionService resolutionService)
+        public IActionResult AddOperativeParagraph(string auth, string resolutionid, 
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
         {
+            if (!authService.ValidateAuthKey(auth))
+                return StatusCode(StatusCodes.Status403Forbidden, "You have no right to do that.");
+
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution != null)
             {
                 var newPP = resolution.AddOperativeParagraph();
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
-                return json;
+                return StatusCode(StatusCodes.Status200OK, json);
             }
             else
             {
-                return "error: Resolution Not Found!";
+                return StatusCode(StatusCodes.Status404NotFound, "Resolution not found");
+                //return "error: Resolution Not Found!";
             }
         }
 
         [Route("[action]")]
         [HttpGet]
-        public string ChangePreambleParagraph(string auth, string resolutionid, string paragraphid, [FromHeader]string newtext, [FromServices]Services.ResolutionService resolutionService)
+        public IActionResult ChangePreambleParagraph(string auth, string resolutionid, string paragraphid, [FromHeader]string newtext, 
+            [FromServices]Services.ResolutionService resolutionService,
+            [FromServices]AuthService authService)
         {
             var re = Request;
             var headers = re.Headers;
+
+            if (!authService.ValidateAuthKey(auth))
+                return StatusCode(StatusCodes.Status403Forbidden, "You have no right to do that.");
 
 
             var resolution = resolutionService.GetResolution(resolutionid);
@@ -113,22 +133,22 @@ namespace MUNityAngular.Controllers
                     var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
                     resolutionService.Save(resolution);
                     _hubContext.Clients.Group(resolutionid).PreambleParagraphChanged(newPP.ID, newPP.Text);
-                    return json;
+                    return StatusCode(StatusCodes.Status200OK, json);
                 }
                 else
                 {
-                    return "error: Parahraph not found";
+                    return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found");
                 }
             }
             else
             {
-                return "error: Resolution Not Found!";
+                return StatusCode(StatusCodes.Status404NotFound, "Resolution not found");
             }
         }
 
         [Route("[action]")]
         [HttpGet]
-        public string ChangeOperativeParagraph(string auth, string resolutionid, string paragraphid, [FromHeader]string newtext, [FromServices]ResolutionService resolutionService)
+        public IActionResult ChangeOperativeParagraph(string auth, string resolutionid, string paragraphid, [FromHeader]string newtext, [FromServices]ResolutionService resolutionService)
         {
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution != null)
@@ -138,28 +158,28 @@ namespace MUNityAngular.Controllers
                 {
                     newPP.Text = newtext;
                     var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
-                    return json;
+                    return StatusCode(StatusCodes.Status200OK, json);
                 }
                 else
                 {
-                    return "error: Parahraph not found";
+                    return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph not found");
                 }
             }
             else
             {
-                return "error: Resolution Not Found!";
+                return StatusCode(StatusCodes.Status404NotFound, "Resolution not found");
             }
         }
 
         
         [Route("[action]")]
         [HttpGet]
-        public string Get(string auth, string id, [FromServices]Services.ResolutionService resolutionService)
+        public IActionResult Get(string auth, string id, [FromServices]Services.ResolutionService resolutionService)
         {
             if (auth.ToLower() == "default")
-                return resolutionService.GetResolution(id).ToJson();
+                return StatusCode(StatusCodes.Status200OK, resolutionService.GetResolution(id).ToJson());
             else
-                return "access denied";
+                return StatusCode(StatusCodes.Status403Forbidden, "You have no access to this document");
         }
 
         // PUT: api/Resolution/5
