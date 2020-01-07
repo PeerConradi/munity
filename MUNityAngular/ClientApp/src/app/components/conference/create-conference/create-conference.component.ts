@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { NgbCalendar, NgbDateParserFormatter, NgbDate } from '@ng-bootstrap/ng-bootstrap';
-import * as cService from '../../../services/conference-service.service';
+import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { Conference } from '../../../models/conference.model';
 
 @Component({
   selector: 'app-create-conference',
@@ -20,7 +21,7 @@ export class CreateConferenceComponent implements OnInit {
   public requested: boolean = false;
   public conferenceCreated: boolean = false;
 
-  constructor(private formBuilder: FormBuilder, private service: cService.ConferenceServiceService) {
+  constructor(private formBuilder: FormBuilder, private service: ConferenceServiceService) {
     this.createForm = this.formBuilder.group({
       name: '',
       fullname: '',
@@ -37,7 +38,7 @@ export class CreateConferenceComponent implements OnInit {
 
   onSubmit(data) {
     console.log(data);
-    let conference: cService.Conference = new cService.Conference();
+    let conference: Conference = new Conference();
     conference.Name = data.name;
     conference.FullName = data.fullname;
     conference.Abbreviation = data.abbreviation;

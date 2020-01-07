@@ -16,7 +16,6 @@ export class ConferenceListComponent implements OnInit {
     this.conferences = null;
     this.conferenceService.getAllConferences().subscribe(n => {
       this.conferences = n;
-      console.log(this.conferences);
     });
   }
 

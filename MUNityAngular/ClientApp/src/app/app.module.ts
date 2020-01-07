@@ -23,6 +23,8 @@ import { ConferenceListComponent } from './components/admin/conference-list/conf
 import { FooterComponent } from './components/default/footer/footer.component';
 import { SignalrtestComponent } from './components/signalr/signalrtest/signalrtest.component';
 import { ResViewComponent } from './components/resedit/res-view/res-view.component';
+import { RegisterComponent } from './components/account/register/register.component';
+import { LoginComponent } from './components/account/login/login.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import { ResViewComponent } from './components/resedit/res-view/res-view.compone
     ConferenceListComponent,
     FooterComponent,
     SignalrtestComponent,
-    ResViewComponent
+    ResViewComponent,
+    RegisterComponent,
+    LoginComponent
   ],
   imports: [
     NgbModule,
@@ -62,7 +66,9 @@ import { ResViewComponent } from './components/resedit/res-view/res-view.compone
       { path: 'dashboard', component: DashboardComponent },
       { path: 'conference/create', component: CreateConferenceComponent },
       { path: 'admin/conferences', component: ConferenceListComponent },
-      { path: 'test/signalr', component: SignalrtestComponent}
+      { path: 'test/signalr', component: SignalrtestComponent },
+      { path: 'register', component: RegisterComponent },
+      { path: 'login', component: LoginComponent}
     ])
   ],
   providers: [],
