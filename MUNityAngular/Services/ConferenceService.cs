@@ -152,6 +152,30 @@ namespace MUNityAngular.Services
             return true;
         }
 
+        public bool CheckConferencePassword(string conferenceid, string password)
+        {
+            bool valid = false;
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmdStr = "SELECT * FROM conference_password WHERE conferenceid=@id;";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@id", conferenceid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    bool rows = reader.HasRows;
+
+                    while (reader.Read())
+                    {
+                        var hashedPass = reader.GetString("password");
+                        var salt = reader.GetString("salt");
+                        valid = Util.Hashing.PasswordHashing.CheckPassword(password, salt, hashedPass);
+                    }
+                }
+            }
+            return valid;
+        }
+
         public List<string> GetNameOfAllConferences()
         {
             var list = new List<string>();
@@ -169,6 +193,21 @@ namespace MUNityAngular.Services
                 }
             }
             return list;
+        }
+
+        public bool ChangeConferenceName(ConferenceModel conference, string newName)
+        {
+            conference.Name = newName;
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmdStr = "UPDATE " + conference_table_name + " SET name=@name WHERE id=@id";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@name", conference.Name);
+                cmd.Parameters.AddWithValue("@id", conference.ID);
+                cmd.ExecuteNonQuery();
+            }
+            return true;
         }
 
         public List<ConferenceModel> GetAllConferences()
@@ -202,8 +241,35 @@ namespace MUNityAngular.Services
         #region Delegation
         public DelegationModel GetDelegation(string id)
         {
-            throw new NotImplementedException("To be done!");
+            DelegationModel model = null;
+            using (var connection = Connector.Connection)
+            {
+                string cmdStr = "SELECT * FROM " + delegation_table_name + " WHERE id = @id";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    model = DataReaderConverter.ObjectFromReader<DelegationModel>(reader);
+
+                }
+            }
+            return model;
         }
+
+        public DelegationModel CreateDelegation(string name, string abbreviation, string type, string countryid = null)
+        {
+            var model = new DelegationModel();
+            model.Abbreviation = abbreviation;
+            model.CountryId = countryid;
+            model.Name = name;
+            model.TypeName = type;
+
+            Connector.Insert(delegation_table_name, model);
+            return model;
+        }
+
+
 
         public List<DelegationModel> GetDelegationsOfConference(ConferenceModel conference)
         {

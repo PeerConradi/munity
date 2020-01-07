@@ -51,7 +51,7 @@ namespace MUNityAngular.DataHandlers.Database
     }
 
     [System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
-    sealed class PrimaryKeyAttribute : Attribute
+    public sealed class PrimaryKeyAttribute : Attribute
     {
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236

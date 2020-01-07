@@ -20,6 +20,12 @@ export class ConferenceListComponent implements OnInit {
     });
   }
 
-  
+  rename(id: string) {
+    console.log('Renaming: ' + id);
+    this.conferenceService.changeConferenceName(id, '123456', 'Rofl').subscribe(n => { console.log('success')}, error => {
+      console.log('Well this sucks: ');
+      console.log(error);
+    });
+  }
 
 }

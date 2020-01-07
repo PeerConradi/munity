@@ -39,6 +39,7 @@ namespace MUNityAngular
             services.AddSignalR();
             services.AddSingleton<Services.ResolutionService>();
             services.AddSingleton<Services.ConferenceService>();
+            services.AddSingleton<Services.AuthService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

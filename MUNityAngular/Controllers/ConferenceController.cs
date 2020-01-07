@@ -25,32 +25,71 @@ namespace MUNityAngular.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IEnumerable<string> GetNameOfAllConferences([FromServices]ConferenceService service)
+        public IActionResult GetNameOfAllConferences(string auth, 
+            [FromServices]ConferenceService service,
+            [FromServices]AuthService authService)
         {
-            return service.GetNameOfAllConferences();
+            return StatusCode(StatusCodes.Status200OK, service.GetNameOfAllConferences());
         }
 
         [HttpGet]
         [Route("[action]")]
-        public IEnumerable<ConferenceModel> GetConferences([FromServices]ConferenceService service)
+        public IActionResult GetConferences([FromServices]ConferenceService service)
         {
-            return service.GetAllConferences();
+            return StatusCode(StatusCodes.Status200OK, service.GetAllConferences());
         }
 
         [HttpGet]
         [Route("[action]")]
-        public string GetConferencesFormatted([FromServices]ConferenceService service)
+        public IActionResult GetConferencesFormatted(string auth,
+            [FromServices]ConferenceService service,
+            [FromServices]AuthService authService)
         {
             var text = JsonConvert.SerializeObject(service.GetAllConferences(), Newtonsoft.Json.Formatting.Indented);
-            return text;
+            return StatusCode(StatusCodes.Status200OK, text);
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult ChangeConferenceName([FromHeader]string auth, [FromHeader]string conferenceid, [FromHeader]string password, [FromHeader]string newname, 
+            [FromServices]ConferenceService service,
+            [FromServices]AuthService authService)
+        {
+            //Auth not requered now but to be implemented later
+
+            //Check the Conference password with the auth by now!
+            if (!service.CheckConferencePassword(conferenceid, password))
+                return StatusCode(StatusCodes.Status401Unauthorized, "You are not allowed to do that. The password may be invalid!");
+
+            var conference = service.GetConference(conferenceid);
+
+            if (conference != null)
+            {
+                var success = service.ChangeConferenceName(conference, newname);
+                if (success)
+                {
+                    return StatusCode(StatusCodes.Status200OK, conference);
+                }
+                else
+                {
+                   return  StatusCode(StatusCodes.Status500InternalServerError, "Unable to change Conference Name");
+                }
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+            }
+            
+        }
 
 
         [Route("[action]")]
         [HttpGet]
-        public string Create(string auth, [FromHeader]string Name, [FromHeader]string FullName, 
-            [FromHeader]string Abbreviation, [FromHeader]string password, [FromHeader]DateTime StartDate, [FromHeader]DateTime EndDate, [FromServices]ConferenceService service)
+        public IActionResult Create(string auth, [FromHeader]string Name, [FromHeader]string FullName, 
+            [FromHeader]string Abbreviation, [FromHeader]string password, [FromHeader]DateTime StartDate, 
+            [FromHeader]DateTime EndDate, 
+            [FromServices]ConferenceService service,
+            [FromServices]AuthService authService)
         {
             var model = new ConferenceModel();
             model.CreationDate = DateTime.Now;
@@ -60,7 +99,7 @@ namespace MUNityAngular.Controllers
             model.StartDate = StartDate;
             model.EndDate = EndDate;
             service.CreateConference(model, password);
-            return JsonConvert.SerializeObject(model);
+            return StatusCode(StatusCodes.Status200OK, JsonConvert.SerializeObject(model));
         }
     }
 }

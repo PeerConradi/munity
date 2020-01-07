@@ -29,36 +29,15 @@ export class ConferenceServiceService {
     return this.http.get<Conference>(this.baseUrl + 'api/Conference/Create?auth=default',
       options);
   }
-}
 
-export class Conference {
-  ID: string;
-  Name: string;
-  FullName: string;
-  Abbreviation: string;
-  Committees: Committee[];
-  CreationDate: Date;
-  StartDate: Date;
-  EndDate: Date;
-  SecretaryGeneralTitle: string;
-  SecretaryGeneralName: string;
-}
-
-export class Committee {
-  ID: string;
-  Abbreviation: string;
-  Article: string;
-  ConferenceID: string;
-  DelegationList: string[];
-  FullName: string;
-  Name: string;
-}
-
-export class Delegation {
-  Abbreviation: string;
-  CountryId: string;
-  ID: string;
-  ISO: string;
-  Name: string;
-  TypeName: string;
+  public changeConferenceName(conferenceid: string, password: string, newname: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', 'default');
+    headers = headers.set('conferenceid', conferenceid);
+    headers = headers.set('password', password);
+    headers = headers.set('newname', newname);
+    let options = { headers: headers };
+    return this.http.get<Conference>(this.baseUrl + 'api/Conference/ChangeConferenceName',
+      options);
+  }
 }
