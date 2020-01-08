@@ -1,4 +1,10 @@
 <h2>Login</h2>
+<div *ngIf="success" class="alert alert-success" role="alert">
+  Login success
+</div>
+<div *ngIf="error" class="alert alert-danger" role="alert">
+  Login failed :(
+</div>
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <div class="form-group">
     <label for="username">Username</label>

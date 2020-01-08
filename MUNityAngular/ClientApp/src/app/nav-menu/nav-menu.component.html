@@ -21,9 +21,12 @@
             <a class="nav-link text-dark" [routerLink]="['/']">Abstimmung</a>
           </li>
           <li>
-            <form class="form-inline">
+            <form class="form-inline" *ngIf="!userSerivce.isLoggedIn">
               <button class="btn btn-outline-success" type="button">Login</button>
               <button class="btn btn-sm btn-outline-secondary" type="button">Register</button>
+            </form>
+            <form class="form-inline" *ngIf="userSerivce.isLoggedIn">
+              <button class="btn btn-outline-danger" type="button">Logout</button>
             </form>
           </li>
 

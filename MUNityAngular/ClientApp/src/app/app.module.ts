@@ -25,6 +25,7 @@ import { SignalrtestComponent } from './components/signalr/signalrtest/signalrte
 import { ResViewComponent } from './components/resedit/res-view/res-view.component';
 import { RegisterComponent } from './components/account/register/register.component';
 import { LoginComponent } from './components/account/login/login.component';
+import { LogoutComponent } from './components/account/logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { LoginComponent } from './components/account/login/login.component';
     SignalrtestComponent,
     ResViewComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    LogoutComponent
   ],
   imports: [
     NgbModule,
@@ -68,7 +70,8 @@ import { LoginComponent } from './components/account/login/login.component';
       { path: 'admin/conferences', component: ConferenceListComponent },
       { path: 'test/signalr', component: SignalrtestComponent },
       { path: 'register', component: RegisterComponent },
-      { path: 'login', component: LoginComponent}
+      { path: 'login', component: LoginComponent },
+      { path: 'logout', component: LogoutComponent}
     ])
   ],
   providers: [],

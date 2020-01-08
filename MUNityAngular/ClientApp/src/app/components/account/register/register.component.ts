@@ -39,7 +39,9 @@ export class RegisterComponent implements OnInit {
 
 
     let data = this.registerForm.value;
-    this.authService.register(data.username, data.password, data.email).subscribe(msg => { this.created = true; this.loading = false; }, error => { this.error = true; this.loading = false;});
+    this.authService.register(data.username, data.password, data.email).subscribe(
+      msg => { this.created = true; this.loading = false; },
+      error => { this.error = true; this.loading = false; });
   }
 
 }

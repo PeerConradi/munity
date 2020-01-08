@@ -11,6 +11,7 @@ namespace MUNityAngular.Services
     public class AuthService
     {
         private const string user_table_name = "user";
+        private const string auth_table_name = "auth";
 
         public (bool status, string key) Login(string username, string password)
         {
@@ -42,8 +43,8 @@ namespace MUNityAngular.Services
                     byte[] randoms = new byte[64];
                     rngCsp.GetBytes(randoms);
                     customAuthKey = Convert.ToBase64String(randoms);
-                    cmdStr = "INSERT INTO auth (key, userid, createdate, expiredate) VALUES " +
-                        "(@key, @userid, @createdate, @expiredate)";
+                    cmdStr = "INSERT INTO " + auth_table_name + " (authkey, userid, createdate, expiredate) VALUES " +
+                        "(@key, @userid, @createdate, @expiredate);";
                     cmd = new MySqlCommand(cmdStr, connection);
                     cmd.Parameters.AddWithValue("@key", customAuthKey);
                     cmd.Parameters.AddWithValue("@userid", userid);
@@ -54,6 +55,36 @@ namespace MUNityAngular.Services
             }
 
             return (success, customAuthKey);
+        }
+
+        internal void Logout(string auth)
+        {
+            if (string.IsNullOrEmpty(auth))
+                return;
+
+            var cmdStr = "DELETE FROM " + auth_table_name + " WHERE authkey=@authkey";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@authkey", auth);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteAuthKeysForUser(string userid)
+        {
+            if (string.IsNullOrEmpty(userid))
+                return;
+
+            var cmdStr = "DELETE FROM " + auth_table_name + " WHERE userid=@userid";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.ExecuteNonQuery();
+            }
         }
 
         public bool Register(string username, string password, string email)
@@ -108,7 +139,27 @@ namespace MUNityAngular.Services
 
         public bool ValidateAuthKey(string authkey)
         {
-            return true;
+            if (string.IsNullOrEmpty(authkey))
+                return false;
+
+            var valid = false;
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT COUNT(*) FROM auth WHERE authkey=@authkey;";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@authkey",authkey);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.GetInt16(0) == 1)
+                            valid = true;
+                    }
+                }
+            }
+
+            return valid;
         }
 
         

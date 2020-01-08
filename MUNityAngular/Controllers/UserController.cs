@@ -24,6 +24,13 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status406NotAcceptable, "Account not created!");
         }
 
+        class LoginKey
+        {
+            public string Key { get; set; }
+
+
+        }
+
         [HttpGet]
         [Route("[action]")]
         public IActionResult Login([FromHeader]string username, [FromHeader]string password,
@@ -32,12 +39,21 @@ namespace MUNityAngular.Controllers
             var status = authService.Login(username, password);
             if (status.status)
             {
-                return StatusCode(StatusCodes.Status200OK, status.key);
+                var key = new LoginKey() { Key = status.key };
+                return StatusCode(StatusCodes.Status200OK, key);
             }
             else
             {
                 return StatusCode(StatusCodes.Status406NotAcceptable, "Invalid login");
             }
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult Logout([FromHeader]string auth, [FromServices]AuthService service)
+        {
+            service.Logout(auth);
+            return StatusCode(StatusCodes.Status200OK);
         }
     }
 }

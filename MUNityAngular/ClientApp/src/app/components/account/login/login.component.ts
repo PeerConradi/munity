@@ -35,15 +35,16 @@ export class LoginComponent implements OnInit {
     }
 
     this.loading = true;
-    this.userService.login(this.f.username.value, this.f.password.value)
-      .subscribe(
-        data => {
-          this.loading = false;
-          this.success = true;
-        },
-        error => {
-          this.loading = false;
-          this.error = true;
-        });
+    this.userService.login(this.f.username.value, this.f.password.value).then(n => {
+      this.loading = false;
+      if (n) { 
+        this.error = false;
+        this.success = true;
+      } else {
+        this.error = true;
+        this.success = false;
+      }
+    });
+    
   }
 }

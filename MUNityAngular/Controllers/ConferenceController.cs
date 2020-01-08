@@ -25,7 +25,7 @@ namespace MUNityAngular.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetNameOfAllConferences(string auth, 
+        public IActionResult GetNameOfAllConferences([FromHeader]string auth, 
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
@@ -41,7 +41,7 @@ namespace MUNityAngular.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetConferencesFormatted(string auth,
+        public IActionResult GetConferencesFormatted([FromHeader]string auth,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
@@ -85,7 +85,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult Create(string auth, [FromHeader]string Name, [FromHeader]string FullName, 
+        public IActionResult Create([FromHeader]string auth, [FromHeader]string Name, [FromHeader]string FullName, 
             [FromHeader]string Abbreviation, [FromHeader]string password, [FromHeader]DateTime StartDate, 
             [FromHeader]DateTime EndDate, 
             [FromServices]ConferenceService service,

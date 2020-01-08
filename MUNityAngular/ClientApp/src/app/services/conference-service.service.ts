@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Conference } from '../models/conference.model';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Conference } from '../models/conference.model';
 export class ConferenceServiceService {
 
   private baseUrl: string;
-  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(private http: HttpClient, private userSerice: UserService, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
   }
 
@@ -20,6 +21,7 @@ export class ConferenceServiceService {
 
   public createConference(conference: Conference, password: string): Observable<Conference> {
     let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userSerice.sessionkey())
     headers = headers.set('Name', conference.Name);
     headers = headers.set('FullName', conference.FullName);
     headers = headers.set('Abbreviation', conference.Abbreviation);
@@ -27,7 +29,7 @@ export class ConferenceServiceService {
     headers = headers.set('EndDate', conference.EndDate.toUTCString());
     headers = headers.set('Password', password);
     let options = { headers: headers };
-    return this.http.get<Conference>(this.baseUrl + 'api/Conference/Create?auth=default',
+    return this.http.get<Conference>(this.baseUrl + 'api/Conference/Create',
       options);
   }
 
