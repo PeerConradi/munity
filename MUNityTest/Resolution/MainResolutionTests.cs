@@ -4,8 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using MUNityAngular.Models;
 using Moq;
-using MUNityAngular.DataHandlers.Database;
-using MUNityAngular.DataHandlers.FileSystem;
+using MUNityAngular.Util.Extenstions;
 
 namespace MUNityTest.Resolution
 {
@@ -25,14 +24,6 @@ namespace MUNityTest.Resolution
         {
             var resolution = new ResolutionModel();
             Assert.IsNotNull(resolution);
-        }
-
-        [Test]
-        public void TestConferenceGetter()
-        {
-            var resolution = new ResolutionModel();
-            resolution.ConferenceID = MUNityAngular.DataHandlers.Database.ConferenceHandler.TestConference.ID;
-            Assert.AreEqual(resolution.Conference, ConferenceHandler.TestConference);
         }
 
         [Test]
@@ -186,12 +177,14 @@ namespace MUNityTest.Resolution
             addAmendment.NewText = "new Section";
             addAmendment.TargetResolution = resolution;
             addAmendment.TargetPosition = 2;
-            
+
             //Safe
-            string safedText = ResolutionHandler.GetJsonFromResolution(resolution);
+            var service = new MUNityAngular.Services.ResolutionService();
+
+            string safedText = resolution.ToJson();
 
             //Load
-            var loadedResolution = ResolutionHandler.GetResolutionFromJson(safedText);
+            var loadedResolution = service.GetResolutionFromJson(safedText);
             //Document Info
             Assert.AreEqual(resolution.ID, loadedResolution.ID);
             Assert.AreEqual(resolution.Name, loadedResolution.Name);

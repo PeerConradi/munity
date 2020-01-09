@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Util.Extenstions;
 
 namespace MUNityAngular.Services
 {
@@ -93,12 +94,5 @@ namespace MUNityAngular.Services
         }
     }
 
-    public static class ResolutionExtensions
-    {
-        public static string ToJson(this Models.ResolutionModel resolution)
-        {
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(resolution, Newtonsoft.Json.Formatting.Indented);
-            return json;
-        }
-    }
+    
 }
