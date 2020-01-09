@@ -34,9 +34,11 @@ namespace MUNityAngular.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetConferences([FromServices]ConferenceService service)
+        public IActionResult GetConferences([FromHeader]string auth, 
+            [FromServices]ConferenceService conferenceService,
+            [FromServices]AuthService authService)
         {
-            return StatusCode(StatusCodes.Status200OK, service.GetAllConferences());
+            return StatusCode(StatusCodes.Status200OK, conferenceService.GetAllConferences(auth));
         }
 
         [HttpGet]
@@ -45,7 +47,7 @@ namespace MUNityAngular.Controllers
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
-            var text = JsonConvert.SerializeObject(service.GetAllConferences(), Newtonsoft.Json.Formatting.Indented);
+            var text = JsonConvert.SerializeObject(service.GetAllConferences(auth), Newtonsoft.Json.Formatting.Indented);
             return StatusCode(StatusCodes.Status200OK, text);
         }
 
@@ -55,14 +57,20 @@ namespace MUNityAngular.Controllers
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
+            bool hasChangeAccess = false;
+
             //Auth not requered now but to be implemented later
+            if (service.CanAuthEditConference(auth, conferenceid))
+                hasChangeAccess = true;
 
             //Check the Conference password with the auth by now!
-            if (!service.CheckConferencePassword(conferenceid, password))
+            if (service.CheckConferencePassword(conferenceid, password))
+                hasChangeAccess = true;
+
+            if (!hasChangeAccess)
                 return StatusCode(StatusCodes.Status401Unauthorized, "You are not allowed to do that. The password may be invalid!");
 
             var conference = service.GetConference(conferenceid);
-
             if (conference != null)
             {
                 var success = service.ChangeConferenceName(conference, newname);
@@ -91,6 +99,11 @@ namespace MUNityAngular.Controllers
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
+            var authstate = authService.GetAuthsByAuthkey(auth);
+
+            if (!authstate.CreateConference)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to create a conference!");
+
             var model = new ConferenceModel();
             model.CreationDate = DateTime.Now;
             model.Name = Name;
@@ -98,7 +111,7 @@ namespace MUNityAngular.Controllers
             model.Abbreviation = Abbreviation;
             model.StartDate = StartDate;
             model.EndDate = EndDate;
-            service.CreateConference(model, password);
+            service.CreateConference(model, password, authstate.UserId);
             return StatusCode(StatusCodes.Status200OK, JsonConvert.SerializeObject(model));
         }
     }

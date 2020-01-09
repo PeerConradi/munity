@@ -13,6 +13,12 @@ namespace MUNityAngular.Services
         private const string user_table_name = "user";
         private const string auth_table_name = "auth";
 
+        public enum EUserClearance
+        {
+            Default,
+            CreateConference
+        }
+
         public (bool status, string key) Login(string username, string password)
         {
             var success = false;
@@ -137,15 +143,16 @@ namespace MUNityAngular.Services
             return available;
         }
 
-        public bool ValidateAuthKey(string authkey)
+        public (bool valid, string userid) ValidateAuthKey(string authkey)
         {
             if (string.IsNullOrEmpty(authkey))
-                return false;
+                return (false, null);
 
             var valid = false;
+            string user = null;
             using (var connection = Connector.Connection)
             {
-                var cmdStr = "SELECT COUNT(*) FROM auth WHERE authkey=@authkey;";
+                var cmdStr = "SELECT COUNT(*), userid FROM auth WHERE authkey=@authkey;";
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
                 cmd.Parameters.AddWithValue("@authkey",authkey);
@@ -154,14 +161,55 @@ namespace MUNityAngular.Services
                     while (reader.Read())
                     {
                         if (reader.GetInt16(0) == 1)
+                        {
                             valid = true;
+                            user = reader.GetString(1);
+                        }
+                            
+
                     }
                 }
             }
 
-            return valid;
+            return (valid, user);
         }
 
+        public UserAuths GetAuthsByAuthkey(string authkey)
+        {
+            var auths = new UserAuths();
+            if (string.IsNullOrEmpty(authkey))
+                return auths;
+
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT user_clearance.* FROM `user`" +
+                    " INNER JOIN user_clearance ON user_clearance.userid = `user`.id" +
+                    " INNER JOIN auth ON auth.userid = `user`.id " +
+                    " WHERE auth.authkey=@authkey";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@authkey", authkey);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        auths = DataReaderConverter.ObjectFromReader<UserAuths>(reader);
+                    }
+                }
+            }
+            return auths;
+
+        }
+
+        public class UserAuths
+        {
+            
+            [DatabaseSave("userid")]
+            public string UserId { get; set; } = null;
+
+            [DatabaseSave("CreateConference")]
+            public bool CreateConference { get; set; } = false;
+        }
         
     }
 }

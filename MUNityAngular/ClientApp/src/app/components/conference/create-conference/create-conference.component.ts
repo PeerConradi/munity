@@ -16,6 +16,8 @@ export class CreateConferenceComponent implements OnInit {
   enddatemodel: NgbDate;
 
   public createdConference = null;
+  error: boolean = false;
+  error_msg: any = null;
   public info: string;
 
   public requested: boolean = false;
@@ -53,7 +55,11 @@ export class CreateConferenceComponent implements OnInit {
       //this.conferenceCreated = true;
       this.createdConference = n;
       console.log(n);
-    });
+    },
+      err => {
+        this.error = true;
+        this.error_msg = err;
+      });
   }
 
 }

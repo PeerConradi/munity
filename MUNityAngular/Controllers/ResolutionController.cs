@@ -50,7 +50,7 @@ namespace MUNityAngular.Controllers
         public IActionResult Create(string auth, [FromServices]Services.ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            if (!authService.ValidateAuthKey(auth))
+            if (!authService.ValidateAuthKey(auth).valid)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             return StatusCode(StatusCodes.Status200OK, resolutionService.CreateResolution().ToJson());
@@ -63,7 +63,7 @@ namespace MUNityAngular.Controllers
             [FromServices]AuthService authService)
         {
 
-            if (!authService.ValidateAuthKey(auth))
+            if (!authService.ValidateAuthKey(auth).valid)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var resolution = resolutionService.GetResolution(resolutionid);
@@ -93,7 +93,7 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            if (!authService.ValidateAuthKey(auth))
+            if (!authService.ValidateAuthKey(auth).valid)
                 return StatusCode(StatusCodes.Status403Forbidden, "You have no right to do that.");
 
             var resolution = resolutionService.GetResolution(resolutionid);
@@ -119,7 +119,7 @@ namespace MUNityAngular.Controllers
             var re = Request;
             var headers = re.Headers;
 
-            if (!authService.ValidateAuthKey(auth))
+            if (!authService.ValidateAuthKey(auth).valid)
                 return StatusCode(StatusCodes.Status403Forbidden, "You have no right to do that.");
 
 

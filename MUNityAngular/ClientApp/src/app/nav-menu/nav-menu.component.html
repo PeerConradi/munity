@@ -22,11 +22,11 @@
           </li>
           <li>
             <form class="form-inline" *ngIf="!userSerivce.isLoggedIn">
-              <button class="btn btn-outline-success" type="button">Login</button>
-              <button class="btn btn-sm btn-outline-secondary" type="button">Register</button>
+              <button class="btn btn-outline-success" type="button" [routerLink]="['/login']">Login</button>
+              <button class="btn btn-sm btn-outline-secondary" type="button" [routerLink]="['/register']">Register</button>
             </form>
             <form class="form-inline" *ngIf="userSerivce.isLoggedIn">
-              <button class="btn btn-outline-danger" type="button">Logout</button>
+              <button class="btn btn-outline-danger" type="button" [routerLink]="['/logout']">Logout</button>
             </form>
           </li>
 

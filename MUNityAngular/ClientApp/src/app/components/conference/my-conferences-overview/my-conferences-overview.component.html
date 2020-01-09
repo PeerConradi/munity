@@ -1,0 +1,5 @@
+<h3>Meine Konferenzen</h3>
+<p *ngIf="!this.userService.isLoggedIn">Um diesen Bereich sehen zu können musst du eingeloggt sein.</p>
+<ul *ngFor="let conf of conferences">
+  <li>{{ conf.name }}, {{ conf.fullName }}</li>
+</ul>

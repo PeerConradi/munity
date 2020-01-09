@@ -15,8 +15,11 @@ export class ConferenceServiceService {
     this.baseUrl = baseUrl;
   }
 
-  public getAllConferences() : Observable<Conference[]> {
-    return this.http.get<Conference[]>(this.baseUrl + 'api/conference/GetConferences');
+  public getAllConferences(): Observable<Conference[]> {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userSerice.sessionkey())
+    const options = { headers: headers };
+    return this.http.get<Conference[]>(this.baseUrl + 'api/conference/GetConferences', options);
   }
 
   public createConference(conference: Conference, password: string): Observable<Conference> {

@@ -47,3 +47,9 @@
   <p>Willkommen auf MUNity. Hoffentlich können wir dir dabei helfen deine Konferenz zu digitalisieren.</p>
   <p>Du kannst dich nun im Loginbereich anmelden um deine Konferenz zu verwalten.</p>
 </div>
+
+<div *ngIf="error">
+  <h2>Fehler</h2>
+  <p>Tut uns leid, aber deine Konferenz konnte nicht angelegt werden, möglicherweise bist du nicht berechtigt neue Konferenzen zu erstellen.</p>
+  <p>{{ error_msg }}</p>
+</div>

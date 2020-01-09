@@ -26,6 +26,8 @@ import { ResViewComponent } from './components/resedit/res-view/res-view.compone
 import { RegisterComponent } from './components/account/register/register.component';
 import { LoginComponent } from './components/account/login/login.component';
 import { LogoutComponent } from './components/account/logout/logout.component';
+import { MyConferencesOverviewComponent } from './components/conference/my-conferences-overview/my-conferences-overview.component';
+import { ConferenceDetailsComponent } from './components/conference/conference-details/conference-details.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { LogoutComponent } from './components/account/logout/logout.component';
     ResViewComponent,
     RegisterComponent,
     LoginComponent,
-    LogoutComponent
+    LogoutComponent,
+    MyConferencesOverviewComponent,
+    ConferenceDetailsComponent
   ],
   imports: [
     NgbModule,
@@ -71,7 +75,9 @@ import { LogoutComponent } from './components/account/logout/logout.component';
       { path: 'test/signalr', component: SignalrtestComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'login', component: LoginComponent },
-      { path: 'logout', component: LogoutComponent}
+      { path: 'logout', component: LogoutComponent },
+      { path: 'conference/my', component: MyConferencesOverviewComponent },
+      { path: 'conferences/:id', component: ConferenceDetailsComponent },
     ])
   ],
   providers: [],
