@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2020-01-08 17:50:23
+Date: 2020-01-09 16:34:46
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -32,7 +32,7 @@ CREATE TABLE `auth` (
 -- ----------------------------
 -- Records of auth
 -- ----------------------------
-INSERT INTO `auth` VALUES ('/3rXx2giQbWXguKygbuaaezxvBGLGj6m4JOjGCgiD651ZUvm6bJwvFVxCvzIQr8Lpatu806vrFA1UOosIhARGg==', '8c19c2eb-39cf-44dd-942f-1ae2930af524', '2020-01-08 16:08:15', '2020-01-09 16:08:15');
+INSERT INTO `auth` VALUES ('9AmrJh4jzDxPACb4hOQ6lW07ypO2vVkivLKUNp4M5j8cEMxYr/VVTKLJmYZFMtnIJfP7ta7rAtuhFI6FksEAyg==', '8c19c2eb-39cf-44dd-942f-1ae2930af524', '2020-01-09 15:50:53', '2020-01-10 15:50:53');
 
 -- ----------------------------
 -- Table structure for committee
@@ -105,16 +105,8 @@ CREATE TABLE `conference` (
 -- ----------------------------
 -- Records of conference
 -- ----------------------------
-INSERT INTO `conference` VALUES ('0e334e37-ef05-4809-9f23-d200a5c366ba', 'Rofl', 'esfsdf', 'sdfsdf', '2020-01-19 00:00:00', '2020-01-22 00:00:00', null, null, '2019-12-19 16:08:18', null);
-INSERT INTO `conference` VALUES ('12e10c4a-a6fe-45fd-94c1-d5ba6dcf7150', 'asdasd', 'wasdasd', 'fawasfasf', '2020-01-19 00:00:00', '2020-01-22 00:00:00', null, null, '2019-12-19 15:37:36', null);
-INSERT INTO `conference` VALUES ('178737f0-262d-4b45-8a05-9accb46abe01', 'sdfsdf', 'sdfsdf', 'sdfsdf', '2020-01-11 00:00:00', '2020-01-20 00:00:00', null, null, '2019-12-19 16:06:45', null);
-INSERT INTO `conference` VALUES ('186e0da9-2de2-437d-95a0-fa62fd7d59b5', 'Hallo', 'Hallo', 'Hallo', '2020-01-19 00:00:00', '2020-01-22 00:00:00', null, null, '2019-12-19 15:50:51', null);
-INSERT INTO `conference` VALUES ('28c750c1-04da-4bda-8c62-8d06ea00bc1a', 'rfsdf', 'sefsdf', 'sefsdf', '2020-01-18 00:00:00', '2020-01-21 00:00:00', null, null, '2019-12-19 15:55:37', null);
-INSERT INTO `conference` VALUES ('341c3b51-6609-438c-9bdd-75cda9da767e', 'adasd', 'awdasd', 'asdad', '2020-01-19 00:00:00', '2020-01-22 00:00:00', null, null, '2019-12-19 15:52:32', null);
-INSERT INTO `conference` VALUES ('cfc3a337-325e-4ff3-9d1e-b1785b0b3b12', 'Hallo Welt', 'Hallo Welt', 'Hallo Welt', '2020-01-12 00:00:00', '2020-01-25 00:00:00', null, null, '2019-12-19 15:48:22', null);
-INSERT INTO `conference` VALUES ('d3fe0c2b-a8a7-40a1-9707-4662072bfdaa', 'sdfsd', 'sdfsf', 'seafsdf', '2020-01-19 00:00:00', '2020-01-21 00:00:00', null, null, '2019-12-19 15:56:15', null);
+INSERT INTO `conference` VALUES ('7cafe067-a9be-4595-9479-b067df507d50', 'Roflcopter', 'Roflcopter swuuup', 'Rofl', '2020-02-09 00:00:00', '2020-02-12 00:00:00', null, null, '2020-01-09 13:38:39', null);
 INSERT INTO `conference` VALUES ('default', 'Default', 'Default Conference', 'DEFAULT', '2019-12-02 00:00:00', '2022-12-31 22:28:10', 'Seine Exzelenz der Generalsekretär', 'António Guterres', '2019-12-02 22:29:00', 'johndoe');
-INSERT INTO `conference` VALUES ('fda73f72-b425-4d3a-8b34-cd0ebaf4342e', 'Hallo Welt', 'alskdjlaksd', 'jslkjdflkjsdf', '2020-01-19 00:00:00', '2020-01-22 00:00:00', null, null, '2019-12-19 16:09:18', null);
 
 -- ----------------------------
 -- Table structure for conference_delegation
@@ -155,15 +147,28 @@ CREATE TABLE `conference_password` (
 -- ----------------------------
 -- Records of conference_password
 -- ----------------------------
-INSERT INTO `conference_password` VALUES ('0e334e37-ef05-4809-9f23-d200a5c366ba', '1JNfxBeVia6l0riIPXkxSB2JjMCzQu98iD5HPjZjzyY=', 'k5xrXe81vaikHctDl7Y4gg==', 'ADMIN');
-INSERT INTO `conference_password` VALUES ('12e10c4a-a6fe-45fd-94c1-d5ba6dcf7150', '7aOiHKotuWTaRiCv3gUDWAHqI9SNcNjWbE2cNQV/Kn8=', 'tL+1FSBNT2SftRnAlGKqZg==', 'ADMIN');
-INSERT INTO `conference_password` VALUES ('178737f0-262d-4b45-8a05-9accb46abe01', 'v6xCy6elUSsjwnS8vuL2t+bqDTlj7kRamrUBtB2UFxk=', 'ceBU9irvpZdlfq6rhybDuw==', 'ADMIN');
-INSERT INTO `conference_password` VALUES ('186e0da9-2de2-437d-95a0-fa62fd7d59b5', 'txsjZ/V6SB9uftwTpRwU92t9gqcHXCqapI0v/iBh16k=', 'ruXB6lMcea/ZEY5ECowY1Q==', 'ADMIN');
-INSERT INTO `conference_password` VALUES ('28c750c1-04da-4bda-8c62-8d06ea00bc1a', 'siTXPS7KrIk/9g1NYOvfKrcOTtz+cAwlX6UxaIz2hUs=', 'QLds+T0EazxyvlO6rzOEBg==', 'ADMIN');
-INSERT INTO `conference_password` VALUES ('341c3b51-6609-438c-9bdd-75cda9da767e', '0qasBNOazz0+1UNRAVXAO5ZAKBcTRWDYtT08xwbNfds=', 'MZOO4VFRmFAZOwHZbRI2GQ==', 'ADMIN');
-INSERT INTO `conference_password` VALUES ('cfc3a337-325e-4ff3-9d1e-b1785b0b3b12', '63AA66X1W+B+0gJRCVfUbzczyrhsNSTEDAWK7cDLsY0=', 'I0oVDA8Qz3iNbi4nLuy1ww==', 'ADMIN');
-INSERT INTO `conference_password` VALUES ('d3fe0c2b-a8a7-40a1-9707-4662072bfdaa', 'Coo/hl3oM5sHfVcCKd/gAGPKEyljiG3XBi8+hFTr7os=', 'J1T8xPNJZJAlAwTivGdWGA==', 'ADMIN');
-INSERT INTO `conference_password` VALUES ('fda73f72-b425-4d3a-8b34-cd0ebaf4342e', 'gEEWtVCafT01En0oVQiGi68AHsYOpi/GR5fmiYGdr7s=', 'TvBFC7cIRqwu+BXH/QDD6Q==', 'ADMIN');
+INSERT INTO `conference_password` VALUES ('7cafe067-a9be-4595-9479-b067df507d50', '2Cxj+7m7BRY6kT7pwFwyqq0k5eHWcgzHZmaTMZP31Zo=', 'ReaXKuTZhrP/MFrUai2s8w==', 'ADMIN');
+
+-- ----------------------------
+-- Table structure for conference_user_auth
+-- ----------------------------
+DROP TABLE IF EXISTS `conference_user_auth`;
+CREATE TABLE `conference_user_auth` (
+  `conferenceid` varchar(255) NOT NULL,
+  `userid` varchar(255) NOT NULL,
+  `CanOpen` bit(1) DEFAULT NULL,
+  `CanEdit` bit(1) DEFAULT NULL,
+  `CanRemove` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`conferenceid`,`userid`),
+  KEY `conferenceAuthUser` (`userid`),
+  CONSTRAINT `conferenceAuthConference` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `conferenceAuthUser` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of conference_user_auth
+-- ----------------------------
+INSERT INTO `conference_user_auth` VALUES ('7cafe067-a9be-4595-9479-b067df507d50', '8c19c2eb-39cf-44dd-942f-1ae2930af524', '', '', '');
 
 -- ----------------------------
 -- Table structure for countries_de
@@ -523,3 +528,19 @@ CREATE TABLE `user` (
 INSERT INTO `user` VALUES ('8c19c2eb-39cf-44dd-942f-1ae2930af524', 'MikeLitoris', 'zq4T5wcwgDQ87dAlCJZ/Nd3zsnDs1APUEBPrOwduxS8=', 'FFlppxx6KlFbWEQDAfZR6w==', 'mike@litoris.de', null, null, null, null, null, null, null, '2020-01-07 16:13:47', null, 'OK');
 INSERT INTO `user` VALUES ('anon', 'anon', 'anon', 'anon', 'anon', 'An', 'On', '1234323131', 'streetname', '13', 'nowhere', '123456', '2019-12-05 11:03:11', '2019-12-05 11:03:14', 'OK');
 INSERT INTO `user` VALUES ('johndoe', 'johndoe', 'password', 'salt', 'john', 'John', 'Doe', '0123456789', 'plygroundstreet', '123', 'nowhere', '123456', '2019-12-02 22:26:44', '2019-12-02 22:26:47', 'OK');
+
+-- ----------------------------
+-- Table structure for user_clearance
+-- ----------------------------
+DROP TABLE IF EXISTS `user_clearance`;
+CREATE TABLE `user_clearance` (
+  `userid` varchar(255) NOT NULL,
+  `CreateConference` bit(1) DEFAULT b'0',
+  PRIMARY KEY (`userid`),
+  CONSTRAINT `userclearancelink` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of user_clearance
+-- ----------------------------
+INSERT INTO `user_clearance` VALUES ('8c19c2eb-39cf-44dd-942f-1ae2930af524', '');
