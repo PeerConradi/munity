@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class ResolutionService {
 
   public stack: stackElement[] = [];
 
-  constructor(private httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(private httpClient: HttpClient, private userService: UserService, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
     this._hubConnection = new signalR.HubConnectionBuilder().withUrl(baseUrl + 'resasocket').build();
     this._hubConnection
@@ -35,14 +36,28 @@ export class ResolutionService {
   }
 
   public createResolution() {
-    return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Create?auth=default');
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', authString);
+    let options = { headers: headers };
+    return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Create', options);
   }
 
 
   public getResolution(id: string) {
-    return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Get?auth=default&id=' + id);
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', authString);
+    headers = headers.set('id', id);
+    let options = { headers: headers };
+    return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Get', options);
   }
 
+  //SignalR Part
   public addResolutionListener = (model: Resolution) => {
     this._hubConnection.on('PreambleParagraphAdded', (position: number, id: string, text: string) => {
       let paragraph: PreambleParagraph = new PreambleParagraph();
@@ -56,24 +71,41 @@ export class ResolutionService {
 
       let target = model.Preamble.Paragraphs.filter(n => n.ID == id)[0];
       if (target != null && target.Text != newtext) {
-        console.log('Update target text!')
         target.Text = newtext;
       }
-      
     });
+
+    this._hubConnection.on('ResolutionSaved', (date: Date) => {
+      console.log('Resolution has been saved!' + date);
+      model.lastSaved = date;
+    })
   }
 
   public addPreambleParagraph(resolutionid: string) {
-    console.log('Requesting new PreambleParagraphFromServer: ')
-    this.httpClient.get(this.baseUrl + 'api/Resolution/AddPreambleParagraph?auth=default&resolutionid=' + resolutionid).subscribe(data => { });
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/AddPreambleParagraph', options).subscribe(data => { });
   }
 
   public changePreambleParagraph(resolutionid: string, paragraphid: string, newtext: string) {
-    console.log('Want to change');
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
     let headers = new HttpHeaders();
-    headers = headers.set('newtext', newtext);
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    headers = headers.set('newtext', newtext + '|');
+    console.log('NEUERTEXT:' + newtext + ':TEXTEND');
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph?auth=default&resolutionid=' + resolutionid + '&paragraphid=' + paragraphid,
+    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph',
       options).subscribe(data => console.log(data));
   }
 
@@ -81,7 +113,6 @@ export class ResolutionService {
     if (this.connectionReady == true)
       this._hubConnection.send('SubscribeToResolution', id);
     else {
-      console.log('going to push the subscribtion to stack!')
       let element = new stackElement();
       element.methodName = 'SubscribeToResolution';
       element.args = id;
@@ -104,6 +135,7 @@ export class Resolution {
   ID: string;
   OperativeSections: OperativeSection[];
   Preamble: Preamble;
+  lastSaved: Date;
 }
 
 export class OperativeSection {

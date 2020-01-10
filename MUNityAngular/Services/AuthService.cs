@@ -1,4 +1,5 @@
 ﻿using MUNityAngular.DataHandlers.Database;
+using MUNityAngular.Models;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,17 @@ namespace MUNityAngular.Services
         private const string user_table_name = "user";
         private const string auth_table_name = "auth";
 
+
+
         public enum EUserClearance
         {
             Default,
             CreateConference
+        }
+
+        public bool isDefaultAuth(string auth)
+        {
+            return auth == "default";
         }
 
         public (bool status, string key) Login(string username, string password)
@@ -172,6 +180,85 @@ namespace MUNityAngular.Services
             }
 
             return (valid, user);
+        }
+
+        public bool CanCreateResolution(string auth)
+        {
+            if (auth == "default")
+                return true;
+
+            return ValidateAuthKey(auth).valid;
+        }
+
+        
+
+        public bool CanEditResolution(string userid, ResolutionModel resolution)
+        {
+            //If the resolution is public edit return true
+            if (GetResolutionPublicState(resolution).writeable)
+                return true;
+            
+            //Check if the user is owner
+            if (GetOwnerId(resolution) == userid)
+                return true;
+
+            //Check if the user has the right to edit this document
+
+            return false;
+        }
+
+        public (bool readable, bool writeable) GetResolutionPublicState(ResolutionModel resolution)
+        {
+            if (resolution == null)
+                throw new ArgumentNullException("The Resolution cant be empty");
+
+            return GetResolutionPublicState(resolution.ID);
+        }
+
+        public (bool readable, bool writeable) GetResolutionPublicState(string resolutionid)
+        {
+            var read = false;
+            var write = false;
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmdStr = "SELECT resolution.ispublicread, resolution.ispublicwrite FROM resolution WHERE resolution.id=@id";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@id", resolutionid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        read = reader.GetBoolean(0);
+                        write = reader.GetBoolean(1);
+                    }
+                }
+            }
+            return (read, write);
+        }
+
+        public string GetOwnerId(ResolutionModel resolution)
+        {
+            string owner = null;
+
+            if (resolution == null)
+                throw new ArgumentNullException("Resolution cant be null");
+
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmdStr = "SELECT `user` FROM resolution WHERE resolution.id=@resoid;";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@resoid", resolution.ID);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        owner = reader.GetString(0);
+                    }
+                }
+            }
+            return owner;
         }
 
         public UserAuths GetAuthsByAuthkey(string authkey)

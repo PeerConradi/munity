@@ -6,7 +6,7 @@
       <h6>ID: {{ model.ID }}</h6>
     </div>
     <div class="col">
-      <p>Last Saved: LAST_SAVE_DATE <span class="badge badge-success">Saved</span> | <a href="#">Verlauf</a></p>
+      <p>Last Saved: {{ model.lastSaved | date:'full' }} | <a href="#">Verlauf</a></p>
     </div>
   </div>
 
