@@ -3,6 +3,9 @@ import * as signalR from "@aspnet/signalr";
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserService } from './user.service';
+import { Resolution } from '../models/resolution.model';
+import { PreambleParagraph } from '../models/preamble-paragraph.model';
+import { ResolutionInformation } from '../models/resolution-information.model';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +60,14 @@ export class ResolutionService {
     return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Get', options);
   }
 
+  public getMyResolutions() {
+    let authString = this.userService.sessionkey();
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', authString);
+    let options = { headers: headers };
+    return this.httpClient.get<ResolutionInformation[]>(this.baseUrl + 'api/Resolution/MyResolutions', options);
+  }
+
   //SignalR Part
   public addResolutionListener = (model: Resolution) => {
     this._hubConnection.on('PreambleParagraphAdded', (position: number, id: string, text: string) => {
@@ -90,6 +101,18 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddPreambleParagraph', options).subscribe(data => { });
+  }
+
+  public changeTitle(resolutionid: string, newtitle: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('newtitle', newtitle);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangeTitle', options).subscribe(data => { });
   }
 
   public changePreambleParagraph(resolutionid: string, paragraphid: string, newtext: string) {
@@ -129,25 +152,4 @@ export class ResolutionService {
 export class stackElement {
   methodName: string;
   args: any;
-}
-
-export class Resolution {
-  ID: string;
-  OperativeSections: OperativeSection[];
-  Preamble: Preamble;
-  lastSaved: Date;
-}
-
-export class OperativeSection {
-  ID: string;
-  Text: string;
-}
-
-export class Preamble {
-  Paragraphs: PreambleParagraph[];
-}
-
-export class PreambleParagraph {
-  Text: string;
-  ID: string;
 }

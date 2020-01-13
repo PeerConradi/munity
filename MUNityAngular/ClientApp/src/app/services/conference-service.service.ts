@@ -36,6 +36,18 @@ export class ConferenceServiceService {
       options);
   }
 
+  public getConference(id: string) {
+    let headers = new HttpHeaders();
+    let authcode = 'default';
+    if (this.userSerice.isLoggedIn)
+      authcode = this.userSerice.sessionkey();
+    headers = headers.set('auth', authcode)
+    headers = headers.set('id', id);
+    let options = { headers: headers };
+    return this.http.get<Conference>(this.baseUrl + 'api/Conference/GetConference',
+      options);
+  }
+
   public changeConferenceName(conferenceid: string, password: string, newname: string) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', 'default');

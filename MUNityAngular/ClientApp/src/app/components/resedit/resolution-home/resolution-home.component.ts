@@ -15,7 +15,7 @@ export class ResolutionHomeComponent implements OnInit {
   }
 
   createResolution() {
-    this.service.createResolution().subscribe(n => this.router.navigateByUrl('/resedit?id=' + n.ID));
+    this.service.createResolution().subscribe(n => this.router.navigate(['/resedit', n.ID]));
   }
 
 }

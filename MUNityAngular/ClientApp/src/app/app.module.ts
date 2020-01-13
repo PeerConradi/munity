@@ -28,6 +28,7 @@ import { LoginComponent } from './components/account/login/login.component';
 import { LogoutComponent } from './components/account/logout/logout.component';
 import { MyConferencesOverviewComponent } from './components/conference/my-conferences-overview/my-conferences-overview.component';
 import { ConferenceDetailsComponent } from './components/conference/conference-details/conference-details.component';
+import { MyresolutionsComponent } from './components/resedit/myresolutions/myresolutions.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { ConferenceDetailsComponent } from './components/conference/conference-d
     LoginComponent,
     LogoutComponent,
     MyConferencesOverviewComponent,
-    ConferenceDetailsComponent
+    ConferenceDetailsComponent,
+    MyresolutionsComponent
   ],
   imports: [
     NgbModule,
@@ -67,7 +69,8 @@ import { ConferenceDetailsComponent } from './components/conference/conference-d
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'resedit', component: EditorComponent },
+      { path: 'resedit/:id', component: EditorComponent },
+      { path: 'mydocs', component: MyresolutionsComponent},
       { path: 'reshome', component: ResolutionHomeComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'conference/create', component: CreateConferenceComponent },

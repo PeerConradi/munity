@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import  * as resService from '../../../services/resolution.service';
 import { ActivatedRoute } from "@angular/router";
 import { interval, Subscription } from 'rxjs';
+import { ResolutionService } from '../../../services/resolution.service';
+import { Resolution } from '../../../models/resolution.model';
 
 @Component({
   selector: 'app-editor',
@@ -10,14 +11,20 @@ import { interval, Subscription } from 'rxjs';
 })
 export class EditorComponent implements OnInit {
 
-  constructor(private service: resService.ResolutionService, private route: ActivatedRoute) { }
+  constructor(private service: ResolutionService, private route: ActivatedRoute) { }
 
-  public model: resService.Resolution;
+  public model: Resolution;
 
   saveSubscription: Subscription;
 
   ngOnInit() {
-    let id = this.route.snapshot.queryParamMap.get("id");
+    let id: string = null;
+    this.route.params.subscribe(params => {
+      id = params.id;
+    })
+    if (id == null)
+      id = this.route.snapshot.queryParamMap.get("id");
+
     if (id != null) {
       this.service.getResolution(id).subscribe(n => {
         let readyState = this.service.connectionReady;

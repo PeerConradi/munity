@@ -65,6 +65,7 @@ namespace MUNityAngular.Models
         public ResolutionModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();
+            this.Topic = "No Name";
             OperativeSections = new ObservableCollection<OperativeParagraphModel>();
             Supporters = new ObservableCollection<DelegationModel>();
             Amendments = new ObservableCollection<AbstractAmendment>();

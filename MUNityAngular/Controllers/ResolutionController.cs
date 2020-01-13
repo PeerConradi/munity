@@ -58,7 +58,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult AddPreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid, 
+        public IActionResult AddPreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromServices]Services.ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -67,10 +67,10 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid,resolution))
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            
+
             if (resolution != null)
             {
                 var newPP = resolution.Preamble.AddParagraph();
@@ -91,7 +91,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult AddOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid, 
+        public IActionResult AddOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -116,8 +116,8 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult ChangePreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid, 
-            [FromHeader]string paragraphid, [FromHeader]string newtext, 
+        public IActionResult ChangePreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string paragraphid, [FromHeader]string newtext,
             [FromServices]Services.ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -157,8 +157,8 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult ChangeOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid, 
-            [FromHeader]string paragraphid, [FromHeader]string newtext, 
+        public IActionResult ChangeOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string paragraphid, [FromHeader]string newtext,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -176,6 +176,8 @@ namespace MUNityAngular.Controllers
                 {
                     newPP.Text = newtext;
                     var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
+                    resolutionService.RequestSave(resolution);
+                    _hubContext.Clients.Group(resolutionid).OperativeParagraphChanged(paragraphid, newtext);
                     return StatusCode(StatusCodes.Status200OK, json);
                 }
                 else
@@ -189,6 +191,108 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult RemovePreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string paragraphid,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
+            if (paragraph == null)
+                return StatusCode(StatusCodes.Status404NotFound, "The Paragraph has not been found!");
+
+            resolution.Preamble.Paragraphs.Remove(paragraph);
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, resolution);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult MovePreambleParagraphUp([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string paragraphid,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
+            if (paragraph == null)
+                return StatusCode(StatusCodes.Status404NotFound, "The Paragraph has not been found!");
+
+            paragraph.MoveUp();
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, resolution);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult MovePreambleParahraphDown([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string paragraphid,
+            [FromServices] ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
+            if (paragraph == null)
+                return StatusCode(StatusCodes.Status404NotFound, "The Paragraph has not been found!");
+
+            paragraph.MoveDown();
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, resolution);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult ChangeTitle([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string newtitle,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            resolution.Topic = newtitle ?? string.Empty;
+            resolutionService.UpdateResolutionName(resolutionid, newtitle);
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, resolution);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult MyResolutions([FromHeader]string auth,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var authresult = authService.ValidateAuthKey(auth);
+            if (authresult.valid == false)
+                return StatusCode(StatusCodes.Status403Forbidden, "The auth is not valid!");
+
+            var resolutions = resolutionService.GetResolutionsOfUser(authresult.userid);
+            return StatusCode(StatusCodes.Status200OK, resolutions);
+        }
         
         [Route("[action]")]
         [HttpGet]

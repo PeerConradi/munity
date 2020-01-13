@@ -10,7 +10,7 @@
     </div>
   </div>
 
-  <app-res-options></app-res-options>
+  <app-res-options [resolution]="model"></app-res-options>
   <h4>Präambel</h4>
   <button class="btn btn-success" (click)="addPreambleParagraph()">Paragraphen hinzufügen</button>
   <div *ngFor="let pp of model.Preamble.Paragraphs; let i = index" [attr.data-index]="i">

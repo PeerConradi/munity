@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using MUNityAngular.Util.Extenstions;
 using System.Threading;
 using Microsoft.AspNetCore.SignalR;
+using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityAngular.Services
 {
     public class ResolutionService : IDisposable
     {
+        private const string resolution_table_name = "resolution";
 
         public IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> HubContext { get; set; }
 
@@ -119,9 +121,9 @@ namespace MUNityAngular.Services
 
         private bool SaveResolutionInDatabase(Models.ResolutionModel resolution, bool pread, bool pwrite, string userid = "anon")
         {
-            using (var connection = DataHandlers.Database.Connector.Connection)
+            using (var connection = Connector.Connection)
             {
-                var cmdStr = "INSERT INTO resolution (id, name, user, creationdate, lastchangeddate, onlinecode,ispublicread,ispublicwrite) VALUES (" +
+                var cmdStr = "INSERT INTO "+ resolution_table_name + " (id, name, user, creationdate, lastchangeddate, onlinecode,ispublicread,ispublicwrite) VALUES (" +
                     "@id, @name, @user, @creationdate, @lastchangeddate, @onlinecode, @pread, @pwrite);";
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -146,6 +148,44 @@ namespace MUNityAngular.Services
         public ResolutionService()
         {
             StartSaveTask(CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Returns a List of resolutions where the User is the creator/owner
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns>a touple with the first value as the id, and the second value is the name</returns>
+        internal List<Models.ResolutionInformationModel> GetResolutionsOfUser(string userid)
+        {
+            var cmdStr = "SELECT id, name FROM " + resolution_table_name + " WHERE user=@userid";
+            var list = new List<Models.ResolutionInformationModel>();
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Models.ResolutionInformationModel() {ID = reader.GetString(0), Name = reader.GetString(1)});
+                    }
+                }
+            }
+            return list;
+        }
+
+        internal void UpdateResolutionName(string resolutionid, string newtitle)
+        {
+            var cmdStr = "UPDATE " + resolution_table_name + " SET name = @newname WHERE id=@id";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@newname", newtitle);
+                cmd.Parameters.AddWithValue("@id", resolutionid);
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 

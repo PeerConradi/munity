@@ -34,6 +34,24 @@ namespace MUNityAngular.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        public IActionResult GetConference([FromHeader]string auth, [FromHeader]string id,
+            [FromServices]AuthService authService,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var validation = authService.ValidateAuthKey(auth);
+            if (!validation.valid && !authService.isDefaultAuth(auth))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to perform this action");
+
+            var conference = conferenceService.GetConference(id);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "I tried so hard and got so far, but in the end, I couldnt find this conference");
+
+            return StatusCode(StatusCodes.Status200OK, conference);
+
+        }
+
+        [HttpGet]
+        [Route("[action]")]
         public IActionResult GetConferences([FromHeader]string auth, 
             [FromServices]ConferenceService conferenceService,
             [FromServices]AuthService authService)

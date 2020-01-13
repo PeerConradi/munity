@@ -1,1 +1,4 @@
-<p>conference-details works!</p>
+<p *ngIf="!conference">Konferenz wird geladen</p>
+<div *ngIf="conference" class="row">
+  <h3>{{ conference.name }}</h3>
+</div>
