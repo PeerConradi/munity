@@ -19,6 +19,8 @@ namespace MUNityAngular.Hubs
 
         Task OperativeSectionOrderChanged(IEnumerable<string> newOrder);
 
+        Task TitleChanged(string newTitle);
+
         Task ResolutionSaved(DateTime time);
     }
 }

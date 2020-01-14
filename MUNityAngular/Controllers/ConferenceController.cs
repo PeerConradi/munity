@@ -132,5 +132,31 @@ namespace MUNityAngular.Controllers
             service.CreateConference(model, password, authstate.UserId);
             return StatusCode(StatusCodes.Status200OK, JsonConvert.SerializeObject(model));
         }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult AddCommittee([FromHeader]string auth, [FromHeader]string conferenceid,
+            [FromHeader]string name, [FromHeader]string fullname, [FromHeader]string abbreviation,
+            [FromHeader]string article, [FromHeader]string resolutlycommittee,
+            [FromServices]AuthService authService,
+            [FromServices]ConferenceService conferenceService)
+        {
+            //TODO: Auth
+
+            var conference = conferenceService.GetConference(conferenceid);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
+
+
+            var committee = new CommitteeModel();
+            committee.Name = name;
+            committee.FullName = fullname;
+            committee.Abbreviation = abbreviation;
+            committee.Article = article;
+            committee.ResolutlyCommitteeID = (resolutlycommittee == null || resolutlycommittee == string.Empty) ? resolutlycommittee : null;
+            conferenceService.AddCommittee(conference, committee);
+            return StatusCode(StatusCodes.Status200OK, committee);
+        }
+
     }
 }

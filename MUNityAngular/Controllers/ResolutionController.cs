@@ -267,6 +267,9 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
+            if (string.IsNullOrEmpty(newtitle))
+                return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
+
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
@@ -277,7 +280,8 @@ namespace MUNityAngular.Controllers
             resolution.Topic = newtitle ?? string.Empty;
             resolutionService.UpdateResolutionName(resolutionid, newtitle);
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, resolution);
+            _hubContext?.Clients.Group(resolution.ID).TitleChanged(newtitle);
+            return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
         }
 
         [Route("[action]")]

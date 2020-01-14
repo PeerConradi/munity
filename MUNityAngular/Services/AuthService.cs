@@ -288,6 +288,26 @@ namespace MUNityAngular.Services
 
         }
 
+        public bool IsAdmin(string userid)
+        {
+            var cmdStr = "SELECT rank FROM admin WHERE userid=@userid";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                        return false;
+                    if (reader.GetInt16(0) == 5)
+                        return true;
+
+                    return false;
+                }
+            }
+        }
+
         public class UserAuths
         {
             

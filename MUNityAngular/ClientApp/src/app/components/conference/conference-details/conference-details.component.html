@@ -1,4 +1,65 @@
 <p *ngIf="!conference">Konferenz wird geladen</p>
-<div *ngIf="conference" class="row">
-  <h3>{{ conference.name }}</h3>
+<div *ngIf="conference">
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-4">{{ conference.name }}</h1>
+        <p class="lead">{{ conference.startDate | date:'shortDate' }} - {{ conference.endDate | date:'shortDate' }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="card border-dark mb-3" style="max-width: 18rem;">
+      <div class="card-header">Gremien</div>
+      <div class="card-body text-dark">
+        <h5 class="card-title">Gremien</h5>
+        <p class="card-text">{{ conference.committees.length }} Gremien gefunden.</p>
+      </div>
+    </div>
+
+    <div class="card border-dark mb-3" style="max-width: 18rem;">
+      <div class="card-header">Delegationen</div>
+      <div class="card-body text-dark">
+        <h5 class="card-title">Delegationen</h5>
+        <p class="card-text">{{ conference.delegations.length }} Delegationen gefunden.</p>
+      </div>
+    </div>
+
+    <div class="card border-danger mb-3" style="max-width: 18rem;">
+      <div class="card-header">Resolutionen</div>
+      <div class="card-body text-dark">
+        <h5 class="card-title">Resolutionen</h5>
+        <p class="card-text"># Resolutionen gefunden.</p>
+      </div>
+    </div>
+
+    <div class="card border-danger mb-3" style="max-width: 18rem;">
+      <div class="card-header">Redelisten</div>
+      <div class="card-body text-dark">
+        <h5 class="card-title">Redelisten</h5>
+        <p class="card-text"># Redelisten gefunden.</p>
+      </div>
+    </div>
+
+    <div class="card border-danger mb-3" style="max-width: 18rem;">
+      <div class="card-header">Team</div>
+      <div class="card-body text-dark">
+        <h5 class="card-title">Team</h5>
+        <p class="card-text"># Teamler(innen) gefunden.</p>
+      </div>
+    </div>
+
+    <div class="card border-danger mb-3" style="max-width: 18rem;">
+      <div class="card-header">Teilnehmende</div>
+      <div class="card-body text-dark">
+        <h5 class="card-title">Teilnehmende</h5>
+        <p class="card-text"># Teilnehmende gefunden.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Show if user has admin rights for this conference! -->
+  <div *ngIf="conference" class="row">
+    <button class="btn btn-primary" (click)="addCommittee()">Add Committee</button>
+  </div>
 </div>

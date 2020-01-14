@@ -12,7 +12,8 @@ namespace MUNityAngular.Services
     {
         private const string conference_table_name = "conference";
         private const string delegation_table_name = "delegation";
-        private const string conferece_user_auth_table_name = "conference_user_auth";
+        private const string conference_user_auth_table_name = "conference_user_auth";
+        private const string committee_table_name = "committee";
 
         private List<Models.ConferenceModel> conferences = new List<Models.ConferenceModel>();
         private void LoadConferencesFromDatabase()
@@ -82,9 +83,22 @@ namespace MUNityAngular.Services
             throw new NotImplementedException("To be done!");
         }
 
-        public static CommitteeModel GetCommittee(string id)
+        public static BaseCommitteeModel GetCommittee(string id)
         {
-            return null;
+            var cmdStr = "SELECT * FROM " + committee_table_name + " WHERE id=@id";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@id", id);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                        return null;
+
+                    return DataReaderConverter.ObjectFromReader<BaseCommitteeModel>(reader);
+                }
+            }
         }
 
         public List<CommitteeModel> GetCommitteesOfConference(ConferenceModel conference)
@@ -151,7 +165,7 @@ namespace MUNityAngular.Services
 
                 if (userid != null)
                 {
-                    cmdStr = "INSERT INTO " + conferece_user_auth_table_name + "(conferenceid, userid, CanOpen, CanEdit, CanRemove)"+ 
+                    cmdStr = "INSERT INTO " + conference_user_auth_table_name + "(conferenceid, userid, CanOpen, CanEdit, CanRemove)"+ 
                         " VALUES (@conferenceid, @userid, 1, 1, 1)";
                     cmd = new MySqlCommand(cmdStr, connection);
                     cmd.Parameters.AddWithValue("@conferenceid", model.ID);
@@ -273,6 +287,17 @@ namespace MUNityAngular.Services
             return canEdit;
         }
 
+        public bool AddCommittee(ConferenceModel conference, CommitteeModel committee)
+        {
+            if (conference == null)
+                throw new ArgumentNullException("The conference cannot be null!");
+
+            committee.ConferenceID = conference.ID;
+            Connector.Insert(committee_table_name, committee);
+            conference.AddCommittee(committee);
+            return true;
+        }
+
         public List<UserModel> UsersWithAccessToConference(string conferenceid)
         {
             var list = new List<UserModel>();
@@ -337,6 +362,11 @@ namespace MUNityAngular.Services
 
         public List<DelegationModel> GetDelegationsOfConference(ConferenceModel conference)
         {
+            return GetDelegationsOfConference(conference.ID);
+        }
+
+        public List<DelegationModel> GetDelegationsOfConference(string conferenceid)
+        {
             var list = new List<DelegationModel>();
             using (var connection = Connector.Connection)
             {
@@ -350,7 +380,7 @@ namespace MUNityAngular.Services
                 cmdStr += "WHERE conference.id = @conferenceid GROUP BY delegation.id";
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@conferenceid", conference.ID);
+                cmd.Parameters.AddWithValue("@conferenceid", conferenceid);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())

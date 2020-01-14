@@ -17,6 +17,6 @@ export class ResOptionsComponent implements OnInit {
   ngOnInit() {
   }
 
-  onEnter(value: string) { this.resolutionService.changeTitle(this.resolution.ID, value); }
+  onEnterTitle(value: string) { this.resolutionService.changeTitle(this.resolution.ID, value); }
 
 }

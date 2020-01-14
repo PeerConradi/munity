@@ -89,7 +89,11 @@ export class ResolutionService {
     this._hubConnection.on('ResolutionSaved', (date: Date) => {
       console.log('Resolution has been saved!' + date);
       model.lastSaved = date;
-    })
+    });
+
+    this._hubConnection.on('TitleChanged', (title: string) => {
+      model.Topic = title;
+    });
   }
 
   public addPreambleParagraph(resolutionid: string) {
@@ -112,7 +116,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('newtitle', newtitle);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangeTitle', options).subscribe(data => { });
+    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeTitle', options).subscribe(data => { }, err => { console.log('eror while changing title'); });
   }
 
   public changePreambleParagraph(resolutionid: string, paragraphid: string, newtext: string) {
