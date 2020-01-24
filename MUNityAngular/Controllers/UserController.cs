@@ -17,6 +17,9 @@ namespace MUNityAngular.Controllers
         public IActionResult Register([FromHeader]string username, [FromHeader]string password, [FromHeader]string email,
             [FromServices]AuthService authService)
         {
+            if (!authService.IsRegistrationOpened)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to create an account. The administrator disabled the registration.");
+
             var status = authService.Register(username, password, email);
             if (status)
                 return StatusCode(StatusCodes.Status200OK);
@@ -54,6 +57,13 @@ namespace MUNityAngular.Controllers
         {
             service.Logout(auth);
             return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetRegistrationState([FromServices]AuthService authService)
+        {
+            return StatusCode(StatusCodes.Status200OK, authService.IsRegistrationOpened);
         }
     }
 }

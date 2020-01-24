@@ -29,6 +29,7 @@ import { LogoutComponent } from './components/account/logout/logout.component';
 import { MyConferencesOverviewComponent } from './components/conference/my-conferences-overview/my-conferences-overview.component';
 import { ConferenceDetailsComponent } from './components/conference/conference-details/conference-details.component';
 import { MyresolutionsComponent } from './components/resedit/myresolutions/myresolutions.component';
+import { EditConferenceComponent } from './components/conference/edit-conference/edit-conference.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { MyresolutionsComponent } from './components/resedit/myresolutions/myres
     LogoutComponent,
     MyConferencesOverviewComponent,
     ConferenceDetailsComponent,
-    MyresolutionsComponent
+    MyresolutionsComponent,
+    EditConferenceComponent
   ],
   imports: [
     NgbModule,
@@ -81,6 +83,7 @@ import { MyresolutionsComponent } from './components/resedit/myresolutions/myres
       { path: 'logout', component: LogoutComponent },
       { path: 'conference/my', component: MyConferencesOverviewComponent },
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
+      { path: 'conferences/edit/:id', component: EditConferenceComponent },
     ])
   ],
   providers: [],

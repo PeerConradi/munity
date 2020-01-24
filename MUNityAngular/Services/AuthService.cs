@@ -14,7 +14,13 @@ namespace MUNityAngular.Services
         private const string user_table_name = "user";
         private const string auth_table_name = "auth";
 
-
+        private bool registrationOpened = true;
+        public bool IsRegistrationOpened { get => registrationOpened; 
+        set
+            {
+                this.registrationOpened = value;
+            }
+        }
 
         public enum EUserClearance
         {

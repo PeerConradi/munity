@@ -29,6 +29,7 @@ export class EditorComponent implements OnInit {
       this.service.getResolution(id).subscribe(n => {
         let readyState = this.service.connectionReady;
         this.model = n;
+        console.log(n);
         this.service.subscribeToResolution(this.model.ID);
         this.service.addResolutionListener(this.model);
         console.log(this.model);

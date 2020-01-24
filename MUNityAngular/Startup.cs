@@ -37,6 +37,7 @@ namespace MUNityAngular
 
 
             services.AddSignalR();
+            services.AddSingleton<Services.InstallationService>();
             services.AddSingleton<Services.ResolutionService>();
             services.AddSingleton<Services.ConferenceService>();
             services.AddSingleton<Services.AuthService>();

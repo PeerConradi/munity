@@ -54,6 +54,8 @@ namespace MUNityAngular.Models
 
         public PreambleModel Preamble { get; set; }
 
+        public string OnlineCode { get; set; }
+
         
         //Make this an read only Observable Collection (only get internal set)
         //And edit its value by just Adding from the different Amendment lists!! 
