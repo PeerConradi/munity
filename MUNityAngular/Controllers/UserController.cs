@@ -27,8 +27,6 @@ namespace MUNityAngular.Controllers
         class LoginKey
         {
             public string Key { get; set; }
-
-
         }
 
         [HttpGet]
