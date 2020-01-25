@@ -33,9 +33,9 @@ namespace MUNityAngular.Models
 
         public TimeSpan RemainingQuestionTime { get; set; }
 
-        public ObservableCollection<DelegationModel> Speakers { get; set; }
+        public List<DelegationModel> Speakers { get; set; }
 
-        public ObservableCollection<DelegationModel> Questions { get; set; }
+        public List<DelegationModel> Questions { get; set; }
 
         public DelegationModel CurrentSpeaker { get; set; }
 
@@ -61,6 +61,10 @@ namespace MUNityAngular.Models
 
         public bool QuestionTimeout { get; set; }
 
+        public string ConferenceId { get; set; }
+
+        public string CommitteeId { get; set; }
+
 
         public void AddSpeaker(DelegationModel speaker)
         {
@@ -77,14 +81,14 @@ namespace MUNityAngular.Models
 
             ID = id ?? Guid.NewGuid().ToString();
             Name = name;
-            Speakers = new ObservableCollection<DelegationModel>();
-            Questions = new ObservableCollection<DelegationModel>();
+            Speakers = new List<DelegationModel>();
+            Questions = new List<DelegationModel>();
         }
 
         public SpeakerlistModel(TimeSpan n_speakertime, TimeSpan n_questiontime)
         {
-            Speakers = new ObservableCollection<DelegationModel>();
-            Questions = new ObservableCollection<DelegationModel>();
+            Speakers = new List<DelegationModel>();
+            Questions = new List<DelegationModel>();
             Speakertime = n_speakertime;
             Questiontime = n_questiontime;
         }

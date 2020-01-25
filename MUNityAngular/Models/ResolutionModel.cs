@@ -54,6 +54,8 @@ namespace MUNityAngular.Models
 
         public PreambleModel Preamble { get; set; }
 
+        public string OnlineCode { get; set; }
+
         
         //Make this an read only Observable Collection (only get internal set)
         //And edit its value by just Adding from the different Amendment lists!! 
@@ -65,6 +67,7 @@ namespace MUNityAngular.Models
         public ResolutionModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();
+            this.Topic = "No Name";
             OperativeSections = new ObservableCollection<OperativeParagraphModel>();
             Supporters = new ObservableCollection<DelegationModel>();
             Amendments = new ObservableCollection<AbstractAmendment>();

@@ -1,0 +1,8 @@
+<h3>Meine Resolutionen</h3>
+<p *ngIf="!userSerivce.isLoggedIn">Für diese Funktion musst du eingeloggt sein!</p>
+<div *ngIf="userSerivce.isLoggedIn">
+  <p *ngIf="!resolutions">Resolutionen werden geladen!</p>
+  <ul *ngFor="let reso of resolutions">
+    <li><a [routerLink]="['/resedit', reso.id]">{{ reso.id }} , {{ reso.name }}</a></li>
+  </ul>
+</div>

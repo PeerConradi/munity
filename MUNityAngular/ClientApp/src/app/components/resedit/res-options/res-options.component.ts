@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Resolution } from '../../../models/resolution.model';
+import { UserService } from '../../../services/user.service';
+import { ResolutionService } from '../../../services/resolution.service';
 
 @Component({
   selector: 'app-res-options',
@@ -7,9 +10,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ResOptionsComponent implements OnInit {
 
-  constructor() { }
+  @Input() resolution: Resolution;
+
+  constructor(private userService: UserService, private resolutionService: ResolutionService) { }
 
   ngOnInit() {
   }
+
+  onEnterTitle(value: string) { this.resolutionService.changeTitle(this.resolution.ID, value); }
 
 }

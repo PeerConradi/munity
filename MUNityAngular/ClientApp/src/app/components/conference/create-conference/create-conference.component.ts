@@ -16,6 +16,8 @@ export class CreateConferenceComponent implements OnInit {
   enddatemodel: NgbDate;
 
   public createdConference = null;
+  error: boolean = false;
+  error_msg: any = null;
   public info: string;
 
   public requested: boolean = false;
@@ -39,21 +41,25 @@ export class CreateConferenceComponent implements OnInit {
   onSubmit(data) {
     console.log(data);
     let conference: Conference = new Conference();
-    conference.Name = data.name;
-    conference.FullName = data.fullname;
-    conference.Abbreviation = data.abbreviation;
+    conference.name = data.name;
+    conference.fullName = data.fullname;
+    conference.abbreviation = data.abbreviation;
     let startDate: Date = new Date(this.startdatemodel.year, this.startdatemodel.month, this.startdatemodel.day);
     let endDate: Date = new Date(this.enddatemodel.year, this.enddatemodel.month, this.enddatemodel.day);
 
-    conference.StartDate = startDate;
-    conference.EndDate = endDate;
+    conference.startDate = startDate;
+    conference.endDate = endDate;
     this.requested = true;
     this.info = '';
     this.service.createConference(conference, data.password).subscribe(n => {
       //this.conferenceCreated = true;
       this.createdConference = n;
       console.log(n);
-    });
+    },
+      err => {
+        this.error = true;
+        this.error_msg = err;
+      });
   }
 
 }

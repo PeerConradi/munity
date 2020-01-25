@@ -18,6 +18,7 @@ export class PreambleParagraphComponent implements OnInit {
 
   onKey(event: any) {
     this.paragraph.Text = event.target.value;
+    console.log('New Text: ' + event.target.value);
     this.service.changePreambleParagraph(this.resolutionid, this.paragraph.ID, event.target.value);
   }
 

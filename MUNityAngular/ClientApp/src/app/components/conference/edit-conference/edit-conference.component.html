@@ -1,0 +1,34 @@
+<div class="row">
+  <h2>Konferenz bearbeiten</h2>
+  <hr />
+</div>
+<div class="row" *ngIf="!conference">
+  <p>Informationen werden geladen!</p>
+</div>
+<div class="row" *ngIf="conference">
+  <div class="col-12">
+    <div class="card">
+      <h5 class="card-header">Gremien</h5>
+      <div class="card-body">
+        <h5 class="card-title">Gremien erstellen oder Bearbeiten</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Entfernen</th>
+
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr *ngFor="let c of conference.committees">
+              <th scope="row">{{ c.name }}</th>
+              <td>Mark</td>
+            </tr>
+          </tbody>
+        </table>
+        <a href="#" class="btn btn-primary">Neues Gremium hinzufügen</a>
+      </div>
+    </div>
+  </div>
+</div>

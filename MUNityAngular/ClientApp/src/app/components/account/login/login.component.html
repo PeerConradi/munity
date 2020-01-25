@@ -5,7 +5,10 @@
 <div *ngIf="error" class="alert alert-danger" role="alert">
   Login failed :(
 </div>
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+<div *ngIf="userService.isLoggedIn">
+  <p>Du bist bereits angemeldet.</p>
+</div>
+<form *ngIf="!success && !userService.isLoggedIn" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <div class="form-group">
     <label for="username">Username</label>
     <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />

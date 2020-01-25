@@ -20,6 +20,10 @@ namespace MUNityAngular.Models
         public string ConferenceID { get; set; }
 
         [DataMember]
+        [DatabaseSave("resolutlycommittee")]
+        public string ResolutlyCommitteeID { get; set; }
+
+        [DataMember]
         public List<string> DelegationList { get; set; }
 
         public CommitteeModel(string id = null)
@@ -33,71 +37,6 @@ namespace MUNityAngular.Models
             this.ID = Guid.NewGuid().ToString();
             DelegationList = new List<string>();
         }
-
-        /*
-        [JsonIgnore]
-        public ConferenceModel Conference
-        {
-            get
-            {
-                //if (ConferenceID == null)
-                //    throw new NullReferenceException("This Committee is not inside an Conference");
-                GetServices()
-                Models.ConferenceModel conference =
-                    DataHandlers.Database.ConferenceHandler.GetConference(this.ConferenceID);
-
-                if (conference != null)
-                    return conference;
-                else
-                    Console.WriteLine("Conference with cannot be found!");
-
-                return null;
-            }
-        }
-        */
-
-        
-            /*
-        [JsonIgnore]
-        public List<DelegationModel> MyDelegations
-        {
-            get
-            {
-                var conf = Conference;
-
-                var tempList = new List<DelegationModel>();
-
-                if (conf == null)
-                    return tempList;
-
-                DelegationList.ToList().ForEach(n =>
-                {
-                    var d = Conference.Delegations.FirstOrDefault(a => a.ID == n);
-                    if (d != null)
-                        tempList.Add(d);
-
-                });
-                return tempList;
-            }
-        }
-        */
-        
-        /*
-        public void AddDelegation(DelegationModel delegation)
-        {
-            //the new way:
-            if (Conference != null)
-            {
-                if (!Conference.Delegations.Contains(delegation) && Conference.Delegations.FirstOrDefault(n => n.ID == delegation.ID) == null)
-                {
-                    Conference.Delegations.Add(delegation);
-                }
-            }
-
-           //TODO: Handle douplicate Delegates
-            
-        }
-        */
 
         public override string ToString()
         {

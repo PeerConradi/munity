@@ -26,6 +26,10 @@ import { ResViewComponent } from './components/resedit/res-view/res-view.compone
 import { RegisterComponent } from './components/account/register/register.component';
 import { LoginComponent } from './components/account/login/login.component';
 import { LogoutComponent } from './components/account/logout/logout.component';
+import { MyConferencesOverviewComponent } from './components/conference/my-conferences-overview/my-conferences-overview.component';
+import { ConferenceDetailsComponent } from './components/conference/conference-details/conference-details.component';
+import { MyresolutionsComponent } from './components/resedit/myresolutions/myresolutions.component';
+import { EditConferenceComponent } from './components/conference/edit-conference/edit-conference.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +55,11 @@ import { LogoutComponent } from './components/account/logout/logout.component';
     ResViewComponent,
     RegisterComponent,
     LoginComponent,
-    LogoutComponent
+    LogoutComponent,
+    MyConferencesOverviewComponent,
+    ConferenceDetailsComponent,
+    MyresolutionsComponent,
+    EditConferenceComponent
   ],
   imports: [
     NgbModule,
@@ -63,7 +71,8 @@ import { LogoutComponent } from './components/account/logout/logout.component';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'resedit', component: EditorComponent },
+      { path: 'resedit/:id', component: EditorComponent },
+      { path: 'mydocs', component: MyresolutionsComponent},
       { path: 'reshome', component: ResolutionHomeComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'conference/create', component: CreateConferenceComponent },
@@ -71,7 +80,10 @@ import { LogoutComponent } from './components/account/logout/logout.component';
       { path: 'test/signalr', component: SignalrtestComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'login', component: LoginComponent },
-      { path: 'logout', component: LogoutComponent}
+      { path: 'logout', component: LogoutComponent },
+      { path: 'conference/my', component: MyConferencesOverviewComponent },
+      { path: 'conferences/:id', component: ConferenceDetailsComponent },
+      { path: 'conferences/edit/:id', component: EditConferenceComponent },
     ])
   ],
   providers: [],

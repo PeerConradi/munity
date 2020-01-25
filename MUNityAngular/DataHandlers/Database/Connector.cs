@@ -36,6 +36,27 @@ namespace MUNityAngular.DataHandlers.Database
             return true;
         }
 
+        public static bool DoesDatabaseExist()
+        {
+            var cmdStr = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = @dbname";
+            using (var connection = Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@dbname", DATABASE_NAME);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.GetString(0) != DATABASE_NAME)
+                            return false;
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        }
+
         public static MySqlConnection Connection
         {
             get => new MySqlConnection(connectionString);
