@@ -33,6 +33,8 @@ import { EditConferenceComponent } from './components/conference/edit-conference
 import { MunityBoxComponent } from './components/components/munity-box/munity-box.component';
 import { AllComponentsComponent } from './components/components/all-components/all-components.component';
 import { NotifierModule } from "angular-notifier";
+import { DefaultLayoutComponent } from './layouts/default-layout/default-layout.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -64,35 +66,18 @@ import { NotifierModule } from "angular-notifier";
     MyresolutionsComponent,
     EditConferenceComponent,
     MunityBoxComponent,
-    AllComponentsComponent
+    AllComponentsComponent,
+    DefaultLayoutComponent
   ],
   imports: [
+    RouterModule,
     NgbModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     NotifierModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'resedit/:id', component: EditorComponent },
-      { path: 'mydocs', component: MyresolutionsComponent },
-      { path: 'reshome', component: ResolutionHomeComponent },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'conference/create', component: CreateConferenceComponent },
-      { path: 'admin/conferences', component: ConferenceListComponent },
-      { path: 'test/signalr', component: SignalrtestComponent },
-      { path: 'register', component: RegisterComponent },
-      { path: 'login', component: LoginComponent },
-      { path: 'logout', component: LogoutComponent },
-      { path: 'conference/my', component: MyConferencesOverviewComponent },
-      { path: 'conferences/:id', component: ConferenceDetailsComponent },
-      { path: 'conferences/edit/:id', component: EditConferenceComponent },
-      { path: 'components', component: AllComponentsComponent },
-      { path: 'resa/read/:id', component: ResViewComponent }
-    ])
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -13,10 +13,13 @@ export class LoginComponent implements OnInit {
   submitted = false;
   success = false;
   error = false;
+
+  inputFocused = false;
+
   constructor(private formBuilder: FormBuilder, private userService: UserService) { }
 
   ngOnInit() {
-    
+
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -38,7 +41,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.userService.login(this.f.username.value, this.f.password.value).then(n => {
       this.loading = false;
-      if (n) { 
+      if (n) {
         this.error = false;
         this.success = true;
       } else {
@@ -46,6 +49,14 @@ export class LoginComponent implements OnInit {
         this.success = false;
       }
     });
-    
+
+  }
+
+  fieldGotFocus() {
+    this.inputFocused = true;
+  }
+
+  fieldLostFocus() {
+    this.inputFocused = false;
   }
 }

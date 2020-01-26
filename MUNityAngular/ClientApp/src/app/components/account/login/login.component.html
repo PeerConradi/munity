@@ -1,33 +1,50 @@
-<h2>Login</h2>
-<div *ngIf="success" class="alert alert-success" role="alert">
-  Login success
-</div>
-<div *ngIf="error" class="alert alert-danger" role="alert">
-  Login failed :(
-</div>
-<div *ngIf="userService.isLoggedIn">
-  <p>Du bist bereits angemeldet.</p>
-</div>
-<form *ngIf="!success && !userService.isLoggedIn" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <div class="form-group">
-    <label for="username">Username</label>
-    <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
-    <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-      <div *ngIf="f.username.errors.required">Username is required</div>
+<div class="row">
+  <div class="col-lg-8 col-xs-0 login-bg" [class.blurred-bg]="inputFocused">
+
+  </div>
+  <!-- Login Box -->
+  <div class="col-lg-4 bg-white login-box .wrap-box">
+
+    <div *ngIf="success" class="alert alert-success" role="alert">
+      Login success
     </div>
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
-    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-      <div *ngIf="f.password.errors.required">Password is required</div>
+    <div *ngIf="error" class="alert alert-danger" role="alert">
+      Login failed :(
     </div>
+    <div *ngIf="userService.isLoggedIn">
+      <p>Du bist bereits angemeldet.</p>
+    </div>
+    <form class="login-title" *ngIf="!success && !userService.isLoggedIn" [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()">
+      <h1>Login</h1>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" formControlName="username" class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f.username.errors }" (focus)="fieldGotFocus();"
+          (focus-out)="fieldLostFocus();" />
+        <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+          <div *ngIf="f.username.errors.required">Username is required</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" formControlName="password" class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f.password.errors }" (focus)="fieldGotFocus();"
+          (focus-out)="fieldLostFocus();" />
+        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+          <div *ngIf="f.password.errors.required">Password is required</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Login
+        </button>
+        <a routerLink="/register" class="btn btn-link">Register</a>
+      </div>
+      <div class="form-group">
+        <a routerLink="/">Startseite</a>
+      </div>
+    </form>
   </div>
-  <div class="form-group">
-    <button [disabled]="loading" class="btn btn-primary">
-      <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-      Login
-    </button>
-    <a routerLink="/register" class="btn btn-link">Register</a>
-  </div>
-</form>
+</div>
