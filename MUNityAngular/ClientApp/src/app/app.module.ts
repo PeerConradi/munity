@@ -30,6 +30,9 @@ import { MyConferencesOverviewComponent } from './components/conference/my-confe
 import { ConferenceDetailsComponent } from './components/conference/conference-details/conference-details.component';
 import { MyresolutionsComponent } from './components/resedit/myresolutions/myresolutions.component';
 import { EditConferenceComponent } from './components/conference/edit-conference/edit-conference.component';
+import { MunityBoxComponent } from './components/components/munity-box/munity-box.component';
+import { AllComponentsComponent } from './components/components/all-components/all-components.component';
+import { NotifierModule } from "angular-notifier";
 
 @NgModule({
   declarations: [
@@ -59,7 +62,9 @@ import { EditConferenceComponent } from './components/conference/edit-conference
     MyConferencesOverviewComponent,
     ConferenceDetailsComponent,
     MyresolutionsComponent,
-    EditConferenceComponent
+    EditConferenceComponent,
+    MunityBoxComponent,
+    AllComponentsComponent
   ],
   imports: [
     NgbModule,
@@ -67,12 +72,13 @@ import { EditConferenceComponent } from './components/conference/edit-conference
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    NotifierModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'resedit/:id', component: EditorComponent },
-      { path: 'mydocs', component: MyresolutionsComponent},
+      { path: 'mydocs', component: MyresolutionsComponent },
       { path: 'reshome', component: ResolutionHomeComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'conference/create', component: CreateConferenceComponent },
@@ -84,6 +90,8 @@ import { EditConferenceComponent } from './components/conference/edit-conference
       { path: 'conference/my', component: MyConferencesOverviewComponent },
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
+      { path: 'components', component: AllComponentsComponent },
+      { path: 'resa/read/:id', component: ResViewComponent }
     ])
   ],
   providers: [],

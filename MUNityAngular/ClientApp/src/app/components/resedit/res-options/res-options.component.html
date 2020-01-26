@@ -1,24 +1,27 @@
-<form>
-  <div class="form-group">
-    <label for="inputName">Name</label>
-    <input type="text" class="form-control" #inputName id="inputName" aria-describedby="emailHelp" (keyup.enter)="onEnterTitle(inputName.value)"
-           value="{{resolution.Topic}}" placeholder="Name der Resolution">
-    <small id="emailHelp" class="form-text text-muted">Dieser Name wird als Titel für die Resolution verwendet.</small>
-  </div>
-  <div class="form-group">
-    <label for="resolultyCommittee">Beschlussfassendes Gremium</label>
-    <select class="form-control" id="resolultyCommittee">
-      <option>Gremium 1</option>
-      <option>Gremium 2</option>
-      <option>Gremium 3</option>
-      <option>Gremium 4</option>
-      <option>Gremium 5</option>
-    </select>
-  </div>
-  <div class="form-group form-check">
-    <input type="checkbox" class="form-check-input" id="display">
-    <label class="form-check-label" for="exampleCheck1">Ansicht erlauben</label>
-    <small id="emailHelp" class="form-text text-muted">Die ID für die Ansicht lautet: 1234567</small>
-  </div>
-  
-</form>
+<app-munity-box title="Eigenschaften" toolbox="true" expand="false">
+  <form>
+    <div class="form-group">
+      <label for="inputName">Name</label>
+      <input type="text" class="form-control" #inputName id="inputName" aria-describedby="emailHelp"
+        (keyup.enter)="onEnterTitle(inputName.value)" value="{{resolution.Topic}}" placeholder="Name der Resolution">
+      <small id="emailHelp" class="form-text text-muted">Dieser Name wird als Titel für die Resolution
+        verwendet.</small>
+    </div>
+    <div class="form-group">
+      <label for="resolultyCommittee">Beschlussfassendes Gremium</label>
+      <select class="form-control" id="resolultyCommittee">
+        <option>Gremium 1</option>
+        <option>Gremium 2</option>
+        <option>Gremium 3</option>
+        <option>Gremium 4</option>
+        <option>Gremium 5</option>
+      </select>
+    </div>
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="display">
+      <label class="form-check-label" for="exampleCheck1">Ansicht erlauben</label>
+      <small id="emailHelp" class="form-text text-muted">Die ID für die Ansicht lautet: 1234567</small>
+    </div>
+
+  </form>
+</app-munity-box>

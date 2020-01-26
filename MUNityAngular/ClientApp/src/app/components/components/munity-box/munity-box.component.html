@@ -1,0 +1,28 @@
+<div class="card" *ngIf="!closed" [class.bg-primary]="colorscheme === 'primary' && !outlined"
+    [class.border-primary]="colorscheme === 'primary' && outlined"
+    [class.bg-secondary]="colorscheme === 'secondary' && !outlined"
+    [class.border-secondary]="colorscheme === 'secondary' && outlined"
+    [class.bg-success]="colorscheme === 'success' && ! outlined"
+    [class.border-success]="colorscheme === 'success' && outlined"
+    [class.bg-danger]="colorscheme === 'danger' && !outlined"
+    [class.border-danger]="colorscheme === 'danger' && outlined"
+    [class.bg-warning]="colorscheme === 'warning' && !outlined"
+    [class.border-warning]="colorscheme === 'warning' && outlined" [class.bg-info]="colorscheme === 'info' && !outlined"
+    [class.border-info]="colorscheme === 'info' && outlined" [class.bg-light]="colorscheme === 'light' && !outlined"
+    [class.border-light]="colorscheme === 'light' && outlined" [class.bg-dark]="colorscheme === 'dark' && !outlined"
+    [class.border-dark]="colorscheme === 'dark' && outlined" [class.text-white]="(colorscheme === 'primary' || colorscheme === 'secondary' || 
+    colorscheme === 'danger' || colorscheme === 'warning' || colorscheme === 'info'
+    || colorscheme === 'dark' || colorscheme === 'success') && outlined===false">
+    <div class="card-header">
+        <h4 class=float-left> {{title}} </h4>
+        <div class="" *ngIf="toolbox">
+            <div class="btn-group float-right" role="group" aria-label="Basic example" *ngIf="toolbox">
+                <button *ngIf="minimizable" type="button" class="btn btn-primary" (click)="toggleContent()">_</button>
+                <button *ngIf="closeable" type="button" class="btn btn-danger" (click)="closeBox()">X</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body" *ngIf="showcontent">
+        <ng-content></ng-content>
+    </div>
+</div>

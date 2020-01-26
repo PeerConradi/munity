@@ -1,3 +1,5 @@
+<notifier-container></notifier-container>
+
 <p *ngIf="!model">Resolution wird geladen</p>
 <div *ngIf="model">
   <div class="row">
@@ -11,18 +13,98 @@
   </div>
 
   <app-res-options [resolution]="model"></app-res-options>
-  <h4>Präambel</h4>
-  <button class="btn btn-success" (click)="addPreambleParagraph()">Paragraphen hinzufügen</button>
-  <div *ngFor="let pp of model.Preamble.Paragraphs; let i = index" [attr.data-index]="i">
-    <app-preamble-paragraph [paragraph]=pp [index]=i+1 [resolutionid]=model.ID></app-preamble-paragraph>
-  </div>
-  <h4>Operativer Abschnitt</h4>
-  <div *ngFor="let pa of model.OperativeSections">
-    <app-operative-paragraph [paragraph]=pa></app-operative-paragraph>
-  </div>
-  <h4>Änderungsanträge</h4>
-  <ul>
-    <li><app-amendment-controller></app-amendment-controller></li>
-  </ul>
+  <div class="row">
+    <div class="col-lg-8 col-md-12">
+      <app-munity-box toolbox="true" title="Präambel">
+        <div *ngFor="let pp of model.Preamble.Paragraphs; let i = index" [attr.data-index]="i">
+          <app-preamble-paragraph [paragraph]=pp [index]=i+1 [resolutionid]=model.ID></app-preamble-paragraph>
+        </div>
+        <button class="btn btn-block btn-success add-button" (click)="addPreambleParagraph()">Paragraphen
+          hinzufügen</button>
+      </app-munity-box>
 
+      <app-munity-box toolbox="true" title="Operativer Abschnitt">
+        <div *ngFor="let pa of model.OperativeSections">
+          <app-operative-paragraph [paragraph]=pa></app-operative-paragraph>
+        </div>
+        <button class="btn btn-block btn-success add-button">Operativen Absatz hinzufügen</button>
+      </app-munity-box>
+    </div>
+    <div class="col-lg-4 col-md-12 col-xm-12 col-xs-12">
+      <app-munity-box toolbox="true" title="Änderungsanträge">
+        <!-- Dieser Button soll gewollt oberhalb der Liste sein! -->
+        <button class="btn btn-block btn-success add-button" (click)="openAddAmendmentModal();">Änderungsantrag
+          hinzufügen</button>
+        <app-amendment-controller></app-amendment-controller>
+        <app-amendment-controller></app-amendment-controller>
+
+      </app-munity-box>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop fade-in" style="opacity: 0.9;" [style.display]="amendmentModalActive ? 'block' : 'none'">
+</div>
+<div class="modal" [style.display]="amendmentModalActive ? 'block' : 'none'" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Änderungsantrag hinzufügen</h5>
+        <button type="button" class="close" (click)="closeAddAmendmentModal();" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <fieldset>
+
+            <!-- Select Basic -->
+            <div class="form-group">
+              <div class="row">
+                <label class="col-12 control-label" for="selecttype">Art</label>
+                <div class="col-12">
+                  <select id="selectbasic" name="selecttype" class="form-control"
+                    (change)="addAmendmentTypeSelected($event.target.value)">
+                    <option value="delete" [selected]>Streichen</option>
+                    <option value="change">Ändern</option>
+                    <option value="move">Verschieben</option>
+                    <option value="add">Hinzufügen</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Ziel Operativer Absatz -->
+              <div class="row"
+                *ngIf="addAmendmentType === 'delete' || addAmendmentType === 'change' || addAmendmentType === 'move'">
+                <label class="col-12 control-label" for="selecttarget">Ziel</label>
+                <div class="col-12">
+                  <select #selectTarget name="selecttarget" class="form-control" [(ngModel)]="amendmentTargetSection">
+                    <option *ngFor="let s of model.OperativeSections" [ngValue]="s">{{ s.Path }}
+                      {{ s.Text | slice:0:20 }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Neuer Text -->
+              <div class="row" *ngIf="addAmendmentType === 'change' || addAmendmentType === 'add'">
+                <label class="col-12 control-label" for="textarea">Neuer Text</label>
+                <div class="col-12">
+                  <textarea class="form-control" cols="4"
+                    style="min-width: 100%">{{ amendmentTargetSection.Text }}</textarea>
+                </div>
+              </div>
+            </div>
+
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+          (click)="closeAddAmendmentModal();">Close</button>
+        <button type="button" class="btn btn-primary">Hinzufügen</button>
+      </div>
+    </div>
+  </div>
 </div>

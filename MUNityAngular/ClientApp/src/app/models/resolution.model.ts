@@ -8,4 +8,7 @@ export class Resolution {
   OperativeSections: OperativeSection[];
   Preamble: Preamble;
   lastSaved: Date;
+  CommitteeName: string;
+  SubmitterName: string;
+  SupporterNames: string[] = [];
 }

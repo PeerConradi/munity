@@ -104,7 +104,7 @@ export class ResolutionService {
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/AddPreambleParagraph', options).subscribe(data => { });
+    return this.httpClient.get(this.baseUrl + 'api/Resolution/AddPreambleParagraph', options);
   }
 
   public changeTitle(resolutionid: string, newtitle: string) {

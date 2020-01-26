@@ -24,6 +24,7 @@
     "@aspnet/signalr": "^1.1.4",
     "@ng-bootstrap/ng-bootstrap": "^5.1.4",
     "@nguniversal/module-map-ngfactory-loader": "8.0.0-rc.1",
+    "angular-notifier": "^6.0.1",
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.3.1",
     "core-js": "^2.6.5",
@@ -35,7 +36,7 @@
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.800.6",
+    "@angular-devkit/build-angular": "^0.803.23",
     "@angular/cli": "8.0.6",
     "@angular/compiler-cli": "8.0.0",
     "@angular/language-service": "8.0.0",

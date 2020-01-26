@@ -25,4 +25,7 @@ export class PreambleParagraphComponent implements OnInit {
   ngOnInit() {
   }
 
+  delete() {
+    console.log('Delete: ' + this.paragraph.ID);
+  }
 }

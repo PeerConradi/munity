@@ -14,53 +14,36 @@ textarea {
   box-sizing: border-box; /* Opera/IE 8+ */
 }
 
-.paragraph-index {
-  position: absolute;
-}
-
-.btn-move {
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  padding: 0px;
-  border-radius: 50%;
-}
-
-.btn-up {
-  top: 35px;
-  right: 10px;
-}
-
-.btn-down {
-  top: 65px;
-  right: 10px;
-}
-
-.btn-left {
-  top: 95px;
-  right: 10px;
-  text-align: center;
-}
-
-.btn-right {
-  top: 125px;
-  right: 10px;
-}
-
-.btn-delete {
-  position: absolute;
-  border-radius: 50%;
-  top: 5px;
-  right: 10px;
-  width: 25px;
-  height: 25px;
-  text-align: center;
-  padding: 0px;
-}
-
 .paragraph-box {
-  border-style: solid;
-  height: 160px;
-  position: relative;
-  margin-bottom: 10px;
+    border-style: solid;
+    border-width: 1px;
+    display: grid;
+    grid-template-columns: auto 50px;
+    grid-template-rows: 40px 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
 }
+
+.paragraph-title {
+    grid-area: 1 / 1 / 2 / 3;
+}
+
+.paragraph-textarea {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+.paragraph-tools {
+    grid-area: 1 / 2 / 3 / 3;
+    padding-top: 0px;
+}
+
+.paragraph-tools>button {
+    
+    width: 35px;
+    height: 35px;
+    padding: 0px;
+    margin-left: auto;
+    margin-right: 0px;
+    max-height: 35px;
+}
+

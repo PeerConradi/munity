@@ -1,1 +1,28 @@
-<p>res-view works!</p>
+<div *ngIf="!resolution">
+    <h3 class="text-danger">Fehler beim Laden der Resolution!</h3>
+</div>
+
+<div *ngIf="resolution">
+    <div class="title-section">
+        <h3> {{ resolution.Topic }}</h3>
+        <p>Einbringer: {{ resolution.SubmitterName }}</p>
+        <p>Unterstützer: </p>
+        <ng-container *ngFor="let name of resolution.SupporterNames">{{ name }}, </ng-container>
+        <br />
+        <br />
+        <b>{{ resolution.CommitteeName | uppercase }},</b>
+        <br />
+    </div>
+
+    <p class="operative-paragraph-text" *ngFor="let pre of resolution.Preamble.Paragraphs"> {{ pre.Text }} </p>
+
+    <div *ngFor="let oa of resolution.OperativeSections">
+        <p class="text-info amendment-counts">Änderungsanträge: {{ oa.DeleteAmendmentCount}}
+            Streichen,
+            {{ oa.ChangeAmendmentCount }}
+            Textänderung,
+            {{ oa.MoveAmendmentCount }} Verschieben</p>
+        <p style="margin-top: -20px;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
+        <br />
+    </div>
+</div>
