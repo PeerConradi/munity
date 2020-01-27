@@ -1,0 +1,145 @@
+<div class="row">
+    <h1>Redeliste Bearbeiten</h1>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-primary" role="alert">
+            Die Anzeige-Id für diese Redeliste lautet: 123456
+        </div>
+    </div>
+    <div class="col-12">
+        <app-munity-box toolbox="true" title="Einstellungen" showcontent="false">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Einstellung</th>
+                        <th scope="col">Wert</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Titel</th>
+                        <td><input type="text" class="form-control" placeholder="Redeliste" /></td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <th scope="row">Redezeit</th>
+                        <td><input type="time" class="form-control" value="02:00" /></td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <th scope=" row">Fragen und Antwortzeit</th>
+                        <td><input type="time" class="form-control" value="00:30" /></td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td><button class="btn btn-info">Zurücksetzen</button></td>
+                        <td><button class="btn btn-block btn-primary">Speichern</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </app-munity-box>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="btn-group w-100" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-secondary">Gastredner</button>
+        <button type="button" class="btn btn-secondary">Generalsekretär</button>
+        <button type="button" class="btn btn-secondary">Zeitbanner</button>
+        <button type="button" class="btn btn-danger">Banner entfernen</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="btn-group w-100" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-warning">Momentanen Redner zurücksetzen</button>
+        <button type="button" class="btn btn-warning">Momentane Frage zurücksetzen</button>
+    </div>
+</div>
+
+<div class="row" style="margin-top: 20px;">
+    <div class="col-lg-6 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                Redeliste
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <b class="col-8 float-left">Aktuell PLATZTHALTER</b>
+                    <b class=" col-4 float-right">ZEIT: 02:00</b>
+                </div>
+
+                <div class="row">
+                    <div class="btn-group btn-block" role="group" aria-label="First group">
+                        <button type="button" class="btn btn-primary">Nächster</button>
+                        <button type="button" class="btn btn-warning">Go/Pause</button>
+                        <button type="button" class="btn btn-secondary">Antworten</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <ngx-sortable class="w-100" [items]="speakers" [name]="'Redner'" [listStyle]="listStyle"
+                        (listSorted)="listOrderChanged($event)" (select)="onSelect($event)" style="margin-top: 10px;">
+                        <ng-template let-item>
+                            <div class="sortable-list-item row">
+                                <div class="col-10">
+                                    <h5 class="align-middle">{{ item.Name }}</h5>
+                                </div>
+                                <div class="col-2" style="padding: 2px;"><button class="btn btn-danger"
+                                        (click)="removeSpeaker(item.ID)">X</button></div>
+                            </div>
+                        </ng-template>
+                    </ngx-sortable>
+                </div>
+                <div class="row">
+                    <button class="btn btn-danger btn-block">Liste schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                Fragen und Kurzbemerkungen
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <b class="col-8 float-left">Aktuell PLATZTHALTER</b>
+                    <b class=" col-4 float-right">ZEIT: 00:30</b>
+                </div>
+
+                <div class="row">
+                    <div class="btn-group btn-block" role="group" aria-label="First group">
+                        <button type="button" class="btn btn-primary">Nächster</button>
+                        <button type="button" class="btn btn-warning">Go/Pause</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <ngx-sortable class="w-100" [items]="speakers" [name]="'Fragen'" [listStyle]="listStyle"
+                        (listSorted)="listOrderChanged($event)" (select)="onSelect($event)" style="margin-top: 10px;">
+                        <ng-template let-item>
+                            <div class="sortable-list-item row">
+                                <div class="col-10">
+                                    <h5 class="align-middle">{{ item.Name }}</h5>
+                                </div>
+                                <div class="col-2" style="padding: 2px;"><button class="btn btn-danger"
+                                        (click)="removeSpeaker(item.ID)">X</button></div>
+                            </div>
+                        </ng-template>
+                    </ngx-sortable>
+                </div>
+                <div class="row">
+                    <button class="btn btn-danger btn-block">Liste schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

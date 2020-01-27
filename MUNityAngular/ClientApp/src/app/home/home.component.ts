@@ -9,11 +9,7 @@ export class HomeComponent {
 
   public conferences;
 
-  constructor(private conferenceSerice: ConferenceServiceService) {
-    this.conferences = conferenceSerice.getAllConferences().subscribe(n => {
-      this.conferences = n;
-      console.log(this.conferences);
-    });
+  constructor() {
 
   }
 

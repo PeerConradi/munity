@@ -5,6 +5,12 @@
     <div class="col-12">
         <h5>Bearbeiten und Einsehen von Resolutionen </h5>
     </div>
+    <div class="col-12" *ngIf="service.hasError">
+        <div class="alert alert-danger" role="alert">
+            <b>ACHTUNG!</b> Offenbar liegt ein Fehler bei unseren WebSockets vor, die Arbeit an Resolutionen kann
+            eingeschränkt sein!
+        </div>
+    </div>
 </div>
 <div class="row">
     <div class="col-4 d-flex align-items-stretch">
@@ -48,8 +54,8 @@
                 <p class="card-text">Mitlesen und ggf. Änderungsanträge einreichen.</p>
                 <form>
                     <div class="form-group">
-                        <label for="speakerlistid">ResolutionId</label>
-                        <input type="number" class="form-control" id="speakerlistid" aria-describedby="emailHelp"
+                        <label for="speakerlistpublicid">ResolutionId</label>
+                        <input type="number" class="form-control" id="speakerlistpublicid" aria-describedby="emailHelp"
                             placeholder="1234567" disabled>
                         <small id="emailHelp" class="form-text text-muted">Die ResolutionId ist lediglich dem
                             ersteller der Resolution bekannt</small>

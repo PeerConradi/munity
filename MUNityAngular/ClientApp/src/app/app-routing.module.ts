@@ -20,6 +20,9 @@ import { ConferenceDetailsComponent } from './components/conference/conference-d
 import { AllComponentsComponent } from './components/components/all-components/all-components.component';
 import { ResViewComponent } from './components/resedit/res-view/res-view.component';
 import { DefaultLayoutComponent } from './layouts/default-layout/default-layout.component';
+import { SpeakerlistStartupComponent } from './components/speakerlist/speakerlist-startup/speakerlist-startup.component';
+import { SpeakerlistControllerComponent } from './components/speakerlist/speakerlist-controller/speakerlist-controller.component';
+import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-view/speakerlist-view.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -44,7 +47,12 @@ const routes: Routes = [
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
       { path: 'components', component: AllComponentsComponent },
-      { path: 'resa/read/:id', component: ResViewComponent }
+      { path: 'resa/read/:id', component: ResViewComponent },
+
+      //Speakerlist
+      { path: 's/start', component: SpeakerlistStartupComponent },
+      { path: 's/edit/:id', component: SpeakerlistControllerComponent },
+      { path: 's/view/:id', component: SpeakerlistViewComponent }
     ]
   }
 

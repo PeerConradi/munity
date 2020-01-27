@@ -11,6 +11,8 @@ import { Committee } from '../models/committee.model';
 })
 export class ConferenceServiceService {
 
+  hasError: boolean = false;
+
   private baseUrl: string;
   constructor(private http: HttpClient, private userService: UserService, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -18,7 +20,11 @@ export class ConferenceServiceService {
 
   public getAllConferences(): Observable<Conference[]> {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.sessionkey())
+    let auth = 'default';
+    if (this.userService.isLoggedIn)
+      auth = this.userService.sessionkey();
+    headers = headers.set('auth', auth);
+
     const options = { headers: headers };
     return this.http.get<Conference[]>(this.baseUrl + 'api/conference/GetConferences', options);
   }

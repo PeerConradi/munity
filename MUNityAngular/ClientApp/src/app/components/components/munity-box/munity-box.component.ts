@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class MunityBoxComponent implements OnInit {
 
-  showcontent = true;
+  @Input() showcontent: boolean = true;
 
   @Input() title: string;
 
@@ -18,16 +18,6 @@ export class MunityBoxComponent implements OnInit {
   @Input() closeable: boolean = false;
 
   @Input() outlined: boolean = false;
-
-  @Input('expand')
-
-  public set expand(v: boolean) {
-
-    this.showcontent = v;
-    console.log('expandedn = ' + this.showcontent);
-  }
-
-
 
   colorscheme: string = "";
 
@@ -41,7 +31,9 @@ export class MunityBoxComponent implements OnInit {
 
 
 
-  constructor() { }
+  constructor() {
+
+  }
 
   ngOnInit() {
   }

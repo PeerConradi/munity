@@ -1,7 +1,7 @@
 <header>
   <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">MUNity</a>
+      <a class="navbar-brand" [routerLink]="['/']">MUNity</a><span class="badge badge-pill badge-primary">ALPHA</span>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
         aria-label="Toggle navigation" [attr.aria-expanded]="isExpanded" (click)="toggle()">
         <span class="navbar-toggler-icon"></span>
@@ -15,15 +15,17 @@
             <a class="nav-link text-dark" [routerLink]="['/reshome']">Resolutionen</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/']">Redeliste</a>
+            <a class="nav-link text-dark" [routerLink]="['/s/start']">Redeliste</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/']">Abstimmung</a>
           </li>
           <li>
             <form class="form-inline" *ngIf="!userSerivce.isLoggedIn">
-              <button id="loginButton" class="btn btn-outline-success" type="button" [routerLink]="['/login']">Anmelden</button>
-              <button id="registerButton" class="btn btn-sm btn-outline-secondary" type="button" [routerLink]="['/register']">Registrieren</button>
+              <button id="loginButton" class="btn btn-outline-success" type="button"
+                [routerLink]="['/login']">Anmelden</button>
+              <button id="registerButton" class="btn btn-sm btn-outline-secondary" type="button"
+                [routerLink]="['/register']">Registrieren</button>
             </form>
             <form class="form-inline" *ngIf="userSerivce.isLoggedIn">
               <button class="btn btn-outline-danger" type="button" [routerLink]="['/logout']">Logout</button>

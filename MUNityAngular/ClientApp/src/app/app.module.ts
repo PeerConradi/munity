@@ -35,6 +35,11 @@ import { AllComponentsComponent } from './components/components/all-components/a
 import { NotifierModule } from "angular-notifier";
 import { DefaultLayoutComponent } from './layouts/default-layout/default-layout.component';
 import { AppRoutingModule } from './app-routing.module';
+import { SpeakerlistStartupComponent } from './components/speakerlist/speakerlist-startup/speakerlist-startup.component';
+import { SpeakerlistControllerComponent } from './components/speakerlist/speakerlist-controller/speakerlist-controller.component';
+import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-view/speakerlist-view.component';
+
+import { NgxSortableModule } from 'ngx-sortable'
 
 @NgModule({
   declarations: [
@@ -67,7 +72,10 @@ import { AppRoutingModule } from './app-routing.module';
     EditConferenceComponent,
     MunityBoxComponent,
     AllComponentsComponent,
-    DefaultLayoutComponent
+    DefaultLayoutComponent,
+    SpeakerlistStartupComponent,
+    SpeakerlistControllerComponent,
+    SpeakerlistViewComponent
   ],
   imports: [
     RouterModule,
@@ -77,7 +85,8 @@ import { AppRoutingModule } from './app-routing.module';
     FormsModule,
     ReactiveFormsModule,
     NotifierModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgxSortableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

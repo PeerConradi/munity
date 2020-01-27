@@ -15,6 +15,8 @@ export class ResolutionService {
 
   private baseUrl: string;
 
+  public hasError: boolean = false;
+
   public resolution: Resolution;
 
   public connectionReady: boolean = false;
@@ -35,7 +37,7 @@ export class ResolutionService {
         });
         this.stack = [];
       })
-      .catch(err => console.log('Error while establishing connection :('));
+      .catch(err => this.hasError = true);
   }
 
   public createResolution() {
