@@ -147,14 +147,11 @@ namespace MUNityAngular.Models
             }
         }
 
-        [JsonIgnore]
+        
         public int DeleteAmendmentCount { get => Amendments.OfType<DeleteAmendmentModel>().Count(); }
 
-
-        [JsonIgnore]
         public int ChangeAmendmentCount { get => Amendments.OfType<ChangeAmendmentModel>().Count(); }
 
-        [JsonIgnore]
         public int MoveAmendmentCount { get => Amendments.OfType<MoveAmendment>().Count(); }
 
 

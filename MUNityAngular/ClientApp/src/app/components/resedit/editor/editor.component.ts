@@ -112,4 +112,10 @@ export class EditorComponent implements OnInit {
       console.log(err)
     });
   }
+
+  addDeleteAmendment() {
+    const resolutionid = this.model.ID;
+    const sectionid = this.model.OperativeSections[0].ID;
+    this.service.addDeleteAmendment(resolutionid, sectionid);
+  }
 }

@@ -7,6 +7,7 @@ import { Resolution } from '../models/resolution.model';
 import { PreambleParagraph } from '../models/preamble-paragraph.model';
 import { ResolutionInformation } from '../models/resolution-information.model';
 import { OperativeSection } from '../models/operative-section.model';
+import { DeleteAmendment } from '../models/delete-amendment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -113,6 +114,11 @@ export class ResolutionService {
     this._hubConnection.on('TitleChanged', (title: string) => {
       model.Topic = title;
     });
+
+    this._hubConnection.on('DeleteAmendmentAdded', (model: DeleteAmendment) => {
+      console.log('new Delete Amendment')
+      console.log(model);
+    })
   }
 
   public addPreambleParagraph(resolutionid: string) {
@@ -161,10 +167,9 @@ export class ResolutionService {
     headers = headers.set('paragraphid', paragraphid);
     headers = headers.set('newtext', encodeURI(newtext + '|'));
     console.log(headers.get('newtext'));
-    console.log('NEUERTEXT:' + newtext + ':TEXTEND');
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph',
-      options).subscribe(data => console.log(data));
+      options).subscribe(data => { });
   }
 
   public changeOperativeParagraph(resolutionid: string, paragraphid: string, newtext: string) {
@@ -177,11 +182,10 @@ export class ResolutionService {
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
-    headers = headers.set('newtext', newtext + '|');
-    console.log('NEUERTEXT:' + newtext + ':TEXTEND');
+    headers = headers.set('newtext', encodeURI(newtext + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/ChangeOperativeParagraph',
-      options).subscribe(data => console.log(data));
+      options).subscribe(data => { });
   }
 
   public subscribeToResolution(id: string) {
@@ -195,9 +199,22 @@ export class ResolutionService {
     }
   }
 
-  public deleteOperativeParagraph(resolutionid: string, paragraphid: string) {
+  public addDeleteAmendment(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
 
+    let headers = new HttpHeaders();
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('sectionid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/AddDeleteAmendment',
+      options).subscribe(data => console.log(data));
   }
+
+  
 
 }
 

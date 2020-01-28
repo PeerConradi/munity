@@ -22,5 +22,7 @@ namespace MUNityAngular.Hubs
         Task TitleChanged(string newTitle);
 
         Task ResolutionSaved(DateTime time);
+
+        Task DeleteAmendmentAdded(string model);
     }
 }

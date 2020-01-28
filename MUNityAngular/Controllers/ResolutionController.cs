@@ -162,8 +162,9 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            if (newtext.EndsWith('|'))
-                newtext = newtext.Substring(0, newtext.Length - 1);
+            var realText = System.Web.HttpUtility.UrlDecode(newtext);
+            if (realText.EndsWith('|'))
+                realText = newtext.Substring(0, realText.Length - 1);
 
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
@@ -177,10 +178,10 @@ namespace MUNityAngular.Controllers
                 var newPP = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
                 if (newPP != null)
                 {
-                    newPP.Text = newtext;
+                    newPP.Text = realText;
                     var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
                     resolutionService.RequestSave(resolution);
-                    _hubContext.Clients.Group(resolutionid).OperativeParagraphChanged(paragraphid, newtext);
+                    _hubContext.Clients.Group(resolutionid).OperativeParagraphChanged(paragraphid, realText);
                     return StatusCode(StatusCodes.Status200OK, json);
                 }
                 else
@@ -285,6 +286,31 @@ namespace MUNityAngular.Controllers
             resolutionService.RequestSave(resolution);
             _hubContext?.Clients.Group(resolution.ID).TitleChanged(newtitle);
             return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult AddDeleteAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string sectionid, [FromHeader]string submittername,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == sectionid);
+            if (section == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
+
+            var amendment = new Models.DeleteAmendmentModel();
+            amendment.TargetSection = section;
+
+            _hubContext.Clients.Group(resolutionid).DeleteAmendmentAdded(Newtonsoft.Json.JsonConvert.SerializeObject(amendment));
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]

@@ -16,8 +16,12 @@ namespace MUNityAngular.Models
 
         public bool Activated { get; set; }
 
+        public string SubmitterName { get; set; }
+
+        [JsonIgnore]
         public DelegationModel Submitter { get; set; }
 
+        [JsonIgnore]
         public List<DelegationModel> Supporters { get; set; }
 
         [JsonIgnore]
@@ -105,5 +109,10 @@ namespace MUNityAngular.Models
 
         [JsonIgnore]
         public virtual int ORDER_LEVEL { get; } = 0;
+
+        public AbstractAmendment()
+        {
+            SubmitTime = DateTime.Now;
+        }
     }
 }

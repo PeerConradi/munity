@@ -32,7 +32,7 @@ namespace MUNityAngular.Models
             
         }
 
-        public DeleteAmendmentModel(string id = null)
+        public DeleteAmendmentModel(string id = null) : base()
         {
             this.ID = id ?? Guid.NewGuid().ToString();
         }
