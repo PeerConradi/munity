@@ -49,8 +49,8 @@
 
 <div class="row">
     <div class="btn-group w-100" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-secondary">Gastredner</button>
-        <button type="button" class="btn btn-secondary">Generalsekretär</button>
+        <button type="button" class="btn btn-secondary" (click)="openGuestSpeakerDialog();">Gastredner</button>
+        <button type="button" class="btn btn-secondary" (click)="openSecretaryModal();">Generalsekretär</button>
         <button type="button" class="btn btn-secondary">Zeitbanner</button>
         <button type="button" class="btn btn-danger">Banner entfernen</button>
     </div>
@@ -84,7 +84,7 @@
                 </div>
 
                 <div class="row">
-                    <ngx-sortable class="w-100" [items]="speakers" [name]="'Redner'" [listStyle]="listStyle"
+                    <ngx-sortable class="w-100" [items]="speakers" [name]="'Anstehende Redner'" [listStyle]="listStyle"
                         (listSorted)="listOrderChanged($event)" (select)="onSelect($event)" style="margin-top: 10px;">
                         <ng-template let-item>
                             <div class="sortable-list-item row">
@@ -123,7 +123,7 @@
                 </div>
 
                 <div class="row">
-                    <ngx-sortable class="w-100" [items]="speakers" [name]="'Fragen'" [listStyle]="listStyle"
+                    <ngx-sortable class="w-100" [items]="speakers" [name]="'Anstehende Fragen'" [listStyle]="listStyle"
                         (listSorted)="listOrderChanged($event)" (select)="onSelect($event)" style="margin-top: 10px;">
                         <ng-template let-item>
                             <div class="sortable-list-item row">
@@ -139,6 +139,120 @@
                 <div class="row">
                     <button class="btn btn-danger btn-block">Liste schließen</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Guest Speaker -->
+<!-- Modal -->
+<div class="modal-backdrop fade-in" style="opacity: 0.9;"
+    [style.display]="addGuestSpeakerModalOpened ? 'block' : 'none'">
+</div>
+<div class="modal" [style.display]="addGuestSpeakerModalOpened ? 'block' : 'none'" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gastredner setzen</h5>
+                <button type="button" class="close" (click)="closeAddGuestSpeakerModal();" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <fieldset>
+
+                        <!-- Select Basic -->
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-12 control-label" for="speakername">Name</label>
+                                <div class="col-12">
+                                    <input type="text" placeholder="Name" class="form-control" id="speakername">
+                                </div>
+
+                            </div>
+
+                            <!-- Ziel Operativer Absatz -->
+                            <div class="row">
+                                <label class="col-12 control-label" for="selecttarget">Bild</label>
+                                <div class="col-12">
+                                    <!-- TODO: Icon selector-->
+                                </div>
+                            </div>
+
+                            <!-- Neuer Text -->
+                            <div class="row">
+                                <label class="col-12 control-label" for="guestTime">Zeit</label>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                                        <label class="form-check-label" for="defaultCheck1">
+                                            Zeit verwenden
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <input id="guestTime" class="form-control" type="time" />
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    (click)="closeAddGuestSpeakerModal();">Close</button>
+                <button type="button" class="btn btn-primary">Hinzufügen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Generalsekretär Modal -->
+<div class="modal-backdrop fade-in" style="opacity: 0.9;" [style.display]="secretaryModalOpened ? 'block' : 'none'">
+</div>
+<div class="modal" [style.display]="secretaryModalOpened ? 'block' : 'none'" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Generalsekretär setzen</h5>
+                <button type="button" class="close" (click)="closeSecretaryModal();" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <fieldset>
+
+                        <!-- Select Basic -->
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-12 control-label" for="speakretarytitle">Titel</label>
+                                <div class="col-12">
+                                    <input type="text" value="Seine Exzellenz der Generalsekretär" class="form-control"
+                                        id="speakretarytitle">
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <label class="col-12 control-label" for="speakretaryname">Name</label>
+                                <div class="col-12">
+                                    <input type="text" placeholder="Name" class="form-control" id="speakretaryname">
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    (click)="closeSecretaryModal();">Close</button>
+                <button type="button" class="btn btn-primary">Hinzufügen</button>
             </div>
         </div>
     </div>

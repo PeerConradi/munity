@@ -10,6 +10,9 @@ export class SpeakerlistControllerComponent implements OnInit {
 
   speakers: Delegation[] = [];
 
+  addGuestSpeakerModalOpened = false;
+  secretaryModalOpened = false;
+
   listStyle = {
     width: '100%', //width of the list defaults to 300,
     height: '250px', //height of the list defaults to 250,
@@ -36,12 +39,29 @@ export class SpeakerlistControllerComponent implements OnInit {
   removeSpeaker(id) {
     let index = -1;
     this.speakers.forEach(n => {
-      if (n.ID == id)
+      if (n.ID == id) {
         index = this.speakers.indexOf(n);
+      }
     });
     if (index !== -1) {
       this.speakers.splice(index, 1);
     }
   }
 
+  closeAddGuestSpeakerModal() {
+    this.addGuestSpeakerModalOpened = false;
+  }
+
+  openGuestSpeakerDialog() {
+    console.log('open');
+    this.addGuestSpeakerModalOpened = true;
+  }
+
+  openSecretaryModal() {
+    this.secretaryModalOpened = true;
+  }
+
+  closeSecretaryModal() {
+    this.secretaryModalOpened = false;
+  }
 }

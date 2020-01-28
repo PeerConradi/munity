@@ -20,8 +20,9 @@ export class EditorComponent implements OnInit {
   public set resolution(v: Resolution) {
     if (v != null) {
       this.model = v;
-      if (v.OperativeSections.length > 0)
+      if (v.OperativeSections.length > 0) {
         this.amendmentTargetSection = v.OperativeSections[0];
+      }
       console.log(this.model);
     }
   }
@@ -31,11 +32,11 @@ export class EditorComponent implements OnInit {
     return this.model;
   }
 
-  public amendmentModalActive: boolean = false;
+  public amendmentModalActive = false;
 
   amendmentTargetSection: OperativeSection;
 
-  addAmendmentType: string = "delete";
+  addAmendmentType = "delete";
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService) { }
 
@@ -48,8 +49,9 @@ export class EditorComponent implements OnInit {
     this.route.params.subscribe(params => {
       id = params.id;
     })
-    if (id == null)
-      id = this.route.snapshot.queryParamMap.get("id");
+    if (id == null) {
+      id = this.route.snapshot.queryParamMap.get('id');
+    }
 
     if (id != null) {
       console.log('Suche resolution mit der ID: ' + id);

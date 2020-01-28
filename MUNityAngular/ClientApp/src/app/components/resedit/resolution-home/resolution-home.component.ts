@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
 import { Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-resolution-home',
@@ -10,7 +11,8 @@ import { NotifierService } from 'angular-notifier';
 })
 export class ResolutionHomeComponent implements OnInit {
 
-  constructor(private service: ResolutionService, private router: Router, private readonly nofitier: NotifierService) { }
+  constructor(private service: ResolutionService, private router: Router,
+    private readonly nofitier: NotifierService, private userService: UserService) { }
 
   ngOnInit() {
   }
