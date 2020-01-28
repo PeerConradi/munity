@@ -34,6 +34,8 @@ namespace MUNityAngular.Services
 
         private string Save(Models.ResolutionModel resolution)
         {
+
+
             var resolutionDirectory = DataHandlers.Database.SettingsHandler.GetResolutionDir;
             var filePath = System.IO.Path.Combine(resolutionDirectory, resolution.ID + ".json");
 

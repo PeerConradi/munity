@@ -17,6 +17,6 @@
 
 
   <div class="form-group paragraph-textarea">
-    <textarea class="form-control" id="operativeTextArea" rows="5">{{ paragraph.Text }}</textarea>
+    <textarea class="form-control" id="operativeTextArea" rows="5"  (keyup)="onKey($event)">{{ paragraph.Text }}</textarea>
   </div>
 </div>

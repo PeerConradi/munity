@@ -26,6 +26,7 @@ import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-v
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'resa/read/:id', component: ResViewComponent },
   {
     path: '',
     component: DefaultLayoutComponent,
@@ -47,7 +48,7 @@ const routes: Routes = [
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
       { path: 'components', component: AllComponentsComponent },
-      { path: 'resa/read/:id', component: ResViewComponent },
+      
 
       //Speakerlist
       { path: 's/start', component: SpeakerlistStartupComponent },

@@ -107,6 +107,7 @@ namespace MUNityAngular.Controllers
                 var newPP = resolution.AddOperativeParagraph();
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
                 resolutionService.RequestSave(resolution);
+                _hubContext.Clients.Group(resolutionid).OperativeParagraphAdded(resolution.OperativeSections.IndexOf(newPP), newPP.ID, newPP.Text);
                 return StatusCode(StatusCodes.Status200OK, json);
             }
 
@@ -121,10 +122,9 @@ namespace MUNityAngular.Controllers
             [FromServices]Services.ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var re = Request;
-            var headers = re.Headers;
-            if (newtext.EndsWith('|'))
-                newtext = newtext.Substring(0, newtext.Length - 1);
+            var realText = System.Web.HttpUtility.UrlDecode(newtext);
+            if (realText.EndsWith('|'))
+                realText = realText.Substring(0, realText.Length - 1);
 
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
@@ -138,7 +138,7 @@ namespace MUNityAngular.Controllers
                 var newPP = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
                 if (newPP != null)
                 {
-                    newPP.Text = newtext;
+                    newPP.Text = realText;
                     var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
                     resolutionService.RequestSave(resolution);
                     _hubContext.Clients.Group(resolutionid).PreambleParagraphChanged(newPP.ID, newPP.Text);
@@ -162,6 +162,9 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
+            if (newtext.EndsWith('|'))
+                newtext = newtext.Substring(0, newtext.Length - 1);
+
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");

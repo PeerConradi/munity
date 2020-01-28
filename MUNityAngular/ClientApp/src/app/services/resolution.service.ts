@@ -6,6 +6,7 @@ import { UserService } from './user.service';
 import { Resolution } from '../models/resolution.model';
 import { PreambleParagraph } from '../models/preamble-paragraph.model';
 import { ResolutionInformation } from '../models/resolution-information.model';
+import { OperativeSection } from '../models/operative-section.model';
 
 @Injectable({
   providedIn: 'root'
@@ -80,9 +81,25 @@ export class ResolutionService {
       //this.resolution.OperativeSections.filter(n => n.ID == id)[0].Text = text;
     });
 
+    this._hubConnection.on('OperativeParagraphAdded', (position: number, id: string, text: string) => {
+      let paragraph: OperativeSection = new OperativeSection();
+      paragraph.ID = id;
+      paragraph.Text = text;
+      model.OperativeSections.push(paragraph);
+      //this.resolution.OperativeSections.filter(n => n.ID == id)[0].Text = text;
+    });
+
     this._hubConnection.on('PreambleParagraphChanged', (id: string, newtext: string) => {
 
       let target = model.Preamble.Paragraphs.filter(n => n.ID == id)[0];
+      if (target != null && target.Text != newtext) {
+        target.Text = newtext;
+      }
+    });
+
+    this._hubConnection.on('OperativeParagraphChanged', (id: string, newtext: string) => {
+
+      let target = model.OperativeSections.filter(n => n.ID == id)[0];
       if (target != null && target.Text != newtext) {
         target.Text = newtext;
       }
@@ -109,6 +126,17 @@ export class ResolutionService {
     return this.httpClient.get(this.baseUrl + 'api/Resolution/AddPreambleParagraph', options);
   }
 
+  public addOperativeParagraph(resolutionid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    let options = { headers: headers };
+    return this.httpClient.get(this.baseUrl + 'api/Resolution/AddOperativeParagraph', options);
+  }
+
   public changeTitle(resolutionid: string, newtitle: string) {
     let authString: string = 'default';
     if (this.userService.isLoggedIn)
@@ -127,6 +155,24 @@ export class ResolutionService {
       authString = this.userService.sessionkey();
 
     let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    headers = headers.set('newtext', encodeURI(newtext + '|'));
+    console.log(headers.get('newtext'));
+    console.log('NEUERTEXT:' + newtext + ':TEXTEND');
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph',
+      options).subscribe(data => console.log(data));
+  }
+
+  public changeOperativeParagraph(resolutionid: string, paragraphid: string, newtext: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
@@ -134,7 +180,7 @@ export class ResolutionService {
     headers = headers.set('newtext', newtext + '|');
     console.log('NEUERTEXT:' + newtext + ':TEXTEND');
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph',
+    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangeOperativeParagraph',
       options).subscribe(data => console.log(data));
   }
 

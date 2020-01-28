@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
 import { Resolution } from 'src/app/models/resolution.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-res-view',
@@ -9,11 +10,26 @@ import { Resolution } from 'src/app/models/resolution.model';
 })
 export class ResViewComponent implements OnInit {
 
-  model: Resolution;
-
   @Input() resolution: Resolution;
 
-  constructor(public service: ResolutionService) { }
+  constructor(public service: ResolutionService, private route: ActivatedRoute) {
+    let id: string = null;
+    this.route.params.subscribe(params => {
+      id = params.id;
+    })
+    if (id == null) {
+      id = this.route.snapshot.queryParamMap.get('id');
+    }
+
+    if (id != null) {
+      this.service.getResolution(id).subscribe(n => {
+        console.log('Search resolution: ' + id);
+        let readyState = this.service.connectionReady;
+        this.resolution = n;
+        this.service.subscribeToResolution(this.resolution.ID);
+        this.service.addResolutionListener(this.resolution);
+      });
+    }}
 
   ngOnInit() {
   }

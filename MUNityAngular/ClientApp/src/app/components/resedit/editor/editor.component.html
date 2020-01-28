@@ -23,9 +23,9 @@
 
       <app-munity-box toolbox="true" title="Operativer Abschnitt">
         <div *ngFor="let pa of model.OperativeSections">
-          <app-operative-paragraph [paragraph]=pa></app-operative-paragraph>
+          <app-operative-paragraph [paragraph]=pa [resolutionid]=model.ID></app-operative-paragraph>
         </div>
-        <button class="btn btn-block btn-success add-button">Operativen Absatz hinzufügen</button>
+        <button class="btn btn-block btn-success add-button" (click)="addOperativeParagraph()">Operativen Absatz hinzufügen</button>
       </app-munity-box>
     </div>
     <div class="col-lg-4 col-md-12 col-xm-12 col-xs-12">
@@ -41,17 +41,18 @@
   </div>
 </div>
 <hr />
-<div class="row">
+<div class="row" *ngIf="model">
   <div class="btn-group">
     <button class="btn btn-primary">Download ChairPro Json</button>
     <button class="btn btn-primary">Download RichTextFile</button>
+    <a [routerLink]="['/resa/read', model.ID]" class="btn btn-success" target="_blank">Teilnehmeransicht öffnen</a>
   </div>
 </div>
 
 <!-- Modal -->
 <div class="modal-backdrop fade-in" style="opacity: 0.9;" [style.display]="amendmentModalActive ? 'block' : 'none'">
 </div>
-<div class="modal" [style.display]="amendmentModalActive ? 'block' : 'none'" tabindex="-1" role="dialog">
+<div class="modal" [style.display]="amendmentModalActive ? 'block' : 'none'" tabindex="-1" role="dialog" *ngIf="model">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -109,6 +110,7 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal"
           (click)="closeAddAmendmentModal();">Close</button>
         <button type="button" class="btn btn-primary">Hinzufügen</button>
+        
       </div>
     </div>
   </div>

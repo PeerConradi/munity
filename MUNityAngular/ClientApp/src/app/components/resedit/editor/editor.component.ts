@@ -100,4 +100,16 @@ export class EditorComponent implements OnInit {
     console.log(target.ID);
     this.amendmentTargetSection = target;
   }
+
+  addOperativeParagraph() {
+    this.service.addOperativeParagraph(this.model.ID).subscribe(data => { console.log('Erfolg!') }, err => {
+      if (err.status == 404) {
+        this.notifier.notify('error', 'Ohh nein - Es besteht keine Verbindung zum Server oder die Resolution exisitert nicht.');
+      }
+      else {
+        this.notifier.notify('error', 'Das hat aus unbekannten Gründen nicht geklappt');
+      }
+      console.log(err)
+    });
+  }
 }

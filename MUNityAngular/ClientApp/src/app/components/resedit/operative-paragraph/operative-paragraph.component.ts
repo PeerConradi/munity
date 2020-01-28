@@ -10,9 +10,19 @@ export class OperativeParagraphComponent implements OnInit {
 
   @Input() paragraph: any;
 
+  @Input() resolutionid: string;
+
+  @Input() index: number;
+
   constructor(private renderer: Renderer2, private service: ResolutionService) { }
 
   ngOnInit() {
+  }
+
+  onKey(event: any) {
+    this.paragraph.Text = event.target.value;
+    console.log('New Text: ' + event.target.value);
+    this.service.changeOperativeParagraph(this.resolutionid, this.paragraph.ID, event.target.value);
   }
 
   delete() {
