@@ -87,11 +87,8 @@ export class ResolutionService {
       //this.resolution.OperativeSections.filter(n => n.ID == id)[0].Text = text;
     });
 
-    this._hubConnection.on('OperativeParagraphAdded', (position: number, id: string, text: string) => {
-      let paragraph: OperativeSection = new OperativeSection();
-      paragraph.ID = id;
-      paragraph.Text = text;
-      model.OperativeSections.push(paragraph);
+    this._hubConnection.on('OperativeParagraphAdded', (position: number, sectionModel: OperativeSection) => {
+      model.OperativeSections.push(sectionModel);
       //this.resolution.OperativeSections.filter(n => n.ID == id)[0].Text = text;
     });
 

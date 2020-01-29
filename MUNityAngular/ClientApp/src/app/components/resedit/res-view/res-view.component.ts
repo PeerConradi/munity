@@ -4,6 +4,7 @@ import { Resolution } from 'src/app/models/resolution.model';
 import { ActivatedRoute } from '@angular/router';
 import { AbstractAmendment } from '../../../models/abstract-amendment.model';
 import { AmendmentInspector } from '../../../models/amendment-inspector';
+import { OperativeSection } from '../../../models/operative-section.model';
 
 @Component({
   selector: 'app-res-view',
@@ -38,4 +39,9 @@ export class ResViewComponent implements OnInit {
   ngOnInit() {
   }
 
+  activeAmendment(section: OperativeSection): AbstractAmendment {
+    let amendment = this.resolution.DeleteAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
+
+    return amendment;
+  }
 }

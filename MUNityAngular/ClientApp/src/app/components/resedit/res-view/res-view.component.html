@@ -17,12 +17,15 @@
     <p class="operative-paragraph-text" *ngFor="let pre of resolution.Preamble.Paragraphs"> {{ pre.Text }} </p>
 
     <div *ngFor="let oa of resolution.OperativeSections">
-        <p class="text-info amendment-counts">Änderungsanträge: {{ oa.DeleteAmendmentCount}}
-            Streichen,
-            {{ oa.ChangeAmendmentCount }}
-            Textänderung,
-            {{ oa.MoveAmendmentCount }} Verschieben</p>
-        <p style="margin-top: -20px;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
-        <br />
+      <p class="text-info amendment-counts">
+        Änderungsanträge: {{ oa.DeleteAmendmentCount}}
+        Streichen,
+        {{ oa.ChangeAmendmentCount }}
+        Textänderung,
+        {{ oa.MoveAmendmentCount }} Verschieben
+      </p>
+      <p *ngIf="activeAmendment(oa)==null" style="margin-top: -20px;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
+      <p *ngIf="activeAmendment(oa)!=null && activeAmendment(oa).Type==='delete'" style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
+      <br />
     </div>
 </div>

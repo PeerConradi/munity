@@ -107,7 +107,7 @@ namespace MUNityAngular.Controllers
                 var newPP = resolution.AddOperativeParagraph();
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
                 resolutionService.RequestSave(resolution);
-                _hubContext.Clients.Group(resolutionid).OperativeParagraphAdded(resolution.OperativeSections.IndexOf(newPP), newPP.ID, newPP.Text);
+                _hubContext.Clients.Group(resolutionid).OperativeParagraphAdded(resolution.OperativeSections.IndexOf(newPP), new Hubs.HubObjects.HUBOperativeParagraph(newPP));
                 return StatusCode(StatusCodes.Status200OK, json);
             }
 

@@ -129,13 +129,14 @@ export class EditorComponent implements OnInit {
   }
 
   createNewAmendment() {
-    console.log('Neuer Änderungsantrag im Auftrag:');
-    console.log('Art: ');
-    console.log(this.addAmendmentType);
-    console.log('Ziel: ');
-    console.log(this.amendmentTargetSection);
-    console.log('Neuer Text')
-    console.log(this.newAmendmentNewText);
+    const type: string = this.addAmendmentType;
+    const target: OperativeSection = this.amendmentTargetSection;
+    const newText: string = this.newAmendmentNewText;
+
+    if (type === 'delete') {
+      this.service.addDeleteAmendment(this.model.ID, target.ID);
+    }
+
     this.amendmentModalActive = false;
   }
 }

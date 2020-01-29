@@ -8,7 +8,7 @@ namespace MUNityAngular.Hubs
 {
     public interface ITypedResolutionHub
     {
-        Task OperativeParagraphAdded(int position, string id, string text);
+        Task OperativeParagraphAdded(int position, HubObjects.HUBOperativeParagraph sectionModel);
 
         Task PreambleParagraphAdded(int position, string id, string text);
 
