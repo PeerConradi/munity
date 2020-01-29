@@ -8,18 +8,23 @@ import { PreambleParagraph } from '../models/preamble-paragraph.model';
 import { ResolutionInformation } from '../models/resolution-information.model';
 import { OperativeSection } from '../models/operative-section.model';
 import { DeleteAmendment } from '../models/delete-amendment.model';
+import { AbstractAmendment } from '../models/abstract-amendment.model';
+import { AmendmentInspector } from '../models/amendment-inspector';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ResolutionService {
+    
   private _hubConnection: signalR.HubConnection;
 
   private baseUrl: string;
 
   public hasError: boolean = false;
 
-  public resolution: Resolution;
+  //public resolution: Resolution;
+
+  public orderedAmendments: AbstractAmendment[] = [];
 
   public connectionReady: boolean = false;
 
@@ -31,15 +36,15 @@ export class ResolutionService {
     this._hubConnection
       .start()
       .then(() => {
-        console.log('Connection started!');
         this.connectionReady = true;
         this.stack.forEach(n => {
-          console.log('work: "' + n.methodName + '" from stack Args: "' + n.args + '"');
           this._hubConnection.send(n.methodName, n.args);
         });
         this.stack = [];
       })
-      .catch(err => this.hasError = true);
+      .catch(err => {
+        this.hasError = true;
+      });
   }
 
   public createResolution() {
@@ -73,7 +78,7 @@ export class ResolutionService {
   }
 
   //SignalR Part
-  public addResolutionListener = (model: Resolution) => {
+  public addResolutionListener = (model: Resolution, inspector: AmendmentInspector) => {
     this._hubConnection.on('PreambleParagraphAdded', (position: number, id: string, text: string) => {
       let paragraph: PreambleParagraph = new PreambleParagraph();
       paragraph.ID = id;
@@ -107,7 +112,6 @@ export class ResolutionService {
     });
 
     this._hubConnection.on('ResolutionSaved', (date: Date) => {
-      console.log('Resolution has been saved!' + date);
       model.lastSaved = date;
     });
 
@@ -115,11 +119,19 @@ export class ResolutionService {
       model.Topic = title;
     });
 
-    this._hubConnection.on('DeleteAmendmentAdded', (model: DeleteAmendment) => {
-      console.log('new Delete Amendment')
-      console.log(model);
-    })
+    this._hubConnection.on('AmendmentRemoved', (amendment: AbstractAmendment) => {
+      this.OnAmendmentRemoved(model, amendment);
+      inspector.allAmendments = this.OnAmendmentRemoved(model, amendment);
+    });
+
+    this._hubConnection.on('DeleteAmendmentAdded', (amendment: DeleteAmendment) => {
+      inspector.allAmendments = this.OnDeleteAmendmentAdded(model, amendment);
+    });
+
+    
   }
+
+  
 
   public addPreambleParagraph(resolutionid: string) {
     let authString: string = 'default';
@@ -166,7 +178,6 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     headers = headers.set('newtext', encodeURI(newtext + '|'));
-    console.log(headers.get('newtext'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph',
       options).subscribe(data => { });
@@ -211,11 +222,70 @@ export class ResolutionService {
     headers = headers.set('sectionid', paragraphid);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddDeleteAmendment',
-      options).subscribe(data => console.log(data));
+      options).subscribe(data => { });
   }
 
-  
+  removeAmendment(resolutionid: string, amendmentid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
 
+    let headers = new HttpHeaders();
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('amendmentid', amendmentid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/RemoveAmendment',
+      options).subscribe(data => { });
+  }
+
+  public OnDeleteAmendmentAdded(resolution: Resolution, amendment: DeleteAmendment): AbstractAmendment[] {
+    if (resolution.DeleteAmendments.find(n => n.ID == amendment.ID || n.ID == amendment.id) == null) {
+      const conv = new DeleteAmendment();
+      conv.ID = amendment.id;
+      conv.TargetSectionID = amendment.targetSectionID;
+
+      resolution.DeleteAmendments.push(conv);
+      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID || n.ID == amendment.targetSectionID);
+      if (target != null) {
+        target.DeleteAmendmentCount += 1;
+      }
+      return this.OrderAmendments(resolution);
+    }
+  }
+
+  public OnAmendmentRemoved(resolution: Resolution, amendment: AbstractAmendment): AbstractAmendment[] {
+    const deleteAmendment = resolution.DeleteAmendments.find(n => n.ID == amendment.ID || n.ID == amendment.id);
+    if (deleteAmendment != null) {
+      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID || n.ID == amendment.targetSectionID);
+      if (target != null) {
+        target.DeleteAmendmentCount -= 1;
+      }
+      const index: number = resolution.DeleteAmendments.indexOf(deleteAmendment);
+      if (index !== -1) {
+        resolution.DeleteAmendments.splice(index, 1);
+      }
+      
+    }
+    return this.OrderAmendments(resolution);
+  }
+
+  public OrderAmendments(resolution: Resolution): AbstractAmendment[] {
+    const arr = [];
+    //All Sections
+    resolution.OperativeSections.forEach(oa => {
+      //Delete Amendments
+      resolution.DeleteAmendments.forEach(n => { if (n.TargetSectionID == oa.ID) arr.push(n) });
+
+      //Change Amendments
+
+      //Move Amendments
+
+      //Add Amendments
+    });
+    return arr;
+  }
 }
 
 export class stackElement {

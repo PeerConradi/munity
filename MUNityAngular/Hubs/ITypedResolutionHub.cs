@@ -23,6 +23,8 @@ namespace MUNityAngular.Hubs
 
         Task ResolutionSaved(DateTime time);
 
-        Task DeleteAmendmentAdded(string model);
+        Task DeleteAmendmentAdded(HubObjects.HUBDeleteAmendment amendment);
+
+        Task AmendmentRemoved(HubObjects.HUBAbstractAmendment amendment);
     }
 }

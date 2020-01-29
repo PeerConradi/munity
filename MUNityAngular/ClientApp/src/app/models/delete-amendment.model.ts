@@ -1,8 +1,5 @@
-export class DeleteAmendment {
-  ID: string;
-  Name: string;
-  TargetSectionID: string;
-  Activated: string;
-  SubmitterName: string;
-  SubmitTime: Date;
+import { AbstractAmendment } from "./abstract-amendment.model";
+
+export class DeleteAmendment extends AbstractAmendment {
+  
 }

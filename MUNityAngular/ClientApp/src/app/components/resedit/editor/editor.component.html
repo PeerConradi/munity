@@ -30,11 +30,19 @@
     </div>
     <div class="col-lg-4 col-md-12 col-xm-12 col-xs-12">
       <app-munity-box toolbox="true" title="Änderungsanträge">
+        <h4> {{ amendmentInspector.allAmendments.length }} Änderungsanträge gefunden </h4>
         <!-- Dieser Button soll gewollt oberhalb der Liste sein! -->
         <button class="btn btn-block btn-success add-button" (click)="openAddAmendmentModal();">Änderungsantrag
           hinzufügen</button>
-        <app-amendment-controller></app-amendment-controller>
-        <app-amendment-controller></app-amendment-controller>
+        <div *ngIf="amendmentInspector">
+          <div *ngFor="let amendment of amendmentInspector.allAmendments">
+            <app-amendment-controller [amendment]="amendment" [resolution]="model"></app-amendment-controller>
+          </div>
+        </div>
+        <div *ngIf="!amendmentInspector">
+          <p>Die Änderungsanträge wurden noch nicht initializiert.</p>
+        </div>
+        
 
       </app-munity-box>
     </div>

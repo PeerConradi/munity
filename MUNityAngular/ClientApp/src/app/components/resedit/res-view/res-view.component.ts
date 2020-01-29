@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
 import { Resolution } from 'src/app/models/resolution.model';
 import { ActivatedRoute } from '@angular/router';
+import { AbstractAmendment } from '../../../models/abstract-amendment.model';
+import { AmendmentInspector } from '../../../models/amendment-inspector';
 
 @Component({
   selector: 'app-res-view',
@@ -11,6 +13,8 @@ import { ActivatedRoute } from '@angular/router';
 export class ResViewComponent implements OnInit {
 
   @Input() resolution: Resolution;
+
+  @Input() allAmendments: AbstractAmendment[];
 
   constructor(public service: ResolutionService, private route: ActivatedRoute) {
     let id: string = null;
@@ -27,7 +31,7 @@ export class ResViewComponent implements OnInit {
         let readyState = this.service.connectionReady;
         this.resolution = n;
         this.service.subscribeToResolution(this.resolution.ID);
-        this.service.addResolutionListener(this.resolution);
+        this.service.addResolutionListener(this.resolution, new AmendmentInspector());
       });
     }}
 

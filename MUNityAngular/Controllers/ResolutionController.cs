@@ -164,7 +164,7 @@ namespace MUNityAngular.Controllers
         {
             var realText = System.Web.HttpUtility.UrlDecode(newtext);
             if (realText.EndsWith('|'))
-                realText = newtext.Substring(0, realText.Length - 1);
+                realText = realText.Substring(0, realText.Length - 1);
 
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
@@ -309,7 +309,36 @@ namespace MUNityAngular.Controllers
             var amendment = new Models.DeleteAmendmentModel();
             amendment.TargetSection = section;
 
-            _hubContext.Clients.Group(resolutionid).DeleteAmendmentAdded(Newtonsoft.Json.JsonConvert.SerializeObject(amendment));
+            resolutionService.RequestSave(resolution);
+
+            _hubContext.Clients.Group(resolutionid).DeleteAmendmentAdded(new Hubs.HubObjects.HUBDeleteAmendment(amendment));
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult RemoveAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string amendmentid,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
+            if (amendment == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, "Amendment not found");
+            }
+
+            amendment.Remove();
+            resolutionService.RequestSave(resolution);
+
+            _hubContext.Clients.Group(resolutionid).AmendmentRemoved(new Hubs.HubObjects.HUBAbstractAmendment(amendment));
             return StatusCode(StatusCodes.Status200OK);
         }
 

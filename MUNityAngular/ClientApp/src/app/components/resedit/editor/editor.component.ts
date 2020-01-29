@@ -5,6 +5,8 @@ import { ResolutionService } from '../../../services/resolution.service';
 import { Resolution } from '../../../models/resolution.model';
 import { OperativeSection } from 'src/app/models/operative-section.model';
 import { NotifierService } from 'angular-notifier';
+import { AbstractAmendment } from '../../../models/abstract-amendment.model';
+import { AmendmentInspector } from '../../../models/amendment-inspector';
 
 @Component({
   selector: 'app-editor',
@@ -14,9 +16,6 @@ import { NotifierService } from 'angular-notifier';
 export class EditorComponent implements OnInit {
 
   @Input('resolution')
-
-
-
   public set resolution(v: Resolution) {
     if (v != null) {
       this.model = v;
@@ -26,6 +25,11 @@ export class EditorComponent implements OnInit {
       console.log(this.model);
     }
   }
+
+
+  public amendmentInspector: AmendmentInspector = new AmendmentInspector();
+
+  
 
 
   public get resolution(): Resolution {
@@ -57,14 +61,15 @@ export class EditorComponent implements OnInit {
       console.log('Suche resolution mit der ID: ' + id);
       this.service.getResolution(id).subscribe(n => {
         let readyState = this.service.connectionReady;
+        //this.service.OrderAmendments(n);
         this.model = n;
-        console.log(n);
         this.service.subscribeToResolution(this.model.ID);
-        this.service.addResolutionListener(this.model);
+        this.service.addResolutionListener(this.model, this.amendmentInspector);
+        this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
+        console.log('Änderungsanträge geordnet:');
+        console.log(this.amendmentInspector.allAmendments);
+        //TODO: Remove this logging
         console.log(this.model);
-
-        //const source = interval(2000);
-        //this.saveSubscription = source.subscribe(val => console.log('Try save'));
       });
     }
   }
