@@ -344,6 +344,87 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
+        public IActionResult ActivateAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string amendmentid,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
+            if (amendment == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, "Amendment not found");
+            }
+
+            amendment.Activate();
+            resolutionService.RequestSave(resolution);
+
+            _hubContext.Clients.Group(resolutionid).AmendmentActivated(new Hubs.HubObjects.HUBAbstractAmendment(amendment));
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult DeactivateAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string amendmentid,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
+            if (amendment == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, "Amendment not found");
+            }
+
+            amendment.Deactivate();
+            resolutionService.RequestSave(resolution);
+
+            _hubContext.Clients.Group(resolutionid).AmendmentDeactivated(new Hubs.HubObjects.HUBAbstractAmendment(amendment));
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult SubmitAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string amendmentid,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
+            if (amendment == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, "Amendment not found");
+            }
+
+            amendment.Submit();
+            resolutionService.RequestSave(resolution);
+
+            _hubContext.Clients.Group(resolutionid).AmendmentSubmitted(new Hubs.HubObjects.HUBResolution(resolution));
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
         public IActionResult MyResolutions([FromHeader]string auth,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNityAngular.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,6 +26,11 @@ namespace MUNityAngular.Hubs
 
         Task DeleteAmendmentAdded(HubObjects.HUBDeleteAmendment amendment);
 
+        Task AmendmentActivated(HubObjects.HUBAbstractAmendment amendment);
+
         Task AmendmentRemoved(HubObjects.HUBAbstractAmendment amendment);
+
+        Task AmendmentDeactivated(HubObjects.HUBAbstractAmendment amendment);
+        Task AmendmentSubmitted(HubObjects.HUBResolution resolution);
     }
 }

@@ -1,4 +1,6 @@
 import { AbstractAmendment } from "./abstract-amendment.model";
+import { Resolution } from "./resolution.model";
+import { OperativeSection } from "./operative-section.model";
 
 /**
  * Ein Austausch von Änderungsanträgen bewirkt, dass die Observables nicht mehr funktionieren
@@ -10,4 +12,15 @@ export class AmendmentInspector {
   public allAmendments: AbstractAmendment[] = [];
 
 
+  public static getSectionForAmendment(resolution: Resolution, amendment: AbstractAmendment): OperativeSection {
+    if (amendment.Type === 'delete') {
+      return resolution.OperativeSections.find(n => n.ID === amendment.TargetSectionID);
+    } else if (amendment.Type === 'change') {
+      return resolution.OperativeSections.find(n => n.ID === amendment.TargetSectionID);
+    } else if (amendment.Type === 'move') {
+      return resolution.OperativeSections.find(n => n.ID === amendment.TargetSectionID);
+    }
+      
+    return null;
+  }
 }

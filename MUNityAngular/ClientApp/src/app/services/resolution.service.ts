@@ -125,13 +125,48 @@ export class ResolutionService {
     });
 
     this._hubConnection.on('DeleteAmendmentAdded', (amendment: DeleteAmendment) => {
+      console.log('amendment added');
       inspector.allAmendments = this.OnDeleteAmendmentAdded(model, amendment);
+      console.log(inspector.allAmendments);
     });
 
+    this._hubConnection.on('AmendmentActivated', (amendment: AbstractAmendment) => {
+      const a = this.findAmendment(model, amendment.ID);
+      a.Activated = true;
+    });
+
+    this._hubConnection.on('AmendmentDeactivated', (amendment: AbstractAmendment) => {
+      const a = this.findAmendment(model, amendment.ID);
+      a.Activated = false;
+    });
+
+    this._hubConnection.on('AmendmentSubmitted', (resolution: Resolution) => {
+      console.log('Ohh shit Amendment submitted:');
+      console.log(resolution);
+      model.OperativeSections = resolution.OperativeSections;
+      model.DeleteAmendments = resolution.DeleteAmendments;
+      //Anderen Amendments ebenfalls ersetzen!
+      inspector.allAmendments = this.OrderAmendments(model);
+    });
     
   }
 
-  
+  public findAmendment(resolution: Resolution, amendmentid: string) {
+    var a = resolution.DeleteAmendments.find(n => n.ID === amendmentid);
+    if (a == null) {
+      //Search inside Change Amendments
+    }
+
+    if (a == null) {
+      //Search inside Move Amendments
+    }
+
+    if (a == null) {
+      //Search inside Add Amendments
+    }
+
+    return a;
+  }
 
   public addPreambleParagraph(resolutionid: string) {
     let authString: string = 'default';
@@ -240,14 +275,56 @@ export class ResolutionService {
       options).subscribe(data => { });
   }
 
-  public OnDeleteAmendmentAdded(resolution: Resolution, amendment: DeleteAmendment): AbstractAmendment[] {
-    if (resolution.DeleteAmendments.find(n => n.ID == amendment.ID || n.ID == amendment.id) == null) {
-      const conv = new DeleteAmendment();
-      conv.ID = amendment.id;
-      conv.TargetSectionID = amendment.targetSectionID;
+  activateAmendment(resolutionid: string, amendmentid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
 
-      resolution.DeleteAmendments.push(conv);
-      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID || n.ID == amendment.targetSectionID);
+    let headers = new HttpHeaders();
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('amendmentid', amendmentid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/ActivateAmendment',
+      options).subscribe(data => { });
+  }
+
+  deactivateAmendment(resolutionid: string, amendmentid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('amendmentid', amendmentid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/DeactivateAmendment',
+      options).subscribe(data => { });
+  }
+
+  submitAmendment(resolutionid: string, amendmentid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('amendmentid', amendmentid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/SubmitAmendment',
+      options).subscribe(data => { });
+  }
+
+  public OnDeleteAmendmentAdded(resolution: Resolution, amendment: DeleteAmendment): AbstractAmendment[] {
+    if (resolution.DeleteAmendments.find(n => n.ID == amendment.ID) == null) {
+
+      resolution.DeleteAmendments.push(amendment);
+      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID);
       if (target != null) {
         target.DeleteAmendmentCount += 1;
       }
@@ -256,9 +333,9 @@ export class ResolutionService {
   }
 
   public OnAmendmentRemoved(resolution: Resolution, amendment: AbstractAmendment): AbstractAmendment[] {
-    const deleteAmendment = resolution.DeleteAmendments.find(n => n.ID == amendment.ID || n.ID == amendment.id);
+    const deleteAmendment = resolution.DeleteAmendments.find(n => n.ID == amendment.ID);
     if (deleteAmendment != null) {
-      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID || n.ID == amendment.targetSectionID);
+      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID);
       if (target != null) {
         target.DeleteAmendmentCount -= 1;
       }
@@ -266,7 +343,6 @@ export class ResolutionService {
       if (index !== -1) {
         resolution.DeleteAmendments.splice(index, 1);
       }
-      
     }
     return this.OrderAmendments(resolution);
   }
@@ -276,6 +352,8 @@ export class ResolutionService {
     //All Sections
     resolution.OperativeSections.forEach(oa => {
       //Delete Amendments
+      console.log(resolution.DeleteAmendments);
+      console.log(oa.ID);
       resolution.DeleteAmendments.forEach(n => { if (n.TargetSectionID == oa.ID) arr.push(n) });
 
       //Change Amendments
@@ -286,6 +364,8 @@ export class ResolutionService {
     });
     return arr;
   }
+
+  
 }
 
 export class stackElement {

@@ -40,6 +40,8 @@ export class EditorComponent implements OnInit {
 
   amendmentTargetSection: OperativeSection;
 
+  newAmendmentNewText: string;
+
   addAmendmentType = "delete";
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService) { }
@@ -66,8 +68,12 @@ export class EditorComponent implements OnInit {
         this.service.subscribeToResolution(this.model.ID);
         this.service.addResolutionListener(this.model, this.amendmentInspector);
         this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
-        console.log('Änderungsanträge geordnet:');
-        console.log(this.amendmentInspector.allAmendments);
+
+        if (n.OperativeSections.length > 0) {
+          this.amendmentTargetSection = n.OperativeSections[0];
+          this.newAmendmentNewText = n.OperativeSections[0].Text;
+        }
+
         //TODO: Remove this logging
         console.log(this.model);
       });
@@ -101,9 +107,7 @@ export class EditorComponent implements OnInit {
   }
 
   addAmendmentTargetSelected(target) {
-    console.log(target);
-    console.log(target.ID);
-    this.amendmentTargetSection = target;
+    this.newAmendmentNewText = this.amendmentTargetSection.Text;
   }
 
   addOperativeParagraph() {
@@ -122,5 +126,16 @@ export class EditorComponent implements OnInit {
     const resolutionid = this.model.ID;
     const sectionid = this.model.OperativeSections[0].ID;
     this.service.addDeleteAmendment(resolutionid, sectionid);
+  }
+
+  createNewAmendment() {
+    console.log('Neuer Änderungsantrag im Auftrag:');
+    console.log('Art: ');
+    console.log(this.addAmendmentType);
+    console.log('Ziel: ');
+    console.log(this.amendmentTargetSection);
+    console.log('Neuer Text')
+    console.log(this.newAmendmentNewText);
+    this.amendmentModalActive = false;
   }
 }

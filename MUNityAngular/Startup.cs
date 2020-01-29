@@ -36,7 +36,9 @@ namespace MUNityAngular
             }));
 
 
-            services.AddSignalR();
+            services.AddSignalR().AddJsonProtocol(options => {
+                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+            });
             services.AddSingleton<Services.InstallationService>();
             services.AddSingleton<Services.ResolutionService>();
             services.AddSingleton<Services.ConferenceService>();

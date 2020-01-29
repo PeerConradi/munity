@@ -15,6 +15,8 @@ namespace MUNityAngular.Models
     {
         public string NewText { get; set; }
 
+        public override string Type => AMENDMENT_TYPES.CHANGE_TYPE;
+
         public ChangeAmendmentModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();

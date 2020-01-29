@@ -41,6 +41,8 @@ namespace MUNityTest.Resolution
             amendment.TargetSection = section;
             amendment.Activate();
             Assert.AreEqual(OperativeParagraphModel.EViewModus.Remove, section.ViewModus);
+            Assert.AreEqual(section.ActiveAmendment, amendment);
+            Assert.IsTrue(amendment.Activated);
         }
 
         [Test]
@@ -52,6 +54,8 @@ namespace MUNityTest.Resolution
             amendment.TargetSection = section;
             amendment.Activate();
             amendment.Deactivate();
+            Assert.IsFalse(amendment.Activated);
+            Assert.AreEqual(section.ActiveAmendment, null);
             Assert.AreEqual(OperativeParagraphModel.EViewModus.Normal, section.ViewModus);
         }
 

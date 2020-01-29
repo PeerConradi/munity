@@ -12,9 +12,12 @@ namespace MUNityAngular.Models
 
         public override string DisplayName => "Löschen";
 
+        public override string Type => AMENDMENT_TYPES.DELETE_TYPE;
+
         public override void Activate()
         {
             TargetSection.ViewModus = OperativeParagraphModel.EViewModus.Remove;
+            base.Activate();
         }
 
         public override int ORDER_LEVEL => 1;

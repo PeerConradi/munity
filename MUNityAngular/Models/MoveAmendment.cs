@@ -17,6 +17,8 @@ namespace MUNityAngular.Models
 
         public override int ORDER_LEVEL => 4;
 
+        public override string Type => AMENDMENT_TYPES.MOVE_TYPE;
+
         [JsonIgnore]
         public OperativeParagraphModel NewSection { get; set; }
 

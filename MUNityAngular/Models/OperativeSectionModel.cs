@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ namespace MUNityAngular.Models
     /// <summary>
     /// The Operative Paragraph is Part of the OperativeSection.
     /// </summary>
+    [DataContract]
     public class OperativeParagraphModel
     {
 
@@ -38,27 +40,37 @@ namespace MUNityAngular.Models
         /// This ID has to be unique inside each Resolution.
         /// It is a Guid so it will be unique and you can find the Document with just one Operative Paragraph ID
         /// </summary>
+        [DataMember]
         public string ID { get; set; }
 
         /// <summary>
         /// Every Paragraph can have a Visible Name to make it easier for the user to identify
         /// it. The Name doesn't has to be like the Text. The default Name will be the Text first characters.
         /// </summary>
+        [DataMember]
         public string Name { get; set; }
 
+        [DataMember]
         public bool IsLocked { get; set; }
+        
+        [DataMember]
         public bool IsVirtual { get; set; }
+        
+        [DataMember]
         public string Text { get; set; }
 
         [JsonIgnore]
+        [IgnoreDataMember]
         public ResolutionModel Resolution { get; set; }
 
         /// <summary>
         /// The Paragraph could be hidden from the User.
         /// </summary>
+        [DataMember]
         public bool Visible { get; set; }
 
         private string _parentid;
+        [DataMember]
         public string ParentID
         {
             get => _parentid;
@@ -82,16 +94,21 @@ namespace MUNityAngular.Models
             }
         }
 
+        [DataMember]
         public string ResolutionID { get; set; }
 
+        [DataMember]
         public EViewModus ViewModus { get; set; }
 
+        [DataMember]
         public bool AmendmentParagraph { get; set; }
 
         [JsonIgnore]
+        [IgnoreDataMember]
         public AbstractAmendment ActiveAmendment { get; set; }
 
         [JsonIgnore]
+        [IgnoreDataMember]
         public OperativeParagraphModel Parent
         {
             get
@@ -105,6 +122,7 @@ namespace MUNityAngular.Models
 
         //Ignore this, it is only Get
         [JsonIgnore]
+        [IgnoreDataMember]
         public short Level
         {
             get
@@ -127,13 +145,15 @@ namespace MUNityAngular.Models
             }
         }
 
-
+        [DataMember]
         public ObservableCollection<string> Children { get; set; }
 
         [JsonIgnore]
+        [IgnoreDataMember]
         public bool CanMoveLeft { get; set; }
 
         private string _path;
+        [DataMember]
         public string Path
         {
             get
@@ -148,10 +168,13 @@ namespace MUNityAngular.Models
         }
 
         
+        [DataMember]
         public int DeleteAmendmentCount { get => Amendments.OfType<DeleteAmendmentModel>().Count(); }
 
+        [DataMember]
         public int ChangeAmendmentCount { get => Amendments.OfType<ChangeAmendmentModel>().Count(); }
 
+        [DataMember]
         public int MoveAmendmentCount { get => Amendments.OfType<MoveAmendment>().Count(); }
 
 
@@ -208,6 +231,7 @@ namespace MUNityAngular.Models
         }
 
         [JsonIgnore]
+        [IgnoreDataMember]
         public IEnumerable<AbstractAmendment> Amendments { get => Resolution?.Amendments.Where(n => n.TargetSection == this); }
 
 

@@ -110,9 +110,22 @@ namespace MUNityAngular.Models
         [JsonIgnore]
         public virtual int ORDER_LEVEL { get; } = 0;
 
+        public virtual string Type { get => "abstract"; }
+
         public AbstractAmendment()
         {
             SubmitTime = DateTime.Now;
         }
+    }
+
+    public static class AMENDMENT_TYPES
+    {
+        public static readonly string DELETE_TYPE = "delete";
+
+        public static readonly string CHANGE_TYPE = "change";
+
+        public static readonly string MOVE_TYPE = "move";
+
+        public static readonly string ADD_TYPE = "add";
     }
 }

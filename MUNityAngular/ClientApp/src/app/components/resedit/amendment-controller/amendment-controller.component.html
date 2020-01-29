@@ -1,14 +1,23 @@
 <div class="amendment-box">
-    <!-- TODO: Den Background abhängig von der Art des Antrags machen -->
-    <div class="box-top bg-info text-white">
-        <b class="box-title">1. Streichen</b>
-        <button class="btn btn-danger remove-button float-right" (click)="removeAmendment()">X</button>
-    </div>
+  <!-- TODO: Den Background abhängig von der Art des Antrags machen -->
+  <div class="box-top text-white" [class.bg-warning]="amendment.Type === 'delete'">
+    <b class="box-title">1. Streichen</b>
+    <button class="btn btn-danger remove-button float-right" (click)="removeAmendment()">X</button>
+  </div>
 
-    <p>Date-Time</p>
-    <p>Target Operative Section Number</p>
-    <label class="cb-container">Anzeigen
-        <input type="checkbox">
-        <span class="checkmark"></span>
-    </label>
+  <p *ngIf="amendment.type === 'delete'">I'm a delete</p>
+  <p *ngIf="amendment.type === 'change'">I'm a change</p>
+  <p *ngIf="!paragraph">Finde den Operativen Absatz nicht o.O</p>
+
+  <p *ngIf="amendment.SubmitTime"><b>Zeit: </b> {{ amendment.SubmitTime | date:'short' }}</p>
+  <p *ngIf="paragraph"><b>Ziel: </b> {{ paragraph.Path }}</p>
+  <label class="cb-container">
+    Anzeigen
+
+    <input *ngIf="amendment.Activated !== null" type="checkbox" [checked]="amendment.Activated" (change)="activeChanged($event)">
+    <span class="checkmark"></span>
+  </label>
+
+  <button class="btn btn-block btn-primary" (click)="submitAmendment();">Annehmen</button>
+
 </div>

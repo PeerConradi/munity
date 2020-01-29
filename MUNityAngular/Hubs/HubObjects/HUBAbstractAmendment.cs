@@ -19,6 +19,8 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public DateTime SubmitTime { get; set; }
 
+        public string Type { get; set; }
+
         public HUBAbstractAmendment(Models.AbstractAmendment amendment)
         {
             this.ID = amendment.ID;
@@ -27,6 +29,7 @@ namespace MUNityAngular.Hubs.HubObjects
             this.Activated = amendment.Activated;
             this.SubmitterName = amendment.SubmitterName;
             this.SubmitTime = amendment.SubmitTime;
+            this.Type = amendment.Type;
         }
     }
 }

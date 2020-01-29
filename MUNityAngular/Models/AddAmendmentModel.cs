@@ -15,6 +15,8 @@ namespace MUNityAngular.Models
 
         public string TargetResolutionID { get; set; }
 
+        public override string Type => AMENDMENT_TYPES.ADD_TYPE;
+
         private ResolutionModel _targetResolution;
         [JsonIgnore]
         public ResolutionModel TargetResolution { get => _targetResolution;

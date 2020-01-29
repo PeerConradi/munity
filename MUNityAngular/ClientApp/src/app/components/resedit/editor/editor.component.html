@@ -6,7 +6,7 @@
       <h6>ID: {{ model.ID }}</h6>
     </div>
     <div class="col">
-      <p>Last Saved: {{ model.lastSaved | date:'full' }} | <a href="#">Verlauf</a></p>
+      <p>Last Saved: {{ model.lastSaved | date:'medium' }} | <a href="#">Verlauf</a></p>
     </div>
   </div>
 
@@ -58,7 +58,7 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Amendment Create Modal -->
 <div class="modal-backdrop fade-in" style="opacity: 0.9;" [style.display]="amendmentModalActive ? 'block' : 'none'">
 </div>
 <div class="modal" [style.display]="amendmentModalActive ? 'block' : 'none'" tabindex="-1" role="dialog" *ngIf="model">
@@ -94,7 +94,7 @@
                 *ngIf="addAmendmentType === 'delete' || addAmendmentType === 'change' || addAmendmentType === 'move'">
                 <label class="col-12 control-label" for="selecttarget">Ziel</label>
                 <div class="col-12">
-                  <select #selectTarget name="selecttarget" class="form-control" [(ngModel)]="amendmentTargetSection">
+                  <select #selectTarget name="selecttarget" class="form-control" [(ngModel)]="amendmentTargetSection" (change)="addAmendmentTargetSelected($event)">
                     <option *ngFor="let s of model.OperativeSections" [ngValue]="s">{{ s.Path }}
                       {{ s.Text | slice:0:20 }}
                     </option>
@@ -106,8 +106,8 @@
               <div class="row" *ngIf="addAmendmentType === 'change' || addAmendmentType === 'add'">
                 <label class="col-12 control-label" for="textarea">Neuer Text</label>
                 <div class="col-12">
-                  <textarea class="form-control" cols="4"
-                    style="min-width: 100%">{{ amendmentTargetSection.Text }}</textarea>
+                  <textarea class="form-control" cols="4" name="newAmendmentNewTextTextArea"
+                    style="min-width: 100%" [(ngModel)]="newAmendmentNewText"></textarea>
                 </div>
               </div>
             </div>
@@ -118,7 +118,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal"
           (click)="closeAddAmendmentModal();">Close</button>
-        <button type="button" class="btn btn-primary">Hinzufügen</button>
+        <button type="button" class="btn btn-primary" (click)="createNewAmendment();">Hinzufügen</button>
         
       </div>
     </div>
