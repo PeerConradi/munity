@@ -20,7 +20,7 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public DateTime Date { get; set; }
 
-        public IEnumerable<Models.ChangeAmendmentModel> ChangeAmendments { get; set; }
+        public List<HUBChangeAmendment> ChangeAmendments { get; set; }
 
         public List<HUBDeleteAmendment> DeleteAmendments { get; set; }
 
@@ -39,7 +39,11 @@ namespace MUNityAngular.Hubs.HubObjects
             this.AgendaItem = resolution.AgendaItem;
             this.Session = resolution.Session;
             this.Date = resolution.Date;
-            this.ChangeAmendments = resolution.ChangeAmendments;
+            ChangeAmendments = new List<HUBChangeAmendment>();
+            foreach(var amendment in resolution.ChangeAmendments)
+            {
+                ChangeAmendments.Add(new HUBChangeAmendment(amendment));
+            }
             this.DeleteAmendments = new List<HUBDeleteAmendment>();
             foreach(var amendment in resolution.DeleteAmendments)
             {

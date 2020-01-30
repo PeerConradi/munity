@@ -1,22 +1,27 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ResolutionService } from '../../../services/resolution.service';
-import { Resolution } from 'src/app/models/resolution.model';
-import { ActivatedRoute } from '@angular/router';
+import { Resolution } from '../../../models/resolution.model';
 import { AbstractAmendment } from '../../../models/abstract-amendment.model';
+import { ResolutionService } from '../../../services/resolution.service';
+import { ActivatedRoute } from '@angular/router';
 import { AmendmentInspector } from '../../../models/amendment-inspector';
 import { OperativeSection } from '../../../models/operative-section.model';
-import { ChangeAmendment } from '../../../models/change-amendment.model';
 
 @Component({
-  selector: 'app-res-view',
-  templateUrl: './res-view.component.html',
-  styleUrls: ['./res-view.component.css']
+  selector: 'app-work-with-resolution',
+  templateUrl: './work-with-resolution.component.html',
+  styleUrls: ['./work-with-resolution.component.css']
 })
-export class ResViewComponent implements OnInit {
+export class WorkWithResolutionComponent implements OnInit {
 
   @Input() resolution: Resolution;
 
   @Input() allAmendments: AbstractAmendment[];
+
+  amendmentModalActive: boolean = false;
+
+  amendmentDetailType: string = 'delete';
+
+  detailAmendments: AbstractAmendment[];
 
   constructor(public service: ResolutionService, private route: ActivatedRoute) {
     let id: string = null;
@@ -30,7 +35,6 @@ export class ResViewComponent implements OnInit {
     if (id != null) {
       this.service.getResolution(id).subscribe(n => {
         console.log('Search resolution: ' + id);
-        let readyState = this.service.connectionReady;
         this.resolution = n;
         this.service.subscribeToResolution(this.resolution.ID);
         this.service.addResolutionListener(this.resolution, new AmendmentInspector());
@@ -41,15 +45,20 @@ export class ResViewComponent implements OnInit {
   ngOnInit() {
   }
 
-  activeAmendment(section: OperativeSection): AbstractAmendment {
-    let amendment = this.resolution.DeleteAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
-    if (amendment == null) {
-      amendment = this.resolution.ChangeAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
-    }
-    return amendment;
+  getDeleteAmendment(val: OperativeSection) {
+    this.detailAmendments = this.resolution.DeleteAmendments.filter(n => n.TargetSectionID == val.ID);
+    this.amendmentModalActive = true;
+    this.amendmentDetailType = 'delete';
   }
 
-  activeChangeAmendment(section: OperativeSection): ChangeAmendment {
-    return this.resolution.ChangeAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
+  getChangeAmendment(val: OperativeSection) {
+    this.detailAmendments = this.resolution.ChangeAmendments.filter(n => n.TargetSectionID == val.ID);
+    this.amendmentModalActive = true;
+    this.amendmentDetailType = 'change';
   }
+
+  closeAmendmentDetailModal() {
+    this.amendmentModalActive = false;
+  }
+
 }

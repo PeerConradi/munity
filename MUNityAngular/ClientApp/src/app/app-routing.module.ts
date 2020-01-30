@@ -23,6 +23,7 @@ import { DefaultLayoutComponent } from './layouts/default-layout/default-layout.
 import { SpeakerlistStartupComponent } from './components/speakerlist/speakerlist-startup/speakerlist-startup.component';
 import { SpeakerlistControllerComponent } from './components/speakerlist/speakerlist-controller/speakerlist-controller.component';
 import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-view/speakerlist-view.component';
+import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -35,6 +36,7 @@ const routes: Routes = [
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'resedit/:id', component: EditorComponent },
+      { path: 'resa/live/:id', component: WorkWithResolutionComponent },
       { path: 'mydocs', component: MyresolutionsComponent },
       { path: 'reshome', component: ResolutionHomeComponent },
       { path: 'dashboard', component: DashboardComponent },

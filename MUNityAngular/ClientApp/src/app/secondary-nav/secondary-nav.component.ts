@@ -8,10 +8,21 @@ import { UserService } from '../services/user.service';
 })
 export class SecondaryNavComponent implements OnInit {
 
+  isSecMenuExpanded: boolean = false;
+
   constructor(private userService: UserService) { }
 
   ngOnInit() {
     
+  }
+
+  collapse() {
+    this.isSecMenuExpanded = false;
+  }
+
+  toggle() {
+    console.log('toggle');
+    this.isSecMenuExpanded = !this.isSecMenuExpanded;
   }
 
 }

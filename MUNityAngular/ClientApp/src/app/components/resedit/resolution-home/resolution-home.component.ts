@@ -11,6 +11,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ResolutionHomeComponent implements OnInit {
 
+  public workOnId: string = "default";
+
   constructor(private service: ResolutionService, private router: Router,
     private readonly nofitier: NotifierService, private userService: UserService) { }
 
@@ -35,4 +37,16 @@ export class ResolutionHomeComponent implements OnInit {
     );
   }
 
+  updateWorkTogetherKey(val) {
+    this.workOnId = val;
+  }
+
+  workTogether(val) {
+    this.workOnId = val;
+    this.workTogetherClick();
+  }
+
+  workTogetherClick() {
+    this.router.navigate(['/resedit/' + this.workOnId]);
+  }
 }

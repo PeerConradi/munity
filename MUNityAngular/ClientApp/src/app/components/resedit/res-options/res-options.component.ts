@@ -19,4 +19,7 @@ export class ResOptionsComponent implements OnInit {
 
   onEnterTitle(value: string) { this.resolutionService.changeTitle(this.resolution.ID, value); }
 
+  onEnterCommittee(value: string) { this.resolutionService.changeCommittee(this.resolution.ID, value); }
+
+  onEnterSubmitter(value: string) { }
 }

@@ -48,6 +48,8 @@ namespace MUNityAngular.Models
         public BaseCommitteeModel ResolutlyCommittee { get; set; }
         public int DocumentNumber { get; set; }
 
+        public string CommitteeName { get; set; }
+
         public ObservableCollection<DelegationModel> Supporters { get; set; }
 
         public string SubmitterID { get; set; }

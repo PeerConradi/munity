@@ -101,6 +101,16 @@ namespace MUNityAngular.Models
             }
         }
 
+        /// <summary>
+        /// Die Deny Methode soll ein Ablehnen des Änderungsantrages bewirken.
+        /// So können ggf. alle Änderungsanträge der selben Natur ebenfalls 
+        /// verworfen werden.
+        /// </summary>
+        public virtual void Deny()
+        {
+            this.Remove();
+        }
+
         [JsonIgnore]
         public virtual string ViewValue { get; } = "Änderungsantrag";
 

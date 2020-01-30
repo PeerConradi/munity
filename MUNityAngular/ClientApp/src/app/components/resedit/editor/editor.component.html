@@ -34,7 +34,7 @@
         <!-- Dieser Button soll gewollt oberhalb der Liste sein! -->
         <button class="btn btn-block btn-success add-button" (click)="openAddAmendmentModal();">Änderungsantrag
           hinzufügen</button>
-        <div *ngIf="amendmentInspector">
+        <div *ngIf="amendmentInspector" class="amendments-area">
           <div *ngFor="let amendment of amendmentInspector.allAmendments">
             <app-amendment-controller [amendment]="amendment" [resolution]="model"></app-amendment-controller>
           </div>

@@ -1,7 +1,8 @@
 <div class="amendment-box">
   <!-- TODO: Den Background abhängig von der Art des Antrags machen -->
-  <div class="box-top text-white" [class.bg-warning]="amendment.Type === 'delete'">
-    <b class="box-title">1. Streichen</b>
+  <div class="box-top text-white" [class.bg-warning]="amendment.Type === 'delete'" [class.bg-primary]="amendment.Type === 'change'">
+    <b *ngIf="amendment.Type === 'delete'" class="box-title">{{ paragraph.Path }} Streichen</b>
+    <b *ngIf="amendment.Type === 'change'" class="box-title">{{ paragraph.Path }} Ändern</b>
     <button class="btn btn-danger remove-button float-right" (click)="removeAmendment()">X</button>
   </div>
 

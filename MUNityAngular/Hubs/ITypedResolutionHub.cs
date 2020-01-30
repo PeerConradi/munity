@@ -22,13 +22,19 @@ namespace MUNityAngular.Hubs
 
         Task TitleChanged(string newTitle);
 
+        Task CommitteeChanged(string newTitle);
+
         Task ResolutionSaved(DateTime time);
 
         Task DeleteAmendmentAdded(HubObjects.HUBDeleteAmendment amendment);
 
-        Task AmendmentActivated(HubObjects.HUBAbstractAmendment amendment);
+        Task ChangeAmendmentAdded(HubObjects.HUBChangeAmendment amendment);
 
-        Task AmendmentRemoved(HubObjects.HUBAbstractAmendment amendment);
+        Task MoveAmendmentAdded(HubObjects.HUBResolution resolution, HubObjects.HUBMoveAmendment amendment);
+
+        Task AmendmentActivated(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);
+
+        Task AmendmentRemoved(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);
 
         Task AmendmentDeactivated(HubObjects.HUBAbstractAmendment amendment);
         Task AmendmentSubmitted(HubObjects.HUBResolution resolution);

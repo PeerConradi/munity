@@ -19,6 +19,8 @@ namespace MUNityAngular.Models
 
         public override string Type => AMENDMENT_TYPES.MOVE_TYPE;
 
+        public string NewSectionID { get => NewSection?.ID ?? string.Empty; }
+
         [JsonIgnore]
         public OperativeParagraphModel NewSection { get; set; }
 

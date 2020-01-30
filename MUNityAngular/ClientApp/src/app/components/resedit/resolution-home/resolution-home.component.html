@@ -34,8 +34,9 @@
                 <form>
                     <div class="form-group">
                         <label for="speakerlistid">Public Work Id</label>
-                        <input type="text" class="form-control" id="speakerlistid" aria-describedby="emailHelp"
-                            placeholder="aaaa-aaaaa-aaaaa-aaaa" disabled>
+                        <input type="text" class="form-control" id="workOnInputId" (keyup.enter)="workTogether(workOnInput.value)"
+                          (blur)="updateWorkTogetherKey(workOnInput.value)" #workOnInput aria-describedby="emailHelp"
+                            placeholder="aaaa-aaaaa-aaaaa-aaaa">
                         <small id="emailHelp" class="form-text text-muted">Die Public-Work-Id ist lediglich dem
                             Ersteller der Resolution bekannt</small>
                     </div>
@@ -43,7 +44,7 @@
                 </form>
             </div>
             <div class="card-footer text-muted">
-                <button type="submit" class="btn btn-primary" disabled>Mitarbeiten (Coming soon)</button>
+                <button type="submit" class="btn btn-primary" (click)="workTogetherClick()">Mitarbeiten</button>
             </div>
         </div>
     </div>

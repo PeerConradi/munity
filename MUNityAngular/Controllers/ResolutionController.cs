@@ -271,7 +271,13 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            if (string.IsNullOrEmpty(newtitle))
+            var realtext = System.Web.HttpUtility.UrlDecode(newtitle);
+            if (realtext.EndsWith('|'))
+            {
+                realtext = realtext.Substring(0, realtext.Length - 1);
+            }
+
+            if (string.IsNullOrEmpty(realtext))
                 return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
 
             var resolution = resolutionService.GetResolution(resolutionid);
@@ -281,10 +287,39 @@ namespace MUNityAngular.Controllers
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            resolution.Topic = newtitle ?? string.Empty;
-            resolutionService.UpdateResolutionName(resolutionid, newtitle);
+            resolution.Topic = realtext ?? string.Empty;
+            resolutionService.UpdateResolutionName(resolutionid, realtext);
             resolutionService.RequestSave(resolution);
-            _hubContext?.Clients.Group(resolution.ID).TitleChanged(newtitle);
+            _hubContext?.Clients.Group(resolution.ID).TitleChanged(realtext);
+            return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult ChangeCommittee([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string newcommitteename,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var realtext = System.Web.HttpUtility.UrlDecode(newcommitteename);
+            if (realtext.EndsWith('|'))
+            {
+                realtext = realtext.Substring(0, realtext.Length - 1);
+            }
+
+            if (string.IsNullOrEmpty(realtext))
+                return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
+
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            resolution.CommitteeName = realtext;
+            resolutionService.RequestSave(resolution);
+            _hubContext?.Clients.Group(resolution.ID).CommitteeChanged(realtext);
             return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
         }
 
@@ -307,12 +342,81 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
 
             var amendment = new Models.DeleteAmendmentModel();
+            amendment.SubmitterName = submittername;
             amendment.TargetSection = section;
 
             resolutionService.RequestSave(resolution);
 
             _hubContext.Clients.Group(resolutionid).DeleteAmendmentAdded(new Hubs.HubObjects.HUBDeleteAmendment(amendment));
             return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult AddChangeAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string sectionid, [FromHeader]string submittername, [FromHeader]string newtext,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var realText = System.Web.HttpUtility.UrlDecode(newtext);
+            if (realText.EndsWith('|'))
+                realText = realText.Substring(0, realText.Length - 1);
+
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == sectionid);
+            if (section == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
+
+            var amendment = new Models.ChangeAmendmentModel();
+            amendment.SubmitterName = submittername;
+            amendment.NewText = realText;
+            amendment.TargetSection = section;
+
+            resolutionService.RequestSave(resolution);
+
+            _hubContext.Clients.Group(resolutionid).ChangeAmendmentAdded(new Hubs.HubObjects.HUBChangeAmendment(amendment));
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult AddMoveAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string sectionid, [FromHeader]string submittername, [FromHeader]string newposition,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == sectionid);
+            if (section == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
+
+            int np;
+            if (int.TryParse(newposition, out np))
+            {
+                var amendment = new Models.MoveAmendment();
+                amendment.SubmitterName = submittername;
+                amendment.NewPosition = np;
+                amendment.TargetSection = section;
+
+                resolutionService.RequestSave(resolution);
+
+                _hubContext.Clients.Group(resolutionid).MoveAmendmentAdded(new Hubs.HubObjects.HUBResolution(resolution), new Hubs.HubObjects.HUBMoveAmendment(amendment));
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            return StatusCode(StatusCodes.Status406NotAcceptable, "The new Position has to be a number!");
         }
 
         [Route("[action]")]
@@ -338,7 +442,7 @@ namespace MUNityAngular.Controllers
             amendment.Remove();
             resolutionService.RequestSave(resolution);
 
-            _hubContext.Clients.Group(resolutionid).AmendmentRemoved(new Hubs.HubObjects.HUBAbstractAmendment(amendment));
+            _hubContext.Clients.Group(resolutionid).AmendmentRemoved(new Hubs.HubObjects.HUBResolution(resolution), new Hubs.HubObjects.HUBAbstractAmendment(amendment));
             return StatusCode(StatusCodes.Status200OK);
         }
 

@@ -2,3 +2,9 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.amendments-area {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 800px;
+}

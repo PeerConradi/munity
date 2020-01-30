@@ -39,7 +39,8 @@ import { SpeakerlistStartupComponent } from './components/speakerlist/speakerlis
 import { SpeakerlistControllerComponent } from './components/speakerlist/speakerlist-controller/speakerlist-controller.component';
 import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-view/speakerlist-view.component';
 
-import { NgxSortableModule } from 'ngx-sortable'
+import { NgxSortableModule } from 'ngx-sortable';
+import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component'
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { NgxSortableModule } from 'ngx-sortable'
     DefaultLayoutComponent,
     SpeakerlistStartupComponent,
     SpeakerlistControllerComponent,
-    SpeakerlistViewComponent
+    SpeakerlistViewComponent,
+    WorkWithResolutionComponent
   ],
   imports: [
     RouterModule,

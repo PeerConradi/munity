@@ -7,6 +7,7 @@ import { OperativeSection } from 'src/app/models/operative-section.model';
 import { NotifierService } from 'angular-notifier';
 import { AbstractAmendment } from '../../../models/abstract-amendment.model';
 import { AmendmentInspector } from '../../../models/amendment-inspector';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-editor',
@@ -44,7 +45,10 @@ export class EditorComponent implements OnInit {
 
   addAmendmentType = "delete";
 
-  constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService) { }
+  constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
+    private titleService: Title) {
+    this.titleService.setTitle('ResaOnline')
+  }
 
   public model: Resolution;
 
@@ -74,15 +78,17 @@ export class EditorComponent implements OnInit {
           this.newAmendmentNewText = n.OperativeSections[0].Text;
         }
 
+        this.titleService.setTitle(this.model.Topic);
+
         //TODO: Remove this logging
-        console.log(this.model);
+        //console.log(this.model);
       });
     }
   }
 
   addPreambleParagraph() {
     console.log('Request addPreambleParagraph at: ' + this.model.ID);
-    this.service.addPreambleParagraph(this.model.ID).subscribe(data => { console.log('Erfolg!') }, err => {
+    this.service.addPreambleParagraph(this.model.ID).subscribe(data => { }, err => {
       if (err.status == 404) {
         this.notifier.notify('error', 'Ohh nein - Es besteht keine Verbindung zum Server oder die Resolution exisitert nicht.');
       }
@@ -125,7 +131,7 @@ export class EditorComponent implements OnInit {
   addDeleteAmendment() {
     const resolutionid = this.model.ID;
     const sectionid = this.model.OperativeSections[0].ID;
-    this.service.addDeleteAmendment(resolutionid, sectionid);
+    this.service.addDeleteAmendment(resolutionid, sectionid, 'Unknown');
   }
 
   createNewAmendment() {
@@ -134,7 +140,9 @@ export class EditorComponent implements OnInit {
     const newText: string = this.newAmendmentNewText;
 
     if (type === 'delete') {
-      this.service.addDeleteAmendment(this.model.ID, target.ID);
+      this.service.addDeleteAmendment(this.model.ID, target.ID, 'Unknown');
+    } else if (type === 'change') {
+      this.service.addChangeAmendment(this.model.ID, target.ID, 'Unknown', newText);
     }
 
     this.amendmentModalActive = false;
