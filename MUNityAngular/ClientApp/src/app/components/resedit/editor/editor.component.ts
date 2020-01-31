@@ -140,6 +140,10 @@ export class EditorComponent implements OnInit {
     this.service.addDeleteAmendment(resolutionid, sectionid, 'Unknown');
   }
 
+  get endIndex(): number {
+    return this.model.OperativeSections.length + 1;
+  }
+
   createNewAmendment() {
     const type: string = this.addAmendmentType;
     const target: OperativeSection = this.amendmentTargetSection;

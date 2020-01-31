@@ -120,6 +120,7 @@
                     <option *ngFor="let oa of model.OperativeSections; let i = index" [ngValue]="i">
                       {{ oa.Path }}
                     </option>
+                    <option [ngValue]="endIndex">Ans Ende</option>
                   </select>
                 </div>
               </div>
