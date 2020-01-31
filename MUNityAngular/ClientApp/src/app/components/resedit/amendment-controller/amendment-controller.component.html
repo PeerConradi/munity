@@ -1,17 +1,19 @@
 <div class="amendment-box">
   <!-- TODO: Den Background abhängig von der Art des Antrags machen -->
   <div class="box-top text-white" [class.bg-warning]="amendment.Type === 'delete'" [class.bg-primary]="amendment.Type === 'change'"
-       [class.bg-secondary]="amendment.Type === 'move'">
+       [class.bg-secondary]="amendment.Type === 'move'" [class.bg-success]="amendment.Type === 'add'">
     <b *ngIf="amendment.Type === 'delete'" class="box-title">{{ paragraph.Path }} Streichen</b>
     <b *ngIf="amendment.Type === 'change'" class="box-title">{{ paragraph.Path }} Ändern</b>
     <b *ngIf="amendment.Type === 'move'" class="box-title">{{ paragraph.Path }} Verschieben</b>
+    <b *ngIf="amendment.Type === 'add'" class="box-title">Neuer Absatz</b>
     <button class="btn btn-danger remove-button float-right" (click)="removeAmendment()">X</button>
   </div>
 
-  <p *ngIf="!paragraph">Finde den Operativen Absatz nicht o.O</p>
+  <p *ngIf="!paragraph && amendment.Type !== 'add'">Finde den Operativen Absatz nicht o.O</p>
 
   <p *ngIf="amendment.SubmitTime"><b>Zeit: </b> {{ amendment.SubmitTime | date:'short' }}</p>
-  <p *ngIf="paragraph"><b>Ziel: </b> {{ paragraph.Path }}</p>
+  <p *ngIf="paragraph && amendment.Type !== 'add'"><b>Ziel: </b> {{ paragraph.Path }}</p>
+  <p *ngIf="amendment.Type === 'add'"><b>Ziel-Position: </b> {{ amendment.TargetPosition }}</p>
   <label class="cb-container">
     Anzeigen
 

@@ -157,6 +157,16 @@ export class ResolutionService {
       model.MoveAmendments = resolution.MoveAmendments;
       model.DeleteAmendments = resolution.DeleteAmendments;
       model.ChangeAmendments = resolution.ChangeAmendments;
+      model.AddAmendmentsSave = resolution.AddAmendmentsSave;
+      inspector.allAmendments = this.OrderAmendments(model);
+    });
+
+    this._hubConnection.on('AddAmendmentAdded', (resolution: Resolution, amendment: ChangeAmendment) => {
+      model.OperativeSections = resolution.OperativeSections;
+      model.MoveAmendments = resolution.MoveAmendments;
+      model.DeleteAmendments = resolution.DeleteAmendments;
+      model.ChangeAmendments = resolution.ChangeAmendments;
+      model.AddAmendmentsSave = resolution.AddAmendmentsSave;
       inspector.allAmendments = this.OrderAmendments(model);
     });
 
@@ -165,7 +175,6 @@ export class ResolutionService {
       //Operativen Abschnitte neu geladen werden, da sich dort etwas in der Vorschau ändert
       if (amendment.Type === 'move' || amendment.Type === 'add') {
         model.OperativeSections = resolution.OperativeSections;
-        console.log(amendment);
       }
 
       const a = this.findAmendment(model, amendment.ID);
@@ -185,7 +194,8 @@ export class ResolutionService {
       model.DeleteAmendments = resolution.DeleteAmendments;
       model.ChangeAmendments = resolution.ChangeAmendments;
       model.MoveAmendments = resolution.MoveAmendments;
-      //Anderen Amendments ebenfalls ersetzen!
+      model.AddAmendmentsSave = resolution.AddAmendmentsSave;
+      
       inspector.allAmendments = this.OrderAmendments(model);
     });
     
@@ -205,6 +215,7 @@ export class ResolutionService {
 
     if (a == null) {
       //Search inside Add Amendments
+      a = resolution.AddAmendmentsSave.find(n => n.ID === amendmentid);
     }
 
     return a;
@@ -370,6 +381,23 @@ export class ResolutionService {
       options).subscribe(data => { });
   }
 
+  public addAddAmendment(resolutionid: string, submitter: string, newPosition: number, newText: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('sumbittername', submitter);
+    headers = headers.set('newposition', newPosition.toString());
+    headers = headers.set('newtext', encodeURI(newText + '|'));
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/AddAddAmendment',
+      options).subscribe(data => { });
+  }
+
   removeAmendment(resolutionid: string, amendmentid: string) {
     let authString: string = 'default';
     if (this.userService.isLoggedIn)
@@ -505,8 +533,10 @@ export class ResolutionService {
       //Move Amendments
       resolution.MoveAmendments.forEach(n => { if (n.TargetSectionID == oa.ID) arr.push(n) });
 
-      //Add Amendments
+      
     });
+    //Add Amendments
+    resolution.AddAmendmentsSave.forEach(n => arr.push(n))
     return arr;
   }
 

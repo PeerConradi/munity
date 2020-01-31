@@ -32,11 +32,14 @@ namespace MUNityAngular.Hubs
 
         Task MoveAmendmentAdded(HubObjects.HUBResolution resolution, HubObjects.HUBMoveAmendment amendment);
 
+        Task AddAmendmentAdded(HubObjects.HUBResolution resolution, HubObjects.HUBAddAmendment amendment);
+
         Task AmendmentActivated(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);
 
         Task AmendmentRemoved(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);
 
         Task AmendmentDeactivated(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);
+
         Task AmendmentSubmitted(HubObjects.HUBResolution resolution);
 
         Task AmendmentDenied(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);

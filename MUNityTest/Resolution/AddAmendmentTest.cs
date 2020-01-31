@@ -47,6 +47,47 @@ namespace MUNityTest.Resolution
         }
 
         [Test]
+        public void TestActivateAddAmendmentNotMultiplyTake1()
+        {
+            var resolution = new ResolutionModel();
+            resolution.AddOperativeParagraph("Real Paragraph!");
+            var amendment = new AddAmendmentModel();
+            amendment.TargetPosition = 1;
+            amendment.TargetResolution = resolution;
+            
+            Assert.AreEqual(1, resolution.Amendments.Count);
+            Assert.AreEqual(1, resolution.AddAmendmentsSave.Count());
+        }
+
+        [Test]
+        public void TestActivateAddAmendmentNotMultiplyTake2()
+        {
+            var resolution = new ResolutionModel();
+            resolution.AddOperativeParagraph("Real Paragraph!");
+            var amendment = new AddAmendmentModel();
+            amendment.TargetPosition = 1;
+            amendment.TargetResolution = resolution;
+            amendment.Activate();
+            
+            Assert.AreEqual(1, resolution.Amendments.Count);
+            Assert.AreEqual(1, resolution.AddAmendmentsSave.Count());
+        }
+
+        [Test]
+        public void TestActivateAddAmendmentNotMultiplyTake3()
+        {
+            var resolution = new ResolutionModel();
+            resolution.AddOperativeParagraph("Real Paragraph!");
+            var amendment = new AddAmendmentModel();
+            amendment.TargetPosition = 1;
+            amendment.TargetResolution = resolution;
+            amendment.Activate();
+            amendment.Deactivate();
+            Assert.AreEqual(1, resolution.Amendments.Count);
+            Assert.AreEqual(1, resolution.AddAmendmentsSave.Count());
+        }
+
+        [Test]
         public void TestDeactivateAddAmendment()
         {
             var resolution = new ResolutionModel();
@@ -82,7 +123,7 @@ namespace MUNityTest.Resolution
             amendment.TargetResolution = resolution;
             amendment.NewText = expectedText;
             amendment.Submit();
-            Assert.IsTrue(resolution.Amendments.Contains(amendment));
+            Assert.IsFalse(resolution.Amendments.Contains(amendment));
             Assert.AreEqual(2, resolution.OperativeSections.Count);
             Assert.AreEqual(amendment.TargetSection, resolution.OperativeSections[1]);
             Assert.IsFalse(resolution.OperativeSections[1].IsVirtual);
@@ -101,7 +142,7 @@ namespace MUNityTest.Resolution
             amendment.NewText = expectedText;
             amendment.Activate();
             amendment.Submit();
-            Assert.IsTrue(resolution.Amendments.Contains(amendment));
+            Assert.IsFalse(resolution.Amendments.Contains(amendment));
             Assert.AreEqual(2, resolution.OperativeSections.Count);
             Assert.AreEqual(amendment.TargetSection, resolution.OperativeSections[1]);
             Assert.IsFalse(resolution.OperativeSections[1].IsVirtual);

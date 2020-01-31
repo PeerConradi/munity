@@ -26,7 +26,7 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public List<HUBMoveAmendment> MoveAmendments { get; set; }
 
-        public IEnumerable<Models.AddAmendmentModel> AddAmendmentsSave { get; set; }
+        public List<HUBAddAmendment> AddAmendmentsSave { get; set; }
 
         public List<HUBOperativeParagraph> OperativeSections { get; set; }
 
@@ -54,7 +54,11 @@ namespace MUNityAngular.Hubs.HubObjects
             {
                 this.MoveAmendments.Add(new HUBMoveAmendment(amendment));
             }
-            this.AddAmendmentsSave = resolution.AddAmendmentsSave;
+            this.AddAmendmentsSave = new List<HUBAddAmendment>();
+            foreach(var amendment in resolution.AddAmendmentsSave)
+            {
+                this.AddAmendmentsSave.Add(new HUBAddAmendment(amendment));
+            }
             
             this.OperativeSections = new List<HUBOperativeParagraph>();
             foreach(var oa in resolution.OperativeSections)

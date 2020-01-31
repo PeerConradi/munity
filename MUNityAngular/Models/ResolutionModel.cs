@@ -12,6 +12,7 @@ namespace MUNityAngular.Models
     {
 
         public delegate void OperativeParagraphAdded(OperativeParagraphModel model);
+
         public event OperativeParagraphAdded OnOperativeParagraphAdded;
 
         public string ID { get; set; }
@@ -85,7 +86,12 @@ namespace MUNityAngular.Models
             {
                 foreach (var am in e.NewItems.OfType<AddAmendmentModel>())
                 {
-                    am.TargetResolution = this;
+                    //Abfragen, sonst ruft sich diese Funktion selbst im Kreis auf
+                    if (am.TargetResolution != this)
+                    {
+                        am.TargetResolution = this;
+                    }
+                    
                 }
             }
 
@@ -93,16 +99,12 @@ namespace MUNityAngular.Models
 
         private void OperativeSections_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-            {
-                foreach(var item in e.NewItems.OfType<OperativeParagraphModel>().Where(n => n.AmendmentParagraph == false))
-                {
-                    item.Resolution = this;
-                }
-            }
             foreach(var os in OperativeSections)
             {
-                os.Resolution = this;
+                if (os.AmendmentParagraph == false)
+                {
+                    os.Resolution = this;
+                }
                 os.UpdatePath();
             }
         }
@@ -121,30 +123,37 @@ namespace MUNityAngular.Models
 
         public OperativeParagraphModel AddOperativeParagraph(int position, bool amendmentParagraph = false)
         {
+            //Wenn diese Position genommen werden kann
             if (position >= 0 && position < OperativeSections.Count || OperativeSections.Count == 0 && position == 0)
             {
-                OperativeParagraphModel paragraph = new OperativeParagraphModel(null, amendmentParagraph);
+                var paragraph = new OperativeParagraphModel(null, amendmentParagraph);
                 paragraph.ResolutionID = this.ID;
                 paragraph.Resolution = this;
                 paragraph.Text = "";
+                //Einfügen des Absatzes an die gegebene Position
                 this.OperativeSections.Insert(position, paragraph);
-                OnOperativeParagraphAdded?.Invoke(paragraph);
+                //OnOperativeParagraphAdded?.Invoke(paragraph);
+
+                //Nummer aller Änderungsanträge auf Verschieben Updaten!
                 foreach (var item in MoveAmendments.Where(n => n.TargetSection.Parent == null && OperativeSections.Where(a => a.Parent == null).ToList().IndexOf(n.TargetSection) < position))
                 {
                     item.NewPosition += 1;
                 }
+
+                //Auch noch die Nummern aller Änderungsanträge auf Hinzufügen verschieben!
+
+                //Update all paths when its inserted
+                foreach (var sect in OperativeSections)
+                {
+                    sect.UpdatePath();
+                }
                 return paragraph;
             }
 
+            //Falls diese Position außerhalb des Bereichs liegt, ans Ende hängen
             if (position >= this.OperativeSections.Count)
             {
                 return this.AddOperativeParagraph();
-            }
-
-            //Update all paths when its inserted
-            foreach(var sect in OperativeSections)
-            {
-                sect.UpdatePath();
             }
 
             return null;

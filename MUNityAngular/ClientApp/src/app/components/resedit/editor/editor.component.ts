@@ -151,6 +151,8 @@ export class EditorComponent implements OnInit {
       this.service.addChangeAmendment(this.model.ID, target.ID, 'Unknown', newText);
     } else if (type === 'move') {
       this.service.addMoveAmendment(this.model.ID, target.ID, 'Unknown', this.amendmentTargetPosition);
+    } else if (type === 'add') {
+      this.service.addAddAmendment(this.model.ID, 'Unknown', this.amendmentTargetPosition, newText);
     }
 
     this.amendmentModalActive = false;

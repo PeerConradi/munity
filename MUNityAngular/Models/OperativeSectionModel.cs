@@ -193,12 +193,9 @@ namespace MUNityAngular.Models
                 string p = "";
 
                 p = Parent.Path;
-
                 p += ".";
 
                 int myIndex = Parent.GetChildren().ToList().IndexOf(this);
-
-                
 
                 if (this.Level == 0)
                 {
@@ -221,9 +218,6 @@ namespace MUNityAngular.Models
                         p += "i";
                     }
                 }
-
-                Console.WriteLine(p + " Level: " + this.Level.ToString());
-
                 Path = p;
             }
 

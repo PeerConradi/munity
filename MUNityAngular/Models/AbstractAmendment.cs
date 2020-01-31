@@ -46,19 +46,30 @@ namespace MUNityAngular.Models
             {
                 _targetSection = value;
 
+                //Wenn die Section gesetzt wird und keine Resolution angegeben ist
+                //oder die Resolution sich von dieser hier unterscheidet, dann setze
+                //Die Resolution neu
+                
                 if (value != null)
                 {
                     TargetSectionID = value.ID;
-                    _targetSection.Resolution.Amendments.Add(this);
+                    if (!_targetSection.Resolution.Amendments.Contains(this))
+                    {
+                        _targetSection.Resolution.Amendments.Add(this);
+                    }
+                    
                     Resolution = _targetSection.Resolution;
                 }
                 else
                 {
-                    TargetSectionID = null;
-                    if (Resolution != null)
-                    {
-                        Resolution.Amendments.Add(this);
-                    }
+                    //Verhlaten für einen Änderungsantrag wenn der Zielabschnitt auf null
+                    //Gesetzt wird ist noch nicht difiniert.
+                    //Möglich wäre hier ein Löschen des Absatzes!
+                    //TargetSectionID = null;
+                    //if (Resolution != null)
+                    //{
+                    //    Resolution.Amendments.Add(this);
+                    //}
                 }
             }
         }

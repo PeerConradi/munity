@@ -25,7 +25,7 @@ namespace MUNityAngular.Models
                 _targetResolution = value;
                 if (value != null)
                 {
-                    if (!value.Amendments.Contains(this))
+                    if (value.Amendments.Any(n => n.ID == this.ID) == false)
                     {
                         value.Amendments.Add(this);
                     }
@@ -47,11 +47,12 @@ namespace MUNityAngular.Models
         {
             if (TargetResolution != null)
             {
+                //Wenn noch keine Darstellung für diesen Änderungsantrag exisitert lege diese an
                 if (TargetSection == null)
                 {
                     TargetSection = TargetResolution.AddOperativeParagraph(TargetPosition, true);
                 }
-
+                TargetSection.AmendmentParagraph = true;
                 TargetSection.Text = NewText;
                 TargetSection.IsVirtual = true;
                 TargetSection.ViewModus = OperativeParagraphModel.EViewModus.Add;

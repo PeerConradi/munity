@@ -122,9 +122,7 @@ namespace MUNityAngular.Controllers
             [FromServices]Services.ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realText = System.Web.HttpUtility.UrlDecode(newtext);
-            if (realText.EndsWith('|'))
-                realText = realText.Substring(0, realText.Length - 1);
+            var realText = newtext.DecodeUrl();
 
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
@@ -162,9 +160,7 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realText = System.Web.HttpUtility.UrlDecode(newtext);
-            if (realText.EndsWith('|'))
-                realText = realText.Substring(0, realText.Length - 1);
+            var realText = newtext.DecodeUrl();
 
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
@@ -389,11 +385,7 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realtext = System.Web.HttpUtility.UrlDecode(newtitle);
-            if (realtext.EndsWith('|'))
-            {
-                realtext = realtext.Substring(0, realtext.Length - 1);
-            }
+            var realtext = newtitle.DecodeUrl();
 
             if (string.IsNullOrEmpty(realtext))
                 return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
@@ -419,11 +411,7 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realtext = System.Web.HttpUtility.UrlDecode(newcommitteename);
-            if (realtext.EndsWith('|'))
-            {
-                realtext = realtext.Substring(0, realtext.Length - 1);
-            }
+            var realtext = newcommitteename.DecodeUrl();
 
             if (string.IsNullOrEmpty(realtext))
                 return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
@@ -476,12 +464,7 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realText = System.Web.HttpUtility.UrlDecode(newtext);
-            if (string.IsNullOrEmpty(realText))
-                return StatusCode(StatusCodes.Status400BadRequest, "The new Text you have given is not valid!");
-
-            if (realText.EndsWith('|'))
-                realText = realText.Substring(0, realText.Length - 1);
+            var realText = newtext.DecodeUrl();
 
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
@@ -535,6 +518,40 @@ namespace MUNityAngular.Controllers
                 resolutionService.RequestSave(resolution);
 
                 _hubContext.Clients.Group(resolutionid).MoveAmendmentAdded(new Hubs.HubObjects.HUBResolution(resolution), new Hubs.HubObjects.HUBMoveAmendment(amendment));
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            return StatusCode(StatusCodes.Status406NotAcceptable, "The new Position has to be a number!");
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult AddAddAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string submittername, [FromHeader]string newposition,
+            [FromHeader]string newtext,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var realtext = newtext.DecodeUrl();
+
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            int np;
+            if (int.TryParse(newposition, out np))
+            {
+                var amendment = new Models.AddAmendmentModel();
+                amendment.SubmitterName = submittername;
+                amendment.TargetPosition = np;
+                amendment.NewText = realtext;
+                amendment.TargetResolution = resolution;
+
+                resolutionService.RequestSave(resolution);
+
+                _hubContext.Clients.Group(resolutionid).AddAmendmentAdded(new Hubs.HubObjects.HUBResolution(resolution), new Hubs.HubObjects.HUBAddAmendment(amendment));
                 return StatusCode(StatusCodes.Status200OK);
             }
             return StatusCode(StatusCodes.Status406NotAcceptable, "The new Position has to be a number!");

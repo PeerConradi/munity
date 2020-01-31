@@ -4,6 +4,7 @@ import { DeleteAmendment } from './delete-amendment.model';
 import { AbstractAmendment } from './abstract-amendment.model';
 import { ChangeAmendment } from './change-amendment.model';
 import { MoveAmendment } from './move-amendment.model';
+import { AddAmendment } from './add-amendment.model';
 
 export class Resolution {
   ID: string;
@@ -18,5 +19,6 @@ export class Resolution {
   DeleteAmendments: DeleteAmendment[] = [];
   ChangeAmendments: ChangeAmendment[] = [];
   MoveAmendments: MoveAmendment[] = [];
+  AddAmendmentsSave: AddAmendment[] = [];
   Level: number;
 }
