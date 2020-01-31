@@ -28,12 +28,12 @@
   </div>
 </div>
 
-<!-- Amendment Create Modal -->
+<!-- Amendment Information Modal -->
 <div class="modal-backdrop fade-in" style="opacity: 0.9;" [style.display]="amendmentModalActive ? 'block' : 'none'">
 </div>
 <div class="modal" [style.display]="amendmentModalActive ? 'block' : 'none'" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered w-100" role="document">
-    <div class="modal-content">
+  <div class="modal-dialog2 bg-white" role="document">
+    <div class="modal-content2">
       <div class="modal-header">
         <h5 class="modal-title">Übersicht der Änderungsanträge</h5>
         <button type="button" class="close" (click)="closeAmendmentDetailModal();" aria-label="Close">
@@ -53,7 +53,7 @@
             <tr *ngFor="let amendment of detailAmendments">
               <th scope="row">{{ amendment.SubmitTime | date:'dd.MM.yyyy HH:mm:ss' }}</th>
               <td>{{ amendment.SubmitterName }}</td>
-              <td *ngIf="amendment.type != 'delete'">{{ amendment.NewText }}</td>
+              <td *ngIf="amendment.type != 'delete'" ><p class="overflow-auto max-height-200">{{ amendment.NewText }}</p></td>
             </tr>
             </table>
         </div>

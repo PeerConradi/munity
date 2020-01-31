@@ -21,7 +21,11 @@ export class ResolutionService {
 
   private baseUrl: string;
 
+  private connectionid: string;
+
   public hasError: boolean = false;
+
+
 
   //public resolution: Resolution;
 
@@ -33,20 +37,9 @@ export class ResolutionService {
 
   constructor(private httpClient: HttpClient, private userService: UserService, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
-    this._hubConnection = new signalR.HubConnectionBuilder().withUrl(baseUrl + 'resasocket').build();
-    this._hubConnection
-      .start()
-      .then(() => {
-        this.connectionReady = true;
-        this.stack.forEach(n => {
-          this._hubConnection.send(n.methodName, n.args);
-        });
-        this.stack = [];
-      })
-      .catch(err => {
-        this.hasError = true;
-      });
   }
+
+
 
   public createResolution() {
     let authString: string = 'default';
@@ -121,13 +114,29 @@ export class ResolutionService {
       model.CommitteeName = newcommitteename;
     });
 
+    /**
+     * One Amendment was deleted (maybe because of a typo or it was wrong not because it was Denied!)
+     **/
     this._hubConnection.on('AmendmentRemoved', (resolution: Resolution, amendment: AbstractAmendment) => {
-      //model.OperativeSections = resolution.OperativeSections;
-      //model.ChangeAmendments = resolution.ChangeAmendments;
-      //model.DeleteAmendments = resolution.DeleteAmendments;
-      //model.MoveAmendments = resolution.MoveAmendments;
-      this.OnAmendmentRemoved(model, amendment);
-      inspector.allAmendments = this.OnAmendmentRemoved(model, amendment);
+      //Fuck it! we update everything who cares about traffic?!
+      model.OperativeSections = resolution.OperativeSections;
+      model.ChangeAmendments = resolution.ChangeAmendments;
+      model.DeleteAmendments = resolution.DeleteAmendments;
+      model.MoveAmendments = resolution.MoveAmendments;
+      //this.OnAmendmentRemoved(model, amendment);
+      inspector.allAmendments = this.OrderAmendments(model);
+      //inspector.allAmendments = this.OnAmendmentRemoved(model, amendment);
+    });
+
+    this._hubConnection.on('AmendmentDenied', (resolution: Resolution, amendment: AbstractAmendment) => {
+      //Fuck it! we update everything who cares about traffic?!
+      model.OperativeSections = resolution.OperativeSections;
+      model.ChangeAmendments = resolution.ChangeAmendments;
+      model.DeleteAmendments = resolution.DeleteAmendments;
+      model.MoveAmendments = resolution.MoveAmendments;
+      //this.OnAmendmentRemoved(model, amendment);
+      inspector.allAmendments = this.OrderAmendments(model);
+      //inspector.allAmendments = this.OnAmendmentRemoved(model, amendment);
     });
 
     /**
@@ -143,18 +152,30 @@ export class ResolutionService {
       inspector.allAmendments = this.onChangeAmendmentAdded(model, amendment);
     });
 
+    this._hubConnection.on('MoveAmendmentAdded', (resolution: Resolution, amendment: ChangeAmendment) => {
+      model.OperativeSections = resolution.OperativeSections;
+      model.MoveAmendments = resolution.MoveAmendments;
+      model.DeleteAmendments = resolution.DeleteAmendments;
+      model.ChangeAmendments = resolution.ChangeAmendments;
+      inspector.allAmendments = this.OrderAmendments(model);
+    });
+
     this._hubConnection.on('AmendmentActivated', (resolution: Resolution, amendment: AbstractAmendment) => {
       //Diese beiden Änderungsanträge sind etwas komplexer und erfordern, dass die Struktur der
       //Operativen Abschnitte neu geladen werden, da sich dort etwas in der Vorschau ändert
       if (amendment.Type === 'move' || amendment.Type === 'add') {
         model.OperativeSections = resolution.OperativeSections;
+        console.log(amendment);
       }
 
       const a = this.findAmendment(model, amendment.ID);
       a.Activated = true;
     });
 
-    this._hubConnection.on('AmendmentDeactivated', (amendment: AbstractAmendment) => {
+    this._hubConnection.on('AmendmentDeactivated', (resolution: Resolution, amendment: AbstractAmendment) => {
+      if (amendment.Type === 'move' || amendment.Type === 'add') {
+        model.OperativeSections = resolution.OperativeSections;
+      }
       const a = this.findAmendment(model, amendment.ID);
       a.Activated = false;
     });
@@ -268,14 +289,35 @@ export class ResolutionService {
   }
 
   public subscribeToResolution(id: string) {
-    if (this.connectionReady == true)
-      this._hubConnection.send('SubscribeToResolution', id);
-    else {
-      let element = new stackElement();
-      element.methodName = 'SubscribeToResolution';
-      element.args = id;
-      this.stack.push(element);
-    }
+    const builder = new signalR.HubConnectionBuilder().withUrl(this.baseUrl + 'resasocket');
+    this._hubConnection = builder.build();
+
+    this._hubConnection
+      .start()
+      .then(() => {
+        var hub = this._hubConnection;
+        var connectionUrl: string = hub["connection"].transport.webSocket.url;
+        this.connectionid = connectionUrl.split('=')[1];
+        this.connectionReady = true;
+
+        console.log('subscribte to: ' + id, ' with my id: ' + this.connectionid);
+        let authString: string = 'default';
+        if (this.userService.isLoggedIn)
+          authString = this.userService.sessionkey();
+
+        let headers = new HttpHeaders();
+        headers = headers.set('content-type', 'application/json; charset=utf-8');
+        headers = headers.set('auth', authString);
+        headers = headers.set('id', id);
+        headers = headers.set('connectionid', this.connectionid);
+        let options = { headers: headers };
+        this.httpClient.get(this.baseUrl + 'api/Resolution/SubscribeToResolution',
+          options).subscribe(data => { });
+      })
+      .catch(err => {
+        this.hasError = true;
+      });
+    
   }
 
   public addDeleteAmendment(resolutionid: string, paragraphid: string, submitter: string) {
@@ -308,6 +350,23 @@ export class ResolutionService {
     headers = headers.set('newtext', encodeURI(newtext + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddChangeAmendment',
+      options).subscribe(data => { });
+  }
+
+  public addMoveAmendment(resolutionid: string, paragraphid: string, submitter: string, newPosition: number) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('sectionid', paragraphid);
+    headers = headers.set('sumbittername', submitter);
+    headers = headers.set('newposition', newPosition.toString());
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/AddMoveAmendment',
       options).subscribe(data => { });
   }
 
@@ -394,6 +453,7 @@ export class ResolutionService {
     }
   }
 
+  /*
   public OnAmendmentRemoved(resolution: Resolution, amendment: AbstractAmendment): AbstractAmendment[] {
     const amendmentElement = this.findAmendment(resolution, amendment.ID);
     if (amendmentElement != null) {
@@ -403,6 +463,8 @@ export class ResolutionService {
           target.DeleteAmendmentCount -= 1;
         } else if (amendment.Type === 'change') {
           target.ChangeAmendmentCount -= 1;
+        } else if (amendment.Type === 'move') {
+          target.MoveAmendmentCount -= 1;
         }
       }
       if (amendment.Type === 'delete') {
@@ -416,10 +478,17 @@ export class ResolutionService {
         if (index !== -1) {
           resolution.ChangeAmendments.splice(index, 1);
         }
-      } else if
+      } else if (amendment.Type === 'move') {
+        const element = resolution.MoveAmendments.find(n => n.ID === amendment.ID);
+        const index: number = resolution.MoveAmendments.indexOf(element);
+        if (index !== -1) {
+          resolution.MoveeAmendments.splice(index, 1);
+        }
+      }
     }
     return this.OrderAmendments(resolution);
   }
+  */
 
   public OrderAmendments(resolution: Resolution): AbstractAmendment[] {
     const arr = [];

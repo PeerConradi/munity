@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent implements OnInit {
 
   inputFocused = false;
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService) { }
+  constructor(private formBuilder: FormBuilder, private userService: UserService, private routerService: Router) { }
 
   ngOnInit() {
 
@@ -24,6 +25,10 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
+
+    if (this.userService.isLoggedIn) {
+      this.routerService.navigate(['/']);
+    }
   }
 
   // convenience getter for easy access to form fields
@@ -44,6 +49,7 @@ export class LoginComponent implements OnInit {
       if (n) {
         this.error = false;
         this.success = true;
+        this.routerService.navigate(['/']);
       } else {
         this.error = true;
         this.success = false;

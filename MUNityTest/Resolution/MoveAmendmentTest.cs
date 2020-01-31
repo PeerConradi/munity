@@ -52,6 +52,7 @@ namespace MUNityTest.Resolution
             Assert.AreEqual(sectionOne, resolution.OperativeSections[1]);
             Assert.AreEqual(sectionTwo, resolution.OperativeSections[2]);
             Assert.IsTrue(amendment.TargetSection.IsLocked);
+            Assert.AreEqual(sectionTwo.ActiveAmendment, amendment);
         }
 
         [Test]

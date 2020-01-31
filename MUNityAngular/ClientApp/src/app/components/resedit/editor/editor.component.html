@@ -1,4 +1,9 @@
-<p *ngIf="!model">Resolution wird geladen</p>
+<div *ngIf="!resolution" class="d-flex justify-content-center">
+  <div class="spinner-border text-success" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
 <div *ngIf="model">
   <div class="row">
     <div class="col">
@@ -54,7 +59,6 @@
     <button class="btn btn-primary">Download ChairPro Json</button>
     <button class="btn btn-primary">Download RichTextFile</button>
     <a [routerLink]="['/resa/read', model.ID]" class="btn btn-success" target="_blank">Teilnehmeransicht öffnen</a>
-    <button class="btn btn-danger" (click)="addDeleteAmendment();">Add Delete Amendment Test</button>
   </div>
 </div>
 
@@ -97,6 +101,24 @@
                   <select #selectTarget name="selecttarget" class="form-control" [(ngModel)]="amendmentTargetSection" (change)="addAmendmentTargetSelected($event)">
                     <option *ngFor="let s of model.OperativeSections" [ngValue]="s">{{ s.Path }}
                       {{ s.Text | slice:0:20 }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Neue Position -->
+              <div class="row"
+                   *ngIf="addAmendmentType === 'move' || addAmendmentType === 'add'">
+                <div class="col-12">
+                  <label class="control-label" for="selectTargetPosition">Zielposition </label>
+                  <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="right" data-content="Nimmt die Position der Auswahl ein.">
+                    ?
+                  </button>
+                </div>
+                <div class="col-12">
+                  <select #selectTargetPosition name="selectTargetPosition" class="form-control" [(ngModel)]="amendmentTargetPosition"  (change)="addAmendmentTargetPositionSelected($event)">
+                    <option *ngFor="let oa of model.OperativeSections; let i = index" [ngValue]="i">
+                      {{ oa.Path }}
                     </option>
                   </select>
                 </div>

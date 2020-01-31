@@ -32,6 +32,7 @@ namespace MUNityAngular.Models
             NewSection.Text = TargetSection.Text;
             NewSection.ViewModus = OperativeParagraphModel.EViewModus.Add;
             NewSection.IsVirtual = true;
+            base.Activate();
         }
 
         public override void Deactivate()

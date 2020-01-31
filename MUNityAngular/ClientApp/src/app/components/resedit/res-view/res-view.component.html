@@ -16,8 +16,8 @@
 
     <p class="operative-paragraph-text" *ngFor="let pre of resolution.Preamble.Paragraphs"> {{ pre.Text }} </p>
 
-    <div *ngFor="let oa of resolution.OperativeSections">
-      <p class="text-info amendment-counts">
+    <div *ngFor="let oa of resolution.OperativeSections" [class.bg-success]="oa.IsVirtual === true" [class.text-white]="oa.IsVirtual === true">
+      <p *ngIf="oa.IsVirtual === false" class="text-info amendment-counts" >
         Änderungsanträge: {{ oa.DeleteAmendmentCount}}
         Streichen,
         {{ oa.ChangeAmendmentCount }}
@@ -25,7 +25,7 @@
         {{ oa.MoveAmendmentCount }} Verschieben
       </p>
       <p *ngIf="activeAmendment(oa)==null" style="margin-top: -20px;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
-      <p *ngIf="activeAmendment(oa)!=null && activeAmendment(oa).Type==='delete'" style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
+      <p *ngIf="activeAmendment(oa)!=null && (activeAmendment(oa).Type==='delete' || activeAmendment(oa).Type==='move')" style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
       <div *ngIf="activeAmendment(oa)!=null && activeAmendment(oa).Type==='change'">
         <p style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
         <p>{{ activeChangeAmendment(oa).NewText }}</p>

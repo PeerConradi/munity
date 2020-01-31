@@ -20,6 +20,14 @@ namespace MUNityAngular.Models
             base.Activate();
         }
 
+        public override void Deny()
+        {
+            //Collection Amendments:
+            var toDelete = TargetSection?.Amendments.OfType<DeleteAmendmentModel>().ToList();
+            toDelete?.ForEach(n => n.Remove());
+            base.Deny();
+        }
+
         public override int ORDER_LEVEL => 1;
 
         public override void Submit()

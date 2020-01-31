@@ -16,5 +16,12 @@ namespace MUNityAngular.Hubs
         {
             return Groups.AddToGroupAsync(Context.ConnectionId, id);
         }
+
+        public Task WhoAmI()
+        {
+            return Clients.User(Context.ConnectionId).HubContextIdChanged(Context.ConnectionId);
+        }
+
+        
     }
 }

@@ -29,6 +29,8 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public int MoveAmendmentCount { get; set; }
 
+        public int Level { get; set; }
+
         public HUBOperativeParagraph(Models.OperativeParagraphModel oa)
         {
             this.ID = oa.ID;
@@ -45,6 +47,7 @@ namespace MUNityAngular.Hubs.HubObjects
             this.DeleteAmendmentCount = oa.DeleteAmendmentCount;
             this.ChangeAmendmentCount = oa.ChangeAmendmentCount;
             this.MoveAmendmentCount = oa.MoveAmendmentCount;
+            this.Level = oa.Level;
         }
     }
 }

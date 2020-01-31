@@ -16,9 +16,9 @@ namespace MUNityAngular.Hubs
 
         Task PreambleParagraphChanged(string id, string newText);
 
-        Task PreambleSectionOrderChanged(IEnumerable<string> newOrder);
+        Task PreambleSectionOrderChanged(IEnumerable<Models.PreambleParagraphModel> paragraphs);
 
-        Task OperativeSectionOrderChanged(IEnumerable<string> newOrder);
+        Task OperativeSectionOrderChanged(IEnumerable<HubObjects.HUBOperativeParagraph> paragraphs);
 
         Task TitleChanged(string newTitle);
 
@@ -36,7 +36,11 @@ namespace MUNityAngular.Hubs
 
         Task AmendmentRemoved(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);
 
-        Task AmendmentDeactivated(HubObjects.HUBAbstractAmendment amendment);
+        Task AmendmentDeactivated(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);
         Task AmendmentSubmitted(HubObjects.HUBResolution resolution);
+
+        Task AmendmentDenied(HubObjects.HUBResolution resolution, HubObjects.HUBAbstractAmendment amendment);
+
+        Task HubContextIdChanged(string id);
     }
 }

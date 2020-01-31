@@ -18,4 +18,5 @@ export class Resolution {
   DeleteAmendments: DeleteAmendment[] = [];
   ChangeAmendments: ChangeAmendment[] = [];
   MoveAmendments: MoveAmendment[] = [];
+  Level: number;
 }

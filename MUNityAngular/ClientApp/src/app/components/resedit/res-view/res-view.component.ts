@@ -46,6 +46,10 @@ export class ResViewComponent implements OnInit {
     if (amendment == null) {
       amendment = this.resolution.ChangeAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
     }
+    if (amendment == null) {
+      amendment = this.resolution.MoveAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
+    }
+
     return amendment;
   }
 

@@ -45,6 +45,8 @@ export class EditorComponent implements OnInit {
 
   addAmendmentType = "delete";
 
+  amendmentTargetPosition: number;
+
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
     private titleService: Title) {
     this.titleService.setTitle('ResaOnline')
@@ -116,6 +118,10 @@ export class EditorComponent implements OnInit {
     this.newAmendmentNewText = this.amendmentTargetSection.Text;
   }
 
+  addAmendmentTargetPositionSelected(target) {
+    console.log('position: ' + this.amendmentTargetPosition);
+  }
+
   addOperativeParagraph() {
     this.service.addOperativeParagraph(this.model.ID).subscribe(data => { console.log('Erfolg!') }, err => {
       if (err.status == 404) {
@@ -143,6 +149,8 @@ export class EditorComponent implements OnInit {
       this.service.addDeleteAmendment(this.model.ID, target.ID, 'Unknown');
     } else if (type === 'change') {
       this.service.addChangeAmendment(this.model.ID, target.ID, 'Unknown', newText);
+    } else if (type === 'move') {
+      this.service.addMoveAmendment(this.model.ID, target.ID, 'Unknown', this.amendmentTargetPosition);
     }
 
     this.amendmentModalActive = false;

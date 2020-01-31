@@ -33,6 +33,28 @@ namespace MUNityTest.Resolution
         }
 
         [Test]
+        public void TestDenyDeleteAmendment()
+        {
+            //Expectation: Should remove all other Move Amendments that are targeting the same Section
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("section One");
+            var sectionTwo = resolution.AddOperativeParagraph("section Two");
+            var amendmentOne = new DeleteAmendmentModel();
+            var amendmentTwo = new DeleteAmendmentModel();
+            var amendmentThree = new DeleteAmendmentModel();
+            amendmentOne.TargetSection = sectionOne;
+            amendmentTwo.TargetSection = sectionOne;
+            amendmentThree.TargetSection = sectionTwo;
+            Assert.AreEqual(3, resolution.Amendments.Count);
+            Assert.AreEqual(2, sectionOne.DeleteAmendmentCount);
+            Assert.AreEqual(1, sectionTwo.DeleteAmendmentCount);
+            amendmentOne.Deny();
+            Assert.AreEqual(1, resolution.Amendments.Count);
+            Assert.AreEqual(0, sectionOne.DeleteAmendmentCount);
+            Assert.IsFalse(sectionOne.Amendments.Any());
+        }
+
+        [Test]
         public void TestActivateDeleteAmendment()
         {
             var resolution = new ResolutionModel();

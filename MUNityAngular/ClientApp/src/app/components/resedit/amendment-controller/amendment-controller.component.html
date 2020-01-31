@@ -1,13 +1,13 @@
 <div class="amendment-box">
   <!-- TODO: Den Background abhängig von der Art des Antrags machen -->
-  <div class="box-top text-white" [class.bg-warning]="amendment.Type === 'delete'" [class.bg-primary]="amendment.Type === 'change'">
+  <div class="box-top text-white" [class.bg-warning]="amendment.Type === 'delete'" [class.bg-primary]="amendment.Type === 'change'"
+       [class.bg-secondary]="amendment.Type === 'move'">
     <b *ngIf="amendment.Type === 'delete'" class="box-title">{{ paragraph.Path }} Streichen</b>
     <b *ngIf="amendment.Type === 'change'" class="box-title">{{ paragraph.Path }} Ändern</b>
+    <b *ngIf="amendment.Type === 'move'" class="box-title">{{ paragraph.Path }} Verschieben</b>
     <button class="btn btn-danger remove-button float-right" (click)="removeAmendment()">X</button>
   </div>
 
-  <p *ngIf="amendment.type === 'delete'">I'm a delete</p>
-  <p *ngIf="amendment.type === 'change'">I'm a change</p>
   <p *ngIf="!paragraph">Finde den Operativen Absatz nicht o.O</p>
 
   <p *ngIf="amendment.SubmitTime"><b>Zeit: </b> {{ amendment.SubmitTime | date:'short' }}</p>

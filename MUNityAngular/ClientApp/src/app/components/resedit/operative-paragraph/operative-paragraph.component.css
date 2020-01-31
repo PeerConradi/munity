@@ -24,6 +24,10 @@ textarea {
     grid-row-gap: 0px;
 }
 
+.virtual-box {
+    background-color: yellow;
+}
+
 .paragraph-title {
     grid-area: 1 / 1 / 2 / 3;
 }
