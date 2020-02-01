@@ -12,8 +12,8 @@ This application is under development and cannot be used at the moment. Please c
 ## To-Dos Before Open Source:
 These Things have to be finished before this project could go OpenSource: 
 * [ ] Generate/Update the Database itself
-* [ ] API Services for the Speakerlists
-* [ ] API Services for the Resolution Editor
+* [ ] API for the Speakerlists
+* [X] API for the Resolution Editor
 * [X] Login and Registration
 * [ ] User Management (Admin, User, Visitors)
 
