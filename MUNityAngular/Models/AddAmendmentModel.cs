@@ -52,6 +52,12 @@ namespace MUNityAngular.Models
                 {
                     TargetSection = TargetResolution.AddOperativeParagraph(TargetPosition, true);
                 }
+                
+                if (!TargetResolution.OperativeSections.Contains(TargetSection))
+                {
+                    TargetResolution.OperativeSections.Insert(TargetPosition, TargetSection);
+                }
+
                 TargetSection.AmendmentParagraph = true;
                 TargetSection.Text = NewText;
                 TargetSection.IsVirtual = true;
@@ -74,16 +80,20 @@ namespace MUNityAngular.Models
         {
             if (TargetResolution != null)
             {
+                //Beim deaktivieren dieses Änderungsantrages muss der
+                //Hierfür verwendete Operative Absatz wieder aus der Resoltion entfernt werden
                 if (TargetSection != null)
                 {
+                    //Setze den Text auf die letzte Eingabe
                     NewText = TargetSection.Text;
-                    TargetResolution.RemoveOperativeSection(TargetSection);
-                    TargetSection = null;
+                    TargetResolution.OperativeSections.Remove(TargetSection);
+                    //TargetResolution.RemoveOperativeSection(TargetSection);
+                    //TargetSection = null;
                 }
-                
-
             }
-            base.Deactivate();
+            Activated = false;
+
+            //base.Deactivate();
         }
 
         public override void Submit()

@@ -48,8 +48,7 @@ namespace MUNityTest.Resolution
             Assert.AreEqual(sectionTwo, resolution.OperativeSections[0]);
         }
 
-        //This tests may create bugs in the GitHub Actions
-        //[Test]
+        [Test]
         public void TestRemoveOperativeSectionRemovesChildren()
         {
             var resolution = new ResolutionModel();
@@ -62,8 +61,7 @@ namespace MUNityTest.Resolution
             Assert.AreEqual(1, resolution.OperativeSections.Count);
         }
 
-        //This tests may create bugs in the GitHub Actions
-        //[Test]
+        [Test]
         public void TestRemoveSubSubSectionsWhenGrandpaIsDeleted()
         {
             var resolution = new ResolutionModel();
@@ -255,8 +253,7 @@ namespace MUNityTest.Resolution
 
         }
 
-        //This tests may create bugs in the GitHub Actions
-        //[Test]
+        [Test]
         public void RemoveOperativeSectionRemovesAllAmendments()
         {
             var resolution = new ResolutionModel();

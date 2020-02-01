@@ -99,14 +99,18 @@ namespace MUNityAngular.Models
 
         private void OperativeSections_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            foreach(var os in OperativeSections)
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
-                if (os.AmendmentParagraph == false)
+                foreach (var os in OperativeSections)
                 {
-                    os.Resolution = this;
+                    if (os.AmendmentParagraph == false)
+                    {
+                        os.Resolution = this;
+                    }
+                    os.UpdatePath();
                 }
-                os.UpdatePath();
             }
+            
         }
 
         public OperativeParagraphModel AddOperativeParagraph(string text = "")

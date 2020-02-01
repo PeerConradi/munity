@@ -9,7 +9,7 @@ namespace MUNityTest.Speakerlist
 {
     class SpeakerlistTests
     {
-        [Test]
+        //[Test]
         public void TestCreateSpeakerlist()
         {
             var instance = new SpeakerlistModel();

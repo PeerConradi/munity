@@ -1,0 +1,162 @@
+TpTrace Information: 0 : 254592, 1, 2020/02/01, 23:22:10.243, 197880235594, testhost.dll, DefaultEngineInvoker.Invoke: Testhost process started with args :[--port, 29981],[--endpoint, 127.0.0.1:029981],[--role, client],[--parentprocessid, 254424],[--diag, I:\MUN-Tools\munity\info.host.20-02-01_23-22-09_87343_6.txt],[--tracelevel, 4],[--telemetryoptedin, false]
+TpTrace Information: 0 : 254592, 1, 2020/02/01, 23:22:10.248, 197880257170, testhost.dll, DefaultEngineInvoker.SetParentProcessExitCallback: Monitoring parent process with id: '254424'
+TpTrace Information: 0 : 254592, 1, 2020/02/01, 23:22:10.252, 197880302644, testhost.dll, DefaultEngineInvoker.GetConnectionInfo: Initialize communication on endpoint address: '127.0.0.1:029981'
+TpTrace Information: 0 : 254592, 1, 2020/02/01, 23:22:10.263, 197880406997, testhost.dll, SocketClient.Start: connecting to server endpoint: 127.0.0.1:029981
+TpTrace Information: 0 : 254592, 1, 2020/02/01, 23:22:10.267, 197880445735, testhost.dll, DefaultEngineInvoker.Invoke: Start Request Processing.
+TpTrace Information: 0 : 254592, 4, 2020/02/01, 23:22:10.268, 197880458158, testhost.dll, SocketClient.OnServerConnected: connected to server endpoint: 127.0.0.1:029981
+TpTrace Information: 0 : 254592, 9, 2020/02/01, 23:22:10.270, 197880477137, testhost.dll, DefaultEngineInvoker.StartProcessingAsync: Connected to vstest.console, Starting process requests.
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.270, 197880478119, testhost.dll, Connected to server, and starting MessageLoopAsync
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.272, 197880498798, testhost.dll, TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: [::ffff:127.0.0.1]:29981 localEndPoint: [::ffff:127.0.0.1]:29983
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.304, 197880822507, testhost.dll, TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: [::ffff:127.0.0.1]:29981 localEndPoint: [::ffff:127.0.0.1]:29983
+TpTrace Information: 0 : 254592, 4, 2020/02/01, 23:22:10.403, 197881812828, testhost.dll, TestRequestHandler.ProcessRequests: received message: (ProtocolVersion) -> 2
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.444, 197882219802, testhost.dll, TestRequestHandler.SendData:  sending data from testhost: {"Version":2,"MessageType":"TestSession.Message","Payload":{"MessageLevel":0,"Message":"Die TestHost-Diagnose wird in der Datei I:\\MUN-Tools\\munity\\info.host.20-02-01_23-22-09_87343_6.txt protokolliert."}}
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.444, 197882221579, testhost.dll, TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: [::ffff:127.0.0.1]:29981 localEndPoint: [::ffff:127.0.0.1]:29983
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.444, 197882222244, testhost.dll, TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: [::ffff:127.0.0.1]:29981 localEndPoint: [::ffff:127.0.0.1]:29983
+TpTrace Information: 0 : 254592, 4, 2020/02/01, 23:22:10.448, 197882255785, testhost.dll, TestRequestHandler.ProcessRequests: received message: (TestExecution.Initialize) -> [
+  "I:\\MUN-Tools\\munity\\testartifacts\\NUnit3.TestAdapter.dll",
+  "C:\\Program Files\\dotnet\\sdk\\3.1.100\\Extensions\\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll",
+  "C:\\Program Files\\dotnet\\sdk\\3.1.100\\Extensions\\Microsoft.TestPlatform.Extensions.EventLogCollector.dll"
+]
+TpTrace Information: 0 : 254592, 4, 2020/02/01, 23:22:10.448, 197882256892, testhost.dll, Execution Session Initialize.
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.454, 197882316436, testhost.dll, TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: [::ffff:127.0.0.1]:29981 localEndPoint: [::ffff:127.0.0.1]:29983
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.454, 197882317414, testhost.dll, TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: [::ffff:127.0.0.1]:29981 localEndPoint: [::ffff:127.0.0.1]:29983
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.455, 197882332508, testhost.dll, TestExecutorService: Loading the extensions
+TpTrace Information: 0 : 254592, 4, 2020/02/01, 23:22:10.457, 197882344485, testhost.dll, TestRequestHandler.ProcessRequests: received message: (TestExecution.StartWithSources) -> {
+  "AdapterSourceMap": {
+    "_none_": [
+      "I:\\MUN-Tools\\munity\\testartifacts\\MUNityTest.dll"
+    ]
+  },
+  "RunSettings": "<RunSettings>\r\n  <RunConfiguration>\r\n    <ResultsDirectory>I:\\MUN-Tools\\munity\\testresults</ResultsDirectory>\r\n    <TargetPlatform>X64</TargetPlatform>\r\n    <TargetFrameworkVersion>.NETCoreApp,Version=v3.0</TargetFrameworkVersion>\r\n    <DesignMode>False</DesignMode>\r\n    <CollectSourceInformation>False</CollectSourceInformation>\r\n  </RunConfiguration>\r\n  <LoggerRunSettings>\r\n    <Loggers>\r\n      <Logger friendlyName=\"Console\" uri=\"logger://microsoft/TestPlatform/ConsoleLogger/v1\" assemblyQualifiedName=\"Microsoft.VisualStudio.TestPlatform.CommandLine.Internal.ConsoleLogger, vstest.console, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\" codeBase=\"C:\\Program Files\\dotnet\\sdk\\3.1.100\\vstest.console.dll\" enabled=\"True\" />\r\n    </Loggers>\r\n  </LoggerRunSettings>\r\n</RunSettings>",
+  "TestExecutionContext": {
+    "FrequencyOfRunStatsChangeEvent": 10,
+    "RunStatsChangeEventTimeout": "00:00:01.5000000",
+    "InIsolation": false,
+    "KeepAlive": false,
+    "AreTestCaseLevelEventsRequired": false,
+    "IsDebug": false,
+    "TestCaseFilter": null,
+    "FilterOptions": null
+  },
+  "Package": null
+}
+TpTrace Information: 0 : 254592, 4, 2020/02/01, 23:22:10.457, 197882345670, testhost.dll, Execution started.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.457, 197882347764, testhost.dll, TestPluginCache.DiscoverTestExtensions: finding test extensions in assemblies endswith: TestAdapter.dll TPluginInfo: Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities.TestExecutorPluginInformation TExtension: Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter.ITestExecutor
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.458, 197882357761, testhost.dll, TestPluginCache.GetExtensionPaths: Filtered extension paths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.458, 197882362817, testhost.dll, TestPluginCache.GetExtensionPaths: Added default extension paths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.459, 197882363873, testhost.dll, TestPluginCache.GetExtensionPaths: Added unfilterableExtensionPaths: 
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.461, 197882384805, testhost.dll, AssemblyResolver.ctor: Creating AssemblyResolver with searchDirectories I:\MUN-Tools\munity\testartifacts,C:\Program Files\dotnet\sdk\3.1.100\Extensions
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.462, 197882395624, testhost.dll, TestPluginCache.DiscoverTestExtensions: Discovering the extensions using extension path.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.462, 197882396676, testhost.dll, TestPluginCache.GetExtensionPaths: Filtered extension paths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.462, 197882397343, testhost.dll, TestPluginCache.GetExtensionPaths: Added default extension paths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.462, 197882397909, testhost.dll, TestPluginCache.GetExtensionPaths: Added unfilterableExtensionPaths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.462, 197882398727, testhost.dll, TestPluginCache.DiscoverTestExtensions: Discovering the extensions using allExtensionPaths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.463, 197882406492, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories I:\MUN-Tools\munity\testartifacts
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.463, 197882407360, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories C:\Program Files\dotnet\sdk\3.1.100\Extensions,I:\MUN-Tools\munity\testartifacts
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.463, 197882408031, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories C:\Program Files\dotnet\sdk\3.1.100\Extensions,I:\MUN-Tools\munity\testartifacts
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.466, 197882438452, testhost.dll, AssemblyResolver.OnResolve: NUnit3.TestAdapter: Resolving assembly.
+TpTrace Verbose: 0 : 254592, 4, 2020/02/01, 23:22:10.477, 197882549853, testhost.dll, TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: [::ffff:127.0.0.1]:29981 localEndPoint: [::ffff:127.0.0.1]:29983
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.526, 197883039268, testhost.dll, AssemblyResolver.OnResolve: Resolved assembly: NUnit3.TestAdapter, from path: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.528, 197883056306, testhost.dll, AssemblyResolver.OnResolve: nunit.engine.api: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.544, 197883219220, testhost.dll, AssemblyResolver.OnResolve: Resolved assembly: nunit.engine.api, from path: I:\MUN-Tools\munity\testartifacts\nunit.engine.api.dll
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.546, 197883240250, testhost.dll, AssemblyResolver.OnResolve: Microsoft.TestPlatform.Extensions.BlameDataCollector: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.547, 197883244399, testhost.dll, AssemblyResolver.OnResolve: Resolved assembly: Microsoft.TestPlatform.Extensions.BlameDataCollector, from path: C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.547, 197883249802, testhost.dll, AssemblyResolver.OnResolve: Microsoft.TestPlatform.Extensions.EventLogCollector: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.547, 197883253270, testhost.dll, AssemblyResolver.OnResolve: Resolved assembly: Microsoft.TestPlatform.Extensions.EventLogCollector, from path: C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.550, 197883281514, testhost.dll, TestPluginCache: Discovered the extensions using extension path ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.551, 197883285047, testhost.dll, TestPluginCache: Discoverers are ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.551, 197883285921, testhost.dll, TestPluginCache: Executors are 'executor://NUnit3TestExecutor'.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.551, 197883286859, testhost.dll, TestPluginCache: Setting providers are ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.551, 197883287764, testhost.dll, TestPluginCache: Loggers are ''.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.556, 197883342347, testhost.dll, TestPluginManager.CreateTestExtension: Attempting to load test extension: NUnit.VisualStudio.TestAdapter.NUnit3TestExecutor
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.557, 197883350278, testhost.dll, TestExecutorExtensionManager: Loading executor NUnit.VisualStudio.TestAdapter.NUnit3TestExecutor
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.557, 197883350941, testhost.dll, TestExecutorService: Loaded the executors
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.558, 197883360210, testhost.dll, TestPluginCache.DiscoverTestExtensions: finding test extensions in assemblies endswith: TestAdapter.dll TPluginInfo: Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities.TestSettingsProviderPluginInformation TExtension: Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter.ISettingsProvider
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.558, 197883362717, testhost.dll, TestPluginCache.GetExtensionPaths: Filtered extension paths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.558, 197883363445, testhost.dll, TestPluginCache.GetExtensionPaths: Added default extension paths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883363976, testhost.dll, TestPluginCache.GetExtensionPaths: Added unfilterableExtensionPaths: 
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883365698, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories I:\MUN-Tools\munity\testartifacts,C:\Program Files\dotnet\sdk\3.1.100\Extensions
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883366368, testhost.dll, TestPluginCache.DiscoverTestExtensions: Discovering the extensions using extension path.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883366896, testhost.dll, TestPluginCache.GetExtensionPaths: Filtered extension paths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883367413, testhost.dll, TestPluginCache.GetExtensionPaths: Added default extension paths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883367907, testhost.dll, TestPluginCache.GetExtensionPaths: Added unfilterableExtensionPaths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883368483, testhost.dll, TestPluginCache.DiscoverTestExtensions: Discovering the extensions using allExtensionPaths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883369078, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories I:\MUN-Tools\munity\testartifacts
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883369637, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories C:\Program Files\dotnet\sdk\3.1.100\Extensions,I:\MUN-Tools\munity\testartifacts
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883370146, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories C:\Program Files\dotnet\sdk\3.1.100\Extensions,I:\MUN-Tools\munity\testartifacts
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883372438, testhost.dll, TestPluginCache: Discovered the extensions using extension path ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.559, 197883373035, testhost.dll, TestPluginCache: Discoverers are ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.560, 197883373741, testhost.dll, TestPluginCache: Executors are 'executor://NUnit3TestExecutor'.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.560, 197883374669, testhost.dll, TestPluginCache: Setting providers are ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.560, 197883375516, testhost.dll, TestPluginCache: Loggers are ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.561, 197883384197, testhost.dll, TestExecutorService: Loaded the settings providers
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.561, 197883385218, testhost.dll, TestExecutorService: Loaded the extensions
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.573, 197883506364, testhost.dll, AssemblyResolver.OnResolve: Microsoft.VisualStudio.TestPlatform.Common.resources: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.573, 197883508024, testhost.dll, AssemblyResolver.OnResolve: Microsoft.VisualStudio.TestPlatform.Common.resources: Failed to load assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.598, 197883759187, testhost.dll, TestDiscoveryManager: Discovering tests from sources I:\MUN-Tools\munity\testartifacts\MUNityTest.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883774846, testhost.dll, TestPluginCache.DiscoverTestExtensions: finding test extensions in assemblies endswith: TestAdapter.dll TPluginInfo: Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities.TestDiscovererPluginInformation TExtension: Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter.ITestDiscoverer
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883775947, testhost.dll, TestPluginCache.GetExtensionPaths: Filtered extension paths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883776571, testhost.dll, TestPluginCache.GetExtensionPaths: Added default extension paths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883777136, testhost.dll, TestPluginCache.GetExtensionPaths: Added unfilterableExtensionPaths: 
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883778077, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories I:\MUN-Tools\munity\testartifacts,C:\Program Files\dotnet\sdk\3.1.100\Extensions
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883778681, testhost.dll, TestPluginCache.DiscoverTestExtensions: Discovering the extensions using extension path.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883779206, testhost.dll, TestPluginCache.GetExtensionPaths: Filtered extension paths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883779684, testhost.dll, TestPluginCache.GetExtensionPaths: Added default extension paths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883780195, testhost.dll, TestPluginCache.GetExtensionPaths: Added unfilterableExtensionPaths: 
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883780692, testhost.dll, TestPluginCache.DiscoverTestExtensions: Discovering the extensions using allExtensionPaths: I:\MUN-Tools\munity\testartifacts\NUnit3.TestAdapter.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
+C:\Program Files\dotnet\sdk\3.1.100\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883781291, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories I:\MUN-Tools\munity\testartifacts
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883781819, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories C:\Program Files\dotnet\sdk\3.1.100\Extensions,I:\MUN-Tools\munity\testartifacts
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.600, 197883782523, testhost.dll, AssemblyResolver.AddSearchDirectories: Adding more searchDirectories C:\Program Files\dotnet\sdk\3.1.100\Extensions,I:\MUN-Tools\munity\testartifacts
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.602, 197883798401, testhost.dll, AssemblyResolver.OnResolve: System.ComponentModel.Primitives.resources: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.602, 197883799721, testhost.dll, AssemblyResolver.OnResolve: System.ComponentModel.Primitives.resources: Failed to load assembly.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.602, 197883802766, testhost.dll, CurrentDomain_AssemblyResolve: Resolving assembly 'System.ComponentModel.Primitives.resources'.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.603, 197883803636, testhost.dll, AssemblyResolver.OnResolve: System.ComponentModel.Primitives.resources: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.603, 197883804242, testhost.dll, AssemblyResolver.OnResolve: System.ComponentModel.Primitives.resources: Resolved from cache.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.603, 197883804795, testhost.dll, CurrentDomain_AssemblyResolve: Resolving assembly 'System.ComponentModel.Primitives.resources'.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.603, 197883805286, testhost.dll, CurrentDomainAssemblyResolve: Failed to resolve assembly 'System.ComponentModel.Primitives.resources'.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.603, 197883810850, testhost.dll, CurrentDomainAssemblyResolve: Failed to resolve assembly 'System.ComponentModel.Primitives.resources'.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.603, 197883812814, testhost.dll, AssemblyResolver.OnResolve: System.ComponentModel.Primitives.resources: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.603, 197883813460, testhost.dll, AssemblyResolver.OnResolve: System.ComponentModel.Primitives.resources: Resolved from cache.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.604, 197883814005, testhost.dll, CurrentDomain_AssemblyResolve: Resolving assembly 'System.ComponentModel.Primitives.resources'.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.604, 197883814498, testhost.dll, CurrentDomainAssemblyResolve: Failed to resolve assembly 'System.ComponentModel.Primitives.resources'.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.604, 197883822023, testhost.dll, TestPluginCache: Discovered the extensions using extension path ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.604, 197883822734, testhost.dll, TestPluginCache: Discoverers are 'NUnit.VisualStudio.TestAdapter.NUnit3TestDiscoverer, NUnit3.TestAdapter, Version=3.15.1.0, Culture=neutral, PublicKeyToken=4cb40d35494691ac'.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.604, 197883823276, testhost.dll, TestPluginCache: Executors are 'executor://NUnit3TestExecutor'.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.605, 197883823834, testhost.dll, TestPluginCache: Setting providers are ''.
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.605, 197883824300, testhost.dll, TestPluginCache: Loggers are ''.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.611, 197883887300, testhost.dll, PEReaderHelper.GetAssemblyType: Determined assemblyType:'Managed' for source: 'I:\MUN-Tools\munity\testartifacts\MUNityTest.dll'
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.615, 197883925445, testhost.dll, BaseRunTests.RunTestInternalWithExecutors: Running tests for executor://NUnit3TestExecutor
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.616, 197883938594, testhost.dll, AssemblyResolver.OnResolve: nunit.engine: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.644, 197884222706, testhost.dll, AssemblyResolver.OnResolve: Resolved assembly: nunit.engine, from path: I:\MUN-Tools\munity\testartifacts\nunit.engine.dll
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.653, 197884308713, testhost.dll, NUnit Adapter 3.15.1.0: Test execution started
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.653, 197884310060, testhost.dll, TestRequestHandler.SendData:  sending data from testhost: {"Version":2,"MessageType":"TestSession.Message","Payload":{"MessageLevel":0,"Message":"NUnit Adapter 3.15.1.0: Test execution started"}}
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.660, 197884379429, testhost.dll, Running all tests in I:\MUN-Tools\munity\testartifacts\MUNityTest.dll
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.660, 197884381052, testhost.dll, TestRequestHandler.SendData:  sending data from testhost: {"Version":2,"MessageType":"TestSession.Message","Payload":{"MessageLevel":0,"Message":"Running all tests in I:\\MUN-Tools\\munity\\testartifacts\\MUNityTest.dll"}}
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.693, 197884704633, testhost.dll, AssemblyResolver.OnResolve: Mono.Cecil: Resolving assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.693, 197884706988, testhost.dll, AssemblyResolver.OnResolve: Mono.Cecil: Failed to load assembly.
+TpTrace Information: 0 : 254592, 5, 2020/02/01, 23:22:10.824, 197886021458, testhost.dll,    NUnit3TestExecutor converted 42 of 42 NUnit test cases
+TpTrace Verbose: 0 : 254592, 5, 2020/02/01, 23:22:10.824, 197886023106, testhost.dll, TestRequestHandler.SendData:  sending data from testhost: {"Version":2,"MessageType":"TestSession.Message","Payload":{"MessageLevel":0,"Message":"   NUnit3TestExecutor converted 42 of 42 NUnit test cases"}}
+TpTrace Verbose: 0 : 254592, 12, 2020/02/01, 23:22:10.860, 197886373853, testhost.dll, TestExecutionRecorder.RecordStart: Starting test: MUNityTest.Resolution.AddAmendmentTest.TestActivateAddAmendment.
+TpTrace Verbose: 0 : 254592, 12, 2020/02/01, 23:22:10.882, 197886599570, testhost.dll, TestExecutionRecorder.RecordEnd: test: MUNityTest.Resolution.AddAmendmentTest.TestActivateAddAmendment execution completed.
+TpTrace Verbose: 0 : 254592, 12, 2020/02/01, 23:22:10.893, 197886707711, testhost.dll, TestExecutionRecorder.RecordResult: Received result for test: MUNityTest.Resolution.AddAmendmentTest.TestActivateAddAmendment.
+TpTrace Warning: 0 : 254592, 12, 2020/02/01, 23:22:10.895, 197886730673, testhost.dll, InProgressTests is null
+TpTrace Information: 0 : 254592, 12, 2020/02/01, 23:22:10.897, 197886745318, testhost.dll, AssemblyResolver.OnResolve: Microsoft.VisualStudio.TestPlatform.ObjectModel.resources: Resolving assembly.
+TpTrace Information: 0 : 254592, 12, 2020/02/01, 23:22:10.897, 197886746674, testhost.dll, AssemblyResolver.OnResolve: Microsoft.VisualStudio.TestPlatform.ObjectModel.resources: Failed to load assembly.

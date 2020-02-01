@@ -65,7 +65,7 @@ namespace MUNityAngular.Models
                     //Verhlaten für einen Änderungsantrag wenn der Zielabschnitt auf null
                     //Gesetzt wird ist noch nicht difiniert.
                     //Möglich wäre hier ein Löschen des Absatzes!
-                    //TargetSectionID = null;
+                    TargetSectionID = null;
                     //if (Resolution != null)
                     //{
                     //    Resolution.Amendments.Add(this);
