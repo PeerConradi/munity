@@ -57,6 +57,7 @@ namespace MUNityAngular.Services
                     }
                 }
 
+                //Auth Key
                 if (success == true)
                 {
                     RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
@@ -75,6 +76,111 @@ namespace MUNityAngular.Services
             }
 
             return (success, customAuthKey);
+        }
+
+        public void DeleteAllUserKeys(string userid)
+        {
+            var cmdStr = "DELETE FROM auth WHERE userid=@userid";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public (bool status, string key) LoginWithId(string userid, string password)
+        {
+            var success = false;
+            var customAuthKey = string.Empty;
+
+            var cmdStr = "SELECT password, salt FROM user WHERE id=@userid";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var hash = reader.GetString("password");
+                        var salt = reader.GetString("salt");
+                        if (Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash))
+                            success = true;
+                    }
+                }
+
+                //Auth Key
+                if (success == true)
+                {
+                    RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
+                    byte[] randoms = new byte[64];
+                    rngCsp.GetBytes(randoms);
+                    customAuthKey = Convert.ToBase64String(randoms);
+                    cmdStr = "INSERT INTO " + auth_table_name + " (authkey, userid, createdate, expiredate) VALUES " +
+                        "(@key, @userid, @createdate, @expiredate);";
+                    cmd = new MySqlCommand(cmdStr, connection);
+                    cmd.Parameters.AddWithValue("@key", customAuthKey);
+                    cmd.Parameters.AddWithValue("@userid", userid);
+                    cmd.Parameters.AddWithValue("@createdate", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@expiredate", DateTime.Now.AddDays(1));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            return (success, customAuthKey);
+        }
+
+        public (bool valid, string userid) CheckLoginData(string username, string password)
+        {
+            var success = false;
+            string userid = string.Empty;
+            var cmdStr = "SELECT id, password, salt FROM user WHERE username=@username";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@username", username);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        userid = reader.GetString("id");
+                        var hash = reader.GetString("password");
+                        var salt = reader.GetString("salt");
+                        if (Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash))
+                            success = true;
+                    }
+                }
+            }
+            return (success, userid);
+        }
+
+        public bool CheckPasswordForUserid(string userid, string password)
+        {
+            var success = false;
+            var cmdStr = "SELECT id, password, salt FROM user WHERE id=@userid";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var hash = reader.GetString("password");
+                        var salt = reader.GetString("salt");
+                        if (Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash))
+                            success = true;
+                    }
+                }
+            }
+            return success;
         }
 
         internal void Logout(string auth)
@@ -132,6 +238,20 @@ namespace MUNityAngular.Services
             }
 
             return true;
+        }
+
+        public void SetPassword(string userid, string newPassword)
+        {
+            var cmdStr = "UPDATE " + user_table_name + " SET password=@password, salt=@salt WHERE id=@userid;";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                var hash = Util.Hashing.PasswordHashing.InitHashing(newPassword);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@password", hash.Key);
+                cmd.Parameters.AddWithValue("@salt", hash.Salt);
+            }
         }
 
         public bool ChangePassword(string userid, string oldpassword, string newpassword)

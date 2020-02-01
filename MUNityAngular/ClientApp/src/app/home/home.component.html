@@ -25,12 +25,12 @@
       <div class="card-body">
         <h5 class="card-title">Resolution einsehen</h5>
         <p class="card-text">Jetzt live mitlesen und Änderungsanträge einsehen/einreichen.</p>
-        <form>
+        <form [formGroup]="checkResolutionForm" (ngSubmit)="onCheckResolution(checkResolutionForm.value)">
           <div class="form-group">
             <label for="resolutionid">Resolutions ID</label>
-            <input type="number" class="form-control" id="resolutionid" aria-describedby="emailHelp"
-              placeholder="1234567">
-            <small id="emailHelp" class="form-text text-muted">Die Resolutions-ID wird vom Vorsitz bekannt
+            <input type="number" formControlName="resolutionkey" class="form-control" id="resolutionid" aria-describedby="resolutionNumberHelp"
+              placeholder="12345678">
+            <small id="resolutionNumberHelp" class="form-text text-muted">Die Resolutions-ID wird vom Vorsitz bekannt
               gegeben.</small>
           </div>
           <button type="submit" class="btn btn-primary">Einsehen</button>

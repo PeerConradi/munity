@@ -19,6 +19,8 @@ export class WorkWithResolutionComponent implements OnInit {
 
   amendmentModalActive: boolean = false;
 
+  loadError = false;
+
   amendmentDetailType: string = 'delete';
 
   detailAmendments: AbstractAmendment[];
@@ -38,6 +40,8 @@ export class WorkWithResolutionComponent implements OnInit {
         this.resolution = n;
         this.service.subscribeToResolution(this.resolution.ID);
         this.service.addResolutionListener(this.resolution, new AmendmentInspector());
+      }, err => {
+          this.loadError = true;
       });
     }
   }
