@@ -254,5 +254,26 @@ namespace MUNityTest.Resolution
             Assert.AreEqual(loadedResolution.OperativeSections[0], loadedDeleteAmendment.TargetSection);
 
         }
+
+        //This tests may create bugs in the GitHub Actions
+        //[Test]
+        public void RemoveOperativeSectionRemovesAllAmendments()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("Paragraph 1");
+            var sectionTwo = resolution.AddOperativeParagraph("Paragraph 2");
+            var amendmentOne = new ChangeAmendmentModel();
+            amendmentOne.TargetSection = sectionOne;
+            var amendmentTwo = new ChangeAmendmentModel();
+            amendmentTwo.TargetSection = sectionTwo;
+
+            //Zwischentest
+            Assert.AreEqual(2, resolution.Amendments.Count);
+            Assert.AreEqual(2, resolution.OperativeSections.Count);
+            sectionOne.Remove();
+
+            Assert.AreEqual(1, resolution.Amendments.Count);
+            Assert.AreEqual(1, resolution.OperativeSections.Count);
+        }
     }
 }
