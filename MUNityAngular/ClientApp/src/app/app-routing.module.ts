@@ -24,6 +24,7 @@ import { SpeakerlistStartupComponent } from './components/speakerlist/speakerlis
 import { SpeakerlistControllerComponent } from './components/speakerlist/speakerlist-controller/speakerlist-controller.component';
 import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-view/speakerlist-view.component';
 import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component';
+import { AccountSettingsComponent } from './components/account/account-settings/account-settings.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -33,24 +34,37 @@ const routes: Routes = [
     component: DefaultLayoutComponent,
     children: [
       { path: '', component: HomeComponent, pathMatch: 'full' },
+
+      //Example
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
+      { path: 'components', component: AllComponentsComponent },
+      { path: 'test/signalr', component: SignalrtestComponent },
+
+      //Resolutionen
       { path: 'resedit/:id', component: EditorComponent },
       { path: 'resa/live/:id', component: WorkWithResolutionComponent },
       { path: 'mydocs', component: MyresolutionsComponent },
       { path: 'reshome', component: ResolutionHomeComponent },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'conference/create', component: CreateConferenceComponent },
-      { path: 'admin/conferences', component: ConferenceListComponent },
-      { path: 'test/signalr', component: SignalrtestComponent },
-      { path: 'register', component: RegisterComponent },
 
+      //User Special Areas
+      { path: 'dashboard', component: DashboardComponent },
+      
+      //Account
+      { path: 'register', component: RegisterComponent },
       { path: 'logout', component: LogoutComponent },
+      { path: 'account/settings', component: AccountSettingsComponent },
+      //// Login is a custom form and not in this layout, register could also be moved someday
+
+      //Konferenz
+      { path: 'conference/create', component: CreateConferenceComponent },
       { path: 'conference/my', component: MyConferencesOverviewComponent },
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
-      { path: 'components', component: AllComponentsComponent },
+
+      //Admin
       
+      { path: 'admin/conferences', component: ConferenceListComponent },
 
       //Speakerlist
       { path: 's/start', component: SpeakerlistStartupComponent },

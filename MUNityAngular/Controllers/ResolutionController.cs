@@ -271,6 +271,7 @@ namespace MUNityAngular.Controllers
             [FromServices]AuthService authService)
         {
             var resolution = resolutionService.GetResolution(resolutionid);
+
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
@@ -715,11 +716,25 @@ namespace MUNityAngular.Controllers
             [FromServices]AuthService authService)
         {
             var resolution = resolutionService.GetResolution(id);
+            //Wer die offizielle id angibt probiert das Dokument zu bearbeiten
+            if (resolution != null)
+            {
+                if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                    return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+            }
+
+            //Wenn die Resolution nicht mit dieser id gefunden wurde handelt
+            //es sich ggf. um eine Public Id
+
+            //Schaue nach, ob die Resolution überhaupt im public mode ist
+            var mode = resolutionService.GetResolutionInfoForPublicId(id);
+            if (mode.publicRead)
+            {
+                resolution = resolutionService.GetResolution(mode.id);
+            }
+
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
-
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
         }
@@ -732,15 +747,51 @@ namespace MUNityAngular.Controllers
             [FromServices]AuthService authService)
         {
             var resolution = resolutionService.GetResolution(id);
+            if (resolution != null)
+            {
+                if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                    return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+            }
+
+            //public Check
+            var mode = resolutionService.GetResolutionInfoForPublicId(id);
+            if (mode.publicRead)
+            {
+                resolution = resolutionService.GetResolution(mode.id);
+            }
+
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
-
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             _hubContext.Groups.AddToGroupAsync(connectionid, id);
 
             return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult CanAuthEditResolution([FromHeader]string auth, [FromHeader]string id,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolutionWithId = resolutionService.GetResolution(id);
+            if (resolutionWithId == null)
+            {
+                //Offenbar die Public id
+                var reso = resolutionService.GetResolutionInfoForPublicId(id);
+                if (!string.IsNullOrWhiteSpace(reso.id))
+                {
+                    resolutionWithId = resolutionService.GetResolution(reso.id);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, "Resolution nicht gefunden!");
+                }
+            }
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolutionWithId))
+                return StatusCode(StatusCodes.Status200OK, false);
+            else
+                return StatusCode(StatusCodes.Status200OK, true);
         }
 
         // PUT: api/Resolution/5

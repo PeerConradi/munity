@@ -101,6 +101,103 @@ namespace MUNityAngular.Services
             return resolution;
         }
 
+
+
+        public (string id, bool publicRead, bool publicWrite, bool publicAmendment) GetResolutionInfoForPublicId(string publicid)
+        {
+            string id = string.Empty;
+            bool isPublicRead = false;
+            bool isPublicWrite = false;
+            bool isOnlineAmendment = false;
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT * FROM resolution WHERE onlinecode=@onlineid";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@onlineid", publicid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        id = reader.GetString("id");
+                        isPublicRead = reader.GetBoolean("ispublicread");
+                        isPublicWrite = reader.GetBoolean("ispublicwrite");
+                        isOnlineAmendment = reader.GetBoolean("allowamendments");
+                    }
+                }
+            }
+
+            return (id, isPublicRead, isPublicWrite, isOnlineAmendment);
+        }
+
+        /// <summary>
+        /// Activates the Public-Read-Mode and returns the Public Id of
+        /// the resolution.
+        /// </summary>
+        /// <param name="resolutionid"></param>
+        /// <returns></returns>
+        public string ActivatePublicReadMode(string resolutionid)
+        {
+            string publicid = GetPublicIdForResolution(resolutionid);
+
+            //Suche nach der Resolution in der Datenbank und schaue ob diese bereits eine PublicId hat
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                
+                if (string.IsNullOrWhiteSpace(publicid))
+                {
+                    publicid = GeneratePublicId();
+                }
+                //Updaten der Resolution:
+                var updateCommandStr = "UPDATE resolution SET onlinecode=@onlinecode, ispublicread=1";
+                var updateCommand = new MySqlCommand(updateCommandStr, connection);
+                updateCommand.Parameters.AddWithValue("@onlinecode", publicid);
+                updateCommand.ExecuteNonQuery();
+            }
+            return publicid;
+        }
+
+        public string GeneratePublicId()
+        {
+            string id = new Random().Next(10000000, 99999999).ToString();
+            bool containsId = true;
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT COUNT(*) FROM resolution WHERE onlinecode=@code";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@code", id);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        containsId = (reader.GetInt16(0) > 0);
+                    }
+                }
+            }
+            return id;
+        }
+
+        public string GetPublicIdForResolution(string resolutionid)
+        {
+            string publicid = null;
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var getOnlineIdCommand = "SELECT onlinecode FROM resolution WHERE id=@resoid";
+                var cmd = new MySqlCommand(getOnlineIdCommand, connection);
+                cmd.Parameters.AddWithValue("@resoid", resolutionid);
+                using (var idreader = cmd.ExecuteReader())
+                {
+                    while (idreader.Read())
+                    {
+                        publicid = idreader.GetString(0);
+                    }
+                }
+            }
+            return publicid;
+        }
+
         public Models.ResolutionModel GetResolutionFromJson(string json)
         {
             var resolution = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ResolutionModel>(json);

@@ -26,6 +26,11 @@ namespace MUNityAngular.DataHandlers.Database
             connectionString = @"server=localhost;userid=" + DATABASE_USER + ";password=" + DATABASE_PASSWORD;
             using (var connection = Connection)
             {
+                //TODO: Was passiert wenn die Datenbank nicht da ist? Kann der Server mit einer Art
+                //Mindestkonfiguration selbst ohne Datenbank laufen? Sodass die Services keine Anfragen an die
+                //Datenbank stellen und alles in einen Temporären Speicher schreiben, das wird am Ende natürlich
+                //ein großer im Nachgang alles in eine Datenbank einzupflegen.
+
                 connection.Open();
                 //Create Database if not exists (AddWithValue failed here)
                 string s0 = "CREATE DATABASE IF NOT EXISTS `" + DATABASE_NAME + "`;";

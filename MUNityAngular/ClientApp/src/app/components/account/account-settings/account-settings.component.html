@@ -1,0 +1,46 @@
+<div *ngIf="!userService.isLoggedIn" class="alert alert-danger" role="alert">
+  Um diesen Bereich zu sehen müssen Sie angemeldet sein.
+</div>
+
+<div *ngIf="userService.isLoggedIn" class="row">
+  <div class="col-12">
+    <app-munity-box title="Konto Informationen">
+      <form>
+        <div class="form-group">
+          <label for="inputFistName">Vorname</label>
+          <input type="text" class="form-control" id="inputFirstName" aria-describedby="inputFirstNameHelp" placeholder="Vorname">
+          <small id="inputFirstNameHelp" class="form-text text-muted">Ihr Vorname, dieser wird anderen Benutzern angezeigt.</small>
+        </div>
+        <div class="form-group">
+          <label for="inputLastName">Nachname</label>
+          <input type="text" class="form-control" id="inputLastName" aria-describedby="inputLastNameHelp" placeholder="Nachname" />
+          <small id="inputLastNameHelp" class="form-text text-muted">Ihr Nachname, von diesem wird teilweise nur der erste Buchstabe angezeigt.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Einstellungen speichern</button>
+      </form>
+    </app-munity-box>
+  </div>
+
+  <div class="col-12">
+    <app-munity-box title="Passwort ändern" toolbox="true" showcontent="false">
+      <form>
+        <div class="form-group">
+          <label for="inputOldPassword">Altes Passwort</label>
+          <input type="password" class="form-control" id="inputOldPassword" aria-describedby="inputOldPasswordHelp" />
+          <small id="inputOldPasswordHelp" class="form-text text-muted">Das aktuelle verwendete Passwort</small>
+        </div>
+        <div class="form-group">
+          <label for="inputNewPasswort">Neues Passwort</label>
+          <input type="password" class="form-control" id="inputNewPassword" aria-describedby="inputNewPasswordHelp" />
+          <small id="inputNewPasswordHelp" class="form-text text-muted">Das neue Passwort, nach Möglichkeit ein gutes, hier ist aber nichts vorgeschrieben!</small>
+        </div>
+        <div class="form-group">
+          <label for="inputNewPasswordConfirm">Neues Passwort wiederholen</label>
+          <input type="password" class="form-control" id="inputNewPasswordConfirm" aria-describedby="inputNewPasswordConfirmHelp" />
+          <small id="inputNewPasswordConfirmHelp" class="form-text text-muted">Zur Sicherheit nochmal eingeben bitte.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Passwort speichern</button>
+      </form>
+    </app-munity-box>
+  </div>
+</div> 

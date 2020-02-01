@@ -8,17 +8,18 @@
         <div class="navbar-collapse collapse" [ngClass]="{ show: isSecMenuExpanded }">
           <ul class="navbar-nav flex-grow">
             <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
-              <a class="nav-link text-dark" [routerLink]="['/mydocs']">Docs</a>
+              <a class="nav-link text-dark" [routerLink]="['/mydocs']"><fa-icon [icon]="['fas', 'file']"></fa-icon> Dokumente</a>
             </li>
             <li class="nav-item" [routerLinkActive]="['link-active']">
-              <a class="nav-link text-dark" [routerLink]="['/conference/my']">MUNs</a>
+              <a class="nav-link text-dark" [routerLink]="['/conference/my']"><fa-icon [icon]="['fas', 'flag']"></fa-icon>Konferenzen</a>
             </li>
             <li class="nav-item" [routerLinkActive]="['link-active']">
-              <a class="nav-link text-dark" [routerLink]="['/']">Profil</a>
+              <a class="nav-link text-dark" [routerLink]="['account/settings']"><fa-icon [icon]="['fas', 'user']"></fa-icon>Profil</a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['link-active']">
+            
+            <!--<li class="nav-item" [routerLinkActive]="['link-active']">
               <a class="nav-link text-dark" [routerLink]="['conference/create']">Create Conference</a>
-            </li>
+            </li>-->
           </ul>
         </div>
     </div>

@@ -33,7 +33,7 @@
 </div>
 <div class="modal" [style.display]="amendmentModalActive ? 'block' : 'none'" tabindex="-1" role="dialog">
   <div class="modal-dialog2 bg-white" role="document">
-    <div class="modal-content2">
+    <div class="modal-content2 scroll-area">
       <div class="modal-header">
         <h5 class="modal-title">Übersicht der Änderungsanträge</h5>
         <button type="button" class="close" (click)="closeAmendmentDetailModal();" aria-label="Close">
@@ -49,7 +49,7 @@
               <th scope="col" *ngIf="amendmentDetailType != 'delete'">Neuer Wert</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody >
             <tr *ngFor="let amendment of detailAmendments">
               <th scope="row">{{ amendment.SubmitTime | date:'dd.MM.yyyy HH:mm:ss' }}</th>
               <td>{{ amendment.SubmitterName }}</td>

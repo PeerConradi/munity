@@ -11,6 +11,7 @@ import { DeleteAmendment } from '../models/delete-amendment.model';
 import { AbstractAmendment } from '../models/abstract-amendment.model';
 import { AmendmentInspector } from '../models/amendment-inspector';
 import { ChangeAmendment } from '../models/change-amendment.model';
+import { NotifierService } from 'angular-notifier';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,9 @@ export class ResolutionService {
 
   public stack: stackElement[] = [];
 
-  constructor(private httpClient: HttpClient, private userService: UserService, @Inject('BASE_URL') baseUrl: string) {
+  constructor(private httpClient: HttpClient, private userService: UserService,
+    private notifyService: NotifierService,
+    @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
   }
 
@@ -252,7 +255,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('newtitle', encodeURI(newtitle + "|"));
     let options = { headers: headers };
-    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeTitle', options).subscribe(data => { }, err => { console.log('eror while changing title'); });
+    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeTitle', options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public changeCommittee(resolutionid: string, newcommitteename: string) {
@@ -264,7 +267,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('newcommitteename', encodeURI(newcommitteename + "|"));
     let options = { headers: headers };
-    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeCommittee', options).subscribe(data => { }, err => { console.log('eror while changing title'); });
+    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeCommittee', options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public changePreambleParagraph(resolutionid: string, paragraphid: string, newtext: string) {
@@ -280,8 +283,23 @@ export class ResolutionService {
     headers = headers.set('newtext', encodeURI(newtext + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
+
+  public canIEditResolution(resolutionid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('id', resolutionid);
+    let options = { headers: headers };
+    return this.httpClient.get<boolean>(this.baseUrl + 'api/Resolution/CanAuthEditResolution',
+      options);
+  }
+
 
   public changeOperativeParagraph(resolutionid: string, paragraphid: string, newtext: string) {
     let authString: string = 'default';
@@ -296,7 +314,7 @@ export class ResolutionService {
     headers = headers.set('newtext', encodeURI(newtext + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/ChangeOperativeParagraph',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public subscribeToResolution(id: string) {
@@ -323,7 +341,7 @@ export class ResolutionService {
         headers = headers.set('connectionid', this.connectionid);
         let options = { headers: headers };
         this.httpClient.get(this.baseUrl + 'api/Resolution/SubscribeToResolution',
-          options).subscribe(data => { });
+          options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
       })
       .catch(err => {
         this.hasError = true;
@@ -344,7 +362,7 @@ export class ResolutionService {
     headers = headers.set('sumbittername', submitter);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddDeleteAmendment',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public addChangeAmendment(resolutionid: string, paragraphid: string, submitter: string, newtext: string) {
@@ -361,7 +379,7 @@ export class ResolutionService {
     headers = headers.set('newtext', encodeURI(newtext + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddChangeAmendment',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public addMoveAmendment(resolutionid: string, paragraphid: string, submitter: string, newPosition: number) {
@@ -378,7 +396,7 @@ export class ResolutionService {
     headers = headers.set('newposition', newPosition.toString());
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddMoveAmendment',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public addAddAmendment(resolutionid: string, submitter: string, newPosition: number, newText: string) {
@@ -395,7 +413,7 @@ export class ResolutionService {
     headers = headers.set('newtext', encodeURI(newText + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddAddAmendment',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   removeAmendment(resolutionid: string, amendmentid: string) {
@@ -410,7 +428,7 @@ export class ResolutionService {
     headers = headers.set('amendmentid', amendmentid);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/RemoveAmendment',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   activateAmendment(resolutionid: string, amendmentid: string) {
@@ -425,7 +443,7 @@ export class ResolutionService {
     headers = headers.set('amendmentid', amendmentid);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/ActivateAmendment',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   deactivateAmendment(resolutionid: string, amendmentid: string) {
@@ -440,7 +458,7 @@ export class ResolutionService {
     headers = headers.set('amendmentid', amendmentid);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/DeactivateAmendment',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   submitAmendment(resolutionid: string, amendmentid: string) {
@@ -455,7 +473,7 @@ export class ResolutionService {
     headers = headers.set('amendmentid', amendmentid);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/SubmitAmendment',
-      options).subscribe(data => { });
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public OnDeleteAmendmentAdded(resolution: Resolution, amendment: DeleteAmendment): AbstractAmendment[] {
@@ -480,43 +498,6 @@ export class ResolutionService {
       return this.OrderAmendments(resolution);
     }
   }
-
-  /*
-  public OnAmendmentRemoved(resolution: Resolution, amendment: AbstractAmendment): AbstractAmendment[] {
-    const amendmentElement = this.findAmendment(resolution, amendment.ID);
-    if (amendmentElement != null) {
-      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID);
-      if (target != null) {
-        if (amendment.Type === 'delete') {
-          target.DeleteAmendmentCount -= 1;
-        } else if (amendment.Type === 'change') {
-          target.ChangeAmendmentCount -= 1;
-        } else if (amendment.Type === 'move') {
-          target.MoveAmendmentCount -= 1;
-        }
-      }
-      if (amendment.Type === 'delete') {
-        const index: number = resolution.DeleteAmendments.indexOf(amendmentElement);
-        if (index !== -1) {
-          resolution.DeleteAmendments.splice(index, 1);
-        }
-      } else if (amendment.Type === 'change') {
-        const element = resolution.ChangeAmendments.find(n => n.ID === amendment.ID);
-        const index: number = resolution.ChangeAmendments.indexOf(element);
-        if (index !== -1) {
-          resolution.ChangeAmendments.splice(index, 1);
-        }
-      } else if (amendment.Type === 'move') {
-        const element = resolution.MoveAmendments.find(n => n.ID === amendment.ID);
-        const index: number = resolution.MoveAmendments.indexOf(element);
-        if (index !== -1) {
-          resolution.MoveeAmendments.splice(index, 1);
-        }
-      }
-    }
-    return this.OrderAmendments(resolution);
-  }
-  */
 
   public OrderAmendments(resolution: Resolution): AbstractAmendment[] {
     const arr = [];

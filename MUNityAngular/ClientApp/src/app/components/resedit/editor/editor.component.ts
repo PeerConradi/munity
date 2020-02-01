@@ -47,6 +47,10 @@ export class EditorComponent implements OnInit {
 
   amendmentTargetPosition: number;
 
+  isLoading: boolean = true;
+
+  canEdit: boolean = null;
+
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
     private titleService: Title) {
     this.titleService.setTitle('ResaOnline')
@@ -67,23 +71,29 @@ export class EditorComponent implements OnInit {
 
     if (id != null) {
       console.log('Suche resolution mit der ID: ' + id);
-      this.service.getResolution(id).subscribe(n => {
-        let readyState = this.service.connectionReady;
-        //this.service.OrderAmendments(n);
-        this.model = n;
-        this.service.subscribeToResolution(this.model.ID);
-        this.service.addResolutionListener(this.model, this.amendmentInspector);
-        this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
 
-        if (n.OperativeSections.length > 0) {
-          this.amendmentTargetSection = n.OperativeSections[0];
-          this.newAmendmentNewText = n.OperativeSections[0].Text;
+      //Überprüfen ob überhaupt bearbeitet werden darf
+      this.service.canIEditResolution(id).subscribe(canEditResolution => {
+        this.isLoading = false;
+        this.canEdit = canEditResolution;
+
+        if (canEditResolution) {
+          this.service.getResolution(id).subscribe(n => {
+            let readyState = this.service.connectionReady;
+            //this.service.OrderAmendments(n);
+            this.model = n;
+            this.service.subscribeToResolution(this.model.ID);
+            this.service.addResolutionListener(this.model, this.amendmentInspector);
+            this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
+
+            if (n.OperativeSections.length > 0) {
+              this.amendmentTargetSection = n.OperativeSections[0];
+              this.newAmendmentNewText = n.OperativeSections[0].Text;
+            }
+
+            this.titleService.setTitle(this.model.Topic);
+          });
         }
-
-        this.titleService.setTitle(this.model.Topic);
-
-        //TODO: Remove this logging
-        //console.log(this.model);
       });
     }
   }

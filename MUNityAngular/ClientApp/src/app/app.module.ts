@@ -40,7 +40,11 @@ import { SpeakerlistControllerComponent } from './components/speakerlist/speaker
 import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-view/speakerlist-view.component';
 
 import { NgxSortableModule } from 'ngx-sortable';
-import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component'
+import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component';
+import { AccountSettingsComponent } from './components/account/account-settings/account-settings.component';
+import { FontAwesomeModule, FaIconLibrary  } from '@fortawesome/angular-fontawesome';
+import { faFile, faFlag, faUser } from '@fortawesome/free-solid-svg-icons';
+
 
 @NgModule({
   declarations: [
@@ -77,11 +81,13 @@ import { WorkWithResolutionComponent } from './components/resedit/work-with-reso
     SpeakerlistStartupComponent,
     SpeakerlistControllerComponent,
     SpeakerlistViewComponent,
-    WorkWithResolutionComponent
+    WorkWithResolutionComponent,
+    AccountSettingsComponent
   ],
   imports: [
     RouterModule,
     NgbModule,
+    FontAwesomeModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
@@ -93,4 +99,10 @@ import { WorkWithResolutionComponent } from './components/resedit/work-with-reso
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(library: FaIconLibrary) {
+    // Add an icon to the library for convenient access in other components
+    library.addIcons(faFile, faFlag, faUser);
+
+  }
+}
