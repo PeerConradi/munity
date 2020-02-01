@@ -49,6 +49,32 @@ namespace MUNityTest.Resolution
         }
 
         [Test]
+        public void TestRemoveOperativeSectionRemovesChildren()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("section 1");
+            var sectionTwo = sectionOne.AddSubSection("Section1.1");
+            var sectionThree = sectionOne.AddSubSection("section1.2");
+            var sectionFour = resolution.AddOperativeParagraph("Section 2");
+            Assert.AreEqual(4, resolution.OperativeSections.Count);
+            sectionOne.Remove();
+            Assert.AreEqual(1, resolution.OperativeSections.Count);
+        }
+
+        [Test]
+        public void TestRemoveSubSubSectionsWhenGrandpaIsDeleted()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("section 1");
+            var sectionTwo = sectionOne.AddSubSection("Section1.1");
+            var sectionThree = sectionTwo.AddSubSection("section1.1.1");
+            var sectionFour = resolution.AddOperativeParagraph("Section 2");
+            Assert.AreEqual(4, resolution.OperativeSections.Count);
+            sectionOne.Remove();
+            Assert.AreEqual(1, resolution.OperativeSections.Count);
+        }
+
+        [Test]
         public void TestMoveOperativeSectionUp()
         {
             var resolution = new ResolutionModel();

@@ -211,7 +211,9 @@ namespace MUNityAngular.Controllers
 
             resolution.Preamble.Paragraphs.Remove(paragraph);
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, resolution);
+
+            _hubContext.Clients.Group(resolutionid).PreambleParaghraphRemoved(resolution.Preamble.Paragraphs.ToHubParagraphs());
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -235,9 +237,9 @@ namespace MUNityAngular.Controllers
             paragraph.MoveUp();
             resolutionService.RequestSave(resolution);
 
-            _hubContext.Clients.Groups(resolutionid).PreambleSectionOrderChanged(resolution.Preamble.Paragraphs);
+            _hubContext.Clients.Groups(resolutionid).PreambleSectionOrderChanged(resolution.Preamble.Paragraphs.ToHubParagraphs());
 
-            return StatusCode(StatusCodes.Status200OK, resolution);
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -260,7 +262,9 @@ namespace MUNityAngular.Controllers
 
             paragraph.MoveDown();
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, resolution);
+
+            _hubContext.Clients.Groups(resolutionid).PreambleSectionOrderChanged(resolution.Preamble.Paragraphs.ToHubParagraphs());
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -284,7 +288,9 @@ namespace MUNityAngular.Controllers
 
             paragraph.MoveUp();
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, resolution);
+
+            _hubContext.Clients.Groups(resolutionid).OperativeSectionOrderChanged(resolution.OperativeSections.ToHubParagraphs());
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -307,7 +313,9 @@ namespace MUNityAngular.Controllers
 
             paragraph.MoveDown();
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, resolution);
+
+            _hubContext.Clients.Groups(resolutionid).OperativeSectionOrderChanged(resolution.OperativeSections.ToHubParagraphs());
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -330,7 +338,8 @@ namespace MUNityAngular.Controllers
 
             paragraph.MoveLeft();
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, resolution);
+            _hubContext.Clients.Groups(resolutionid).OperativeSectionOrderChanged(resolution.OperativeSections.ToHubParagraphs());
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -353,7 +362,8 @@ namespace MUNityAngular.Controllers
 
             paragraph.MoveRight();
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, resolution);
+            _hubContext.Clients.Groups(resolutionid).OperativeSectionOrderChanged(resolution.OperativeSections.ToHubParagraphs());
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -376,7 +386,9 @@ namespace MUNityAngular.Controllers
 
             paragraph.Remove();
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, resolution);
+
+            _hubContext.Clients.Groups(resolutionid).OperativeParagraphRemoved(new Hubs.HubObjects.HUBResolution(resolution));
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -792,6 +804,20 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status200OK, false);
             else
                 return StatusCode(StatusCodes.Status200OK, true);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetResolutionInfos([FromHeader]string auth, [FromHeader]string id,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var infos = resolutionService.GetResolutionInfoForId(id);
+            if (infos == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, "Resolution was not found");
+            }
+            return StatusCode(StatusCodes.Status200OK, infos.AsNewtonsoftJson());
         }
 
         // PUT: api/Resolution/5

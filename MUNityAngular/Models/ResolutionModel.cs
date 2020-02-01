@@ -194,12 +194,24 @@ namespace MUNityAngular.Models
 
             List<OperativeParagraphModel> toDelete = new List<OperativeParagraphModel>();
 
+            //Entferne auch alle Unterpunkte
+            //Zunächst alle Unterpunkte Sammeln welche entfernt werden soll
             foreach (var child in OperativeSections.Where(n => n.ParentID == paragraphModel.ID))
             {
                 DeleteSubSections(child, toDelete);
             }
 
-            toDelete.ForEach(n => OperativeSections.Remove(n));
+            //Durch die Unterpunkte gehen und auch alle Änderungsanträge, welche diese betreffen mit entfernen!
+            toDelete.ForEach(n =>
+            {
+                n.Amendments.ToList().ForEach(n => n.Remove());
+
+                //Absatz entfernen
+                OperativeSections.Remove(n);
+            });
+            //Die Änderungsanträge auf den eigentlichen Punkt auch entfernen
+            paragraphModel.Amendments.ToList().ForEach(n => n.Remove());
+
             OperativeSections.Remove(paragraphModel);
         }
 

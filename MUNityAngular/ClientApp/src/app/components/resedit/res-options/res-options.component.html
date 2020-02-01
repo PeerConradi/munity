@@ -2,18 +2,21 @@
   <form>
     <div class="form-group">
       <label for="inputName">Name</label>
-      <input type="text" class="form-control" #inputName id="inputName" aria-describedby="emailHelp"
+      <input type="text" class="form-control" #inputName id="inputName" aria-describedby="inputNameHelp"
              (keyup.enter)="onEnterTitle(inputName.value)" [value]="resolution.Topic" placeholder="Name der Resolution">
-      <small id="emailHelp" class="form-text text-muted">
+      <small id="inputNameHelp" class="form-text text-muted">
         Dieser Name wird als Titel für die Resolution
-        verwendet.
+        verwendet. Bestätigung der Eingabe mit [ENTER].
       </small>
     </div>
     <!-- Einbringer -->
     <div class="form-group">
       <label for="inputSubmitter">Einbringer</label>
       <input class="form-control" id="inputSubmitter" #inputSubmitter placeholder="Delegationsname" [value]="resolution.SubmitterName"
-             (keyup.enter)="onEnterSubmitter(inputSubmitter.value)" />
+             (keyup.enter)="onEnterSubmitter(inputSubmitter.value)" aria-describedby="inputSubmitterHelp"/>
+      <small id="inputSubmitterHelp" class="form-text text-muted">
+        Der Name des Einbringers. Bestätigung der Eingabe mit [ENTER].
+      </small>
     </div>
     <!-- Beschlussfassendes Gremium -->
     <div class="form-group">
@@ -21,12 +24,17 @@
       <input class="form-control" id="resolutlyCommittee" #inputCommittee placeholder="Gremiumname" [value]="resolution.CommitteeName"
              (keyup.enter)="onEnterCommittee(inputCommittee.value)" />
     </div>
-    <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="display">
+    <!-- Online Tools-->
+    <div *ngIf="!onlineid">
+      <span *ngIf="!onlineid" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Online Informationen werden geladen
+    </div>
+    <div *ngIf="onlineid" class="form-group form-check">
+      <input type="checkbox" [ngModel]="publicView" [ngModelOptions]="{standalone: true}" class="form-check-input" id="display">
       <label class="form-check-label" for="display">Online Ansicht erlauben</label>
       <small id="emailHelp" class="form-text text-muted">
-        Die ID für die Ansicht lautet: <a href="http://www.google.com/"
-                                          target="_blank">1234567</a>
+        Die ID für die Ansicht lautet:
+        {{ onlineid }}
       </small>
     </div>
     <div class="form-group form-check">

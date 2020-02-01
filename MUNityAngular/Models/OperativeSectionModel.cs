@@ -360,7 +360,7 @@ namespace MUNityAngular.Models
 
         public void Remove()
         {
-            Resolution.RemoveOperativeSection(this);
+            Resolution?.RemoveOperativeSection(this);
         }
 
         public override string ToString()

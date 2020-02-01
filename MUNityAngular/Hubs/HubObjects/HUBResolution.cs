@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Util.Extenstions;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
@@ -19,6 +20,8 @@ namespace MUNityAngular.Hubs.HubObjects
         public string Session { get; set; }
 
         public DateTime Date { get; set; }
+
+        public HUBPreamble Preamble { get; set; }
 
         public List<HUBChangeAmendment> ChangeAmendments { get; set; }
 
@@ -39,32 +42,12 @@ namespace MUNityAngular.Hubs.HubObjects
             this.AgendaItem = resolution.AgendaItem;
             this.Session = resolution.Session;
             this.Date = resolution.Date;
-            ChangeAmendments = new List<HUBChangeAmendment>();
-            foreach(var amendment in resolution.ChangeAmendments)
-            {
-                ChangeAmendments.Add(new HUBChangeAmendment(amendment));
-            }
-            this.DeleteAmendments = new List<HUBDeleteAmendment>();
-            foreach(var amendment in resolution.DeleteAmendments)
-            {
-                this.DeleteAmendments.Add(new HUBDeleteAmendment(amendment));
-            }
-            this.MoveAmendments = new List<HUBMoveAmendment>();
-            foreach(var amendment in resolution.MoveAmendments)
-            {
-                this.MoveAmendments.Add(new HUBMoveAmendment(amendment));
-            }
-            this.AddAmendmentsSave = new List<HUBAddAmendment>();
-            foreach(var amendment in resolution.AddAmendmentsSave)
-            {
-                this.AddAmendmentsSave.Add(new HUBAddAmendment(amendment));
-            }
-            
-            this.OperativeSections = new List<HUBOperativeParagraph>();
-            foreach(var oa in resolution.OperativeSections)
-            {
-                OperativeSections.Add(new HUBOperativeParagraph(oa));
-            }
+            this.Preamble = new HUBPreamble(resolution.Preamble);
+            ChangeAmendments = resolution.ChangeAmendments.ToHubAmendments();
+            this.DeleteAmendments = resolution.DeleteAmendments.ToHubAmendments();
+            this.MoveAmendments = resolution.MoveAmendments.ToHubAmendments();
+            this.AddAmendmentsSave = resolution.AddAmendmentsSave.ToHubAmendments();
+            this.OperativeSections = resolution.OperativeSections.ToHubParagraphs();
         }
     }
 }

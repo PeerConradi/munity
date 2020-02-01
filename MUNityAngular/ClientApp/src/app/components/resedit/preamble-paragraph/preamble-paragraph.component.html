@@ -10,8 +10,8 @@
   <div class="preamble-tools btn-group-vertical">
     <button type="button" class="btn btn-danger" placement="left" [ngbPopover]="popContent" triggers="manual"
       #p="ngbPopover" (click)="p.open()">X</button>
-    <button type="button" class="btn btn-outline-primary">▲</button>
-    <button type="button" class="btn btn-outline-primary">▼</button>
+    <button type="button" class="btn btn-outline-primary" (click)="moveUp()">▲</button>
+    <button type="button" class="btn btn-outline-primary" (click)="moveDown()">▼</button>
 
   </div>
 

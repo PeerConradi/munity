@@ -13,6 +13,8 @@ export class ResolutionHomeComponent implements OnInit {
 
   public workOnId: string = "default";
 
+  public displayId: string = "";
+
   constructor(private service: ResolutionService, private router: Router,
     private readonly nofitier: NotifierService, private userService: UserService) { }
 
@@ -48,5 +50,18 @@ export class ResolutionHomeComponent implements OnInit {
 
   workTogetherClick() {
     this.router.navigate(['/resedit/' + this.workOnId]);
+  }
+
+  updateDisplayKey(val) {
+    this.displayId = val;
+  }
+
+  displayResolution(val) {
+    this.displayId = val;
+    this.displayResolutionClick();
+  }
+
+  displayResolutionClick() {
+    this.router.navigate(['/resa/live/' + this.displayId]);
   }
 }

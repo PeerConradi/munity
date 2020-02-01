@@ -91,5 +91,39 @@ namespace MUNityTest.Resolution
             amendment.Remove();
             Assert.IsFalse(resolution.Amendments.Contains(amendment));
         }
+
+        [Test]
+        public void TestSubmitDeleteAmendment()
+        {
+            //OAs aufbauen
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("Section 1");
+            var sectionOneOne = sectionOne.AddSubSection("Section 1.1");
+            var sectionOneTwo = sectionOne.AddSubSection("Section 1.2");
+            var sectionOneTwoOne = sectionOneTwo.AddSubSection("Section 1.2.1");
+            var sectionTwo = resolution.AddOperativeParagraph("Section 2");
+
+            //Änderungsanträge bauen
+            //Der Ziel Änderungsantrag
+            var amendmentOne = new DeleteAmendmentModel();
+            amendmentOne.TargetSection = sectionOne;
+
+            //Änderungsanträge welche durch ein Annehmen mit entfernt werden müssen
+            var noiseOne = new DeleteAmendmentModel() { TargetSection = sectionOne };
+            var noiseTwo = new ChangeAmendmentModel() { TargetSection = sectionOne };
+            var noiseThree = new DeleteAmendmentModel() { TargetSection = sectionOneOne };
+            var noiseFour = new MoveAmendment() { TargetSection = sectionOneTwo };
+
+            //Änderungsanträge die erhalten bleiben sollen
+            var keepOne = new DeleteAmendmentModel() { TargetSection = sectionTwo };
+
+            //Zwischentest
+            Assert.AreEqual(5, resolution.OperativeSections.Count);
+            Assert.AreEqual(6, resolution.Amendments.Count);
+
+            amendmentOne.Submit();
+            Assert.AreEqual(1, resolution.OperativeSections.Count);
+            Assert.AreEqual(1, resolution.Amendments.Count);
+        }
     }
 }

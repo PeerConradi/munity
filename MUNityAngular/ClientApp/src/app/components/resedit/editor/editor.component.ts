@@ -51,6 +51,8 @@ export class EditorComponent implements OnInit {
 
   canEdit: boolean = null;
 
+  notFound = false;
+
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
     private titleService: Title) {
     this.titleService.setTitle('ResaOnline')
@@ -92,8 +94,14 @@ export class EditorComponent implements OnInit {
             }
 
             this.titleService.setTitle(this.model.Topic);
+          }, err => {
+              //TODO: 404 check or differet error
+              this.notFound = true;
           });
         }
+      }, err => {
+        //TODO: 404 check or differet error
+        this.notFound = true;
       });
     }
   }

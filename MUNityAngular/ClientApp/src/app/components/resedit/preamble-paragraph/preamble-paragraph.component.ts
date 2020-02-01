@@ -25,6 +25,14 @@ export class PreambleParagraphComponent implements OnInit {
   }
 
   delete() {
-    console.log('Delete: ' + this.paragraph.ID);
+    this.service.removePrembleParagraph(this.resolutionid, this.paragraph.ID);
+  }
+
+  moveUp() {
+    this.service.movePrembleParagraphUp(this.resolutionid, this.paragraph.ID);
+  }
+
+  moveDown() {
+    this.service.movePrembleParagraphDown(this.resolutionid, this.paragraph.ID);
   }
 }

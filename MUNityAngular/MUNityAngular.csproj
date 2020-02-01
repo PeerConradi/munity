@@ -44,7 +44,6 @@
   <ItemGroup>
     <Folder Include="ClientApp\src\app\components\resedit\" />
     <Folder Include="ClientApp\src\app\loggedIn\conference\" />
-    <Folder Include="ClientApp\src\app\models\" />
   </ItemGroup>
 
   <ItemGroup>

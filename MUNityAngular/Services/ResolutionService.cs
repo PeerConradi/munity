@@ -131,6 +131,49 @@ namespace MUNityAngular.Services
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Touple with infos publicid is null when the resolution can not be found!</returns>
+        public Models.ResolutionAdvancedInfoModel GetResolutionInfoForId(string id)
+        {
+            Models.ResolutionAdvancedInfoModel model = null;
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT * FROM resolution WHERE id=@id";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@id", id);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                    {
+                        model = null;
+                    }
+                    else
+                    {
+                        while (reader.Read())
+                        {
+                            model = new Models.ResolutionAdvancedInfoModel();
+                            model.ID = id;
+                            model.Name = reader.GetString("name");
+                            model.OnlineCode = reader.GetString("onlinecode");
+                            model.CreationDate = reader.GetDateTime("creationdate");
+                            model.LastChangedDate = reader.GetDateTime("lastchangeddate");
+                            model.PublicRead = reader.GetBoolean("ispublicread");
+                            model.PublicWrite = reader.GetBoolean("ispublicwrite");
+                            model.PublicAmendment = reader.GetBoolean("allowamendments");
+                        }
+                    }
+
+                    
+                }
+            }
+
+            return model;
+        }
+
+        /// <summary>
         /// Activates the Public-Read-Mode and returns the Public Id of
         /// the resolution.
         /// </summary>

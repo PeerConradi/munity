@@ -16,7 +16,17 @@ namespace MUNityAngular.Hubs
 
         Task PreambleParagraphChanged(string id, string newText);
 
-        Task PreambleSectionOrderChanged(IEnumerable<Models.PreambleParagraphModel> paragraphs);
+        /// <summary>
+        /// This Change is very complex because also amendments could be effected
+        /// thats why we update the whole thing
+        /// </summary>
+        /// <param name="resolution"></param>
+        /// <returns></returns>
+        Task OperativeParagraphRemoved(HubObjects.HUBResolution resolution);
+
+        Task PreambleParaghraphRemoved(IEnumerable<HubObjects.HUBPreambleParagraph> paragraphs);
+
+        Task PreambleSectionOrderChanged(IEnumerable<HubObjects.HUBPreambleParagraph> paragraphs);
 
         Task OperativeSectionOrderChanged(IEnumerable<HubObjects.HUBOperativeParagraph> paragraphs);
 

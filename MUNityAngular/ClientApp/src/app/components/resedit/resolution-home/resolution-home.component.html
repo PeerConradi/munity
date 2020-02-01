@@ -56,15 +56,16 @@
                 <form>
                     <div class="form-group">
                         <label for="speakerlistpublicid">ResolutionId</label>
-                        <input type="number" class="form-control" id="speakerlistpublicid" aria-describedby="emailHelp"
-                            placeholder="1234567" disabled>
-                        <small id="emailHelp" class="form-text text-muted">Die ResolutionId ist lediglich dem
+                        <input type="number" class="form-control" id="displayInputId" #displayInput aria-describedby="displayKeyHelp"
+                            placeholder="12345678" (keyup.enter)="displayResolution(displayInput.value)"
+                               (blur)="updateDisplayKey(displayInput.value)">
+                        <small id="displayKeyHelp" class="form-text text-muted">Die ResolutionId ist lediglich dem
                             ersteller der Resolution bekannt</small>
                     </div>
                 </form>
             </div>
             <div class="card-footer text-muted">
-                <button type="submit" class="btn btn-block btn-primary" disabled>Mitarbeiten (Coming
+                <button type="submit" class="btn btn-block btn-primary" (click)="displayResolutionClick()">Mitarbeiten (Coming
                     soon)</button>
             </div>
         </div>

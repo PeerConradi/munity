@@ -12,6 +12,7 @@ import { AbstractAmendment } from '../models/abstract-amendment.model';
 import { AmendmentInspector } from '../models/amendment-inspector';
 import { ChangeAmendment } from '../models/change-amendment.model';
 import { NotifierService } from 'angular-notifier';
+import { ResolutionAdvancedInfo } from '../models/resolution-advanced-info.model';
 
 @Injectable({
   providedIn: 'root'
@@ -115,6 +116,30 @@ export class ResolutionService {
 
     this._hubConnection.on('CommitteeChanged', (newcommitteename: string) => {
       model.CommitteeName = newcommitteename;
+    });
+
+    this._hubConnection.on('SubmitterChanged', (newsubmittername: string) => {
+      model.SubmitterName = newsubmittername;
+    })
+
+    this._hubConnection.on('PreambleSectionOrderChanged', (paragraphs: PreambleParagraph[]) => {
+      model.Preamble.Paragraphs = paragraphs;
+    });
+
+    this._hubConnection.on('OperativeSectionOrderChanged', (paragraphs: OperativeSection[]) => {
+      model.OperativeSections = paragraphs;
+    });
+
+    this._hubConnection.on('PreambleParaghraphRemoved', (paragraphs: PreambleParagraph[]) => {
+      model.Preamble.Paragraphs = paragraphs;
+    });
+
+    this._hubConnection.on('OperativeSectionRemoved', (resolution: Resolution) => {
+      model.OperativeSections = resolution.OperativeSections;
+      model.ChangeAmendments = resolution.ChangeAmendments;
+      model.MoveAmendments = resolution.MoveAmendments;
+      model.DeleteAmendments = resolution.DeleteAmendments;
+      model.AddAmendmentsSave = resolution.AddAmendmentsSave;
     });
 
     /**
@@ -284,6 +309,65 @@ export class ResolutionService {
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph',
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public movePrembleParagraphUp(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/MovePreambleParagraphUp',
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public movePrembleParagraphDown(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/MovePreambleParahraphDown',
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public removePrembleParagraph(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/RemovePreambleParagraph',
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public getAdvancedInfos(resolutionid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('id', resolutionid);
+    let options = { headers: headers };
+    return this.httpClient.get<ResolutionAdvancedInfo>(this.baseUrl + 'api/Resolution/GetResolutionInfos',
+      options);
   }
 
   public canIEditResolution(resolutionid: string) {

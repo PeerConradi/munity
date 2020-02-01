@@ -1,11 +1,15 @@
-<div *ngIf="isLoading" class="d-flex justify-content-center">
+<div *ngIf="isLoading && notFound === false" class="d-flex justify-content-center">
   <div class="spinner-border text-success" role="status">
     <span class="sr-only">Loading...</span>
   </div>
 </div>
 
-<div *ngIf="isLoading === false && canEdit === false" class="alert alert-danger">
+<div *ngIf="isLoading === false && canEdit === false && notFound === false" class="alert alert-danger">
   Du darfst dieses Dokument nicht bearbeiten!
+</div>
+
+<div *ngIf="notFound === true" class="alert alert-danger">
+  <b>#belastend</b> Diese Resolution exisitert nicht. Möglicherweise ist die eingegebene ID Falsch
 </div>
 
 <div *ngIf="model">

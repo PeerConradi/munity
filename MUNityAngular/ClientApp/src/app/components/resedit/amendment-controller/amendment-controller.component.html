@@ -11,7 +11,7 @@
 
   <p *ngIf="!paragraph && amendment.Type !== 'add'">Finde den Operativen Absatz nicht o.O</p>
 
-  <p *ngIf="amendment.SubmitTime"><b>Zeit: </b> {{ amendment.SubmitTime | date:'short' }}</p>
+  <p *ngIf="amendment.SubmitTime"><b>Zeit: </b> {{ amendment.SubmitTime | date:'dd.MM.yyyy HH:mm:ss' }}</p>
   <p *ngIf="paragraph && amendment.Type !== 'add'"><b>Ziel: </b> {{ paragraph.Path }}</p>
   <p *ngIf="amendment.Type === 'add'"><b>Ziel-Position: </b> {{ amendment.TargetPosition }}</p>
   <label class="cb-container">
@@ -21,6 +21,8 @@
     <span class="checkmark"></span>
   </label>
 
-  <button class="btn btn-block btn-primary" (click)="submitAmendment();">Annehmen</button>
+  <button class="btn btn-block btn-success" (click)="submitAmendment();">Annehmen</button>
+  <button class="btn btn-block btn-danger" (click)="submitAmendment();" disabled>Ablehnen</button>
+  <button class="btn btn-block btn-primary" (click)="submitAmendment();" disabled>Bearbeiten</button>
 
 </div>
