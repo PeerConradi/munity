@@ -10,7 +10,7 @@ export class SecondaryNavComponent implements OnInit {
 
   isSecMenuExpanded: boolean = false;
 
-  constructor(private userService: UserService) { }
+  constructor(public userService: UserService) { }
 
   ngOnInit() {
     

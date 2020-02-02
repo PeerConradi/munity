@@ -12,7 +12,7 @@ export class MyresolutionsComponent implements OnInit {
 
   resolutions: ResolutionInformation[];
 
-  constructor(private resolutionService: ResolutionService, private userSerivce: UserService) { }
+  constructor(public resolutionService: ResolutionService, public userSerivce: UserService) { }
 
   ngOnInit() {
     if (this.userSerivce.isLoggedIn) {

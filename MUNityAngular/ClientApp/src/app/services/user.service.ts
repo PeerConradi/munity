@@ -52,7 +52,7 @@ export class UserService {
     headers = headers.set('oldpassword', encodeURI(oldpassword + '|'));
     headers = headers.set('newpassword', encodeURI(newpassword + '|'));
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/User/ChangePassword',
+    return this.http.get<string>(this.baseUrl + 'api/User/ChangePassword',
       options);
   }
 

@@ -1,4 +1,5 @@
-﻿using MUNityAngular.Util.Exceptions;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MUNityAngular.Util.Exceptions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace MUNityAngular.Models
 
         private ResolutionModel _targetResolution;
         [JsonIgnore]
+        [BsonIgnore]
         public ResolutionModel TargetResolution { get => _targetResolution;
             set
             {
@@ -38,9 +40,11 @@ namespace MUNityAngular.Models
         }
 
         [JsonIgnore]
+        [BsonIgnore]
         public override string ViewValue => "Hinzufügen";
 
         [JsonIgnore]
+        [BsonIgnore]
         public override string DisplayName => "Absatz hinzufügen";
 
         public override void Activate()

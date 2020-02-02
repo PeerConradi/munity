@@ -404,11 +404,12 @@ export class ResolutionService {
   public subscribeToResolution(id: string) {
     const builder = new signalR.HubConnectionBuilder().withUrl(this.baseUrl + 'resasocket');
     this._hubConnection = builder.build();
-
+    this._hubConnection.serverTimeoutInMilliseconds = 9600000;
     this._hubConnection
       .start()
       .then(() => {
         var hub = this._hubConnection;
+        
         var connectionUrl: string = hub["connection"].transport.webSocket.url;
         this.connectionid = connectionUrl.split('=')[1];
         this.connectionReady = true;

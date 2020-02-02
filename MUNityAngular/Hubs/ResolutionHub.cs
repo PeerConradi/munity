@@ -21,7 +21,6 @@ namespace MUNityAngular.Hubs
         {
             return Clients.User(Context.ConnectionId).HubContextIdChanged(Context.ConnectionId);
         }
-
         
     }
 }

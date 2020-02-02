@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 namespace MUNityAngular.Models
@@ -15,6 +16,7 @@ namespace MUNityAngular.Models
 
         public event OperativeParagraphAdded OnOperativeParagraphAdded;
 
+        [BsonId]
         public string ID { get; set; }
 
         public string Name { get; set; }
@@ -22,6 +24,8 @@ namespace MUNityAngular.Models
         public string FullName { get; set; }
 
         public string Topic { get; set; }
+
+
         public string AgendaItem { get; set; }
 
         public string Session { get; set; }
@@ -59,11 +63,21 @@ namespace MUNityAngular.Models
 
         public string OnlineCode { get; set; }
 
-        
+
         //Make this an read only Observable Collection (only get internal set)
         //And edit its value by just Adding from the different Amendment lists!! 
+        private ObservableCollection<AbstractAmendment> _amendments;
         [JsonIgnore]
-        public ObservableCollection<AbstractAmendment> Amendments { get; set; }
+        [BsonIgnore]
+        public ObservableCollection<AbstractAmendment> Amendments { get {
+                if (this._amendments == null)
+                {
+                    this._amendments = new ObservableCollection<AbstractAmendment>();
+                }
+                return this._amendments;
+            } 
+            set => this._amendments = value; 
+        }
 
         
 
@@ -77,7 +91,6 @@ namespace MUNityAngular.Models
             Preamble = new PreambleModel();
             OperativeSections.CollectionChanged += OperativeSections_CollectionChanged;
             Amendments.CollectionChanged += Amendments_CollectionChanged;
-
         }
 
         private void Amendments_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -242,7 +255,7 @@ namespace MUNityAngular.Models
         {
             get
             {
-                return Amendments.OfType<Models.ChangeAmendmentModel>();
+                return Amendments.OfType<ChangeAmendmentModel>();
             }
             set
             {
@@ -256,7 +269,10 @@ namespace MUNityAngular.Models
 
         public IEnumerable<DeleteAmendmentModel> DeleteAmendments
         {
-            get => Amendments.OfType<DeleteAmendmentModel>();
+            get
+            {
+                return Amendments.OfType<DeleteAmendmentModel>();
+            }
             set
             {
                 foreach (var v in value)
@@ -269,7 +285,10 @@ namespace MUNityAngular.Models
 
         public IEnumerable<MoveAmendment> MoveAmendments
         {
-            get => Amendments.OfType<MoveAmendment>();
+            get
+            {
+                return  Amendments.OfType<MoveAmendment>();
+            }
             set
             {
                 foreach (var v in value)
@@ -281,7 +300,10 @@ namespace MUNityAngular.Models
 
         public IEnumerable<AddAmendmentModel> AddAmendmentsSave
         {
-            get => Amendments.OfType<AddAmendmentModel>();
+            get
+            {
+                return Amendments.OfType<AddAmendmentModel>();
+            }
             set {
                 foreach (var v in value)
                 {

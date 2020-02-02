@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,18 +20,22 @@ namespace MUNityAngular.Models
         public string SubmitterName { get; set; }
 
         [JsonIgnore]
+        [BsonIgnore]
         public DelegationModel Submitter { get; set; }
 
         [JsonIgnore]
+        [BsonIgnore]
         public List<DelegationModel> Supporters { get; set; }
 
         [JsonIgnore]
+        [BsonIgnore]
         public ResolutionModel Resolution { get; set; }
 
         public DateTime SubmitTime { get; set; }
 
         private OperativeParagraphModel _targetSection;
         [JsonIgnore]
+        [BsonIgnore]
         public OperativeParagraphModel TargetSection
         {
             get

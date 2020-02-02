@@ -93,6 +93,36 @@ namespace MUNityTest.Resolution
         }
 
         [Test]
+        public void TestActivateDeactivateMultiply()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            var amendment = new MoveAmendment();
+            amendment.TargetSection = sectionTwo;
+            amendment.NewPosition = 0;
+            amendment.Activate();
+            amendment.Deactivate();
+            Assert.AreEqual(2, resolution.OperativeSections.Count);
+        }
+
+        [Test]
+        public void TestActivateDeactivateMultiplyTake2()
+        {
+            var resolution = new ResolutionModel();
+            var sectionOne = resolution.AddOperativeParagraph("sectionOne");
+            var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
+            var amendment = new MoveAmendment();
+            amendment.TargetSection = sectionTwo;
+            amendment.NewPosition = 0;
+            amendment.Activate();
+            amendment.Deactivate();
+            amendment.Activate();
+            amendment.Deactivate();
+            Assert.AreEqual(2, resolution.OperativeSections.Count);
+        }
+
+        [Test]
         public void TestRemoveAddAmendment()
         {
             var resolution = new ResolutionModel();

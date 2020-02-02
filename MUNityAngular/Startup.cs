@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MUNityAngular.DataHandlers.Database;
+using System.Net;
 
 namespace MUNityAngular
 {
@@ -33,12 +35,26 @@ namespace MUNityAngular
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
+                //.AllowAnyOrigin();
             }));
 
-
-            services.AddSignalR().AddJsonProtocol(options => {
-                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
             });
+
+
+            services.AddSignalR(options =>
+            {
+                options.MaximumReceiveMessageSize = 68000;
+                options.ClientTimeoutInterval = new System.TimeSpan(2,0,0);
+            }).AddJsonProtocol(options => {
+                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+                
+            });
+
+           
+
             services.AddSingleton<Services.InstallationService>();
             services.AddSingleton<Services.ResolutionService>();
             services.AddSingleton<Services.ConferenceService>();
@@ -57,9 +73,21 @@ namespace MUNityAngular
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+
+                
             }
 
+            
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
+            app.UseAuthentication();
+
             app.UseCors("CorsPolicy");
+
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -69,7 +97,6 @@ namespace MUNityAngular
             }
 
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -78,6 +105,7 @@ namespace MUNityAngular
                 endpoints.MapHub<Hubs.TestHub>("/signalrtest");
                 endpoints.MapHub<Hubs.ResolutionHub>("/resasocket");
             });
+
 
             app.UseSpa(spa =>
             {
@@ -94,7 +122,7 @@ namespace MUNityAngular
 
            
 
-            Connector.EnsureDatabaseExists();
+            //Connector.EnsureDatabaseExists();
         }
     }
 }

@@ -777,6 +777,8 @@ namespace MUNityAngular.Controllers
 
             _hubContext.Groups.AddToGroupAsync(connectionid, id);
 
+            
+
             return StatusCode(StatusCodes.Status200OK);
         }
 

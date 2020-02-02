@@ -8,9 +8,9 @@ import { UserService } from '../../../services/user.service';
 })
 export class LogoutComponent implements OnInit {
 
-  private logoutSuccess = false;
+  public logoutSuccess = false;
 
-  constructor(private userSerivce: UserService) { }
+  constructor(public userSerivce: UserService) { }
 
   ngOnInit() {
     this.userSerivce.logout().then(n => {

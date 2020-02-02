@@ -26,7 +26,7 @@ namespace MUNityAngular.Services
 
         public void CreateDatabaseAndTables()
         {
-            Connector.EnsureDatabaseExists();
+            //Connector.EnsureDatabaseExists();
             string filePath = System.IO.Path.Combine(Environment.CurrentDirectory, "/Util/Files/database.sql");
             if (System.IO.File.Exists(filePath))
             {

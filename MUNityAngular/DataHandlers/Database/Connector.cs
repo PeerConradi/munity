@@ -16,10 +16,13 @@ namespace MUNityAngular.DataHandlers.Database
     {
         private const string DATABASE_NAME = "munity";
         private const string DATABASE_USER = "root";
-        private const string DATABASE_PASSWORD = "";
+        private const string DATABASE_PASSWORD = "12345";
 
+        //Private Connection String
+        //private static string connectionString { get; set; } = @"server=localhost;userid=root;password='';database='munity'";
 
-        private static string connectionString { get; set; }
+        //Release Connection String
+        private static string connectionString { get; set; } = @"server=localhost;userid=munity-user;password='12345';database='munity'";
 
         public static bool EnsureDatabaseExists()
         {

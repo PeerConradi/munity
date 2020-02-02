@@ -85,7 +85,7 @@
 
                 <div class="row">
                     <ngx-sortable class="w-100" [items]="speakers" [name]="'Anstehende Redner'" [listStyle]="listStyle"
-                        (listSorted)="listOrderChanged($event)" (select)="onSelect($event)" style="margin-top: 10px;">
+                        (listSorted)="listOrderChanged($event)" style="margin-top: 10px;">
                         <ng-template let-item>
                             <div class="sortable-list-item row">
                                 <div class="col-10">
@@ -124,7 +124,7 @@
 
                 <div class="row">
                     <ngx-sortable class="w-100" [items]="speakers" [name]="'Anstehende Fragen'" [listStyle]="listStyle"
-                        (listSorted)="listOrderChanged($event)" (select)="onSelect($event)" style="margin-top: 10px;">
+                        (listSorted)="listOrderChanged($event)" style="margin-top: 10px;">
                         <ng-template let-item>
                             <div class="sortable-list-item row">
                                 <div class="col-10">

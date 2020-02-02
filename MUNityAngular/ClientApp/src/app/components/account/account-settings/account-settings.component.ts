@@ -13,7 +13,7 @@ export class AccountSettingsComponent implements OnInit {
   changePasswordForm;
   passdontmatch = false;
 
-  constructor(private userService: UserService,private formBuilder: FormBuilder,private notifier: NotifierService) {
+  constructor(public userService: UserService,private formBuilder: FormBuilder,private notifier: NotifierService) {
     this.changePasswordForm = this.formBuilder.group({
       oldpassword: '',
       newpassword: '',

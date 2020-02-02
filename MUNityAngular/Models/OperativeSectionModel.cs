@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 namespace MUNityAngular.Models
@@ -41,6 +42,7 @@ namespace MUNityAngular.Models
         /// It is a Guid so it will be unique and you can find the Document with just one Operative Paragraph ID
         /// </summary>
         [DataMember]
+        [BsonId]
         public string ID { get; set; }
 
         /// <summary>
@@ -61,6 +63,7 @@ namespace MUNityAngular.Models
 
         [JsonIgnore]
         [IgnoreDataMember]
+        [BsonIgnore]
         public ResolutionModel Resolution { get; set; }
 
         /// <summary>
@@ -105,10 +108,12 @@ namespace MUNityAngular.Models
 
         [JsonIgnore]
         [IgnoreDataMember]
+        [BsonIgnore]
         public AbstractAmendment ActiveAmendment { get; set; }
 
         [JsonIgnore]
         [IgnoreDataMember]
+        [BsonIgnore]
         public OperativeParagraphModel Parent
         {
             get
@@ -123,6 +128,7 @@ namespace MUNityAngular.Models
         //Ignore this, it is only Get
         [JsonIgnore]
         [IgnoreDataMember]
+        [BsonIgnore]
         public short Level
         {
             get
@@ -150,6 +156,7 @@ namespace MUNityAngular.Models
 
         [JsonIgnore]
         [IgnoreDataMember]
+        [BsonIgnore]
         public bool CanMoveLeft { get; set; }
 
         private string _path;
@@ -226,8 +233,21 @@ namespace MUNityAngular.Models
 
         [JsonIgnore]
         [IgnoreDataMember]
-        public IEnumerable<AbstractAmendment> Amendments { get => Resolution?.Amendments.Where(n => n.TargetSection == this); }
+        [BsonIgnore]
+        public IEnumerable<AbstractAmendment> Amendments
+        {
+            get
+            {
+                if (Resolution == null)
+                    return new List<AbstractAmendment>();
 
+                if (Resolution.Amendments == null)
+                {
+                    Resolution.Amendments = new ObservableCollection<AbstractAmendment>();
+                }
+                return Resolution?.Amendments.Where(n => n.TargetSection == this);
+            }
+        }
 
         public OperativeParagraphModel(string id = null, bool amendmentParagraph = false)
         {

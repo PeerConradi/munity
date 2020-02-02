@@ -7,6 +7,7 @@ using MUNityAngular.Util.Extenstions;
 using System.Threading;
 using Microsoft.AspNetCore.SignalR;
 using MUNityAngular.DataHandlers.Database;
+using MongoDB.Driver;
 
 namespace MUNityAngular.Services
 {
@@ -16,7 +17,9 @@ namespace MUNityAngular.Services
 
         public IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> HubContext { get; set; }
 
-        private List<Models.ResolutionModel> resolutions = new List<Models.ResolutionModel>();
+        //private List<Models.ResolutionModel> resolutions = new List<Models.ResolutionModel>();
+
+        private readonly IMongoCollection<Models.ResolutionModel> _resolutions;
 
         private Timer _saveTimer;
 
@@ -25,17 +28,17 @@ namespace MUNityAngular.Services
         public Models.ResolutionModel CreateResolution(bool isPublicReadable = false, bool isPublicWriteable = false, string userid = "anon")
         {
             var resolution = new Models.ResolutionModel();
-            resolutions.Add(resolution);
+            this._resolutions.InsertOne(resolution);
+            //resolutions.Add(resolution);
             //Add To database
             SaveResolutionInDatabase(resolution, isPublicReadable, isPublicWriteable, userid);
+
             //Create file
             return resolution;
         }
 
         private string Save(Models.ResolutionModel resolution)
         {
-
-
             var resolutionDirectory = DataHandlers.Database.SettingsHandler.GetResolutionDir;
             var filePath = System.IO.Path.Combine(resolutionDirectory, resolution.ID + ".json");
 
@@ -50,54 +53,71 @@ namespace MUNityAngular.Services
             return filePath;
         }
 
-        private void SaveStack(object state)
-        {
-            int stackCount = _saveStack.Count;
-            while (stackCount > 0)
-            {
-                var resolution = _saveStack.Pop();
-                Save(resolution);
-                stackCount = _saveStack.Count;
-            }
-        }
+        //private void SaveStack(object state)
+        //{
+        //    Console.WriteLine(DateTime.Now + " Start Saving stack");
+        //    int total = _saveStack.Count;
+        //    int stackCount = _saveStack.Count;
+        //    while (stackCount > 0)
+        //    {
+        //        var resolution = _saveStack.Pop();
+        //        Save(resolution);
+        //        stackCount = _saveStack.Count;
+        //    }
+        //    Console.WriteLine("Stack has been Saved total of " + total + " elements.");
+        //}
 
-        private Task StartSaveTask(CancellationToken stoppingToken)
-        {
-            _saveTimer = new Timer(SaveStack, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(5));
-            return Task.CompletedTask;
-        }
+        //private Task StartSaveTask(CancellationToken stoppingToken)
+        //{
+        //    _saveTimer = new Timer(SaveStack, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+        //    return Task.CompletedTask;
+        //}
 
-        private Task StopSaveTask(CancellationToken stoppingToken)
-        {
-            _saveTimer?.Change(Timeout.Infinite, 0);
+        //private Task StopSaveTask(CancellationToken stoppingToken)
+        //{
+        //    _saveTimer?.Change(Timeout.Infinite, 0);
 
-            return Task.CompletedTask;
-        }
+        //    return Task.CompletedTask;
+        //}
 
         public void RequestSave(Models.ResolutionModel resolution)
         {
+            
+            this._resolutions.ReplaceOne(n => n.ID == resolution.ID, resolution);
+
+            //Old Saving with the Stack!
+            /*
+            if (resolution == null)
+            {
+                return;
+            }
+
             if (!_saveStack.Contains(resolution))
+            {
+                Console.WriteLine("Pushed Resolution to save stack " + resolution.ID);
                 _saveStack.Push(resolution);
+            }
+            */
         }
 
         public Models.ResolutionModel GetResolution(string id)
         {
-            var resolution = resolutions.FirstOrDefault(n => n.ID == id);
-            if (resolution == null)
-            {
-                var resolutionDirectory = DataHandlers.Database.SettingsHandler.GetResolutionDir;
-                var filePath = System.IO.Path.Combine(resolutionDirectory, id + ".json");
-                if (System.IO.File.Exists(filePath))
-                {
-                    resolution = GetResolutionFromJson(System.IO.File.ReadAllText(filePath));
-                    resolutions.Add(resolution);
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            
+            var resolution = this._resolutions.Find(n => n.ID == id).FirstOrDefault();
+            //if (resolution == null)
+            //{
+            //    var resolutionDirectory = DataHandlers.Database.SettingsHandler.GetResolutionDir;
+            //    var filePath = System.IO.Path.Combine(resolutionDirectory, id + ".json");
+            //    if (System.IO.File.Exists(filePath))
+            //    {
+            //        resolution = GetResolutionFromJson(System.IO.File.ReadAllText(filePath));
+            //        resolutions.Add(resolution);
+            //    }
+            //    else
+            //    {
+            //        return null;
+            //    }
+            //}
             return resolution;
         }
 
@@ -261,6 +281,7 @@ namespace MUNityAngular.Services
             }
         }
 
+        
         private bool SaveResolutionInDatabase(Models.ResolutionModel resolution, bool pread, bool pwrite, string userid = "anon")
         {
             using (var connection = Connector.Connection)
@@ -287,10 +308,7 @@ namespace MUNityAngular.Services
             _saveTimer?.Dispose();
         }
 
-        public ResolutionService()
-        {
-            StartSaveTask(CancellationToken.None);
-        }
+        
 
         /// <summary>
         /// Returns a List of resolutions where the User is the creator/owner
@@ -328,6 +346,18 @@ namespace MUNityAngular.Services
                 cmd.Parameters.AddWithValue("@id", resolutionid);
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        public ResolutionService()
+        {
+            //New Saving in MongoDB
+            var connectionString = "mongodb://localhost:27017";
+            var databaseString = "MunityDb";
+            var resolutionTableString = "Resolutions";
+            var client = new MongoClient(connectionString);
+            var database = client.GetDatabase(databaseString);
+
+            this._resolutions = database.GetCollection<Models.ResolutionModel>(resolutionTableString);
         }
     }
 

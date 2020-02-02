@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class SignalrtestComponent implements OnInit {
 
-  constructor(private signalRService: SignalrtestService, private httpClient: HttpClient) { }
+  constructor(public signalRService: SignalrtestService, private httpClient: HttpClient) { }
 
   ngOnInit() {
     this.signalRService.startConnection();

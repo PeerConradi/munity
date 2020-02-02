@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MUNityAngular.Util.Extenstions;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace MUNityAngular.Models
 {
@@ -19,25 +21,39 @@ namespace MUNityAngular.Models
 
         public override string Type => AMENDMENT_TYPES.MOVE_TYPE;
 
-        public string NewSectionID { get => NewSection?.ID ?? string.Empty; }
+        public string NewSectionID { get; set; }
 
         [JsonIgnore]
+        [BsonIgnore]
         public OperativeParagraphModel NewSection { get; set; }
 
         public override void Activate()
         {
+            NewSection = TargetSection.Resolution.OperativeSections.FirstOrDefault(n => n.ID == NewSectionID);
+
             TargetSection.ViewModus = OperativeParagraphModel.EViewModus.Remove;
             TargetSection.IsLocked = true;
-            NewSection = TargetSection.Resolution.AddOperativeParagraph(NewPosition, true);
+
+            if (NewSection == null)
+            {
+                NewSection = TargetSection.Resolution.AddOperativeParagraph(NewPosition, true);
+            }
+            
             NewSection.Text = TargetSection.Text;
             NewSection.ViewModus = OperativeParagraphModel.EViewModus.Add;
             NewSection.IsVirtual = true;
+            NewSectionID = NewSection.ID;
             base.Activate();
         }
 
         public override void Deactivate()
         {
             TargetSection.IsLocked = false;
+            if (NewSection == null)
+            {
+                NewSection = TargetSection.Resolution.OperativeSections.FirstOrDefault(n => n.ID == NewSectionID);
+            }
+            //TargetSection.Resolution.OperativeSections.Remove(TargetSection);
             TargetSection.Resolution.RemoveOperativeSection(NewSection);
             base.Deactivate();
         }

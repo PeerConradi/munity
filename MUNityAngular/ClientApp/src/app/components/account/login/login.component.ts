@@ -9,15 +9,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
-  loading = false;
-  submitted = false;
-  success = false;
-  error = false;
+  public loginForm: FormGroup;
+  public loading = false;
+  public submitted = false;
+  public success = false;
+  public error = false;
 
   inputFocused = false;
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService, private routerService: Router) { }
+  constructor(private formBuilder: FormBuilder, public userService: UserService, private routerService: Router) { }
 
   ngOnInit() {
 

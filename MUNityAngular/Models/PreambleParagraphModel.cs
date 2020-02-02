@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MUNityAngular.Util.Extenstions;
 
 namespace MUNityAngular.Models
 {
@@ -14,6 +16,7 @@ namespace MUNityAngular.Models
         public string Text { get; set; }
 
         [JsonIgnore]
+        [BsonIgnore]
         public PreambleModel Preamble { get; set; }
 
         public void MoveUp()

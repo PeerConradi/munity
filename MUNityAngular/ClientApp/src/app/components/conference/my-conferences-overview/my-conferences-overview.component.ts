@@ -12,7 +12,7 @@ export class MyConferencesOverviewComponent implements OnInit {
   conferences = [];
   
 
-  constructor(private userService: UserService, private conferenceService: ConferenceServiceService) { }
+  constructor(public userService: UserService, private conferenceService: ConferenceServiceService) { }
 
   ngOnInit() {
     this.conferenceService.getAllConferences().subscribe(success => {

@@ -9,8 +9,8 @@ import { UserService } from '../services/user.service';
 export class NavMenuComponent {
   isExpanded = false;
 
-  constructor(private userSerivce: UserService) {
-
+  constructor(public userSerivce: UserService) {
+    
   }
 
   collapse() {
