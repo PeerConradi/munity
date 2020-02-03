@@ -4,10 +4,10 @@
 
   </div>
   <div class="col-12">
-    <!-- <alert [type]="alert.type" [dismissible]="dismissible">
+    <alert type="info" dismissible="true">
       <h3>Information!</h3>
       <p>Dies ist nur eine Vorschauversion, welche noch nicht für den EInsatz auf Konferenzen vorgesehen ist.</p>
-    </alert> -->
+    </alert>
   </div>
   <div class="col-12">
     <h5>MUNity ALPHA</h5>
@@ -17,14 +17,15 @@
 </div>
 <hr />
 <div class="row">
-  <div class="col-lg-6 col-xs-12">
-    <div class="card text-center">
+  <div class="col-lg-6 col-xs-12  d-flex align-items-stretch">
+    <div class="card text-center border-primary">
       <div class="card-header">
         Resolution ansehen
       </div>
       <div class="card-body">
         <h5 class="card-title">Resolution einsehen</h5>
-        <p class="card-text">Jetzt live mitlesen und Änderungsanträge einsehen/einreichen.</p>
+        <p class="card-text">Jetzt live mitlesen und Änderungsanträge einsehen/einreichen. Der dafür benötigte Code kann
+          vom Vorsitz bereitgestellt werden.</p>
         <form [formGroup]="checkResolutionForm" (ngSubmit)="onCheckResolution(checkResolutionForm.value)">
           <div class="form-group">
             <label for="resolutionid">Resolutions ID</label>
@@ -38,7 +39,7 @@
       </div>
     </div>
   </div>
-  <div class="col-lg-6 col-xs-12">
+  <div class="col-lg-6 col-xs-12  d-flex align-items-stretch">
     <div class="card text-center">
       <div class="card-header">
         Redeliste einsehen
