@@ -1,0 +1,20 @@
+.my-sortable-item {
+    padding: 6px 12px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    line-height: 1.4em;
+    text-align: center;
+    cursor: grab;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    border-color: #adadad;
+  }
+
+  .my-sortable-item-active {
+    background-color: #e6e6e6;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+  }
+
+  .my-sortable-wrapper {
+    min-height: 150px;
+  }

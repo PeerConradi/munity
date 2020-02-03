@@ -39,11 +39,13 @@ import { SpeakerlistStartupComponent } from './components/speakerlist/speakerlis
 import { SpeakerlistControllerComponent } from './components/speakerlist/speakerlist-controller/speakerlist-controller.component';
 import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-view/speakerlist-view.component';
 
-import { NgxSortableModule } from 'ngx-sortable';
 import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component';
 import { AccountSettingsComponent } from './components/account/account-settings/account-settings.component';
-import { FontAwesomeModule, FaIconLibrary  } from '@fortawesome/angular-fontawesome';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faFile, faFlag, faUser } from '@fortawesome/free-solid-svg-icons';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { SortableModule } from 'ngx-bootstrap/sortable';
 
 
 @NgModule({
@@ -94,7 +96,9 @@ import { faFile, faFlag, faUser } from '@fortawesome/free-solid-svg-icons';
     ReactiveFormsModule,
     NotifierModule,
     AppRoutingModule,
-    NgxSortableModule
+    BrowserAnimationsModule,
+    AlertModule.forRoot(),
+    SortableModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

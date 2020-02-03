@@ -84,18 +84,13 @@
                 </div>
 
                 <div class="row">
-                    <ngx-sortable class="w-100" [items]="speakers" [name]="'Anstehende Redner'" [listStyle]="listStyle"
-                        (listSorted)="listOrderChanged($event)" style="margin-top: 10px;">
-                        <ng-template let-item>
-                            <div class="sortable-list-item row">
-                                <div class="col-10">
-                                    <h5 class="align-middle">{{ item.Name }}</h5>
-                                </div>
-                                <div class="col-2" style="padding: 2px;"><button class="btn btn-danger"
-                                        (click)="removeSpeaker(item.ID)">X</button></div>
-                            </div>
-                        </ng-template>
-                    </ngx-sortable>
+                    <div class="col-12">
+                        <bs-sortable [(ngModel)]="speakers" fieldName="Name" itemClass="sortable-item"
+                            itemActiveClass="sortable-item-active" placeholderItem="Drag here"
+                            placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper">
+                        </bs-sortable>
+                    </div>
+
                 </div>
                 <div class="row">
                     <button class="btn btn-danger btn-block">Liste schließen</button>
@@ -123,18 +118,7 @@
                 </div>
 
                 <div class="row">
-                    <ngx-sortable class="w-100" [items]="speakers" [name]="'Anstehende Fragen'" [listStyle]="listStyle"
-                        (listSorted)="listOrderChanged($event)" style="margin-top: 10px;">
-                        <ng-template let-item>
-                            <div class="sortable-list-item row">
-                                <div class="col-10">
-                                    <h5 class="align-middle">{{ item.Name }}</h5>
-                                </div>
-                                <div class="col-2" style="padding: 2px;"><button class="btn btn-danger"
-                                        (click)="removeSpeaker(item.ID)">X</button></div>
-                            </div>
-                        </ng-template>
-                    </ngx-sortable>
+
                 </div>
                 <div class="row">
                     <button class="btn btn-danger btn-block">Liste schließen</button>
@@ -143,7 +127,6 @@
         </div>
     </div>
 </div>
-
 <!-- Add Guest Speaker -->
 <!-- Modal -->
 <div class="modal-backdrop fade-in" style="opacity: 0.9;"

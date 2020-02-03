@@ -4,10 +4,10 @@
 
   </div>
   <div class="col-12">
-    <div class="alert alert-primary" role="alert">
-      <b>ALPHA</b> Dies ist nur eine Vorschauversion. Es können während des Einsatzes Fehler auftreten. Bitte diese
-      Version noch nicht auf einer Konferenz einsetzen!
-    </div>
+    <!-- <alert [type]="alert.type" [dismissible]="dismissible">
+      <h3>Information!</h3>
+      <p>Dies ist nur eine Vorschauversion, welche noch nicht für den EInsatz auf Konferenzen vorgesehen ist.</p>
+    </alert> -->
   </div>
   <div class="col-12">
     <h5>MUNity ALPHA</h5>
@@ -28,8 +28,8 @@
         <form [formGroup]="checkResolutionForm" (ngSubmit)="onCheckResolution(checkResolutionForm.value)">
           <div class="form-group">
             <label for="resolutionid">Resolutions ID</label>
-            <input type="number" formControlName="resolutionkey" class="form-control" id="resolutionid" aria-describedby="resolutionNumberHelp"
-              placeholder="12345678">
+            <input type="number" formControlName="resolutionkey" class="form-control" id="resolutionid"
+              aria-describedby="resolutionNumberHelp" placeholder="12345678">
             <small id="resolutionNumberHelp" class="form-text text-muted">Die Resolutions-ID wird vom Vorsitz bekannt
               gegeben.</small>
           </div>
