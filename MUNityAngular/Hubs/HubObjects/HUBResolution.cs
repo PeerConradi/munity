@@ -19,6 +19,8 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public string Session { get; set; }
 
+        public string SubmitterName { get; set; }
+
         public DateTime Date { get; set; }
 
         public HUBPreamble Preamble { get; set; }
@@ -48,6 +50,7 @@ namespace MUNityAngular.Hubs.HubObjects
             this.MoveAmendments = resolution.MoveAmendments.ToHubAmendments();
             this.AddAmendmentsSave = resolution.AddAmendmentsSave.ToHubAmendments();
             this.OperativeSections = resolution.OperativeSections.ToHubParagraphs();
+            this.SubmitterName = SubmitterName;
         }
     }
 }

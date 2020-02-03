@@ -34,6 +34,8 @@ namespace MUNityAngular.Hubs
 
         Task CommitteeChanged(string newTitle);
 
+        Task SubmitterChanged(string newSubmitter);
+
         Task ResolutionSaved(DateTime time);
 
         Task DeleteAmendmentAdded(HubObjects.HUBDeleteAmendment amendment);

@@ -37,91 +37,57 @@ namespace MUNityAngular.Services
             return resolution;
         }
 
-        private string Save(Models.ResolutionModel resolution)
+        public void DeleteResolution(string id)
         {
-            var resolutionDirectory = DataHandlers.Database.SettingsHandler.GetResolutionDir;
-            var filePath = System.IO.Path.Combine(resolutionDirectory, resolution.ID + ".json");
-
-            if (!System.IO.File.Exists(filePath))
+            this._resolutions.DeleteOne(n => n.ID == id);
+            using (var connection = Connector.Connection)
             {
-                var stream = System.IO.File.Create(filePath);
-                stream.Close();
+                connection.Open();
+                var cmdStr = "DELETE FROM resolution WHERE id=@id";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
             }
-            System.IO.File.WriteAllText(filePath, resolution.ToJson());
-            if (HubContext != null)
-                HubContext.Clients.Group(resolution.ID).ResolutionSaved(DateTime.Now);
-            return filePath;
         }
 
-        //private void SaveStack(object state)
-        //{
-        //    Console.WriteLine(DateTime.Now + " Start Saving stack");
-        //    int total = _saveStack.Count;
-        //    int stackCount = _saveStack.Count;
-        //    while (stackCount > 0)
-        //    {
-        //        var resolution = _saveStack.Pop();
-        //        Save(resolution);
-        //        stackCount = _saveStack.Count;
-        //    }
-        //    Console.WriteLine("Stack has been Saved total of " + total + " elements.");
-        //}
+        public long SavedResolutionsCount { get => this._resolutions.CountDocuments(n => n.ID != null); }
 
-        //private Task StartSaveTask(CancellationToken stoppingToken)
-        //{
-        //    _saveTimer = new Timer(SaveStack, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
-        //    return Task.CompletedTask;
-        //}
-
-        //private Task StopSaveTask(CancellationToken stoppingToken)
-        //{
-        //    _saveTimer?.Change(Timeout.Infinite, 0);
-
-        //    return Task.CompletedTask;
-        //}
+        public long DatabaseResolutionsCount
+        {
+            get
+            {
+                long count = 0;
+                using (var connection = Connector.Connection)
+                {
+                    connection.Open();
+                    var cmdStr = "SELECT COUNT(*) FROM resolution;";
+                    var cmd = new MySqlCommand(cmdStr, connection);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                count = reader.GetInt64(0);
+                            }
+                        }
+                    }
+                }
+                return count;
+            }
+        }
 
         public void RequestSave(Models.ResolutionModel resolution)
         {
             
             this._resolutions.ReplaceOne(n => n.ID == resolution.ID, resolution);
-
-            //Old Saving with the Stack!
-            /*
-            if (resolution == null)
-            {
-                return;
-            }
-
-            if (!_saveStack.Contains(resolution))
-            {
-                Console.WriteLine("Pushed Resolution to save stack " + resolution.ID);
-                _saveStack.Push(resolution);
-            }
-            */
         }
 
         public Models.ResolutionModel GetResolution(string id)
         {
-            
             var resolution = this._resolutions.Find(n => n.ID == id).FirstOrDefault();
-            //if (resolution == null)
-            //{
-            //    var resolutionDirectory = DataHandlers.Database.SettingsHandler.GetResolutionDir;
-            //    var filePath = System.IO.Path.Combine(resolutionDirectory, id + ".json");
-            //    if (System.IO.File.Exists(filePath))
-            //    {
-            //        resolution = GetResolutionFromJson(System.IO.File.ReadAllText(filePath));
-            //        resolutions.Add(resolution);
-            //    }
-            //    else
-            //    {
-            //        return null;
-            //    }
-            //}
             return resolution;
         }
-
-
 
         public (string id, bool publicRead, bool publicWrite, bool publicAmendment) GetResolutionInfoForPublicId(string publicid)
         {

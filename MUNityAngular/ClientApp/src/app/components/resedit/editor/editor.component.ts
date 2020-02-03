@@ -43,7 +43,9 @@ export class EditorComponent implements OnInit {
 
   newAmendmentNewText: string;
 
-  addAmendmentType = "delete";
+  newamendmentDelegation: string = '';
+
+  addAmendmentType = 'delete';
 
   amendmentTargetPosition: number;
 
@@ -52,6 +54,8 @@ export class EditorComponent implements OnInit {
   canEdit: boolean = null;
 
   notFound = false;
+
+  allDelegations: string[] = [];
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
     private titleService: Title) {
@@ -63,6 +67,7 @@ export class EditorComponent implements OnInit {
   saveSubscription: Subscription;
 
   ngOnInit() {
+    this.allDelegations.push('Deutschland');
     let id: string = null;
     this.route.params.subscribe(params => {
       id = params.id;
@@ -168,13 +173,13 @@ export class EditorComponent implements OnInit {
     const newText: string = this.newAmendmentNewText;
 
     if (type === 'delete') {
-      this.service.addDeleteAmendment(this.model.ID, target.ID, 'Unknown');
+      this.service.addDeleteAmendment(this.model.ID, target.ID, this.newamendmentDelegation);
     } else if (type === 'change') {
-      this.service.addChangeAmendment(this.model.ID, target.ID, 'Unknown', newText);
+      this.service.addChangeAmendment(this.model.ID, target.ID, this.newamendmentDelegation, newText);
     } else if (type === 'move') {
-      this.service.addMoveAmendment(this.model.ID, target.ID, 'Unknown', this.amendmentTargetPosition);
+      this.service.addMoveAmendment(this.model.ID, target.ID, this.newamendmentDelegation, this.amendmentTargetPosition);
     } else if (type === 'add') {
-      this.service.addAddAmendment(this.model.ID, 'Unknown', this.amendmentTargetPosition, newText);
+      this.service.addAddAmendment(this.model.ID, this.newamendmentDelegation, this.amendmentTargetPosition, newText);
     }
 
     this.amendmentModalActive = false;

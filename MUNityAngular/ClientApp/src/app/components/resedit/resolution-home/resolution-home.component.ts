@@ -28,9 +28,9 @@ export class ResolutionHomeComponent implements OnInit {
         if (n.ID != null) {
           this.router.navigate(['/resedit', n.ID])
         }
-        this.nofitier.notify('error', 'Fehler beim Erstellen der Resolution.');
+        
       } else {
-
+        this.nofitier.notify('error', 'Fehler beim Erstellen der Resolution.');
       }
     },
       err => {

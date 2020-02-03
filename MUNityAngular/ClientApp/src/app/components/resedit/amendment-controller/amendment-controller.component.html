@@ -14,6 +14,7 @@
   <p *ngIf="amendment.SubmitTime"><b>Zeit: </b> {{ amendment.SubmitTime | date:'dd.MM.yyyy HH:mm:ss' }}</p>
   <p *ngIf="paragraph && amendment.Type !== 'add'"><b>Ziel: </b> {{ paragraph.Path }}</p>
   <p *ngIf="amendment.Type === 'add'"><b>Ziel-Position: </b> {{ amendment.TargetPosition }}</p>
+  <p *ngIf="amendment"><b>Einbringer: </b> {{ amendment.SubmitterName }}</p>
   <label class="cb-container">
     Anzeigen
 
@@ -22,7 +23,7 @@
   </label>
 
   <button class="btn btn-block btn-success" (click)="submitAmendment();">Annehmen</button>
-  <button class="btn btn-block btn-danger" (click)="submitAmendment();" disabled>Ablehnen</button>
-  <button class="btn btn-block btn-primary" (click)="submitAmendment();" disabled>Bearbeiten</button>
+  <button class="btn btn-block btn-danger" (click)="submitAmendment();" disabled>Ablehnen (N/A)</button>
+  <button class="btn btn-block btn-primary" (click)="submitAmendment();" disabled>Bearbeiten (N/A)</button>
 
 </div>

@@ -444,6 +444,31 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
+        public IActionResult ChangeSubmitter([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string newsubmitter,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var realtext = newsubmitter.DecodeUrl();
+
+            if (string.IsNullOrEmpty(realtext))
+                return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
+
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            resolution.SubmitterName = realtext;
+            resolutionService.RequestSave(resolution);
+            _hubContext?.Clients.Group(resolution.ID).SubmitterChanged(realtext);
+            return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
+        }
+
+        [Route("[action]")]
+        [HttpGet]
         public IActionResult AddDeleteAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string sectionid, [FromHeader]string submittername,
             [FromServices]ResolutionService resolutionService,

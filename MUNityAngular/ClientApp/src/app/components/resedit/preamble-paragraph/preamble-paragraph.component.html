@@ -18,7 +18,7 @@
 
   <div class="form-group preamble-textarea">
     <textarea class="form-control" id="preambleTextArea" rows="3"
-      (keyup)="onKey($event)">{{ paragraph.Text }}</textarea>
+      (keyup)="onKey($event)" maxlength="4000">{{ paragraph.Text }}</textarea>
 
   </div>
 </div>

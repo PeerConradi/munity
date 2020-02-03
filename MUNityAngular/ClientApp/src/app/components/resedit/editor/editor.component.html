@@ -101,6 +101,17 @@
                 </div>
               </div>
 
+              <!-- Einbringer-->
+              <div class="row">
+                <label class="control-label">Einbringer</label>
+                <div class="col-12">
+                  <input [(ngModel)]="newamendmentDelegation"
+                         [typeahead]="allDelegations"
+                         class="form-control"
+                         [ngModelOptions]="{standalone: true}">
+                </div>
+              </div>
+
               <!-- Ziel Operativer Absatz -->
               <div class="row"
                 *ngIf="addAmendmentType === 'delete' || addAmendmentType === 'change' || addAmendmentType === 'move'">

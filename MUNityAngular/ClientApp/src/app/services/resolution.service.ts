@@ -134,7 +134,7 @@ export class ResolutionService {
       model.Preamble.Paragraphs = paragraphs;
     });
 
-    this._hubConnection.on('OperativeSectionRemoved', (resolution: Resolution) => {
+    this._hubConnection.on('OperativeParagraphRemoved', (resolution: Resolution) => {
       model.OperativeSections = resolution.OperativeSections;
       model.ChangeAmendments = resolution.ChangeAmendments;
       model.MoveAmendments = resolution.MoveAmendments;
@@ -295,6 +295,19 @@ export class ResolutionService {
     this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeCommittee', options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
+  public changeSubmitter(resolutionid: string, newsubmittername: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('newcommitteename', encodeURI(newsubmittername + "|"));
+    let options = { headers: headers };
+    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeCommittee', options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+
   public changePreambleParagraph(resolutionid: string, paragraphid: string, newtext: string) {
     let authString: string = 'default';
     if (this.userService.isLoggedIn)
@@ -353,6 +366,81 @@ export class ResolutionService {
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/RemovePreambleParagraph',
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public moveOperativeParagraphUp(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/MoveOperativeParagraphUp',
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public moveOperativeParagraphDown(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/MoveOperativeParagraphDown',
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public moveOperativeParagraphLeft(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/MoveOperativeParagraphLeft',
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public moveOperativeParagraphRight(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/MoveOperativeParagraphRight',
+      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public removeOperativeParagraph(resolutionid: string, paragraphid: string) {
+    let authString: string = 'default';
+    if (this.userService.isLoggedIn)
+      authString = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', authString);
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('paragraphid', paragraphid);
+    let options = { headers: headers };
+    this.httpClient.get(this.baseUrl + 'api/Resolution/RemoveOperativeParagraph',
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -444,7 +532,7 @@ export class ResolutionService {
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
-    headers = headers.set('sumbittername', submitter);
+    headers = headers.set('submittername', submitter);
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddDeleteAmendment',
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
@@ -460,7 +548,7 @@ export class ResolutionService {
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
-    headers = headers.set('sumbittername', submitter);
+    headers = headers.set('submittername', submitter);
     headers = headers.set('newtext', encodeURI(newtext + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddChangeAmendment',
@@ -477,7 +565,7 @@ export class ResolutionService {
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
-    headers = headers.set('sumbittername', submitter);
+    headers = headers.set('submittername', submitter);
     headers = headers.set('newposition', newPosition.toString());
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddMoveAmendment',
@@ -493,7 +581,7 @@ export class ResolutionService {
     headers = headers.set('content-type', 'application/json; charset=utf-8');
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('sumbittername', submitter);
+    headers = headers.set('submittername', submitter);
     headers = headers.set('newposition', newPosition.toString());
     headers = headers.set('newtext', encodeURI(newText + '|'));
     let options = { headers: headers };

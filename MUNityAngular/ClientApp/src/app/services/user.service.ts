@@ -2,23 +2,28 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Session } from 'inspector';
+import { resolve } from 'dns';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  public isLoggedIn: boolean = false;
+  private _loggedIn: boolean = false;
+
+  public get isLoggedIn(): boolean {
+    return (this._loggedIn);
+  }
 
   private baseUrl: string;
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
     if (this.sessionkey() != null && this.sessionkey() != '') {
       this.validateKey(this.sessionkey()).subscribe(n => {
-        this.isLoggedIn = true;
+        this._loggedIn = true;
       }, err => {
           //Delete the invalid AuthKey:
-          this.isLoggedIn = false;
+          this._loggedIn = false;
           this.setSessionkey('');
       });
     }
@@ -72,7 +77,7 @@ export class UserService {
     let options = { headers: headers };
     await this.http.get(this.baseUrl + 'api/User/Logout', options).toPromise().then(msg => {
       this.setSessionkey('');
-      this.isLoggedIn = false;
+      this._loggedIn = false;
     }).catch(err => error = true);
     if (error == false)
       return true;
@@ -88,13 +93,12 @@ export class UserService {
     let options = { headers: headers };
     await this.http.get<Login>(this.baseUrl + 'api/User/Login', options).toPromise().then(msg => {
       localStorage.setItem('munity_session_key', msg.key);
-      this.isLoggedIn = true;
+      this._loggedIn = true;
     }).catch(err => error = true);
     if (error == false)
       return true;
     else
       return false;
-
   }
 }
 

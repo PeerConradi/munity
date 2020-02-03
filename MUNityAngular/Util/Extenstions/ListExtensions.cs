@@ -13,5 +13,10 @@ namespace MUNityAngular.Util.Extenstions
             list.RemoveAt(oldIndex);
             list.Insert(newIndex, item);
         }
+
+        public static string ToNewtonsoftJson<T>(this List<T> list)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(list);
+        } 
     }
 }

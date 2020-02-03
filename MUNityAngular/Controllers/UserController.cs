@@ -96,6 +96,27 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult IsAdmin([FromHeader]string auth, [FromServices]AuthService authService)
+        {
+            var authState = authService.ValidateAuthKey(auth);
+            if (authState.valid == false)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
+            }
+
+            var state = authService.IsAdmin(authState.userid);
+            if (state == true)
+            {
+                return StatusCode(StatusCodes.Status200OK, true);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status200OK, false);
+            }
+        }
+
 
         [Route("[action]")]
         [HttpGet]

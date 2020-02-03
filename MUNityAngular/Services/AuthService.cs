@@ -426,8 +426,13 @@ namespace MUNityAngular.Services
                 {
                     if (!reader.HasRows)
                         return false;
-                    if (reader.GetInt16(0) == 5)
-                        return true;
+
+                    while (reader.Read())
+                    {
+                        if (reader.GetInt16(0) == 5)
+                            return true;
+                    }
+                    
 
                     return false;
                 }
@@ -444,5 +449,26 @@ namespace MUNityAngular.Services
             public bool CreateConference { get; set; } = false;
         }
         
+        public List<UserModel> GetAllUsers()
+        {
+            var users = new List<UserModel>();
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmdStr = "SELECT * FROM user;";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var user = DataReaderConverter.ObjectFromReader<UserModel>(reader);
+                        users.Add(user);
+                    }
+                    
+                }
+            }
+            return users;
+        }
+
     }
 }

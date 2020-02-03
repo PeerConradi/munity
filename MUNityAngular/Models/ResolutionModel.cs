@@ -313,5 +313,6 @@ namespace MUNityAngular.Models
             }
         }
 
+        public string SubmitterName { get; set; }
     }
 }

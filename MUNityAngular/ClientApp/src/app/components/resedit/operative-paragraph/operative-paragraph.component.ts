@@ -25,7 +25,22 @@ export class OperativeParagraphComponent implements OnInit {
   }
 
   delete() {
-    console.log('Delete: ' + this.paragraph.ID);
+    this.service.removeOperativeParagraph(this.resolutionid, this.paragraph.ID);
   }
 
+  moveUp() {
+    this.service.moveOperativeParagraphUp(this.resolutionid, this.paragraph.ID);
+  }
+
+  moveDown() {
+    this.service.moveOperativeParagraphDown(this.resolutionid, this.paragraph.ID);
+  }
+
+  moveLeft() {
+    this.service.moveOperativeParagraphLeft(this.resolutionid, this.paragraph.ID);
+  }
+
+  moveRight() {
+    this.service.moveOperativeParagraphRight(this.resolutionid, this.paragraph.ID);
+  }
 }

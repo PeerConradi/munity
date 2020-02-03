@@ -46,6 +46,9 @@ import { faFile, faFlag, faUser } from '@fortawesome/free-solid-svg-icons';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { SortableModule } from 'ngx-bootstrap/sortable';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
 
 
 @NgModule({
@@ -84,7 +87,9 @@ import { SortableModule } from 'ngx-bootstrap/sortable';
     SpeakerlistControllerComponent,
     SpeakerlistViewComponent,
     WorkWithResolutionComponent,
-    AccountSettingsComponent
+    AccountSettingsComponent,
+    UserManagementComponent,
+    ResolutionsManagementComponent
   ],
   imports: [
     RouterModule,
@@ -98,7 +103,8 @@ import { SortableModule } from 'ngx-bootstrap/sortable';
     AppRoutingModule,
     BrowserAnimationsModule,
     AlertModule.forRoot(),
-    SortableModule.forRoot()
+    SortableModule.forRoot(),
+    TypeaheadModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

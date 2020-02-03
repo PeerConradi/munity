@@ -25,6 +25,7 @@ import { SpeakerlistControllerComponent } from './components/speakerlist/speaker
 import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-view/speakerlist-view.component';
 import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component';
 import { AccountSettingsComponent } from './components/account/account-settings/account-settings.component';
+import { UserManagementComponent } from './components/admin/user-management/user-management.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -63,8 +64,8 @@ const routes: Routes = [
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
 
       //Admin
-      
       { path: 'admin/conferences', component: ConferenceListComponent },
+      { path: 'admin/users', component: UserManagementComponent },
 
       //Speakerlist
       { path: 's/start', component: SpeakerlistStartupComponent },

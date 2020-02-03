@@ -126,9 +126,9 @@ namespace MUNityAngular.Models
         }
 
         //Ignore this, it is only Get
-        [JsonIgnore]
-        [IgnoreDataMember]
-        [BsonIgnore]
+        //[JsonIgnore]
+        //[IgnoreDataMember]
+        //[BsonIgnore]
         public short Level
         {
             get
@@ -185,7 +185,7 @@ namespace MUNityAngular.Models
         public int MoveAmendmentCount { get => Amendments.OfType<MoveAmendment>().Count(); }
 
 
-        private string levelTwoLetters = "abcdefghijklmnopqrstuvwxyz";
+        private static readonly string levelTwoLetters = "abcdefghijklmnopqrstuvwxyz";
 
         public void UpdatePath()
         {
