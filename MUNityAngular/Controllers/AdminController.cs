@@ -78,5 +78,27 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult DeleteAccount ([FromHeader]string auth, [FromHeader]string id, 
+            [FromServices]AuthService authService)
+        {
+            var authState = authService.ValidateAuthKey(auth);
+            if (authState.valid == false)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
+            }
+
+            var state = authService.IsAdmin(authState.userid);
+            if (state == true)
+            {
+                return StatusCode(StatusCodes.Status200OK, authService.GetAllUsers().ToNewtonsoftJson());
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
+            }
+        }
+
     }
 }

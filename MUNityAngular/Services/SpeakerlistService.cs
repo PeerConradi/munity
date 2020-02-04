@@ -9,10 +9,7 @@ namespace MUNityAngular.Services
     {
         private List<Models.SpeakerlistModel> Speakerlists;
 
-        public SpeakerlistService()
-        {
-            Speakerlists = new List<Models.SpeakerlistModel>();
-        }
+       
 
         public void AddSpeakerlist(Models.SpeakerlistModel list)
         {
@@ -22,6 +19,12 @@ namespace MUNityAngular.Services
         public Models.SpeakerlistModel GetSpeakerlist(string id)
         {
             return Speakerlists.FirstOrDefault(n => n.ID == id);
+        }
+
+        public SpeakerlistService()
+        {
+            Speakerlists = new List<Models.SpeakerlistModel>();
+            Console.WriteLine("Speakerlist Service Started!");
         }
     }
 }

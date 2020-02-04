@@ -49,7 +49,7 @@ namespace MUNityAngular.Controllers
 
 
             string json;
-            if (authService.isDefaultAuth(auth))
+            if (authService.IsDefaultAuth(auth))
                 json = resolutionService.CreateResolution(true, true).ToJson();
             else
                 json = resolutionService.CreateResolution(userid: authService.ValidateAuthKey(auth).userid).ToJson();
@@ -545,8 +545,7 @@ namespace MUNityAngular.Controllers
             if (section == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
 
-            int np;
-            if (int.TryParse(newposition, out np))
+            if (int.TryParse(newposition, out int np))
             {
                 var amendment = new Models.MoveAmendment();
                 amendment.SubmitterName = submittername;
@@ -578,8 +577,7 @@ namespace MUNityAngular.Controllers
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            int np;
-            if (int.TryParse(newposition, out np))
+            if (int.TryParse(newposition, out int np))
             {
                 var amendment = new Models.AddAmendmentModel();
                 amendment.SubmitterName = submittername;

@@ -28,7 +28,7 @@ namespace MUNityAngular.Services
             CreateConference
         }
 
-        public bool isDefaultAuth(string auth)
+        public bool IsDefaultAuth(string auth)
         {
             return auth == "default";
         }
@@ -89,6 +89,43 @@ namespace MUNityAngular.Services
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public void DeleteAccount(string id)
+        {
+            //Delete all User Keys
+            DeleteAllUserKeys(id);
+
+            
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                //Free all Resolutions from this User (give them to anon)
+                var cmdStr = "DELETE FROM user WHERE id=@userid;";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public string GetHeadAdminId()
+        {
+            string id = null;
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT userid FROM admin WHERE rank=5;";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        id = reader.GetString(0);
+                    }
+                }
+            }
+            return id;
+        }
+
+
 
         public (bool status, string key) LoginWithId(string userid, string password)
         {
@@ -308,6 +345,8 @@ namespace MUNityAngular.Services
             return (valid, user);
         }
 
+        #region Resolution
+
         public bool CanCreateResolution(string auth)
         {
             if (auth == "default")
@@ -386,6 +425,8 @@ namespace MUNityAngular.Services
             }
             return owner;
         }
+
+        #endregion
 
         public UserAuths GetAuthsByAuthkey(string authkey)
         {
@@ -470,5 +511,51 @@ namespace MUNityAngular.Services
             return users;
         }
 
+
+        #region Konferenz
+
+        public bool CanManageConference(string userid, string conferenceid)
+        {
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmdStr = "SELECT FROM conference WHERE id=@conferenceid And creationuser=@userid;";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@conferenceid", conferenceid);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        //Der Benutzer ist der Ersteller der Konferenz und hat somit alle notwendigen rechte
+                        return true;
+                    }
+                }
+                cmd.CommandText = "SELECT CanEdit FROM conference_user_auth WHERE conferenceid=@conferenceid And userid=@userid;";
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            return reader.GetBoolean(0);
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+
+        #endregion
+
+
+        public AuthService()
+        {
+            Console.WriteLine("Auth-Service Started!");
+        }
     }
 }

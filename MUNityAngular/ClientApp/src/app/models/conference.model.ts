@@ -1,14 +1,16 @@
 import { Committee } from "./committee.model";
+import { Delegation } from "./delegation.model";
 
 export class Conference {
-  id: string;
-  name: string;
-  fullName: string;
-  abbreviation: string;
-  committees: Committee[];
-  creationDate: Date;
-  startDate: Date;
-  endDate: Date;
-  secretaryGeneralTitle: string;
-  secretaryGeneralName: string;
+  ID: string;
+  Name: string;
+  FullName: string;
+  Abbreviation: string;
+  Committees: Committee[];
+  Delegations: Delegation[];
+  CreationDate: Date;
+  StartDate: Date;
+  EndDate: Date;
+  SecretaryGeneralTitle: string;
+  SecretaryGeneralName: string;
 }

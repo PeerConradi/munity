@@ -27,8 +27,7 @@ export class CreateConferenceComponent implements OnInit {
     this.createForm = this.formBuilder.group({
       name: '',
       fullname: '',
-      abbreviation: '',
-      password: ''
+      abbreviation: ''
     });
     
   }
@@ -41,17 +40,17 @@ export class CreateConferenceComponent implements OnInit {
   onSubmit(data) {
     console.log(data);
     let conference: Conference = new Conference();
-    conference.name = data.name;
-    conference.fullName = data.fullname;
-    conference.abbreviation = data.abbreviation;
+    conference.Name = data.name;
+    conference.FullName = data.fullname;
+    conference.Abbreviation = data.abbreviation;
     let startDate: Date = new Date(this.startdatemodel.year, this.startdatemodel.month, this.startdatemodel.day);
     let endDate: Date = new Date(this.enddatemodel.year, this.enddatemodel.month, this.enddatemodel.day);
 
-    conference.startDate = startDate;
-    conference.endDate = endDate;
+    conference.StartDate = startDate;
+    conference.EndDate = endDate;
     this.requested = true;
     this.info = '';
-    this.service.createConference(conference, data.password).subscribe(n => {
+    this.service.createConference(conference).subscribe(n => {
       //this.conferenceCreated = true;
       this.createdConference = n;
       console.log(n);

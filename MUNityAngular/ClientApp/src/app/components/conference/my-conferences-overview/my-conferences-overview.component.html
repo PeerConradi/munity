@@ -1,5 +1,53 @@
-<h3>Meine Konferenzen</h3>
 <p *ngIf="!this.userService.isLoggedIn">Um diesen Bereich sehen zu können musst du eingeloggt sein.</p>
-<ul *ngFor="let conf of conferences">
-  <li><a [routerLink]="['/conferences', conf.id]">{{ conf.name }}, {{ conf.fullName }}</a></li>
-</ul>
+
+<div *ngIf="this.userService.isLoggedIn">
+  <h3>Konferenzverwaltung</h3>
+  <div class="row">
+    <!-- Linke Seite-->
+    <div class="col-lg-6 col-xs-12">
+      <!-- Konferenz Übersich Box-->
+      <div class="card w-100">
+        <div class="card-header">
+          <h3 class="card-title">Meine Konferenzen</h3>
+        </div>
+        <div class="card-body">
+          <div *ngIf="!conferences" class="spinner-border text-primary" role="status">
+            <span class="sr-only">Konferenzen werden geladen</span>
+          </div>
+          <table *ngIf="conferences" class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Vollständiger Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let conf of conferences">
+                <td><a [routerLink]="['/conferences', conf.ID]">{{ conf.Name }}</a></td>
+                <td>{{ conf.FullName }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Rechte Seite -->
+    <div class="col-lg-6 col-xs-12">
+      <div class="w-100 card border-success">
+        <div class="card-header">
+          <h3 class="card-title">Konferenz erstellen</h3>
+        </div>
+        <div class="card-body">
+          <p>Eine neue Konferenz erstellen und bearbeiten geht hier ganz einfach und kostenlos.</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-block btn-success">Konferenz erstellen</button>
+        </div>
+        </div>
+      </div>
+  </div>
+   
+    
+</div>

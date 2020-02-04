@@ -1,9 +1,9 @@
 export class Committee {
-  id: string;
-  abbreviation: string;
-  article: string;
-  conferenceid: string;
-  delegationlist: string[];
-  fullname: string;
-  name: string;
+  ID: string;
+  Abbreviation: string;
+  Article: string;
+  Conferenceid: string;
+  DelegationList: string[];
+  FullName: string;
+  Name: string;
 }

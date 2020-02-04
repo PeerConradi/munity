@@ -49,6 +49,8 @@ import { SortableModule } from 'ngx-bootstrap/sortable';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
 import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { ImpressumComponent } from './components/default/impressum/impressum.component';
 
 
 @NgModule({
@@ -89,7 +91,8 @@ import { ResolutionsManagementComponent } from './components/admin/resolutions-m
     WorkWithResolutionComponent,
     AccountSettingsComponent,
     UserManagementComponent,
-    ResolutionsManagementComponent
+    ResolutionsManagementComponent,
+    ImpressumComponent
   ],
   imports: [
     RouterModule,
@@ -104,7 +107,8 @@ import { ResolutionsManagementComponent } from './components/admin/resolutions-m
     BrowserAnimationsModule,
     AlertModule.forRoot(),
     SortableModule.forRoot(),
-    TypeaheadModule.forRoot()
+    TypeaheadModule.forRoot(),
+    ModalModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

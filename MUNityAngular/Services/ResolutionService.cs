@@ -21,10 +21,6 @@ namespace MUNityAngular.Services
 
         private readonly IMongoCollection<Models.ResolutionModel> _resolutions;
 
-        private Timer _saveTimer;
-
-        private Stack<Models.ResolutionModel> _saveStack = new Stack<Models.ResolutionModel>();
-
         public Models.ResolutionModel CreateResolution(bool isPublicReadable = false, bool isPublicWriteable = false, string userid = "anon")
         {
             var resolution = new Models.ResolutionModel();
@@ -190,20 +186,24 @@ namespace MUNityAngular.Services
         public string GeneratePublicId()
         {
             string id = new Random().Next(10000000, 99999999).ToString();
-            bool containsId = true;
-            using (var connection = Connector.Connection)
+            bool containsId = false;
+            do
             {
-                var cmdStr = "SELECT COUNT(*) FROM resolution WHERE onlinecode=@code";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@code", id);
-                using (var reader = cmd.ExecuteReader())
+                using (var connection = Connector.Connection)
                 {
-                    while (reader.Read())
+                    var cmdStr = "SELECT COUNT(*) FROM resolution WHERE onlinecode=@code";
+                    var cmd = new MySqlCommand(cmdStr, connection);
+                    cmd.Parameters.AddWithValue("@code", id);
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        containsId = (reader.GetInt16(0) > 0);
+                        while (reader.Read())
+                        {
+                            containsId = (reader.GetInt16(0) > 0);
+                        }
                     }
                 }
-            }
+            } while (containsId == true);
+            
             return id;
         }
 
@@ -271,7 +271,7 @@ namespace MUNityAngular.Services
 
         public void Dispose()
         {
-            _saveTimer?.Dispose();
+            //Nothing to Dispose()
         }
 
         
@@ -324,6 +324,8 @@ namespace MUNityAngular.Services
             var database = client.GetDatabase(databaseString);
 
             this._resolutions = database.GetCollection<Models.ResolutionModel>(resolutionTableString);
+
+            Console.WriteLine("Resolution Service Started!");
         }
     }
 
