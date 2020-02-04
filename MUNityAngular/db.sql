@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : LocalHost-NoPW
+Source Server         : localhost mariadb
 Source Server Version : 50505
 Source Host           : localhost:3306
 Source Database       : munity
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2020-02-02 12:44:58
+Date: 2020-02-04 17:16:12
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,7 +23,7 @@ CREATE TABLE `admin` (
   `userid` varchar(255) NOT NULL,
   `rank` int(11) DEFAULT NULL,
   PRIMARY KEY (`userid`),
-  CONSTRAINT `useradminlink` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `useradminlink` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
@@ -42,12 +42,13 @@ CREATE TABLE `auth` (
   `expiredate` datetime DEFAULT NULL,
   PRIMARY KEY (`authkey`),
   KEY `userkeylink` (`userid`),
-  CONSTRAINT `userkeylink` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `userkeylink` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of auth
 -- ----------------------------
+INSERT INTO `auth` VALUES ('YPkdMoiNuWUu4mFMw0nzBG5I6wT7fC7DcIPCB3/khyQNRboXBiAq3x88WVLW16kpaA4JZWyYuoAJHFRm1dnDUQ==', '8c19c2eb-39cf-44dd-942f-1ae2930af524', '2020-02-04 12:44:35', '2020-02-05 12:44:35');
 
 -- ----------------------------
 -- Table structure for committee
@@ -65,13 +66,14 @@ CREATE TABLE `committee` (
   PRIMARY KEY (`id`),
   KEY `committee_conference` (`conferenceid`),
   KEY `head` (`resolutlycommittee`),
-  CONSTRAINT `committee_conference` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `head` FOREIGN KEY (`resolutlycommittee`) REFERENCES `committee` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `committee_conference` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `head` FOREIGN KEY (`resolutlycommittee`) REFERENCES `committee` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of committee
 -- ----------------------------
+INSERT INTO `committee` VALUES ('4f1c1d1a-477e-494e-bf95-d9b4ea74365c', 'Hallo Welt', 'Hallo Welt', 'asd', 'södkf', '7cafe067-a9be-4595-9479-b067df507d50', null, null);
 INSERT INTO `committee` VALUES ('default_de_gv', 'Generalversammlung', 'Generalversammlung', 'GV', 'die', 'default', 'DE', null);
 INSERT INTO `committee` VALUES ('default_de_igh', 'Internationaler Gerichtshof', 'Internationaler Gerichtshof', 'IGH', 'der', 'default', 'DE', null);
 INSERT INTO `committee` VALUES ('default_de_mrr', 'Menschenrechtsrat', 'Menschenrechtsrat', 'MRR', 'der', 'default', 'DE', null);
@@ -92,8 +94,8 @@ CREATE TABLE `committee_lead` (
   `rolename` varchar(255) DEFAULT NULL,
   KEY `committee` (`committeeid`),
   KEY `user` (`userid`),
-  CONSTRAINT `committee` FOREIGN KEY (`committeeid`) REFERENCES `committee` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `user` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `committee` FOREIGN KEY (`committeeid`) REFERENCES `committee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
@@ -123,6 +125,7 @@ CREATE TABLE `conference` (
 -- ----------------------------
 INSERT INTO `conference` VALUES ('7cafe067-a9be-4595-9479-b067df507d50', 'Roflcopter', 'Roflcopter swuuup', 'Rofl', '2020-02-09 00:00:00', '2020-02-12 00:00:00', null, null, '2020-01-09 13:38:39', null);
 INSERT INTO `conference` VALUES ('default', 'Default', 'Default Conference', 'DEFAULT', '2019-12-02 00:00:00', '2022-12-31 22:28:10', 'Seine Exzelenz der Generalsekretär', 'António Guterres', '2019-12-02 22:29:00', 'johndoe');
+INSERT INTO `conference` VALUES ('test', 'test', 'test', 'test', '2020-02-04 10:55:34', '2020-02-14 10:55:37', 'test', 'test', '2020-02-04 10:55:47', 'test');
 
 -- ----------------------------
 -- Table structure for conference_delegation
@@ -132,8 +135,8 @@ CREATE TABLE `conference_delegation` (
   `linkid` int(11) NOT NULL AUTO_INCREMENT,
   `conference_id` varchar(255) DEFAULT NULL,
   `delegation_id` varchar(255) DEFAULT NULL,
-  `mincount` int(11) DEFAULT NULL,
-  `maxcount` int(11) DEFAULT NULL,
+  `mincount` int(11) DEFAULT 1,
+  `maxcount` int(11) DEFAULT 1,
   PRIMARY KEY (`linkid`),
   KEY `conference` (`conference_id`),
   KEY `delegation` (`delegation_id`),
@@ -148,22 +151,25 @@ INSERT INTO `conference_delegation` VALUES ('1', 'default', 'default_aegypten', 
 INSERT INTO `conference_delegation` VALUES ('2', 'default', 'default_afghanistan', '1', '1');
 
 -- ----------------------------
--- Table structure for conference_password
+-- Table structure for conference_team
 -- ----------------------------
-DROP TABLE IF EXISTS `conference_password`;
-CREATE TABLE `conference_password` (
-  `conferenceid` varchar(255) NOT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `salt` varchar(255) DEFAULT NULL,
-  `rank` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`conferenceid`),
-  CONSTRAINT `conference_password_link` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+DROP TABLE IF EXISTS `conference_team`;
+CREATE TABLE `conference_team` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `conferenceid` varchar(255) DEFAULT NULL,
+  `userid` varchar(255) DEFAULT NULL,
+  `rolename` varchar(255) DEFAULT NULL,
+  `parentrole` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `conferenceteamconnection` (`conferenceid`),
+  KEY `userteamconnection` (`userid`),
+  CONSTRAINT `conferenceteamconnection` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `userteamconnection` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
--- Records of conference_password
+-- Records of conference_team
 -- ----------------------------
-INSERT INTO `conference_password` VALUES ('7cafe067-a9be-4595-9479-b067df507d50', '2Cxj+7m7BRY6kT7pwFwyqq0k5eHWcgzHZmaTMZP31Zo=', 'ReaXKuTZhrP/MFrUai2s8w==', 'ADMIN');
 
 -- ----------------------------
 -- Table structure for conference_user_auth
@@ -402,6 +408,7 @@ DROP TABLE IF EXISTS `delegation`;
 CREATE TABLE `delegation` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
+  `fullname` varchar(255) DEFAULT NULL,
   `abbreviation` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT '',
   `countryid` int(11) DEFAULT NULL,
@@ -411,8 +418,8 @@ CREATE TABLE `delegation` (
 -- ----------------------------
 -- Records of delegation
 -- ----------------------------
-INSERT INTO `delegation` VALUES ('default_aegypten', 'Ägypten', 'Ägypten', 'COUNTRY', '818');
-INSERT INTO `delegation` VALUES ('default_afghanistan', 'Afghanistan', 'Afghanistan', 'COUNTRY', '4');
+INSERT INTO `delegation` VALUES ('default_aegypten', 'Ägypten', 'Ägypten', 'Ägypten', 'COUNTRY', '818');
+INSERT INTO `delegation` VALUES ('default_afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'COUNTRY', '4');
 
 -- ----------------------------
 -- Table structure for delegation_in_committee
@@ -427,14 +434,14 @@ CREATE TABLE `delegation_in_committee` (
   PRIMARY KEY (`delincommitteeid`),
   KEY `linker` (`linkid`),
   KEY `committeelink` (`committeeid`),
-  CONSTRAINT `committeelink` FOREIGN KEY (`committeeid`) REFERENCES `committee` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `linker` FOREIGN KEY (`linkid`) REFERENCES `conference_delegation` (`linkid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `committeelink` FOREIGN KEY (`committeeid`) REFERENCES `committee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `linker` FOREIGN KEY (`linkid`) REFERENCES `conference_delegation` (`linkid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of delegation_in_committee
 -- ----------------------------
-INSERT INTO `delegation_in_committee` VALUES ('1', '1', 'default_de_gv', null, null);
+INSERT INTO `delegation_in_committee` VALUES ('1', '1', 'default_de_gv', '1', '1');
 
 -- ----------------------------
 -- Table structure for ngo
@@ -468,9 +475,9 @@ CREATE TABLE `participation_delegation` (
   KEY `link_del` (`linkid`),
   KEY `user_link` (`userid`),
   KEY `committee_link` (`incommitteeid`),
-  CONSTRAINT `committee_link` FOREIGN KEY (`incommitteeid`) REFERENCES `delegation_in_committee` (`delincommitteeid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `link_del` FOREIGN KEY (`linkid`) REFERENCES `conference_delegation` (`linkid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `user_link` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `committee_link` FOREIGN KEY (`incommitteeid`) REFERENCES `delegation_in_committee` (`delincommitteeid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `link_del` FOREIGN KEY (`linkid`) REFERENCES `conference_delegation` (`linkid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_link` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
@@ -494,12 +501,15 @@ CREATE TABLE `resolution` (
   `ispublicwrite` bit(1) DEFAULT b'0',
   `allowamendments` bit(1) DEFAULT b'0',
   PRIMARY KEY (`id`),
-  KEY `id` (`id`)
+  KEY `id` (`id`),
+  KEY `resolutionuser` (`user`),
+  CONSTRAINT `resolutionuser` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of resolution
 -- ----------------------------
+INSERT INTO `resolution` VALUES ('04fee515-d0b9-4318-b3a7-11e13530ce11', 'No Name', 'anon', '2020-02-04 10:31:51', '2020-02-04 10:31:51', '77700489', '', '', '\0');
 
 -- ----------------------------
 -- Table structure for resolution_auth
@@ -512,8 +522,8 @@ CREATE TABLE `resolution_auth` (
   `write` bit(1) DEFAULT NULL,
   PRIMARY KEY (`resolutionid`),
   KEY `resoauthuser` (`userid`),
-  CONSTRAINT `resoauthreso` FOREIGN KEY (`resolutionid`) REFERENCES `resolution` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `resoauthuser` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `resoauthreso` FOREIGN KEY (`resolutionid`) REFERENCES `resolution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `resoauthuser` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
@@ -573,7 +583,7 @@ CREATE TABLE `user_clearance` (
   `userid` varchar(255) NOT NULL,
   `CreateConference` bit(1) DEFAULT b'0',
   PRIMARY KEY (`userid`),
-  CONSTRAINT `userclearancelink` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `userclearancelink` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
