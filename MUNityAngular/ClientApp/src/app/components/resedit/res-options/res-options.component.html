@@ -31,7 +31,7 @@
       Online Informationen werden geladen
     </div>
     <div *ngIf="onlineid" class="form-group form-check">
-      <input type="checkbox" [ngModel]="publicView" [ngModelOptions]="{standalone: true}" class="form-check-input" id="display">
+      <input type="checkbox" [(ngModel)]="publicView" (change)="publicModeChanged($event);" [ngModelOptions]="{standalone: true}" class="form-check-input" id="display">
       <label class="form-check-label" for="display">Online Ansicht erlauben</label>
       <small id="emailHelp" class="form-text text-muted">
         Die ID für die Ansicht lautet:

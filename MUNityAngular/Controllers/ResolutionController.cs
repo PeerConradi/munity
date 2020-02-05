@@ -391,6 +391,8 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        #region Document Information and Options
+
         [Route("[action]")]
         [HttpGet]
         public IActionResult ChangeTitle([FromHeader]string auth, [FromHeader]string resolutionid,
@@ -466,6 +468,33 @@ namespace MUNityAngular.Controllers
             _hubContext?.Clients.Group(resolution.ID).SubmitterChanged(realtext);
             return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
         }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult ChangePublicReadMode([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromHeader]string pmode,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            bool newMode = false;
+            if (pmode.ToLower().Trim() == "true" || pmode == "1")
+                newMode = true;
+
+            resolutionService.SetPublicReadMode(resolutionid, newMode);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        #endregion
+
+        #region Amendments
 
         [Route("[action]")]
         [HttpGet]
@@ -729,6 +758,8 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        #endregion
+
         [Route("[action]")]
         [HttpGet]
         public IActionResult MyResolutions([FromHeader]string auth,
@@ -740,7 +771,7 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, "The auth is not valid!");
 
             var resolutions = resolutionService.GetResolutionsOfUser(authresult.userid);
-            return StatusCode(StatusCodes.Status200OK, resolutions);
+            return StatusCode(StatusCodes.Status200OK, resolutions.AsNewtonsoftJson());
         }
         
         [Route("[action]")]

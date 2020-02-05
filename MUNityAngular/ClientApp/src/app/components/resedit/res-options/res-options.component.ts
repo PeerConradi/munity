@@ -44,9 +44,13 @@ export class ResOptionsComponent implements OnInit {
 
     this.conferenceService.getAllDelegations().subscribe(n => {
       n.forEach(d => {
-        this.allDelegations.push(d.Name);
+        this.allDelegations.push(d.FullName);
       });
     });
+  }
+
+  publicModeChanged(e) {
+    this.resolutionService.changePublicReadMode(this.resolution.ID, this.publicView);
   }
 
   onEnterTitle(value: string) { this.resolutionService.changeTitle(this.resolution.ID, value); }

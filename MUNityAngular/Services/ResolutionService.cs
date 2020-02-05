@@ -281,10 +281,10 @@ namespace MUNityAngular.Services
         /// </summary>
         /// <param name="userid"></param>
         /// <returns>a touple with the first value as the id, and the second value is the name</returns>
-        internal List<Models.ResolutionInformationModel> GetResolutionsOfUser(string userid)
+        internal List<Models.ResolutionAdvancedInfoModel> GetResolutionsOfUser(string userid)
         {
-            var cmdStr = "SELECT id, name FROM " + resolution_table_name + " WHERE user=@userid";
-            var list = new List<Models.ResolutionInformationModel>();
+            var cmdStr = "SELECT * FROM " + resolution_table_name + " WHERE user=@userid";
+            var list = new List<Models.ResolutionAdvancedInfoModel>();
             using (var connection = Connector.Connection)
             {
                 connection.Open();
@@ -294,7 +294,7 @@ namespace MUNityAngular.Services
                 {
                     while (reader.Read())
                     {
-                        list.Add(new Models.ResolutionInformationModel() {ID = reader.GetString(0), Name = reader.GetString(1)});
+                        list.Add(DataReaderConverter.ObjectFromReader<Models.ResolutionAdvancedInfoModel>(reader));
                     }
                 }
             }
@@ -326,6 +326,19 @@ namespace MUNityAngular.Services
             this._resolutions = database.GetCollection<Models.ResolutionModel>(resolutionTableString);
 
             Console.WriteLine("Resolution Service Started!");
+        }
+
+        internal void SetPublicReadMode(string resolutionid, bool mode)
+        {
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "UPDATE resolution SET ispublicread=@mode WHERE id=@resoid;";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@mode", mode);
+                cmd.Parameters.AddWithValue("@resoid", resolutionid);
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 

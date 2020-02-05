@@ -72,7 +72,7 @@ export class ResolutionService {
     let headers = new HttpHeaders();
     headers = headers.set('auth', authString);
     let options = { headers: headers };
-    return this.httpClient.get<ResolutionInformation[]>(this.baseUrl + 'api/Resolution/MyResolutions', options);
+    return this.httpClient.get<ResolutionAdvancedInfo[]>(this.baseUrl + 'api/Resolution/MyResolutions', options);
   }
 
   //SignalR Part
@@ -487,6 +487,28 @@ export class ResolutionService {
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/ChangeOperativeParagraph',
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public changePublicReadMode(resolutionid: string, mode: boolean) {
+    if (this.userService.isLoggedIn) {
+      //Soll zunächst nur möglich sein wenn man auch eingeloggt ist.
+      //Dieser Schutz muss aber auch Serverside implementiert werden!
+      const authString = this.userService.sessionkey();
+
+      let headers = new HttpHeaders();
+      headers = headers.set('content-type', 'application/json; charset=utf-8');
+      headers = headers.set('auth', authString);
+      headers = headers.set('resolutionid', resolutionid);
+      let modetext = 'false';
+      if (mode) {
+        modetext = 'true';
+      }
+      headers = headers.set('pmode', modetext);
+      let options = { headers: headers };
+      this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePublicReadMode',
+        options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+    }
+      
   }
 
   public subscribeToResolution(id: string) {

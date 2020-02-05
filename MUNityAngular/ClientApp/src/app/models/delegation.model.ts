@@ -4,5 +4,6 @@ export class Delegation {
   ID: string;
   ISO: string;
   Name: string;
+  FullName: string;
   TypeName: string;
 }

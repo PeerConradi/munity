@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
 import { UserService } from '../../../services/user.service';
 import { ResolutionInformation } from '../../../models/resolution-information.model';
+import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
 
 @Component({
   selector: 'app-myresolutions',
@@ -10,7 +11,7 @@ import { ResolutionInformation } from '../../../models/resolution-information.mo
 })
 export class MyresolutionsComponent implements OnInit {
 
-  resolutions: ResolutionInformation[];
+  resolutions: ResolutionAdvancedInfo[];
 
   constructor(public resolutionService: ResolutionService, public userSerivce: UserService) { }
 

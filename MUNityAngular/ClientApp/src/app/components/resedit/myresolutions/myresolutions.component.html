@@ -1,8 +1,29 @@
-<h3>Meine Resolutionen</h3>
+
 <p *ngIf="!userSerivce.isLoggedIn">Für diese Funktion musst du eingeloggt sein!</p>
-<div *ngIf="userSerivce.isLoggedIn">
+<div class="row" *ngIf="userSerivce.isLoggedIn">
   <p *ngIf="!resolutions">Resolutionen werden geladen!</p>
-  <ul *ngFor="let reso of resolutions">
-    <li><a [routerLink]="['/resedit', reso.id]">{{ reso.id }} , {{ reso.name }}</a></li>
-  </ul>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Meine Resolutionen</h3>
+      </div>
+      <div class="card-body">
+        <table class="table w-100">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Online Code</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let reso of resolutions">
+              <td><a [routerLink]="['/resedit', reso.ID]">{{ reso.Name }}</a></td>
+              <td><a [routerLink]="['/resa/live', reso.OnlineCode]">{{ reso.OnlineCode }}</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
 </div>
