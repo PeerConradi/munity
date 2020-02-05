@@ -305,7 +305,7 @@ namespace MUNityAngular.Services
                 {
                     while (reader.Read())
                     {
-                        list.Add(DataHandlers.Database.DataReaderConverter.ObjectFromReader<DelegationModel>(reader));
+                        list.Add(DataReaderConverter.ObjectFromReader<DelegationModel>(reader));
                     }
                 }
             }
@@ -320,6 +320,7 @@ namespace MUNityAngular.Services
                 string cmdStr = "SELECT * FROM " + delegation_table_name + " WHERE id = @id";
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@id", id);
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -375,7 +376,7 @@ namespace MUNityAngular.Services
                 else
                 {
                     //Insert as new
-                    cmd.CommandText = "INERT INTO conference_delegation (conference_id, delegation_id, mincount, maxcount) VALUES " +
+                    cmd.CommandText = "INSERT INTO conference_delegation (conference_id, delegation_id, mincount, maxcount) VALUES " +
                         "(@conferenceid, @delegationid, @mincount, @maxcount);";
                     cmd.ExecuteNonQuery();
                 }

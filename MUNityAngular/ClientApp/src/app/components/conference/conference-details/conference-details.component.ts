@@ -5,6 +5,7 @@ import { UserService } from '../../../services/user.service';
 import { Conference } from '../../../models/conference.model';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { NotifierService } from 'angular-notifier';
+import { Delegation } from '../../../models/delegation.model';
 
 @Component({
   selector: 'app-conference-details',
@@ -19,6 +20,8 @@ export class ConferenceDetailsComponent implements OnInit {
   newcommitteeabbreviation: string;
   newcommitteeparent: string;
   newcommitteearticle: string;
+  presetDelegations: Delegation[] = [];
+  addDelegationSelection: Delegation = null;
 
   constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService) { }
@@ -30,6 +33,9 @@ export class ConferenceDetailsComponent implements OnInit {
         this.conference = n;
         console.log(n);
       });
+    });
+    this.conferenceService.getAllDelegations().subscribe(n => {
+      this.presetDelegations = n;
     })
   }
 
@@ -60,6 +66,16 @@ export class ConferenceDetailsComponent implements OnInit {
           console.error('Conference was not added:');
           console.log(err);
       });
+  }
+
+  addDelegationClick() {
+    if (this.addDelegationSelection == null) {
+      this.notifier.notify('error', 'Zuerst muss eine Delegation ausgewählt werden. Ist diese nicht vorhanden lege bitte eine neue Delegation an.');
+    } else {
+      this.conferenceService.addDelegationToConference(this.conference.ID, this.addDelegationSelection.ID, 1, 1).subscribe(n => {
+        this.conference.Delegations.push(n);
+      });
+    }
   }
 
 }

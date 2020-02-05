@@ -8,6 +8,8 @@ import { NotifierService } from 'angular-notifier';
 import { AbstractAmendment } from '../../../models/abstract-amendment.model';
 import { AmendmentInspector } from '../../../models/amendment-inspector';
 import { Title } from '@angular/platform-browser';
+import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { Delegation } from '../../../models/delegation.model';
 
 @Component({
   selector: 'app-editor',
@@ -58,7 +60,7 @@ export class EditorComponent implements OnInit {
   allDelegations: string[] = [];
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
-    private titleService: Title) {
+    private titleService: Title, private conferenceService: ConferenceServiceService) {
     this.titleService.setTitle('ResaOnline')
   }
 
@@ -67,7 +69,6 @@ export class EditorComponent implements OnInit {
   saveSubscription: Subscription;
 
   ngOnInit() {
-    this.allDelegations.push('Deutschland');
     let id: string = null;
     this.route.params.subscribe(params => {
       id = params.id;
@@ -109,6 +110,13 @@ export class EditorComponent implements OnInit {
         this.notFound = true;
       });
     }
+
+    this.conferenceService.getAllDelegations().subscribe(n => {
+      n.forEach(d => {
+        this.allDelegations.push(d.Name);
+      });
+    });
+    
   }
 
   addPreambleParagraph() {

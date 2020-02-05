@@ -9,24 +9,21 @@ import { resolve } from 'dns';
 })
 export class UserService {
 
-  private _loggedIn: boolean = false;
+  private _loggedIn: boolean;
 
   public get isLoggedIn(): boolean {
-    return (this._loggedIn);
+    if (this.sessionkey() != '' && this.sessionkey() != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private baseUrl: string;
+
+
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
-    if (this.sessionkey() != null && this.sessionkey() != '') {
-      this.validateKey(this.sessionkey()).subscribe(n => {
-        this._loggedIn = true;
-      }, err => {
-          //Delete the invalid AuthKey:
-          this._loggedIn = false;
-          this.setSessionkey('');
-      });
-    }
   }
 
   public sessionkey(): string {

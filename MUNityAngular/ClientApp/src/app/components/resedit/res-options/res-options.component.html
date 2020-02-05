@@ -13,7 +13,8 @@
     <div class="form-group">
       <label for="inputSubmitter">Einbringer</label>
       <input class="form-control" id="inputSubmitter" #inputSubmitter placeholder="Delegationsname" [value]="resolution.SubmitterName"
-             (keyup.enter)="onEnterSubmitter(inputSubmitter.value)" aria-describedby="inputSubmitterHelp"/>
+             [(ngModel)]="resolutionSubmitter" [ngModelOptions]="{standalone: true}"
+             (keyup.enter)="onEnterSubmitter(inputSubmitter.value)" aria-describedby="inputSubmitterHelp" [typeahead]="allDelegations" />
       <small id="inputSubmitterHelp" class="form-text text-muted">
         Der Name des Einbringers. Bestätigung der Eingabe mit [ENTER].
       </small>

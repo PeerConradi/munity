@@ -532,7 +532,7 @@ export class ResolutionService {
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
-    headers = headers.set('submittername', submitter);
+    headers = headers.set('submittername', encodeURI(submitter + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddDeleteAmendment',
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
@@ -548,7 +548,7 @@ export class ResolutionService {
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
-    headers = headers.set('submittername', submitter);
+    headers = headers.set('submittername', encodeURI(submitter + '|'));
     headers = headers.set('newtext', encodeURI(newtext + '|'));
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddChangeAmendment',
@@ -565,7 +565,7 @@ export class ResolutionService {
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
-    headers = headers.set('submittername', submitter);
+    headers = headers.set('submittername', encodeURI(submitter + '|'));
     headers = headers.set('newposition', newPosition.toString());
     let options = { headers: headers };
     this.httpClient.get(this.baseUrl + 'api/Resolution/AddMoveAmendment',
@@ -581,7 +581,7 @@ export class ResolutionService {
     headers = headers.set('content-type', 'application/json; charset=utf-8');
     headers = headers.set('auth', authString);
     headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('submittername', submitter);
+    headers = headers.set('submittername', encodeURI(submitter + '|'));
     headers = headers.set('newposition', newPosition.toString());
     headers = headers.set('newtext', encodeURI(newText + '|'));
     let options = { headers: headers };

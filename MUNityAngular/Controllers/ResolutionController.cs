@@ -486,7 +486,7 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
 
             var amendment = new Models.DeleteAmendmentModel();
-            amendment.SubmitterName = submittername;
+            amendment.SubmitterName = submittername.DecodeUrl();
             amendment.TargetSection = section;
 
             resolutionService.RequestSave(resolution);
@@ -516,7 +516,7 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
 
             var amendment = new Models.ChangeAmendmentModel();
-            amendment.SubmitterName = submittername;
+            amendment.SubmitterName = submittername.DecodeUrl();
             amendment.NewText = realText;
             amendment.TargetSection = section;
 
@@ -548,7 +548,7 @@ namespace MUNityAngular.Controllers
             if (int.TryParse(newposition, out int np))
             {
                 var amendment = new Models.MoveAmendment();
-                amendment.SubmitterName = submittername;
+                amendment.SubmitterName = submittername.DecodeUrl();
                 amendment.NewPosition = np;
                 amendment.TargetSection = section;
 
@@ -568,7 +568,6 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realtext = newtext.DecodeUrl();
 
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
@@ -580,9 +579,9 @@ namespace MUNityAngular.Controllers
             if (int.TryParse(newposition, out int np))
             {
                 var amendment = new Models.AddAmendmentModel();
-                amendment.SubmitterName = submittername;
+                amendment.SubmitterName = submittername.DecodeUrl();
                 amendment.TargetPosition = np;
-                amendment.NewText = realtext;
+                amendment.NewText = newtext.DecodeUrl();
                 amendment.TargetResolution = resolution;
 
                 resolutionService.RequestSave(resolution);

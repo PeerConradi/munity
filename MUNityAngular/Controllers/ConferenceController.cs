@@ -159,22 +159,40 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult AddDelegation([FromHeader]string auth, [FromHeader]string conferenceid,
+        public IActionResult CreateDelegation([FromHeader]string auth,
             [FromHeader]string name, [FromHeader]string fullname, [FromHeader]string abbreviation,
-            [FromHeader]string mincount, [FromHeader]string maxcount,
             [FromServices]AuthService authService,
+            [FromServices]ConferenceService conferenceService)
+        {
+            //Eine Delegation existiert global über mehrere Konferenzen hinweg, so kann eine default Palette an Delegationen gestellt werden,
+            //welche erst einmal nichts miteinander zutun haben. 
+            //Später muss es möglich sein, diese als "NOT LISTED" zu markieren, damit nicht so viel Noise entsteht falls jemand 20x Vereinigte Staaten anlegt...
+            //Dazu könnte es ein "See also" geben...
+            var authCheck = authService.ValidateAuthKey(auth);
+
+            if (!authCheck.valid)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
+
+            var delegation = conferenceService.CreateDelegation(name.DecodeUrl(), fullname.DecodeUrl(), abbreviation.DecodeUrl(), "COUNTRY");
+            //conferenceService.AddDelegationToConference(conferenceid, delegation.ID);
+            return StatusCode(StatusCodes.Status200OK, delegation.AsNewtonsoftJson());
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult AddDelegationToConference([FromHeader]string auth, [FromHeader]string conferenceid, [FromHeader]string delegationid,
+            [FromHeader]string mincount, [FromHeader]string maxcount,
             [FromServices]ConferenceService conferenceService)
         {
             var canEdit = conferenceService.CanAuthEditConference(auth, conferenceid);
             if (!canEdit)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
 
-            var conference = conferenceService.GetConference(conferenceid);
-            if (conference == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
+            var delegation = conferenceService.GetDelegation(delegationid);
+            if (delegation == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Delegation not found with the given id");
 
-            var delegation = conferenceService.CreateDelegation(name.DecodeUrl(), fullname.DecodeUrl(), abbreviation.DecodeUrl(), "COUNTRY");
-            conferenceService.AddDelegationToConference(conferenceid, delegation.ID, mincount.ToIntOrDefault(1), maxcount.ToIntOrDefault(1));
+            conferenceService.AddDelegationToConference(conferenceid, delegationid, mincount.ToIntOrDefault(1), maxcount.ToIntOrDefault(1));
             return StatusCode(StatusCodes.Status200OK, delegation.AsNewtonsoftJson());
         }
 

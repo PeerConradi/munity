@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Resolution } from '../../../models/resolution.model';
 import { UserService } from '../../../services/user.service';
 import { ResolutionService } from '../../../services/resolution.service';
+import { Delegation } from '../../../models/delegation.model';
+import { ConferenceServiceService } from '../../../services/conference-service.service';
 
 @Component({
   selector: 'app-res-options',
@@ -22,7 +24,12 @@ export class ResOptionsComponent implements OnInit {
 
   publicView: boolean = false;
 
-  constructor(private userService: UserService, private resolutionService: ResolutionService) { }
+  allDelegations: string[] = [];
+
+  resolutionSubmitter: string;
+
+  constructor(private userService: UserService, private resolutionService: ResolutionService,
+  private conferenceService: ConferenceServiceService) { }
 
   ngOnInit() {
     //this.updateOnlineInfos();
@@ -33,6 +40,12 @@ export class ResOptionsComponent implements OnInit {
       this.onlineid = n.OnlineCode;
       this.publicView = n.PublicRead;
       console.log(n);
+    });
+
+    this.conferenceService.getAllDelegations().subscribe(n => {
+      n.forEach(d => {
+        this.allDelegations.push(d.Name);
+      });
     });
   }
 

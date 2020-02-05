@@ -76,8 +76,25 @@ export class ConferenceServiceService {
       options);
   }
 
-  public addDelegation(conferenceid: string, name: string, fullname: string,
-    abbreviation: string, mincount: number, maxcount: number) {
+  public createDelegation(name: string, fullname: string,
+    abbreviation: string) {
+    let authcode = 'default';
+    if (this.userService.isLoggedIn)
+      authcode = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+
+    headers = headers.set('auth', authcode);
+    headers = headers.set('name', encodeURI(name + '|'));
+    headers = headers.set('fullname', encodeURI(fullname + '|'));
+    headers = headers.set('abbreviation', encodeURI(abbreviation + '|'));
+    console.log(headers);
+    let options = { headers: headers };
+    return this.http.get<Delegation>(this.baseUrl + 'api/Conference/CreateDelegation',
+      options);
+  }
+
+  public addDelegationToConference(conferenceid: string, delegationid: string, mincount: number, maxcount: number) {
     let authcode = 'default';
     if (this.userService.isLoggedIn)
       authcode = this.userService.sessionkey();
@@ -86,14 +103,12 @@ export class ConferenceServiceService {
 
     headers = headers.set('auth', authcode);
     headers = headers.set('conferenceid', conferenceid);
-    headers = headers.set('name', encodeURI(name + '|'));
-    headers = headers.set('fullname', encodeURI(fullname + '|'));
-    headers = headers.set('abbreviation', encodeURI(abbreviation + '|'));
+    headers = headers.set('delegationid', delegationid);
     headers = headers.set('mincount', mincount.toString());
     headers = headers.set('maxcount', maxcount.toString());
     console.log(headers);
     let options = { headers: headers };
-    return this.http.get<Committee>(this.baseUrl + 'api/Conference/AddDelegation',
+    return this.http.get<Delegation>(this.baseUrl + 'api/Conference/AddDelegationToConference',
       options);
   }
 
@@ -109,6 +124,6 @@ export class ConferenceServiceService {
   }
 
   public getAllDelegations() {
-    return this.http.get<Delegation[]>(this.baseUrl + '/api/Conference/AllDelegations');
+    return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/AllDelegations');
   }
 }
