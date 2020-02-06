@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2020-02-05 22:21:47
+Date: 2020-02-06 19:43:50
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -143,7 +143,7 @@ CREATE TABLE `conference_delegation` (
   KEY `delegation` (`delegation_id`),
   CONSTRAINT `conference` FOREIGN KEY (`conference_id`) REFERENCES `conference` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `delegation` FOREIGN KEY (`delegation_id`) REFERENCES `delegation` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of conference_delegation
@@ -151,6 +151,9 @@ CREATE TABLE `conference_delegation` (
 INSERT INTO `conference_delegation` VALUES ('1', 'default', 'default_aegypten', '1', '1');
 INSERT INTO `conference_delegation` VALUES ('2', 'default', 'default_afghanistan', '1', '1');
 INSERT INTO `conference_delegation` VALUES ('3', '7cafe067-a9be-4595-9479-b067df507d50', 'default_aegypten', '1', '1');
+INSERT INTO `conference_delegation` VALUES ('4', '7cafe067-a9be-4595-9479-b067df507d50', 'default_libyen', '1', '1');
+INSERT INTO `conference_delegation` VALUES ('5', '7cafe067-a9be-4595-9479-b067df507d50', 'default_republik_senegal', '1', '1');
+INSERT INTO `conference_delegation` VALUES ('6', '7cafe067-a9be-4595-9479-b067df507d50', 'default_aequatorialguinea', '1', '1');
 
 -- ----------------------------
 -- Table structure for conference_team
@@ -167,7 +170,7 @@ CREATE TABLE `conference_team` (
   KEY `userteamconnection` (`userid`),
   CONSTRAINT `conferenceteamconnection` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `userteamconnection` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of conference_team
@@ -420,64 +423,202 @@ CREATE TABLE `delegation` (
 -- ----------------------------
 -- Records of delegation
 -- ----------------------------
-INSERT INTO `delegation` VALUES ('default_ belgien', ' Belgien', 'Königreich Belgien', ' Belgien', '', null);
 INSERT INTO `delegation` VALUES ('default_aegypten', 'Ägypten', 'Arabische Republik Ägypten', 'Ägypten', 'COUNTRY', '818');
-INSERT INTO `delegation` VALUES ('default_aequatorialguinea', 'Äquatorialguinea', 'Republik Äquatorialguinea', 'Äquatorialguinea', 'COUNTRY', null);
-INSERT INTO `delegation` VALUES ('default_aethiopien', 'Äthiopien', 'Demokratische Bundesrepublik Äthiopien', 'Äthiopien', '', null);
+INSERT INTO `delegation` VALUES ('default_aequatorialguinea', 'Äquatorialguinea', 'Republik Äquatorialguinea', 'Äquatorialguinea', 'COUNTRY', '226');
+INSERT INTO `delegation` VALUES ('default_aethiopien', 'Äthiopien', 'Demokratische Bundesrepublik Äthiopien', 'Äthiopien', 'COUNTRY', '231');
 INSERT INTO `delegation` VALUES ('default_afghanistan', 'Afghanistan', '	Islamische Republik Afghanistan', 'Afghanistan', 'COUNTRY', '4');
 INSERT INTO `delegation` VALUES ('default_albanien', 'Albanien', 'Albanien', 'Albanien', 'COUNTRY', '8');
+INSERT INTO `delegation` VALUES ('default_algerien', 'Andorra', 'Andorra', 'Andorra', 'COUNTRY', '20');
 INSERT INTO `delegation` VALUES ('default_angola', 'Angola', 'Angola', 'Angola', 'COUNTRY', '24');
-INSERT INTO `delegation` VALUES ('default_antigua', 'Antigua und Barbuda', 'Antigua und Barbuda', 'Antigua und Barbuda', 'COUNTRY', null);
-INSERT INTO `delegation` VALUES ('default_argentinien', 'Argentinien', 'Argentinische Republik', 'Argentinien', 'COUNTRY', null);
-INSERT INTO `delegation` VALUES ('default_armenien', 'Armenien', 'Republik Armenien', 'Armenien', 'COUNTRY', null);
-INSERT INTO `delegation` VALUES ('default_aserbaidschan', 'Aserbaidschan', '	Republik Aserbaidschan', 'Aserbaidschan', '', null);
-INSERT INTO `delegation` VALUES ('default_australien', 'Australien', 'Commonwealth von Australien', 'Australien', '', null);
-INSERT INTO `delegation` VALUES ('default_bahamas', 'Bahamas', 'Commonwealth der Bahamas', 'Bahamas', '', null);
-INSERT INTO `delegation` VALUES ('default_bahrain', 'Bahrain', 'Königreich Bahrain', 'Bahrain', '', null);
-INSERT INTO `delegation` VALUES ('default_bangladesch', 'Bangladesch', '	Volksrepublik Bangladesch', 'Bangladesch', '', null);
-INSERT INTO `delegation` VALUES ('default_barbados', 'Barbados', 'Barbados', 'Barbados', '', null);
-INSERT INTO `delegation` VALUES ('default_belize', 'Belize', 'Belize', 'Belize', '', null);
-INSERT INTO `delegation` VALUES ('default_benin', 'Benin', 'Republik Benin', 'Benin', '', null);
-INSERT INTO `delegation` VALUES ('default_bhutan', 'Bhutan', 'Königreich Bhutan', 'Bhutan', '', null);
-INSERT INTO `delegation` VALUES ('default_bolivien', 'Bolivien', 'Plurinationaler Staat Bolivien', 'Bolivien', '', null);
-INSERT INTO `delegation` VALUES ('default_bosnien', 'Bosnien und Herzegowina', 'Bosnien und Herzegowina', 'Bosnien und Herzegowina', '', null);
-INSERT INTO `delegation` VALUES ('default_botswana', 'Botswana', 'Republik Botswana', 'Botswana', '', null);
-INSERT INTO `delegation` VALUES ('default_brasilien', 'Brasilien', 'Föderative Republik Brasilien', 'Brasilien', '', null);
-INSERT INTO `delegation` VALUES ('default_brunei', 'Brunei', 'Brunei Darussalam', 'Brunei', '', null);
-INSERT INTO `delegation` VALUES ('default_bulgarien', 'Bulgarien', 'Republik Bulgarien', 'Bulgarien', '', null);
-INSERT INTO `delegation` VALUES ('default_burkina_faso', 'Burkina Faso', 'Burkina Faso', 'Burkina Faso', '', null);
-INSERT INTO `delegation` VALUES ('default_burundi', 'Burundi', 'Republik Burundi', 'Burundi', '', null);
-INSERT INTO `delegation` VALUES ('default_chile', 'Chile', 'Republik Chile', 'Chile', '', null);
-INSERT INTO `delegation` VALUES ('default_china', 'Volksrepublik China', 'Volksrepublik China', 'China', '', null);
-INSERT INTO `delegation` VALUES ('default_costa_rica', 'Costa Rica', 'Republik Costa Rica', 'Costa Rica', '', null);
-INSERT INTO `delegation` VALUES ('default_daenemark', 'Dänemark', '	Königreich Dänemark', 'Dänemark', '', null);
-INSERT INTO `delegation` VALUES ('default_deutschland', 'Deutschland', 'Bundesrepublik Deutschland', 'Deutschland', '', null);
-INSERT INTO `delegation` VALUES ('default_dominica', 'Dominica', 'Commonwealth Dominica', 'Dominica', '', null);
-INSERT INTO `delegation` VALUES ('default_dominikanische_republik', 'Dominikanische Republik', 'Dominikanische Republik', 'Dominikanische Republik', '', null);
-INSERT INTO `delegation` VALUES ('default_dschibuti', 'Dschibuti', 'Republik Dschibuti', 'Dschibuti', '', null);
-INSERT INTO `delegation` VALUES ('default_ecuador', 'Ecuador', '	Republik Ecuador', 'Ecuador', '', null);
-INSERT INTO `delegation` VALUES ('default_elfenbeinkueste', 'Côte d\'Ivoire', 'Republik Côte d\'Ivoire', 'Côte d\'Ivoire', '', null);
-INSERT INTO `delegation` VALUES ('default_eritrea', 'Eritrea', 'Staat Eritrea', 'Eritrea', '', null);
-INSERT INTO `delegation` VALUES ('default_estland', 'Estland', 'Republik Estland', 'Estland', '', null);
-INSERT INTO `delegation` VALUES ('default_fidschi', 'Fidschi', 'Republik Fidschi-Inseln', 'Fidschi', '', null);
-INSERT INTO `delegation` VALUES ('default_finnland', 'Finnland', 'Republik Finnland', 'Finnland', '', null);
-INSERT INTO `delegation` VALUES ('default_frankreich', 'Frankreich', 'Französische Republik', 'Frankreich', '', null);
-INSERT INTO `delegation` VALUES ('default_gabun', 'Gabun', 'Gabunische Republik', 'Gabun', '', null);
-INSERT INTO `delegation` VALUES ('default_gambia', 'Gambia', 'Republik Gambia', 'Gambia', '', null);
-INSERT INTO `delegation` VALUES ('default_georgien', 'Georgien', 'Georgien', 'Georgien', '', null);
-INSERT INTO `delegation` VALUES ('default_ghana', 'Ghana', 'Republik Ghana', 'Ghana', '', null);
-INSERT INTO `delegation` VALUES ('default_grenada', 'Grenada', 'Staat Grenada', 'Grenada', '', null);
-INSERT INTO `delegation` VALUES ('default_griechenland', 'Griechenland', 'Hellenische Republik', 'Griechenland', '', null);
-INSERT INTO `delegation` VALUES ('default_guatemala', 'Guatemala', 'Republik Guatemala', 'Guatemala', '', null);
-INSERT INTO `delegation` VALUES ('default_guinea', 'Guinea', 'Republik Guinea', 'Guinea', '', null);
-INSERT INTO `delegation` VALUES ('default_Guinea-Bissau', 'Guinea-Bissau', 'Republik Guinea-Bissau', 'Guinea-Bissau', '', null);
-INSERT INTO `delegation` VALUES ('default_guyana', 'Guyana', 'Kooperative Republik Guyana', 'Guyana', '', null);
-INSERT INTO `delegation` VALUES ('default_haiti', 'Haiti', 'Republik Haiti', 'Haiti', '', null);
-INSERT INTO `delegation` VALUES ('default_honduras', 'Honduras', 'Republik Honduras', 'Honduras', '', null);
-INSERT INTO `delegation` VALUES ('default_indien', 'Indien', 'Republik Indien', 'Indien', '', null);
-INSERT INTO `delegation` VALUES ('default_salvador', 'El Salvador', 'Republik El Salvador', 'El Salvador', '', null);
-INSERT INTO `delegation` VALUES ('default_taiwan', 'Taiwan', 'Taiwan', 'Taiwan', '', null);
-INSERT INTO `delegation` VALUES ('deflaut_algerien', 'Andorra', 'Andorra', 'Andorra', 'COUNTRY', '20');
+INSERT INTO `delegation` VALUES ('default_antigua', 'Antigua und Barbuda', 'Antigua und Barbuda', 'Antigua und Barbuda', 'COUNTRY', '28');
+INSERT INTO `delegation` VALUES ('default_arabische_republik_syrien', 'Syrien', 'Arabische Republik Syrien', 'Syrien', 'COUNTRY', '760');
+INSERT INTO `delegation` VALUES ('default_argentinien', 'Argentinien', 'Argentinische Republik', 'Argentinien', 'COUNTRY', '32');
+INSERT INTO `delegation` VALUES ('default_armenien', 'Armenien', 'Republik Armenien', 'Armenien', 'COUNTRY', '51');
+INSERT INTO `delegation` VALUES ('default_aserbaidschan', 'Aserbaidschan', '	Republik Aserbaidschan', 'Aserbaidschan', 'COUNTRY', '31');
+INSERT INTO `delegation` VALUES ('default_australien', 'Australien', 'Commonwealth von Australien', 'Australien', 'COUNTRY', '36');
+INSERT INTO `delegation` VALUES ('default_bahamas', 'Bahamas', 'Commonwealth der Bahamas', 'Bahamas', 'COUNTRY', '44');
+INSERT INTO `delegation` VALUES ('default_bahrain', 'Bahrain', 'Königreich Bahrain', 'Bahrain', 'COUNTRY', '48');
+INSERT INTO `delegation` VALUES ('default_bangladesch', 'Bangladesch', '	Volksrepublik Bangladesch', 'Bangladesch', 'COUNTRY', '50');
+INSERT INTO `delegation` VALUES ('default_barbados', 'Barbados', 'Barbados', 'Barbados', 'COUNTRY', '52');
+INSERT INTO `delegation` VALUES ('default_belgien', 'Belgien', 'Königreich Belgien', 'Belgien', 'COUNTRY', '56');
+INSERT INTO `delegation` VALUES ('default_belize', 'Belize', 'Belize', 'Belize', 'COUNTRY', '84');
+INSERT INTO `delegation` VALUES ('default_benin', 'Benin', 'Republik Benin', 'Benin', 'COUNTRY', '204');
+INSERT INTO `delegation` VALUES ('default_bhutan', 'Bhutan', 'Königreich Bhutan', 'Bhutan', 'COUNTRY', '64');
+INSERT INTO `delegation` VALUES ('default_bolivien', 'Bolivien', 'Plurinationaler Staat Bolivien', 'Bolivien', 'COUNTRY', '68');
+INSERT INTO `delegation` VALUES ('default_bosnien', 'Bosnien und Herzegowina', 'Bosnien und Herzegowina', 'Bosnien und Herzegowina', 'COUNTRY', '70');
+INSERT INTO `delegation` VALUES ('default_botswana', 'Botswana', 'Republik Botswana', 'Botswana', 'COUNTRY', '72');
+INSERT INTO `delegation` VALUES ('default_brasilien', 'Brasilien', 'Föderative Republik Brasilien', 'Brasilien', 'COUNTRY', '76');
+INSERT INTO `delegation` VALUES ('default_brunei', 'Brunei', 'Brunei Darussalam', 'Brunei', 'COUNTRY', '96');
+INSERT INTO `delegation` VALUES ('default_bulgarien', 'Bulgarien', 'Republik Bulgarien', 'Bulgarien', 'COUNTRY', '100');
+INSERT INTO `delegation` VALUES ('default_bundesrepublik_somalia', 'Somalia', 'Bundesrepublik Somalia', 'Somalia', 'COUNTRY', '706');
+INSERT INTO `delegation` VALUES ('default_burkina_faso', 'Burkina Faso', 'Burkina Faso', 'Burkina Faso', 'COUNTRY', '854');
+INSERT INTO `delegation` VALUES ('default_burundi', 'Burundi', 'Republik Burundi', 'Burundi', 'COUNTRY', '108');
+INSERT INTO `delegation` VALUES ('default_chile', 'Chile', 'Republik Chile', 'Chile', 'COUNTRY', '152');
+INSERT INTO `delegation` VALUES ('default_china', 'Volksrepublik China', 'Volksrepublik China', 'China', 'COUNTRY', '156');
+INSERT INTO `delegation` VALUES ('default_costa_rica', 'Costa Rica', 'Republik Costa Rica', 'Costa Rica', 'COUNTRY', '188');
+INSERT INTO `delegation` VALUES ('default_daenemark', 'Dänemark', '	Königreich Dänemark', 'Dänemark', 'COUNTRY', '208');
+INSERT INTO `delegation` VALUES ('default_demokratische_republik_timor-leste', 'Timor-Leste', 'Demokratische Republik Timor-Leste', 'Timor-Leste', 'COUNTRY', '626');
+INSERT INTO `delegation` VALUES ('default_deutschland', 'Deutschland', 'Bundesrepublik Deutschland', 'Deutschland', 'COUNTRY', '276');
+INSERT INTO `delegation` VALUES ('default_dominica', 'Dominica', 'Commonwealth Dominica', 'Dominica', 'COUNTRY', '212');
+INSERT INTO `delegation` VALUES ('default_dominikanische_republik', 'Dominikanische Republik', 'Dominikanische Republik', 'Dominikanische Republik', 'COUNTRY', '214');
+INSERT INTO `delegation` VALUES ('default_dr_kongo', 'DR Kongo', 'Demokratische Republik Kongo', 'DR Kongo', 'COUNTRY', '180');
+INSERT INTO `delegation` VALUES ('default_dschibuti', 'Dschibuti', 'Republik Dschibuti', 'Dschibuti', 'COUNTRY', '262');
+INSERT INTO `delegation` VALUES ('default_dvr_korea', 'DVR Korea', 'Demokratische Volksrepublik Korea', 'Nordkorea', 'COUNTRY', '408');
+INSERT INTO `delegation` VALUES ('default_ecuador', 'Ecuador', '	Republik Ecuador', 'Ecuador', 'COUNTRY', '218');
+INSERT INTO `delegation` VALUES ('default_elfenbeinkueste', 'Côte d\'Ivoire', 'Republik Côte d\'Ivoire', 'Côte d\'Ivoire', 'COUNTRY', '384');
+INSERT INTO `delegation` VALUES ('default_eritrea', 'Eritrea', 'Staat Eritrea', 'Eritrea', 'COUNTRY', '232');
+INSERT INTO `delegation` VALUES ('default_estland', 'Estland', 'Republik Estland', 'Estland', 'COUNTRY', '233');
+INSERT INTO `delegation` VALUES ('default_fidschi', 'Fidschi', 'Republik Fidschi-Inseln', 'Fidschi', 'COUNTRY', '242');
+INSERT INTO `delegation` VALUES ('default_finnland', 'Finnland', 'Republik Finnland', 'Finnland', 'COUNTRY', '246');
+INSERT INTO `delegation` VALUES ('default_frankreich', 'Frankreich', 'Französische Republik', 'Frankreich', 'COUNTRY', '250');
+INSERT INTO `delegation` VALUES ('default_föderation_st._kitts_und_nevis', ' St. Kitts und Nevis', 'Föderation St. Kitts und Nevis', ' St. Kitts und Nevis', 'COUNTRY', '659');
+INSERT INTO `delegation` VALUES ('default_gabun', 'Gabun', 'Gabunische Republik', 'Gabun', 'COUNTRY', '266');
+INSERT INTO `delegation` VALUES ('default_gambia', 'Gambia', 'Republik Gambia', 'Gambia', 'COUNTRY', '270');
+INSERT INTO `delegation` VALUES ('default_georgien', 'Georgien', 'Georgien', 'Georgien', 'COUNTRY', '268');
+INSERT INTO `delegation` VALUES ('default_ghana', 'Ghana', 'Republik Ghana', 'Ghana', 'COUNTRY', '288');
+INSERT INTO `delegation` VALUES ('default_grenada', 'Grenada', 'Staat Grenada', 'Grenada', 'COUNTRY', '308');
+INSERT INTO `delegation` VALUES ('default_griechenland', 'Griechenland', 'Hellenische Republik', 'Griechenland', 'COUNTRY', '300');
+INSERT INTO `delegation` VALUES ('default_großherzogtum_luxemburg', 'Luxemburg', 'Großherzogtum Luxemburg', ' Luxemburg', 'COUNTRY', '442');
+INSERT INTO `delegation` VALUES ('default_guatemala', 'Guatemala', 'Republik Guatemala', 'Guatemala', 'COUNTRY', '320');
+INSERT INTO `delegation` VALUES ('default_guinea', 'Guinea', 'Republik Guinea', 'Guinea', 'COUNTRY', '324');
+INSERT INTO `delegation` VALUES ('default_Guinea-Bissau', 'Guinea-Bissau', 'Republik Guinea-Bissau', 'Guinea-Bissau', 'COUNTRY', '624');
+INSERT INTO `delegation` VALUES ('default_guyana', 'Guyana', 'Kooperative Republik Guyana', 'Guyana', 'COUNTRY', '328');
+INSERT INTO `delegation` VALUES ('default_haiti', 'Haiti', 'Republik Haiti', 'Haiti', 'COUNTRY', '332');
+INSERT INTO `delegation` VALUES ('default_honduras', 'Honduras', 'Republik Honduras', 'Honduras', 'COUNTRY', '340');
+INSERT INTO `delegation` VALUES ('default_indien', 'Indien', 'Republik Indien', 'Indien', 'COUNTRY', '356');
+INSERT INTO `delegation` VALUES ('default_indonesien', 'Indonesien', 'Republik Indonesien', 'Indonesien', 'COUNTRY', '360');
+INSERT INTO `delegation` VALUES ('default_irak', 'Irak', 'Republik Irak', 'Irak', 'COUNTRY', '368');
+INSERT INTO `delegation` VALUES ('default_iran', 'Iran', 'Islamische Republik Iran', 'Iran', 'COUNTRY', '364');
+INSERT INTO `delegation` VALUES ('default_irland', 'Irland', 'Irland', 'Irland', 'COUNTRY', '372');
+INSERT INTO `delegation` VALUES ('default_islamische_republik_mauretanien', 'Mauretanien', 'Islamische Republik Mauretanien', ' Mauretanien', 'COUNTRY', '478');
+INSERT INTO `delegation` VALUES ('default_islamische_republik_pakistan', 'Pakistan', 'Islamische Republik Pakistan', ' Pakistan', 'COUNTRY', '586');
+INSERT INTO `delegation` VALUES ('default_island', 'Island', 'Republik Island', 'Island', 'COUNTRY', '352');
+INSERT INTO `delegation` VALUES ('default_israel', 'Israel', 'Staat Israel', 'Israel', 'COUNTRY', '376');
+INSERT INTO `delegation` VALUES ('default_italien', 'Italien', 'Italienische Republik', 'Italien', 'COUNTRY', '380');
+INSERT INTO `delegation` VALUES ('default_jamaika', 'Jamaika', 'Jamaika', 'Jamaika', 'COUNTRY', '388');
+INSERT INTO `delegation` VALUES ('default_japan', 'Japan', 'Staat Japan', 'Japan', 'COUNTRY', '392');
+INSERT INTO `delegation` VALUES ('default_jemen', 'Jemen', 'Republik Jemen', 'Jemen', 'COUNTRY', '887');
+INSERT INTO `delegation` VALUES ('default_jordanien', 'Jordanien', 'Haschemitisches Königreich Jordanien', 'Jordanien', 'COUNTRY', '400');
+INSERT INTO `delegation` VALUES ('default_kambodscha', 'Kambodscha', 'Königreich Kambodscha', 'Kambodscha', 'COUNTRY', '116');
+INSERT INTO `delegation` VALUES ('default_kamerun', 'Kamerun', 'Republik Kamerun', 'Kamerun', 'COUNTRY', '120');
+INSERT INTO `delegation` VALUES ('default_kanada', 'Kanada', 'Kanada', 'Kanada', 'COUNTRY', '124');
+INSERT INTO `delegation` VALUES ('default_kap_verde', 'Kap Verde', 'Republik Kap Verde', 'Kap Verde', 'COUNTRY', '132');
+INSERT INTO `delegation` VALUES ('default_kasachstan', 'Kasachstan', 'Republik Kasachstan', 'Kasachstan', 'COUNTRY', '398');
+INSERT INTO `delegation` VALUES ('default_katar', 'Katar', 'Staat Katar', 'Katar', 'COUNTRY', '634');
+INSERT INTO `delegation` VALUES ('default_Kenia', 'Kenia', 'Republik Kenia', 'Kenia', 'COUNTRY', '404');
+INSERT INTO `delegation` VALUES ('default_kirgisistan', 'Kirgisistan', 'Kirgisische Republik', 'Kirgisistan', 'COUNTRY', '417');
+INSERT INTO `delegation` VALUES ('default_kiribati', 'Kiribati', 'Republik Kiribati', 'Kiribati', 'COUNTRY', '296');
+INSERT INTO `delegation` VALUES ('default_kolumbien', 'Kolumbien', 'Republik Kolumbien', 'Kolumbien', 'COUNTRY', '170');
+INSERT INTO `delegation` VALUES ('default_komoren', 'Komoren', 'Union der Komoren', 'Komoren', 'COUNTRY', '174');
+INSERT INTO `delegation` VALUES ('default_kroatien', 'Kroatien', 'Republik Kroatien', 'Kroatien', 'COUNTRY', '191');
+INSERT INTO `delegation` VALUES ('default_kuba', 'Kuba', 'Republik Kuba', 'Kuba', 'COUNTRY', '192');
+INSERT INTO `delegation` VALUES ('default_kuwait', 'Kuwait', 'Staat Kuwait', 'Kuwait', 'COUNTRY', '414');
+INSERT INTO `delegation` VALUES ('default_königreich_der_niederlande', 'Niederlande', 'Königreich der Niederlande', 'Niederlande', 'COUNTRY', '528');
+INSERT INTO `delegation` VALUES ('default_königreich_marokko', 'Marokko', 'Königreich Marokko', 'Marokko', 'COUNTRY', '504');
+INSERT INTO `delegation` VALUES ('default_königreich_norwegen', 'Norwegen', 'Königreich Norwegen', 'Norwegen', 'COUNTRY', '578');
+INSERT INTO `delegation` VALUES ('default_königreich_saudi-arabien', 'Saudi-Arabien', 'Königreich Saudi-Arabien', 'Saudi-Arabien', 'COUNTRY', '682');
+INSERT INTO `delegation` VALUES ('default_königreich_schweden', 'Schweden', 'Königreich Schweden', 'Schweden', 'COUNTRY', '752');
+INSERT INTO `delegation` VALUES ('default_königreich_spanien', 'Spanien', 'Königreich Spanien', 'Spanien', 'COUNTRY', '724');
+INSERT INTO `delegation` VALUES ('default_königreich_swasiland', 'Swasiland', 'Königreich Swasiland', 'Swasiland', 'COUNTRY', '748');
+INSERT INTO `delegation` VALUES ('default_königreich_thailand', 'Thailand', 'Königreich Thailand', 'Thailand', 'COUNTRY', '764');
+INSERT INTO `delegation` VALUES ('default_königreich_tonga', 'Tonga', 'Königreich Tonga', 'Tonga', 'COUNTRY', '776');
+INSERT INTO `delegation` VALUES ('default_laos', 'Laos', 'Demokratische Volksrepublik Laos', 'Laos', 'COUNTRY', '418');
+INSERT INTO `delegation` VALUES ('default_lesotho', 'Lesotho', 'Königreich Lesotho', 'Lesotho', 'COUNTRY', '426');
+INSERT INTO `delegation` VALUES ('default_lettland', 'Lettland', 'Republik Lettland', 'Lettland', 'COUNTRY', '428');
+INSERT INTO `delegation` VALUES ('default_libanon', 'Libanon', 'Libanesische Republik', 'Libanon', 'COUNTRY', '422');
+INSERT INTO `delegation` VALUES ('default_liberia', 'Liberia', 'Republik Liberia', 'Liberia', 'COUNTRY', '430');
+INSERT INTO `delegation` VALUES ('default_libyen', 'Libyen', 'Libyen', 'Libyen', 'COUNTRY', '434');
+INSERT INTO `delegation` VALUES ('default_liechtenstein', 'Liechtenstein', 'Fürstentum Liechtenstein', 'Liechtenstein', 'COUNTRY', '438');
+INSERT INTO `delegation` VALUES ('default_litauen', 'Litauen', 'Republik Litauen', 'Litauen', 'COUNTRY', '440');
+INSERT INTO `delegation` VALUES ('default_malaysia', 'Malaysia', 'Malaysia', 'Malaysia', 'COUNTRY', '458');
+INSERT INTO `delegation` VALUES ('default_mikronesien', 'Mikronesien', 'Föderierte Staaten von Mikronesien', 'Mikronesien', 'COUNTRY', '583');
+INSERT INTO `delegation` VALUES ('default_monaco', 'Monaco', 'Fürstentum Monaco', 'Monaco', 'COUNTRY', '492');
+INSERT INTO `delegation` VALUES ('default_mongolei', 'Mongolei', 'Mongolei', 'Mongolei', 'COUNTRY', '496');
+INSERT INTO `delegation` VALUES ('default_montenegro', 'Montenegro', 'Montenegro', 'Montenegro', 'COUNTRY', '499');
+INSERT INTO `delegation` VALUES ('default_nepal', 'Nepal', 'Demokratische Bundesrepublik Nepal', 'Nepal', 'COUNTRY', '524');
+INSERT INTO `delegation` VALUES ('default_neuseeland', 'Neuseeland', 'Neuseeland', 'Neuseeland', 'COUNTRY', '554');
+INSERT INTO `delegation` VALUES ('default_nigeria', 'Nigeria', 'Bundesrepublik Nigeria', 'Nigeria', 'COUNTRY', '566');
+INSERT INTO `delegation` VALUES ('default_portugal', 'Portugal', 'Portugiesische Republik', 'Portugal', 'COUNTRY', '620');
+INSERT INTO `delegation` VALUES ('default_republik_belarus', 'Belarus', 'Republik Belarus', ' Belarus', 'COUNTRY', null);
+INSERT INTO `delegation` VALUES ('default_republik_der_philippinen', 'Philippinen', 'Republik der Philippinen', 'Philippinen', 'COUNTRY', '608');
+INSERT INTO `delegation` VALUES ('default_republik_kongo', 'Republik Kongo', 'Republik Kongo', 'Republik Kongo', 'COUNTRY', null);
+INSERT INTO `delegation` VALUES ('default_republik_korea', 'Republik Korea', 'Republik Korea', 'Südkorea', 'COUNTRY', null);
+INSERT INTO `delegation` VALUES ('default_republik_madagaskar', 'Madagaskar', 'Republik Madagaskar', ' Madagaskar', 'COUNTRY', '450');
+INSERT INTO `delegation` VALUES ('default_republik_malawi', 'Malawi', 'Republik Malawi', ' Malawi', 'COUNTRY', '454');
+INSERT INTO `delegation` VALUES ('default_republik_malediven', 'Malediven', 'Republik Malediven', ' Malediven', 'COUNTRY', '462');
+INSERT INTO `delegation` VALUES ('default_republik_mali', 'Mali', 'Republik Mali', ' Mali', 'COUNTRY', '466');
+INSERT INTO `delegation` VALUES ('default_republik_malta', 'Malta', 'Republik Malta', ' Malta', 'COUNTRY', '470');
+INSERT INTO `delegation` VALUES ('default_republik_marshallinseln', 'Marshallinseln', 'Republik Marshallinseln', ' Marshallinseln', 'COUNTRY', '584');
+INSERT INTO `delegation` VALUES ('default_republik_mauritius', 'Mauritius', 'Republik Mauritius', ' Mauritius', 'COUNTRY', '480');
+INSERT INTO `delegation` VALUES ('default_republik_moldau', 'Moldau', 'Republik Moldau', ' Moldau', 'COUNTRY', '498');
+INSERT INTO `delegation` VALUES ('default_republik_mosambik', 'Mosambik', 'Republik Mosambik', ' Mosambik', 'COUNTRY', '508');
+INSERT INTO `delegation` VALUES ('default_republik_namibia', 'Namibia', 'Republik Namibia', ' Namibia', 'COUNTRY', '516');
+INSERT INTO `delegation` VALUES ('default_republik_nauru', 'Nauru', 'Republik Nauru', ' Nauru', 'COUNTRY', '520');
+INSERT INTO `delegation` VALUES ('default_republik_nicaragua', 'Nicaragua', 'Republik Nicaragua', ' Nicaragua', 'COUNTRY', '558');
+INSERT INTO `delegation` VALUES ('default_republik_niger', 'Niger', 'Republik Niger', ' Niger', 'COUNTRY', '562');
+INSERT INTO `delegation` VALUES ('default_republik_nordmazedonien', 'Nordmazedonien', 'Republik Nordmazedonien', ' Nordmazedonien', 'COUNTRY', '807');
+INSERT INTO `delegation` VALUES ('default_republik_palau', 'Palau', 'Republik Palau', ' Palau', 'COUNTRY', '585');
+INSERT INTO `delegation` VALUES ('default_republik_panama', 'Panama', 'Republik Panama', ' Panama', 'COUNTRY', '591');
+INSERT INTO `delegation` VALUES ('default_republik_paraguay', 'Paraguay', 'Republik Paraguay', ' Paraguay', 'COUNTRY', '600');
+INSERT INTO `delegation` VALUES ('default_republik_peru', 'Peru', 'Republik Peru', ' Peru', 'COUNTRY', '604');
+INSERT INTO `delegation` VALUES ('default_republik_polen', 'Polen', 'Republik Polen', ' Polen', 'COUNTRY', '616');
+INSERT INTO `delegation` VALUES ('default_republik_ruanda', 'Ruanda', 'Republik Ruanda', ' Ruanda', 'COUNTRY', '646');
+INSERT INTO `delegation` VALUES ('default_republik_sambia', 'Sambia', 'Republik Sambia', ' Sambia', 'COUNTRY', '894');
+INSERT INTO `delegation` VALUES ('default_republik_san_marino', 'San Marino', 'Republik San Marino', ' San Marino', 'COUNTRY', '674');
+INSERT INTO `delegation` VALUES ('default_republik_senegal', 'Senegal', 'Republik Senegal', ' Senegal', 'COUNTRY', '686');
+INSERT INTO `delegation` VALUES ('default_republik_serbien', 'Serbien', 'Republik Serbien', ' Serbien', 'COUNTRY', '688');
+INSERT INTO `delegation` VALUES ('default_republik_seychellen', 'Seychellen', 'Republik Seychellen', ' Seychellen', 'COUNTRY', '690');
+INSERT INTO `delegation` VALUES ('default_republik_sierra_leone', 'Sierra Leone', 'Republik Sierra Leone', ' Sierra Leone', 'COUNTRY', '694');
+INSERT INTO `delegation` VALUES ('default_republik_simbabwe', 'Simbabwe', 'Republik Simbabwe', ' Simbabwe', 'COUNTRY', '716');
+INSERT INTO `delegation` VALUES ('default_republik_singapur', 'Singapur', 'Republik Singapur', ' Singapur', 'COUNTRY', '702');
+INSERT INTO `delegation` VALUES ('default_republik_slowenien', 'Slowenien', 'Republik Slowenien', ' Slowenien', 'COUNTRY', '705');
+INSERT INTO `delegation` VALUES ('default_republik_sudan', 'Sudan', 'Republik Sudan', 'Sudan', 'COUNTRY', '729');
+INSERT INTO `delegation` VALUES ('default_republik_suriname', 'Suriname', 'Republik Suriname', ' Suriname', 'COUNTRY', '740');
+INSERT INTO `delegation` VALUES ('default_republik_südafrika', 'Südafrika', 'Republik Südafrika', ' Südafrika', 'COUNTRY', '710');
+INSERT INTO `delegation` VALUES ('default_republik_südsudan', 'Südsudan', 'Republik Südsudan', ' Südsudan', 'COUNTRY', '728');
+INSERT INTO `delegation` VALUES ('default_republik_tadschikistan', 'Tadschikistan', 'Republik Tadschikistan', ' Tadschikistan', 'COUNTRY', '762');
+INSERT INTO `delegation` VALUES ('default_republik_togo', 'Togo', 'Republik Togo', ' Togo', 'COUNTRY', '768');
+INSERT INTO `delegation` VALUES ('default_republik_trinidad_und_tobago', 'Trinidad und Tobago', 'Republik Trinidad und Tobago', ' Trinidad und Tobago', 'COUNTRY', '780');
+INSERT INTO `delegation` VALUES ('default_republik_tschad', 'Tschad', 'Republik Tschad', ' Tschad', 'COUNTRY', '148');
+INSERT INTO `delegation` VALUES ('default_republik_türkei', 'Türkei', 'Republik Türkei', ' Türkei', 'COUNTRY', '792');
+INSERT INTO `delegation` VALUES ('default_republik_uganda', 'Uganda', 'Republik Uganda', ' Uganda', 'COUNTRY', '800');
+INSERT INTO `delegation` VALUES ('default_republik_ungarn', 'Ungarn', 'Republik Ungarn', ' Ungarn', 'COUNTRY', '348');
+INSERT INTO `delegation` VALUES ('default_republik_usbekistan', 'Usbekistan', 'Republik Usbekistan', ' Usbekistan', 'COUNTRY', '860');
+INSERT INTO `delegation` VALUES ('default_republik_vanuatu', 'Vanuatu', 'Republik Vanuatu', ' Vanuatu', 'COUNTRY', '548');
+INSERT INTO `delegation` VALUES ('default_republik_zypern', 'Zypern', 'Republik Zypern', ' Zypern', 'COUNTRY', '196');
+INSERT INTO `delegation` VALUES ('default_republik_österreich', 'Österreich', 'Republik Österreich', 'Österreich', 'COUNTRY', '40');
+INSERT INTO `delegation` VALUES ('default_rumänien', 'Rumänien', 'Rumänien', 'Rumänien', 'COUNTRY', '642');
+INSERT INTO `delegation` VALUES ('default_russische_föderation', 'Russland', 'Russische Föderation', 'Russland', 'COUNTRY', '643');
+INSERT INTO `delegation` VALUES ('default_salomonen', 'Salomonen', 'Salomonen', 'Salomonen', 'COUNTRY', '90');
+INSERT INTO `delegation` VALUES ('default_salvador', 'El Salvador', 'Republik El Salvador', 'El Salvador', 'COUNTRY', '222');
+INSERT INTO `delegation` VALUES ('default_sao_tome_und_principe', 'São Tomé und Príncipe', 'Demokratische Republik São Tomé und Príncipe', 'São Tomé und Príncipe', 'COUNTRY', '678');
+INSERT INTO `delegation` VALUES ('default_schweizerische_eidgenossenschaft', 'Schweiz', 'Schweizerische Eidgenossenschaft', 'Schweiz', 'COUNTRY', '756');
+INSERT INTO `delegation` VALUES ('default_slowakische_republik', 'Slowakei', 'Slowakische Republik', 'Slowakei', 'COUNTRY', '703');
+INSERT INTO `delegation` VALUES ('default_sozialistische_republik_vietnam', 'Vietnam', 'Sozialistische Republik Vietnam', 'Vietnam', 'COUNTRY', '704');
+INSERT INTO `delegation` VALUES ('default_sri_lanka', 'Sri Lanka', 'Demokratische Sozialistische Republik Sri Lanka', 'Sri Lanka', 'COUNTRY', '144');
+INSERT INTO `delegation` VALUES ('default_st._lucia', 'St. Lucia', 'St. Lucia', 'St. Lucia', 'COUNTRY', '662');
+INSERT INTO `delegation` VALUES ('default_st._vincent_und_die_grenadinen', 'St. Vincent und die Grenadinen', 'St. Vincent und die Grenadinen', 'St. Vincent und die Grenadinen', 'COUNTRY', '670');
+INSERT INTO `delegation` VALUES ('default_staat_palästina', 'Palästina', 'Staat Palästina', 'Palästina', 'COUNTRY', null);
+INSERT INTO `delegation` VALUES ('default_staat_vatikanstadt', 'Vatikanstadt', 'Staat Vatikanstadt', 'Vatikanstadt', 'COUNTRY', null);
+INSERT INTO `delegation` VALUES ('default_sultanat_oman', 'Oman', 'Sultanat Oman', 'Oman', 'COUNTRY', '512');
+INSERT INTO `delegation` VALUES ('default_taiwan', 'Taiwan', 'Taiwan', 'Taiwan', 'COUNTRY', null);
+INSERT INTO `delegation` VALUES ('default_tschechische_republik', 'Tschechien', 'Tschechische Republik', 'Tschechien ', 'COUNTRY', '203');
+INSERT INTO `delegation` VALUES ('default_tunesische_republik', 'Tunesien', 'Tunesische Republik', 'Tunesien', 'COUNTRY', '788');
+INSERT INTO `delegation` VALUES ('default_turkmenistan', 'Turkmenistan', 'Turkmenistan', 'Turkmenistan', 'COUNTRY', '795');
+INSERT INTO `delegation` VALUES ('default_tuvalu', 'Tuvalu', 'Tuvalu', 'Tuvalu', 'COUNTRY', '798');
+INSERT INTO `delegation` VALUES ('default_türkische_republik_nordzypern', 'Nordzypern', 'Türkische Republik Nordzypern', 'Nordzypern', 'COUNTRY', null);
+INSERT INTO `delegation` VALUES ('default_ukraine', 'Ukraine', 'Ukraine', 'Ukraine', 'COUNTRY', '804');
+INSERT INTO `delegation` VALUES ('default_unabhängiger_staat_papua-neuguinea', 'Papua-Neuguinea', 'Unabhängiger Staat Papua-Neuguinea', 'Papua-Neuguinea', 'COUNTRY', '598');
+INSERT INTO `delegation` VALUES ('default_unabhängiger_staat_samoa', 'Samoa', 'Unabhängiger Staat Samoa', 'Samoa', 'COUNTRY', '882');
+INSERT INTO `delegation` VALUES ('default_union_myanmar', 'Myanmar', 'Union Myanmar', 'Myanmar', 'COUNTRY', '104');
+INSERT INTO `delegation` VALUES ('default_uruguay', 'Uruguay', 'Republik Östlich des Uruguay', 'Uruguay', 'COUNTRY', '858');
+INSERT INTO `delegation` VALUES ('default_venezuela', 'Venezuela', 'Bolivarische Republik Venezuela', 'Venezuela', 'COUNTRY', '862');
+INSERT INTO `delegation` VALUES ('default_vereinigtes_königreich_großbritannien_und_nordirland', 'Vereinigtes Königreich', 'Vereinigtes Königreich Großbritannien und Nordirland', 'Vereinigtes Königreich', 'COUNTRY', '826');
+INSERT INTO `delegation` VALUES ('default_vereinigte_arabische_emirate', 'Vereinigte Arabische Emirate', 'Vereinigte Arabische Emirate', 'Vereinigte Arabische Emirate', 'COUNTRY', '784');
+INSERT INTO `delegation` VALUES ('default_vereinigte_mexikanische_staaten', 'Mexiko', 'Vereinigte Mexikanische Staaten', 'Mexiko', 'COUNTRY', '484');
+INSERT INTO `delegation` VALUES ('default_vereinigte_republik_tansania', 'Tansania', 'Vereinigte Republik Tansania', 'Tansania', 'COUNTRY', '834');
+INSERT INTO `delegation` VALUES ('default_vereinigte_staaten_von_amerika', 'Vereinigte Staaten', 'Vereinigte Staaten von Amerika', 'Vereinigte Staaten', 'COUNTRY', '840');
+INSERT INTO `delegation` VALUES ('default_zentralafrikanische_republik', 'Zentral­afrikanische Republik', 'Zentralafrikanische Republik', 'Zentral­afrikanische Republik', 'COUNTRY', '140');
 
 -- ----------------------------
 -- Table structure for delegation_in_committee
@@ -494,12 +635,19 @@ CREATE TABLE `delegation_in_committee` (
   KEY `committeelink` (`committeeid`),
   CONSTRAINT `committeelink` FOREIGN KEY (`committeeid`) REFERENCES `committee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `linker` FOREIGN KEY (`linkid`) REFERENCES `conference_delegation` (`linkid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of delegation_in_committee
 -- ----------------------------
 INSERT INTO `delegation_in_committee` VALUES ('1', '1', 'default_de_gv', '1', '1');
+INSERT INTO `delegation_in_committee` VALUES ('2', '3', '4f1c1d1a-477e-494e-bf95-d9b4ea74365c', '1', '1');
+INSERT INTO `delegation_in_committee` VALUES ('3', '4', '4f1c1d1a-477e-494e-bf95-d9b4ea74365c', '1', '1');
+INSERT INTO `delegation_in_committee` VALUES ('4', '5', '4f1c1d1a-477e-494e-bf95-d9b4ea74365c', '1', '1');
+INSERT INTO `delegation_in_committee` VALUES ('5', '6', '4f1c1d1a-477e-494e-bf95-d9b4ea74365c', '1', '1');
+INSERT INTO `delegation_in_committee` VALUES ('6', '3', 'efc5fdab-d571-4b4f-8c36-f9f0918235ce', '1', '1');
+INSERT INTO `delegation_in_committee` VALUES ('7', '4', 'efc5fdab-d571-4b4f-8c36-f9f0918235ce', '1', '1');
+INSERT INTO `delegation_in_committee` VALUES ('8', '3', '4f1c1d1a-477e-494e-bf95-d9b4ea74365c', '1', '1');
 
 -- ----------------------------
 -- Table structure for ngo
@@ -568,7 +716,7 @@ CREATE TABLE `resolution` (
 -- Records of resolution
 -- ----------------------------
 INSERT INTO `resolution` VALUES ('04fee515-d0b9-4318-b3a7-11e13530ce11', 'No Name', 'anon', '2020-02-04 10:31:51', '2020-02-04 10:31:51', '77700489', '', '', '\0');
-INSERT INTO `resolution` VALUES ('6520c75f-6758-4cb6-b8d4-6f8fc386bc5b', 'No Name', '8c19c2eb-39cf-44dd-942f-1ae2930af524', '2020-02-05 18:33:21', '2020-02-05 18:33:21', '68468295', '\0', '\0', '\0');
+INSERT INTO `resolution` VALUES ('6520c75f-6758-4cb6-b8d4-6f8fc386bc5b', 'Mein Dokument', '8c19c2eb-39cf-44dd-942f-1ae2930af524', '2020-02-05 18:33:21', '2020-02-05 18:33:21', '68468295', '\0', '\0', '\0');
 INSERT INTO `resolution` VALUES ('89e45e1a-428c-4fff-8ba5-8d94e301acce', 'No Name', '8c19c2eb-39cf-44dd-942f-1ae2930af524', '2020-02-05 18:56:21', '2020-02-05 18:56:21', '16850586', '\0', '\0', '\0');
 
 -- ----------------------------
