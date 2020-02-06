@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Delegation } from 'src/app/models/delegation.model';
+import { ConferenceServiceService } from '../../../services/conference-service.service';
 
 @Component({
   selector: 'app-speakerlist-controller',
@@ -9,6 +10,8 @@ import { Delegation } from 'src/app/models/delegation.model';
 export class SpeakerlistControllerComponent implements OnInit {
 
   speakers: Delegation[] = [];
+  addSpeakerSelection: string;
+  presetDelegations: Delegation[] = [];
 
   addGuestSpeakerModalOpened = false;
   secretaryModalOpened = false;
@@ -19,17 +22,15 @@ export class SpeakerlistControllerComponent implements OnInit {
     dropZoneHeight: '10px' // height of the dropzone indicator defaults to 50
   }
 
-  constructor() {
+  constructor(private conferenceService: ConferenceServiceService) {
 
   }
 
   ngOnInit() {
-    for (let i = 0; i < 10; i++) {
-      const delegation = new Delegation();
-      delegation.ID = 'del' + i;
-      delegation.Name = 'Delegation ' + i;
-      this.speakers.push(delegation);
-    }
+    this.conferenceService.getAllDelegations().subscribe(n => {
+      this.presetDelegations = n;
+    });
+    this.speakers = [];
   }
 
   listOrderChanged(newOrder) {
@@ -46,6 +47,23 @@ export class SpeakerlistControllerComponent implements OnInit {
     if (index !== -1) {
       this.speakers.splice(index, 1);
     }
+  }
+
+  addSpeaker() {
+    console.log('add Speaker');
+    console.log(this.addSpeakerSelection);
+    const s = this.presetDelegations.find(n => n.Name == this.addSpeakerSelection);
+    console.log(s);
+    const list: Delegation[] = [];
+    this.speakers.forEach(n => {
+      list.push(n);
+    });
+    if (s != null) {
+      list.push(s);
+    }
+    this.speakers = list;
+    console.log(this.speakers);
+    
   }
 
   closeAddGuestSpeakerModal() {

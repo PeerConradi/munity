@@ -388,11 +388,6 @@ namespace MUNityAngular.Services
             }
         }
 
-        public bool AddDelegationToCommittee(DelegationModel delegation)
-        {
-            throw new NotImplementedException("To be done!");
-        }
-
         public List<DelegationModel> GetDelegationsOfCommittee(CommitteeModel committee)
         {
             return GetDelegationsOfCommittee(committee.ID);
@@ -428,20 +423,54 @@ namespace MUNityAngular.Services
 
             if (linkid.HasValue)
             {
+                
+
+
                 using (var connection = Connector.Connection)
                 {
                     connection.Open();
-                    var cmdStr = "INSERT INTO delegation_in_committee (linkid, committeeid, mincount, maxcount) VALUES (@linkid, @committeeid, @mincount, @maxcount);";
-                    var cmd = new MySqlCommand(cmdStr, connection);
-                    cmd.Parameters.AddWithValue("@linkid", linkid.Value);
-                    cmd.Parameters.AddWithValue("@committeeid", committee.ID);
-                    cmd.Parameters.AddWithValue("@mincount", mincount);
-                    cmd.Parameters.AddWithValue("@maxcount", maxcount);
-                    cmd.ExecuteNonQuery();
+                    //Prüfe ob die Verbindung nicht bereits exisitert!
+                    int? isIn = null;
+                    var cStr = "SELECT delincommitteeid FROM delegation_in_committee WHERE linkid=@linkid AND committeeid=@committeeid;";
+                    var c = new MySqlCommand(cStr, connection);
+                    c.Parameters.AddWithValue("@linkid", linkid.Value);
+                    c.Parameters.AddWithValue("@committeeid", committee.ID);
+                    using (var reader = c.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            isIn = reader.GetInt16(0);
+                        }
+                    }
 
-                    committee.DelegationList.Add(delegation.ID);
+                    if (isIn.HasValue)
+                    {
+                        var cmdStr = "UPDATE delegation_in_committee SET mincount=@mincount, maxcount=@maxcount WHERE delincommitteeid=@inId;";
+                        var cmd = new MySqlCommand(cmdStr, connection);
+                        cmd.Parameters.AddWithValue("@inId", isIn.Value);
+                        cmd.Parameters.AddWithValue("@mincount", mincount);
+                        cmd.Parameters.AddWithValue("@maxcount", maxcount);
+                        cmd.ExecuteNonQuery();
 
-                    return true;
+                        return true;
+                    }
+                    else
+                    {
+                        var cmdStr = "INSERT INTO delegation_in_committee (linkid, committeeid, mincount, maxcount) VALUES (@linkid, @committeeid, @mincount, @maxcount);";
+                        var cmd = new MySqlCommand(cmdStr, connection);
+                        cmd.Parameters.AddWithValue("@linkid", linkid.Value);
+                        cmd.Parameters.AddWithValue("@committeeid", committee.ID);
+                        cmd.Parameters.AddWithValue("@mincount", mincount);
+                        cmd.Parameters.AddWithValue("@maxcount", maxcount);
+                        cmd.ExecuteNonQuery();
+
+                        committee.DelegationList.Add(delegation.ID);
+                        this.conferences.FirstOrDefault(n => n.ID == committee.ConferenceID)?.Committees.FirstOrDefault(n => n.ID == committee.ID)?.DelegationList.Add(delegation.ID);
+
+                        return true;
+
+                    }
+                    
                 }
             }
             else

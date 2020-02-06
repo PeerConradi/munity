@@ -1,3 +1,7 @@
+<ng-template #customItemTemplate let-model="item" let-index="index">
+  <p>This is: {{model.Name}}</p>
+</ng-template>
+
 <div class="row">
     <h1>Redeliste Bearbeiten</h1>
 </div>
@@ -31,7 +35,7 @@
                 </tbody>
                 <tbody>
                     <tr>
-                        <th scope=" row">Fragen und Antwortzeit</th>
+                        <th scope="row">Fragen und Antwortzeit</th>
                         <td><input type="time" class="form-control" value="00:30" /></td>
                     </tr>
                 </tbody>
@@ -75,7 +79,13 @@
                     <b class=" col-4 float-right">ZEIT: 02:00</b>
                 </div>
 
-                <div class="row">
+              <div class="row">
+                <label>Redner hinzufügen</label>
+                <input type="text" class="form-control" [(ngModel)]="addSpeakerSelection" [typeahead]="presetDelegations" typeaheadOptionField="Name" placeholder="Namen eingeben" />
+                <button class="btn btn-success btn-block" (click)="addSpeaker();">Hinzufügen</button>
+              </div>
+
+                <div class="row" style="margin-top: 20px;">
                     <div class="btn-group btn-block" role="group" aria-label="First group">
                         <button type="button" class="btn btn-primary">Nächster</button>
                         <button type="button" class="btn btn-warning">Go/Pause</button>
@@ -83,7 +93,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" style="margin-top: 20px;">
                     <div class="col-12">
                         <bs-sortable [(ngModel)]="speakers" fieldName="Name" itemClass="sortable-item"
                             itemActiveClass="sortable-item-active" placeholderItem="Drag here"

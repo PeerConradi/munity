@@ -13,12 +13,17 @@
             <tr>
               <th>Name</th>
               <th>Online Code</th>
+              <th>Öffentlich einsehbar</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let reso of resolutions">
               <td><a [routerLink]="['/resedit', reso.ID]">{{ reso.Name }}</a></td>
               <td><a [routerLink]="['/resa/live', reso.OnlineCode]">{{ reso.OnlineCode }}</a></td>
+              <td>
+                <span *ngIf="reso.PublicRead == true" class="text-success">Ja</span>
+                <span *ngIf="reso.PublicRead == false" class="text-danger">Nein</span>
+              </td>
             </tr>
           </tbody>
         </table>

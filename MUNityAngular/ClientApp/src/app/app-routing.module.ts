@@ -26,6 +26,7 @@ import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-v
 import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component';
 import { AccountSettingsComponent } from './components/account/account-settings/account-settings.component';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { ImpressumComponent } from './components/default/impressum/impressum.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -35,6 +36,7 @@ const routes: Routes = [
     component: DefaultLayoutComponent,
     children: [
       { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: 'impressum', component: ImpressumComponent},
 
       //Example
       { path: 'counter', component: CounterComponent },
