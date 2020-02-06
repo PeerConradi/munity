@@ -126,4 +126,30 @@ export class ConferenceServiceService {
   public getAllDelegations() {
     return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/AllDelegations');
   }
+
+  public getDelegationsOfCommittee(committeeid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', 'default');
+    headers = headers.set('committeeid', committeeid);
+    let options = { headers: headers };
+    return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/GetDelegationsOfCommittee',
+      options);
+  }
+
+  public addDelegationToCommittee(committeeid: string, delegationid: string, mincount: number, maxcount: number) {
+    let authcode = 'default';
+    if (this.userService.isLoggedIn)
+      authcode = this.userService.sessionkey();
+
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', authcode);
+    headers = headers.set('committeeid', committeeid);
+    headers = headers.set('delegationid', delegationid);
+    headers = headers.set('mincount', mincount.toString());
+    headers = headers.set('maxcount', maxcount.toString());
+    console.log(headers);
+    let options = { headers: headers };
+    return this.http.get<Committee>(this.baseUrl + 'api/Conference/AddDelegationToCommittee',
+      options);
+  }
 }

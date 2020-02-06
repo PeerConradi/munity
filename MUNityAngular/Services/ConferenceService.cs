@@ -60,7 +60,8 @@ namespace MUNityAngular.Services
                         conference = DataReaderConverter.ObjectFromReader<ConferenceModel>(reader);
                         conference.Committees = GetCommitteesOfConference(conference);
                         conference.Delegations = GetDelegationsOfConference(conference);
-                        conference.Committees.ForEach(n => n.DelegationList = GetDelegationIdsOfCommittee(n));
+
+                        conference.Committees.ForEach(n => n.DelegationList = GetDelegationsOfCommittee(n).Select(a => a.ID).ToList());
                         conferences.Add(conference);
                     }
                 }
@@ -213,7 +214,6 @@ namespace MUNityAngular.Services
             return canEdit;
         }
 
-        
 
         public List<UserModel> UsersWithAccessToConference(string conferenceid)
         {
@@ -251,9 +251,10 @@ namespace MUNityAngular.Services
             return true;
         }
 
-        public static BaseCommitteeModel GetCommittee(string id)
+        public CommitteeModel GetCommittee(string id)
         {
             var cmdStr = "SELECT * FROM " + committee_table_name + " WHERE id=@id";
+            CommitteeModel committee = null;
             using (var connection = Connector.Connection)
             {
                 connection.Open();
@@ -263,10 +264,14 @@ namespace MUNityAngular.Services
                 {
                     if (!reader.HasRows)
                         return null;
-
-                    return DataReaderConverter.ObjectFromReader<BaseCommitteeModel>(reader);
+                    while (reader.Read())
+                    {
+                        committee = DataReaderConverter.ObjectFromReader<CommitteeModel>(reader);
+                    }
+                    
                 }
             }
+            return committee;
         }
 
         public List<CommitteeModel> GetCommitteesOfConference(ConferenceModel conference)
@@ -386,6 +391,86 @@ namespace MUNityAngular.Services
         public bool AddDelegationToCommittee(DelegationModel delegation)
         {
             throw new NotImplementedException("To be done!");
+        }
+
+        public List<DelegationModel> GetDelegationsOfCommittee(CommitteeModel committee)
+        {
+            return GetDelegationsOfCommittee(committee.ID);
+        }
+
+        public List<DelegationModel> GetDelegationsOfCommittee(string committeeid)
+        {
+            var list = new List<DelegationModel>();
+
+            var cmdStr = "SELECT delegation.* FROM delegation, delegation_in_committee, conference_delegation " +
+                "WHERE conference_delegation.linkid = delegation_in_committee.linkid " +
+                "AND conference_delegation.delegation_id = delegation.id " +
+                "AND delegation_in_committee.committeeid = @committeeid;";
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@committeeid", committeeid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(DataReaderConverter.ObjectFromReader<DelegationModel>(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public bool AddDelegationToCommittee(CommitteeModel committee, DelegationModel delegation, int mincount, int maxcount)
+        {
+            var linkid = GetDelegationConferenceLinkId(committee.ConferenceID, delegation.ID);
+
+            if (linkid.HasValue)
+            {
+                using (var connection = Connector.Connection)
+                {
+                    connection.Open();
+                    var cmdStr = "INSERT INTO delegation_in_committee (linkid, committeeid, mincount, maxcount) VALUES (@linkid, @committeeid, @mincount, @maxcount);";
+                    var cmd = new MySqlCommand(cmdStr, connection);
+                    cmd.Parameters.AddWithValue("@linkid", linkid.Value);
+                    cmd.Parameters.AddWithValue("@committeeid", committee.ID);
+                    cmd.Parameters.AddWithValue("@mincount", mincount);
+                    cmd.Parameters.AddWithValue("@maxcount", maxcount);
+                    cmd.ExecuteNonQuery();
+
+                    committee.DelegationList.Add(delegation.ID);
+
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public int? GetDelegationConferenceLinkId(string conferenceid, string delegationid)
+        {
+            int? value = null;
+
+            using (var connection = Connector.Connection)
+            {
+                var cmdStr = "SELECT linkid FROM conference_delegation WHERE conference_id=@confid AND delegation_id=@delid;";
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@confid", conferenceid);
+                cmd.Parameters.AddWithValue("@delid", delegationid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        value = reader.GetInt16(0);
+                    }
+                }
+            }
+
+            return value;
         }
 
         public List<DelegationModel> GetDelegationsOfConference(ConferenceModel conference)

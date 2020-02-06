@@ -6,6 +6,7 @@ import { Conference } from '../../../models/conference.model';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { NotifierService } from 'angular-notifier';
 import { Delegation } from '../../../models/delegation.model';
+import { Committee } from '../../../models/committee.model';
 
 @Component({
   selector: 'app-conference-details',
@@ -22,6 +23,8 @@ export class ConferenceDetailsComponent implements OnInit {
   newcommitteearticle: string;
   presetDelegations: Delegation[] = [];
   addDelegationSelection: Delegation = null;
+  addDelegationToCommitteeSelection: Delegation = null;
+  currentCommittee: Committee = null;
 
   constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService) { }
@@ -68,6 +71,8 @@ export class ConferenceDetailsComponent implements OnInit {
       });
   }
 
+
+
   addDelegationClick() {
     if (this.addDelegationSelection == null) {
       this.notifier.notify('error', 'Zuerst muss eine Delegation ausgewählt werden. Ist diese nicht vorhanden lege bitte eine neue Delegation an.');
@@ -76,6 +81,24 @@ export class ConferenceDetailsComponent implements OnInit {
         this.conference.Delegations.push(n);
       });
     }
+  }
+
+  setCurrentCommittee(c: Committee) {
+    this.currentCommittee = c;
+  }
+
+  addDelegationToCommittee() {
+    console.log(this.currentCommittee);
+    console.log(this.addDelegationToCommitteeSelection);
+    const committee: Committee = this.currentCommittee;
+
+    this.conferenceService.addDelegationToCommittee(committee.ID, this.addDelegationToCommitteeSelection.ID, 1, 1).subscribe(n => {
+      committee.DelegationList = n.DelegationList;
+      const c = this.conference.Committees.find(n => n.ID == committee.ID);
+      c.DelegationList = n.DelegationList;
+    }, err => {
+      this.notifier.notify('error', 'Hinzufügen gescheitert!');
+    });
   }
 
 }

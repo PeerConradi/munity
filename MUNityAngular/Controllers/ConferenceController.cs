@@ -192,10 +192,65 @@ namespace MUNityAngular.Controllers
             if (delegation == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Delegation not found with the given id");
 
+            var conference = conferenceService.GetConference(conferenceid);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+
+
+
             conferenceService.AddDelegationToConference(conferenceid, delegationid, mincount.ToIntOrDefault(1), maxcount.ToIntOrDefault(1));
+            conference.Delegations.Add(delegation);
             return StatusCode(StatusCodes.Status200OK, delegation.AsNewtonsoftJson());
         }
 
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult AddDelegationToCommittee([FromHeader]string auth, [FromHeader]string committeeid, [FromHeader]string delegationid,
+            [FromHeader]string mincount, [FromHeader]string maxcount,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var committee = conferenceService.GetCommittee(committeeid);
+            if (committee == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Committee not found!");
+
+            
+
+            var canEdit = conferenceService.CanAuthEditConference(auth, committee.ConferenceID);
+            if (!canEdit)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
+
+            var delegation = conferenceService.GetDelegation(delegationid);
+            if (delegation == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Delegation not found with the given id");
+
+            var conference = conferenceService.GetConference(committee.ConferenceID);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+
+
+            var result = conferenceService.AddDelegationToCommittee(committee, delegation, mincount.ToIntOrDefault(1), maxcount.ToIntOrDefault(1));
+            var committeeInConferece = conferenceService.GetConference(committee.ConferenceID).Committees.FirstOrDefault(n => n.ID == committeeid);
+
+            if (result == true)
+            {
+                return StatusCode(StatusCodes.Status200OK, committeeInConferece.AsNewtonsoftJson());
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Unable to add Delegation to Committee");
+            }
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetDelegationsOfCommittee([FromHeader]string auth, [FromHeader]string committeeid,
+            [FromServices]ConferenceService conferenceService)
+        {
+            //Authentication egal
+            var delegations = conferenceService.GetDelegationsOfCommittee(committeeid);
+            return StatusCode(StatusCodes.Status200OK, delegations.AsNewtonsoftJson());
+
+        }
         [Route("[action]")]
         [HttpGet]
         public IActionResult AllDelegations([FromServices]ConferenceService conferenceService)

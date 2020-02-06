@@ -23,12 +23,14 @@
               <tr>
                 <th>Name </th>
                 <th>Delegationen </th>
+                <th>Hinzufügen</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let committee of conference.Committees">
                 <td>{{ committee.Name}}</td>
                 <td>{{ committee.DelegationList.length }}</td>
+                <td><button class="btn btn-outline-success" (click)="openModal(addDelegationToCommitteeModal);setCurrentCommittee(committee);">Delegation Hinzufügen</button></td>
               </tr>
             </tbody>
           </table>
@@ -181,6 +183,32 @@
     <div class="row">
       <button class="btn btn-block btn-primary" (click)="addCommittee()">Hinzufügen</button>
     </div>
+  </div>
+</ng-template>
+
+<!-- Dialog zum Hinzufügen einer Delegation zu einem Gremium -->
+<ng-template #addDelegationToCommitteeModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <!-- Name (name) -->
+      <div class="row">
+        <label class="control-label">Delgation</label>
+        <div class="col-12">
+          <select class="form-control" id="inlineFormCustomSelectPref2" [(ngModel)]="addDelegationToCommitteeSelection" [ngModelOptions]="{standalone: true}">
+            <option *ngFor="let delegation of conference.Delegations" [ngValue]="delegation">{{ delegation.Name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-block btn-primary" (click)="addDelegationToCommittee()">Hinzufügen</button>
+      </div>
+    
   </div>
 </ng-template>
 

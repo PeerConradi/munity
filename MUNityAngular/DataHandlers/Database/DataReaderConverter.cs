@@ -39,7 +39,7 @@ namespace MUNityAngular.DataHandlers.Database
                             {
                                 setPropertySuccess = element.SetProperty(property.Name, reader.GetString(columnname));
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
                                 setPropertySuccess = element.SetProperty(property.Name, string.Empty);
                             }
