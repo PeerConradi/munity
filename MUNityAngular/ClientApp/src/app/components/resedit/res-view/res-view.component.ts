@@ -26,7 +26,7 @@ export class ResViewComponent implements OnInit {
     if (id == null) {
       id = this.route.snapshot.queryParamMap.get('id');
     }
-
+    
     if (id != null) {
       this.service.getResolution(id).subscribe(n => {
         console.log('Search resolution: ' + id);

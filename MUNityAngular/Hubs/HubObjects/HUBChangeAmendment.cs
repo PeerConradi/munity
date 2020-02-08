@@ -14,5 +14,10 @@ namespace MUNityAngular.Hubs.HubObjects
         {
             this.NewText = amendment.NewText;
         }
+
+        public HUBChangeAmendment()
+        {
+
+        }
     }
 }

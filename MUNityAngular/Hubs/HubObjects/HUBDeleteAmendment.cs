@@ -11,5 +11,10 @@ namespace MUNityAngular.Hubs.HubObjects
         {
             //No Custom Parameters here
         }
+
+        public HUBDeleteAmendment()
+        {
+
+        }
     }
 }

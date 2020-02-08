@@ -23,6 +23,8 @@ namespace MUNityAngular.Models
 
         public string ID { get; set; }
 
+        public int PublicId { get; set; }
+
         public string Name { get; set; }
 
         public TimeSpan Speakertime { get; set; }
@@ -83,6 +85,11 @@ namespace MUNityAngular.Models
             Name = name;
             Speakers = new List<DelegationModel>();
             Questions = new List<DelegationModel>();
+            Speakertime = new TimeSpan(0, 3, 0);
+            Questiontime = new TimeSpan(0, 1, 0);
+            LowTimeMark = new TimeSpan(0, 0, 10);
+            RemainingSpeakerTime = new TimeSpan(0, 3, 0);
+            RemainingQuestionTime = new TimeSpan(0, 1, 0);
         }
 
         public SpeakerlistModel(TimeSpan n_speakertime, TimeSpan n_questiontime)
@@ -172,6 +179,17 @@ namespace MUNityAngular.Models
         public void RemoveSpeaker(DelegationModel delegation)
         {
             Speakers.Remove(delegation);
+        }
+
+        public bool RemoveSpeaker(string id)
+        {
+            var speaker = Speakers.FirstOrDefault(n => n.ID == id);
+            if (speaker != null)
+            {
+                Speakers.Remove(speaker);
+                return true;
+            }
+            return false;
         }
 
         public void RemoveQuestion(DelegationModel delegation)

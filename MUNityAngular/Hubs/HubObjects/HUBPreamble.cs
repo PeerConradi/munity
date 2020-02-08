@@ -17,5 +17,10 @@ namespace MUNityAngular.Hubs.HubObjects
             this.ID = preamble.ID;
             this.Paragraphs = preamble.Paragraphs.ToHubParagraphs();
         }
+
+        public HUBPreamble()
+        {
+            Paragraphs = new List<HUBPreambleParagraph>();
+        }
     }
 }

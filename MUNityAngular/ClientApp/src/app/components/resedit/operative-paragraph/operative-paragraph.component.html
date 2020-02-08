@@ -11,10 +11,10 @@
       #p="ngbPopover" (click)="p.open()">X</button>
     <button [disabled]="paragraph.IsVirtual === true" (click)="moveUp()" type="button" class="btn btn-outline-primary btn-move btn-up" title="Nach oben verschieben">▲</button>
     <button [disabled]="paragraph.IsVirtual === true" (click)="moveDown()" type="button" class="btn btn-outline-primary btn-move btn-down">▼</button>
-    <button [disabled]="paragraph.IsVirtual === true" (click)="moveLeft()" type="button" class="btn btn-outline-primary btn-move btn-left">◄</button>
-    <button [disabled]="paragraph.IsVirtual === true" (click)="moveRight()" type="button" class="btn btn-outline-primary btn-move btn-right">►</button>
+    <!-- This buttons are disabled for now. The Editing should be made different! -->
+    <!--<button [disabled]="paragraph.IsVirtual === true" (click)="moveLeft()" type="button" class="btn btn-outline-primary btn-move btn-left">◄</button>
+    <button [disabled]="paragraph.IsVirtual === true" (click)="moveRight()" type="button" class="btn btn-outline-primary btn-move btn-right">►</button>-->
   </div>
-
 
   <div class="form-group paragraph-textarea">
     <textarea class="form-control" id="operativeTextArea" rows="5" [disabled]="paragraph.IsVirtual === true" (keyup)="onKey($event)" maxlength="4000">{{ paragraph.Text }}</textarea>

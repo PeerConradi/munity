@@ -19,5 +19,10 @@ namespace MUNityAngular.Hubs.HubObjects
             this.NewText = amendment.NewText;
             this.TargetResolutionID = amendment.TargetResolutionID;
         }
+
+        public HUBAddAmendment()
+        {
+
+        }
     }
 }

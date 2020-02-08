@@ -16,5 +16,10 @@ namespace MUNityAngular.Hubs.HubObjects
             this.NewPosition = amendment.NewPosition;
             this.NewSectionID = amendment.NewSectionID;
         }
+
+        public HUBMoveAmendment()
+        {
+
+        }
     }
 }

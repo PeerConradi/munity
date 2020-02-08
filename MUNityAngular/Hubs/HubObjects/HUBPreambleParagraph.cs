@@ -16,5 +16,10 @@ namespace MUNityAngular.Hubs.HubObjects
             this.ID = p.ID;
             this.Text = p.Text;
         }
+
+        public HUBPreambleParagraph()
+        {
+
+        }
     }
 }

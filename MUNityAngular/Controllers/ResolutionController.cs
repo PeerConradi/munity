@@ -154,41 +154,26 @@ namespace MUNityAngular.Controllers
         }
 
         [Route("[action]")]
-        [HttpGet]
-        public IActionResult ChangeOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
-            [FromHeader]string paragraphid, [FromHeader]string newtext,
+        [HttpPut]
+        public IActionResult UpdateOperativeSection([FromQuery]string auth, [FromBody]Hubs.HubObjects.HUBOperativeParagraph paragraph,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realText = newtext.DecodeUrl();
-
-            var resolution = resolutionService.GetResolution(resolutionid);
+            var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            if (resolution != null)
-            {
-                var newPP = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
-                if (newPP != null)
-                {
-                    newPP.Text = realText;
-                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
-                    resolutionService.RequestSave(resolution);
-                    _hubContext.Clients.Group(resolutionid).OperativeParagraphChanged(paragraphid, realText);
-                    return StatusCode(StatusCodes.Status200OK, json);
-                }
-                else
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph not found");
-                }
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status404NotFound, "Resolution not found");
-            }
+            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
+            if (section == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
+
+            section.Text = paragraph.Text;
+            _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(new Hubs.HubObjects.HUBOperativeParagraph(section));
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, section.AsNewtonsoftJson());
         }
 
         [Route("[action]")]

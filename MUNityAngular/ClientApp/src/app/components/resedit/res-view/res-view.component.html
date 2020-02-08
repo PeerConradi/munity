@@ -33,7 +33,7 @@
         <p>Einbringer: {{ activeAmendment(oa).SubmitterName }}</p>
       </div>
       <div *ngIf="activeAmendment(oa)!=null && activeAmendment(oa).Type==='change'">
-        <p style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
+        <p style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text.replace('\n','<br />') }}</p>
         <p class="operative-paragraph-text" style="color: darkgreen;">{{ activeChangeAmendment(oa).NewText }}</p>
       </div>
       

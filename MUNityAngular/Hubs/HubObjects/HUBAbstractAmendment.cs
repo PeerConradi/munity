@@ -31,5 +31,10 @@ namespace MUNityAngular.Hubs.HubObjects
             this.SubmitTime = amendment.SubmitTime;
             this.Type = amendment.Type;
         }
+
+        public HUBAbstractAmendment()
+        {
+            ID = Guid.NewGuid().ToString();
+        }
     }
 }

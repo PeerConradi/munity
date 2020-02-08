@@ -19,6 +19,14 @@ export class UserService {
     }
   }
 
+  public getAuthOrDefault(): string {
+    let key = this.sessionkey();
+    if (key == null || key == '') {
+      key = 'default';
+    }
+    return key;
+  }
+
   private baseUrl: string;
 
 

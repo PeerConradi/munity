@@ -56,9 +56,10 @@ namespace MUNityAngular
            
 
             services.AddSingleton<Services.InstallationService>();
+            services.AddSingleton<Services.AuthService>();
             services.AddSingleton<Services.ResolutionService>();
             services.AddSingleton<Services.ConferenceService>();
-            services.AddSingleton<Services.AuthService>();
+            services.AddSingleton<Services.SpeakerlistService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,6 +105,7 @@ namespace MUNityAngular
                     pattern: "{controller}/{action=index}/{id?}");
                 endpoints.MapHub<Hubs.TestHub>("/signalrtest");
                 endpoints.MapHub<Hubs.ResolutionHub>("/resasocket");
+                endpoints.MapHub<Hubs.SpeakerListHub>("/slsocket");
             });
 
 

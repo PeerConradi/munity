@@ -52,5 +52,15 @@ namespace MUNityAngular.Hubs.HubObjects
             this.OperativeSections = resolution.OperativeSections.ToHubParagraphs();
             this.SubmitterName = SubmitterName;
         }
+
+        public HUBResolution()
+        {
+            ChangeAmendments = new List<HUBChangeAmendment>();
+            DeleteAmendments = new List<HUBDeleteAmendment>();
+            MoveAmendments = new List<HUBMoveAmendment>();
+            AddAmendmentsSave = new List<HUBAddAmendment>();
+            OperativeSections = new List<HUBOperativeParagraph>();
+            Preamble = new HUBPreamble();
+        }
     }
 }

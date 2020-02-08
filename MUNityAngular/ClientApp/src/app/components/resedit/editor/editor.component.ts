@@ -119,6 +119,10 @@ export class EditorComponent implements OnInit {
     
   }
 
+  pushResolution() {
+    this.service.pushResolution(this.resolution).subscribe(n => { });
+  }
+
   addPreambleParagraph() {
     console.log('Request addPreambleParagraph at: ' + this.model.ID);
     this.service.addPreambleParagraph(this.model.ID).subscribe(data => { }, err => {

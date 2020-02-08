@@ -21,7 +21,7 @@ export class OperativeParagraphComponent implements OnInit {
 
   onKey(event: any) {
     this.paragraph.Text = event.target.value;
-    this.service.changeOperativeParagraph(this.resolutionid, this.paragraph.ID, event.target.value);
+    this.service.changeOperativeParagraph(this.paragraph);
   }
 
   delete() {

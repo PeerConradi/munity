@@ -75,6 +75,10 @@ export class ResolutionService {
     return this.httpClient.get<ResolutionAdvancedInfo[]>(this.baseUrl + 'api/Resolution/MyResolutions', options);
   }
 
+  public pushResolution(resolution: Resolution) {
+    return this.httpClient.put(this.baseUrl + 'api/Resolution/PutResolution', resolution);
+  }
+
   //SignalR Part
   public addResolutionListener = (model: Resolution, inspector: AmendmentInspector) => {
     this._hubConnection.on('PreambleParagraphAdded', (position: number, id: string, text: string) => {
@@ -98,11 +102,12 @@ export class ResolutionService {
       }
     });
 
-    this._hubConnection.on('OperativeParagraphChanged', (id: string, newtext: string) => {
+    this._hubConnection.on('OperativeParagraphChanged', (paragraph: OperativeSection) => {
 
-      let target = model.OperativeSections.filter(n => n.ID == id)[0];
-      if (target != null && target.Text != newtext) {
-        target.Text = newtext;
+      let target = model.OperativeSections.find(n => n.ID == paragraph.ID);
+      if (target != null && target.Text != paragraph.Text) {
+        target.Text = paragraph.Text;
+        //Commends could also change but that has yet to come!
       }
     });
 
@@ -472,21 +477,9 @@ export class ResolutionService {
       options);
   }
 
-
-  public changeOperativeParagraph(resolutionid: string, paragraphid: string, newtext: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
-    let headers = new HttpHeaders();
-    headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
-    headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('paragraphid', paragraphid);
-    headers = headers.set('newtext', encodeURI(newtext + '|'));
-    let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangeOperativeParagraph',
-      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  public changeOperativeParagraph(paragraph: OperativeSection) {
+    this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection?auth=' + this.userService.getAuthOrDefault(),
+      paragraph).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public changePublicReadMode(resolutionid: string, mode: boolean) {
@@ -524,14 +517,9 @@ export class ResolutionService {
         this.connectionid = connectionUrl.split('=')[1];
         this.connectionReady = true;
 
-        console.log('subscribte to: ' + id, ' with my id: ' + this.connectionid);
-        let authString: string = 'default';
-        if (this.userService.isLoggedIn)
-          authString = this.userService.sessionkey();
-
         let headers = new HttpHeaders();
         headers = headers.set('content-type', 'application/json; charset=utf-8');
-        headers = headers.set('auth', authString);
+        headers = headers.set('auth', this.userService.getAuthOrDefault());
         headers = headers.set('id', id);
         headers = headers.set('connectionid', this.connectionid);
         let options = { headers: headers };
@@ -541,17 +529,13 @@ export class ResolutionService {
       .catch(err => {
         this.hasError = true;
       });
-    
   }
 
   public addDeleteAmendment(resolutionid: string, paragraphid: string, submitter: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
 
     let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
     headers = headers.set('submittername', encodeURI(submitter + '|'));
@@ -561,13 +545,9 @@ export class ResolutionService {
   }
 
   public addChangeAmendment(resolutionid: string, paragraphid: string, submitter: string, newtext: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
     headers = headers.set('submittername', encodeURI(submitter + '|'));
@@ -578,13 +558,9 @@ export class ResolutionService {
   }
 
   public addMoveAmendment(resolutionid: string, paragraphid: string, submitter: string, newPosition: number) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('sectionid', paragraphid);
     headers = headers.set('submittername', encodeURI(submitter + '|'));
@@ -595,13 +571,9 @@ export class ResolutionService {
   }
 
   public addAddAmendment(resolutionid: string, submitter: string, newPosition: number, newText: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('submittername', encodeURI(submitter + '|'));
     headers = headers.set('newposition', newPosition.toString());
@@ -612,13 +584,9 @@ export class ResolutionService {
   }
 
   removeAmendment(resolutionid: string, amendmentid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('amendmentid', amendmentid);
     let options = { headers: headers };
@@ -627,13 +595,9 @@ export class ResolutionService {
   }
 
   activateAmendment(resolutionid: string, amendmentid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('amendmentid', amendmentid);
     let options = { headers: headers };
@@ -642,13 +606,9 @@ export class ResolutionService {
   }
 
   deactivateAmendment(resolutionid: string, amendmentid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('amendmentid', amendmentid);
     let options = { headers: headers };
@@ -657,13 +617,9 @@ export class ResolutionService {
   }
 
   submitAmendment(resolutionid: string, amendmentid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('amendmentid', amendmentid);
     let options = { headers: headers };

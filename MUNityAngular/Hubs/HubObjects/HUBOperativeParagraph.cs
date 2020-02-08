@@ -49,5 +49,10 @@ namespace MUNityAngular.Hubs.HubObjects
             this.MoveAmendmentCount = oa.MoveAmendmentCount;
             this.Level = oa.Level;
         }
+
+        public HUBOperativeParagraph()
+        {
+            Children = new List<string>();
+        }
     }
 }

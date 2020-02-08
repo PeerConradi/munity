@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MUNityAngular.Hubs
 {
-    public class ResolutionHub : Hub<ITypedResolutionHub>
+    public class SpeakerListHub : Hub<ITypedSpeakerlistHub>
     {
 
     }
