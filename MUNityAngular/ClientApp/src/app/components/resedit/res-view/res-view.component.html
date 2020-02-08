@@ -18,25 +18,31 @@
 
     <div *ngFor="let oa of resolution.OperativeSections" [class.bg-success]="oa.IsVirtual === true" [class.text-white]="oa.IsVirtual === true">
       <!-- Kopfzeile -->
-      <p *ngIf="oa.IsVirtual === false" class="text-info amendment-counts" >
-        Änderungsanträge: {{ oa.DeleteAmendmentCount}}
-        Streichen,
-        {{ oa.ChangeAmendmentCount }}
-        Textänderung,
-        {{ oa.MoveAmendmentCount }} Verschieben
+      <p *ngIf="oa.IsVirtual === false" class="operative-paragraph-title">
+        <span >
+          {{ oa.Path }}.
+        </span>
+        <span class=" badge badge-secondary">
+          Änderungsanträge: {{ oa.DeleteAmendmentCount}}
+          Streichen,
+          {{ oa.ChangeAmendmentCount }}
+          Textänderung,
+          {{ oa.MoveAmendmentCount }} Verschieben
+        </span>
       </p>
-      <!-- Default Style -->
-      <p *ngIf="activeAmendment(oa)==null" style="margin-top: -20px;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text }}</p>
+
+
+      <markdown *ngIf="activeAmendment(oa)==null" class="operative-paragraph-text" [data]="oa.Text"></markdown>
       <!-- Wenn dieser Absatz gesrichen oder Verschoben werden soll -->
       <div *ngIf="activeAmendment(oa)!=null && (activeAmendment(oa).Type==='delete' || activeAmendment(oa).Type==='move')" style="margin-top: -20px; " class="operative-paragraph-text">
-        <p style="text-decoration: line-through; color: darkred;">{{ oa.Path }} {{ oa.Text }}</p>
+        <markdown style="text-decoration: line-through; color: darkred;" [data]="oa.Text"></markdown>
         <p>Einbringer: {{ activeAmendment(oa).SubmitterName }}</p>
       </div>
       <div *ngIf="activeAmendment(oa)!=null && activeAmendment(oa).Type==='change'">
         <p style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text.replace('\n','<br />') }}</p>
         <p class="operative-paragraph-text" style="color: darkgreen;">{{ activeChangeAmendment(oa).NewText }}</p>
       </div>
-      
+
       <br />
     </div>
 </div>

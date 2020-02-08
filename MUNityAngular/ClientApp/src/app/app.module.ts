@@ -52,6 +52,8 @@ import { ResolutionsManagementComponent } from './components/admin/resolutions-m
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ImpressumComponent } from './components/default/impressum/impressum.component';
 
+import { MarkdownModule } from 'ngx-markdown';
+
 
 @NgModule({
   declarations: [
@@ -108,7 +110,8 @@ import { ImpressumComponent } from './components/default/impressum/impressum.com
     AlertModule.forRoot(),
     SortableModule.forRoot(),
     TypeaheadModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    MarkdownModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
