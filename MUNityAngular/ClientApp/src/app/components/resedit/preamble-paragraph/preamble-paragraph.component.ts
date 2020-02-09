@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
+import { PreambleParagraph } from '../../../models/preamble-paragraph.model';
 
 @Component({
   selector: 'app-preamble-paragraph',
@@ -8,7 +9,7 @@ import { ResolutionService } from '../../../services/resolution.service';
 })
 export class PreambleParagraphComponent implements OnInit {
 
-  @Input() paragraph: any;
+  @Input() paragraph: PreambleParagraph;
 
   @Input() resolutionid: string;
 
@@ -17,8 +18,11 @@ export class PreambleParagraphComponent implements OnInit {
   constructor(private service: ResolutionService) { }
 
   onKey(event: any) {
+    if (this.paragraph.ResolutionID == null) {
+      this.paragraph.ResolutionID = this.resolutionid;
+    }
     this.paragraph.Text = event.target.value;
-    this.service.changePreambleParagraph(this.resolutionid, this.paragraph.ID, event.target.value);
+    this.service.changePreambleParagraph(this.paragraph);
   }
 
   ngOnInit() {

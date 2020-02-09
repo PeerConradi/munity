@@ -14,7 +14,7 @@ namespace MUNityAngular.Hubs
 
         Task OperativeParagraphChanged(HubObjects.HUBOperativeParagraph paragraph);
 
-        Task PreambleParagraphChanged(string id, string newText);
+        Task PreambleParagraphChanged(HubObjects.HUBPreambleParagraph paragraph);
 
         /// <summary>
         /// This Change is very complex because also amendments could be effected

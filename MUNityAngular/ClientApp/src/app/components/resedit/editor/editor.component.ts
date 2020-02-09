@@ -100,11 +100,12 @@ export class EditorComponent implements OnInit {
             }
 
             this.titleService.setTitle(this.model.Topic);
+            console.log(n);
           }, err => {
               //TODO: 404 check or differet error
               this.notFound = true;
           });
-        }
+                  }
       }, err => {
         //TODO: 404 check or differet error
         this.notFound = true;
@@ -124,8 +125,7 @@ export class EditorComponent implements OnInit {
   }
 
   addPreambleParagraph() {
-    console.log('Request addPreambleParagraph at: ' + this.model.ID);
-    this.service.addPreambleParagraph(this.model.ID).subscribe(data => { }, err => {
+    this.service.addPreambleParagraph(this.model.ID).subscribe(data => { console.log(data); }, err => {
       if (err.status == 404) {
         this.notifier.notify('error', 'Ohh nein - Es besteht keine Verbindung zum Server oder die Resolution exisitert nicht.');
       }

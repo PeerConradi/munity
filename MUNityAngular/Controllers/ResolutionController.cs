@@ -115,42 +115,66 @@ namespace MUNityAngular.Controllers
 
         }
 
+        //[Route("[action]")]
+        //[HttpGet]
+        //public IActionResult ChangePreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
+        //    [FromHeader]string paragraphid, [FromHeader]string newtext,
+        //    [FromServices]Services.ResolutionService resolutionService,
+        //    [FromServices]AuthService authService)
+        //{
+        //    var realText = newtext.DecodeUrl();
+
+        //    var resolution = resolutionService.GetResolution(resolutionid);
+        //    if (resolution == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+        //    if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+        //        return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+        //    if (resolution != null)
+        //    {
+        //        var newPP = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
+        //        if (newPP != null)
+        //        {
+        //            newPP.Text = realText;
+        //            var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
+        //            resolutionService.RequestSave(resolution);
+        //            _hubContext.Clients.Group(resolutionid).PreambleParagraphChanged(newPP.ID, newPP.Text);
+        //            return StatusCode(StatusCodes.Status200OK, json);
+        //        }
+        //        else
+        //        {
+        //            return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return StatusCode(StatusCodes.Status404NotFound, "Resolution not found");
+        //    }
+        //}
+
         [Route("[action]")]
-        [HttpGet]
-        public IActionResult ChangePreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
-            [FromHeader]string paragraphid, [FromHeader]string newtext,
-            [FromServices]Services.ResolutionService resolutionService,
+        [HttpPut]
+        public IActionResult UpdatePreambleParagraph([FromQuery]string auth, [FromBody]Hubs.HubObjects.HUBPreambleParagraph paragraph,
+            [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realText = newtext.DecodeUrl();
-
-            var resolution = resolutionService.GetResolution(resolutionid);
+            var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            if (resolution != null)
-            {
-                var newPP = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
-                if (newPP != null)
-                {
-                    newPP.Text = realText;
-                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
-                    resolutionService.RequestSave(resolution);
-                    _hubContext.Clients.Group(resolutionid).PreambleParagraphChanged(newPP.ID, newPP.Text);
-                    return StatusCode(StatusCodes.Status200OK, json);
-                }
-                else
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found");
-                }
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status404NotFound, "Resolution not found");
-            }
+            var pp = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraph.ID);
+            if (pp == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found!");
+
+            pp.Text = paragraph.Text;
+            _hubContext.Clients.Group(resolution.ID).PreambleParagraphChanged(new Hubs.HubObjects.HUBPreambleParagraph(pp));
+            resolutionService.RequestSave(resolution);
+
+            return StatusCode(StatusCodes.Status200OK, pp.AsNewtonsoftJson());
         }
 
         [Route("[action]")]

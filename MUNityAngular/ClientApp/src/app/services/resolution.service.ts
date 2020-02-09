@@ -94,11 +94,11 @@ export class ResolutionService {
       //this.resolution.OperativeSections.filter(n => n.ID == id)[0].Text = text;
     });
 
-    this._hubConnection.on('PreambleParagraphChanged', (id: string, newtext: string) => {
+    this._hubConnection.on('PreambleParagraphChanged', (paragraph: PreambleParagraph) => {
 
-      let target = model.Preamble.Paragraphs.filter(n => n.ID == id)[0];
-      if (target != null && target.Text != newtext) {
-        target.Text = newtext;
+      let target = model.Preamble.Paragraphs.find(n => n.ID == paragraph.ID);
+      if (target != null && target.Text != paragraph.Text) {
+        target.Text = paragraph.Text;
       }
     });
 
@@ -312,21 +312,16 @@ export class ResolutionService {
     this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeCommittee', options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
+  public changeOperativeParagraph(paragraph: OperativeSection) {
+    
+    this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection?auth=' + this.userService.getAuthOrDefault(),
+      paragraph).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
 
-  public changePreambleParagraph(resolutionid: string, paragraphid: string, newtext: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
-    let headers = new HttpHeaders();
-    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
-    headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('paragraphid', paragraphid);
-    headers = headers.set('newtext', encodeURI(newtext + '|'));
-    let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/ChangePreambleParagraph',
-      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  public changePreambleParagraph(paragraph: PreambleParagraph) {
+    console.log(paragraph);
+    this.httpClient.put<PreambleParagraph>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraph?auth=' + this.userService.getAuthOrDefault(),
+      paragraph).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public movePrembleParagraphUp(resolutionid: string, paragraphid: string) {
@@ -477,10 +472,7 @@ export class ResolutionService {
       options);
   }
 
-  public changeOperativeParagraph(paragraph: OperativeSection) {
-    this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection?auth=' + this.userService.getAuthOrDefault(),
-      paragraph).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
-  }
+  
 
   public changePublicReadMode(resolutionid: string, mode: boolean) {
     if (this.userService.isLoggedIn) {

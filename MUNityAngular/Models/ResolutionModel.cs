@@ -59,7 +59,20 @@ namespace MUNityAngular.Models
 
         public string SubmitterID { get; set; }
 
-        public PreambleModel Preamble { get; set; }
+        private PreambleModel _preamble;
+        public PreambleModel Preamble
+        {
+            get => _preamble; 
+            set
+            {
+                this._preamble = value;
+                this._preamble.ResolutionID = this.ID;
+                foreach(var e in value.Paragraphs)
+                {
+                    e.ResolutionID = this.ID;
+                }
+            }
+        }
 
         public string OnlineCode { get; set; }
 
@@ -89,6 +102,7 @@ namespace MUNityAngular.Models
             Supporters = new ObservableCollection<DelegationModel>();
             Amendments = new ObservableCollection<AbstractAmendment>();
             Preamble = new PreambleModel();
+            Preamble.ResolutionID = this.ID;
             OperativeSections.CollectionChanged += OperativeSections_CollectionChanged;
             Amendments.CollectionChanged += Amendments_CollectionChanged;
         }

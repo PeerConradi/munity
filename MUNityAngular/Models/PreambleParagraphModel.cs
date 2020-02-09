@@ -15,6 +15,8 @@ namespace MUNityAngular.Models
 
         public string Text { get; set; }
 
+        public string ResolutionID { get; set; }
+
         [JsonIgnore]
         [BsonIgnore]
         public PreambleModel Preamble { get; set; }
@@ -46,6 +48,7 @@ namespace MUNityAngular.Models
         {
             Preamble = preamble;
             ID = Guid.NewGuid().ToString();
+            this.ResolutionID = preamble.ResolutionID;
         }
 
         public override string ToString()

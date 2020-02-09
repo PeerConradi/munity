@@ -3,46 +3,50 @@
 </div>
 
 <div *ngIf="resolution" class="container">
-    <div class="title-section">
-        <h3> {{ resolution.Topic }}</h3>
-        <p>Einbringer: {{ resolution.SubmitterName }}</p>
-        <p>Unterstützer: </p>
-        <ng-container *ngFor="let name of resolution.SupporterNames">{{ name }}, </ng-container>
-        <br />
-        <br />
-        <b>{{ resolution.CommitteeName | uppercase }},</b>
-        <br />
-    </div>
-
-    <p class="operative-paragraph-text" *ngFor="let pre of resolution.Preamble.Paragraphs"> {{ pre.Text }} </p>
-
-    <div *ngFor="let oa of resolution.OperativeSections" [class.bg-success]="oa.IsVirtual === true" [class.text-white]="oa.IsVirtual === true">
-      <!-- Kopfzeile -->
-      <p *ngIf="oa.IsVirtual === false" class="operative-paragraph-title">
-        <span >
-          {{ oa.Path }}.
-        </span>
-        <span class=" badge badge-secondary">
-          Änderungsanträge: {{ oa.DeleteAmendmentCount}}
-          Streichen,
-          {{ oa.ChangeAmendmentCount }}
-          Textänderung,
-          {{ oa.MoveAmendmentCount }} Verschieben
-        </span>
-      </p>
-
-
-      <markdown *ngIf="activeAmendment(oa)==null" class="operative-paragraph-text" [data]="oa.Text"></markdown>
-      <!-- Wenn dieser Absatz gesrichen oder Verschoben werden soll -->
-      <div *ngIf="activeAmendment(oa)!=null && (activeAmendment(oa).Type==='delete' || activeAmendment(oa).Type==='move')" style="margin-top: -20px; " class="operative-paragraph-text">
-        <markdown style="text-decoration: line-through; color: darkred;" [data]="oa.Text"></markdown>
-        <p>Einbringer: {{ activeAmendment(oa).SubmitterName }}</p>
-      </div>
-      <div *ngIf="activeAmendment(oa)!=null && activeAmendment(oa).Type==='change'">
-        <p style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text.replace('\n','<br />') }}</p>
-        <p class="operative-paragraph-text" style="color: darkgreen;">{{ activeChangeAmendment(oa).NewText }}</p>
-      </div>
-
+  <div class="title-section">
+      <h3> {{ resolution.Topic }}</h3>
+      <p>Einbringer: {{ resolution.SubmitterName }}</p>
+      <p>Unterstützer: </p>
+      <ng-container *ngFor="let name of resolution.SupporterNames">{{ name }}, </ng-container>
       <br />
+      <br />
+      <b>{{ resolution.CommitteeName | uppercase }},</b>
+      <br />
+  </div>
+
+  <!-- Präambel -->
+  <div *ngFor="let pre of resolution.Preamble.Paragraphs">
+    <markdown class="operative-paragraph-text" [data]="pre.Text"></markdown>
+    <br />
+  </div>
+
+  <div *ngFor="let oa of resolution.OperativeSections" [class.bg-success]="oa.IsVirtual === true" [class.text-white]="oa.IsVirtual === true">
+    <!-- Kopfzeile -->
+    <p *ngIf="oa.IsVirtual === false" class="operative-paragraph-title">
+      <span >
+        {{ oa.Path }}.
+      </span>
+      <span class=" badge badge-secondary">
+        Änderungsanträge: {{ oa.DeleteAmendmentCount}}
+        Streichen,
+        {{ oa.ChangeAmendmentCount }}
+        Textänderung,
+        {{ oa.MoveAmendmentCount }} Verschieben
+      </span>
+    </p>
+
+
+    <markdown *ngIf="activeAmendment(oa)==null" class="operative-paragraph-text" [data]="oa.Text"></markdown>
+    <!-- Wenn dieser Absatz gesrichen oder Verschoben werden soll -->
+    <div *ngIf="activeAmendment(oa)!=null && (activeAmendment(oa).Type==='delete' || activeAmendment(oa).Type==='move')" style="margin-top: -20px; " class="operative-paragraph-text">
+      <markdown style="text-decoration: line-through; color: darkred;" [data]="oa.Text"></markdown>
+      <p>Einbringer: {{ activeAmendment(oa).SubmitterName }}</p>
     </div>
+    <div *ngIf="activeAmendment(oa)!=null && activeAmendment(oa).Type==='change'">
+      <p style="margin-top: -20px; text-decoration: line-through; color: darkred;" class="operative-paragraph-text">{{ oa.Path }} {{ oa.Text.replace('\n','<br />') }}</p>
+      <p class="operative-paragraph-text" style="color: darkgreen;">{{ activeChangeAmendment(oa).NewText }}</p>
+    </div>
+
+    <br />
+  </div>
 </div>

@@ -11,10 +11,13 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public string Text { get; set; }
 
+        public string ResolutionID { get; set; }
+
         public HUBPreambleParagraph(Models.PreambleParagraphModel p)
         {
             this.ID = p.ID;
             this.Text = p.Text;
+            this.ResolutionID = p.ResolutionID;
         }
 
         public HUBPreambleParagraph()

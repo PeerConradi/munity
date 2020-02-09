@@ -12,7 +12,20 @@ namespace MUNityAngular.Models
     {
         public string ID { get; set; }
 
-        public ObservableCollection<PreambleParagraphModel> Paragraphs { get; set; }
+        public string ResolutionID { get; set; }
+
+        private ObservableCollection<PreambleParagraphModel> _paragraphs;
+        public ObservableCollection<PreambleParagraphModel> Paragraphs { 
+            get => _paragraphs;
+            set 
+            {
+                this._paragraphs = value;
+                foreach(var e in value)
+                {
+                    e.ResolutionID = this.ResolutionID;
+                }
+            } 
+        }
 
         public PreambleModel()
         {
@@ -29,6 +42,10 @@ namespace MUNityAngular.Models
                     l.Preamble = this;
                 }
             }
+            foreach(var p in Paragraphs)
+            {
+                p.ResolutionID = this.ResolutionID;
+            }
             
         }
 
@@ -36,6 +53,7 @@ namespace MUNityAngular.Models
         {
             PreambleParagraphModel paragraph = new PreambleParagraphModel(this);
             paragraph.Text = text;
+            paragraph.ResolutionID = this.ResolutionID;
             Paragraphs.Add(paragraph);
             return paragraph;
         }

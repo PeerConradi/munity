@@ -16,7 +16,7 @@
   <h1>{{ resolution.Topic }}</h1>
   <h2>Präambel</h2>
   <div *ngFor="let preamble of resolution.Preamble.Paragraphs" class="card col-12">
-    <p>{{ preamble.Text }}</p>
+    <markdown [data]="preamble.Text"></markdown>
   </div>
   <h2>Operativer Abschnitt</h2>
   <div *ngFor="let operative of resolution.OperativeSections" class="col-12 card">
@@ -32,7 +32,7 @@
         Verschieben <span class="badge badge-light"> {{ operative.MoveAmendmentCount }}</span>
       </button>
     </div>
-    <p>{{ operative.Text }} </p>
+    <markdown [data]="operative.Text"></markdown>
   </div>
 </div>
 
