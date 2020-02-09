@@ -106,6 +106,27 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
+        public IActionResult AddQuestionToList([FromHeader]string auth,
+            [FromHeader]string listid, [FromHeader]string delegationid,
+            [FromServices]SpeakerlistService speakerlistService,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var delegation = conferenceService.GetDelegation(delegationid);
+            if (delegation == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Delegation not found!");
+
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+
+            speakerlist.AddQuestion(delegation);
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
+            return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
+        }
+
+        [Route("[action]")]
+        [HttpGet]
         public IActionResult RemoveSpeakerFromList([FromHeader]string auth,
             [FromHeader]string listid, [FromHeader]string delegationid,
             [FromServices]AuthService authService,

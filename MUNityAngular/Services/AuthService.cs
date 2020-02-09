@@ -45,7 +45,7 @@ namespace MUNityAngular.Services
                 connection.Open();
                 string userid = string.Empty;
                 var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@username", username.ToLower());
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -265,11 +265,11 @@ namespace MUNityAngular.Services
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@id", username);
-                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@id", username.ToLower());
+                cmd.Parameters.AddWithValue("@username", username.ToLower());
                 cmd.Parameters.AddWithValue("@password", hash.Key);
                 cmd.Parameters.AddWithValue("@salt", hash.Salt);
-                cmd.Parameters.AddWithValue("@mail", email);
+                cmd.Parameters.AddWithValue("@mail", email.ToLower());
                 cmd.Parameters.AddWithValue("@registerdate", DateTime.Now);
                 cmd.Parameters.AddWithValue("@status", "OK");
                 cmd.ExecuteNonQuery();
@@ -305,7 +305,7 @@ namespace MUNityAngular.Services
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@username", username.ToLower());
                 using (var reader = cmd.ExecuteReader())
                 {
                     if (reader.HasRows)

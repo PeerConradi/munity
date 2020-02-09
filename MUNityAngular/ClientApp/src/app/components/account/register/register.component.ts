@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { Registration } from '../../../models/registration.model';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-register',
@@ -14,19 +16,32 @@ export class RegisterComponent implements OnInit {
   error = false;
   loading = false;
 
-  constructor(private formBuilder: FormBuilder, private authService: UserService) { }
+  constructor(private formBuilder: FormBuilder, private authService: UserService, private notifier: NotifierService) { }
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
       username: ['', Validators.required],
-      email: ['', Validators.required],
+      email: ['', Validators.required, Validators.email],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmpassword: ['', [Validators.required, Validators.minLength(6)]],
       agb: [false, Validators.pattern('true')]
     });
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.registerForm.controls; }
+
+  checkUsername() {
+    const data = this.registerForm.value;
+    const username = data.username;
+    this.authService.checkUsername(username).subscribe(n => {
+      if (n == true) {
+        this.f.username.setErrors({ 'taken': true });
+      } else {
+        this.f.username.setErrors({ 'taken': false });
+      }
+    });
+  }
 
   onSubmit() {
     this.submitted = true;
@@ -36,12 +51,21 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
+    
+    let data = this.registerForm.value;
+
+    if (data.password != data.confirmpassword) {
+      this.f.password.setErrors({'incorrect': true});
+      this.f.confirmpassword.setErrors({ 'incorrect': true });
+      return;
+    }
 
     this.loading = true;
-
-
-    let data = this.registerForm.value;
-    this.authService.register(data.username, data.password, data.email).subscribe(
+    const model: Registration = new Registration();
+    model.Username = data.username;
+    model.Password = data.password;
+    model.Mail = data.email;
+    this.authService.register(model).subscribe(
       msg => { this.created = true; this.loading = false; },
       error => { this.error = true; this.loading = false; });
   }

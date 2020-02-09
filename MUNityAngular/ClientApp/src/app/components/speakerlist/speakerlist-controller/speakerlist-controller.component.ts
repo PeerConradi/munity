@@ -19,12 +19,14 @@ export class SpeakerlistControllerComponent implements OnInit {
   public speakerlist: Speakerlist;
 
   addSpeakerSelection: string;
+  addQuestionSelection: string;
   presetDelegations: Delegation[] = [];
 
   addGuestSpeakerModalOpened = false;
   secretaryModalOpened = false;
   interval: NodeJS.Timeout;
   timeLeft: number;
+  deleteItems: any;
 
 
   constructor(private conferenceService: ConferenceServiceService,
@@ -48,6 +50,7 @@ export class SpeakerlistControllerComponent implements OnInit {
       this.speakerlistService.getSpeakerlistById(id).subscribe(list => {
         //In the beginning the object should be set, because TimeSpan is not correctly converted.
         const remainingTimeString: string = list.RemainingSpeakerTime.toString();
+        const remainingQuestionTimeString: string = list.RemainingQuestionTime.toString();
 
         this.speakerlist = list;
         this.speakerlistService.subscribeToSpeakerlist(list.PublicId.toString());
@@ -58,6 +61,9 @@ export class SpeakerlistControllerComponent implements OnInit {
         const sTime = new TimeSpan(0,0,0,0,0);
         sTime.fromString(remainingTimeString);
         this.speakerlist.RemainingSpeakerTime = sTime;
+        const qTime = new TimeSpan(0, 0, 0, 0, 0);
+        qTime.fromString(remainingQuestionTimeString);
+        this.speakerlist.RemainingQuestionTime = qTime;
       })
     }
 
@@ -81,36 +87,21 @@ export class SpeakerlistControllerComponent implements OnInit {
     console.log(newOrder);
   }
 
-  removeSpeaker(id) {
-    //let index = -1;
-    //this.speakers.forEach(n => {
-    //  if (n.ID == id) {
-    //    index = this.speakers.indexOf(n);
-    //  }
-    //});
-    //if (index !== -1) {
-    //  this.speakers.splice(index, 1);
-    //}
-    this.speakerlistService.removeSpeaker(this.speakerlist.ID, id);
+  removeSpeaker() {
+    console.log('Remove Speaker:');
+    console.log(this.deleteItems);
+    //this.speakerlistService.removeSpeaker(this.speakerlist.ID, id);
   }
 
   addSpeaker() {
-    console.log('add Speaker');
-    //console.log(this.addSpeakerSelection);
     const s = this.presetDelegations.find(n => n.Name == this.addSpeakerSelection);
-    //console.log(s);
-    //const list: Delegation[] = [];
-    //this.speakers.forEach(n => {
-    //  list.push(n);
-    //});
-    //if (s != null) {
-    //  list.push(s);
-    //}
-    //this.speakers = list;
-    //console.log(this.speakers);
-    this.speakerlistService.addSpeaker(this.speakerlist.ID, s.ID).subscribe(n => {
-      this.notifier.notify('success', s.Name + " zur Redeliste hinzufügt.");
-    });
+    this.speakerlistService.addSpeaker(this.speakerlist.ID, s.ID).subscribe();
+  }
+
+  addQuestion() {
+    console.log('add Question')
+    const s = this.presetDelegations.find(n => n.Name == this.addQuestionSelection);
+    this.speakerlistService.addQuestion(this.speakerlist.ID, s.ID).subscribe();
   }
 
   nextSpeaker() {

@@ -60,6 +60,16 @@ export class SpeakerListService {
       options);
   }
 
+  public addQuestion(listid: string, delegationid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    headers = headers.set('delegationid', delegationid);
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/AddQuestionToList',
+      options);
+  }
+
   public nextSpeaker(listid: string) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());

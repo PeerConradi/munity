@@ -513,6 +513,7 @@ namespace MUNityAngular.Services
             var list = new List<DelegationModel>();
             using (var connection = Connector.Connection)
             {
+                //Anhängen der ISO
                 var cmdStr = "SELECT delegation.* FROM delegation INNER JOIN conference_delegation ON conference_delegation.delegation_id = delegation.id WHERE conference_id=@conferenceid";
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -528,6 +529,7 @@ namespace MUNityAngular.Services
             }
             return list;
         }
+
         #endregion
 
         public ConferenceService()

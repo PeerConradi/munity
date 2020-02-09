@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Session } from 'inspector';
 import { resolve } from 'dns';
+import { Registration } from '../models/registration.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,14 +43,12 @@ export class UserService {
     localStorage.setItem('munity_session_key', val);
   }
 
-  public register(username: string, password: string, email: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('username', username);
-    headers = headers.set('password', password);
-    headers = headers.set('email', email);
-    let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/User/Register',
-      options);
+  public register(model: Registration) {
+    return this.http.put(this.baseUrl + 'api/User/Register', model);
+  }
+
+  public checkUsername(username: string) {
+    return this.http.get<boolean>(this.baseUrl + 'api/User/CheckUsername?username=' + username);
   }
 
   public changePassword(oldpassword: string, newpassword: string) {

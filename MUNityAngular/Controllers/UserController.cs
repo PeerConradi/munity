@@ -14,7 +14,7 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        [HttpGet]
+        [HttpPut]
         [Route("[action]")]
         public IActionResult Register([FromBody]RegistrationModel model,
             [FromServices]AuthService authService)
@@ -116,6 +116,16 @@ namespace MUNityAngular.Controllers
             {
                 return StatusCode(StatusCodes.Status200OK, false);
             }
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult CheckUsername(string username, [FromServices]AuthService authService)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return StatusCode(StatusCodes.Status406NotAcceptable, "The username cannot be empty.");
+            var result = !authService.UsernameAvailable(username);
+            return StatusCode(StatusCodes.Status200OK, result);
         }
 
 
