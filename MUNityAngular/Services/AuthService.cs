@@ -1,5 +1,6 @@
 ﻿using MUNityAngular.DataHandlers.Database;
-using MUNityAngular.Models;
+using MUNityAngular.Models.User;
+using MUNityAngular.Models.Resolution;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;

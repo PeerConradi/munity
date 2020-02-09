@@ -10,6 +10,7 @@ import { AmendmentInspector } from '../../../models/amendment-inspector';
 import { Title } from '@angular/platform-browser';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
 import { Delegation } from '../../../models/delegation.model';
+import { AddAmendment } from '../../../models/add-amendment.model';
 
 @Component({
   selector: 'app-editor',
@@ -191,7 +192,12 @@ export class EditorComponent implements OnInit {
     } else if (type === 'move') {
       this.service.addMoveAmendment(this.model.ID, target.ID, this.newamendmentDelegation, this.amendmentTargetPosition);
     } else if (type === 'add') {
-      this.service.addAddAmendment(this.model.ID, this.newamendmentDelegation, this.amendmentTargetPosition, newText);
+      const amendment = new AddAmendment();
+      amendment.TargetResolutionID = this.resolution.ID;
+      amendment.SubmitterName = this.newamendmentDelegation;
+      amendment.NewText = newText;
+      amendment.TargetPosition = this.amendmentTargetPosition;
+      this.service.addAddAmendment(amendment);
     }
 
     this.amendmentModalActive = false;

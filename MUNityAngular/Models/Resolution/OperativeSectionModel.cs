@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace MUNityAngular.Models
+namespace MUNityAngular.Models.Resolution
 {
 
     /// <summary>
@@ -456,7 +456,7 @@ namespace MUNityAngular.Models
             UpdatePath();
         }
 
-        public IEnumerable<Models.OperativeParagraphModel> GetChildren()
+        public IEnumerable<OperativeParagraphModel> GetChildren()
         {
             return Resolution.OperativeSections.Where(n => n.ParentID == this.ID);
         }

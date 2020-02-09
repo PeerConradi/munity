@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
@@ -21,7 +22,7 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public string Type { get; set; }
 
-        public HUBAbstractAmendment(Models.AbstractAmendment amendment)
+        public HUBAbstractAmendment(AbstractAmendment amendment)
         {
             this.ID = amendment.ID;
             this.Name = amendment.Name;

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MUNityAngular.Util.Extenstions;
 
-namespace MUNityAngular.Models
+namespace MUNityAngular.Models.Resolution
 {
     public class PreambleParagraphModel
     {

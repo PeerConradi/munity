@@ -9,7 +9,7 @@ using System.Net;
 using MUNityAngular.DataHandlers.Database;
 
 
-namespace MUNityAngular.Models
+namespace MUNityAngular.Models.Conference
 {
 
     public class DelegationModel

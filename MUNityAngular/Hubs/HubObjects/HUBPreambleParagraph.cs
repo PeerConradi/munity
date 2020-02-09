@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
@@ -13,7 +14,7 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public string ResolutionID { get; set; }
 
-        public HUBPreambleParagraph(Models.PreambleParagraphModel p)
+        public HUBPreambleParagraph(PreambleParagraphModel p)
         {
             this.ID = p.ID;
             this.Text = p.Text;

@@ -13,6 +13,7 @@ import { AmendmentInspector } from '../models/amendment-inspector';
 import { ChangeAmendment } from '../models/change-amendment.model';
 import { NotifierService } from 'angular-notifier';
 import { ResolutionAdvancedInfo } from '../models/resolution-advanced-info.model';
+import { AddAmendment } from '../models/add-amendment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +27,6 @@ export class ResolutionService {
   private connectionid: string;
 
   public hasError: boolean = false;
-
-
 
   //public resolution: Resolution;
 
@@ -562,17 +561,9 @@ export class ResolutionService {
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
-  public addAddAmendment(resolutionid: string, submitter: string, newPosition: number, newText: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('content-type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('submittername', encodeURI(submitter + '|'));
-    headers = headers.set('newposition', newPosition.toString());
-    headers = headers.set('newtext', encodeURI(newText + '|'));
-    let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/AddAddAmendment',
-      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  public addAddAmendment(amendment: AddAmendment) {
+    this.httpClient.put<AddAmendment>(this.baseUrl + 'api/Resolution/AddAddAmendment?auth=' + this.userService.getAuthOrDefault(),
+      amendment).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   removeAmendment(resolutionid: string, amendmentid: string) {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using MUNityAngular.Util.Extenstions;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MUNityAngular.Models
+namespace MUNityAngular.Models.Resolution
 {
     public class MoveAmendment : AbstractAmendment
     {

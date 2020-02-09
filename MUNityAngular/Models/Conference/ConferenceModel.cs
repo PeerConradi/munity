@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using MUNityAngular.DataHandlers.Database;
 
-namespace MUNityAngular.Models
+namespace MUNityAngular.Models.Conference
 {
 
     /// <summary>

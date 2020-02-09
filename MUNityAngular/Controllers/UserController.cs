@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MUNityAngular.Models.User;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 
@@ -15,13 +16,13 @@ namespace MUNityAngular.Controllers
     {
         [HttpGet]
         [Route("[action]")]
-        public IActionResult Register([FromHeader]string username, [FromHeader]string password, [FromHeader]string email,
+        public IActionResult Register([FromBody]RegistrationModel model,
             [FromServices]AuthService authService)
         {
             if (!authService.IsRegistrationOpened)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to create an account. The administrator disabled the registration.");
 
-            var status = authService.Register(username, password, email);
+            var status = authService.Register(model.Username, model.Password, model.Mail);
             if (status)
                 return StatusCode(StatusCodes.Status200OK);
             else

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
@@ -31,7 +32,7 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public int Level { get; set; }
 
-        public HUBOperativeParagraph(Models.OperativeParagraphModel oa)
+        public HUBOperativeParagraph(OperativeParagraphModel oa)
         {
             this.ID = oa.ID;
             this.Name = oa.Name;

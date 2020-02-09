@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Resolution;
+using MUNityAngular.Models.Conference;
 
 namespace MUNityAngular.Models
 {
@@ -80,7 +82,7 @@ namespace MUNityAngular.Models
             switch (e.Action)
             {
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-                    foreach(var o in e.NewItems.OfType<Models.DelegationModel>())
+                    foreach(var o in e.NewItems.OfType<DelegationModel>())
                     {
                         Remaining.Add(o);
                     }

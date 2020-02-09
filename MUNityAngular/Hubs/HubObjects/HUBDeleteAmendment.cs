@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
     public class HUBDeleteAmendment : HUBAbstractAmendment
     {
-        public HUBDeleteAmendment(Models.DeleteAmendmentModel amendment) : base(amendment)
+        public HUBDeleteAmendment(DeleteAmendmentModel amendment) : base(amendment)
         {
             //No Custom Parameters here
         }

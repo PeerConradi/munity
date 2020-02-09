@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
+using MUNityAngular.Models.Conference;
 
-namespace MUNityAngular.Models
+namespace MUNityAngular.Models.Resolution
 {
     public class ResolutionModel
     {
@@ -191,7 +192,7 @@ namespace MUNityAngular.Models
             
         }
 
-        public OperativeParagraphModel AddOperativeParagraph(Models.OperativeParagraphModel paragraphModel)
+        public OperativeParagraphModel AddOperativeParagraph(OperativeParagraphModel paragraphModel)
         {
             paragraphModel.ResolutionID = this.ID;
             paragraphModel.Resolution = this;

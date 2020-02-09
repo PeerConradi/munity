@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.DataHandlers.Database;
-using MUNityAngular.Models;
 using MySql.Data.MySqlClient;
+using MUNityAngular.Models.Conference;
+using MUNityAngular.Models.User;
 
 namespace MUNityAngular.Services
 {
@@ -15,7 +16,7 @@ namespace MUNityAngular.Services
         private const string conference_user_auth_table_name = "conference_user_auth";
         private const string committee_table_name = "committee";
 
-        private List<Models.ConferenceModel> conferences = new List<Models.ConferenceModel>();
+        private List<ConferenceModel> conferences = new List<ConferenceModel>();
         private void LoadConferencesFromDatabase()
         {
             var list = new List<ConferenceModel>();

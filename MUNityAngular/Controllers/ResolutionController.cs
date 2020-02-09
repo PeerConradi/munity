@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
+using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Controllers
 {
@@ -114,44 +115,6 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong, this should not have appened");
 
         }
-
-        //[Route("[action]")]
-        //[HttpGet]
-        //public IActionResult ChangePreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
-        //    [FromHeader]string paragraphid, [FromHeader]string newtext,
-        //    [FromServices]Services.ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
-        //{
-        //    var realText = newtext.DecodeUrl();
-
-        //    var resolution = resolutionService.GetResolution(resolutionid);
-        //    if (resolution == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
-
-        //    if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
-        //        return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
-
-        //    if (resolution != null)
-        //    {
-        //        var newPP = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
-        //        if (newPP != null)
-        //        {
-        //            newPP.Text = realText;
-        //            var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
-        //            resolutionService.RequestSave(resolution);
-        //            _hubContext.Clients.Group(resolutionid).PreambleParagraphChanged(newPP.ID, newPP.Text);
-        //            return StatusCode(StatusCodes.Status200OK, json);
-        //        }
-        //        else
-        //        {
-        //            return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return StatusCode(StatusCodes.Status404NotFound, "Resolution not found");
-        //    }
-        //}
 
         [Route("[action]")]
         [HttpPut]
@@ -523,7 +486,7 @@ namespace MUNityAngular.Controllers
             if (section == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
 
-            var amendment = new Models.DeleteAmendmentModel();
+            var amendment = new DeleteAmendmentModel();
             amendment.SubmitterName = submittername.DecodeUrl();
             amendment.TargetSection = section;
 
@@ -553,7 +516,7 @@ namespace MUNityAngular.Controllers
             if (section == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
 
-            var amendment = new Models.ChangeAmendmentModel();
+            var amendment = new ChangeAmendmentModel();
             amendment.SubmitterName = submittername.DecodeUrl();
             amendment.NewText = realText;
             amendment.TargetSection = section;
@@ -585,7 +548,7 @@ namespace MUNityAngular.Controllers
 
             if (int.TryParse(newposition, out int np))
             {
-                var amendment = new Models.MoveAmendment();
+                var amendment = new MoveAmendment();
                 amendment.SubmitterName = submittername.DecodeUrl();
                 amendment.NewPosition = np;
                 amendment.TargetSection = section;
@@ -599,35 +562,31 @@ namespace MUNityAngular.Controllers
         }
 
         [Route("[action]")]
-        [HttpGet]
-        public IActionResult AddAddAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
-            [FromHeader]string submittername, [FromHeader]string newposition,
-            [FromHeader]string newtext,
+        [HttpPut]
+        public IActionResult AddAddAmendment([FromQuery]string auth, [FromBody]Hubs.HubObjects.HUBAddAmendment amendment,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
 
-            var resolution = resolutionService.GetResolution(resolutionid);
+            var resolution = resolutionService.GetResolution(amendment.TargetResolutionID);
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            if (int.TryParse(newposition, out int np))
-            {
-                var amendment = new Models.AddAmendmentModel();
-                amendment.SubmitterName = submittername.DecodeUrl();
-                amendment.TargetPosition = np;
-                amendment.NewText = newtext.DecodeUrl();
-                amendment.TargetResolution = resolution;
+            var model = new AddAmendmentModel();
+            model.SubmitterName = amendment.SubmitterName;
+            model.TargetPosition = amendment.TargetPosition;
+            model.NewText = amendment.NewText;
+            model.TargetResolution = resolution;
 
-                resolutionService.RequestSave(resolution);
+            resolutionService.RequestSave(resolution);
 
-                _hubContext.Clients.Group(resolutionid).AddAmendmentAdded(new Hubs.HubObjects.HUBResolution(resolution), new Hubs.HubObjects.HUBAddAmendment(amendment));
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            return StatusCode(StatusCodes.Status406NotAcceptable, "The new Position has to be a number!");
+            //The amendment gets its ID From the Controller thats why we create a new model.
+            _hubContext.Clients.Group(resolution.ID).AddAmendmentAdded(new Hubs.HubObjects.HUBResolution(resolution), new Hubs.HubObjects.HUBAddAmendment(model));
+            return StatusCode(StatusCodes.Status200OK);
+            
         }
 
         [Route("[action]")]

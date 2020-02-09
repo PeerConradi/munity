@@ -9,6 +9,7 @@ using MUNityAngular.Models;
 using MUNityAngular.Services;
 using Newtonsoft.Json;
 using MUNityAngular.Util.Extenstions;
+using MUNityAngular.Models.Conference;
 
 namespace MUNityAngular.Controllers
 {

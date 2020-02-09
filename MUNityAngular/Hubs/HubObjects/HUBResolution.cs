@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.Util.Extenstions;
+using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
@@ -35,7 +36,7 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public List<HUBOperativeParagraph> OperativeSections { get; set; }
 
-        public HUBResolution(Models.ResolutionModel resolution)
+        public HUBResolution(ResolutionModel resolution)
         {
             this.ID = resolution.ID;
             this.Name = resolution.Name;

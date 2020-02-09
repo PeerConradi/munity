@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.DataHandlers.Database;
 
-namespace MUNityAngular.Models
+namespace MUNityAngular.Models.Resolution
 {
     public class ResolutionAdvancedInfoModel : ResolutionInformationModel
     {

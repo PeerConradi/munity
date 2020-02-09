@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
@@ -11,7 +12,7 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public string NewSectionID { get; set; }
 
-        public HUBMoveAmendment(Models.MoveAmendment amendment) : base (amendment)
+        public HUBMoveAmendment(MoveAmendment amendment) : base (amendment)
         {
             this.NewPosition = amendment.NewPosition;
             this.NewSectionID = amendment.NewSectionID;

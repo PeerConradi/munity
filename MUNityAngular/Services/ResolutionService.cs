@@ -8,6 +8,7 @@ using System.Threading;
 using Microsoft.AspNetCore.SignalR;
 using MUNityAngular.DataHandlers.Database;
 using MongoDB.Driver;
+using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Services
 {
@@ -19,11 +20,11 @@ namespace MUNityAngular.Services
 
         //private List<Models.ResolutionModel> resolutions = new List<Models.ResolutionModel>();
 
-        private readonly IMongoCollection<Models.ResolutionModel> _resolutions;
+        private readonly IMongoCollection<ResolutionModel> _resolutions;
 
-        public Models.ResolutionModel CreateResolution(bool isPublicReadable = false, bool isPublicWriteable = false, string userid = "anon")
+        public ResolutionModel CreateResolution(bool isPublicReadable = false, bool isPublicWriteable = false, string userid = "anon")
         {
-            var resolution = new Models.ResolutionModel();
+            var resolution = new ResolutionModel();
             this._resolutions.InsertOne(resolution);
             //resolutions.Add(resolution);
             //Add To database
@@ -73,13 +74,13 @@ namespace MUNityAngular.Services
             }
         }
 
-        public void RequestSave(Models.ResolutionModel resolution)
+        public void RequestSave(ResolutionModel resolution)
         {
             
             this._resolutions.ReplaceOne(n => n.ID == resolution.ID, resolution);
         }
 
-        public Models.ResolutionModel GetResolution(string id)
+        public ResolutionModel GetResolution(string id)
         {
             var resolution = this._resolutions.Find(n => n.ID == id).FirstOrDefault();
             return resolution;
@@ -117,9 +118,9 @@ namespace MUNityAngular.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Touple with infos publicid is null when the resolution can not be found!</returns>
-        public Models.ResolutionAdvancedInfoModel GetResolutionInfoForId(string id)
+        public ResolutionAdvancedInfoModel GetResolutionInfoForId(string id)
         {
-            Models.ResolutionAdvancedInfoModel model = null;
+            ResolutionAdvancedInfoModel model = null;
             using (var connection = Connector.Connection)
             {
                 var cmdStr = "SELECT * FROM resolution WHERE id=@id";
@@ -136,7 +137,7 @@ namespace MUNityAngular.Services
                     {
                         while (reader.Read())
                         {
-                            model = new Models.ResolutionAdvancedInfoModel();
+                            model = new ResolutionAdvancedInfoModel();
                             model.ID = id;
                             model.Name = reader.GetString("name");
                             model.OnlineCode = reader.GetString("onlinecode");
@@ -227,9 +228,9 @@ namespace MUNityAngular.Services
             return publicid;
         }
 
-        public Models.ResolutionModel GetResolutionFromJson(string json)
+        public ResolutionModel GetResolutionFromJson(string json)
         {
-            var resolution = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.ResolutionModel>(json);
+            var resolution = Newtonsoft.Json.JsonConvert.DeserializeObject<ResolutionModel>(json);
             return resolution;
         }
 
@@ -248,7 +249,7 @@ namespace MUNityAngular.Services
         }
 
         
-        private bool SaveResolutionInDatabase(Models.ResolutionModel resolution, bool pread, bool pwrite, string userid = "anon")
+        private bool SaveResolutionInDatabase(ResolutionModel resolution, bool pread, bool pwrite, string userid = "anon")
         {
             using (var connection = Connector.Connection)
             {
@@ -281,10 +282,10 @@ namespace MUNityAngular.Services
         /// </summary>
         /// <param name="userid"></param>
         /// <returns>a touple with the first value as the id, and the second value is the name</returns>
-        internal List<Models.ResolutionAdvancedInfoModel> GetResolutionsOfUser(string userid)
+        internal List<ResolutionAdvancedInfoModel> GetResolutionsOfUser(string userid)
         {
             var cmdStr = "SELECT * FROM " + resolution_table_name + " WHERE user=@userid";
-            var list = new List<Models.ResolutionAdvancedInfoModel>();
+            var list = new List<ResolutionAdvancedInfoModel>();
             using (var connection = Connector.Connection)
             {
                 connection.Open();
@@ -294,7 +295,7 @@ namespace MUNityAngular.Services
                 {
                     while (reader.Read())
                     {
-                        list.Add(DataReaderConverter.ObjectFromReader<Models.ResolutionAdvancedInfoModel>(reader));
+                        list.Add(DataReaderConverter.ObjectFromReader<ResolutionAdvancedInfoModel>(reader));
                     }
                 }
             }
@@ -323,7 +324,7 @@ namespace MUNityAngular.Services
             var client = new MongoClient(connectionString);
             var database = client.GetDatabase(databaseString);
 
-            this._resolutions = database.GetCollection<Models.ResolutionModel>(resolutionTableString);
+            this._resolutions = database.GetCollection<ResolutionModel>(resolutionTableString);
 
             Console.WriteLine("Resolution Service Started!");
         }

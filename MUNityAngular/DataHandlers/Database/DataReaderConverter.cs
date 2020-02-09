@@ -39,12 +39,10 @@ namespace MUNityAngular.DataHandlers.Database
                             {
                                 setPropertySuccess = element.SetProperty(property.Name, reader.GetString(columnname));
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 setPropertySuccess = element.SetProperty(property.Name, string.Empty);
                             }
-
-                                
                         }
                             
                         else if (propType == typeof(DateTime))
