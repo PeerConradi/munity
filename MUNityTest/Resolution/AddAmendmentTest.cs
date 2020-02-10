@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MUNityAngular.Models;
+using MUNityAngular.Models.Resolution;
 using NUnit.Framework;
 
 namespace MUNityTest.Resolution
