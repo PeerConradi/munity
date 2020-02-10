@@ -15,7 +15,6 @@ import { PreambleParagraphComponent } from './components/resedit/preamble-paragr
 import { ResOptionsComponent } from './components/resedit/res-options/res-options.component';
 import { AmendmentControllerComponent } from './components/resedit/amendment-controller/amendment-controller.component';
 import { ResolutionHomeComponent } from './components/resedit/resolution-home/resolution-home.component';
-import { SecondaryNavComponent } from './secondary-nav/secondary-nav.component';
 import { DashboardComponent } from './loggedIn/dashboard/dashboard.component';
 import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box.component';
 import { CreateConferenceComponent } from './components/conference/create-conference/create-conference.component';
@@ -53,6 +52,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { ImpressumComponent } from './components/default/impressum/impressum.component';
 
 import { MarkdownModule } from 'ngx-markdown';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
 
 
 @NgModule({
@@ -69,7 +70,6 @@ import { MarkdownModule } from 'ngx-markdown';
     ResOptionsComponent,
     AmendmentControllerComponent,
     ResolutionHomeComponent,
-    SecondaryNavComponent,
     DashboardComponent,
     ConferenceBoxComponent,
     CreateConferenceComponent,
@@ -94,7 +94,8 @@ import { MarkdownModule } from 'ngx-markdown';
     AccountSettingsComponent,
     UserManagementComponent,
     ResolutionsManagementComponent,
-    ImpressumComponent
+    ImpressumComponent,
+    ExploreConferencesComponent
   ],
   imports: [
     RouterModule,
@@ -111,7 +112,8 @@ import { MarkdownModule } from 'ngx-markdown';
     SortableModule.forRoot(),
     TypeaheadModule.forRoot(),
     ModalModule.forRoot(),
-    MarkdownModule.forRoot()
+    MarkdownModule.forRoot(),
+    BsDropdownModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

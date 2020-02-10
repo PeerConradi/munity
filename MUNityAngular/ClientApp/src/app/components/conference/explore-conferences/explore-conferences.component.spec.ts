@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SecondaryNavComponent } from './secondary-nav.component';
+import { ExploreConferencesComponent } from './explore-conferences.component';
 
-describe('SecondaryNavComponent', () => {
-  let component: SecondaryNavComponent;
-  let fixture: ComponentFixture<SecondaryNavComponent>;
+describe('ExploreConferencesComponent', () => {
+  let component: ExploreConferencesComponent;
+  let fixture: ComponentFixture<ExploreConferencesComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SecondaryNavComponent ]
+      declarations: [ ExploreConferencesComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SecondaryNavComponent);
+    fixture = TestBed.createComponent(ExploreConferencesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

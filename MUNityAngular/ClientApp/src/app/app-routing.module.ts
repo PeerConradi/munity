@@ -27,6 +27,7 @@ import { WorkWithResolutionComponent } from './components/resedit/work-with-reso
 import { AccountSettingsComponent } from './components/account/account-settings/account-settings.component';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
 import { ImpressumComponent } from './components/default/impressum/impressum.component';
+import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -64,6 +65,7 @@ const routes: Routes = [
       { path: 'conference/my', component: MyConferencesOverviewComponent },
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
+      { path: 'exploreconferences', component: ExploreConferencesComponent },
 
       //Admin
       { path: 'admin/conferences', component: ConferenceListComponent },

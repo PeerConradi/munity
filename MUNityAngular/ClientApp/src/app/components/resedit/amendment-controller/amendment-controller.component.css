@@ -9,11 +9,11 @@
     grid-row-gap: 0px;
 }
 
-.box-top {
+.amendment-box-top {
     grid-area: 1 / 1 / 2 / 2;
 }
 
-.box-title {
+.amendment-box-title {
     font-weight: 800;
     vertical-align: middle;
 }

@@ -1,7 +1,7 @@
 <header>
-  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-top: -15px;">
     <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">MUNity</a><span class="badge badge-pill badge-primary">ALPHA</span>
+      <a class="navbar-brand" [routerLink]="['/']">MUNity</a><span class="badge badge-pill badge-primary">ALPHA 3</span>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
         aria-label="Toggle navigation" [attr.aria-expanded]="isExpanded" (click)="toggle()">
         <span class="navbar-toggler-icon"></span>
@@ -10,6 +10,9 @@
         <ul class="navbar-nav flex-grow">
           <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
             <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['/exploreconferences']">Konferenzen</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/reshome']">Resolutionen</a>
@@ -23,13 +26,35 @@
           <li>
             <form class="form-inline" *ngIf="!userSerivce.isLoggedIn">
               <button id="loginButton" class="btn btn-outline-success" type="button"
-                [routerLink]="['/login']">Anmelden</button>
+                      [routerLink]="['/login']">
+                Anmelden
+              </button>
               <button id="registerButton" class="btn btn-sm btn-outline-secondary" type="button"
-                [routerLink]="['/register']">Registrieren</button>
+                      [routerLink]="['/register']">
+                Registrieren
+              </button>
             </form>
-            <form class="form-inline" *ngIf="userSerivce.isLoggedIn">
-              <button class="btn btn-outline-danger" type="button" [routerLink]="['/logout']">Logout</button>
-            </form>
+            <!--<form class="form-inline" *ngIf="userSerivce.isLoggedIn">
+      <button class="btn btn-outline-danger" type="button" [routerLink]="['/logout']">Logout</button>
+    </form>-->
+
+            <div class="btn-group" *ngIf="userSerivce.isLoggedIn" dropdown>
+              <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle"
+                      aria-controls="dropdown-basic">
+                Menü <span class="caret"></span>
+              </button>
+              <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+                  role="menu" aria-labelledby="button-basic">
+                <li role="menuitem"><a class="dropdown-item" [routerLink]="['/account/settings']"><fa-icon [icon]="['fas', 'user']"></fa-icon> Mein Profil</a></li>
+                <li role="menuitem"><a class="dropdown-item" [routerLink]="['/conference/my']" href="#"><fa-icon [icon]="['fas', 'flag']"></fa-icon> Meine Konferenzen</a></li>
+                <li role="menuitem"><a class="dropdown-item" [routerLink]="['/mydocs']" href="#"><fa-icon [icon]="['fas', 'file']"></fa-icon> Meine Resolutionen</a></li>
+                <li role="menuitem"><a class="dropdown-item" href="#">Meine Redelisten</a></li>
+                <li class="divider dropdown-divider"></li>
+                <li role="menuitem">
+                  <a class="dropdown-item" [routerLink]="['/logout']">Abmelden</a>
+                </li>
+              </ul>
+            </div>
           </li>
 
         </ul>
