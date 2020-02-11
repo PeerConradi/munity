@@ -16,31 +16,23 @@ export class AdminService {
 
   //Get the Count of Resolutions that exist inside the MongoDb
   public getResolutionMongoDbCount() {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     let options = { headers: headers };
     return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetResolutionMongoCount', options);
   }
 
   //Get the Count of Resolutions that exist inside the MySQL Database.
   public getResolutionDatabaseCount() {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     let options = { headers: headers };
     return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetResolutionDatabaseCount', options);
   }
 
   public getUsers() {
-    let authString: string = 'default';
-    authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     let options = { headers: headers };
     return this.httpClient.get<User[]>(this.baseUrl + 'api/Admin/GetAllUsers', options);
   }

@@ -1,4 +1,16 @@
 <app-nav-menu></app-nav-menu>
+
+<!-- Tool Button Test -->
+<div *ngIf="speakerListService.currentList != null" class="speakerlist-panel speakerlist-panel-lg" [class.active]="showRightPanel">
+  <button class="btn btn-outline-success tool-button" (click)="toggleRightPanel()"
+          [class.btn-outline-danger]="speakerListService.currentList.Status == 1 && speakerListService.currentList.RemainingSpeakerTime.TotalSeconds <= 10 || speakerListService.currentList.Status == 2 && speakerListService.currentList.RemainingQuestionTime.TotalSeconds <= 10">
+  <span class="inner rotated-text">Redeliste</span></button>
+  <div class="speakerlist-panel-content">
+    <app-speakerlist-panel [speakerlist]="speakerListService.currentList"></app-speakerlist-panel>
+  </div>
+</div>
+
+
 <div class="container">
     <router-outlet></router-outlet>
 </div>

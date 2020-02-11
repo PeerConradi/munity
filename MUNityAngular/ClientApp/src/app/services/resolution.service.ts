@@ -45,31 +45,24 @@ export class ResolutionService {
 
 
   public createResolution() {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     let options = { headers: headers };
     return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Create', options);
   }
 
 
   public getResolution(id: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('id', id);
     let options = { headers: headers };
     return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Get', options);
   }
 
   public getMyResolutions() {
-    let authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     let options = { headers: headers };
     return this.httpClient.get<ResolutionAdvancedInfo[]>(this.baseUrl + 'api/Resolution/MyResolutions', options);
   }
@@ -254,33 +247,24 @@ export class ResolutionService {
   }
 
   public addPreambleParagraph(resolutionid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     let options = { headers: headers };
     return this.httpClient.get(this.baseUrl + 'api/Resolution/AddPreambleParagraph', options);
   }
 
   public addOperativeParagraph(resolutionid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     let options = { headers: headers };
     return this.httpClient.get(this.baseUrl + 'api/Resolution/AddOperativeParagraph', options);
   }
 
   public changeTitle(resolutionid: string, newtitle: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('newtitle', encodeURI(newtitle + "|"));
     let options = { headers: headers };
@@ -288,11 +272,8 @@ export class ResolutionService {
   }
 
   public changeCommittee(resolutionid: string, newcommitteename: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('newcommitteename', encodeURI(newcommitteename + "|"));
     let options = { headers: headers };
@@ -300,11 +281,8 @@ export class ResolutionService {
   }
 
   public changeSubmitter(resolutionid: string, newsubmittername: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('newcommitteename', encodeURI(newsubmittername + "|"));
     let options = { headers: headers };
@@ -312,25 +290,23 @@ export class ResolutionService {
   }
 
   public changeOperativeParagraph(paragraph: OperativeSection) {
-    
-    this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection?auth=' + this.userService.getAuthOrDefault(),
-      paragraph).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection',
+      paragraph, { headers: headers }).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public changePreambleParagraph(paragraph: PreambleParagraph) {
-    console.log(paragraph);
-    this.httpClient.put<PreambleParagraph>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraph?auth=' + this.userService.getAuthOrDefault(),
-      paragraph).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    this.httpClient.put<PreambleParagraph>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraph',
+      paragraph, { headers: headers }).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public movePrembleParagraphUp(resolutionid: string, paragraphid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
@@ -339,13 +315,9 @@ export class ResolutionService {
   }
 
   public movePrembleParagraphDown(resolutionid: string, paragraphid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
@@ -354,13 +326,9 @@ export class ResolutionService {
   }
 
   public removePrembleParagraph(resolutionid: string, paragraphid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
@@ -369,13 +337,9 @@ export class ResolutionService {
   }
 
   public moveOperativeParagraphUp(resolutionid: string, paragraphid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
@@ -384,13 +348,9 @@ export class ResolutionService {
   }
 
   public moveOperativeParagraphDown(resolutionid: string, paragraphid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
@@ -399,13 +359,9 @@ export class ResolutionService {
   }
 
   public moveOperativeParagraphLeft(resolutionid: string, paragraphid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
@@ -414,13 +370,9 @@ export class ResolutionService {
   }
 
   public moveOperativeParagraphRight(resolutionid: string, paragraphid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
@@ -429,13 +381,9 @@ export class ResolutionService {
   }
 
   public removeOperativeParagraph(resolutionid: string, paragraphid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
@@ -444,13 +392,9 @@ export class ResolutionService {
   }
 
   public getAdvancedInfos(resolutionid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('id', resolutionid);
     let options = { headers: headers };
     return this.httpClient.get<ResolutionAdvancedInfo>(this.baseUrl + 'api/Resolution/GetResolutionInfos',
@@ -458,13 +402,9 @@ export class ResolutionService {
   }
 
   public canIEditResolution(resolutionid: string) {
-    let authString: string = 'default';
-    if (this.userService.isLoggedIn)
-      authString = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('auth', authString);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('id', resolutionid);
     let options = { headers: headers };
     return this.httpClient.get<boolean>(this.baseUrl + 'api/Resolution/CanAuthEditResolution',
@@ -638,8 +578,6 @@ export class ResolutionService {
     //All Sections
     resolution.OperativeSections.forEach(oa => {
       //Delete Amendments
-      console.log(resolution.DeleteAmendments);
-      console.log(oa.ID);
       resolution.DeleteAmendments.forEach(n => { if (n.TargetSectionID == oa.ID) arr.push(n) });
 
       //Change Amendments

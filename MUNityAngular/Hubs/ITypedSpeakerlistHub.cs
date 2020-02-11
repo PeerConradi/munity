@@ -12,7 +12,9 @@ namespace MUNityAngular.Hubs
 
         Task SpeakerTimerStarted(int seconds);
 
-        Task SpeakerTimerStopped();
+        Task QuestionTimerStarted(int seconds);
+
+        Task TimerStopped();
 
         Task SpeakerTimerSynced(int seconds);
     }

@@ -20,7 +20,6 @@ export class SpeakerlistStartupComponent implements OnInit {
       this.router.navigate(['/s/edit', n.ID])
     }, err => {
         this.notifier.notify('error', 'Fehler beim Erstellen einer neuen Redeliste!');
-        console.log(err);
     });
   }
 

@@ -36,13 +36,9 @@ namespace MUNityAngular.Services
             return Speakerlists.FirstOrDefault(n => n.PublicId == publicId);
         }
 
-        public SpeakerlistService()
+        public void FlushSpeakerlist()
         {
-            Speakerlists = new List<Models.SpeakerlistModel>();
-            this.countDownTimer = new Timer(1000);
-            this.countDownTimer.Elapsed += CountDownTimer_Elapsed;
-            this.countDownTimer.Start();
-            Console.WriteLine("Speakerlist Service Started!");
+            Speakerlists.Clear();
         }
 
         private void CountDownTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -59,6 +55,15 @@ namespace MUNityAngular.Services
                     speakerlist.RemainingQuestionTime = speakerlist.RemainingQuestionTime - oneSec;
                 }
             }
+        }
+
+        public SpeakerlistService()
+        {
+            Speakerlists = new List<Models.SpeakerlistModel>();
+            this.countDownTimer = new Timer(1000);
+            this.countDownTimer.Elapsed += CountDownTimer_Elapsed;
+            this.countDownTimer.Start();
+            Console.WriteLine("Speakerlist Service Started!");
         }
     }
 }

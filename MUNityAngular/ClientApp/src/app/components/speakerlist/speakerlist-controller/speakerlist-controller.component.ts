@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Delegation } from 'src/app/models/delegation.model';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
-import { Time } from '@angular/common';
-import { Observable } from 'rxjs';
 import { TimeSpan } from '../../../models/TimeSpan';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { SpeakerListService } from '../../../services/speaker-list.service';
@@ -77,8 +75,13 @@ export class SpeakerlistControllerComponent implements OnInit {
     //Der Time läuft die ganze Zeit und behält einfach nur den Status der Redeliste im Auge.
     //Die Zeiten müssen hin und wieder einmal gesynct werden.
     this.interval = setInterval(() => {
+      //Status 0: Beide Listen gestoppt
+      //Status 1: Redebeitrag
+      //Status 2: Frage/Kurzbemerkung
       if (this.speakerlist.Status == 1) {
         this.speakerlist.RemainingSpeakerTime.addSeconds(-1);
+      } else if (this.speakerlist.Status == 2) {
+        this.speakerlist.RemainingQuestionTime.addSeconds(-1);
       }
     }, 1000);
   }
@@ -99,7 +102,6 @@ export class SpeakerlistControllerComponent implements OnInit {
   }
 
   addQuestion() {
-    console.log('add Question')
     const s = this.presetDelegations.find(n => n.Name == this.addQuestionSelection);
     this.speakerlistService.addQuestion(this.speakerlist.ID, s.ID).subscribe();
   }
@@ -108,8 +110,24 @@ export class SpeakerlistControllerComponent implements OnInit {
     this.speakerlistService.nextSpeaker(this.speakerlist.ID).subscribe();
   }
 
-  startSpeakerlist() {
-    this.speakerlistService.startSpeaker(this.speakerlist.ID, this.speakerlist.RemainingSpeakerTime.TotalSeconds).subscribe();
+  nextQuestion() {
+    this.speakerlistService.nextQuestion(this.speakerlist.ID).subscribe();
+  }
+
+  toggleSpeaker() {
+    if (this.speakerlist.Status == 1) {
+      this.speakerlistService.stopTimer(this.speakerlist.ID).subscribe();
+    } else {
+      this.speakerlistService.startSpeaker(this.speakerlist.ID, this.speakerlist.RemainingSpeakerTime.TotalSeconds).subscribe();
+    }
+  }
+
+  toggleQuestion() {
+    if (this.speakerlist.Status == 2) {
+      this.speakerlistService.stopTimer(this.speakerlist.ID).subscribe();
+    } else {
+      this.speakerlistService.startQuestion(this.speakerlist.ID, this.speakerlist.RemainingQuestionTime.TotalSeconds).subscribe();
+    }
   }
 
   closeAddGuestSpeakerModal() {
@@ -117,7 +135,6 @@ export class SpeakerlistControllerComponent implements OnInit {
   }
 
   openGuestSpeakerDialog() {
-    console.log('open');
     this.addGuestSpeakerModalOpened = true;
   }
 
@@ -127,5 +144,9 @@ export class SpeakerlistControllerComponent implements OnInit {
 
   closeSecretaryModal() {
     this.secretaryModalOpened = false;
+  }
+
+  dockSpeakerlist() {
+    this.speakerlistService.currentList = this.speakerlist;
   }
 }

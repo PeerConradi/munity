@@ -26,7 +26,6 @@ export class EditorComponent implements OnInit {
       if (v.OperativeSections.length > 0) {
         this.amendmentTargetSection = v.OperativeSections[0];
       }
-      console.log(this.model);
     }
   }
 
@@ -79,8 +78,6 @@ export class EditorComponent implements OnInit {
     }
 
     if (id != null) {
-      console.log('Suche resolution mit der ID: ' + id);
-
       //Überprüfen ob überhaupt bearbeitet werden darf
       this.service.canIEditResolution(id).subscribe(canEditResolution => {
         this.isLoading = false;
@@ -101,7 +98,6 @@ export class EditorComponent implements OnInit {
             }
 
             this.titleService.setTitle(this.model.Topic);
-            console.log(n);
           }, err => {
               //TODO: 404 check or differet error
               this.notFound = true;
@@ -126,14 +122,13 @@ export class EditorComponent implements OnInit {
   }
 
   addPreambleParagraph() {
-    this.service.addPreambleParagraph(this.model.ID).subscribe(data => { console.log(data); }, err => {
+    this.service.addPreambleParagraph(this.model.ID).subscribe(data => { }, err => {
       if (err.status == 404) {
         this.notifier.notify('error', 'Ohh nein - Es besteht keine Verbindung zum Server oder die Resolution exisitert nicht.');
       }
       else {
         this.notifier.notify('error', 'Das hat aus unbekannten Gründen nicht geklappt');
       }
-      console.log(err)
     });
   }
 
@@ -146,7 +141,6 @@ export class EditorComponent implements OnInit {
   }
 
   addAmendmentTypeSelected(newValue) {
-    console.log(newValue);
     this.addAmendmentType = newValue;
   }
 
@@ -155,18 +149,17 @@ export class EditorComponent implements OnInit {
   }
 
   addAmendmentTargetPositionSelected(target) {
-    console.log('position: ' + this.amendmentTargetPosition);
+    //Nothing to do: feeling cute may delete late
   }
 
   addOperativeParagraph() {
-    this.service.addOperativeParagraph(this.model.ID).subscribe(data => { console.log('Erfolg!') }, err => {
+    this.service.addOperativeParagraph(this.model.ID).subscribe(data => { }, err => {
       if (err.status == 404) {
         this.notifier.notify('error', 'Ohh nein - Es besteht keine Verbindung zum Server oder die Resolution exisitert nicht.');
       }
       else {
         this.notifier.notify('error', 'Das hat aus unbekannten Gründen nicht geklappt');
       }
-      console.log(err)
     });
   }
 

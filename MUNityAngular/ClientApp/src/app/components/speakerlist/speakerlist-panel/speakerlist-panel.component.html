@@ -1,0 +1,44 @@
+<div class="row">
+  <h2>Redeliste</h2>
+</div>
+<!-- Redeliste Informationen -->
+<div class="row" *ngIf="speakerlist != null">
+  <!-- Aktuelle Redner -->
+  <div class="col-12">
+    <b *ngIf="speakerlist.CurrentSpeaker != null">Aktuell: {{ speakerlist.CurrentSpeaker.Name }}</b>
+    <b *ngIf="speakerlist.CurrentSpeaker == null">Aktuell: Niemand</b>
+  </div>
+  <!-- Verbleibnde Zeit -->
+  <div class="col-12">
+    <b *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"
+       [class.text-success]="speakerlist.Status == 1 && speakerlist.RemainingSpeakerTime.TotalSeconds > 10"
+       [class.text-danger]="speakerlist.Status == 1 && speakerlist.RemainingSpeakerTime.TotalSeconds <= 10">
+      ZEIT: {{ speakerlist.RemainingSpeakerTime.timeString }}
+    </b>
+    <b class="text-danger" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds < 0">
+      ZEIT: ÜBERSCHRITTEN
+    </b>
+  </div>
+
+
+  <!-- Controls -->
+  <!-- Pausieren/Fortsetzen -->
+  <div class="col-12">
+    <button type="button" class="btn btn-block btn-outline-primary" (click)="nextSpeaker();">Nächster</button>
+    <button type="button" class="btn btn-block btn-outline-warning" (click)="toggleSpeaker();">Go/Pause</button>
+    <button type="button" class="btn btn-block btn-outline-secondary">Antworten</button>
+  </div>
+
+  <!-- Warteliste -->
+  <div class="col-12">
+    <h3>Warteliste</h3>
+    <ul>
+      <li *ngFor="let delegation of speakerlist.Speakers">{{ delegation.Name }} </li>
+    </ul>
+  </div>
+
+  <div class="col-12">
+    <a class="btn btn-block btn-primary" [routerLink]="['/s/edit', speakerlist.ID]">Editor öffnen</a>
+  </div>
+
+</div>

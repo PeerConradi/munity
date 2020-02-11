@@ -63,11 +63,16 @@ export class TimeSpan {
       const secs: number = +secString;
       const mins: number = +minString;
       const hours: number = +hourString;
-      if (secs != null && mins != null && hours != null) {
+      if (secs != null && mins != null && hours != null && !s.startsWith('-')) {
         this._timeInMilliseconds = 0;
         this.addSeconds(secs);
         this.addMinutes(mins);
         this.addHours(hours);
+      } else if (s.startsWith('-')) {
+        this._timeInMilliseconds = 0;
+        this.addSeconds(-secs);
+        this.addMinutes(-mins);
+        this.addHours(-hours);
       }
     }
   }

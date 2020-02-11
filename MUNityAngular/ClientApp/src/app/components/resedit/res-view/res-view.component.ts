@@ -29,7 +29,6 @@ export class ResViewComponent implements OnInit {
     
     if (id != null) {
       this.service.getResolution(id).subscribe(n => {
-        console.log('Search resolution: ' + id);
         let readyState = this.service.connectionReady;
         this.resolution = n;
         this.service.subscribeToResolution(this.resolution.ID);

@@ -54,6 +54,7 @@ import { ImpressumComponent } from './components/default/impressum/impressum.com
 import { MarkdownModule } from 'ngx-markdown';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
+import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-panel/speakerlist-panel.component';
 
 
 @NgModule({
@@ -95,7 +96,8 @@ import { ExploreConferencesComponent } from './components/conference/explore-con
     UserManagementComponent,
     ResolutionsManagementComponent,
     ImpressumComponent,
-    ExploreConferencesComponent
+    ExploreConferencesComponent,
+    SpeakerlistPanelComponent
   ],
   imports: [
     RouterModule,

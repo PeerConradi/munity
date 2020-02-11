@@ -118,7 +118,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpPut]
-        public IActionResult UpdatePreambleParagraph([FromQuery]string auth, [FromBody]Hubs.HubObjects.HUBPreambleParagraph paragraph,
+        public IActionResult UpdatePreambleParagraph([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBPreambleParagraph paragraph,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -142,7 +142,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpPut]
-        public IActionResult UpdateOperativeSection([FromQuery]string auth, [FromBody]Hubs.HubObjects.HUBOperativeParagraph paragraph,
+        public IActionResult UpdateOperativeSection([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBOperativeParagraph paragraph,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {

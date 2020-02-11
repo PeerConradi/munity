@@ -46,9 +46,17 @@ namespace MUNityAngular.Models.Resolution
 
         public PreambleParagraphModel(PreambleModel preamble)
         {
-            Preamble = preamble;
+            
             ID = Guid.NewGuid().ToString();
-            this.ResolutionID = preamble.ResolutionID;
+            //At this moment the preamble could be null when deserialzed
+            //Because the Paragraphs are stored inside an observable list they will
+            //be givin their parent later...
+            if (preamble != null)
+            {
+                Preamble = preamble;
+                this.ResolutionID = preamble.ResolutionID;
+            }
+           
         }
 
         public override string ToString()

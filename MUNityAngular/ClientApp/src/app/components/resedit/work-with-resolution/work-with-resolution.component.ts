@@ -36,7 +36,6 @@ export class WorkWithResolutionComponent implements OnInit {
 
     if (id != null) {
       this.service.getResolution(id).subscribe(n => {
-        console.log('Search resolution: ' + id);
         this.resolution = n;
         this.service.subscribeToResolution(this.resolution.ID);
         this.service.addResolutionListener(this.resolution, new AmendmentInspector());

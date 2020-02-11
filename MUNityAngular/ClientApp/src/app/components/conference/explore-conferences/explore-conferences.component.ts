@@ -9,6 +9,8 @@ export class ExploreConferencesComponent implements OnInit {
 
   pageDescription: string = '';
 
+  munbwDescription: string = '';
+
   constructor() { }
 
   ngOnInit() {

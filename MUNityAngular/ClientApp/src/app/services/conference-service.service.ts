@@ -21,18 +21,14 @@ export class ConferenceServiceService {
 
   public getAllConferences(): Observable<Conference[]> {
     let headers = new HttpHeaders();
-    let auth = 'default';
-    if (this.userService.isLoggedIn)
-      auth = this.userService.sessionkey();
-    headers = headers.set('auth', auth);
-
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     const options = { headers: headers };
     return this.http.get<Conference[]>(this.baseUrl + 'api/conference/GetConferences', options);
   }
 
   public createConference(conference: Conference): Observable<Conference> {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.sessionkey())
+    headers = headers.set('auth', this.userService.getAuthOrDefault())
     headers = headers.set('Name', conference.Name);
     headers = headers.set('FullName', conference.FullName);
     headers = headers.set('Abbreviation', conference.Abbreviation);
@@ -45,10 +41,7 @@ export class ConferenceServiceService {
 
   public getConference(id: string) {
     let headers = new HttpHeaders();
-    let authcode = 'default';
-    if (this.userService.isLoggedIn)
-      authcode = this.userService.sessionkey();
-    headers = headers.set('auth', authcode)
+    headers = headers.set('auth', this.userService.getAuthOrDefault())
     headers = headers.set('id', id);
     let options = { headers: headers };
     return this.http.get<Conference>(this.baseUrl + 'api/Conference/GetConference',
@@ -57,20 +50,15 @@ export class ConferenceServiceService {
 
   public addCommittee(conferenceid: string, name: string, fullname: string,
     abbreviation: string, article: string, resolutlycommittee: string) {
-    let authcode = 'default';
-    if (this.userService.isLoggedIn)
-      authcode = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
 
-    headers = headers.set('auth', authcode);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('conferenceid', conferenceid);
     headers = headers.set('name', name);
     headers = headers.set('fullname', fullname);
     headers = headers.set('abbreviation', abbreviation);
     headers = headers.set('article', article);
     headers = headers.set('resolutlycommittee', resolutlycommittee);
-    console.log(headers);
     let options = { headers: headers };
     return this.http.get<Committee>(this.baseUrl + 'api/Conference/AddCommittee',
       options);
@@ -78,45 +66,34 @@ export class ConferenceServiceService {
 
   public createDelegation(name: string, fullname: string,
     abbreviation: string) {
-    let authcode = 'default';
-    if (this.userService.isLoggedIn)
-      authcode = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
 
-    headers = headers.set('auth', authcode);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('name', encodeURI(name + '|'));
     headers = headers.set('fullname', encodeURI(fullname + '|'));
     headers = headers.set('abbreviation', encodeURI(abbreviation + '|'));
-    console.log(headers);
     let options = { headers: headers };
     return this.http.get<Delegation>(this.baseUrl + 'api/Conference/CreateDelegation',
       options);
   }
 
   public addDelegationToConference(conferenceid: string, delegationid: string, mincount: number, maxcount: number) {
-    let authcode = 'default';
-    if (this.userService.isLoggedIn)
-      authcode = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
 
-    headers = headers.set('auth', authcode);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('conferenceid', conferenceid);
     headers = headers.set('delegationid', delegationid);
     headers = headers.set('mincount', mincount.toString());
     headers = headers.set('maxcount', maxcount.toString());
-    console.log(headers);
     let options = { headers: headers };
     return this.http.get<Delegation>(this.baseUrl + 'api/Conference/AddDelegationToConference',
       options);
   }
 
-  public changeConferenceName(conferenceid: string, password: string, newname: string) {
+  public changeConferenceName(conferenceid: string, newname: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', 'default');
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('conferenceid', conferenceid);
-    headers = headers.set('password', password);
     headers = headers.set('newname', newname);
     let options = { headers: headers };
     return this.http.get<Conference>(this.baseUrl + 'api/Conference/ChangeConferenceName',
@@ -129,7 +106,7 @@ export class ConferenceServiceService {
 
   public getDelegationsOfCommittee(committeeid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', 'default');
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('committeeid', committeeid);
     let options = { headers: headers };
     return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/GetDelegationsOfCommittee',
@@ -137,17 +114,12 @@ export class ConferenceServiceService {
   }
 
   public addDelegationToCommittee(committeeid: string, delegationid: string, mincount: number, maxcount: number) {
-    let authcode = 'default';
-    if (this.userService.isLoggedIn)
-      authcode = this.userService.sessionkey();
-
     let headers = new HttpHeaders();
-    headers = headers.set('auth', authcode);
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('committeeid', committeeid);
     headers = headers.set('delegationid', delegationid);
     headers = headers.set('mincount', mincount.toString());
     headers = headers.set('maxcount', maxcount.toString());
-    console.log(headers);
     let options = { headers: headers };
     return this.http.get<Committee>(this.baseUrl + 'api/Conference/AddDelegationToCommittee',
       options);

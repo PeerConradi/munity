@@ -16,6 +16,8 @@ export class SpeakerListService {
 
   private connectionid: string;
 
+  public currentList: Speakerlist;
+
   private _hubConnection: signalR.HubConnection;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string, private userService: UserService) {
@@ -79,6 +81,15 @@ export class SpeakerListService {
       options);
   }
 
+  public nextQuestion(listid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/NextQuestion',
+      options);
+  }
+
   public startSpeaker(listid: string, remainingSeconds: number) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());
@@ -86,6 +97,25 @@ export class SpeakerListService {
     headers = headers.set('remainingTime', remainingSeconds.toString());
     let options = { headers: headers };
     return this.http.get(this.baseUrl + 'api/Speakerlist/StartSpeaker',
+      options);
+  }
+
+  public startQuestion(listid: string, remainingSeconds: number) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    headers = headers.set('remainingTime', remainingSeconds.toString());
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/StartQuestion',
+      options);
+  }
+
+  public stopTimer(listid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/PauseTimer',
       options);
   }
 
@@ -122,16 +152,17 @@ export class SpeakerListService {
       })
       .catch(err => {
         this.hasError = true;
-        console.log('Fehler mit dem Socket!')
-        console.log(err);
       });
   }
 
+  public timeSpanFromString(timespan: string): TimeSpan {
+    const ts = new TimeSpan(0, 0, 0, 0, 0);
+    ts.fromString(timespan);
+    return ts;
+  }
 
   public addSpeakerlistListener = (model: Speakerlist) => {
     this._hubConnection.on('SpeakerListChanged', (speakerlist: Speakerlist) => {
-      console.log('List changed!');
-      console.log(speakerlist);
       model.Speakers = speakerlist.Speakers;
       model.Questions = speakerlist.Questions;
       model.ListClosed = speakerlist.ListClosed;
@@ -140,16 +171,24 @@ export class SpeakerListService {
       model.CurrentQuestion = speakerlist.CurrentQuestion;
       model.Status = speakerlist.Status;
 
+      //Sync the times in a better way!
       model.RemainingSpeakerTime.reset();
       model.RemainingSpeakerTime.addSeconds(speakerlist.RemainingSpeakerTime.TotalSeconds);
-      console.log(speakerlist.RemainingSpeakerTime);
+
+      model.RemainingQuestionTime.reset();
+      model.RemainingQuestionTime.addSeconds(speakerlist.RemainingQuestionTime.TotalSeconds);
     });
     this._hubConnection.on('SpeakerTimerStarted', (secs: number) => {
       model.RemainingSpeakerTime = new TimeSpan(0, 0, 0, 0, 0);
       model.RemainingSpeakerTime.addSeconds(secs);
       model.Status = 1;
     });
-    this._hubConnection.on('SpeakerTimerStopped', () => {
+    this._hubConnection.on('QuestionTimerStarted', (secs: number) => {
+      model.RemainingQuestionTime = new TimeSpan(0, 0, 0, 0, 0);
+      model.RemainingQuestionTime.addSeconds(secs);
+      model.Status = 2;
+    });
+    this._hubConnection.on('TimerStopped', () => {
       model.Status = 0;
     });
     this._hubConnection.on('SpeakerTimerSynced', (secs: number) => {

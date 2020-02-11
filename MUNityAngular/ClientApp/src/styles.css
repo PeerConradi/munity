@@ -38,7 +38,7 @@
   border-width: 1px;
   border-color: rgb(0, 0, 0);
   border-style: solid;
-  box-shadow: 0px 6px 5.39px 1.61px rgba(0, 0, 0, 0.42);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   width: 100%;
   margin-top: -50px;
   padding-top: 100px;
@@ -58,8 +58,8 @@
 
 .box-image {
     position: absolute;
-    left: 5px;
-    top: 5px;
+    left: 10px;
+    top: 10px;
     height: 80px;
     width: auto;
     z-index: -1;
@@ -85,7 +85,7 @@
   border-width: 0px 1px 1px 1px;
   border-color: rgb(0, 0, 0);
   border-style: solid;
-  box-shadow: 0px 6px 5.39px 1.61px rgba(0, 0, 0, 0.42);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   width: 98%;
   margin-left: 1%;
   margin-right: 1%;
@@ -131,4 +131,10 @@
   background: #0089E3; /* fallback for old browsers */
   background: -webkit-linear-gradient(47deg, #0089E3, #239CEA); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(47deg, #0089E3, #239CEA); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.bg-gradient-munbw {
+  background: #0C4695; /* fallback for old browsers */
+  background: -webkit-linear-gradient(47deg, #0C4695, #18316d); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(47deg, #0C4695, #18316d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }

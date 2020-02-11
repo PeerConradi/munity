@@ -39,7 +39,6 @@ export class ResOptionsComponent implements OnInit {
     this.resolutionService.getAdvancedInfos(this.resolution.ID).subscribe(n => {
       this.onlineid = n.OnlineCode;
       this.publicView = n.PublicRead;
-      console.log(n);
     });
 
     this.conferenceService.getAllDelegations().subscribe(n => {
