@@ -14,5 +14,21 @@ namespace MUNityAngular.Util.Extenstions
             }
             return defaultValue;
         }
+
+        public static TimeSpan? ToTimeSpan(this string s)
+        {
+            if (s.ToCharArray().Count(n => n == ':') == 2)
+            {
+                int hours = 0;
+                int minutes = 0;
+                int seconds = 0;
+                int.TryParse(s.Split(':')[0], out hours);
+                int.TryParse(s.Split(':')[1], out minutes);
+                int.TryParse(s.Split(':')[2], out seconds);
+                return new TimeSpan(hours, minutes, seconds);
+            }
+
+            return null;
+        }
     }
 }

@@ -1,6 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { SpeakerListService } from '../../../services/speaker-list.service';
+import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { Delegation } from '../../../models/delegation.model';
+import { TypeaheadMatch } from 'ngx-bootstrap/typeahead/public_api';
 
 @Component({
   selector: 'app-speakerlist-panel',
@@ -11,15 +14,31 @@ export class SpeakerlistPanelComponent implements OnInit {
 
   @Input() speakerlist: Speakerlist;
 
-  constructor(private speakerlistService: SpeakerListService) { }
+  addSpeakerSelection: string;
+
+  presetDelegations: Delegation[];
+
+  constructor(private speakerlistService: SpeakerListService, private conferenceService: ConferenceServiceService) { }
 
   ngOnInit() {
+    this.conferenceService.getAllDelegations().subscribe(n => {
+      this.presetDelegations = n;
+    });
   }
 
   //addSpeaker() {
   //  const s = this.presetDelegations.find(n => n.Name == this.addSpeakerSelection);
   //  this.speakerlistService.addSpeaker(this.speakerlist.ID, s.ID).subscribe();
   //}
+
+  onAddSpeakerSelected(val: TypeaheadMatch) {
+    if (val !== null) {
+      const del: Delegation = val.item;
+      this.speakerlistService.addSpeaker(this.speakerlist.ID, del.ID).subscribe(n => {
+        this.addSpeakerSelection = '';
+      });
+    }
+  }
 
   //addQuestion() {
   //  const s = this.presetDelegations.find(n => n.Name == this.addQuestionSelection);
@@ -38,7 +57,7 @@ export class SpeakerlistPanelComponent implements OnInit {
     if (this.speakerlist.Status == 1) {
       this.speakerlistService.stopTimer(this.speakerlist.ID).subscribe();
     } else {
-      this.speakerlistService.startSpeaker(this.speakerlist.ID, this.speakerlist.RemainingSpeakerTime.TotalSeconds).subscribe();
+      this.speakerlistService.startSpeaker(this.speakerlist.ID).subscribe();
     }
   }
 
@@ -46,8 +65,12 @@ export class SpeakerlistPanelComponent implements OnInit {
     if (this.speakerlist.Status == 2) {
       this.speakerlistService.stopTimer(this.speakerlist.ID).subscribe();
     } else {
-      this.speakerlistService.startQuestion(this.speakerlist.ID, this.speakerlist.RemainingQuestionTime.TotalSeconds).subscribe();
+      this.speakerlistService.startQuestion(this.speakerlist.ID).subscribe();
     }
+  }
+
+  clearSpeaker() {
+    this.speakerlistService.clearSpeaker(this.speakerlist.ID).subscribe();
   }
 
 }
