@@ -1,16 +1,60 @@
 <ng-template #popContent>
   <button class="btn btn-danger" (click)="p.close();delete()">Löschen</button>
 </ng-template>
+<div class="notice-box" *ngIf="!hideNotices">
+  <div class="card border-warning">
+    <div class="card-header">
+      <h3 class="card-title">Kommentare <span class="badge badge-secondary">Preview</span></h3>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled">
+        <li class="media">
+          <div class="media-body">
+            <h5 class="mt-0 mb-1">Titel</h5>
+            Hier steht der Text des Kommentars, welcher durchaus auch länger ausfallen könnte.
+          </div>
+        </li>
+        <li class="media my-4">
+          <div class="media-body">
+            <h5 class="mt-0 mb-1">List-based media object</h5>
+            Hier steht der Text des Kommentars, welcher durchaus auch länger ausfallen könnte.
+          </div>
+        </li>
+        <li class="media">
+          <div class="media-body">
+            <h5 class="mt-0 mb-1">List-based media object</h5>
+            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <h6>Kommentar schreiben</h6>
+      <textarea class="form-control"></textarea>
+      <button class="btn btn-block btn-primary">Hinzufügen</button>
+    </div>
+  </div>
+
+</div>
 
 <div class="paragraph-box" [class.bg-info]="paragraph.IsVirtual === true">
   <div class="paragraph-title">
     {{ paragraph.Path }}
   </div>
+
+  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="toggleNotices()"> 
+    <span>N</span>
+    <span class="badge">3</span>
+  </button>
+
   <div class="btn-group-vertical paragraph-tools">
     <button [disabled]="paragraph.IsVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left" [ngbPopover]="popContent" triggers="manual"
-      #p="ngbPopover" (click)="p.open()">X</button>
+      #p="ngbPopover" (click)="p.open()">
+      X
+    </button>
     <button [disabled]="paragraph.IsVirtual === true" (click)="moveUp()" type="button" class="btn btn-outline-primary btn-move btn-up" title="Nach oben verschieben">▲</button>
     <button [disabled]="paragraph.IsVirtual === true" (click)="moveDown()" type="button" class="btn btn-outline-primary btn-move btn-down">▼</button>
+
     <!-- This buttons are disabled for now. The Editing should be made different! -->
     <!--<button [disabled]="paragraph.IsVirtual === true" (click)="moveLeft()" type="button" class="btn btn-outline-primary btn-move btn-left">◄</button>
     <button [disabled]="paragraph.IsVirtual === true" (click)="moveRight()" type="button" class="btn btn-outline-primary btn-move btn-right">►</button>-->

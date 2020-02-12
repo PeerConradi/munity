@@ -14,6 +14,8 @@ export class OperativeParagraphComponent implements OnInit {
 
   @Input() index: number;
 
+  hideNotices = true;
+
   constructor(private renderer: Renderer2, private service: ResolutionService) { }
 
   ngOnInit() {
@@ -42,5 +44,8 @@ export class OperativeParagraphComponent implements OnInit {
 
   moveRight() {
     this.service.moveOperativeParagraphRight(this.resolutionid, this.paragraph.ID);
+  }
+  toggleNotices() {
+    this.hideNotices = !this.hideNotices;
   }
 }
