@@ -148,8 +148,6 @@ namespace MUNityAngular.Services
                             model.PublicAmendment = reader.GetBoolean("allowamendments");
                         }
                     }
-
-                    
                 }
             }
 

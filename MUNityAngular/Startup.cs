@@ -53,8 +53,6 @@ namespace MUNityAngular
                 
             });
 
-           
-
             services.AddSingleton<Services.InstallationService>();
             services.AddSingleton<Services.AuthService>();
             services.AddSingleton<Services.ResolutionService>();

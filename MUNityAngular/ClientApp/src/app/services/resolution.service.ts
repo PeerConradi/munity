@@ -411,8 +411,6 @@ export class ResolutionService {
       options);
   }
 
-  
-
   public changePublicReadMode(resolutionid: string, mode: boolean) {
     if (this.userService.isLoggedIn) {
       //Soll zunächst nur möglich sein wenn man auch eingeloggt ist.
