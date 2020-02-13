@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 using MUNityAngular.Models.Resolution;
+using MUNityAngular.Schema.Request;
 
 namespace MUNityAngular.Controllers
 {
@@ -456,107 +457,26 @@ namespace MUNityAngular.Controllers
 
         #region Document Information and Options
 
-        /// <summary>
-        /// Changes the title of a resolution
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="resolutionid"></param>
-        /// <param name="newtitle"></param>
-        /// <param name="resolutionService"></param>
-        /// <param name="authService"></param>
-        /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
-        public IActionResult ChangeTitle([FromHeader]string auth, [FromHeader]string resolutionid,
-            [FromHeader]string newtitle,
+        public IActionResult ChangeHeader([FromHeader]string auth, [FromBody]UpdateResolutionHeaderRequest request,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realtext = newtitle.DecodeUrl();
-
-            if (string.IsNullOrEmpty(realtext))
-                return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
-
-            var resolution = resolutionService.GetResolution(resolutionid);
+            var resolution = resolutionService.GetResolution(request.ResolutionId);
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            resolution.Topic = realtext ?? string.Empty;
-            resolutionService.UpdateResolutionName(resolutionid, realtext);
+            resolution.Topic = request.Title;
+            resolution.SubmitterName = request.SubmitterName;
+            resolution.CommitteeName = request.Committee;
+            resolution.SupporterNames = request.Supporters;
             resolutionService.RequestSave(resolution);
-            _hubContext?.Clients.Group(resolution.ID).TitleChanged(realtext);
-            return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
-        }
-
-        /// <summary>
-        /// Changes the Committee of the resolution
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="resolutionid"></param>
-        /// <param name="newcommitteename"></param>
-        /// <param name="resolutionService"></param>
-        /// <param name="authService"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpPatch]
-        public IActionResult ChangeCommittee([FromHeader]string auth, [FromHeader]string resolutionid,
-            [FromHeader]string newcommitteename,
-            [FromServices]ResolutionService resolutionService,
-            [FromServices]AuthService authService)
-        {
-            var realtext = newcommitteename.DecodeUrl();
-
-            if (string.IsNullOrEmpty(realtext))
-                return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
-
-            var resolution = resolutionService.GetResolution(resolutionid);
-            if (resolution == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
-
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
-
-            resolution.CommitteeName = realtext;
-            resolutionService.RequestSave(resolution);
-            _hubContext?.Clients.Group(resolution.ID).CommitteeChanged(realtext);
-            return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
-        }
-
-        /// <summary>
-        /// Changes the Submitter Name of the resolution
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="resolutionid"></param>
-        /// <param name="newsubmitter"></param>
-        /// <param name="resolutionService"></param>
-        /// <param name="authService"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpPatch]
-        public IActionResult ChangeSubmitter([FromHeader]string auth, [FromHeader]string resolutionid,
-            [FromHeader]string newsubmitter,
-            [FromServices]ResolutionService resolutionService,
-            [FromServices]AuthService authService)
-        {
-            var realtext = newsubmitter.DecodeUrl();
-
-            if (string.IsNullOrEmpty(realtext))
-                return StatusCode(StatusCodes.Status400BadRequest, "You are not allowed to set an empty title.");
-
-            var resolution = resolutionService.GetResolution(resolutionid);
-            if (resolution == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
-
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
-
-            resolution.SubmitterName = realtext;
-            resolutionService.RequestSave(resolution);
-            _hubContext?.Clients.Group(resolution.ID).SubmitterChanged(realtext);
-            return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
+            _hubContext?.Clients.Group(resolution.ID).ResolutionChanged(new Hubs.HubObjects.HUBResolution(resolution));
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         /// <summary>

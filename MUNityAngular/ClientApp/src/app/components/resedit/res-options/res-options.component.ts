@@ -4,6 +4,7 @@ import { UserService } from '../../../services/user.service';
 import { ResolutionService } from '../../../services/resolution.service';
 import { Delegation } from '../../../models/delegation.model';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-resolution-header-request';
 
 @Component({
   selector: 'app-res-options',
@@ -33,6 +34,7 @@ export class ResOptionsComponent implements OnInit {
 
   ngOnInit() {
     //this.updateOnlineInfos();
+    this.resolutionSubmitter = this.resolution.SubmitterName;
   }
 
   updateOnlineInfos() {
@@ -52,9 +54,33 @@ export class ResOptionsComponent implements OnInit {
     this.resolutionService.changePublicReadMode(this.resolution.ID, this.publicView);
   }
 
-  onEnterTitle(value: string) { this.resolutionService.changeTitle(this.resolution.ID, value); }
+  onEnterTitle(value: string) {
+    const request = this.baseRequest();
+    request.title = value;
+    this.resolutionService.updateHeader(request);
+  }
 
-  onEnterCommittee(value: string) { this.resolutionService.changeCommittee(this.resolution.ID, value); }
+  onEnterCommittee(value: string) {
+    console.log('change committee: ' + value);
+    const request = this.baseRequest();
+    request.committee = value;
+    this.resolutionService.updateHeader(request);
+  }
 
-  onEnterSubmitter(value: string) { }
+  onEnterSubmitter(value: string) {
+    console.log('changed Submitter' + value);
+    const request = this.baseRequest();
+    request.submitterName = value;
+    this.resolutionService.updateHeader(request);
+  }
+
+  baseRequest(): ChangeResolutionHeaderRequest {
+    const r = new ChangeResolutionHeaderRequest();
+    r.committee = this.resolution.CommitteeName;
+    r.resolutionId = this.resolution.ID;
+    r.supporters = this.resolution.SupporterNames;
+    r.title = this.resolution.Topic;
+    r.submitterName = this.resolution.SubmitterName;
+    return r;
+  }
 }

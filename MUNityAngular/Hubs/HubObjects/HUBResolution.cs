@@ -16,11 +16,14 @@ namespace MUNityAngular.Hubs.HubObjects
         public string FullName { get; set; }
 
         public string Topic { get; set; }
+
         public string AgendaItem { get; set; }
 
         public string Session { get; set; }
 
         public string SubmitterName { get; set; }
+
+        public string CommitteeName { get; set; }
 
         public DateTime Date { get; set; }
 
@@ -35,6 +38,8 @@ namespace MUNityAngular.Hubs.HubObjects
         public List<HUBAddAmendment> AddAmendmentsSave { get; set; }
 
         public List<HUBOperativeParagraph> OperativeSections { get; set; }
+
+        public List<string> SupporterNames { get; set; }
 
         public HUBResolution(ResolutionModel resolution)
         {
@@ -52,6 +57,8 @@ namespace MUNityAngular.Hubs.HubObjects
             this.AddAmendmentsSave = resolution.AddAmendmentsSave.ToHubAmendments();
             this.OperativeSections = resolution.OperativeSections.ToHubParagraphs();
             this.SubmitterName = SubmitterName;
+            this.SupporterNames = resolution.SupporterNames;
+            this.CommitteeName = resolution.CommitteeName;
         }
 
         public HUBResolution()

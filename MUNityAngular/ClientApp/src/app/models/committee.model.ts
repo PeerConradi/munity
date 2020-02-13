@@ -6,4 +6,5 @@ export class Committee {
   DelegationList: string[];
   FullName: string;
   Name: string;
+  ResolutlyCommittee: string;
 }

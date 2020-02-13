@@ -56,6 +56,8 @@ namespace MUNityAngular.Models.Resolution
 
         public string CommitteeName { get; set; }
 
+        public List<string> SupporterNames { get; set; }
+
         public ObservableCollection<DelegationModel> Supporters { get; set; }
 
         public string SubmitterID { get; set; }

@@ -14,6 +14,7 @@ import { ChangeAmendment } from '../models/change-amendment.model';
 import { NotifierService } from 'angular-notifier';
 import { ResolutionAdvancedInfo } from '../models/resolution-advanced-info.model';
 import { AddAmendment } from '../models/add-amendment.model';
+import { ChangeResolutionHeaderRequest } from '../models/requests/change-resolution-header-request';
 
 @Injectable({
   providedIn: 'root'
@@ -47,10 +48,8 @@ export class ResolutionService {
   public createResolution() {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());
-    let options = { headers: headers };
-    return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Create', options);
+    return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Create', { headers: headers });
   }
-
 
   public getResolution(id: string) {
     let headers = new HttpHeaders();
@@ -73,6 +72,16 @@ export class ResolutionService {
 
   //SignalR Part
   public addResolutionListener = (model: Resolution, inspector: AmendmentInspector) => {
+    this._hubConnection.on('ResolutionChanged', (resolution: Resolution) => {
+      console.log('Update');
+      console.log(resolution);
+      model.Name = resolution.Name;
+      model.Topic = resolution.Topic;
+      model.CommitteeName = resolution.CommitteeName;
+      model.SubmitterName = resolution.SubmitterName;
+      model.SupporterNames = resolution.SupporterNames;
+    });
+
     this._hubConnection.on('PreambleParagraphAdded', (position: number, id: string, text: string) => {
       let paragraph: PreambleParagraph = new PreambleParagraph();
       paragraph.ID = id;
@@ -262,31 +271,12 @@ export class ResolutionService {
     return this.httpClient.get(this.baseUrl + 'api/Resolution/AddOperativeParagraph', options);
   }
 
-  public changeTitle(resolutionid: string, newtitle: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('newtitle', encodeURI(newtitle + "|"));
-    let options = { headers: headers };
-    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeTitle', options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
-  }
 
-  public changeCommittee(resolutionid: string, newcommitteename: string) {
+  public updateHeader(request: ChangeResolutionHeaderRequest) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());
-    headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('newcommitteename', encodeURI(newcommitteename + "|"));
     let options = { headers: headers };
-    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeCommittee', options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
-  }
-
-  public changeSubmitter(resolutionid: string, newsubmittername: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('newcommitteename', encodeURI(newsubmittername + "|"));
-    let options = { headers: headers };
-    this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/ChangeCommittee', options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+    this.httpClient.patch(this.baseUrl + 'api/Resolution/ChangeHeader', request, options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public changeOperativeParagraph(paragraph: OperativeSection) {
@@ -310,7 +300,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/MovePreambleParagraphUp',
+    this.httpClient.patch(this.baseUrl + 'api/Resolution/MovePreambleParagraphUp', null,
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -321,7 +311,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/MovePreambleParahraphDown',
+    this.httpClient.patch(this.baseUrl + 'api/Resolution/MovePreambleParahraphDown', null,
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -332,7 +322,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/RemovePreambleParagraph',
+    this.httpClient.delete(this.baseUrl + 'api/Resolution/RemovePreambleParagraph',
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -343,7 +333,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/MoveOperativeParagraphUp',
+    this.httpClient.patch(this.baseUrl + 'api/Resolution/MoveOperativeParagraphUp', null,
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -354,7 +344,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/MoveOperativeParagraphDown',
+    this.httpClient.patch(this.baseUrl + 'api/Resolution/MoveOperativeParagraphDown', null,
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -365,7 +355,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/MoveOperativeParagraphLeft',
+    this.httpClient.patch(this.baseUrl + 'api/Resolution/MoveOperativeParagraphLeft', null,
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -376,7 +366,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/MoveOperativeParagraphRight',
+    this.httpClient.patch(this.baseUrl + 'api/Resolution/MoveOperativeParagraphRight', null,
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -387,7 +377,7 @@ export class ResolutionService {
     headers = headers.set('resolutionid', resolutionid);
     headers = headers.set('paragraphid', paragraphid);
     let options = { headers: headers };
-    this.httpClient.get(this.baseUrl + 'api/Resolution/RemoveOperativeParagraph',
+    this.httpClient.delete(this.baseUrl + 'api/Resolution/RemoveOperativeParagraph',
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
@@ -452,7 +442,7 @@ export class ResolutionService {
         headers = headers.set('id', id);
         headers = headers.set('connectionid', this.connectionid);
         let options = { headers: headers };
-        this.httpClient.get(this.baseUrl + 'api/Resolution/SubscribeToResolution',
+        this.httpClient.put(this.baseUrl + 'api/Resolution/SubscribeToResolution', null,
           options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
       })
       .catch(err => {

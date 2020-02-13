@@ -59,8 +59,13 @@ export class ConferenceDetailsComponent implements OnInit {
       this.newcommitteename + ', ' +
       this.newcommitteeabbreviation + ', ' +
       this.newcommitteeparent);
-    this.conferenceService.addCommittee(this.conference.ID, this.newcommitteename,
-      this.newcommitteename, this.newcommitteeabbreviation, this.newcommitteearticle, this.newcommitteeparent).subscribe(n => {
+    const newCommittee = new Committee();
+    newCommittee.Name = this.newcommitteename;
+    newCommittee.FullName = this.newcommitteename;
+    newCommittee.Abbreviation = this.newcommitteeabbreviation;
+    newCommittee.Article = this.newcommitteearticle;
+    newCommittee.ResolutlyCommittee = this.newcommitteeparent;
+    this.conferenceService.addCommittee(this.conference.ID, newCommittee).subscribe(n => {
         console.log(n);
         this.conference.Committees.push(n);
     },
