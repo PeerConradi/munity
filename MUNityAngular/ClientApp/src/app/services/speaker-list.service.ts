@@ -52,6 +52,26 @@ export class SpeakerListService {
       options);
   }
 
+  public setSpeakertime(listid: string, time: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    headers = headers.set('time', time);
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/SetSpeakertime',
+      options);
+  }
+
+  public setQuestionTime(listid: string, time: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    headers = headers.set('time', time);
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/SetQuestiontime',
+      options);
+  }
+
   public addSpeaker(listid: string, delegationid: string) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());
@@ -90,21 +110,46 @@ export class SpeakerListService {
       options);
   }
 
-  public startSpeaker(listid: string, remainingSeconds: number) {
+  public startSpeaker(listid: string) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
-    headers = headers.set('remainingTime', remainingSeconds.toString());
     let options = { headers: headers };
     return this.http.get(this.baseUrl + 'api/Speakerlist/StartSpeaker',
       options);
   }
 
-  public startQuestion(listid: string, remainingSeconds: number) {
+  public clearSpeaker(listid: string) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
-    headers = headers.set('remainingTime', remainingSeconds.toString());
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/ClearSpeaker',
+      options);
+  }
+
+  public clearQuestion(listid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/ClearQuestion',
+      options);
+  }
+
+  public startAnswer(listid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    let options = { headers: headers };
+    return this.http.get(this.baseUrl + 'api/Speakerlist/StartAnswer',
+      options);
+  }
+
+  public startQuestion(listid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.get(this.baseUrl + 'api/Speakerlist/StartQuestion',
       options);

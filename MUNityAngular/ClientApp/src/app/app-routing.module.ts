@@ -32,6 +32,7 @@ import { ExploreConferencesComponent } from './components/conference/explore-con
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'resa/read/:id', component: ResViewComponent },
+  { path: 's/view/:id', component: SpeakerlistViewComponent },
   {
     path: '',
     component: DefaultLayoutComponent,
@@ -73,8 +74,8 @@ const routes: Routes = [
 
       //Speakerlist
       { path: 's/start', component: SpeakerlistStartupComponent },
-      { path: 's/edit/:id', component: SpeakerlistControllerComponent },
-      { path: 's/view/:id', component: SpeakerlistViewComponent }
+      { path: 's/edit/:id', component: SpeakerlistControllerComponent }
+      
     ]
   }
 

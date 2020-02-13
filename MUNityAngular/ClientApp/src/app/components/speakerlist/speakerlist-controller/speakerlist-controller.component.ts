@@ -6,6 +6,7 @@ import { Speakerlist } from '../../../models/speakerlist.model';
 import { SpeakerListService } from '../../../services/speaker-list.service';
 import { ActivatedRoute } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
+import { TypeaheadMatch } from 'ngx-bootstrap/typeahead/public_api';
 
 @Component({
   selector: 'app-speakerlist-controller',
@@ -101,6 +102,24 @@ export class SpeakerlistControllerComponent implements OnInit {
     this.speakerlistService.addSpeaker(this.speakerlist.ID, s.ID).subscribe();
   }
 
+  onAddSpeakerSelected(val: TypeaheadMatch) {
+    if (val !== null) {
+      const del: Delegation = val.item;
+      this.speakerlistService.addSpeaker(this.speakerlist.ID, del.ID).subscribe(n => {
+        this.addSpeakerSelection = '';
+      });
+    }
+  }
+
+  onAddQuestionSelected(val: TypeaheadMatch) {
+    if (val !== null) {
+      const del: Delegation = val.item;
+      this.speakerlistService.addQuestion(this.speakerlist.ID, del.ID).subscribe(n => {
+        this.addQuestionSelection = '';
+      });
+    }
+  }
+
   addQuestion() {
     const s = this.presetDelegations.find(n => n.Name == this.addQuestionSelection);
     this.speakerlistService.addQuestion(this.speakerlist.ID, s.ID).subscribe();
@@ -118,16 +137,36 @@ export class SpeakerlistControllerComponent implements OnInit {
     if (this.speakerlist.Status == 1) {
       this.speakerlistService.stopTimer(this.speakerlist.ID).subscribe();
     } else {
-      this.speakerlistService.startSpeaker(this.speakerlist.ID, this.speakerlist.RemainingSpeakerTime.TotalSeconds).subscribe();
+      this.speakerlistService.startSpeaker(this.speakerlist.ID).subscribe();
     }
+  }
+
+  startAnswer() {
+    this.speakerlistService.startAnswer(this.speakerlist.ID).subscribe();
+  }
+
+  setSpeakertime(val: string) {
+    this.speakerlistService.setSpeakertime(this.speakerlist.ID, val).subscribe();
+  }
+
+  setQuestiontime(val: string) {
+    this.speakerlistService.setQuestionTime(this.speakerlist.ID, val).subscribe();
   }
 
   toggleQuestion() {
     if (this.speakerlist.Status == 2) {
       this.speakerlistService.stopTimer(this.speakerlist.ID).subscribe();
     } else {
-      this.speakerlistService.startQuestion(this.speakerlist.ID, this.speakerlist.RemainingQuestionTime.TotalSeconds).subscribe();
+      this.speakerlistService.startQuestion(this.speakerlist.ID).subscribe();
     }
+  }
+
+  clearSpeaker() {
+    this.speakerlistService.clearSpeaker(this.speakerlist.ID).subscribe();
+  }
+
+  clearQuestion() {
+    this.speakerlistService.clearQuestion(this.speakerlist.ID).subscribe();
   }
 
   closeAddGuestSpeakerModal() {

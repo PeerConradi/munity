@@ -84,15 +84,21 @@ var TimeSpan = /** @class */ (function () {
         var secString = s.split(':')[2];
         var minString = s.split(':')[1];
         var hourString = s.split(':')[0];
-        if (secString != null && minString != null && hourString != null) {
+        if (secString !== null && minString !== null && hourString !== null) {
             var secs = +secString;
             var mins = +minString;
             var hours = +hourString;
-            if (secs != null && mins != null && hours != null) {
+            if (secs !== null && mins !== null && hours !== null && s.charAt(0) !== '-') {
                 this._timeInMilliseconds = 0;
                 this.addSeconds(secs);
                 this.addMinutes(mins);
                 this.addHours(hours);
+            }
+            else if (s.charAt(0) === '-') {
+                this._timeInMilliseconds = 0;
+                this.addSeconds(-secs);
+                this.addMinutes(-mins);
+                this.addHours(-hours);
             }
         }
     };

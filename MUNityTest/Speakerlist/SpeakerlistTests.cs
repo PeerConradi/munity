@@ -5,6 +5,7 @@ using NUnit.Framework;
 using MUNityAngular.Models;
 using MUNityAngular.Models.Conference;
 using MUNityAngular.DataHandlers.Database;
+using MUNityAngular.Util.Extenstions;
 
 namespace MUNityTest.Speakerlist
 {
@@ -29,6 +30,15 @@ namespace MUNityTest.Speakerlist
             Assert.AreEqual(2, instance.RemainingQuestionTime.TotalSeconds);
             instance.NextQuestion();
             Assert.AreEqual(instance.Questiontime.TotalSeconds, instance.RemainingQuestionTime.TotalSeconds);
+        }
+
+        [Test]
+        public void TestTimeSpanFromString()
+        {
+            var ts_string = "00:01:00";
+            var dt = ts_string.ToTimeSpan();
+            Assert.IsTrue(dt.HasValue);
+            Assert.AreEqual(60, (int)dt.Value.TotalSeconds);
 
         }
 

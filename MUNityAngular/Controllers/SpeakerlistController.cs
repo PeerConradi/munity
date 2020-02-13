@@ -158,7 +158,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult StartSpeaker([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string remainingTime,
+        public IActionResult StartSpeaker([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
@@ -166,14 +166,8 @@ namespace MUNityAngular.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            int time = (int)speakerlist.RemainingSpeakerTime.TotalSeconds;
-            if (int.TryParse(remainingTime, out int secs))
-            {
-                time = secs;
-            }
-
             speakerlist.StartSpeaker();
-            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerTimerStarted(time);
+            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerTimerStarted((int)speakerlist.RemainingSpeakerTime.TotalSeconds);
             return StatusCode(StatusCodes.Status200OK);
         }
 
@@ -194,7 +188,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult StartQuestion([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string remainingTime,
+        public IActionResult StartQuestion([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
@@ -202,20 +196,14 @@ namespace MUNityAngular.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            int time = (int)speakerlist.RemainingSpeakerTime.TotalSeconds;
-            if (int.TryParse(remainingTime, out int secs))
-            {
-                time = secs;
-            }
-
             speakerlist.StartQuestion();
-            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).QuestionTimerStarted(time);
+            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).QuestionTimerStarted((int)speakerlist.RemainingQuestionTime.TotalSeconds);
             return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult StartAnswer([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string remainingTime,
+        public IActionResult StartAnswer([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
@@ -223,14 +211,8 @@ namespace MUNityAngular.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            int time = (int)speakerlist.RemainingSpeakerTime.TotalSeconds;
-            if (int.TryParse(remainingTime, out int secs))
-            {
-                time = secs;
-            }
-
             speakerlist.StartAnswer();
-            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerTimerStarted(time);
+            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerTimerStarted((int)speakerlist.RemainingSpeakerTime.TotalSeconds);
             return StatusCode(StatusCodes.Status200OK);
         }
 
@@ -246,6 +228,87 @@ namespace MUNityAngular.Controllers
 
             speakerlist.PauseSpeaker();
             this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).TimerStopped();
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult SetSpeakertime([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string time,
+            [FromServices]AuthService authService,
+            [FromServices]SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+
+            var newTime = time.ToTimeSpan();
+            if (newTime.HasValue == false)
+                return StatusCode(StatusCodes.Status400BadRequest, "Invalid Time Format it should be hh:mm:ss");
+
+            speakerlist.Speakertime = newTime.Value;
+
+            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult SetQuestiontime([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string time,
+            [FromServices]AuthService authService,
+            [FromServices]SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+
+            var newTime = time.ToTimeSpan();
+            if (newTime.HasValue == false)
+                return StatusCode(StatusCodes.Status400BadRequest, "Invalid Time Format it should be hh:mm:ss");
+
+            speakerlist.Questiontime = newTime.Value;
+
+            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult ClearSpeaker([FromHeader]string auth, [FromHeader]string listid,
+            [FromServices]AuthService authService,
+            [FromServices]SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+
+
+            if (speakerlist.Status == Models.SpeakerlistModel.EStatus.SPEAKING)
+                speakerlist.Status = Models.SpeakerlistModel.EStatus.STOPPED;
+
+            speakerlist.CurrentSpeaker = null;
+            speakerlist.RemainingSpeakerTime = speakerlist.Speakertime;
+
+            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult ClearQuestion([FromHeader]string auth, [FromHeader]string listid,
+            [FromServices]AuthService authService,
+            [FromServices]SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+
+            if (speakerlist.Status == Models.SpeakerlistModel.EStatus.QUESTION)
+                speakerlist.Status = Models.SpeakerlistModel.EStatus.STOPPED;
+
+            speakerlist.CurrentQuestion = null;
+            speakerlist.RemainingQuestionTime = speakerlist.Speakertime;
+
+            this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             return StatusCode(StatusCodes.Status200OK);
         }
 

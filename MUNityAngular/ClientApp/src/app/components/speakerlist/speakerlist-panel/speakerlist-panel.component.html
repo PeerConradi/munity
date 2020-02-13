@@ -6,6 +6,7 @@
   <!-- Aktuelle Redner -->
   <div class="col-12">
     <b *ngIf="speakerlist.CurrentSpeaker != null">Aktuell: {{ speakerlist.CurrentSpeaker.Name }}</b>
+    <button *ngIf="speakerlist.CurrentSpeaker !== null" class="btn btn-outline-danger mini-button" (click)="clearSpeaker()">X</button>
     <b *ngIf="speakerlist.CurrentSpeaker == null">Aktuell: Niemand</b>
   </div>
   <!-- Verbleibnde Zeit -->
@@ -36,6 +37,13 @@
       <li *ngFor="let delegation of speakerlist.Speakers">{{ delegation.Name }} </li>
     </ul>
   </div>
+
+  <!-- Hinzufügen -->
+  <div class="col-12">
+    <label>Hinzufügen</label>
+    <input type="text" class="form-control" [(ngModel)]="addSpeakerSelection" [typeahead]="presetDelegations" typeaheadOptionField="Name" placeholder="Namen eingeben" (typeaheadOnSelect)="onAddSpeakerSelected($event)" />
+  </div>
+  
 
   <div class="col-12">
     <a class="btn btn-block btn-primary" [routerLink]="['/s/edit', speakerlist.ID]">Editor öffnen</a>
