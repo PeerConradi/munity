@@ -205,7 +205,8 @@ namespace MUNityTest.Resolution
             addAmendment.TargetPosition = 2;
 
             //Safe
-            var service = new MUNityAngular.Services.ResolutionService();
+            //There should be a munity Test Database here.
+            var service = new MUNityAngular.Services.ResolutionService("mongodb://localhost:27017", "MunityDb");
 
             string safedText = resolution.ToJson();
 

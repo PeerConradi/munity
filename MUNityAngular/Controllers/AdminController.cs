@@ -107,6 +107,13 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        /// <summary>
+        /// Removes an account from the Database and also all the things connected to this account.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="id"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult DeleteAccount ([FromHeader]string auth, [FromHeader]string id, 

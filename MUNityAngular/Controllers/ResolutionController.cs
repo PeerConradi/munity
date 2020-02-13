@@ -25,17 +25,6 @@ namespace MUNityAngular.Controllers
         }
 
         /// <summary>
-        /// Gives an overview of thats possible inside the resolution Controller
-        /// </summary>
-        /// <returns>a Text that gives a small overview of all posibilities with the Resolution Controller</returns>
-        [HttpGet]
-        public string Get()
-        {
-            string description = "Read the Resolution Documentation!";
-            return description;
-        }
-
-        /// <summary>
         /// Creates a new Resolution
         /// </summary>
         /// <param name="auth">The authenticator-code </param>
@@ -57,6 +46,14 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, json);
         }
 
+        /// <summary>
+        /// Adds a new Preamble Paragraph to a resolutions and returns its object.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult AddPreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
@@ -75,20 +72,21 @@ namespace MUNityAngular.Controllers
             if (resolution != null)
             {
                 var newPP = resolution.Preamble.AddParagraph();
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
                 resolutionService.RequestSave(resolution);
                 _hubContext.Clients.Group(resolutionid).PreambleParagraphAdded(resolution.Preamble.Paragraphs.IndexOf(newPP), newPP.ID, newPP.Text);
-                return StatusCode(StatusCodes.Status200OK, json);
+                return StatusCode(StatusCodes.Status200OK, newPP.AsNewtonsoftJson());
             }
 
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong, this should not have appened");
         }
 
         /// <summary>
-        /// Adds an Premable Paragraph to the Resolution.
+        /// Adds an Operative Paragraph to the Resolution.
         /// </summary>
         /// <param name="auth"></param>
         /// <param name="resolutionid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
@@ -116,6 +114,15 @@ namespace MUNityAngular.Controllers
 
         }
 
+        /// <summary>
+        /// Changes the value of the Preamble paragraph. Use this function if the text has
+        /// changed or you want to add a comment.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="paragraph"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult UpdatePreambleParagraph([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBPreambleParagraph paragraph,
@@ -140,6 +147,15 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, pp.AsNewtonsoftJson());
         }
 
+        /// <summary>
+        /// Updates an Operative Section. Use this Request when changing the text of an
+        /// operative parahraph or you want to add a comment.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="paragraph"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult UpdateOperativeSection([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBOperativeParagraph paragraph,
@@ -163,8 +179,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, section.AsNewtonsoftJson());
         }
 
+        /// <summary>
+        /// Removes a preamble paragraph from the resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="paragraphid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpDelete]
         public IActionResult RemovePreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromServices]ResolutionService resolutionService,
@@ -188,8 +213,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// moves the preamble paragraph one step up if thats possible
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="paragraphid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult MovePreambleParagraphUp([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromServices]ResolutionService resolutionService,
@@ -214,8 +248,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Moves the preamble paragraph one stop down if thats possible
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="paragraphid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult MovePreambleParahraphDown([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromServices] ResolutionService resolutionService,
@@ -239,8 +282,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Moves the operative paragraph one step up if thats possible
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="paragraphid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult MoveOperativeParagraphUp([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromServices] ResolutionService resolutionService,
@@ -265,8 +317,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Moves the operative paragraph one step down
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="paragraphid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult MoveOperativeParagraphDown([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromServices] ResolutionService resolutionService,
@@ -290,8 +351,18 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Moves the paragraph to the left so it loses one level.
+        /// This means that if the OA is 1.3.2 it will become 1.4.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="paragraphid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult MoveOperativeParagraphLeft([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromServices] ResolutionService resolutionService,
@@ -314,8 +385,19 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Moves the Operative Paragraph on step to the right. This means it will become a
+        /// sub Point of the next OA that is the same level as this one the moment before this
+        /// action is called.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="paragraphid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult MoveOperativeParagraphRight([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromServices] ResolutionService resolutionService,
@@ -338,8 +420,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Removes a operative paragraph and all amendments that are linked to it.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="paragraphid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpDelete]
         public IActionResult RemoveOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromServices] ResolutionService resolutionService,
@@ -365,8 +456,17 @@ namespace MUNityAngular.Controllers
 
         #region Document Information and Options
 
+        /// <summary>
+        /// Changes the title of a resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="newtitle"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult ChangeTitle([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string newtitle,
             [FromServices]ResolutionService resolutionService,
@@ -391,8 +491,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
         }
 
+        /// <summary>
+        /// Changes the Committee of the resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="newcommitteename"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult ChangeCommittee([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string newcommitteename,
             [FromServices]ResolutionService resolutionService,
@@ -416,8 +525,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
         }
 
+        /// <summary>
+        /// Changes the Submitter Name of the resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="newsubmitter"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult ChangeSubmitter([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string newsubmitter,
             [FromServices]ResolutionService resolutionService,
@@ -441,8 +559,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
         }
 
+        /// <summary>
+        /// Changes the Public Read Mode of the resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="pmode"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult ChangePublicReadMode([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string pmode,
             [FromServices]ResolutionService resolutionService,
@@ -468,8 +595,18 @@ namespace MUNityAngular.Controllers
 
         #region Amendments
 
+        /// <summary>
+        /// Adds a new DeleteAmendment to the resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="sectionid"></param>
+        /// <param name="submittername"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult AddDeleteAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string sectionid, [FromHeader]string submittername,
             [FromServices]ResolutionService resolutionService,
@@ -496,8 +633,19 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Adds a new Change Text Amendment to the resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="sectionid"></param>
+        /// <param name="submittername"></param>
+        /// <param name="newtext"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult AddChangeAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string sectionid, [FromHeader]string submittername, [FromHeader]string newtext,
             [FromServices]ResolutionService resolutionService,
@@ -527,8 +675,19 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Adds a new Move Operative Paragraph Amendment to the resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="sectionid"></param>
+        /// <param name="submittername"></param>
+        /// <param name="newposition"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult AddMoveAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string sectionid, [FromHeader]string submittername, [FromHeader]string newposition,
             [FromServices]ResolutionService resolutionService,
@@ -561,8 +720,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status406NotAcceptable, "The new Position has to be a number!");
         }
 
+        /// <summary>
+        /// Adds a new Add-Paragraph Amendment to the resolution.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="amendment"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpPut]
+        [HttpPost]
         public IActionResult AddAddAmendment([FromQuery]string auth, [FromBody]Hubs.HubObjects.HUBAddAmendment amendment,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
@@ -589,8 +756,17 @@ namespace MUNityAngular.Controllers
             
         }
 
+        /// <summary>
+        /// Removes a given Amendment
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="amendmentid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpDelete]
         public IActionResult RemoveAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string amendmentid,
             [FromServices]ResolutionService resolutionService,
@@ -616,8 +792,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Activates the given Amendment on the resolution.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="amendmentid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult ActivateAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string amendmentid,
             [FromServices]ResolutionService resolutionService,
@@ -643,8 +828,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Deactivates the given amendment on the resolution.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="amendmentid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult DeactivateAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string amendmentid,
             [FromServices]ResolutionService resolutionService,
@@ -671,8 +865,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Submits the Amendment
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="amendmentid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult SubmitAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string amendmentid,
             [FromServices]ResolutionService resolutionService,
@@ -698,9 +901,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
-
+        /// <summary>
+        /// Denies the Amendment
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionid"></param>
+        /// <param name="amendmentid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult DenyAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string amendmentid,
             [FromServices]ResolutionService resolutionService,
@@ -728,6 +939,13 @@ namespace MUNityAngular.Controllers
 
         #endregion
 
+        /// <summary>
+        /// Returns a list of all the resolutions that the user has access to.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult MyResolutions([FromHeader]string auth,
@@ -742,6 +960,14 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, resolutions.AsNewtonsoftJson());
         }
         
+        /// <summary>
+        /// Gets a specific resolution with all of its content.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="id"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult Get([FromHeader]string auth, [FromHeader]string id,
@@ -772,8 +998,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
         }
 
+        /// <summary>
+        /// Puts the user into the signalR Group for this document.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="id"></param>
+        /// <param name="connectionid"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPut]
         public IActionResult SubscribeToResolution([FromHeader]string auth, [FromHeader]string id,
             [FromHeader]string connectionid,
             [FromServices]ResolutionService resolutionService,
@@ -803,6 +1038,14 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Checks if the given auth-key is allowed to edit the given resolution
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="id"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult CanAuthEditResolution([FromHeader]string auth, [FromHeader]string id,
@@ -829,6 +1072,14 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status200OK, true);
         }
 
+        /// <summary>
+        /// Returns all finrmations for the resolution with the given id.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="id"></param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult GetResolutionInfos([FromHeader]string auth, [FromHeader]string id,
@@ -841,18 +1092,6 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Resolution was not found");
             }
             return StatusCode(StatusCodes.Status200OK, infos.AsNewtonsoftJson());
-        }
-
-        // PUT: api/Resolution/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
