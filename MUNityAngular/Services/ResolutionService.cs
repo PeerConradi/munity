@@ -315,11 +315,9 @@ namespace MUNityAngular.Services
             }
         }
 
-        public ResolutionService()
+        public ResolutionService(string connectionString, string databaseString)
         {
             //New Saving in MongoDB
-            var connectionString = "mongodb://localhost:27017";
-            var databaseString = "MunityDb";
             var resolutionTableString = "Resolutions";
             var client = new MongoClient(connectionString);
             var database = client.GetDatabase(databaseString);

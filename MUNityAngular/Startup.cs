@@ -53,11 +53,14 @@ namespace MUNityAngular
                 
             });
 
-           
-
             services.AddSingleton<Services.InstallationService>();
             services.AddSingleton<Services.AuthService>();
-            services.AddSingleton<Services.ResolutionService>();
+            services.AddSingleton(serviceProvider =>
+            {
+                var cs = Configuration.GetValue<string>("MunityMongoDatabaseSettings:ConnectionString");
+                var dbName = Configuration.GetValue<string>("MunityMongoDatabaseSettings:DatabaseName");
+                return new Services.ResolutionService(cs, dbName);
+            });
             services.AddSingleton<Services.ConferenceService>();
             services.AddSingleton<Services.SpeakerlistService>();
         }
@@ -77,7 +80,7 @@ namespace MUNityAngular
 
                 
             }
-
+            
             
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
