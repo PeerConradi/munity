@@ -19,6 +19,10 @@ namespace MUNityAngular.Controllers
             
         }
 
+        /// <summary>
+        /// Test SignalR Method
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public StatusCodeResult PushMessage()
@@ -27,6 +31,10 @@ namespace MUNityAngular.Controllers
             return new StatusCodeResult(200);
         }
 
+        /// <summary>
+        /// Test SignalR Method
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public StatusCodeResult PushGroup()

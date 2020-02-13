@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MUNityAngular.Models.User;
+using MUNityAngular.Schema.Request;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 
@@ -14,6 +15,12 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        /// <summary>
+        /// Registers a new user.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Register([FromBody]RegistrationModel model,
@@ -34,6 +41,13 @@ namespace MUNityAngular.Controllers
             public string Key { get; set; }
         }
 
+        /// <summary>
+        /// Logs in the user and will return a session key for this user.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public IActionResult Login([FromHeader]string username, [FromHeader]string password,
@@ -51,16 +65,22 @@ namespace MUNityAngular.Controllers
             }
         }
 
-        [HttpGet]
+        /// <summary>
+        /// Changes the password of the given user
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="oldpassword"></param>
+        /// <param name="newpassword"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
+        [HttpPut]
         [Route("[action]")]
-        public IActionResult ChangePassword([FromHeader]string auth, [FromHeader]string oldpassword, [FromHeader]string newpassword,
+        public IActionResult ChangePassword([FromHeader]string auth, [FromBody]ChangePasswordRequest request,
             [FromServices]AuthService authService)
         {
-            oldpassword = oldpassword.DecodeUrl();
-            newpassword = newpassword.DecodeUrl();
 
             var authstate = authService.ValidateAuthKey(auth);
-            var status = authService.CheckPasswordForUserid(authstate.userid, oldpassword);
+            var status = authService.CheckPasswordForUserid(authstate.userid, request.OldPassword);
 
             if (status == false)
             {
@@ -68,14 +88,21 @@ namespace MUNityAngular.Controllers
             }
             else
             {
-                authService.SetPassword(authstate.userid, newpassword);
+                authService.SetPassword(authstate.userid, request.NewPassword);
                 authService.DeleteAllUserKeys(authstate.userid);
-                var login = authService.LoginWithId(authstate.userid, newpassword);
+                var login = authService.LoginWithId(authstate.userid, request.NewPassword);
                 return StatusCode(StatusCodes.Status200OK, login);
             }
         }
 
-        [HttpGet]
+
+        /// <summary>
+        /// Logs out the user and deletes the auth key that is used to do this.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="service"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Route("[action]")]
         public IActionResult Logout([FromHeader]string auth, [FromServices]AuthService service)
         {
@@ -83,6 +110,12 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Validates the given Auth Key and returns if its valid (true) or not (false)
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public IActionResult ValidateKey([FromHeader]string auth, [FromServices]AuthService authService)
@@ -97,6 +130,12 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        /// <summary>
+        /// Checks if the user behind the given Auth key has admin rights.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public IActionResult IsAdmin([FromHeader]string auth, [FromServices]AuthService authService)
@@ -118,6 +157,12 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        /// <summary>
+        /// Checks if the username is available: true -> username taken, false -> username available
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public IActionResult CheckUsername(string username, [FromServices]AuthService authService)
@@ -128,7 +173,11 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, result);
         }
 
-
+        /// <summary>
+        /// Checks if the registration is opened or closed.
+        /// </summary>
+        /// <param name="authService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult GetRegistrationState([FromServices]AuthService authService)

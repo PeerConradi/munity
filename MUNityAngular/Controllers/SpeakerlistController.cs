@@ -22,6 +22,16 @@ namespace MUNityAngular.Controllers
             this._hubContext = hubContext;
         }
 
+        /// <summary>
+        /// Creates a new Speakerlist and returns it.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="conferenceid"></param>
+        /// <param name="committeeid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <param name="conferenceSerivce"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult CreateSpeakerlist([FromHeader]string auth,
@@ -38,6 +48,14 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
         }
 
+        /// <summary>
+        /// Gets a speakerlist
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="id"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult GetSpeakerlist([FromHeader]string auth, [FromHeader]string id,
@@ -54,6 +72,14 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
         }
 
+        /// <summary>
+        /// Gets a speakerlist with the public ID
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="publicid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult ReadSpeakerlist([FromHeader]string auth, [FromHeader]string publicid,
@@ -71,8 +97,17 @@ namespace MUNityAngular.Controllers
 
         }
 
+        /// <summary>
+        /// Subscribes to a speakerlist
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="publicid"></param>
+        /// <param name="connectionid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult SubscribeToList([FromHeader]string auth, [FromHeader]string publicid, [FromHeader]string connectionid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -81,9 +116,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
-
+        /// <summary>
+        /// Adds a speaker to the speakerlist
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="delegationid"></param>
+        /// <param name="speakerlistService"></param>
+        /// <param name="conferenceService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult AddSpeakerToList([FromHeader]string auth,
             [FromHeader]string listid,
             [FromHeader]string delegationid,
@@ -104,8 +147,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
         }
 
+        /// <summary>
+        /// Adds a Question to the Speakerlist (Question Area)
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="delegationid"></param>
+        /// <param name="speakerlistService"></param>
+        /// <param name="conferenceService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult AddQuestionToList([FromHeader]string auth,
             [FromHeader]string listid, [FromHeader]string delegationid,
             [FromServices]SpeakerlistService speakerlistService,
@@ -125,8 +177,19 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
         }
 
+        /// <summary>
+        /// Removes a speaker from the speakerlist.
+        /// This function will remove the first entry of the delegationid it will
+        /// find.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="delegationid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpDelete]
         public IActionResult RemoveSpeakerFromList([FromHeader]string auth,
             [FromHeader]string listid, [FromHeader]string delegationid,
             [FromServices]AuthService authService,
@@ -141,8 +204,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Will set the next speaker to the list.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult NextSpeaker([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -156,8 +227,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Starts the Speaking Timer
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult StartSpeaker([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -171,8 +250,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Sets the next question on the list
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult NextQuestion([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -186,8 +273,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Starts the Question Timer
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult StartQuestion([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -201,8 +296,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Starts the Answer Timer for the speaker.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult StartAnswer([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -216,8 +319,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Pauses the speaker timer.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult PauseTimer([FromHeader]string auth, [FromHeader]string listid,
            [FromServices]AuthService authService,
            [FromServices]SpeakerlistService speakerlistService)
@@ -231,8 +342,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Changes the maximum timefor each speaker.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="time"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult SetSpeakertime([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string time,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -251,8 +371,17 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// changes the maximum time for each question.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="time"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPatch]
         public IActionResult SetQuestiontime([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string time,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -271,8 +400,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Clears the current Speaker from the list.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPut]
         public IActionResult ClearSpeaker([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -292,8 +429,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Clears the current Question from the list
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="listid"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpGet]
+        [HttpPut]
         public IActionResult ClearQuestion([FromHeader]string auth, [FromHeader]string listid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
@@ -312,6 +457,16 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Returns a list of all delegations that are inside the conference
+        /// that this speakerlist is linked to. This will serve as a pre filter
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="id"></param>
+        /// <param name="authService"></param>
+        /// <param name="speakerlistService"></param>
+        /// <param name="conferenceService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public IActionResult GetPossibleDelegations([FromHeader]string auth,
