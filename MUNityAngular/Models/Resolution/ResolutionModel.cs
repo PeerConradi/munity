@@ -80,6 +80,11 @@ namespace MUNityAngular.Models.Resolution
         public string OnlineCode { get; set; }
 
 
+        /// <summary>
+        /// Notices are a List of comments that users can add to the document.
+        /// </summary>
+        public List<NoticeModel> Notices { get; set; } = new List<NoticeModel>();
+
         //Make this an read only Observable Collection (only get internal set)
         //And edit its value by just Adding from the different Amendment lists!! 
         private ObservableCollection<AbstractAmendment> _amendments;
