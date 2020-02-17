@@ -58,6 +58,7 @@ import { TeamRolesComponent } from './components/conference/team-roles/team-role
 import { TeamComponent } from './components/conference/team/team.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ProfileComponent } from './components/account/profile/profile.component';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 
 @NgModule({
@@ -121,7 +122,8 @@ import { ProfileComponent } from './components/account/profile/profile.component
     ModalModule.forRoot(),
     MarkdownModule.forRoot(),
     BsDropdownModule.forRoot(),
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    TabsModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
