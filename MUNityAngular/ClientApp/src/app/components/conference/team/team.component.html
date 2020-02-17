@@ -1,0 +1,90 @@
+<div class="row">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Konferenz</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Team</li>
+    </ol>
+  </nav>
+</div>
+
+<!-- Hinzufügen -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Teammitglied hinzufügen</h3>
+      </div>
+      <div class="card-body">
+        <form>
+          <div class="form-group row">
+            <label for="inputUsername" class="col-sm-2 col-form-label">Benutzername</label>
+            <div class="col-sm-10">
+              <!-- Kann auch ein typeahead sein welcher async bei mindestens 3 Zeichen eine Liste sucht...-->
+              <input type="email" class="form-control" id="inputUsername">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="selectRole" class="col-sm-2 col-form-label">Rolle</label>
+            <div class="col-sm-10">
+              <select class="form-control" id="selectRole">
+                <option>Projektleitung</option>
+                <optgroup label="Erweiterte Projektleitung">
+                  <option>Generalsekretär*in</option>
+                  <option>Team- und Materialkoordination</option>
+                  <option>Chairbetreuung</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+              <button class="btn btn-success btn-block">Zum Team hinzufügen</button>
+            </div>
+          </div> 
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Teamliste -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Teamliste</h3>
+      </div>
+      <div class="card-body">
+        <table class="table">
+          <tr>
+            <th>Vorname</th>
+            <th>Nachname</th>
+            <th>Rolle</th>
+            <th>Optionen</th>
+          </tr>
+          <tr>
+            <td>Max</td>
+            <td>Mustermann</td>
+            <td>Projektleitung</td>
+            <td>
+              <div class="btn-group" dropdown>
+                <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+                        aria-controls="dropdown-basic">
+                  Einstellungen <span class="caret"></span>
+                </button>
+                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+                    role="menu" aria-labelledby="button-basic">
+                  <li role="menuitem"><a class="dropdown-item" href="#">Rolle ändern</a></li>
+                  <li class="divider dropdown-divider"></li>
+                  <li role="menuitem">
+                    <a class="dropdown-item text-danger" href="#">Entfernen</a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div> <!-- End card-->
+  </div> <!-- End col -->
+</div>

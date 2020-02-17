@@ -2,12 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { EditorComponent } from './components/resedit/editor/editor.component';
 import { MyresolutionsComponent } from './components/resedit/myresolutions/myresolutions.component';
 import { ResolutionHomeComponent } from './components/resedit/resolution-home/resolution-home.component';
-import { DashboardComponent } from './loggedIn/dashboard/dashboard.component';
 import { CreateConferenceComponent } from './components/conference/create-conference/create-conference.component';
 import { ConferenceListComponent } from './components/admin/conference-list/conference-list.component';
 import { SignalrtestComponent } from './components/signalr/signalrtest/signalrtest.component';
@@ -28,6 +25,9 @@ import { AccountSettingsComponent } from './components/account/account-settings/
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
 import { ImpressumComponent } from './components/default/impressum/impressum.component';
 import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
+import { PresentsCheckComponent } from './components/presents/presents-check/presents-check.component';
+import { TeamComponent } from './components/conference/team/team.component';
+import { ProfileComponent } from './components/account/profile/profile.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -41,8 +41,6 @@ const routes: Routes = [
       { path: 'impressum', component: ImpressumComponent},
 
       //Example
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
       { path: 'components', component: AllComponentsComponent },
       { path: 'test/signalr', component: SignalrtestComponent },
 
@@ -51,22 +49,22 @@ const routes: Routes = [
       { path: 'resa/live/:id', component: WorkWithResolutionComponent },
       { path: 'mydocs', component: MyresolutionsComponent },
       { path: 'reshome', component: ResolutionHomeComponent },
-
-      //User Special Areas
-      { path: 'dashboard', component: DashboardComponent },
       
       //Account
       { path: 'register', component: RegisterComponent },
       { path: 'logout', component: LogoutComponent },
       { path: 'account/settings', component: AccountSettingsComponent },
+      { path: 'u/:id', component: ProfileComponent },
+
       //// Login is a custom form and not in this layout, register could also be moved someday
 
       //Konferenz
-      { path: 'conference/create', component: CreateConferenceComponent },
+      { path: 'createconference', component: CreateConferenceComponent },
       { path: 'conference/my', component: MyConferencesOverviewComponent },
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
       { path: 'exploreconferences', component: ExploreConferencesComponent },
+      { path: 'c/team', component: TeamComponent },
 
       //Admin
       { path: 'admin/conferences', component: ConferenceListComponent },
@@ -74,7 +72,9 @@ const routes: Routes = [
 
       //Speakerlist
       { path: 's/start', component: SpeakerlistStartupComponent },
-      { path: 's/edit/:id', component: SpeakerlistControllerComponent }
+      { path: 's/edit/:id', component: SpeakerlistControllerComponent },
+
+      { path: 'p/check/:id', component: PresentsCheckComponent }
       
     ]
   }

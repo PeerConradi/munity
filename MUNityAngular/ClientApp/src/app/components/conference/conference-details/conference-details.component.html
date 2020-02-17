@@ -24,6 +24,7 @@
                 <th>Name </th>
                 <th>Delegationen </th>
                 <th>Hinzufügen</th>
+                <th>Anwesenheit</th>
               </tr>
             </thead>
             <tbody>
@@ -31,9 +32,11 @@
                 <td>{{ committee.Name}}</td>
                 <td>{{ committee.DelegationList.length }}</td>
                 <td><button class="btn btn-outline-success" (click)="openModal(addDelegationToCommitteeModal);setCurrentCommittee(committee);">Delegation Hinzufügen</button></td>
+                <td><a class="btn btn-block btn-outline-success" [routerLink]="['/p/check', committee.ID]">Anwesenehti feststellen</a></td>
               </tr>
             </tbody>
           </table>
+          
         </div>
         <div class="card-footer">
           <button type="button" class="btn btn-block btn-primary" (click)="openModal(addCommitteeModal)">Gremium hinzufügen</button>

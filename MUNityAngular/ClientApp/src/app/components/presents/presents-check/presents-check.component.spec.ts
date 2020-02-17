@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConferenceBoxComponent } from './conference-box.component';
+import { PresentsCheckComponent } from './presents-check.component';
 
-describe('ConferenceBoxComponent', () => {
-  let component: ConferenceBoxComponent;
-  let fixture: ComponentFixture<ConferenceBoxComponent>;
+describe('PresentsCheckComponent', () => {
+  let component: PresentsCheckComponent;
+  let fixture: ComponentFixture<PresentsCheckComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConferenceBoxComponent ]
+      declarations: [ PresentsCheckComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConferenceBoxComponent);
+    fixture = TestBed.createComponent(PresentsCheckComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

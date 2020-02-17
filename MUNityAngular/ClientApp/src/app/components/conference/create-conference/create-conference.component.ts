@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { NgbCalendar, NgbDateParserFormatter, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
 import { Conference } from '../../../models/conference.model';
 
@@ -12,8 +11,6 @@ import { Conference } from '../../../models/conference.model';
 export class CreateConferenceComponent implements OnInit {
 
   public createForm;
-  startdatemodel: NgbDate;
-  enddatemodel: NgbDate;
 
   public createdConference = null;
   error: boolean = false;
@@ -27,7 +24,8 @@ export class CreateConferenceComponent implements OnInit {
     this.createForm = this.formBuilder.group({
       name: '',
       fullname: '',
-      abbreviation: ''
+      abbreviation: '',
+      timespan: null
     });
     
   }
@@ -38,27 +36,29 @@ export class CreateConferenceComponent implements OnInit {
   }
 
   onSubmit(data) {
+    //TODO: validate Timespan
+
     console.log(data);
     let conference: Conference = new Conference();
     conference.Name = data.name;
     conference.FullName = data.fullname;
     conference.Abbreviation = data.abbreviation;
-    let startDate: Date = new Date(this.startdatemodel.year, this.startdatemodel.month, this.startdatemodel.day);
-    let endDate: Date = new Date(this.enddatemodel.year, this.enddatemodel.month, this.enddatemodel.day);
+    let startDate: Date = data.timespan[0];
+    let endDate: Date = data.timespan[1];
 
     conference.StartDate = startDate;
     conference.EndDate = endDate;
-    this.requested = true;
-    this.info = '';
-    this.service.createConference(conference).subscribe(n => {
-      //this.conferenceCreated = true;
-      this.createdConference = n;
-      console.log(n);
-    },
-      err => {
-        this.error = true;
-        this.error_msg = err;
-      });
+    //this.requested = true;
+    //this.info = '';
+    //this.service.createConference(conference).subscribe(n => {
+    //  //this.conferenceCreated = true;
+    //  this.createdConference = n;
+    //  console.log(n);
+    //},
+    //  err => {
+    //    this.error = true;
+    //    this.error_msg = err;
+    //  });
   }
 
 }

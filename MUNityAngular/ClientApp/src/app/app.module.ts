@@ -7,16 +7,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { EditorComponent } from './components/resedit/editor/editor.component';
 import { OperativeParagraphComponent } from './components/resedit/operative-paragraph/operative-paragraph.component';
 import { PreambleParagraphComponent } from './components/resedit/preamble-paragraph/preamble-paragraph.component';
 import { ResOptionsComponent } from './components/resedit/res-options/res-options.component';
 import { AmendmentControllerComponent } from './components/resedit/amendment-controller/amendment-controller.component';
 import { ResolutionHomeComponent } from './components/resedit/resolution-home/resolution-home.component';
-import { DashboardComponent } from './loggedIn/dashboard/dashboard.component';
-import { ConferenceBoxComponent } from './loggedIn/conference-box/conference-box.component';
 import { CreateConferenceComponent } from './components/conference/create-conference/create-conference.component';
 import { ConferenceListComponent } from './components/admin/conference-list/conference-list.component';
 import { FooterComponent } from './components/default/footer/footer.component';
@@ -55,6 +51,13 @@ import { MarkdownModule } from 'ngx-markdown';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
 import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-panel/speakerlist-panel.component';
+import { PresentsCheckComponent } from './components/presents/presents-check/presents-check.component';
+import { CommitteeDetailsComponent } from './components/conference/committee-details/committee-details.component';
+import { DelegationDetailsComponent } from './components/conference/delegation-details/delegation-details.component';
+import { TeamRolesComponent } from './components/conference/team-roles/team-roles.component';
+import { TeamComponent } from './components/conference/team/team.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ProfileComponent } from './components/account/profile/profile.component';
 
 
 @NgModule({
@@ -62,8 +65,6 @@ import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
     EditorComponent,
     //Todo: Auslagerung der ohnehin nur mit der EditorComponent genutzten Components in ein eigenes Module.
     OperativeParagraphComponent,
@@ -71,8 +72,6 @@ import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-
     ResOptionsComponent,
     AmendmentControllerComponent,
     ResolutionHomeComponent,
-    DashboardComponent,
-    ConferenceBoxComponent,
     CreateConferenceComponent,
     ConferenceListComponent,
     FooterComponent,
@@ -97,7 +96,13 @@ import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-
     ResolutionsManagementComponent,
     ImpressumComponent,
     ExploreConferencesComponent,
-    SpeakerlistPanelComponent
+    SpeakerlistPanelComponent,
+    PresentsCheckComponent,
+    CommitteeDetailsComponent,
+    DelegationDetailsComponent,
+    TeamRolesComponent,
+    TeamComponent,
+    ProfileComponent
   ],
   imports: [
     RouterModule,
@@ -115,7 +120,8 @@ import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-
     TypeaheadModule.forRoot(),
     ModalModule.forRoot(),
     MarkdownModule.forRoot(),
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
+    BsDatepickerModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
