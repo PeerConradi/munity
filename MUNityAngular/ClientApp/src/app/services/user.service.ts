@@ -76,12 +76,13 @@ export class UserService {
 
 
   public async logout() {
+    this.setSessionkey('');
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.sessionkey());
     let error = false;
     let options = { headers: headers };
     await this.http.get(this.baseUrl + 'api/User/Logout', options).toPromise().then(msg => {
-      this.setSessionkey('');
+      
       this._loggedIn = false;
     }).catch(err => error = true);
     if (error == false)

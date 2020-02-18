@@ -67,6 +67,45 @@ namespace MUNityAngular.DataHandlers.Database
             }
         }
 
+        public List<T> GetElements<T>()
+        {
+            var list = new List<T>();
+            var cmdStr = "SELECT * FROM " + _name + ";";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(DataReaderConverter.ObjectFromReader<T>(reader));
+                    }
+                    
+                }
+            }
+            return list;
+        }
+
+        public T First<T>(string conditionKey, object conditionValue)
+        {
+            var cmdStr = "SELECT * FROM " + _name + " WHERE " + conditionKey + "=@conditionvalue;";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@conditionvalue", conditionValue);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return DataReaderConverter.ObjectFromReader<T>(reader);
+                    }
+                }
+            }
+            throw new NullReferenceException("No element found");
+        }
+
         /// <summary>
         /// Get Entries with one filter condition
         /// </summary>

@@ -15,6 +15,8 @@ namespace MUNityAngular.Services
         private const string user_table_name = "user";
         private const string auth_table_name = "auth";
 
+        private string _connectionString;
+
         private bool registrationOpened = true;
         public bool IsRegistrationOpened { get => registrationOpened; 
         set
@@ -40,7 +42,7 @@ namespace MUNityAngular.Services
             var customAuthKey = string.Empty;
 
             var cmdStr = "SELECT id, password, salt FROM user WHERE username=@username";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 string userid = string.Empty;
@@ -82,7 +84,7 @@ namespace MUNityAngular.Services
         public void DeleteAllUserKeys(string userid)
         {
             var cmdStr = "DELETE FROM auth WHERE userid=@userid";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -97,7 +99,7 @@ namespace MUNityAngular.Services
             DeleteAllUserKeys(id);
 
             
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 //Free all Resolutions from this User (give them to anon)
@@ -111,7 +113,7 @@ namespace MUNityAngular.Services
         public string GetHeadAdminId()
         {
             string id = null;
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 var cmdStr = "SELECT userid FROM admin WHERE rank=5;";
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -134,7 +136,7 @@ namespace MUNityAngular.Services
             var customAuthKey = string.Empty;
 
             var cmdStr = "SELECT password, salt FROM user WHERE id=@userid";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -176,7 +178,7 @@ namespace MUNityAngular.Services
             var success = false;
             string userid = string.Empty;
             var cmdStr = "SELECT id, password, salt FROM user WHERE username=@username";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 
@@ -189,8 +191,7 @@ namespace MUNityAngular.Services
                         userid = reader.GetString("id");
                         var hash = reader.GetString("password");
                         var salt = reader.GetString("salt");
-                        if (Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash))
-                            success = true;
+                        success = Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash);
                     }
                 }
             }
@@ -201,7 +202,7 @@ namespace MUNityAngular.Services
         {
             var success = false;
             var cmdStr = "SELECT id, password, salt FROM user WHERE id=@userid";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -227,7 +228,7 @@ namespace MUNityAngular.Services
                 return;
 
             var cmdStr = "DELETE FROM " + auth_table_name + " WHERE authkey=@authkey";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -242,7 +243,7 @@ namespace MUNityAngular.Services
                 return;
 
             var cmdStr = "DELETE FROM " + auth_table_name + " WHERE userid=@userid";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -261,7 +262,7 @@ namespace MUNityAngular.Services
 
             var hash = Util.Hashing.PasswordHashing.InitHashing(password);
 
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -280,39 +281,14 @@ namespace MUNityAngular.Services
 
         public void SetPassword(string userid, string newPassword)
         {
-            var cmdStr = "UPDATE " + user_table_name + " SET password=@password, salt=@salt WHERE id=@userid;";
-            using (var connection = Connector.Connection)
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                var hash = Util.Hashing.PasswordHashing.InitHashing(newPassword);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                cmd.Parameters.AddWithValue("@password", hash.Key);
-                cmd.Parameters.AddWithValue("@salt", hash.Salt);
-            }
-        }
-
-        public bool ChangePassword(string userid, string oldpassword, string newpassword)
-        {
-            throw new NotImplementedException();
+            var hash = Util.Hashing.PasswordHashing.InitHashing(newPassword);
+            Tools.Connection(_connectionString).Table(user_table_name).SetEntry("id", userid, "password", hash.Key);
+            Tools.Connection(_connectionString).Table(user_table_name).SetEntry("id", userid, "salt", hash.Salt);
         }
 
         public bool UsernameAvailable(string username)
         {
-            bool available = true;
-            var cmdStr = "SELECT * FROM " + user_table_name + " WHERE username=@username";
-            using (var connection = Connector.Connection)
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@username", username.ToLower());
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                        available = false;
-                }
-            }
-            return available;
+            return !Tools.Connection(_connectionString).Table(user_table_name).HasEntry("username", username.ToLower());
         }
 
         public (bool valid, string userid) ValidateAuthKey(string authkey)
@@ -322,7 +298,7 @@ namespace MUNityAngular.Services
 
             var valid = false;
             string user = null;
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 var cmdStr = "SELECT COUNT(*), userid FROM auth WHERE authkey=@authkey;";
                 connection.Open();
@@ -385,7 +361,7 @@ namespace MUNityAngular.Services
         {
             var read = false;
             var write = false;
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmdStr = "SELECT resolution.ispublicread, resolution.ispublicwrite FROM resolution WHERE resolution.id=@id";
@@ -410,7 +386,7 @@ namespace MUNityAngular.Services
             if (resolution == null)
                 throw new ArgumentNullException("Resolution cant be null");
 
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmdStr = "SELECT `user` FROM resolution WHERE resolution.id=@resoid;";
@@ -435,7 +411,7 @@ namespace MUNityAngular.Services
             if (string.IsNullOrEmpty(authkey))
                 return auths;
 
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 var cmdStr = "SELECT user_clearance.* FROM `user`" +
                     " INNER JOIN user_clearance ON user_clearance.userid = `user`.id" +
@@ -459,7 +435,7 @@ namespace MUNityAngular.Services
         public bool IsAdmin(string userid)
         {
             var cmdStr = "SELECT rank FROM admin WHERE userid=@userid";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -494,7 +470,7 @@ namespace MUNityAngular.Services
         public List<UserModel> GetAllUsers()
         {
             var users = new List<UserModel>();
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmdStr = "SELECT * FROM user;";
@@ -515,7 +491,7 @@ namespace MUNityAngular.Services
         public UserModel GetUserByUsername(string username)
         {
             UserModel user = null;
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmdStr = "SELECT * FROM user WHERE username=@username;";
@@ -538,7 +514,7 @@ namespace MUNityAngular.Services
 
         public bool CanManageConference(string userid, string conferenceid)
         {
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmdStr = "SELECT FROM conference WHERE id=@conferenceid And creationuser=@userid;";
@@ -575,8 +551,9 @@ namespace MUNityAngular.Services
         #endregion
 
 
-        public AuthService()
+        public AuthService(string connectionString)
         {
+            _connectionString = connectionString;
             Console.WriteLine("Auth-Service Started!");
         }
     }

@@ -61,7 +61,7 @@ namespace MUNityAngular
 
             // All services that are used inside the controllers.
             services.AddSingleton<Services.InstallationService>();
-            services.AddSingleton<Services.AuthService>();
+            services.AddSingleton(serviceProvider => new Services.AuthService(mySqlConnectionString));
             services.AddSingleton(serviceProvider =>
             {
                 //We pass the settings to this one!

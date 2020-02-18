@@ -20,5 +20,7 @@ namespace MUNityAngular.Models.User
 
         [DatabaseSave("lastname")]
         public string Lastname { get; set; }
+
+        
     }
 }
