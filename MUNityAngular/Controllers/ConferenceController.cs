@@ -28,7 +28,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetNameOfAllConferences([FromHeader]string auth, 
+        public IActionResult GetNameOfAllConferences([FromHeader]string auth,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
@@ -72,7 +72,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetConferences([FromHeader]string auth, 
+        public IActionResult GetConferences([FromHeader]string auth,
             [FromServices]ConferenceService conferenceService,
             [FromServices]AuthService authService)
         {
@@ -106,7 +106,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpPatch]
         [Route("[action]")]
-        public IActionResult ChangeConferenceName([FromHeader]string auth, [FromBody]ChangeConferenceNameRequest request, 
+        public IActionResult ChangeConferenceName([FromHeader]string auth, [FromBody]ChangeConferenceNameRequest request,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
@@ -129,14 +129,14 @@ namespace MUNityAngular.Controllers
                 }
                 else
                 {
-                   return  StatusCode(StatusCodes.Status500InternalServerError, "Unable to change Conference Name");
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Unable to change Conference Name");
                 }
             }
             else
             {
                 return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
             }
-            
+
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult Create([FromHeader]string auth, [FromBody]CreateConferenceRequest request, 
+        public IActionResult Create([FromHeader]string auth, [FromBody]CreateConferenceRequest request,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
@@ -287,8 +287,6 @@ namespace MUNityAngular.Controllers
             if (committee == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Committee not found!");
 
-            
-
             var canEdit = conferenceService.CanAuthEditConference(auth, committee.ConferenceID);
             if (!canEdit)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
@@ -330,7 +328,6 @@ namespace MUNityAngular.Controllers
             //Authentication egal
             var delegations = conferenceService.GetDelegationsOfCommittee(committeeid);
             return StatusCode(StatusCodes.Status200OK, delegations.AsNewtonsoftJson());
-
         }
 
         //Returns a list of all public visible Delegations.

@@ -207,6 +207,7 @@ namespace MUNityAngular.DataHandlers.Database
         /// <param name="tablename"></param>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Obsolete("Use the Get Insertion String Method in future implementations and make sure every service uses its own connection String")]
         public static bool Insert(string tablename, object model)
         {
             var cmdStr = "INSERT INTO " + tablename + " (";
@@ -246,6 +247,42 @@ namespace MUNityAngular.DataHandlers.Database
                 cmd.ExecuteNonQuery();
             }
             return true;
+        }
+
+        public static MySqlCommand GetInsertionCommand(string tablename, object model)
+        {
+            var cmdStr = "INSERT INTO " + tablename + " (";
+            var paramList = new List<string>();
+            var valList = new Dictionary<string, object>();
+            var t = model.GetType();
+            foreach (var prep in t.GetProperties())
+            {
+                var attr = Connector.GetAttributeForProperty(prep);
+                if (attr != null)
+                {
+                    if (prep.GetValue(model) != null)
+                    {
+                        paramList.Add(attr.ColumnName);
+                        valList.Add("@" + attr.ColumnName, prep.GetValue(model));
+                    }
+
+                }
+            }
+            paramList.ForEach(n => cmdStr += n + ",");
+            if (cmdStr.EndsWith(',')) cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+            cmdStr += ") VALUES (";
+            foreach (var item in valList)
+            {
+                cmdStr += item.Key + ",";
+            }
+            if (cmdStr.EndsWith(',')) cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+            cmdStr += ")";
+            var cmd = new MySqlCommand(cmdStr);
+            foreach (var item in valList)
+            {
+                cmd.Parameters.AddWithValue(item.Key, item.Value);
+            }
+            return cmd;
         }
     
         [Obsolete("This function is not fully working and tested right now. Please dont use it!")]

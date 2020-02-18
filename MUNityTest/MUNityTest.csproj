@@ -17,4 +17,10 @@
     <ProjectReference Include="..\MUNityAngular\MUNityAngular.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="NeededFiles\munity.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

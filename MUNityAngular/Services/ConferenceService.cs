@@ -11,16 +11,21 @@ namespace MUNityAngular.Services
 {
     public class ConferenceService
     {
+        private string _connectionString;
+        
         private const string conference_table_name = "conference";
         private const string delegation_table_name = "delegation";
         private const string conference_user_auth_table_name = "conference_user_auth";
         private const string committee_table_name = "committee";
 
+
+
+
         private List<ConferenceModel> conferences = new List<ConferenceModel>();
         private void LoadConferencesFromDatabase()
         {
             var list = new List<ConferenceModel>();
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 string cmdStr = "SELECT * FROM conference";
                 connection.Open();
@@ -72,6 +77,9 @@ namespace MUNityAngular.Services
 
         public ConferenceModel GetConference(string id)
         {
+            //Look if the conference may is already inside the cache, if its not then load it from the
+            //Database. Because this may take longer we save it in cache.
+            //To not waste memory the cache should be cleaned every couple of hours.
             var conference = this.conferences.FirstOrDefault(n => n.ID == id);
             if (conference == null)
             {
@@ -108,19 +116,28 @@ namespace MUNityAngular.Services
         public bool CreateConference(ConferenceModel model, string userid)
         {
             model.CreationDate = DateTime.Now;
-            Connector.Insert(conference_table_name, model);
             conferences.Add(model);
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
-                var cmdStr = "INSERT INTO " + conference_user_auth_table_name + "(conferenceid, userid, CanOpen, CanEdit, CanRemove)" +
-                        " VALUES (@conferenceid, @userid, 1, 1, 1)";
                 connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@conferenceid", model.ID);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                cmd.ExecuteNonQuery();
-            }
+                var cmdInsert = Connector.GetInsertionCommand(conference_table_name, model);
+                cmdInsert.Connection = connection;
+                cmdInsert.ExecuteNonQuery();
 
+
+                if (userid != null)
+                {
+                    var cmdStr = "INSERT INTO " + conference_user_auth_table_name + "(conferenceid, userid, CanOpen, CanEdit, CanRemove)" +
+                        " VALUES (@conferenceid, @userid, 1, 1, 1)";
+                    connection.Open();
+                    var cmd = new MySqlCommand(cmdStr, connection);
+                    cmd.Parameters.AddWithValue("@conferenceid", model.ID);
+                    cmd.Parameters.AddWithValue("@userid", userid);
+                    cmd.ExecuteNonQuery();
+                }
+                
+            }
+            
             return true;
         }
 
@@ -189,8 +206,6 @@ namespace MUNityAngular.Services
         }
         #endregion
 
-
-
         public bool CanAuthEditConference(string auth, string conferenceid)
         {
             var canEdit = false;
@@ -214,7 +229,6 @@ namespace MUNityAngular.Services
             }
             return canEdit;
         }
-
 
         public List<UserModel> UsersWithAccessToConference(string conferenceid)
         {
@@ -424,9 +438,6 @@ namespace MUNityAngular.Services
 
             if (linkid.HasValue)
             {
-                
-
-
                 using (var connection = Connector.Connection)
                 {
                     connection.Open();
@@ -478,6 +489,27 @@ namespace MUNityAngular.Services
             {
                 return false;
             }
+        }
+
+        public bool RemoveDelegationFromCommittee(CommitteeModel committee, DelegationModel delegation)
+        {
+            var linkid = GetDelegationConferenceLinkId(committee.ConferenceID, delegation.ID);
+
+            if (linkid.HasValue)
+            {
+                using (var connection = Connector.Connection)
+                {
+                    connection.Open();
+                    var cmdStr = "DELETE FROM delegation_in_committee WHERE linkid=@linkid AND committeeid=@committeeid";
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public int? GetDelegationConferenceLinkId(string conferenceid, string delegationid)
@@ -532,8 +564,9 @@ namespace MUNityAngular.Services
 
         #endregion
 
-        public ConferenceService()
+        public ConferenceService(string connectionString)
         {
+            this._connectionString = connectionString;
             Console.WriteLine("Conference-Service Started!");
         }
     }

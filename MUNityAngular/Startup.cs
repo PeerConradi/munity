@@ -57,6 +57,8 @@ namespace MUNityAngular
                 
             });
 
+            var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
+
             // All services that are used inside the controllers.
             services.AddSingleton<Services.InstallationService>();
             services.AddSingleton<Services.AuthService>();
@@ -67,7 +69,8 @@ namespace MUNityAngular
                 var dbName = Configuration.GetValue<string>("MunityMongoDatabaseSettings:DatabaseName");
                 return new Services.ResolutionService(cs, dbName);
             });
-            services.AddSingleton<Services.ConferenceService>();
+            //Add the Conference Service, with the mySqlConnectionString
+            services.AddSingleton(serviceProvider => new Services.ConferenceService(mySqlConnectionString));
             services.AddSingleton<Services.SpeakerlistService>();
 
             // Swagger for Documentation
