@@ -11,7 +11,7 @@ namespace MUNityTest.ServiceTests
 {
     class ConferenceServiceTest
     {
-        private string _connectionString = @"server=localhost;userid=root;password=''";
+        private string _connectionString = @"server=127.0.0.1;userid=root;password=''";
         private string test_database_name = "munity-test";
 
         [SetUp]
