@@ -65,6 +65,7 @@ namespace MUNityAngular.DataHandlers.Database
             }
         }
 
+        [Obsolete("Use MySQL Connection in future implementations and give the custom conenction string to the services!")]
         public static MySqlConnection Connection
         {
             get => new MySqlConnection(connectionString);
@@ -102,7 +103,7 @@ namespace MUNityAngular.DataHandlers.Database
             return (DatabaseSaveAttribute)property.GetCustomAttribute(typeof(DatabaseSaveAttribute));
         }
 
-        public static (PrimaryKeyAttribute, PropertyInfo) GetPrimaryKey(object o)
+        public static (PrimaryKeyAttribute attribute, PropertyInfo propertyInfo) GetPrimaryKey(object o)
         {
             PrimaryKeyAttribute val = null;
 
@@ -285,18 +286,20 @@ namespace MUNityAngular.DataHandlers.Database
             return cmd;
         }
     
-        [Obsolete("This function is not fully working and tested right now. Please dont use it!")]
-        public static bool Update(string tablename, object oldModel, object newModel, bool allowPrimaryKeyChange = false)
+        /// <summary>
+        /// Updates new object in the given table, notice that it needs a primary key (only one!)
+        /// </summary>
+        /// <param name="tablename"></param>
+        /// <param name="newModel"></param>
+        /// <returns></returns>
+        public static MySqlCommand CreateUpdateCommand(string tablename, object newModel)
         {
-            if (oldModel == null)
-                return Insert(tablename, newModel);
-
-            if (oldModel.GetType() != newModel.GetType())
-                throw new Exception("The Model have to be from the same type");
 
             var primaryKey = GetPrimaryKey(newModel);
             if (primaryKey.Item1 == null)
                 throw new Exception("Primary Key not found!");
+
+            //UPDATE tableName SET key=@value WHERE primaryKeyName=@pkValue
 
             Dictionary<string, object> newValues = new Dictionary<string, object>();
             var modelType = newModel.GetType();
@@ -304,45 +307,36 @@ namespace MUNityAngular.DataHandlers.Database
             {
                 var attr = GetAttributeForProperty(newProp);
                 //Do not allow to change the Primary key
-                if (newProp.GetCustomAttribute(typeof(PrimaryKeyAttribute)) == null && allowPrimaryKeyChange == false || allowPrimaryKeyChange == true)
+                if (newProp.GetCustomAttribute(typeof(PrimaryKeyAttribute)) == null)
                 {
-                    if (attr != null)
+                    var saveAttribute = newProp.GetCustomAttribute<DatabaseSaveAttribute>();
+                    if (saveAttribute != null)
                     {
-                        var oldPropValue = modelType.GetProperty(newProp.Name)?.GetValue(oldModel);
-                        var newPropValue = newProp.GetValue(newModel);
-                        if (oldPropValue != newProp.GetValue(newModel))
-                        {
-                            newValues.Add(newProp.Name, newPropValue);
-                        }
+                        newValues.Add(saveAttribute.ColumnName, newProp.GetValue(newModel));
                     }
                 }
-                
             }
 
             if (newValues.Count == 0)
-                return false;
+                throw new Exception("No Arguments to change found!");
 
             var cmdStr = "UPDATE " + tablename + " SET ";
             //TODO: Column setzen ausgehend von den newValues Dict
             foreach (var key in newValues)
             {
-                cmdStr += " " + key.Key + "=" + "@" + key.Key;
+                cmdStr += " " + key.Key + "=" + "@" + key.Key + ",";
             }
-            cmdStr += " WHERE " + primaryKey.Item2.Name + " = @" + primaryKey.Item2.Name + ";";
+            cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+            cmdStr += " WHERE " + primaryKey.propertyInfo.Name + " = @" + primaryKey.propertyInfo.Name + ";";
 
-            using (var connection = Connector.Connection)
+            var cmd = new MySqlCommand(cmdStr);
+            //Insert all the new Values
+            foreach(var keyVal in newValues)
             {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                //Insert all the new Values
-                foreach(var keyVal in newValues)
-                {
-                    cmd.Parameters.AddWithValue("@" + keyVal.Key, keyVal.Value);
-                }
-                cmd.Parameters.AddWithValue("@" + primaryKey.Item2.Name, primaryKey.Item2.GetValue(newModel));
-                cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue("@" + keyVal.Key, keyVal.Value);
             }
-            return true;           
+            cmd.Parameters.AddWithValue("@" + primaryKey.Item2.Name, primaryKey.Item2.GetValue(newModel));
+            return cmd;         
         }
     }
 }

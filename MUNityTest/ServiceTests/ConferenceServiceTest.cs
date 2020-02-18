@@ -6,12 +6,16 @@ using System.Text;
 using System.IO;
 using MUNityAngular.Services;
 using MUNityAngular.Models.Conference;
+using MUNityTest.DatabaseTestTools;
 
 namespace MUNityTest.ServiceTests
 {
-    class ConferenceServiceTest
+
+    public class ConferenceServiceTest
     {
-        private string _connectionString = @"server=127.0.0.1;userid=root;password='root'";
+
+        //Change the password if needed localy, keep in mind that inside the git-Action the password needs to be root!
+        private string _connectionString = @"server=127.0.0.1;userid=root;password='12345'";
         private string test_database_name = "munity-test";
 
         [SetUp]
@@ -76,6 +80,9 @@ namespace MUNityTest.ServiceTests
                             Assert.AreEqual(conference.Name, reader.GetString("name"));
                             Assert.AreEqual(conference.FullName, reader.GetString("fullname"));
                             Assert.AreEqual(conference.StartDate, reader.GetDateTime("startdate"));
+                            Assert.AreEqual(conference.EndDate, reader.GetDateTime("enddate"));
+                            Assert.AreEqual(conference.SecretaryGeneralTitle, reader.GetString("secretarygeneraltitle"));
+                            Assert.AreEqual(conference.SecretaryGerneralName, reader.GetString("secretarygeneralname"));
                         }
                     }
                     else
@@ -84,6 +91,72 @@ namespace MUNityTest.ServiceTests
                     }
                 }
             }
+        }
+
+        [Test]
+        public void RemoveConferenceTest()
+        {
+            var service = new ConferenceService(_connectionString);
+            var conference = new ConferenceModel();
+            var result = service.CreateConference(conference, null);
+            Assert.IsTrue(result);
+            Assert.AreEqual(conference, service.GetConference(conference.ID));
+
+            //Database Checks
+            var dbResult = Tools.Connection(_connectionString).Table("conference").HasEntry("id", conference.ID);
+            Assert.IsTrue(dbResult);
+
+            service.RemoveConference(conference);
+
+            //Database Checks
+            dbResult = Tools.Connection(_connectionString).Table("conference").HasEntry("id", conference.ID);
+            Assert.IsFalse(dbResult);
+            Assert.IsNull(service.GetConference(conference.ID));
+        }
+    
+        [Test]
+        public void ChangeConferenceNameTest()
+        {
+            var service = new ConferenceService(_connectionString);
+            var conference = new ConferenceModel();
+            conference.Name = "oldName";
+            var result = service.CreateConference(conference, null);
+            Assert.IsTrue(result);
+            Assert.AreEqual(conference, service.GetConference(conference.ID));
+
+            //Database Checks
+            var name = Tools.Connection(_connectionString).Table("conference").GetEntries("id", conference.ID)["name"];
+            Assert.AreEqual("oldName", name);
+            service.ChangeConferenceName(conference, "newName");
+
+            //Database Check
+            name = Tools.Connection(_connectionString).Table("conference").GetEntries("id", conference.ID)["name"];
+            Assert.AreEqual("newName", name);
+
+            var cFromService = service.GetConference(conference.ID);
+            Assert.IsNotNull(cFromService);
+            Assert.AreEqual("newName", cFromService.Name);
+        }
+    
+        [Test]
+        public void AddCommitteeTest()
+        {
+            var service = new ConferenceService(_connectionString);
+            var conference = new ConferenceModel();
+            var conferenceResult = service.CreateConference(conference, null);
+            Assert.IsTrue(conferenceResult);
+            Assert.AreEqual(conference, service.GetConference(conference.ID));
+
+            var committee = new CommitteeModel();
+            var committeeResult = service.AddCommittee(conference, committee);
+            Assert.IsTrue(committeeResult);
+
+            var cf = service.GetConference(conference.ID);
+            Assert.AreEqual(1, cf.Committees.Count);
+
+            //Database Checks
+            var cValue = Tools.Connection(_connectionString).Table("committee").GetEntries("id", committee.ID)["conferenceid"];
+            Assert.AreEqual(conference.ID, cValue);
         }
     }
 }

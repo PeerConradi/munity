@@ -14,6 +14,7 @@ namespace MUNityAngular.Services
 {
     public class ResolutionService : IDisposable
     {
+        private string _mySqlConnectionString;
         private const string resolution_table_name = "resolution";
 
         public IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> HubContext { get; set; }
@@ -273,8 +274,6 @@ namespace MUNityAngular.Services
             //Nothing to Dispose()
         }
 
-        
-
         /// <summary>
         /// Returns a List of resolutions where the User is the creator/owner
         /// </summary>
@@ -313,21 +312,11 @@ namespace MUNityAngular.Services
             }
         }
 
-        public ResolutionService(string connectionString, string databaseString)
-        {
-            //New Saving in MongoDB
-            var resolutionTableString = "Resolutions";
-            var client = new MongoClient(connectionString);
-            var database = client.GetDatabase(databaseString);
-
-            this._resolutions = database.GetCollection<ResolutionModel>(resolutionTableString);
-
-            Console.WriteLine("Resolution Service Started!");
-        }
+        
 
         internal void SetPublicReadMode(string resolutionid, bool mode)
         {
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_mySqlConnectionString))
             {
                 var cmdStr = "UPDATE resolution SET ispublicread=@mode WHERE id=@resoid;";
                 connection.Open();
@@ -336,6 +325,20 @@ namespace MUNityAngular.Services
                 cmd.Parameters.AddWithValue("@resoid", resolutionid);
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        public ResolutionService(string mysqlConnectionString, string mongoConnectionString, string mongoDatabaseName)
+        {
+            //New Saving in MongoDB
+            _mySqlConnectionString = mysqlConnectionString;
+
+            var resolutionTableString = "Resolutions";
+            var client = new MongoClient(mongoConnectionString);
+            var database = client.GetDatabase(mongoDatabaseName);
+
+            this._resolutions = database.GetCollection<ResolutionModel>(resolutionTableString);
+
+            Console.WriteLine("Resolution Service Started!");
         }
     }
 

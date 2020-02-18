@@ -22,33 +22,11 @@ namespace MUNityAngular.Services
 
 
         private List<ConferenceModel> conferences = new List<ConferenceModel>();
-        private void LoadConferencesFromDatabase()
-        {
-            var list = new List<ConferenceModel>();
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                string cmdStr = "SELECT * FROM conference";
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var conference = DataReaderConverter.ObjectFromReader<ConferenceModel>(reader);
-                        conference.Committees = GetCommitteesOfConference(conference);
-                        conference.Delegations = GetDelegationsOfConference(conference);
-                        conference.Committees.ForEach(n => n.DelegationList = GetDelegationIdsOfCommittee(n));
-                        list.Add(conference);
-                    }
-                }
-            }
-            conferences = list;
-        }
 
         private ConferenceModel LoadConferenceFromDatabase(string id)
         {
             var conference = new ConferenceModel();
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 string cmdStr = "SELECT * FROM conference WHERE id=@id;";
                 connection.Open();
@@ -92,7 +70,7 @@ namespace MUNityAngular.Services
         public List<string> GetDelegationIdsOfCommittee(CommitteeModel committee)
         {
             var list = new List<string>();
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 var cmdStr = "SELECT conference_delegation.delegation_id FROM delegation_in_committee ";
                 cmdStr += "INNER JOIN committee ON delegation_in_committee.committeeid = committee.id ";
@@ -141,18 +119,23 @@ namespace MUNityAngular.Services
             return true;
         }
 
+        public void RemoveConference(ConferenceModel conference)
+        {
+            if (conference == null)
+                throw new ArgumentNullException("The given conference is null");
+
+            conferences.Remove(conference);
+            var f = conferences.Where(n => n.ID == conference.ID).ToList();
+            f.ForEach(n => conferences.Remove(n));
+
+            Tools.Connection(_connectionString).Table(conference_table_name).Remove(conference);
+        }
+
         public bool ChangeConferenceName(ConferenceModel conference, string newName)
         {
             conference.Name = newName;
-            using (var connection = Connector.Connection)
-            {
-                connection.Open();
-                var cmdStr = "UPDATE " + conference_table_name + " SET name=@name WHERE id=@id";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@name", conference.Name);
-                cmd.Parameters.AddWithValue("@id", conference.ID);
-                cmd.ExecuteNonQuery();
-            }
+            //Tools.Connection(_connectionString).Table(conference_table_name).SetEntry("id", conference.ID, "name", conference.Name);
+            Tools.Connection(_connectionString).Table(conference_table_name).Update(conference);
             return true;
         }
         #endregion
@@ -209,7 +192,7 @@ namespace MUNityAngular.Services
         public bool CanAuthEditConference(string auth, string conferenceid)
         {
             var canEdit = false;
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 string cmdStr = "SELECT conference_user_auth.CanEdit FROM auth" +
                     " INNER JOIN conference_user_auth ON conference_user_auth.userid = auth.userid" +
@@ -233,7 +216,7 @@ namespace MUNityAngular.Services
         public List<UserModel> UsersWithAccessToConference(string conferenceid)
         {
             var list = new List<UserModel>();
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 string cmdStr = "SELECT `user`.* FROM `user`" +
                     " INNER JOIN conference_user_auth ON conference_user_auth.userid = `user`.id" +
@@ -261,7 +244,15 @@ namespace MUNityAngular.Services
                 throw new ArgumentNullException("The conference cannot be null!");
 
             committee.ConferenceID = conference.ID;
-            Connector.Insert(committee_table_name, committee);
+
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = Connector.GetInsertionCommand(committee_table_name, committee);
+                cmd.Connection = connection;
+                cmd.ExecuteNonQuery();
+            }
+
             conference.AddCommittee(committee);
             return true;
         }
@@ -292,7 +283,7 @@ namespace MUNityAngular.Services
         public List<CommitteeModel> GetCommitteesOfConference(ConferenceModel conference)
         {
             var list = new List<CommitteeModel>();
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 var cmdStr = "SELECT * FROM committee WHERE conferenceid = @conferenceid";
                 connection.Open();
@@ -316,7 +307,7 @@ namespace MUNityAngular.Services
         public List<DelegationModel> GetAllDelegations()
         {
             var list = new List<DelegationModel>();
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmdStr = "SELECT * FROM delegation";
@@ -335,7 +326,7 @@ namespace MUNityAngular.Services
         public DelegationModel GetDelegation(string id)
         {
             DelegationModel model = null;
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 string cmdStr = "SELECT * FROM " + delegation_table_name + " WHERE id = @id";
                 connection.Open();
@@ -360,13 +351,18 @@ namespace MUNityAngular.Services
             model.TypeName = type;
             model.FullName = fullname;
 
-            Connector.Insert(delegation_table_name, model);
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = Connector.GetInsertionCommand(delegation_table_name, model);
+                cmd.ExecuteNonQuery();
+            }
             return model;
         }
 
         public void AddDelegationToConference(string conferenceid, string delegationid, int minCount, int maxCount)
         {
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 int? linkId = null;
@@ -416,7 +412,7 @@ namespace MUNityAngular.Services
                 "WHERE conference_delegation.linkid = delegation_in_committee.linkid " +
                 "AND conference_delegation.delegation_id = delegation.id " +
                 "AND delegation_in_committee.committeeid = @committeeid;";
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
@@ -438,7 +434,7 @@ namespace MUNityAngular.Services
 
             if (linkid.HasValue)
             {
-                using (var connection = Connector.Connection)
+                using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
                     //Prüfe ob die Verbindung nicht bereits exisitert!
@@ -497,11 +493,12 @@ namespace MUNityAngular.Services
 
             if (linkid.HasValue)
             {
-                using (var connection = Connector.Connection)
+                using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
                     var cmdStr = "DELETE FROM delegation_in_committee WHERE linkid=@linkid AND committeeid=@committeeid";
-                    throw new NotImplementedException();
+                    var cmd = new MySqlCommand(cmdStr, connection);
+                    cmd.ExecuteNonQuery();
                 }
             }
             else
@@ -516,7 +513,7 @@ namespace MUNityAngular.Services
         {
             int? value = null;
 
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 var cmdStr = "SELECT linkid FROM conference_delegation WHERE conference_id=@confid AND delegation_id=@delid;";
                 connection.Open();
@@ -543,7 +540,7 @@ namespace MUNityAngular.Services
         public List<DelegationModel> GetDelegationsOfConference(string conferenceid)
         {
             var list = new List<DelegationModel>();
-            using (var connection = Connector.Connection)
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 //Anhängen der ISO
                 var cmdStr = "SELECT delegation.* FROM delegation INNER JOIN conference_delegation ON conference_delegation.delegation_id = delegation.id WHERE conference_id=@conferenceid";

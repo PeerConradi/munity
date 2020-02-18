@@ -206,7 +206,7 @@ namespace MUNityTest.Resolution
 
             //Safe
             //There should be a munity Test Database here.
-            var service = new MUNityAngular.Services.ResolutionService("mongodb://localhost:27017", "MunityDb");
+            var service = new MUNityAngular.Services.ResolutionService("", "mongodb://localhost:27017", "MunityDb");
 
             string safedText = resolution.ToJson();
 
