@@ -512,6 +512,27 @@ namespace MUNityAngular.Services
             return users;
         }
 
+        public UserModel GetUserByUsername(string username)
+        {
+            UserModel user = null;
+            using (var connection = Connector.Connection)
+            {
+                connection.Open();
+                var cmdStr = "SELECT * FROM user WHERE username=@username;";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@username", username);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        user = DataReaderConverter.ObjectFromReader<UserModel>(reader);
+                    }
+
+                }
+            }
+            return user;
+        }
+
 
         #region Konferenz
 

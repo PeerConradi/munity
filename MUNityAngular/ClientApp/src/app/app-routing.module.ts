@@ -26,8 +26,9 @@ import { UserManagementComponent } from './components/admin/user-management/user
 import { ImpressumComponent } from './components/default/impressum/impressum.component';
 import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
 import { PresentsCheckComponent } from './components/presents/presents-check/presents-check.component';
-import { TeamComponent } from './components/conference/team/team.component';
 import { ProfileComponent } from './components/account/profile/profile.component';
+import { ManageConferenceTeamComponent } from './components/conference/manage/manage-conference-team/manage-conference-team.component';
+import { ManageConferenceCommitteesComponent } from './components/conference/manage/manage-conference-committees/manage-conference-committees.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -64,7 +65,9 @@ const routes: Routes = [
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
       { path: 'exploreconferences', component: ExploreConferencesComponent },
-      { path: 'c/team', component: TeamComponent },
+      // mc for manage conference
+      { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
+      { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent},
 
       //Admin
       { path: 'admin/conferences', component: ConferenceListComponent },

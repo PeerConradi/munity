@@ -6,6 +6,13 @@ using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
+
+    /// <summary>
+    /// The HUBOperativeParagraph is a one on one copy of the OperativeParagraphModel.
+    /// The only difference is:
+    /// It only stores Data and has absolutly no logic. We need to create this class
+    /// because SignalR will otherwise send Data that is tagged with [JsonIgnore].
+    /// </summary>
     public class HUBOperativeParagraph
     {
         public string ID { get; set; }

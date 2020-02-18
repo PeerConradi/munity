@@ -1,33 +1,89 @@
 <div class="row">
-  <h2>Konferenz bearbeiten</h2>
-  <hr />
+  <h1 class="col-12">Konferenz bearbeiten</h1>
+  <h3 class="col-12" *ngIf="confernece">{{ conference.Name }}</h3>
 </div>
-<div class="row" *ngIf="!conference">
-  <p>Informationen werden geladen!</p>
-</div>
-<div class="row" *ngIf="conference">
-  <div class="col-12">
-    <div class="card">
-      <h5 class="card-header">Gremien</h5>
-      <div class="card-body">
-        <h5 class="card-title">Gremien erstellen oder Bearbeiten</h5>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Entfernen</th>
 
-            </tr>
-          </thead>
-          <tbody>
+<p *ngIf="!conference"> Konferenz wird geladen</p>
 
-            <tr *ngFor="let c of conference.committees">
-              <th scope="row">{{ c.name }}</th>
-              <td>Mark</td>
-            </tr>
-          </tbody>
-        </table>
-        <a href="#" class="btn btn-primary">Neues Gremium hinzufügen</a>
+<div *ngIf="conference" class="row mbr-justify-content-center">
+
+  <div class="col-lg-6 mbr-col-md-10" (click)="foo()">
+    <div class="wrap">
+      <div class="ico-wrap">
+        <span class="mbr-iconfont fa-volume-up fa"></span>
+      </div>
+      <div class="text-wrap vcenter">
+        <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Gremien <span>Bearbeiten</span></h2>
+        <p class="mbr-fonts-style text1 mbr-text display-6">Gremien hinzufügen, umbenennen oder entfernen. Sowie Delegationen einem Gremium hinzufügen.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6 mbr-col-md-10">
+    <div class="wrap">
+      <div class="ico-wrap">
+        <span class="mbr-iconfont fa-calendar fa"></span>
+      </div>
+      <div class="text-wrap vcenter">
+        <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">
+          Delegationen
+          <span>einstellen</span>
+        </h2>
+        <p class="mbr-fonts-style text1 mbr-text display-6">Delegationen zu dieser Konferenz hinzufügen, bearbeiten oder auflösen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Team -->
+  <div class="col-lg-6 mbr-col-md-10">
+    <div class="wrap">
+      <div class="ico-wrap">
+        <span class="mbr-iconfont fa-globe fa"></span>
+      </div>
+      <div class="text-wrap vcenter">
+        <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">
+          Team
+          <span>verwalten</span>
+        </h2>
+        <p class="mbr-fonts-style text1 mbr-text display-6">Benutzer zum Team hinzufügen, Rechte verwalten oder aus dem Team entfernen. Sowie Aufgaben und Rollen verwalten.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit generals -->
+  <div class="col-lg-6 mbr-col-md-10">
+    <div class="wrap">
+      <div class="ico-wrap">
+        <span class="mbr-iconfont fa-trophy fa"></span>
+      </div>
+      <div class="text-wrap vcenter">
+        <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Allgemeine <span>Einstellungen</span></h2>
+        <p class="mbr-fonts-style text1 mbr-text display-6">Allgemeine Einstellungen für die Konferenz vornehmen, wie Datum, Namen oder Veranstaltungsort.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Webpages -->
+  <div class="col-lg-6 mbr-col-md-10">
+    <div class="wrap">
+      <div class="ico-wrap">
+        <span class="mbr-iconfont fa-trophy fa"></span>
+      </div>
+      <div class="text-wrap vcenter">
+        <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Webpräsenz <span>Bearbeiten</span></h2>
+        <p class="mbr-fonts-style text1 mbr-text display-6">Öffentliche Seiten, Infoboxen und Beiträge für die Konferenz erstellen und bearbeiten.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Participants -->
+  <div class="col-lg-6 mbr-col-md-10">
+    <div class="wrap">
+      <div class="ico-wrap">
+        <span class="mbr-iconfont fa-trophy fa"></span>
+      </div>
+      <div class="text-wrap vcenter">
+        <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">Teilnehmende <span>verwalten</span></h2>
+        <p class="mbr-fonts-style text1 mbr-text display-6">Einsicht in die Teilnehmendenlisten, Verteilung von Teilnehmenden auf Delegationen und Gremien, sowie Beiträge innerhalb der Konferenz.</p>
       </div>
     </div>
   </div>

@@ -184,5 +184,33 @@ namespace MUNityAngular.Controllers
         {
             return StatusCode(StatusCodes.Status200OK, authService.IsRegistrationOpened);
         }
+
+        /// <summary>
+        /// To protect data from robots you can only get a user when you are logged
+        /// in.
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="username"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetUserByUsername(
+            [FromHeader]string auth,
+            [FromHeader]string username,
+            [FromServices]AuthService authService)
+        {
+            var validCheck = authService.ValidateAuthKey(auth);
+
+            if (validCheck.valid == false)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that");
+
+            var user = authService.GetUserByUsername(username);
+
+            if (user == null)
+                return StatusCode(StatusCodes.Status404NotFound, "User with the given Username not found");
+
+            return StatusCode(StatusCodes.Status200OK, user.AsNewtonsoftJson());
+        }
     }
 }

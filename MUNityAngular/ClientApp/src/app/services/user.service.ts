@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Session } from 'inspector';
 import { resolve } from 'dns';
 import { Registration } from '../models/registration.model';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -103,6 +104,13 @@ export class UserService {
       return true;
     else
       return false;
+  }
+
+  public getUser(username: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.getAuthOrDefault());
+    headers = headers.set('username', username);
+    return this.http.get<User>(this.baseUrl + 'api/User/GetUserByUsername', { headers: headers });
   }
 }
 

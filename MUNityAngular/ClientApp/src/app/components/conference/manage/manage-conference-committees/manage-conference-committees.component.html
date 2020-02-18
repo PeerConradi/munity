@@ -1,0 +1,165 @@
+<div *ngIf="!conference">
+  <p>Konferenz wird geladen</p>
+</div>
+
+<div *ngIf="conference">
+
+
+  <div class="row">
+    <h1>Gremien verwalten</h1>
+  </div>
+
+  <!-- Übersicht -->
+  <div class="row">
+    <div class="card border-dark w-100">
+      <div class="card-header">Gremien</div>
+      <div class="card-body text-dark">
+        <h5 class="card-title">Gremien</h5>
+
+        <p class="card-text">{{ conference.Committees.length }} Gremien gefunden.</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name </th>
+              <th>Delegationen </th>
+              <th>Hinzufügen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let committee of conference.Committees">
+              <td>{{ committee.Name}}</td>
+              <td>{{ committee.DelegationList.length }}</td>
+              <td><button class="btn btn-outline-success" (click)="openModal(addDelegationToCommitteeModal);setCurrentCommittee(committee);">Delegation Hinzufügen</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="card-footer">
+        <button type="button" class="btn btn-block btn-primary" (click)="openModal(addCommitteeModal)">Gremium hinzufügen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Überischt neu! -->
+  <div class="row">
+    <div *ngFor="let committee of conference.Committees" class="col-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">{{ committee.Name }}</h3>
+        </div>
+        <div class="card-body">
+          <div>
+            <tabset>
+              <tab heading="Beschreibung" id="tab1">Keine Beschreibung vorhanden</tab>
+              <tab heading="Delegationen">
+                <table class="table">
+                  <tr>
+                    <th>Name</th>
+                    <th>Sitze</th>
+                    <th>Entfernen</th>
+                  </tr>
+                  <tr *ngFor="let delegationid of committee.DelegationList">
+                    <td>{{ getDelegationById(delegationid).Name }}</td>
+                    <td>1</td>
+                    <td><button class="btn btn-outline-danger" (click)="removeDelegationFromCommittee(committee, delegationid);">entfernen</button></td>
+                  </tr>
+                </table>
+              </tab>
+            </tabset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gremium hinzufügen -->
+
+</div>
+
+
+<!-- Add Committee Modal -->
+<ng-template #addCommitteeModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <!-- Name -->
+    <div class="row">
+      <label class="control-label">Anzeigename</label>
+      <div class="col-12">
+        <input [(ngModel)]="newcommitteename"
+               class="form-control"
+               [ngModelOptions]="{standalone: true}">
+      </div>
+    </div>
+
+    <!-- Abkürzung -->
+    <div class="row">
+      <label class="control-label">Abkürzung/Kurzform</label>
+      <div class="col-12">
+        <input [(ngModel)]="newcommitteeabbreviation"
+               class="form-control"
+               [ngModelOptions]="{standalone: true}">
+      </div>
+    </div>
+
+    <!-- Abkürzung -->
+    <div class="row">
+      <label class="control-label">Artikel (der/die/das)</label>
+      <div class="col-12">
+        <input [(ngModel)]="newcommitteearticle"
+               class="form-control"
+               [ngModelOptions]="{standalone: true}">
+      </div>
+    </div>
+
+    <!-- Übergeordnetes Gremium -->
+    <div class="row">
+      <label class="control-label">Übergeodnetes Gremium</label>
+      <div class="col-12">
+        <input [(ngModel)]="newcommitteeparent"
+               [typeahead]="conference.Committees"
+               typeaheadOptionField="Name"
+               class="form-control"
+               [ngModelOptions]="{standalone: true}"
+               aria-describedby="dsds">
+        <small id="dsds" class="text-muted">Wenn keines existiert Feld leer lassen</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn btn-block btn-primary" (click)="addCommittee()">Hinzufügen</button>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- Dialog zum Hinzufügen einer Delegation zu einem Gremium -->
+<ng-template #addDelegationToCommitteeModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <!-- Name (name) -->
+    <div class="row">
+      <label class="control-label">Delgation</label>
+      <div class="col-12">
+        <select class="form-control" id="inlineFormCustomSelectPref2" [(ngModel)]="addDelegationToCommitteeSelection" [ngModelOptions]="{standalone: true}">
+          <option *ngFor="let delegation of conference.Delegations" [ngValue]="delegation">{{ delegation.Name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn btn-block btn-primary" (click)="addDelegationToCommittee()">Hinzufügen</button>
+    </div>
+
+  </div>
+</ng-template>

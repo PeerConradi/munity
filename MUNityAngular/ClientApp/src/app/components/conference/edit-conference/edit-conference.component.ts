@@ -26,4 +26,8 @@ export class EditConferenceComponent implements OnInit {
     })
   }
 
+  foo() {
+    console.log('bar');
+  }
+
 }

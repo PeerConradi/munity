@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace MUNityAngular.Hubs
 {
+
+    /// <summary>
+    /// The SpeakerlistHub defines every method that is needed to directly communicate from the
+    /// Serverto the Client via a WebSocket.
+    /// </summary>
     public interface ITypedSpeakerlistHub
     {
         Task SpeakerListChanged(SpeakerlistModel speakerlist);

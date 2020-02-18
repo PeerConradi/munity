@@ -7,6 +7,13 @@ using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
+
+    /// <summary>
+    /// The HUBResolution is a one on one copy of the ResolutionModel.
+    /// The only difference is:
+    /// It only stores Data and has absolutly no logic. We need to create this class
+    /// because SignalR will otherwise send Data that is tagged with [JsonIgnore].
+    /// </summary>
     public class HUBResolution
     {
         public string ID { get; set; }

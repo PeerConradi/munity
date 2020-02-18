@@ -8,6 +8,13 @@ using MUNityAngular.Models.Conference;
 
 namespace MUNityAngular.Models.Resolution
 {
+
+    /// <summary>
+    /// An Amendment is a form of request to change one Operative Paragraph inside a
+    /// resolution.
+    /// There are different types of amendments that will work different.
+    /// Every Amendment can be deleted, denied or be submitted.
+    /// </summary>
     public class AbstractAmendment
     {
         public string ID { get; set; }

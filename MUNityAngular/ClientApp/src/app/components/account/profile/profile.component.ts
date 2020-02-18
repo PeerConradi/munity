@@ -1,5 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TabsetComponent } from 'ngx-bootstrap';
+import { User } from '../../../models/user.model';
+import { Router, ActivatedRoute } from '@angular/router';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -8,9 +11,24 @@ import { TabsetComponent } from 'ngx-bootstrap';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor() { }
+  user: User;
+
+  constructor(private route: ActivatedRoute, private userService: UserService) { }
+
 
   ngOnInit() {
+    let id: string = null;
+    this.route.params.subscribe(params => {
+      id = params.id;
+    })
+    if (id == null) {
+      id = this.route.snapshot.queryParamMap.get('id');
+    }
+
+    this.userService.getUser(id).subscribe(n => {
+      this.user = n;
+      
+    })
   }
 
   @ViewChild('staticTabs', { static: false }) staticTabs: TabsetComponent;

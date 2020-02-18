@@ -1,9 +1,9 @@
-<div class="container emp-profile">
+<div *ngIf="user" class="container emp-profile">
   <form method="post">
     <div class="row">
       <div class="col-md-4">
         <div class="profile-img">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" alt="" />
+          <img src="../../../../assets/img/profile/p.conradi.JPG" alt="" />
           <!-- Show when own profile -->
           <!--<div class="file btn btn-lg btn-primary">
             Change Photo
@@ -14,20 +14,13 @@
       <div class="col-md-6">
         <div class="profile-head">
           <h5>
-            Peer Conradi
+            {{ user.Forename }} {{ user.Lastname }}
           </h5>
+          <small>{{ user.Username }}</small>
           <h6>
             Founder & CEO
           </h6>
           <p class="proile-rating">Konferenzen : <span>10</span></p>
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
-            </li>
-          </ul>
         </div>
       </div>
       <div class="col-md-2">
@@ -37,16 +30,10 @@
     <div class="row">
       <div class="col-md-4">
         <div class="profile-work">
-          <p>WORK LINK</p>
-          <a href="">Website Link</a><br />
-          <a href="">Bootsnipp Profile</a><br />
-          <a href="">Bootply Profile</a>
-          <p>SKILLS</p>
-          <a href="">Web Designer</a><br />
-          <a href="">Web Developer</a><br />
-          <a href="">WordPress</a><br />
-          <a href="">WooCommerce</a><br />
-          <a href="">PHP, .Net</a><br />
+          <p>Funktionen</p>
+          <a href="">Freund hinzufügen</a><br />
+          <a href="">Abonnieren</a><br />
+          <a href="">Nachricht schreiben</a>
         </div>
       </div>
       <!-- Profil Bereich-->
@@ -59,8 +46,32 @@
             in Schleswig-Holstein. Dort war er Teilnehmer des Fernsehteams. Im Jahre 2014 wechselte er ins Team von Model United Nations Baden-Württemberg.
             In den darauf folgenden Jahren leitete er die Sitzungstechnik bei den Konferenzen MUN-SH und MUNBB.</p>
           </tab>
-          <tab heading="Konferenzen">Static content 1</tab>
-          <tab heading="Beiträge">Static content 2</tab>
+          <tab heading="Konferenzen">
+            <table class="table">
+              <tr>
+                <th>Name</th>
+                <th>Jahr</th>
+                <th>Rolle</th>
+              </tr>
+              <tr>
+                <td>MUN-SH 2020</td>
+                <td>2020</td>
+                <td>Fernsehteamlitung</td>
+              </tr>
+
+            </table>
+
+          </tab>
+          <tab heading="Beiträge">
+            <div class="media">
+              <!--<img class="mr-3" src="..." alt="Generic placeholder image">-->
+              <div class="media-body">
+                <h5 class="mt-0">Media heading</h5>
+                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                <small>0 Kommentare | <a>Kommentar schreiben</a> | <a>Melden</a></small>
+              </div>
+            </div>
+          </tab>
           <tab heading="Dokumente">Static content 3</tab>
         </tabset>
 
@@ -68,3 +79,6 @@
     </div>
   </form>
 </div>
+
+<p *ngIf="!user">Benutzer nicht gefunden. Denke daran, dass du angemeldet sein musst
+  um Profile anschauen zu können.</p>

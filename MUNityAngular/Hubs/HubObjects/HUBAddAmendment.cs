@@ -6,6 +6,13 @@ using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
+
+    /// <summary>
+    /// The HUBAddAmendment is a one on one copy of the AddAmendmentModel.
+    /// The only difference is:
+    /// It only stores Data and has absolutly no logic. We need to create this class
+    /// because SignalR will otherwise send Data that is tagged with [JsonIgnore].
+    /// </summary>
     public class HUBAddAmendment : HUBAbstractAmendment
     {
         public int TargetPosition { get; set; }

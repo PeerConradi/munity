@@ -8,41 +8,48 @@
       </div>
     </div>
   </div>
-  <div class="row">
-    <!-- Linke Spalte -->
-    <div class="col-lg-6 col-xs-12">
-      <!-- Gremien Box -->
-      <div class="card border-dark w-100">
-        <div class="card-header">Gremien</div>
-        <div class="card-body text-dark">
-          <h5 class="card-title">Gremien</h5>
 
-          <p class="card-text">{{ conference.Committees.length }} Gremien gefunden.</p>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Name </th>
-                <th>Delegationen </th>
-                <th>Hinzufügen</th>
-                <th>Anwesenheit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let committee of conference.Committees">
-                <td>{{ committee.Name}}</td>
-                <td>{{ committee.DelegationList.length }}</td>
-                <td><button class="btn btn-outline-success" (click)="openModal(addDelegationToCommitteeModal);setCurrentCommittee(committee);">Delegation Hinzufügen</button></td>
-                <td><a class="btn btn-block btn-outline-success" [routerLink]="['/p/check', committee.ID]">Anwesenehti feststellen</a></td>
-              </tr>
-            </tbody>
-          </table>
-          
+  <!-- Committees -->
+
+  
+  <div class="row">
+    <div class="col-12">
+      <h1>Gremien</h1>
+      <!-- Show if Conference-Admin-->
+      <a [routerLink]="['/mc/committees', conference.ID]">bearbeiten</a>
+    </div>
+    <div *ngFor="let committee of conference.Committees" class="col-12">
+      <div class="card b-1 hover-shadow mb-20">
+        <div class="media card-body">
+          <!--<div class="media-left pr-12">
+            <img class="avatar avatar-xl no-radius" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="...">
+          </div>-->
+          <div class="media-body">
+            <div class="mb-2">
+              <span class="fs-20 pr-16">{{ committee.Name }}</span>
+            </div>
+            <small class="fs-16 fw-300 ls-1">{{ committee.FullName }}</small>
+          </div>
+          <div class="media-right text-right d-none d-md-block">
+            <p class="fs-14 text-fade mb-12"><i class="fa fa-map-marker pr-1"></i> {{ committee.Abbreviation }}</p>
+            <!--<span class="text-fade"><i class="fa fa-money pr-1"></i> $60 per hour</span>-->
+          </div>
         </div>
-        <div class="card-footer">
-          <button type="button" class="btn btn-block btn-primary" (click)="openModal(addCommitteeModal)">Gremium hinzufügen</button>
-        </div>
+        <footer class="card-footer flexbox align-items-center">
+          <div>
+            <strong>Letzte Anweseneheit </strong>
+            <span>8/10 (80%) - 01.01.2020</span>
+          </div>
+          <div class="card-hover-show">
+            <a class="btn btn-bold btn-primary" [routerLink]="['/p/check', committee.ID]">Anwesenheit feststellen</a>
+            <a class="btn btn-bold btn-warning" href="#">Resolutionen</a>
+          </div>
+        </footer>
       </div>
     </div>
+  </div>
+
+  <div class="row">
     
     <!-- Rechte Spalte -->
     <div class="col-lg-6 col-xs-12">
@@ -130,90 +137,9 @@
   </div>
 </div>
 
-<!-- Add Committee Modal -->
-<ng-template #addCommitteeModal>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Modal</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <!-- Name -->
-    <div class="row">
-      <label class="control-label">Anzeigename</label>
-      <div class="col-12">
-        <input [(ngModel)]="newcommitteename"
-               class="form-control"
-               [ngModelOptions]="{standalone: true}">
-      </div>
-    </div>
 
-    <!-- Abkürzung -->
-    <div class="row">
-      <label class="control-label">Abkürzung/Kurzform</label>
-      <div class="col-12">
-        <input [(ngModel)]="newcommitteeabbreviation"
-               class="form-control"
-               [ngModelOptions]="{standalone: true}">
-      </div>
-    </div>
 
-    <!-- Abkürzung -->
-    <div class="row">
-      <label class="control-label">Artikel (der/die/das)</label>
-      <div class="col-12">
-        <input [(ngModel)]="newcommitteearticle"
-               class="form-control"
-               [ngModelOptions]="{standalone: true}">
-      </div>
-    </div>
 
-    <!-- Übergeordnetes Gremium -->
-    <div class="row">
-      <label class="control-label">Übergeodnetes Gremium</label>
-      <div class="col-12">
-        <input [(ngModel)]="newcommitteeparent"
-               [typeahead]="conference.Committees"
-               typeaheadOptionField="Name"
-               class="form-control"
-               [ngModelOptions]="{standalone: true}"
-               aria-describedby="dsds">
-        <small id="dsds" class="text-muted">Wenn keines existiert Feld leer lassen</small>
-      </div>
-    </div>
-
-    <div class="row">
-      <button class="btn btn-block btn-primary" (click)="addCommittee()">Hinzufügen</button>
-    </div>
-  </div>
-</ng-template>
-
-<!-- Dialog zum Hinzufügen einer Delegation zu einem Gremium -->
-<ng-template #addDelegationToCommitteeModal>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Modal</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <!-- Name (name) -->
-      <div class="row">
-        <label class="control-label">Delgation</label>
-        <div class="col-12">
-          <select class="form-control" id="inlineFormCustomSelectPref2" [(ngModel)]="addDelegationToCommitteeSelection" [ngModelOptions]="{standalone: true}">
-            <option *ngFor="let delegation of conference.Delegations" [ngValue]="delegation">{{ delegation.Name }}</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row">
-        <button class="btn btn-block btn-primary" (click)="addDelegationToCommittee()">Hinzufügen</button>
-      </div>
-    
-  </div>
-</ng-template>
 
 <!-- Dialog zum Anlegen einer neuen Delegation, falls in der Absoluten Liste diese bisher nicht exisiterte! -->
 <ng-template #addDelegationModal>

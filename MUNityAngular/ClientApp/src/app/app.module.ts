@@ -54,11 +54,14 @@ import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-
 import { PresentsCheckComponent } from './components/presents/presents-check/presents-check.component';
 import { CommitteeDetailsComponent } from './components/conference/committee-details/committee-details.component';
 import { DelegationDetailsComponent } from './components/conference/delegation-details/delegation-details.component';
-import { TeamRolesComponent } from './components/conference/team-roles/team-roles.component';
-import { TeamComponent } from './components/conference/team/team.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ProfileComponent } from './components/account/profile/profile.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { ManageConferenceCommitteesComponent } from './components/conference/manage/manage-conference-committees/manage-conference-committees.component';
+import { ManageConferenceTeamComponent } from './components/conference/manage/manage-conference-team/manage-conference-team.component';
+import { ManageConferenceTeamRolesComponent } from './components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component';
+import { ManageConferenceWebsiteComponent } from './components/conference/manage/manage-conference-website/manage-conference-website.component';
+import { ManageConferenceDelegationsComponent } from './components/conference/manage/manage-conference-delegations/manage-conference-delegations.component';
 
 
 @NgModule({
@@ -101,9 +104,12 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     PresentsCheckComponent,
     CommitteeDetailsComponent,
     DelegationDetailsComponent,
-    TeamRolesComponent,
-    TeamComponent,
-    ProfileComponent
+    ProfileComponent,
+    ManageConferenceCommitteesComponent,
+    ManageConferenceTeamComponent,
+    ManageConferenceTeamRolesComponent,
+    ManageConferenceWebsiteComponent,
+    ManageConferenceDelegationsComponent
   ],
   imports: [
     RouterModule,

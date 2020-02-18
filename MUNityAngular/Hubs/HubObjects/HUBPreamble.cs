@@ -7,6 +7,13 @@ using MUNityAngular.Models.Resolution;
 
 namespace MUNityAngular.Hubs.HubObjects
 {
+
+    /// <summary>
+    /// The HUBPreambleis a one on one copy of the PreambleModel.
+    /// The only difference is:
+    /// It only stores Data and has absolutly no logic. We need to create this class
+    /// because SignalR will otherwise send Data that is tagged with [JsonIgnore].
+    /// </summary>
     public class HUBPreamble
     {
         public string ID { get; set; }
