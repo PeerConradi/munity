@@ -44,7 +44,7 @@ namespace MUNityAngular.DataHandlers.Database
                                 setPropertySuccess = element.SetProperty(property.Name, string.Empty);
                             }
                         }
-                            
+
                         else if (propType == typeof(DateTime))
                             setPropertySuccess = element.SetProperty(property.Name, reader.GetDateTime(columnname));
                         else if (propType == typeof(double))
@@ -55,6 +55,12 @@ namespace MUNityAngular.DataHandlers.Database
                             element.SetProperty(property.Name, reader.GetByte(columnname));
                         else if (propType == typeof(TimeSpan))
                             element.SetProperty(property.Name, reader.GetTimeSpan(columnname));
+                        else if (propType == typeof(int?))
+                            element.SetProperty(property.Name, reader.GetInt32(columnname));        //Ich rieche eine Null exception
+                        else
+                        {
+                            throw new Exception("Unknow/Unhandled type: " + propType.Name);
+                        }
                     }
                 }
             }

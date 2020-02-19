@@ -29,6 +29,7 @@ import { PresentsCheckComponent } from './components/presents/presents-check/pre
 import { ProfileComponent } from './components/account/profile/profile.component';
 import { ManageConferenceTeamComponent } from './components/conference/manage/manage-conference-team/manage-conference-team.component';
 import { ManageConferenceCommitteesComponent } from './components/conference/manage/manage-conference-committees/manage-conference-committees.component';
+import { ManageConferenceTeamRolesComponent } from './components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -66,7 +67,9 @@ const routes: Routes = [
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
       { path: 'exploreconferences', component: ExploreConferencesComponent },
       // mc for manage conference
+      { path: 'mc/overview/:id', component: EditConferenceComponent },
       { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
+      { path: 'mc/TeamRoles/:id', component: ManageConferenceTeamRolesComponent },
       { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent},
 
       //Admin

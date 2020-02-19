@@ -6,7 +6,7 @@ using System.Text;
 using System.IO;
 using MUNityAngular.Services;
 using MUNityAngular.Models.Conference;
-using MUNityTest.DatabaseTestTools;
+using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityTest.ServiceTests
 {
@@ -157,6 +157,115 @@ namespace MUNityTest.ServiceTests
             //Database Checks
             var cValue = Tools.Connection(_connectionString).Table("committee").GetEntries("id", committee.ID)["conferenceid"];
             Assert.AreEqual(conference.ID, cValue);
+        }
+
+        [Test]
+        public void AddDelegationToConferenceTest()
+        {
+            var service = new ConferenceService(_connectionString);
+            var conference = new ConferenceModel();
+            service.CreateConference(conference, null);
+            var delegations = service.GetAllDelegations();
+            Assert.NotZero(delegations.Count);
+            service.AddDelegationToConference(conference.ID, delegations[0].ID, 1, 1);
+            var testResult = Tools.Connection(_connectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
+            Assert.NotZero(testResult.Count);
+            var result = testResult.Find(n => n.ConferenceId == conference.ID && n.DelegationId == delegations[0].ID);
+            Assert.NotNull(result);
+
+            var conferenceDelegations = service.GetDelegationsOfConference(conference);
+            Assert.NotNull(conferenceDelegations.Find(n => n.ID == delegations[0].ID));
+        }
+
+        [Test]
+        public void AddDelegationToCommitteeTest()
+        {
+            var service = new ConferenceService(_connectionString);
+            var conference = new ConferenceModel();
+            service.CreateConference(conference, null);
+            var delegations = service.GetAllDelegations();
+            var committee = new CommitteeModel();
+            service.AddCommittee(conference, committee);
+            service.AddDelegationToCommittee(committee, delegations[0], 1, 1);
+            //An dieser Stelle sollte bereits eine Verbindung zwischen der Konferenz und den Delegationen bestehen
+            var conferenceDelegations = Tools.Connection(_connectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
+            Assert.NotZero(conferenceDelegations.Count);
+
+            //Die Verbindung zwischen Delegation und Gremium sollte natürlich auch existieren
+            var committeeDelegations = Tools.Connection(_connectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
+            Assert.NotZero(committeeDelegations.Count);
+
+            //Testen der Internen Sammelmethode
+            var dels = service.GetDelegationsOfCommittee(committee);
+            Assert.NotNull(dels.Find(n => n.ID == delegations[0].ID));
+        }
+
+        [Test]
+        public void RemoveDelegationFromCommitteeTest()
+        {
+            var service = new ConferenceService(_connectionString);
+            var conference = new ConferenceModel();
+            service.CreateConference(conference, null);
+            var delegations = service.GetAllDelegations();
+            var committee = new CommitteeModel();
+            service.AddCommittee(conference, committee);
+            service.AddDelegationToCommittee(committee, delegations[0], 1, 1);
+            //An dieser Stelle sollte bereits eine Verbindung zwischen der Konferenz und den Delegationen bestehen
+            var conferenceDelegations = Tools.Connection(_connectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
+            Assert.NotZero(conferenceDelegations.Count);
+
+            //Die Verbindung zwischen Delegation und Gremium sollte natürlich auch existieren
+            var committeeDelegations = Tools.Connection(_connectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
+            Assert.NotZero(committeeDelegations.Count);
+
+            service.RemoveDelegationFromCommittee(committee, delegations[0]);
+            committeeDelegations = Tools.Connection(_connectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
+            Assert.Zero(committeeDelegations.Count);
+        }
+
+        [Test]
+        public void CreateTeamRoleTest()
+        {
+            var service = new ConferenceService(_connectionString);
+            var conference = new ConferenceModel();
+            service.CreateConference(conference, null);
+            var role = new TeamRoleModel();
+            role.Name = "Testrolle";
+            role.MinCount = 1;
+            role.MaxCount = 1;
+            role.Description = "Rolle zum Testen";
+            role.ParentRoleId = null;
+            role.ConferenceId = conference.ID;
+            service.AddTeamRole(role);
+            var result = Tools.Connection(_connectionString).ConferenceTeamRoles.HasEntry("name", "Testrolle");
+            var copy = Tools.Connection(_connectionString).ConferenceTeamRoles.First<TeamRoleModel>();
+            Assert.AreEqual(role.Name, copy.Name);
+            Assert.AreEqual(role.MinCount, copy.MinCount);
+            Assert.AreEqual(role.MaxCount, copy.MaxCount);
+            Assert.AreEqual(role.ParentRoleId, copy.ParentRoleId);
+            Assert.AreEqual(role.ConferenceId, copy.ConferenceId);
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void ConferenceTeamTest()
+        {
+            var service = new ConferenceService(_connectionString);
+            var authService = new AuthService(_connectionString);
+            var conference = new ConferenceModel();
+            service.CreateConference(conference, null);
+            var plRole = new TeamRoleModel() { Name = "Projektleitung", MinCount = 2, MaxCount = 3, Description = "Leitung des Projekts" };
+            plRole.Id = (int)service.AddTeamRole(plRole);
+            authService.Register("test", "test", "test@test.test");
+            var user = authService.GetUserByUsername("test");
+
+            //Add user to team
+            service.AddUserToConferenceTeam(user, conference, plRole);
+            var team = Tools.Connection(_connectionString).ConferenceTeam.GetElements<ConferenceTeamUserModel>();
+            Assert.NotZero(team.Count);
+            var serviceTeam = service.GetTeam(conference);
+            Assert.NotZero(serviceTeam.Count);
+            Assert.NotNull(serviceTeam.Find(n => n.Id == user.Id));
         }
     }
 }

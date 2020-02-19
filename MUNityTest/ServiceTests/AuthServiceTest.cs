@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using MUNityTest.DatabaseTestTools;
+using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityTest.ServiceTests
 {
@@ -90,6 +90,29 @@ namespace MUNityTest.ServiceTests
             Assert.IsTrue(service.UsernameAvailable("test"));
             service.Register("test", "password", "mail@domain.ttl");
             Assert.IsFalse(service.UsernameAvailable("test"));
+        }
+
+        [Test]
+        public void AuthKeyTest()
+        {
+            //Create a user/Login that user and get the auth key then
+            //validate the auth-key
+            var service = new AuthService(_connectionString);
+            service.Register("test", "test", "test@mail.com");
+            var login = service.Login("test", "test");
+            Assert.IsTrue(login.status);
+            var user = service.GetUserByUsername("test");
+            //Validieren des Auth Keys sollte den selben benutzer ausgeben
+            var validation = service.ValidateAuthKey(login.key);
+            Assert.AreEqual(validation.userid, user.Id);
+        }
+
+        [Test]
+        public void NegativeHeadAdminTest()
+        {
+            var service = new AuthService(_connectionString);
+            var admin = service.GetHeadAdminId();
+            Assert.IsNull(admin);
         }
     }
 }

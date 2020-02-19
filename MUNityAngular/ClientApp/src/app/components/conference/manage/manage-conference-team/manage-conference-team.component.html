@@ -1,1 +1,39 @@
-<p>manage-conference-team works!</p>
+<div class="row">
+  <div class="col-12">
+   <h1>Team verwalten</h1>
+  </div>
+  <div class="col-12" *ngIf="addMemberForm">
+      <form [formGroup]="addMemberForm" (ngSubmit)="addMember()">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors || f.username.errors.found === false }" [class.is-valid]="f.username.errors.found == true" (blur)="checkUsername()" />
+          <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+            <div *ngIf="f.username.errors.required">Es muss ein Benutzername angegeben werden</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="roleSelect">Rolle</label>
+            <select #roleSelect formControlName="role" class="form-control">
+              <option *ngFor="let r of roles" [ngValue]="r">{{ r.Name }}</option>
+            </select>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-success btn-block">Hinzufügen</button>
+        </div>
+      </form>
+  </div>
+  <div class="col-12" *ngIf="team">
+    <table class="table">
+      <tr>
+        <th>Vorname</th>
+        <th>Nachname</th>
+        <th>Rolle</th>
+      </tr>
+      <tr *ngFor="let member of team">
+        <td>{{ member.ForeName }}</td>
+        <td>{{ member.LastName }}</td>
+        <td>How the fuck am I going to get this?!</td>
+      </tr>
+    </table>
+  </div>
+</div>

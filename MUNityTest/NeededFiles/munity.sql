@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2020-02-18 16:10:46
+Date: 2020-02-19 13:56:33
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -107,11 +107,6 @@ CREATE TABLE `conference` (
   `creationuser` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of conference
--- ----------------------------
-
 -- ----------------------------
 -- Table structure for conference_delegation
 -- ----------------------------
@@ -127,7 +122,7 @@ CREATE TABLE `conference_delegation` (
   KEY `delegation` (`delegation_id`),
   CONSTRAINT `conference` FOREIGN KEY (`conference_id`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `delegation` FOREIGN KEY (`delegation_id`) REFERENCES `delegation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of conference_delegation
@@ -141,18 +136,36 @@ CREATE TABLE `conference_team` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `conferenceid` varchar(255) DEFAULT NULL,
   `userid` varchar(255) DEFAULT NULL,
-  `rolename` varchar(255) DEFAULT NULL,
-  `parentrole` int(11) DEFAULT NULL,
+  `role` int(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `conferenceteamconnection` (`conferenceid`),
   KEY `userteamconnection` (`userid`),
+  KEY `roleLink` (`role`),
   CONSTRAINT `conferenceteamconnection` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `roleLink` FOREIGN KEY (`role`) REFERENCES `conference_team_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `userteamconnection` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
 
 -- ----------------------------
--- Records of conference_team
+-- Table structure for conference_team_roles
 -- ----------------------------
+DROP TABLE IF EXISTS `conference_team_roles`;
+CREATE TABLE `conference_team_roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `parentrole` int(11) DEFAULT NULL,
+  `mincount` int(11) DEFAULT NULL,
+  `maxcount` int(11) DEFAULT NULL,
+  `conferenceid` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `selfReference` (`parentrole`),
+  KEY `conferenceReference` (`conferenceid`),
+  CONSTRAINT `conferenceReference` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `selfReference` FOREIGN KEY (`parentrole`) REFERENCES `conference_team_roles` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
 
 -- ----------------------------
 -- Table structure for conference_user_auth
@@ -229,7 +242,7 @@ CREATE TABLE `delegation_in_committee` (
   KEY `committeelink` (`committeeid`),
   CONSTRAINT `committeelink` FOREIGN KEY (`committeeid`) REFERENCES `committee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `linker` FOREIGN KEY (`linkid`) REFERENCES `conference_delegation` (`linkid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of delegation_in_committee
@@ -356,10 +369,6 @@ CREATE TABLE `user` (
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of user
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for user_clearance

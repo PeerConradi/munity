@@ -399,6 +399,8 @@ namespace MUNityAngular.Services
             }
         }
 
+        
+
         public List<DelegationModel> GetDelegationsOfCommittee(CommitteeModel committee)
         {
             return GetDelegationsOfCommittee(committee.ID);
@@ -432,6 +434,16 @@ namespace MUNityAngular.Services
         {
             var linkid = GetDelegationConferenceLinkId(committee.ConferenceID, delegation.ID);
 
+            if (linkid == null)
+            {
+                AddDelegationToConference(committee.ConferenceID, delegation.ID, mincount, maxcount);
+                linkid = GetDelegationConferenceLinkId(committee.ConferenceID, delegation.ID);
+            }
+            else
+            {
+                // TODO: Update mincount and maxcount
+            }
+
             if (linkid.HasValue)
             {
                 using (var connection = new MySqlConnection(_connectionString))
@@ -453,6 +465,7 @@ namespace MUNityAngular.Services
 
                     if (isIn.HasValue)
                     {
+                        //Update min and max count if already in
                         var cmdStr = "UPDATE delegation_in_committee SET mincount=@mincount, maxcount=@maxcount WHERE delincommitteeid=@inId;";
                         var cmd = new MySqlCommand(cmdStr, connection);
                         cmd.Parameters.AddWithValue("@inId", isIn.Value);
@@ -464,6 +477,7 @@ namespace MUNityAngular.Services
                     }
                     else
                     {
+                        //Insert if doesnt exist at the moment
                         var cmdStr = "INSERT INTO delegation_in_committee (linkid, committeeid, mincount, maxcount) VALUES (@linkid, @committeeid, @mincount, @maxcount);";
                         var cmd = new MySqlCommand(cmdStr, connection);
                         cmd.Parameters.AddWithValue("@linkid", linkid.Value);
@@ -490,7 +504,6 @@ namespace MUNityAngular.Services
         public bool RemoveDelegationFromCommittee(CommitteeModel committee, DelegationModel delegation)
         {
             var linkid = GetDelegationConferenceLinkId(committee.ConferenceID, delegation.ID);
-
             if (linkid.HasValue)
             {
                 using (var connection = new MySqlConnection(_connectionString))
@@ -498,6 +511,8 @@ namespace MUNityAngular.Services
                     connection.Open();
                     var cmdStr = "DELETE FROM delegation_in_committee WHERE linkid=@linkid AND committeeid=@committeeid";
                     var cmd = new MySqlCommand(cmdStr, connection);
+                    cmd.Parameters.AddWithValue("@linkid", linkid);
+                    cmd.Parameters.AddWithValue("@committeeid", committee.ID);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -555,6 +570,53 @@ namespace MUNityAngular.Services
                     }
                 }
 
+            }
+            return list;
+        }
+
+        #endregion
+
+        #region Team
+
+        public int AddTeamRole(TeamRoleModel role)
+        {
+            var val = Tools.Connection(_connectionString).ConferenceTeamRoles.Insert(role);
+            return Convert.ToInt32(val);
+        }
+
+        internal List<TeamRoleModel> GetRolesOfConference(string conferenceid)
+        {
+            var val = Tools.Connection(_connectionString).ConferenceTeamRoles.GetElements<TeamRoleModel>("conferenceid", conferenceid);
+            return val;
+        }
+
+        public void AddUserToConferenceTeam(UserModel user, ConferenceModel conference, TeamRoleModel role)
+        {
+            var model = new ConferenceTeamUserModel();
+            model.ConferenceId = conference.ID;
+            model.RoleId = role.Id.Value;
+            model.UserId = user.Id;
+            Tools.Connection(_connectionString).ConferenceTeam.Insert(model);
+        }
+
+        public List<UserModel> GetTeam(ConferenceModel conference)
+        {
+            var list = new List<UserModel>();
+            var cmdStr = "SELECT `user`.* FROM `user` " +
+                "INNER JOIN conference_team ON conference_team.userid = `user`.id " +
+                "WHERE conference_team.conferenceid = @conferenceid;";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@conferenceid", conference.ID);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(DataReaderConverter.ObjectFromReader<UserModel>(reader));
+                    }
+                }
             }
             return list;
         }

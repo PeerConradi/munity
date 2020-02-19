@@ -9,7 +9,11 @@ import { Delegation } from '../models/delegation.model';
 import { AddCommitteeRequest } from '../models/requests/add-committee-request';
 import { CreateDelegationRequest } from '../models/requests/create-delegation-request';
 import { ChangeConferenceNameRequest } from '../models/requests/change-conference-name-request';
+import { User } from '../models/user.model';
+import { TeamRole } from '../models/team-role.model';
 
+
+// Some day this thing should be renamed into ConferenceService!
 @Injectable({
   providedIn: 'root'
 })
@@ -109,6 +113,36 @@ export class ConferenceServiceService {
     let options = { headers: headers };
     return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/GetDelegationsOfCommittee',
       options);
+  }
+
+  public getTeam(conferenceid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('conferenceid', conferenceid);
+    let options = { headers: headers };
+    return this.http.get<User[]>(this.baseUrl + 'api/Conference/GetTeam',
+      options);
+  }
+
+  public getTeamRoles(conferenceid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('conferenceid', conferenceid);
+    let options = { headers: headers };
+    return this.http.get<TeamRole[]>(this.baseUrl + 'api/Conference/GetTeamRoles',
+      options);
+  }
+
+  public addTeamRole(role: TeamRole) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    return this.http.put(this.baseUrl + 'api/Conference/AddTeamRole', role, { headers: headers });
+  }
+
+  public addTeamMember(username: string, role: TeamRole) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    return this.http.put(this.baseUrl + 'api/Conference/AddUserToTeam', {Username: username, Role: role}, { headers: headers });
   }
 
   public addDelegationToCommittee(committeeid: string, delegationid: string, mincount: number, maxcount: number) {

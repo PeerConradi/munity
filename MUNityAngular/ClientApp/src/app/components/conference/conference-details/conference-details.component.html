@@ -14,6 +14,9 @@
   
   <div class="row">
     <div class="col-12">
+      <a [routerLink]="['/mc/overview', conference.ID]">Konferenz bearbeiten</a>
+    </div>
+    <div class="col-12">
       <h1>Gremien</h1>
       <!-- Show if Conference-Admin-->
       <a [routerLink]="['/mc/committees', conference.ID]">bearbeiten</a>

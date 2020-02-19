@@ -330,6 +330,68 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, delegations.AsNewtonsoftJson());
         }
 
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetTeam([FromHeader]string auth, [FromHeader]string conferenceid,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var conference = conferenceService.GetConference(conferenceid);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+            return StatusCode(StatusCodes.Status200OK, conferenceService.GetTeam(conference).AsNewtonsoftJson());
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetTeamRoles([FromHeader]string auth,
+            [FromHeader]string conferenceid, [FromServices]ConferenceService conferenceService)
+        {
+            var roles = conferenceService.GetRolesOfConference(conferenceid);
+            return StatusCode(StatusCodes.Status200OK, roles.ToNewtonsoftJson());
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult AddTeamRole([FromHeader]string auth, [FromBody]TeamRoleModel role,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var canEdit = conferenceService.CanAuthEditConference(auth, role.ConferenceId);
+            if (!canEdit)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
+
+            var conference = conferenceService.GetConference(role.ConferenceId);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+
+            role.Id = null;
+            conferenceService.AddTeamRole(role);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult AddUserToTeam([FromHeader]string auth, [FromBody]AddTeamMemberModel value,
+            [FromServices]ConferenceService conferenceService, [FromServices]AuthService authService)
+        {
+            var canEdit = conferenceService.CanAuthEditConference(auth, value.Role.ConferenceId);
+            if (!canEdit)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
+
+            var conference = conferenceService.GetConference(value.Role.ConferenceId);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+
+            var user = authService.GetUserByUsername(value.Username);
+            if (user == null)
+                return StatusCode(StatusCodes.Status404NotFound, "User not found");
+
+            if (value.Role.Id == null)
+                return StatusCode(StatusCodes.Status400BadRequest);
+
+            conferenceService.AddUserToConferenceTeam(user, conference, value.Role);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
         //Returns a list of all public visible Delegations.
         [Route("[action]")]
         [HttpGet]

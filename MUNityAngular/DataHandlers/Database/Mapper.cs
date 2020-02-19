@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using MUNityAngular.Models.Conference;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,13 @@ namespace MUNityAngular.DataHandlers.Database
         {
             throw new NotImplementedException();
         }
+
+        public DTable ConferenceTeamRoles
+        {
+            get => new DTable("conference_team_roles", ConnectionString);
+        }
+
+        public DTable ConferenceTeam { get => new DTable("conference_team", ConnectionString); }
 
     }
 
@@ -87,6 +95,27 @@ namespace MUNityAngular.DataHandlers.Database
             return list;
         }
 
+        public List<T> GetElements<T>(string conditionKey, object conditionValue)
+        {
+            var list = new List<T>();
+            var cmdStr = "SELECT * FROM " + _name + " WHERE " + conditionKey + " = @conditionValue;";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@conditionValue", conditionValue);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(DataReaderConverter.ObjectFromReader<T>(reader));
+                    }
+
+                }
+            }
+            return list;
+        }
+
         public T First<T>(string conditionKey, object conditionValue)
         {
             var cmdStr = "SELECT * FROM " + _name + " WHERE " + conditionKey + "=@conditionvalue;";
@@ -106,11 +135,29 @@ namespace MUNityAngular.DataHandlers.Database
             throw new NullReferenceException("No element found");
         }
 
+        public T First<T>()
+        {
+            var cmdStr = "SELECT * FROM " + _name + ";";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return DataReaderConverter.ObjectFromReader<T>(reader);
+                    }
+                }
+            }
+            throw new NullReferenceException("No element found");
+        }
+
         /// <summary>
         /// Get Entries with one filter condition
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <param name="key">a condition key</param>
+        /// <param name="value">a condtion value</param>
         /// <returns></returns>
         public Dictionary<string, object> GetEntries(string key, object value)
         {
@@ -156,6 +203,7 @@ namespace MUNityAngular.DataHandlers.Database
                     }
                 }
             }
+            
             return list;
         }
     
@@ -245,6 +293,22 @@ namespace MUNityAngular.DataHandlers.Database
                 }
             }
         }
+
+        internal object Insert(object element)
+        {
+            if (element == null)
+                throw new ArgumentNullException("The element cannot be null");
+
+            var cmd = Connector.GetInsertionCommand(_name, element);
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                cmd.Connection = connection;
+                cmd.ExecuteNonQuery();
+                cmd.CommandText = "SELECT @@Identity;";
+                return cmd.ExecuteScalar();
+            }
+        }
     }
 
 
@@ -256,5 +320,7 @@ namespace MUNityAngular.DataHandlers.Database
         {
             return new DTable(name, connection.ConnectionString);
         }
+
+        
     }
 }

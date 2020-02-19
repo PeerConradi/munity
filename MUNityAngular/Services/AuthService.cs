@@ -83,49 +83,22 @@ namespace MUNityAngular.Services
 
         public void DeleteAllUserKeys(string userid)
         {
-            var cmdStr = "DELETE FROM auth WHERE userid=@userid";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                cmd.ExecuteNonQuery();
-            }
+            Tools.Connection(_connectionString).Table(auth_table_name).RemoveEntry("userid", userid);
         }
 
         public void DeleteAccount(string id)
         {
             //Delete all User Keys
             DeleteAllUserKeys(id);
-
-            
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                //Free all Resolutions from this User (give them to anon)
-                var cmdStr = "DELETE FROM user WHERE id=@userid;";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", id);
-                cmd.ExecuteNonQuery();
-            }
+            Tools.Connection(_connectionString).Table(user_table_name).RemoveEntry("id", id);
         }
 
         public string GetHeadAdminId()
         {
-            string id = null;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                var cmdStr = "SELECT userid FROM admin WHERE rank=5;";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        id = reader.GetString(0);
-                    }
-                }
-            }
-            return id;
+            var entries = Tools.Connection(_connectionString).Table("admin").GetEntries("rank", "5");
+            if (entries.ContainsKey("userid"))
+                return entries["userid"] as string;
+            return null;
         }
 
 

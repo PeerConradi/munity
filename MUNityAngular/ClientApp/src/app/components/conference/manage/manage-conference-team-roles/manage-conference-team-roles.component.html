@@ -1,1 +1,65 @@
-<p>manage-conference-team-roles works!</p>
+<div class="row">
+  <div class="col-12">
+    <h1>Rollenverwaltung</h1>
+  </div>
+  <div class="col-12">
+    <a [routerLink]="['/mc/team', conference.ID]">Teammitgielder verwalten</a>
+  </div>
+  <!-- Hinzufügen Form -->
+  <div class="col-12">
+    <h3>Rolle hinzufügen</h3>
+    <form [formGroup]="addRoleForm" (ngSubmit)="addRole()">
+      <!-- Name -->
+      <div class="form-group">
+        <label for="nameInput">Name</label>
+        <input type="text" #nameInput formControlName="name" class="form-control" />
+        <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+          <div *ngIf="f.email.errors.required">Es muss ein Name angegeben werden.</div>
+        </div>
+      </div>
+      <!-- Beschreibung -->
+      <div class="form-group">
+        <label for="descriptionInput">Beschreibung</label>
+        <input type="text" #descriptionInput formControlName="description" class="form-control" />
+        <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+          <div *ngIf="f.description.errors.required">Es muss eine Beschreibung angegeben werden.</div>
+        </div>
+      </div>
+      <!-- Mindestanzahl -->
+      <div class="form-group">
+        <label for="minInput">Mindestanzahl Vertreter</label>
+        <input type="number" #minInput formControlName="minCount" class="form-control" />
+        <div *ngIf="submitted && f.minCount.errors" class="invalid-feedback">
+          <div *ngIf="f.minCount.errors.required">Es muss eine Mindestanzahl angegeben werden.</div>
+        </div>
+      </div>
+      <!-- MaxCount -->
+      <div class="form-group">
+        <label for="miaxInput">Maximalanzahl Vertreter</label>
+        <input type="number" #minInput formControlName="maxCount" class="form-control" />
+        <div *ngIf="submitted && f.maxCount.errors" class="invalid-feedback">
+          <div *ngIf="f.maxCount.errors.required">Es muss eine Maximalanzahl angegeben werden.</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary">Erstellen</button>
+    </form>
+  </div>
+
+  <div class="col-12">
+    <table class="table">
+      <tr>
+        <th>Rollenname</th>
+        <th>Beschreibung</th>
+        <th>Mindestanzahl</th>
+        <th>Maxanzahl</th>
+      </tr>
+      <tr *ngFor="let role of roles">
+        <td>{{ role.Name }}</td>
+        <td>{{ role.Description }}</td>
+        <td>{{ role.MinCount }}</td>
+        <td>{{ role.MaxCount }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
