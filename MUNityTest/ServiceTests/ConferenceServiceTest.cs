@@ -15,7 +15,7 @@ namespace MUNityTest.ServiceTests
     {
 
         //Change the password if needed localy, keep in mind that inside the git-Action the password needs to be root!
-        private string _connectionString = @"server=127.0.0.1;userid=root;password=''";
+        private string _connectionString = @"server=127.0.0.1;userid=root;password='root'";
         private string test_database_name = "munity-test";
 
         [SetUp]
