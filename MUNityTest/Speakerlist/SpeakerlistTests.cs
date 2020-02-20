@@ -39,7 +39,6 @@ namespace MUNityTest.Speakerlist
             var dt = ts_string.ToTimeSpan();
             Assert.IsTrue(dt.HasValue);
             Assert.AreEqual(60, (int)dt.Value.TotalSeconds);
-
         }
 
     }

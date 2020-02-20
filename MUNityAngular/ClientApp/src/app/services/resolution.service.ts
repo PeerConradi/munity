@@ -73,8 +73,6 @@ export class ResolutionService {
   //SignalR Part
   public addResolutionListener = (model: Resolution, inspector: AmendmentInspector) => {
     this._hubConnection.on('ResolutionChanged', (resolution: Resolution) => {
-      console.log('Update');
-      console.log(resolution);
       model.Name = resolution.Name;
       model.Topic = resolution.Topic;
       model.CommitteeName = resolution.CommitteeName;

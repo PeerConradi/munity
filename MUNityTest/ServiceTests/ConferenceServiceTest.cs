@@ -15,7 +15,7 @@ namespace MUNityTest.ServiceTests
     {
 
         //Change the password if needed localy, keep in mind that inside the git-Action the password needs to be root!
-        private string _connectionString = @"server=127.0.0.1;userid=root;password='root'";
+        private string _connectionString = @"server=127.0.0.1;userid=root;password=''";
         private string test_database_name = "munity-test";
 
         [SetUp]
@@ -263,9 +263,13 @@ namespace MUNityTest.ServiceTests
             service.AddUserToConferenceTeam(user, conference, plRole);
             var team = Tools.Connection(_connectionString).ConferenceTeam.GetElements<ConferenceTeamUserModel>();
             Assert.NotZero(team.Count);
-            var serviceTeam = service.GetTeam(conference);
+            var serviceTeam = service.GetTeamUsers(conference);
             Assert.NotZero(serviceTeam.Count);
             Assert.NotNull(serviceTeam.Find(n => n.Id == user.Id));
+
+            var teamWithRoles = service.GetConferenceTeam(conference);
+            Assert.NotZero(teamWithRoles.Count);
+            Assert.NotNull(teamWithRoles.Find(n => n.User.Id == user.Id));
         }
     }
 }

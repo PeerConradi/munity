@@ -599,7 +599,7 @@ namespace MUNityAngular.Services
             Tools.Connection(_connectionString).ConferenceTeam.Insert(model);
         }
 
-        public List<UserModel> GetTeam(ConferenceModel conference)
+        public List<UserModel> GetTeamUsers(ConferenceModel conference)
         {
             var list = new List<UserModel>();
             var cmdStr = "SELECT `user`.* FROM `user` " +
@@ -615,6 +615,42 @@ namespace MUNityAngular.Services
                     while (reader.Read())
                     {
                         list.Add(DataReaderConverter.ObjectFromReader<UserModel>(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public List<UserConferenceRoleModel> GetConferenceTeam(ConferenceModel conference)
+        {
+            var list = new List<UserConferenceRoleModel>();
+            //Was ein kack, aber viel kürzer fällt mir gerade nichts ein...
+            var cmdStr = "SELECT conference_team_roles.id as 'role.id', " +
+                "conference_team_roles.`name` as 'role.name', " +
+                "conference_team_roles.description as 'role.description', " +
+                "conference_team_roles.parentrole as 'role.parentrole', " +
+                "conference_team_roles.mincount as 'role.mincount', " +
+                "conference_team_roles.maxcount as 'role.maxcount', " +
+                "`user`.id as 'user.id', " +
+                "`user`.username as 'user.username', " +
+                "`user`.forename as 'user.forename', " +
+                "`user`.lastname as 'user.lastname' FROM conference_team_roles " +
+                "INNER JOIN conference_team ON conference_team.role = conference_team_roles.id " +
+                "INNER JOIN `user` ON conference_team.userid = `user`.id WHERE " +
+                "conference_team.conferenceid=@conferenceid;";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@conferenceid", conference.ID);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var model = new UserConferenceRoleModel();
+                        model.User = DataReaderConverter.ObjectFromReader<UserModel>(reader, "user");
+                        model.Role = DataReaderConverter.ObjectFromReader<TeamRoleModel>(reader, "role");
+                        list.Add(model);
                     }
                 }
             }

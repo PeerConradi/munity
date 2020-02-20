@@ -1,8 +1,18 @@
 <div class="row">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">Konferenzverwaltung</li>
+      <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ID]" *ngIf="conference">{{ conference.Name }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Team-Rollen</li>
+    </ol>
+  </nav>
+</div>
+
+<div class="row">
   <div class="col-12">
     <h1>Rollenverwaltung</h1>
   </div>
-  <div class="col-12">
+  <div class="col-12" *ngIf="conference">
     <a [routerLink]="['/mc/team', conference.ID]">Teammitgielder verwalten</a>
   </div>
   <!-- Hinzufügen Form -->

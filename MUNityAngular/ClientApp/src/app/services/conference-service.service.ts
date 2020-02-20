@@ -11,6 +11,7 @@ import { CreateDelegationRequest } from '../models/requests/create-delegation-re
 import { ChangeConferenceNameRequest } from '../models/requests/change-conference-name-request';
 import { User } from '../models/user.model';
 import { TeamRole } from '../models/team-role.model';
+import { UserConferenceRole } from '../models/user-conference-role.model';
 
 
 // Some day this thing should be renamed into ConferenceService!
@@ -120,7 +121,7 @@ export class ConferenceServiceService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('conferenceid', conferenceid);
     let options = { headers: headers };
-    return this.http.get<User[]>(this.baseUrl + 'api/Conference/GetTeam',
+    return this.http.get<UserConferenceRole[]>(this.baseUrl + 'api/Conference/GetTeam',
       options);
   }
 

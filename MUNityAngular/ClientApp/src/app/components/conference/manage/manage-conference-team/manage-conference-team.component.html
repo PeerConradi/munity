@@ -1,4 +1,14 @@
 <div class="row">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">Konferenzverwaltung</li>
+      <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ID]" *ngIf="conference">{{ conference.Name }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Team</li>
+    </ol>
+  </nav>
+</div>
+
+<div class="row">
   <div class="col-12">
    <h1>Team verwalten</h1>
   </div>
@@ -30,9 +40,9 @@
         <th>Rolle</th>
       </tr>
       <tr *ngFor="let member of team">
-        <td>{{ member.ForeName }}</td>
-        <td>{{ member.LastName }}</td>
-        <td>How the fuck am I going to get this?!</td>
+        <td>{{ member.User.Forename }}</td>
+        <td>{{ member.User.Lastname }}</td>
+        <td>{{ member.Role.Name }}</td>
       </tr>
     </table>
   </div>

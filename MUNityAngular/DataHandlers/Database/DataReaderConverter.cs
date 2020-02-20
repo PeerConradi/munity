@@ -10,7 +10,7 @@ namespace MUNityAngular.DataHandlers.Database
 {
     public static class DataReaderConverter
     {
-        public static T ObjectFromReader<T>(MySqlDataReader reader)
+        public static T ObjectFromReader<T>(MySqlDataReader reader, string prefix = null)
         {
             var type = typeof(T);
             T element = (T)Activator.CreateInstance(typeof(T));
@@ -22,6 +22,11 @@ namespace MUNityAngular.DataHandlers.Database
                 {
                     var propType = property.PropertyType;
                     var columnname = databaseAttribute.ColumnName;
+
+                    if (prefix != null)
+                    {
+                        columnname = prefix + "." + columnname;
+                    }
 
                     var setPropertySuccess = false;
 
@@ -56,7 +61,12 @@ namespace MUNityAngular.DataHandlers.Database
                         else if (propType == typeof(TimeSpan))
                             element.SetProperty(property.Name, reader.GetTimeSpan(columnname));
                         else if (propType == typeof(int?))
-                            element.SetProperty(property.Name, reader.GetInt32(columnname));        //Ich rieche eine Null exception
+                        {
+                            if (reader.IsDBNull(columnname))
+                                element.SetProperty(property.Name, null);
+                            else
+                                element.SetProperty(property.Name, reader.GetInt32(columnname));
+                        }
                         else
                         {
                             throw new Exception("Unknow/Unhandled type: " + propType.Name);
@@ -69,14 +79,27 @@ namespace MUNityAngular.DataHandlers.Database
 
         public static bool SetProperty(this object o, string name, object value)
         {
+            if (o == null)
+            {
+                return false;
+            }
+
+
             if (o.GetType().GetProperty(name) == null)
                 return false;
 
             if (o.GetType().GetProperty(name).SetMethod == null)
                 return false;
 
-            if (o.GetType().GetProperty(name).PropertyType != value.GetType())
-                return false;
+            if (value == null)
+            {
+                o.GetType().GetProperty(name).SetValue(o, value);
+                return true;
+            }
+
+            //As long as the Nullable is not implemented right this cannot be done...
+            //if (o.GetType().GetProperty(name).PropertyType != value.GetType())
+            //    return false;
 
             o.GetType().GetProperty(name).SetValue(o, value);
             return true;

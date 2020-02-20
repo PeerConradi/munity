@@ -338,7 +338,7 @@ namespace MUNityAngular.Controllers
             var conference = conferenceService.GetConference(conferenceid);
             if (conference == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
-            return StatusCode(StatusCodes.Status200OK, conferenceService.GetTeam(conference).AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, conferenceService.GetConferenceTeam(conference).AsNewtonsoftJson());
         }
 
         [Route("[action]")]

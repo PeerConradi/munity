@@ -6,6 +6,8 @@ import { Conference } from '../../../../models/conference.model';
 import { TeamRole } from '../../../../models/team-role.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../../../services/user.service';
+import { User } from '../../../../models/user.model';
+import { UserConferenceRole } from '../../../../models/user-conference-role.model';
 
 @Component({
   selector: 'app-manage-conference-team',
@@ -17,6 +19,8 @@ export class ManageConferenceTeamComponent implements OnInit {
   conference: Conference;
 
   roles: TeamRole[] = [];
+
+  team: UserConferenceRole[] = [];
 
   addMemberForm: FormGroup;
 
@@ -46,6 +50,11 @@ export class ManageConferenceTeamComponent implements OnInit {
         console.log(n);
         this.roles = n;
       })
+      this.conferenceService.getTeam(params.id).subscribe(n => {
+        console.log('Team');
+        console.log(n);
+        this.team = n;
+      });
     });
 
     this.addMemberForm = this.formBuilder.group({
