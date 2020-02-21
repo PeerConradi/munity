@@ -113,6 +113,7 @@ namespace MUNityAngular.Models.Resolution
             Preamble.ResolutionID = this.ID;
             OperativeSections.CollectionChanged += OperativeSections_CollectionChanged;
             Amendments.CollectionChanged += Amendments_CollectionChanged;
+            this.Notices = new List<NoticeModel>();
         }
 
         private void Amendments_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

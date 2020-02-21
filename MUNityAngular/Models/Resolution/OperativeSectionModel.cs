@@ -252,12 +252,7 @@ namespace MUNityAngular.Models.Resolution
             }
         }
 
-        public OperativeParagraphModel(string id = null, bool amendmentParagraph = false)
-        {
-            this.AmendmentParagraph = amendmentParagraph;
-            this.ID = id ?? Guid.NewGuid().ToString();
-            Children = new ObservableCollection<string>();
-        }
+        
 
         public OperativeParagraphModel AddSubSection(string text = "")
         {
@@ -464,8 +459,11 @@ namespace MUNityAngular.Models.Resolution
             return Resolution.OperativeSections.Where(n => n.ParentID == this.ID);
         }
 
-        public OperativeParagraphModel()
+        public OperativeParagraphModel(string id = null, bool amendmentParagraph = false)
         {
+            this.AmendmentParagraph = amendmentParagraph;
+            this.ID = id ?? Guid.NewGuid().ToString();
+            Children = new ObservableCollection<string>();
             this.Notices = new List<NoticeModel>();
         }
     }
