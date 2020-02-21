@@ -15,28 +15,39 @@ namespace MUNityTest.ServiceTests
     {
 
         //Change the password if needed localy, keep in mind that inside the git-Action the password needs to be root!
-        private string _connectionString = @"server=127.0.0.1;userid=root;password='root'";
-        private string test_database_name = "munity-test";
+        //private string _connectionString = @"server=127.0.0.1;userid=root;password=''";
+        //private string test_database_name = "munity-test";
+
+        private ConnectionInfo _sqlConnection;
 
         [SetUp]
         public void Setup()
         {
+            //Testinformationen laden
+            var TestSettingsPath = Path.Combine(Environment.CurrentDirectory, "NeededFiles/testsettings.json");
+
+            if (!File.Exists(TestSettingsPath))
+                Assert.Fail("The Test configuration is missing!");
+            var settingsTest = File.ReadAllText(TestSettingsPath);
+            _sqlConnection = Newtonsoft.Json.JsonConvert.DeserializeObject<ConnectionInfo>(settingsTest);
+
             //Create the empty Database
-            using (var connection = new MySqlConnection(_connectionString))
+            using (var connection = new MySqlConnection(_sqlConnection.ConnectionString))
             {
+                
                 connection.Open();
                 //Vorhandene Datenbank entfernen
-                var cmdStr = "DROP DATABASE IF EXISTS `" + test_database_name + "`";
+                var cmdStr = "DROP DATABASE IF EXISTS `" + _sqlConnection.DatabaseName + "`";
                 var cmdDrop = new MySqlCommand(cmdStr, connection);
                 cmdDrop.ExecuteNonQuery();
 
-                cmdStr = "CREATE DATABASE `" + test_database_name + "`";
+                cmdStr = "CREATE DATABASE `" + _sqlConnection.DatabaseName + "`";
                 var cmdCreate = new MySqlCommand(cmdStr, connection);
                 cmdCreate.ExecuteNonQuery();
 
                 //Wechseln auf die neue Datenbank
-                connection.ChangeDatabase(test_database_name);
-                this._connectionString += ";database=" + test_database_name;
+                connection.ChangeDatabase(_sqlConnection.DatabaseName);
+                this._sqlConnection.ConnectionString += ";database=" + _sqlConnection.DatabaseName;
 
                 //Schaue wo die munitysql hin kopiert wird...
                 var path = Path.Combine(Environment.CurrentDirectory, "NeededFiles/munity.sql");
@@ -51,7 +62,7 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void CreateConferenceTest()
         {
-            var service = new ConferenceService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             conference.Name = "Test";
             conference.FullName = "Test";
@@ -65,7 +76,7 @@ namespace MUNityTest.ServiceTests
             Assert.AreEqual(conference, service.GetConference(conference.ID));
 
             //Database Checks
-            using (var connection = new MySqlConnection(_connectionString))
+            using (var connection = new MySqlConnection(_sqlConnection.ConnectionString))
             {
                 connection.Open();
                 var cmdStr = "SELECT * FROM conference WHERE id=@id";
@@ -96,20 +107,20 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void RemoveConferenceTest()
         {
-            var service = new ConferenceService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             var result = service.CreateConference(conference, null);
             Assert.IsTrue(result);
             Assert.AreEqual(conference, service.GetConference(conference.ID));
 
             //Database Checks
-            var dbResult = Tools.Connection(_connectionString).Table("conference").HasEntry("id", conference.ID);
+            var dbResult = Tools.Connection(_sqlConnection.ConnectionString).Table("conference").HasEntry("id", conference.ID);
             Assert.IsTrue(dbResult);
 
             service.RemoveConference(conference);
 
             //Database Checks
-            dbResult = Tools.Connection(_connectionString).Table("conference").HasEntry("id", conference.ID);
+            dbResult = Tools.Connection(_sqlConnection.ConnectionString).Table("conference").HasEntry("id", conference.ID);
             Assert.IsFalse(dbResult);
             Assert.IsNull(service.GetConference(conference.ID));
         }
@@ -117,7 +128,7 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void ChangeConferenceNameTest()
         {
-            var service = new ConferenceService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             conference.Name = "oldName";
             var result = service.CreateConference(conference, null);
@@ -125,12 +136,12 @@ namespace MUNityTest.ServiceTests
             Assert.AreEqual(conference, service.GetConference(conference.ID));
 
             //Database Checks
-            var name = Tools.Connection(_connectionString).Table("conference").GetEntries("id", conference.ID)["name"];
+            var name = Tools.Connection(_sqlConnection.ConnectionString).Table("conference").GetEntries("id", conference.ID)["name"];
             Assert.AreEqual("oldName", name);
             service.ChangeConferenceName(conference, "newName");
 
             //Database Check
-            name = Tools.Connection(_connectionString).Table("conference").GetEntries("id", conference.ID)["name"];
+            name = Tools.Connection(_sqlConnection.ConnectionString).Table("conference").GetEntries("id", conference.ID)["name"];
             Assert.AreEqual("newName", name);
 
             var cFromService = service.GetConference(conference.ID);
@@ -141,7 +152,7 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void AddCommitteeTest()
         {
-            var service = new ConferenceService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             var conferenceResult = service.CreateConference(conference, null);
             Assert.IsTrue(conferenceResult);
@@ -155,20 +166,20 @@ namespace MUNityTest.ServiceTests
             Assert.AreEqual(1, cf.Committees.Count);
 
             //Database Checks
-            var cValue = Tools.Connection(_connectionString).Table("committee").GetEntries("id", committee.ID)["conferenceid"];
+            var cValue = Tools.Connection(_sqlConnection.ConnectionString).Table("committee").GetEntries("id", committee.ID)["conferenceid"];
             Assert.AreEqual(conference.ID, cValue);
         }
 
         [Test]
         public void AddDelegationToConferenceTest()
         {
-            var service = new ConferenceService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             service.CreateConference(conference, null);
             var delegations = service.GetAllDelegations();
             Assert.NotZero(delegations.Count);
             service.AddDelegationToConference(conference.ID, delegations[0].ID, 1, 1);
-            var testResult = Tools.Connection(_connectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
+            var testResult = Tools.Connection(_sqlConnection.ConnectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
             Assert.NotZero(testResult.Count);
             var result = testResult.Find(n => n.ConferenceId == conference.ID && n.DelegationId == delegations[0].ID);
             Assert.NotNull(result);
@@ -180,7 +191,7 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void AddDelegationToCommitteeTest()
         {
-            var service = new ConferenceService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             service.CreateConference(conference, null);
             var delegations = service.GetAllDelegations();
@@ -188,11 +199,11 @@ namespace MUNityTest.ServiceTests
             service.AddCommittee(conference, committee);
             service.AddDelegationToCommittee(committee, delegations[0], 1, 1);
             //An dieser Stelle sollte bereits eine Verbindung zwischen der Konferenz und den Delegationen bestehen
-            var conferenceDelegations = Tools.Connection(_connectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
+            var conferenceDelegations = Tools.Connection(_sqlConnection.ConnectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
             Assert.NotZero(conferenceDelegations.Count);
 
             //Die Verbindung zwischen Delegation und Gremium sollte natürlich auch existieren
-            var committeeDelegations = Tools.Connection(_connectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
+            var committeeDelegations = Tools.Connection(_sqlConnection.ConnectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
             Assert.NotZero(committeeDelegations.Count);
 
             //Testen der Internen Sammelmethode
@@ -203,7 +214,7 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void RemoveDelegationFromCommitteeTest()
         {
-            var service = new ConferenceService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             service.CreateConference(conference, null);
             var delegations = service.GetAllDelegations();
@@ -211,22 +222,22 @@ namespace MUNityTest.ServiceTests
             service.AddCommittee(conference, committee);
             service.AddDelegationToCommittee(committee, delegations[0], 1, 1);
             //An dieser Stelle sollte bereits eine Verbindung zwischen der Konferenz und den Delegationen bestehen
-            var conferenceDelegations = Tools.Connection(_connectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
+            var conferenceDelegations = Tools.Connection(_sqlConnection.ConnectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
             Assert.NotZero(conferenceDelegations.Count);
 
             //Die Verbindung zwischen Delegation und Gremium sollte natürlich auch existieren
-            var committeeDelegations = Tools.Connection(_connectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
+            var committeeDelegations = Tools.Connection(_sqlConnection.ConnectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
             Assert.NotZero(committeeDelegations.Count);
 
             service.RemoveDelegationFromCommittee(committee, delegations[0]);
-            committeeDelegations = Tools.Connection(_connectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
+            committeeDelegations = Tools.Connection(_sqlConnection.ConnectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();
             Assert.Zero(committeeDelegations.Count);
         }
 
         [Test]
         public void CreateTeamRoleTest()
         {
-            var service = new ConferenceService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             service.CreateConference(conference, null);
             var role = new TeamRoleModel();
@@ -237,8 +248,8 @@ namespace MUNityTest.ServiceTests
             role.ParentRoleId = null;
             role.ConferenceId = conference.ID;
             service.AddTeamRole(role);
-            var result = Tools.Connection(_connectionString).ConferenceTeamRoles.HasEntry("name", "Testrolle");
-            var copy = Tools.Connection(_connectionString).ConferenceTeamRoles.First<TeamRoleModel>();
+            var result = Tools.Connection(_sqlConnection.ConnectionString).ConferenceTeamRoles.HasEntry("name", "Testrolle");
+            var copy = Tools.Connection(_sqlConnection.ConnectionString).ConferenceTeamRoles.First<TeamRoleModel>();
             Assert.AreEqual(role.Name, copy.Name);
             Assert.AreEqual(role.MinCount, copy.MinCount);
             Assert.AreEqual(role.MaxCount, copy.MaxCount);
@@ -250,8 +261,8 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void ConferenceTeamTest()
         {
-            var service = new ConferenceService(_connectionString);
-            var authService = new AuthService(_connectionString);
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
+            var authService = new AuthService(_sqlConnection.ConnectionString);
             var conference = new ConferenceModel();
             service.CreateConference(conference, null);
             var plRole = new TeamRoleModel() { Name = "Projektleitung", MinCount = 2, MaxCount = 3, Description = "Leitung des Projekts" };
@@ -261,7 +272,7 @@ namespace MUNityTest.ServiceTests
 
             //Add user to team
             service.AddUserToConferenceTeam(user, conference, plRole);
-            var team = Tools.Connection(_connectionString).ConferenceTeam.GetElements<ConferenceTeamUserModel>();
+            var team = Tools.Connection(_sqlConnection.ConnectionString).ConferenceTeam.GetElements<ConferenceTeamUserModel>();
             Assert.NotZero(team.Count);
             var serviceTeam = service.GetTeamUsers(conference);
             Assert.NotZero(serviceTeam.Count);
@@ -270,6 +281,10 @@ namespace MUNityTest.ServiceTests
             var teamWithRoles = service.GetConferenceTeam(conference);
             Assert.NotZero(teamWithRoles.Count);
             Assert.NotNull(teamWithRoles.Find(n => n.User.Id == user.Id));
+
+            //Test all Team Roles
+            var rolesOfUser = service.GetUserTeamRolesAtConference(user, conference);
+            Assert.NotZero(rolesOfUser.Count);
         }
     }
 }

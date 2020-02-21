@@ -621,6 +621,30 @@ namespace MUNityAngular.Services
             return list;
         }
 
+        public List<TeamRoleModel> GetUserTeamRolesAtConference(UserModel user, ConferenceModel conference)
+        {
+            var roles = new List<TeamRoleModel>();
+            var cmdStr = "SELECT conference_team_roles.* FROM conference_team_roles " +
+                "INNER JOIN conference_team ON conference_team.role = conference_team_roles.id " +
+                "WHERE conference_team.userid = @userid AND conference_team.conferenceid = @conferenceid";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", user.Id);
+                cmd.Parameters.AddWithValue("@conferenceid", conference.ID);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        roles.Add(DataReaderConverter.ObjectFromReader<TeamRoleModel>(reader));
+                    }
+                    
+                }
+            }
+            return roles;
+        }
+
         public List<UserConferenceRoleModel> GetConferenceTeam(ConferenceModel conference)
         {
             var list = new List<UserConferenceRoleModel>();

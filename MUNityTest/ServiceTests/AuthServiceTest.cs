@@ -12,28 +12,39 @@ namespace MUNityTest.ServiceTests
     public class AuthServiceTest
     {
         //Change the password if needed localy, keep in mind that inside the git-Action the password needs to be root!
-        private string _connectionString = @"server=127.0.0.1;userid=root;password='root'";
-        private string test_database_name = "munity-test";
+        //private string _connectionString = @"server=127.0.0.1;userid=root;password='root'";
+        //private string test_database_name = "munity-test";
+
+        private ConnectionInfo _sqlConnection;
 
         [SetUp]
         public void Setup()
         {
+            //Testinformationen laden
+            var TestSettingsPath = Path.Combine(Environment.CurrentDirectory, "NeededFiles/testsettings.json");
+
+            if (!File.Exists(TestSettingsPath))
+                Assert.Fail("The Test configuration is missing!");
+            var settingsTest = File.ReadAllText(TestSettingsPath);
+            _sqlConnection = Newtonsoft.Json.JsonConvert.DeserializeObject<ConnectionInfo>(settingsTest);
+
             //Create the empty Database
-            using (var connection = new MySqlConnection(_connectionString))
+            using (var connection = new MySqlConnection(_sqlConnection.ConnectionString))
             {
+
                 connection.Open();
                 //Vorhandene Datenbank entfernen
-                var cmdStr = "DROP DATABASE IF EXISTS `" + test_database_name + "`";
+                var cmdStr = "DROP DATABASE IF EXISTS `" + _sqlConnection.DatabaseName + "`";
                 var cmdDrop = new MySqlCommand(cmdStr, connection);
                 cmdDrop.ExecuteNonQuery();
 
-                cmdStr = "CREATE DATABASE `" + test_database_name + "`";
+                cmdStr = "CREATE DATABASE `" + _sqlConnection.DatabaseName + "`";
                 var cmdCreate = new MySqlCommand(cmdStr, connection);
                 cmdCreate.ExecuteNonQuery();
 
                 //Wechseln auf die neue Datenbank
-                connection.ChangeDatabase(test_database_name);
-                this._connectionString += ";database=" + test_database_name;
+                connection.ChangeDatabase(_sqlConnection.DatabaseName);
+                this._sqlConnection.ConnectionString += ";database=" + _sqlConnection.DatabaseName;
 
                 //Schaue wo die munitysql hin kopiert wird...
                 var path = Path.Combine(Environment.CurrentDirectory, "NeededFiles/munity.sql");
@@ -48,17 +59,17 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void RegistrationTest()
         {
-            var service = new AuthService(_connectionString);
+            var service = new AuthService(_sqlConnection.ConnectionString);
             service.Register("test", "password", "mail@domain.ttl");
 
-            var result = Tools.Connection(_connectionString).Table("user").HasEntry("username", "test");
+            var result = Tools.Connection(_sqlConnection.ConnectionString).Table("user").HasEntry("username", "test");
             Assert.IsTrue(result);
         }
 
         [Test]
         public void CheckLoginDataTest()
         {
-            var service = new AuthService(_connectionString);
+            var service = new AuthService(_sqlConnection.ConnectionString);
             service.Register("test", "password", "mail@domain.ttl");
 
             var login = service.CheckLoginData("test", "password");
@@ -70,7 +81,7 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void ChangePasswordTest()
         {
-            var service = new AuthService(_connectionString);
+            var service = new AuthService(_sqlConnection.ConnectionString);
             service.Register("test", "password", "mail@domain.ttl");
 
             var login = service.CheckLoginData("test", "password");
@@ -86,7 +97,7 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void UsernameAvailableTest()
         {
-            var service = new AuthService(_connectionString);
+            var service = new AuthService(_sqlConnection.ConnectionString);
             Assert.IsTrue(service.UsernameAvailable("test"));
             service.Register("test", "password", "mail@domain.ttl");
             Assert.IsFalse(service.UsernameAvailable("test"));
@@ -97,7 +108,7 @@ namespace MUNityTest.ServiceTests
         {
             //Create a user/Login that user and get the auth key then
             //validate the auth-key
-            var service = new AuthService(_connectionString);
+            var service = new AuthService(_sqlConnection.ConnectionString);
             service.Register("test", "test", "test@mail.com");
             var login = service.Login("test", "test");
             Assert.IsTrue(login.status);
@@ -110,7 +121,7 @@ namespace MUNityTest.ServiceTests
         [Test]
         public void NegativeHeadAdminTest()
         {
-            var service = new AuthService(_connectionString);
+            var service = new AuthService(_sqlConnection.ConnectionString);
             var admin = service.GetHeadAdminId();
             Assert.IsNull(admin);
         }
