@@ -22,6 +22,7 @@ export class ManageConferenceCommitteesComponent implements OnInit {
   newcommitteeparent: string;
   newcommitteearticle: string;
   presetDelegations: Delegation[] = [];
+  filteredDelegations: Delegation[] = [];
   addDelegationSelection: Delegation = null;
   addDelegationToCommitteeSelection: Delegation = null;
   currentCommittee: Committee = null;
@@ -33,11 +34,12 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.conferenceService.getConference(params.id).subscribe(n => {
         this.conference = n;
-        console.log(n);
+        this.filteredDelegations = this.conference.Delegations;
       });
     });
     this.conferenceService.getAllDelegations().subscribe(n => {
       this.presetDelegations = n;
+      
     });
   }
 
@@ -49,6 +51,11 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     console.log('TODO: removeDelegationFromCommittee');
     console.log(committee);
     console.log(delegationid);
+  }
+
+  isDelegationInCommittee(delegation: Delegation, committee: Committee) {
+    const amount = committee.DelegationList.filter(n => n == delegation.ID).length;
+    return (amount > 0);
   }
 
   openModal(template: TemplateRef<any>) {
@@ -85,7 +92,14 @@ export class ManageConferenceCommitteesComponent implements OnInit {
       });
   }
 
-
+  onSearchKey(event: any) { // without type info
+    const filter: string = event.target.value;
+    if (filter != null && filter != '') {
+      this.filteredDelegations = this.conference.Delegations.filter(n => n.Name.includes(filter));
+    } else {
+      this.filteredDelegations = this.conference.Delegations;
+    }
+  }
 
   addDelegationClick() {
     if (this.addDelegationSelection == null) {
@@ -105,7 +119,6 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     console.log(this.currentCommittee);
     console.log(this.addDelegationToCommitteeSelection);
     const committee: Committee = this.currentCommittee;
-
     this.conferenceService.addDelegationToCommittee(committee.ID, this.addDelegationToCommitteeSelection.ID, 1, 1).subscribe(n => {
       committee.DelegationList = n.DelegationList;
       const c = this.conference.Committees.find(n => n.ID == committee.ID);

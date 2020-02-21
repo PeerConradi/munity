@@ -1,3 +1,5 @@
+import { Notice } from "./notice.model";
+
 export class OperativeSection {
   ID: string;
   Name: string;
@@ -12,5 +14,6 @@ export class OperativeSection {
   DeleteAmendmentCount: number = 0;
   ChangeAmendmentCount: number = 0;
   MoveAmendmentCount: number = 0;
+  Notices: Notice[] = [];
 
 }

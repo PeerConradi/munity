@@ -1,9 +1,20 @@
+
+
+
 <div *ngIf="!conference">
   <p>Konferenz wird geladen</p>
 </div>
 
 <div *ngIf="conference">
-
+  <div class="row">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">Konferenzverwaltung</li>
+        <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ID]" *ngIf="conference">{{ conference.Name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Gremien</li>
+      </ol>
+    </nav>
+  </div>
 
   <div class="row">
     <h1>Gremien verwalten</h1>
@@ -22,14 +33,12 @@
             <tr>
               <th>Name </th>
               <th>Delegationen </th>
-              <th>Hinzufügen</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let committee of conference.Committees">
               <td>{{ committee.Name}}</td>
               <td>{{ committee.DelegationList.length }}</td>
-              <td><button class="btn btn-outline-success" (click)="openModal(addDelegationToCommitteeModal);setCurrentCommittee(committee);">Delegation Hinzufügen</button></td>
             </tr>
           </tbody>
         </table>
@@ -40,40 +49,44 @@
       </div>
     </div>
   </div>
-
-  <!-- Überischt neu! -->
   <div class="row">
-    <div *ngFor="let committee of conference.Committees" class="col-6">
-      <div class="card">
+    <div class="col-12">
+      <div class="card border-primary">
         <div class="card-header">
-          <h3 class="card-title">{{ committee.Name }}</h3>
+          <h3 class="card-title">Delegation zur Konferenz hinzufügen</h3>
         </div>
         <div class="card-body">
-          <div>
-            <tabset>
-              <tab heading="Beschreibung" id="tab1">Keine Beschreibung vorhanden</tab>
-              <tab heading="Delegationen">
-                <table class="table">
-                  <tr>
-                    <th>Name</th>
-                    <th>Sitze</th>
-                    <th>Entfernen</th>
-                  </tr>
-                  <tr *ngFor="let delegationid of committee.DelegationList">
-                    <td>{{ getDelegationById(delegationid).Name }}</td>
-                    <td>1</td>
-                    <td><button class="btn btn-outline-danger" (click)="removeDelegationFromCommittee(committee, delegationid);">entfernen</button></td>
-                  </tr>
-                </table>
-              </tab>
-            </tabset>
-          </div>
+
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Gremium hinzufügen -->
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <label>Suche: </label>
+      <input type="text" class="form-control" placeholder="Suchbegriff" (keyup)="onSearchKey($event)" />
+    </div>
+    <div class="col-12">
+      <table class="table table-hover">
+        <tr>
+          <th>Delegation\Gremium</th>
+          <th *ngFor="let committee of conference.Committees" class="text-center">{{ committee.Abbreviation }}</th>
+        </tr>
+        <tr *ngFor="let delegation of filteredDelegations">
+          <td>{{ delegation.Name }}</td>
+          <td *ngFor="let committee of conference.Committees" [class.bg-success]="isDelegationInCommittee(delegation, committee)">
+            <div class="checkbox">
+              <label style="font-size: 1em">
+                <input type="checkbox" value="" [checked]="isDelegationInCommittee(delegation, committee)">
+              </label>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
 
 </div>
 
@@ -149,14 +162,13 @@
   <div class="modal-body">
     <!-- Name (name) -->
     <div class="row">
-      <label class="control-label">Delgation</label>
+      <label class="control-label">Delgation hinzufügen</label>
       <div class="col-12">
-        <select class="form-control" id="inlineFormCustomSelectPref2" [(ngModel)]="addDelegationToCommitteeSelection" [ngModelOptions]="{standalone: true}">
-          <option *ngFor="let delegation of conference.Delegations" [ngValue]="delegation">{{ delegation.Name }}</option>
+        <select class="form-control" [(ngModel)]="addDelegationToCommitteeSelection" [ngModelOptions]="{standalone: true}">
+          <option *ngFor="let delegation of presetDelegations" [ngValue]="delegation">{{ delegation.Name }}</option>
         </select>
       </div>
     </div>
-
     <div class="row">
       <button class="btn btn-block btn-primary" (click)="addDelegationToCommittee()">Hinzufügen</button>
     </div>

@@ -39,6 +39,8 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public int Level { get; set; }
 
+        public List<NoticeModel> Notices { get; set; }
+
         public HUBOperativeParagraph(OperativeParagraphModel oa)
         {
             this.ID = oa.ID;
@@ -56,11 +58,13 @@ namespace MUNityAngular.Hubs.HubObjects
             this.ChangeAmendmentCount = oa.ChangeAmendmentCount;
             this.MoveAmendmentCount = oa.MoveAmendmentCount;
             this.Level = oa.Level;
+            this.Notices = oa.Notices;
         }
 
         public HUBOperativeParagraph()
         {
             Children = new List<string>();
+            Notices = new List<NoticeModel>();
         }
     }
 }

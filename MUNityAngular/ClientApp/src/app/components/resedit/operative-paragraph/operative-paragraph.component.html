@@ -4,34 +4,26 @@
 <div class="notice-box" *ngIf="!hideNotices">
   <div class="card border-warning">
     <div class="card-header">
-      <h3 class="card-title">Kommentare <span class="badge badge-secondary">Preview</span></h3>
+      <div class="clearfix">
+        <h3 class="card-title float-left">Kommentare <span class="badge badge-secondary">Preview</span></h3>
+        <button class="btn btn-danger float-right" (click)="toggleNotices()">Close</button>
+      </div>
+      
     </div>
     <div class="card-body">
       <ul class="list-unstyled">
-        <li class="media">
+        <li class="media" *ngFor="let notice of paragraph.Notices">
           <div class="media-body">
-            <h5 class="mt-0 mb-1">Titel</h5>
-            Hier steht der Text des Kommentars, welcher durchaus auch länger ausfallen könnte.
-          </div>
-        </li>
-        <li class="media my-4">
-          <div class="media-body">
-            <h5 class="mt-0 mb-1">List-based media object</h5>
-            Hier steht der Text des Kommentars, welcher durchaus auch länger ausfallen könnte.
-          </div>
-        </li>
-        <li class="media">
-          <div class="media-body">
-            <h5 class="mt-0 mb-1">List-based media object</h5>
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            <h5 class="mt-0 mb-1">{{ notice.Title }}</h5>
+            {{ notice.Text }}
           </div>
         </li>
       </ul>
     </div>
     <div class="card-footer">
       <h6>Kommentar schreiben</h6>
-      <textarea class="form-control"></textarea>
-      <button class="btn btn-block btn-primary">Hinzufügen</button>
+      <textarea class="form-control" [(ngModel)]="newNoticeText"></textarea>
+      <button class="btn btn-block btn-primary" (click)="addNotice()">Hinzufügen</button>
     </div>
   </div>
 
@@ -42,9 +34,9 @@
     {{ paragraph.Path }}
   </div>
 
-  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="toggleNotices()"> 
+  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="toggleNotices()" *ngIf="paragraph.Notices != null"> 
     <span>N</span>
-    <span class="badge">3</span>
+    <span class="badge">{{ paragraph.Notices.length }}</span>
   </button>
 
   <div class="btn-group-vertical paragraph-tools">

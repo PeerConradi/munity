@@ -48,6 +48,8 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public List<string> SupporterNames { get; set; }
 
+        public List<NoticeModel> Notices { get; set; }
+
         public HUBResolution(ResolutionModel resolution)
         {
             this.ID = resolution.ID;
@@ -66,6 +68,7 @@ namespace MUNityAngular.Hubs.HubObjects
             this.SubmitterName = SubmitterName;
             this.SupporterNames = resolution.SupporterNames;
             this.CommitteeName = resolution.CommitteeName;
+            this.Notices = resolution.Notices;
         }
 
         public HUBResolution()
@@ -76,6 +79,7 @@ namespace MUNityAngular.Hubs.HubObjects
             AddAmendmentsSave = new List<HUBAddAmendment>();
             OperativeSections = new List<HUBOperativeParagraph>();
             Preamble = new HUBPreamble();
+            this.Notices = new List<NoticeModel>();
         }
     }
 }

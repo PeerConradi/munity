@@ -201,6 +201,10 @@ namespace MUNityTest.ServiceTests
             //An dieser Stelle sollte bereits eine Verbindung zwischen der Konferenz und den Delegationen bestehen
             var conferenceDelegations = Tools.Connection(_sqlConnection.ConnectionString).Table("conference_delegation").GetElements<ConferenceDelegationModel>();
             Assert.NotZero(conferenceDelegations.Count);
+            Assert.NotNull(conferenceDelegations.Find(n => n.DelegationId == delegations[0].ID));
+
+            var cacheConference = service.GetConference(conference.ID).Delegations;
+            Assert.NotNull(cacheConference.Find(n => n.ID == delegations[0].ID));
 
             //Die Verbindung zwischen Delegation und Gremium sollte natürlich auch existieren
             var committeeDelegations = Tools.Connection(_sqlConnection.ConnectionString).Table("delegation_in_committee").GetElements<DelegationInCommitteeModel>();

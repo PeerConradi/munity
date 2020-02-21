@@ -61,6 +61,9 @@ namespace MUNityAngular.Models.Resolution
         [DataMember]
         public string Text { get; set; }
 
+        [DataMember]
+        public List<NoticeModel> Notices { get; set; }
+
         [JsonIgnore]
         [IgnoreDataMember]
         [BsonIgnore]
@@ -459,6 +462,11 @@ namespace MUNityAngular.Models.Resolution
         public IEnumerable<OperativeParagraphModel> GetChildren()
         {
             return Resolution.OperativeSections.Where(n => n.ParentID == this.ID);
+        }
+
+        public OperativeParagraphModel()
+        {
+            this.Notices = new List<NoticeModel>();
         }
     }
 }

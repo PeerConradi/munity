@@ -175,6 +175,7 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
 
             section.Text = paragraph.Text;
+            section.Notices = paragraph.Notices;
             _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(new Hubs.HubObjects.HUBOperativeParagraph(section));
             resolutionService.RequestSave(resolution);
             return StatusCode(StatusCodes.Status200OK, section.AsNewtonsoftJson());

@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
+import { Notice } from '../../../models/notice.model';
+import { OperativeSection } from '../../../models/operative-section.model';
 
 @Component({
   selector: 'app-operative-paragraph',
@@ -8,7 +10,7 @@ import { ResolutionService } from '../../../services/resolution.service';
 })
 export class OperativeParagraphComponent implements OnInit {
 
-  @Input() paragraph: any;
+  @Input() paragraph: OperativeSection;
 
   @Input() resolutionid: string;
 
@@ -16,9 +18,12 @@ export class OperativeParagraphComponent implements OnInit {
 
   hideNotices = true;
 
+  newNoticeText: string;
+
   constructor(private renderer: Renderer2, private service: ResolutionService) { }
 
   ngOnInit() {
+    console.log(this.paragraph);
   }
 
   onKey(event: any) {
@@ -47,5 +52,16 @@ export class OperativeParagraphComponent implements OnInit {
   }
   toggleNotices() {
     this.hideNotices = !this.hideNotices;
+  }
+
+  addNotice() {
+    console.log(this.newNoticeText);
+    const notice = new Notice();
+    notice.Id = new Date().getTime().toString();
+    notice.Title = 'Titel';
+    notice.Text = this.newNoticeText;
+    this.paragraph.Notices.push(notice);
+    this.service.changeOperativeParagraph(this.paragraph);
+    this.service.changeOperativeParagraph(this.paragraph);
   }
 }
