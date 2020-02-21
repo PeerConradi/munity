@@ -226,7 +226,7 @@ namespace MUNityAngular.Controllers
 
             if (!authCheck.valid)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
-
+            
             var delegation = conferenceService.CreateDelegation(request.Name, request.FullName, request.Abbreviation, request.Type.ToString());
             //conferenceService.AddDelegationToConference(conferenceid, delegation.ID);
             return StatusCode(StatusCodes.Status200OK, delegation.AsNewtonsoftJson());

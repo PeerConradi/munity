@@ -7,6 +7,10 @@ namespace MUNityAngular.Models.Resolution
 {
     public class TagModel
     {
+        /// <summary>
+        /// To Identify the Tag later
+        /// </summary>
+        public string Id { get; set; }
 
         /// <summary>
         /// A Tag has a type, for example: success, danger, error etc.
@@ -19,5 +23,10 @@ namespace MUNityAngular.Models.Resolution
         /// The Text of the Tag, should be short but is not limited by default.
         /// </summary>
         public string Text { get; set; }
+
+        public TagModel()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
     }
 }

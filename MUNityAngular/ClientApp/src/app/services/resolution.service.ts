@@ -108,6 +108,9 @@ export class ResolutionService {
         target.Text = paragraph.Text;
         //Commends could also change but that has yet to come!
       }
+      if (target != null && target.Notices != paragraph.Notices) {
+        target.Notices = paragraph.Notices;
+      }
     });
 
     this._hubConnection.on('ResolutionSaved', (date: Date) => {

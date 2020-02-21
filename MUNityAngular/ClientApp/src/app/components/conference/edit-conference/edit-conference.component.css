@@ -7,7 +7,33 @@
   margin-bottom: 2rem;
 }
 
+
+
   .wrap:hover {
+    background: linear-gradient(135deg,#6394ff 0%,#0a193b 100%);
+    color: white;
+  }
+
+.wrap-primary {
+  border: solid;
+  border-width: 2Px;
+  border-color: #007bff;
+  box-shadow: 7px 7px 30px -5px rgba(0,123,255,0.1);
+}
+
+.wrap-warning:hover {
+  background: linear-gradient(135deg,#ff9c63 0%,#3b2d0a 100%);
+  color: white;
+}
+
+.wrap-warning {
+  border: solid;
+  border-width: 2Px;
+  border-color: #ffc107;
+  box-shadow: 7px 7px 30px -5px rgba(255,193,7,0.1);
+}
+
+  .wrap-primary:hover {
     background: linear-gradient(135deg,#6394ff 0%,#0a193b 100%);
     color: white;
   }

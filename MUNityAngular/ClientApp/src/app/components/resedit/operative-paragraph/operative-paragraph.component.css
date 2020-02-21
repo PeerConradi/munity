@@ -14,12 +14,26 @@ textarea {
   box-sizing: border-box; /* Opera/IE 8+ */
 }
 
-.notice-box {
-  position: absolute;
-  width: 80%;
-  left: 80Px;
-  top: 0Px;
-  z-index: 999;
+@media only screen and (min-width: 992px) {
+  .notice-box {
+    position: fixed;
+    width: 30%;
+    max-height: 90%;
+    left: 60%;
+    top: 10%;
+    z-index: 999;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .notice-box {
+    position: fixed;
+    width: 80%;
+    max-height: 200Px;
+    left: 10%;
+    top: 0Px;
+    z-index: 999;
+  }
 }
 
 .paragraph-box {

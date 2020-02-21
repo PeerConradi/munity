@@ -434,6 +434,18 @@ namespace MUNityAngular.Services
         {
             var linkid = GetDelegationConferenceLinkId(committee.ConferenceID, delegation.ID);
 
+            if (!committee.DelegationList.Contains(delegation.ID))
+                committee.DelegationList.Add(delegation.ID);
+
+            var conference = conferences.FirstOrDefault(n => n.ID == committee.ConferenceID);
+            if (conference != null)
+            {
+                if (!conference.Delegations.Any(n => n.ID == delegation.ID))
+                {
+                    conference.Delegations.Add(delegation);
+                }
+            }
+            
             if (linkid == null)
             {
                 AddDelegationToConference(committee.ConferenceID, delegation.ID, mincount, maxcount);

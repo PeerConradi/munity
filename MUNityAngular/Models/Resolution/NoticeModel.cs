@@ -8,6 +8,11 @@ namespace MUNityAngular.Models.Resolution
     public class NoticeModel
     {
         /// <summary>
+        /// The Id to change or delete this one later!
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
         /// The notice does not save a Link to the user but the fore- and
         /// lastname of the Author
         /// </summary>
@@ -32,5 +37,11 @@ namespace MUNityAngular.Models.Resolution
         /// Notices can have tags
         /// </summary>
         public List<TagModel> Tags { get; set; }
+
+        public NoticeModel()
+        {
+            this.Tags = new List<TagModel>();
+            this.Id = Guid.NewGuid().ToString();
+        }
     }
 }
