@@ -9,41 +9,25 @@ server on mun-tools.com.
 ## Status
 This application is under development and cannot be used at the moment. Please check later to see some progress.
 
-## To-Dos Before Open Source:
-These Things have to be finished before this project could go OpenSource: 
-* [ ] Generate/Update the Database itself
-* [ ] API for the Speakerlists
-* [X] API for the Resolution Editor
-* [X] Login and Registration
-* [ ] User Management (Admin, User, Visitors)
+You can open a preview at www.mun-tools.com.
 
-## To-Dos Before Beta
-* [X] Login&Register
-* [X] Create Conference Area
-* [ ] Edit Conference Area
-* [ ] Conference Team Area
-* [ ] Delegation Area
-* [ ] Resolution Editor
-* [ ] Speakerlist Editor
-* [ ] Resolution and Speakerlist Views
-* [ ] imprint
-* [ ] privacy statement
+## Setup Development Environment
+To start developing MUNity you need to clone the repository and have a mariaDb or mySql up and running.
+The basic Database structure can be found under ```MUNityTest\NeededFiles\munity.sql``` note that this is also the Test Database and which already contains someData (Countries and Delegations). Feel free to delete them.
 
-## Components
+## Roadmap
 
-### Public Views
-Some Areas should be visible to everyone
+### Done
+* Registration
+* Resolution Editor structure
+* Speakerlist structure
+* Conference Management
+  * Create a conference
+  * Manage Team (Roles and Members)
+  * Manage Committees and Delegations
 
-### ID Views (ID-Access)
-Some Areas like Speakerlists and Resolutions should be visible to everyone if the owner of the document/speakerlist 
-allowed the ID-Access.
-
-### Login Area
-Some features only work when the user has an account.
-The Basic account only requires an email adress, username and password, everything else should be optional.
-
-## Features
-* Speakerlists
-* Resolution Editor
-* Delegation Editor
-* Conference Configuration
+### Todo
+* Notices/Comments on Resolutions and Preambles
+* Custom Component for Notices with Tags
+* View that displays speakerlist and Resolution at the same time
+* Conference-rights management
