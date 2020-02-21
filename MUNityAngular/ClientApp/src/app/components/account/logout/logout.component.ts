@@ -13,9 +13,7 @@ export class LogoutComponent implements OnInit {
   constructor(public userSerivce: UserService) { }
 
   ngOnInit() {
-    this.userSerivce.logout().then(n => {
-      this.logoutSuccess = n;
-    });
+    this.userSerivce.logout();
   }
 
 }

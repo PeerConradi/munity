@@ -56,7 +56,15 @@
           <h3 class="card-title">Delegation zur Konferenz hinzufügen</h3>
         </div>
         <div class="card-body">
-
+          <div class="form-group">
+            <label>Delegation auswählen</label>
+            <select class="form-control" [(ngModel)]="addDelegationSelection" [ngModelOptions]="{standalone: true}">
+              <option *ngFor="let delegation of presetDelegations" [ngValue]="delegation">{{ delegation.Name }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-block btn-primary" (click)="addDelegationClick()">Auswahl Hinzufügen</button>
+          </div>
         </div>
       </div>
     </div>
@@ -76,9 +84,9 @@
         <tr *ngFor="let delegation of filteredDelegations">
           <td>{{ delegation.Name }}</td>
           <td *ngFor="let committee of conference.Committees" [class.bg-success]="isDelegationInCommittee(delegation, committee)">
-            <div class="checkbox">
+            <div class="checkbox" class="align-content-center">
               <label style="font-size: 1em">
-                <input type="checkbox" value="" [checked]="isDelegationInCommittee(delegation, committee)">
+                  <input type="checkbox" value="" [checked]="isDelegationInCommittee(delegation, committee)" (change)="toggleDelegationInCommittee(delegation, committee)">
               </label>
             </div>
           </td>
@@ -147,31 +155,5 @@
     <div class="row">
       <button class="btn btn-block btn-primary" (click)="addCommittee()">Hinzufügen</button>
     </div>
-  </div>
-</ng-template>
-
-
-<!-- Dialog zum Hinzufügen einer Delegation zu einem Gremium -->
-<ng-template #addDelegationToCommitteeModal>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Modal</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <!-- Name (name) -->
-    <div class="row">
-      <label class="control-label">Delgation hinzufügen</label>
-      <div class="col-12">
-        <select class="form-control" [(ngModel)]="addDelegationToCommitteeSelection" [ngModelOptions]="{standalone: true}">
-          <option *ngFor="let delegation of presetDelegations" [ngValue]="delegation">{{ delegation.Name }}</option>
-        </select>
-      </div>
-    </div>
-    <div class="row">
-      <button class="btn btn-block btn-primary" (click)="addDelegationToCommittee()">Hinzufügen</button>
-    </div>
-
   </div>
 </ng-template>

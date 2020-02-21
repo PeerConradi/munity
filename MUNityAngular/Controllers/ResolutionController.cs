@@ -907,10 +907,10 @@ namespace MUNityAngular.Controllers
             //es sich ggf. um eine Public Id
 
             //Schaue nach, ob die Resolution überhaupt im public mode ist
-            var mode = resolutionService.GetResolutionInfoForPublicId(id);
-            if (mode.publicRead)
+            var info = resolutionService.GetResolutionInfoForPublicId(id);
+            if (info.PublicRead)
             {
-                resolution = resolutionService.GetResolution(mode.id);
+                resolution = resolutionService.GetResolution(info.ID);
             }
 
             if (resolution == null)
@@ -943,10 +943,10 @@ namespace MUNityAngular.Controllers
             }
 
             //public Check
-            var mode = resolutionService.GetResolutionInfoForPublicId(id);
-            if (mode.publicRead)
+            var info = resolutionService.GetResolutionInfoForPublicId(id);
+            if (info.PublicRead)
             {
-                resolution = resolutionService.GetResolution(mode.id);
+                resolution = resolutionService.GetResolution(info.ID);
             }
 
             if (resolution == null)
@@ -977,10 +977,10 @@ namespace MUNityAngular.Controllers
             if (resolutionWithId == null)
             {
                 //Offenbar die Public id
-                var reso = resolutionService.GetResolutionInfoForPublicId(id);
-                if (!string.IsNullOrWhiteSpace(reso.id))
+                var info = resolutionService.GetResolutionInfoForPublicId(id);
+                if (!string.IsNullOrWhiteSpace(info.ID))
                 {
-                    resolutionWithId = resolutionService.GetResolution(reso.id);
+                    resolutionWithId = resolutionService.GetResolution(info.ID);
                 }
                 else
                 {

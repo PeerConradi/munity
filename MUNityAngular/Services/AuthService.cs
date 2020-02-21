@@ -259,6 +259,12 @@ namespace MUNityAngular.Services
             Tools.Connection(_connectionString).Table(user_table_name).SetEntry("id", userid, "salt", hash.Salt);
         }
 
+        public void SetForename(string userid, string newForename) =>
+            Tools.Connection(_connectionString).User.SetEntry("id", userid, "forename", newForename);
+
+        public void SetLastname(string userid, string newForename) =>
+            Tools.Connection(_connectionString).User.SetEntry("id", userid, "lastname", newForename);
+
         public bool UsernameAvailable(string username)
         {
             return !Tools.Connection(_connectionString).Table(user_table_name).HasEntry("username", username.ToLower());
@@ -401,6 +407,14 @@ namespace MUNityAngular.Services
                     }
                 }
             }
+            var validation = ValidateAuthKey(authkey);
+            if (validation.valid)
+            {
+                if (IsAdmin(validation.userid))
+                {
+                    auths.SetAdmin();
+                }
+            }
             return auths;
 
         }
@@ -438,6 +452,11 @@ namespace MUNityAngular.Services
 
             [DatabaseSave("CreateConference")]
             public bool CreateConference { get; set; } = false;
+
+            internal void SetAdmin()
+            {
+                CreateConference = true;
+            }
         }
         
         public List<UserModel> GetAllUsers()
@@ -461,6 +480,11 @@ namespace MUNityAngular.Services
             return users;
         }
 
+        public int GetUserCount()
+        {
+            return Tools.Connection(_connectionString).Table(user_table_name).Count();
+        }
+
         public UserModel GetUserByUsername(string username)
         {
             UserModel user = null;
@@ -480,6 +504,11 @@ namespace MUNityAngular.Services
                 }
             }
             return user;
+        }
+
+        public UserModel GetUserById(string id)
+        {
+            return Tools.Connection(_connectionString).Table(user_table_name).First<UserModel>("id", id);
         }
 
 

@@ -26,7 +26,6 @@ export class ConferenceDetailsComponent implements OnInit {
       console.log(params.id);
       this.conferenceService.getConference(params.id).subscribe(n => {
         this.conference = n;
-        console.log(n);
       });
     });
   }

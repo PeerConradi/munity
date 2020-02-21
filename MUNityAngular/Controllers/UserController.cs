@@ -130,6 +130,38 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetAuthUser([FromHeader]string auth, [FromServices]AuthService authService)
+        {
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation.valid == true)
+            {
+                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid).AsNewtonsoftJson());
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
+        }
+
+        [Route("[action]")]
+        [HttpPatch]
+        public IActionResult UpdateUserinfo([FromHeader]string auth, [FromBody]UserModel userModel, [FromServices]AuthService authService)
+        {
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation.valid == true && validation.userid == userModel.Id)
+            {
+                authService.SetForename(userModel.Id, userModel.Forename);
+                authService.SetLastname(userModel.Id, userModel.Lastname);
+                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid).AsNewtonsoftJson());
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
+        }
+
         /// <summary>
         /// Checks if the user behind the given Auth key has admin rights.
         /// </summary>
@@ -183,6 +215,21 @@ namespace MUNityAngular.Controllers
         public IActionResult GetRegistrationState([FromServices]AuthService authService)
         {
             return StatusCode(StatusCodes.Status200OK, authService.IsRegistrationOpened);
+        }
+
+
+        /// <summary>
+        /// Returns the rights of the given user!
+        /// </summary>
+        /// <param name="auth"></param>
+        /// <param name="authService"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult GetKeyAuths([FromHeader]string auth, [FromServices]AuthService authService)
+        {
+            var authstate = authService.GetAuthsByAuthkey(auth);
+            return StatusCode(StatusCodes.Status200OK, authstate.AsNewtonsoftJson());
         }
 
         /// <summary>

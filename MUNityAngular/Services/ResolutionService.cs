@@ -37,47 +37,17 @@ namespace MUNityAngular.Services
 
         public void DeleteResolution(string id)
         {
+            
             this._resolutions.DeleteOne(n => n.ID == id);
-            using (var connection = Connector.Connection)
-            {
-                connection.Open();
-                var cmdStr = "DELETE FROM resolution WHERE id=@id";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@id", id);
-                cmd.ExecuteNonQuery();
-            }
+            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).RemoveEntry("id", id);
         }
 
         public long SavedResolutionsCount { get => this._resolutions.CountDocuments(n => n.ID != null); }
 
-        public long DatabaseResolutionsCount
-        {
-            get
-            {
-                long count = 0;
-                using (var connection = Connector.Connection)
-                {
-                    connection.Open();
-                    var cmdStr = "SELECT COUNT(*) FROM resolution;";
-                    var cmd = new MySqlCommand(cmdStr, connection);
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                            {
-                                count = reader.GetInt64(0);
-                            }
-                        }
-                    }
-                }
-                return count;
-            }
-        }
+        public long DatabaseResolutionsCount { get => Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).Count(); }
 
         public void RequestSave(ResolutionModel resolution)
         {
-            
             this._resolutions.ReplaceOne(n => n.ID == resolution.ID, resolution);
         }
 
@@ -87,31 +57,9 @@ namespace MUNityAngular.Services
             return resolution;
         }
 
-        public (string id, bool publicRead, bool publicWrite, bool publicAmendment) GetResolutionInfoForPublicId(string publicid)
+        public ResolutionAdvancedInfoModel GetResolutionInfoForPublicId(string publicid)
         {
-            string id = string.Empty;
-            bool isPublicRead = false;
-            bool isPublicWrite = false;
-            bool isOnlineAmendment = false;
-            using (var connection = Connector.Connection)
-            {
-                var cmdStr = "SELECT * FROM resolution WHERE onlinecode=@onlineid";
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@onlineid", publicid);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        id = reader.GetString("id");
-                        isPublicRead = reader.GetBoolean("ispublicread");
-                        isPublicWrite = reader.GetBoolean("ispublicwrite");
-                        isOnlineAmendment = reader.GetBoolean("allowamendments");
-                    }
-                }
-            }
-
-            return (id, isPublicRead, isPublicWrite, isOnlineAmendment);
+            return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).First<ResolutionAdvancedInfoModel>("onlinecode", publicid);
         }
 
         /// <summary>
@@ -122,37 +70,7 @@ namespace MUNityAngular.Services
         public ResolutionAdvancedInfoModel GetResolutionInfoForId(string id)
         {
             ResolutionAdvancedInfoModel model = null;
-            using (var connection = Connector.Connection)
-            {
-                var cmdStr = "SELECT * FROM resolution WHERE id=@id";
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@id", id);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (!reader.HasRows)
-                    {
-                        model = null;
-                    }
-                    else
-                    {
-                        while (reader.Read())
-                        {
-                            model = new ResolutionAdvancedInfoModel();
-                            model.ID = id;
-                            model.Name = reader.GetString("name");
-                            model.OnlineCode = reader.GetString("onlinecode");
-                            model.CreationDate = reader.GetDateTime("creationdate");
-                            model.LastChangedDate = reader.GetDateTime("lastchangeddate");
-                            model.PublicRead = reader.GetBoolean("ispublicread");
-                            model.PublicWrite = reader.GetBoolean("ispublicwrite");
-                            model.PublicAmendment = reader.GetBoolean("allowamendments");
-                        }
-                    }
-                }
-            }
-
-            return model;
+            return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).First<ResolutionAdvancedInfoModel>("id", id);
         }
 
         /// <summary>
@@ -165,21 +83,9 @@ namespace MUNityAngular.Services
         {
             string publicid = GetPublicIdForResolution(resolutionid);
 
+            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "ispublicread", true);
+            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "onlinecode", publicid);
             //Suche nach der Resolution in der Datenbank und schaue ob diese bereits eine PublicId hat
-            using (var connection = Connector.Connection)
-            {
-                connection.Open();
-                
-                if (string.IsNullOrWhiteSpace(publicid))
-                {
-                    publicid = GeneratePublicId();
-                }
-                //Updaten der Resolution:
-                var updateCommandStr = "UPDATE resolution SET onlinecode=@onlinecode, ispublicread=1";
-                var updateCommand = new MySqlCommand(updateCommandStr, connection);
-                updateCommand.Parameters.AddWithValue("@onlinecode", publicid);
-                updateCommand.ExecuteNonQuery();
-            }
             return publicid;
         }
 
@@ -189,7 +95,7 @@ namespace MUNityAngular.Services
             bool containsId = false;
             do
             {
-                using (var connection = Connector.Connection)
+                using (var connection = new MySqlConnection(_mySqlConnectionString))
                 {
                     var cmdStr = "SELECT COUNT(*) FROM resolution WHERE onlinecode=@code";
                     var cmd = new MySqlCommand(cmdStr, connection);
@@ -209,22 +115,7 @@ namespace MUNityAngular.Services
 
         public string GetPublicIdForResolution(string resolutionid)
         {
-            string publicid = null;
-            using (var connection = Connector.Connection)
-            {
-                connection.Open();
-                var getOnlineIdCommand = "SELECT onlinecode FROM resolution WHERE id=@resoid";
-                var cmd = new MySqlCommand(getOnlineIdCommand, connection);
-                cmd.Parameters.AddWithValue("@resoid", resolutionid);
-                using (var idreader = cmd.ExecuteReader())
-                {
-                    while (idreader.Read())
-                    {
-                        publicid = idreader.GetString(0);
-                    }
-                }
-            }
-            return publicid;
+            return Tools.Connection(_mySqlConnectionString).Table(resolutionid).First<ResolutionAdvancedInfoModel>("id", resolutionid)?.OnlineCode ?? null;
         }
 
         public ResolutionModel GetResolutionFromJson(string json)
@@ -233,40 +124,14 @@ namespace MUNityAngular.Services
             return resolution;
         }
 
-        public string GetResolutionJsonFromFile(string id)
-        {
-            var resolutionDirectory = DataHandlers.Database.SettingsHandler.GetResolutionDir;
-            var filePath = System.IO.Path.Combine(resolutionDirectory, id + ".json");
-            if (System.IO.File.Exists(filePath))
-            {
-                return System.IO.File.ReadAllText(filePath);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         
-        private bool SaveResolutionInDatabase(ResolutionModel resolution, bool pread, bool pwrite, string userid = "anon")
+        private bool SaveResolutionInDatabase(ResolutionModel resolution, bool pread, bool pwrite, string userid = null)
         {
-            using (var connection = Connector.Connection)
-            {
-                var cmdStr = "INSERT INTO "+ resolution_table_name + " (id, name, user, creationdate, lastchangeddate, onlinecode,ispublicread,ispublicwrite) VALUES (" +
-                    "@id, @name, @user, @creationdate, @lastchangeddate, @onlinecode, @pread, @pwrite);";
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@id", resolution.ID);
-                cmd.Parameters.AddWithValue("@name", resolution.Topic);
-                cmd.Parameters.AddWithValue("@user", userid);
-                cmd.Parameters.AddWithValue("@creationdate", DateTime.Now);
-                cmd.Parameters.AddWithValue("@lastchangeddate", DateTime.Now);
-                cmd.Parameters.AddWithValue("@onlinecode", new Random().Next(10000000, 99999999));
-                cmd.Parameters.AddWithValue("@pread", pread);
-                cmd.Parameters.AddWithValue("@pwrite", pwrite);
-                cmd.ExecuteNonQuery();
-                return true;
-            }
+            var AdvancedInfo = new ResolutionAdvancedInfoModel(resolution, userid);
+            AdvancedInfo.PublicRead = pread;
+            AdvancedInfo.PublicWrite = pwrite;
+            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).Insert(AdvancedInfo);
+            return true;
         }
 
         public void Dispose()
@@ -281,50 +146,19 @@ namespace MUNityAngular.Services
         /// <returns>a touple with the first value as the id, and the second value is the name</returns>
         internal List<ResolutionAdvancedInfoModel> GetResolutionsOfUser(string userid)
         {
-            var cmdStr = "SELECT * FROM " + resolution_table_name + " WHERE user=@userid";
-            var list = new List<ResolutionAdvancedInfoModel>();
-            using (var connection = Connector.Connection)
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        list.Add(DataReaderConverter.ObjectFromReader<ResolutionAdvancedInfoModel>(reader));
-                    }
-                }
-            }
-            return list;
+            return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).GetElements<ResolutionAdvancedInfoModel>("userid", userid);
         }
 
         internal void UpdateResolutionName(string resolutionid, string newtitle)
         {
-            var cmdStr = "UPDATE " + resolution_table_name + " SET name = @newname WHERE id=@id";
-            using (var connection = Connector.Connection)
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@newname", newtitle);
-                cmd.Parameters.AddWithValue("@id", resolutionid);
-                cmd.ExecuteNonQuery();
-            }
+            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "name", newtitle);
         }
 
         
 
         internal void SetPublicReadMode(string resolutionid, bool mode)
         {
-            using (var connection = new MySqlConnection(_mySqlConnectionString))
-            {
-                var cmdStr = "UPDATE resolution SET ispublicread=@mode WHERE id=@resoid;";
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@mode", mode);
-                cmd.Parameters.AddWithValue("@resoid", resolutionid);
-                cmd.ExecuteNonQuery();
-            }
+            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "ispublicread", mode);
         }
 
         public ResolutionService(string mysqlConnectionString, string mongoConnectionString, string mongoDatabaseName)

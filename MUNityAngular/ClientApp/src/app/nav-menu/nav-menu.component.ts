@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
 
 @Component({
@@ -6,11 +6,19 @@ import { UserService } from '../services/user.service';
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.css']
 })
-export class NavMenuComponent {
+export class NavMenuComponent implements OnInit{
   isExpanded = false;
+
+  isAdmin = false;
 
   constructor(public userSerivce: UserService) {
     
+  }
+
+  ngOnInit() {
+    this.userSerivce.getIsAdmin().subscribe(n => {
+      this.isAdmin = n;
+    });
   }
 
   collapse() {

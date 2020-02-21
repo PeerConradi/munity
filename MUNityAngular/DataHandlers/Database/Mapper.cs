@@ -1,4 +1,5 @@
 ﻿using MUNityAngular.Models.Conference;
+using MUNityAngular.Models.User;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,95 @@ namespace MUNityAngular.DataHandlers.Database
             this._connectionString = connectionString;
         }
 
-        public void CreateTable(object preset)
+        public bool CreateTable(string tablename, Type sourceObject)
         {
-            throw new NotImplementedException();
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                string cmdStr = "CREATE TABLE IF NOT EXISTS `" + tablename + "` (";
+                var primarykeys = new List<string>();
+                foreach (var prep in sourceObject.GetProperties())
+                {
+                    var databaseAttr = Connector.GetAttributeForProperty(prep);
+                    if (databaseAttr != null)
+                    {
+                        if (databaseAttr.FieldType == DatabaseSaveAttribute.EFieldType.AUTO)
+                        {
+                            cmdStr += "`" + databaseAttr.ColumnName + "` " + DatabaseInformation.GetDatabaseType(prep.PropertyType) + ",";
+                        }
+                        else
+                        {
+                            cmdStr += "`" + databaseAttr.ColumnName + "` " + DatabaseInformation.GetDatabaseType(databaseAttr.FieldType) + ",";
+                        }
+
+                        var pkAttr = (PrimaryKeyAttribute)prep.GetCustomAttribute(typeof(PrimaryKeyAttribute));
+                        if (pkAttr != null)
+                            primarykeys.Add(databaseAttr.ColumnName);
+                    }
+                }
+                //PRIMARY KEYS
+                if (primarykeys.Count > 0)
+                    cmdStr += "PRIMARY KEY (";
+
+                primarykeys.ForEach(key =>
+                {
+                    cmdStr += key + ",";
+                });
+                //delete last ,
+                if (cmdStr.EndsWith(','))
+                    cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+
+                if (primarykeys.Count > 0)
+                    cmdStr += ")";
+
+                cmdStr += ");";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.ExecuteNonQuery();
+            }
+            return true;
+        }
+
+        public bool DoesDatabaseExist(string database)
+        {
+            var cmdStr = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = @dbname";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@dbname", database);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.GetString(0) != database)
+                            return false;
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        }
+
+        public bool DoesTableExists(string tablename)
+        {
+            var val = false;
+            using (var connection = new MySqlConnection(ConnectionString))
+            {
+                var cmdStr = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '" + connection.Database + "' AND table_name = @tablename";
+
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@tablename", tablename);
+                connection.Open();
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int count = reader.GetInt32(0);
+                    if (count == 1) val = true;
+                }
+            }
+            return val;
         }
 
         public DTable ConferenceTeamRoles
@@ -30,6 +117,8 @@ namespace MUNityAngular.DataHandlers.Database
         }
 
         public DTable ConferenceTeam { get => new DTable("conference_team", ConnectionString); }
+
+        public DTable User { get => new DTable("user", ConnectionString); }
 
     }
 
@@ -73,6 +162,24 @@ namespace MUNityAngular.DataHandlers.Database
                     return reader.HasRows;
                 }
             }
+        }
+
+        public int Count()
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmdStr = "SELECT COUNT(*) FROM " + _name;
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return reader.GetInt32(0);
+                    }
+                }
+            }
+            return 0;
         }
 
         public List<T> GetElements<T>()
@@ -151,6 +258,42 @@ namespace MUNityAngular.DataHandlers.Database
                 }
             }
             throw new NullReferenceException("No element found");
+        }
+
+        /// <summary>
+        /// Inserts or Updates a value and returns the primary Key
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        internal object UpdateOrInsert(object element)
+        {
+            //Suche nach dem PrimaryKey
+            var pkProperty = Connector.GetPrimaryKey(element);
+
+            if (pkProperty.attribute == null)
+                throw new Exception("The object has no primary Key to do that!");
+
+            //Hole den DatabaseSave des PrimaryKeys
+            var databaseColumnName = pkProperty.propertyInfo.GetCustomAttribute<DatabaseSaveAttribute>();
+            var primaryKeyValue = pkProperty.propertyInfo.GetValue(element);
+            if (primaryKeyValue == null)
+            {
+                //Wenn kein Primarykey vorhanden ist muss das objekt wohl inserted werden
+                return Insert(element);
+            } else
+            {
+                if (HasEntry(databaseColumnName.ColumnName, primaryKeyValue))
+                {
+                    Update(element);
+                    return primaryKeyValue;
+                }
+                else
+                {
+                    return Insert(element);
+                }
+                
+            }
+
         }
 
         /// <summary>
@@ -310,8 +453,6 @@ namespace MUNityAngular.DataHandlers.Database
             }
         }
     }
-
-
 
 
     public static class Extensions

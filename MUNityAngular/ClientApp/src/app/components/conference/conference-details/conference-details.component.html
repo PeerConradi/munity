@@ -18,8 +18,6 @@
     </div>
     <div class="col-12">
       <h1>Gremien</h1>
-      <!-- Show if Conference-Admin-->
-      <a [routerLink]="['/mc/committees', conference.ID]">bearbeiten</a>
     </div>
     <div *ngFor="let committee of conference.Committees" class="col-12">
       <div class="card b-1 hover-shadow mb-20">
@@ -31,7 +29,7 @@
             <div class="mb-2">
               <span class="fs-20 pr-16">{{ committee.Name }}</span>
             </div>
-            <small class="fs-16 fw-300 ls-1">{{ committee.FullName }}</small>
+            <small class="fs-16 fw-300 ls-1">Kein Status vorhanden</small>
           </div>
           <div class="media-right text-right d-none d-md-block">
             <p class="fs-14 text-fade mb-12"><i class="fa fa-map-marker pr-1"></i> {{ committee.Abbreviation }}</p>
@@ -40,8 +38,8 @@
         </div>
         <footer class="card-footer flexbox align-items-center">
           <div>
-            <strong>Letzte Anweseneheit </strong>
-            <span>8/10 (80%) - 01.01.2020</span>
+            <strong>Letzte Anweseneheit: </strong>
+            <span>0/{{ committee.DelegationList.length }} (0%) - 01.01.2020</span>
           </div>
           <div class="card-hover-show">
             <a class="btn btn-bold btn-primary" [routerLink]="['/p/check', committee.ID]">Anwesenheit feststellen</a>

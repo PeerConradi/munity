@@ -1,0 +1,54 @@
+<div *ngIf="!isAdmin" class="row">
+  <div class="col-12">
+    <div class="alert alert-danger">
+      <h1>Zutritt verweigert</h1>
+      <p>Diesen Bereich darfst du nicht einsehen.</p>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isAdmin">
+  <div class="row">
+    <div class="col-12">
+      <h1>Willkommen</h1>
+    </div>
+  </div>
+  <div class="row">
+    <!-- Benutzer Box -->
+    <div class="col-lg-4 col-sm-6" [routerLink]="['/admin/users']">
+      <div class="widget widget-stats bg-primary m-b-10">
+        <!--<div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>-->
+        <div class="stats-content">
+          <div class="stats-title">Benutzer</div>
+          <div class="stats-number">{{ userCount }}</div>
+          <div class="stats-desc">haben sich bereits Registriert!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resolutionen -->
+    <div class="col-lg-4 col-sm-6">
+      <div class="widget widget-stats bg-secondary m-b-10">
+        <!--<div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>-->
+        <div class="stats-content">
+          <div class="stats-title">Resolutionen</div>
+          <div class="stats-number">{{ resolutionsInSQL }}</div>
+          <div class="stats-desc">{{ resolutionsInMGDB }} In der MongoDB</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resolutionen -->
+    <div class="col-lg-4 col-sm-6" [routerLink]="['/admin/conferences']">
+      <div class="widget widget-stats bg-info m-b-10">
+        <!--<div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>-->
+        <div class="stats-content">
+          <div class="stats-title">Konferenzen</div>
+          <div class="stats-number">{{ conferenceCount }}</div>
+          <div class="stats-desc">davon sind {{conferenceCacheCount }} im Cache</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>

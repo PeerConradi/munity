@@ -26,5 +26,16 @@ namespace MUNityAngular.Models.Resolution
 
         [DatabaseSave("lastchangeddate")]
         public DateTime LastChangedDate { get; set; }
+
+        public ResolutionAdvancedInfoModel()
+        {
+
+        }
+
+        public ResolutionAdvancedInfoModel(ResolutionModel resolution, string userid)
+        {
+            this.ID = resolution.ID;
+            this.Name = resolution.Name;
+        }
     }
 }

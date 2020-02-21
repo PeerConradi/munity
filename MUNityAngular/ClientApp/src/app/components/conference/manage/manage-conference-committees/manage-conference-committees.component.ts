@@ -24,8 +24,6 @@ export class ManageConferenceCommitteesComponent implements OnInit {
   presetDelegations: Delegation[] = [];
   filteredDelegations: Delegation[] = [];
   addDelegationSelection: Delegation = null;
-  addDelegationToCommitteeSelection: Delegation = null;
-  currentCommittee: Committee = null;
 
   constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService) { }
@@ -111,21 +109,15 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     }
   }
 
-  setCurrentCommittee(c: Committee) {
-    this.currentCommittee = c;
-  }
-
-  addDelegationToCommittee() {
-    console.log(this.currentCommittee);
-    console.log(this.addDelegationToCommitteeSelection);
-    const committee: Committee = this.currentCommittee;
-    this.conferenceService.addDelegationToCommittee(committee.ID, this.addDelegationToCommitteeSelection.ID, 1, 1).subscribe(n => {
-      committee.DelegationList = n.DelegationList;
-      const c = this.conference.Committees.find(n => n.ID == committee.ID);
-      c.DelegationList = n.DelegationList;
-    }, err => {
-      this.notifier.notify('error', 'Hinzufügen gescheitert!');
-    });
+  toggleDelegationInCommittee(delegation: Delegation, committee: Committee) {
+    if (committee.DelegationList.find(n => n == delegation.ID) == null) {
+      this.conferenceService.addDelegationToCommittee(committee.ID, delegation.ID, 1, 1).subscribe(n => {
+        if (committee.DelegationList.find(n => n == delegation.ID) == null) {
+          committee.DelegationList.push(delegation.ID);
+        }
+      });
+    }
+    
   }
 
 }

@@ -30,6 +30,7 @@ import { ProfileComponent } from './components/account/profile/profile.component
 import { ManageConferenceTeamComponent } from './components/conference/manage/manage-conference-team/manage-conference-team.component';
 import { ManageConferenceCommitteesComponent } from './components/conference/manage/manage-conference-committees/manage-conference-committees.component';
 import { ManageConferenceTeamRolesComponent } from './components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -73,6 +74,7 @@ const routes: Routes = [
       { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent},
 
       //Admin
+      { path: 'admin/dashboard', component: AdminDashboardComponent },
       { path: 'admin/conferences', component: ConferenceListComponent },
       { path: 'admin/users', component: UserManagementComponent },
 

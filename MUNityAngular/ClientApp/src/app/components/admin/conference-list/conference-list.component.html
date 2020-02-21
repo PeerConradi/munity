@@ -17,20 +17,30 @@
       <th>ID</th>
       <th>Name</th>
       <th>FullName</th>
-      <th>Anzahl Gremien</th>
       <th>Bearbeiten</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let conference of conferences">
-      <td>{{ conference.id }}</td>
-      <td>{{ conference.name }}</td>
-      <td>{{ conference.fullName }}</td>
-      <td>{{ conference.committees.length }}</td>
+      <td>{{ conference.ID }}</td>
+      <td>{{ conference.Name }}</td>
+      <td>{{ conference.FullName }}</td>
       <td>
-        <button class="btn btn-primary btn-sm">Bearbeiten</button>
-        <button class="btn btn-danger btn-sm">Entfernen</button>
-        <button class="btn btn-default btn-sm" (click)="rename(conference.id);">Rename to Rofl</button>
+        <div class="btn-group" dropdown>
+          <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+                  aria-controls="dropdown-basic">
+            Einstellungen <span class="caret"></span>
+          </button>
+          <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+              role="menu" aria-labelledby="button-basic">
+            <li role="menuitem"><a class="dropdown-item" href="#">Bearbeiten</a></li>
+            <li role="menuitem"><a class="dropdown-item" href="#">Rechte beschaffen</a></li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem">
+              <a class="dropdown-item text-danger" href="#">Entfernen</a>
+            </li>
+          </ul>
+        </div>
       </td>
     </tr>
   </tbody>

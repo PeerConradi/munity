@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user.service';
 import { FormBuilder } from '@angular/forms';
 import { NotifierService } from 'angular-notifier';
+import { User } from '../../../models/user.model';
 
 @Component({
   selector: 'app-account-settings',
@@ -12,6 +13,7 @@ export class AccountSettingsComponent implements OnInit {
 
   changePasswordForm;
   passdontmatch = false;
+  user: User;
 
   constructor(public userService: UserService,private formBuilder: FormBuilder,private notifier: NotifierService) {
     this.changePasswordForm = this.formBuilder.group({
@@ -19,6 +21,14 @@ export class AccountSettingsComponent implements OnInit {
       newpassword: '',
       confirmpassword: ''
     });
+  }
+
+  ngOnInit() {
+    this.userService.getCurrentUser().subscribe(n => this.user = n);
+  }
+
+  updateProfile() {
+    this.userService.updateUserinfo(this.user).subscribe();
   }
 
   onChangePassword(data) {
@@ -37,7 +47,6 @@ export class AccountSettingsComponent implements OnInit {
     console.log(data);
   }
 
-  ngOnInit() {
-  }
+  
 
 }

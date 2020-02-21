@@ -14,7 +14,6 @@ namespace MUNityAngular.Services
         public InstallationService()
         {
             InstallationLog = new List<string>();
-            IsInstalled = Connector.DoesDatabaseExist();
         }
 
         public bool IsInstalled { get; private set; }
@@ -27,38 +26,32 @@ namespace MUNityAngular.Services
         public void CreateDatabaseAndTables()
         {
             //Connector.EnsureDatabaseExists();
-            string filePath = System.IO.Path.Combine(Environment.CurrentDirectory, "/Util/Files/database.sql");
-            if (System.IO.File.Exists(filePath))
-            {
-                var cmdStr = System.IO.File.ReadAllText(filePath);
-                using (var connection = Connector.Connection)
-                {
-                    connection.Open();
-                    var cmd = new MySqlCommand(cmdStr, connection);
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            InstallationLog.Add(reader.ToString());
-                        }
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception("DatabaseFile not found!");
-            }
+            //string filePath = System.IO.Path.Combine(Environment.CurrentDirectory, "/Util/Files/database.sql");
+            //if (System.IO.File.Exists(filePath))
+            //{
+            //    var cmdStr = System.IO.File.ReadAllText(filePath);
+            //    using (var connection = Connector.Connection)
+            //    {
+            //        connection.Open();
+            //        var cmd = new MySqlCommand(cmdStr, connection);
+            //        using (var reader = cmd.ExecuteReader())
+            //        {
+            //            while (reader.Read())
+            //            {
+            //                InstallationLog.Add(reader.ToString());
+            //            }
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    throw new Exception("DatabaseFile not found!");
+            //}
         }
 
         public void Install()
         {
-            if (!Connector.DoesDatabaseExist())
-            {
-                InstallationLog.Add("Database not found!");
-                CreateDatabaseAndTables();
-            }
-
-            IsInstalled = true;
+            throw new NotImplementedException("Not Done yet!");
         }
     }
 }

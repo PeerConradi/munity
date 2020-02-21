@@ -56,6 +56,7 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
     role.MaxCount = this.addRoleForm.value.maxCount;
     this.conferenceService.addTeamRole(role).subscribe(n => {
       this.addRoleForm.reset();
+      this.roles.push(role);
     })
   }
 

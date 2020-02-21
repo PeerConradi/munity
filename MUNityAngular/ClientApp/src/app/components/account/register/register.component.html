@@ -43,8 +43,9 @@
   </div>
 </form>
 <div *ngIf="created" class="alert alert-success" role="alert">
-  Account has been created
+  <p>Der Account wurde angelegt. Du kannst dich nun anmelden.</p>
+  <p><b>Viel Spaß!</b></p>
 </div>
 <div *ngIf="error" class="alert alert-danger" role="alert">
-  Error while creating the account
+  <p>Der Account konnte nicht angelegt werden :(</p>
 </div>
