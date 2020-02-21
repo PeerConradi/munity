@@ -1,4 +1,4 @@
 {
-	"ConnectionString": "server=127.0.0.1;userid=root;password=''",
+	"ConnectionString": "server=127.0.0.1;userid=root;password='root'",
 	"DatabaseName": "munity-test"
 }
