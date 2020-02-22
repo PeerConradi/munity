@@ -1,3 +1,54 @@
-<div class="row">
-  <h1>Resolutionsverwaltung</h1>
-</div>
+
+  <div *ngIf="isAdmin">
+    <div class="row">
+      <div class="col-12">
+        <h1>Resolutionsverwaltung</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Linker part-->
+      <div class="col-lg-6 col-md-12">
+
+      </div>
+
+      <div class="col-lg-6 col-md-12">
+        <!-- Quick tools-->
+        <!-- begin widget-list -->
+        <div class="widget-list widget-list-rounded inverse-mode">
+          <!-- begin widget-list-item -->
+          <a class="widget-list-item" (click)="restoreResolutions();">
+
+            <div class="widget-list-content">
+              <h4 class="widget-list-title">Restore Resolutions</h4>
+            </div>
+            <div class="widget-list-action text-nowrap text-grey-darker text-right text-white">
+              <div class="spinner-border text-light" role="status" *ngIf="isRestoring">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <div *ngIf="!isRestoring">
+                {{ resolutionsInSQL }}/{{ resolutionsInMGDB }}
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- Purge Database -->
+        <div class="widget-list widget-list-rounded inverse-mode">
+          <!-- begin widget-list-item -->
+          <a class="widget-list-item" (click)="purgeResolutions();">
+
+            <div class="widget-list-content">
+              <h4 class="widget-list-title">Purge MongoDB</h4>
+            </div>
+            <div class="widget-list-action text-nowrap text-grey-darker text-right text-white">
+              <div class="spinner-border text-light" role="status" *ngIf="isPurging">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <div *ngIf="!isRestoring">
+                {{ resolutionsInSQL }}/{{ resolutionsInMGDB }}
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- end widget-list -->
+      </div>

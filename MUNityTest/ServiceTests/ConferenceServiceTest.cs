@@ -14,10 +14,6 @@ namespace MUNityTest.ServiceTests
     public class ConferenceServiceTest
     {
 
-        //Change the password if needed localy, keep in mind that inside the git-Action the password needs to be root!
-        //private string _connectionString = @"server=127.0.0.1;userid=root;password=''";
-        //private string test_database_name = "munity-test";
-
         private ConnectionInfo _sqlConnection;
 
         [SetUp]
@@ -289,6 +285,39 @@ namespace MUNityTest.ServiceTests
             //Test all Team Roles
             var rolesOfUser = service.GetUserTeamRolesAtConference(user, conference);
             Assert.NotZero(rolesOfUser.Count);
+        }
+
+        [Test]
+        public void ConferenceUserAuthTest()
+        {
+            var service = new ConferenceService(_sqlConnection.ConnectionString);
+            var authService = new AuthService(_sqlConnection.ConnectionString);
+            var conference = new ConferenceModel();
+            service.CreateConference(conference, null);
+            authService.Register("test", "test", "test@test.test");
+            var user = authService.GetUserByUsername("test");
+
+            var auths = new ConferenceUserAuthModel();
+            auths.CanEdit = true;
+            auths.CanOpen = true;
+            auths.CanRemove = true;
+
+            service.SetUserConferenceAuths(user, conference, auths);
+            var userConferenceAuths = service.GetConferenceUserAuth(conference, user);
+            Assert.NotNull(userConferenceAuths);
+            Assert.IsTrue(userConferenceAuths.CanEdit);
+            Assert.IsTrue(userConferenceAuths.CanOpen);
+            Assert.IsTrue(userConferenceAuths.CanRemove);
+
+            //Change auths
+            auths.CanEdit = false;
+            auths.CanRemove = false;
+            service.SetUserConferenceAuths(user, conference, auths);
+            userConferenceAuths = service.GetConferenceUserAuth(conference, user);
+            Assert.NotNull(userConferenceAuths);
+            Assert.IsTrue(userConferenceAuths.CanOpen);
+            Assert.IsFalse(userConferenceAuths.CanEdit);
+            Assert.IsFalse(userConferenceAuths.CanRemove);
         }
     }
 }

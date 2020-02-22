@@ -226,6 +226,53 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult RestoreResolutions([FromHeader]string auth, [FromServices]AuthService authService,
+            [FromServices]ResolutionService resolutionService)
+        {
+            var (valid, userid) = authService.ValidateAuthKey(auth);
+            if (valid == false)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
+            }
+
+            var state = authService.IsAdmin(userid);
+            if (state == true)
+            {
+                resolutionService.RestoreToDatabase(userid);
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
+            }
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public IActionResult PurgeResolutions([FromHeader]string auth, [FromServices]AuthService authService,
+            [FromServices]ResolutionService resolutionService)
+        {
+            var (valid, userid) = authService.ValidateAuthKey(auth);
+            if (valid == false)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
+            }
+
+            var state = authService.IsAdmin(userid);
+            if (state == true)
+            {
+                resolutionService.PurgeMongoDB();
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
+            }
+        }
+
         /// <summary>
         /// Removes an account from the Database and also all the things connected to this account.
         /// </summary>

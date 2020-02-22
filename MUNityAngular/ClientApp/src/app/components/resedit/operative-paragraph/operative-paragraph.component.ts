@@ -16,6 +16,8 @@ export class OperativeParagraphComponent implements OnInit {
 
   @Input() index: number;
 
+  @ViewChild('operativeTextArea', null) textArea: ElementRef;
+
   hideNotices = true;
 
   newNoticeText: string;

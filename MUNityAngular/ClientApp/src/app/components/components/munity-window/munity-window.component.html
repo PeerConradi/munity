@@ -1,0 +1,11 @@
+<div class="window" [style.left.px]="leftVal" [style.top.px]="topVal">
+  <div class="window-header bg-primary clearfix" (mousedown)="windowMouseDown($event)"
+       (mousemove)="windowMouseMove($event)" (mouseup)="windowMouseUp($event)"
+       (mouseleave)="windowMouseLeave()">
+    <h3 class="float-left">{{ title }}</h3>
+    <button class="btn btn-danger float-right" (click)="closeClicked()">Close</button>
+  </div>
+  <div class="window-body bg-white border-dark" [style.opacity]="isMoving == true ? 0.5 : 1">
+    <ng-content></ng-content>
+  </div>
+</div>

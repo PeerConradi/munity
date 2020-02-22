@@ -508,8 +508,8 @@ namespace MUNityAngular.Controllers
             if (pmode.ToLower().Trim() == "true" || pmode == "1")
                 newMode = true;
 
-            resolutionService.SetPublicReadMode(resolutionid, newMode);
-            return StatusCode(StatusCodes.Status200OK);
+            var code = resolutionService.SetPublicReadMode(resolutionid, newMode);
+            return StatusCode(StatusCodes.Status200OK, code.AsNewtonsoftJson());
         }
 
         #endregion
@@ -559,20 +559,17 @@ namespace MUNityAngular.Controllers
         /// </summary>
         /// <param name="auth"></param>
         /// <param name="resolutionid"></param>
-        /// <param name="sectionid"></param>
-        /// <param name="submittername"></param>
-        /// <param name="newtext"></param>
+        /// <param name="model"></param>
         /// <param name="resolutionService"></param>
         /// <param name="authService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
         public IActionResult AddChangeAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
-            [FromHeader]string sectionid, [FromHeader]string submittername, [FromHeader]string newtext,
+            [FromBody]Hubs.HubObjects.HUBChangeAmendment model,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var realText = newtext.DecodeUrl();
 
             var resolution = resolutionService.GetResolution(resolutionid);
             if (resolution == null)
@@ -581,13 +578,13 @@ namespace MUNityAngular.Controllers
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == sectionid);
+            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == model.TargetSectionID);
             if (section == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Paragraph Not found!");
 
             var amendment = new ChangeAmendmentModel();
-            amendment.SubmitterName = submittername.DecodeUrl();
-            amendment.NewText = realText;
+            amendment.SubmitterName = model.SubmitterName;
+            amendment.NewText = model.NewText;
             amendment.TargetSection = section;
 
             resolutionService.RequestSave(resolution);
@@ -901,11 +898,12 @@ namespace MUNityAngular.Controllers
             {
                 if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                     return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+                return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
             }
 
             //Wenn die Resolution nicht mit dieser id gefunden wurde handelt
             //es sich ggf. um eine Public Id
-
             //Schaue nach, ob die Resolution überhaupt im public mode ist
             var info = resolutionService.GetResolutionInfoForPublicId(id);
             if (info.PublicRead)
@@ -938,8 +936,22 @@ namespace MUNityAngular.Controllers
             var resolution = resolutionService.GetResolution(id);
             if (resolution != null)
             {
-                if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
-                    return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+                
+
+                var isPublic = resolutionService.GetResolutionInfoForId(id);
+                if (isPublic.PublicRead)
+                {
+                    _hubContext.Groups.AddToGroupAsync(connectionid, id);
+                    return StatusCode(StatusCodes.Status200OK);
+                }
+                else
+                {
+                    if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                        return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+                }
+                _hubContext.Groups.AddToGroupAsync(connectionid, id);
+                return StatusCode(StatusCodes.Status200OK);
+
             }
 
             //public Check

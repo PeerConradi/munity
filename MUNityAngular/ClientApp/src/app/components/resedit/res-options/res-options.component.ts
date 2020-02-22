@@ -5,6 +5,7 @@ import { ResolutionService } from '../../../services/resolution.service';
 import { Delegation } from '../../../models/delegation.model';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
 import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-resolution-header-request';
+import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
 
 @Component({
   selector: 'app-res-options',
@@ -21,13 +22,11 @@ export class ResOptionsComponent implements OnInit {
   }
   get resolution() { return this._resolution;}
 
-  onlineid: string = null;
-
-  publicView: boolean = false;
-
   allDelegations: string[] = [];
 
   resolutionSubmitter: string;
+
+  documentInfo: ResolutionAdvancedInfo = null;
 
   constructor(private userService: UserService, private resolutionService: ResolutionService,
   private conferenceService: ConferenceServiceService) { }
@@ -39,8 +38,9 @@ export class ResOptionsComponent implements OnInit {
 
   updateOnlineInfos() {
     this.resolutionService.getAdvancedInfos(this.resolution.ID).subscribe(n => {
-      this.onlineid = n.OnlineCode;
-      this.publicView = n.PublicRead;
+      this.documentInfo = n;
+      
+      console.log(n);
     });
 
     this.conferenceService.getAllDelegations().subscribe(n => {
@@ -51,7 +51,9 @@ export class ResOptionsComponent implements OnInit {
   }
 
   publicModeChanged(e) {
-    this.resolutionService.changePublicReadMode(this.resolution.ID, this.publicView);
+    this.resolutionService.changePublicReadMode(this.resolution.ID, this.documentInfo.PublicRead).subscribe(n => {
+      this.documentInfo.OnlineCode = n;
+    });
   }
 
   onEnterTitle(value: string) {

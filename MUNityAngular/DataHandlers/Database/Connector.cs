@@ -75,6 +75,39 @@ namespace MUNityAngular.DataHandlers.Database
             }
             return cmd;
         }
+
+        public static MySqlCommand GetReplaceCommand(string tablename, object model)
+        {
+            var cmdStr = "REPLACE INTO " + tablename + " (";
+            var paramList = new List<string>();
+            var valList = new Dictionary<string, object>();
+
+            var parametrable = model.GetType().GetProperties().Where(n => n.GetCustomAttribute<DatabaseSaveAttribute>() != null);
+
+            //Build the command!
+            foreach(var prop in parametrable)
+            {
+                var attr = prop.GetCustomAttribute<DatabaseSaveAttribute>();
+                cmdStr += attr.ColumnName + ",";
+            }
+            if (cmdStr.EndsWith(',')) cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+            cmdStr += ") VALUES (";
+            foreach (var prop in parametrable)
+            {
+                var attr = prop.GetCustomAttribute<DatabaseSaveAttribute>();
+                cmdStr += "@" + attr.ColumnName + ",";
+            }
+            if (cmdStr.EndsWith(',')) cmdStr = cmdStr.Substring(0, cmdStr.Length - 1);
+            cmdStr += ")";
+
+            var cmd = new MySqlCommand(cmdStr);
+            foreach (var prop in parametrable)
+            {
+                var attr = prop.GetCustomAttribute<DatabaseSaveAttribute>();
+                cmd.Parameters.AddWithValue("@" + attr.ColumnName, prop.GetValue(model));
+            }
+            return cmd;
+        }
     
         /// <summary>
         /// Updates new object in the given table, notice that it needs a primary key (only one!)

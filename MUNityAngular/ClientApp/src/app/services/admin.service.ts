@@ -61,4 +61,16 @@ export class AdminService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/GetConferences', { headers: headers });
   }
+
+  public restoreResolutions() {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/RestoreResolutions', { headers: headers });
+  }
+
+  public purgeResolutions() {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/PurgeResolutions', { headers: headers });
+  }
 }

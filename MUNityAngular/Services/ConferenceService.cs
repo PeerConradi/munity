@@ -120,7 +120,14 @@ namespace MUNityAngular.Services
 
         public void SetUserConferenceAuths(UserModel user, ConferenceModel conference, ConferenceUserAuthModel auths)
         {
-            Tools.Connection(_connectionString).Table(conference_user_auth_table_name).UpdateOrInsert(auths);
+            auths.ConferenceId = conference.ID;
+            auths.UserId = user.Id;
+            Tools.Connection(_connectionString).Table(conference_user_auth_table_name).ReplaceInto(auths);
+        }
+
+        public void SetUserConferenceAuths(ConferenceUserAuthModel auths)
+        {
+            Tools.Connection(_connectionString).Table(conference_user_auth_table_name).ReplaceInto(auths);
         }
 
 
@@ -680,6 +687,21 @@ namespace MUNityAngular.Services
                 }
             }
             return list;
+        }
+
+        public ConferenceUserAuthModel GetConferenceUserAuth(ConferenceModel conference, UserModel user)
+        {
+            if (conference == null || user == null)
+                return null;
+            return GetConferenceUserAuth(conference.ID, user.Id);
+        }
+
+        public ConferenceUserAuthModel GetConferenceUserAuth(string conferenceid, string userid)
+        {
+            var filters = new Dictionary<string, object>();
+            filters.Add("conferenceid", conferenceid);
+            filters.Add("userid", userid);
+            return Tools.Connection(_connectionString).Table(conference_user_auth_table_name).First<ConferenceUserAuthModel>(filters);
         }
 
         public int GetConferenceCount()

@@ -179,18 +179,18 @@ export class EditorComponent implements OnInit {
     const newText: string = this.newAmendmentNewText;
 
     if (type === 'delete') {
-      this.service.addDeleteAmendment(this.model.ID, target.ID, this.newamendmentDelegation);
+      this.service.addDeleteAmendment(this.model.ID, target.ID, this.newamendmentDelegation).subscribe();
     } else if (type === 'change') {
-      this.service.addChangeAmendment(this.model.ID, target.ID, this.newamendmentDelegation, newText);
+      this.service.addChangeAmendment(this.model.ID, target.ID, this.newamendmentDelegation, newText).subscribe();
     } else if (type === 'move') {
-      this.service.addMoveAmendment(this.model.ID, target.ID, this.newamendmentDelegation, this.amendmentTargetPosition);
+      this.service.addMoveAmendment(this.model.ID, target.ID, this.newamendmentDelegation, this.amendmentTargetPosition).subscribe();
     } else if (type === 'add') {
       const amendment = new AddAmendment();
       amendment.TargetResolutionID = this.resolution.ID;
       amendment.SubmitterName = this.newamendmentDelegation;
       amendment.NewText = newText;
       amendment.TargetPosition = this.amendmentTargetPosition;
-      this.service.addAddAmendment(amendment);
+      this.service.addAddAmendment(amendment).subscribe();
     }
 
     this.amendmentModalActive = false;

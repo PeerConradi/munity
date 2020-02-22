@@ -26,16 +26,19 @@
              (keyup.enter)="onEnterCommittee(inputCommittee.value)" />
     </div>
     <!-- Online Tools-->
-    <div *ngIf="!onlineid">
-      <span *ngIf="!onlineid" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    <div *ngIf="!documentInfo">
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
       Online Informationen werden geladen
     </div>
-    <div *ngIf="onlineid" class="form-group form-check">
-      <input type="checkbox" [(ngModel)]="publicView" (change)="publicModeChanged($event);" [ngModelOptions]="{standalone: true}" class="form-check-input" id="display">
+    <div *ngIf="documentInfo" class="form-group form-check">
+      <input type="checkbox" [(ngModel)]="documentInfo.PublicRead" (change)="publicModeChanged($event);" [ngModelOptions]="{standalone: true}" class="form-check-input" id="display">
       <label class="form-check-label" for="display">Online Ansicht erlauben</label>
-      <small id="emailHelp" class="form-text text-muted">
+      <small *ngIf="documentInfo.PublicRead" id="emailHelp" class="form-text text-muted">
         Die ID für die Ansicht lautet:
-        {{ onlineid }}
+        {{ documentInfo.OnlineCode }}
+      </small>
+      <small *ngIf="!documentInfo.PublicRead" id="emailHelp" class="form-text text-muted">
+        Diese Resolution ist nicht öffentlich einsehbar.
       </small>
     </div>
     <div class="form-group form-check">

@@ -31,6 +31,7 @@ import { ManageConferenceTeamComponent } from './components/conference/manage/ma
 import { ManageConferenceCommitteesComponent } from './components/conference/manage/manage-conference-committees/manage-conference-committees.component';
 import { ManageConferenceTeamRolesComponent } from './components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -77,6 +78,7 @@ const routes: Routes = [
       { path: 'admin/dashboard', component: AdminDashboardComponent },
       { path: 'admin/conferences', component: ConferenceListComponent },
       { path: 'admin/users', component: UserManagementComponent },
+      { path: 'admin/resolutions', component: ResolutionsManagementComponent },
 
       //Speakerlist
       { path: 's/start', component: SpeakerlistStartupComponent },

@@ -48,6 +48,18 @@ namespace MUNityAngular.Services
 
         public void RequestSave(ResolutionModel resolution)
         {
+            Task.Run(() =>
+            {
+                //An dieser Stelle könnte man auch einen Replace Into verwenden, aber ich bin mir zu 100% sicher, dass
+                //diese Funktion deutlich schneller ist!
+                var info = GetResolutionInfoForId(resolution.ID);
+                if (info.Name != resolution.Topic)
+                {
+                    Tools.Connection(_mySqlConnectionString).Resolution.SetEntry("id", resolution.ID, "name", resolution.Topic);
+                }
+                Tools.Connection(_mySqlConnectionString).Resolution.SetEntry("id", resolution.ID, "lastchangeddate", DateTime.Now);
+            });
+            
             this._resolutions.ReplaceOne(n => n.ID == resolution.ID, resolution);
         }
 
@@ -69,7 +81,6 @@ namespace MUNityAngular.Services
         /// <returns>Touple with infos publicid is null when the resolution can not be found!</returns>
         public ResolutionAdvancedInfoModel GetResolutionInfoForId(string id)
         {
-            ResolutionAdvancedInfoModel model = null;
             return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).First<ResolutionAdvancedInfoModel>("id", id);
         }
 
@@ -82,6 +93,11 @@ namespace MUNityAngular.Services
         public string ActivatePublicReadMode(string resolutionid)
         {
             string publicid = GetPublicIdForResolution(resolutionid);
+
+            if (string.IsNullOrWhiteSpace(publicid))
+            {
+                publicid = GeneratePublicId();
+            }
 
             Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "ispublicread", true);
             Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "onlinecode", publicid);
@@ -97,6 +113,7 @@ namespace MUNityAngular.Services
             {
                 using (var connection = new MySqlConnection(_mySqlConnectionString))
                 {
+                    connection.Open();
                     var cmdStr = "SELECT COUNT(*) FROM resolution WHERE onlinecode=@code";
                     var cmd = new MySqlCommand(cmdStr, connection);
                     cmd.Parameters.AddWithValue("@code", id);
@@ -115,7 +132,7 @@ namespace MUNityAngular.Services
 
         public string GetPublicIdForResolution(string resolutionid)
         {
-            return Tools.Connection(_mySqlConnectionString).Table(resolutionid).First<ResolutionAdvancedInfoModel>("id", resolutionid)?.OnlineCode ?? null;
+            return Tools.Connection(_mySqlConnectionString).Resolution.First<ResolutionAdvancedInfoModel>("id", resolutionid)?.OnlineCode ?? null;
         }
 
         public ResolutionModel GetResolutionFromJson(string json)
@@ -128,6 +145,7 @@ namespace MUNityAngular.Services
         private bool SaveResolutionInDatabase(ResolutionModel resolution, bool pread, bool pwrite, string userid = null)
         {
             var AdvancedInfo = new ResolutionAdvancedInfoModel(resolution, userid);
+            AdvancedInfo.Name = resolution.Topic;
             AdvancedInfo.PublicRead = pread;
             AdvancedInfo.PublicWrite = pwrite;
             Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).Insert(AdvancedInfo);
@@ -146,7 +164,7 @@ namespace MUNityAngular.Services
         /// <returns>a touple with the first value as the id, and the second value is the name</returns>
         internal List<ResolutionAdvancedInfoModel> GetResolutionsOfUser(string userid)
         {
-            return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).GetElements<ResolutionAdvancedInfoModel>("userid", userid);
+            return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).GetElements<ResolutionAdvancedInfoModel>("user", userid);
         }
 
         internal void UpdateResolutionName(string resolutionid, string newtitle)
@@ -156,9 +174,51 @@ namespace MUNityAngular.Services
 
         
 
-        internal void SetPublicReadMode(string resolutionid, bool mode)
+        internal string SetPublicReadMode(string resolutionid, bool mode)
         {
-            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "ispublicread", mode);
+            if (mode)
+                return ActivatePublicReadMode(resolutionid);
+            else
+            {
+                Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "ispublicread", false);
+                return Tools.Connection(_mySqlConnectionString).Resolution.First<ResolutionAdvancedInfoModel>("id", resolutionid).OnlineCode;
+            }
+            
+        }
+
+        /// <summary>
+        /// Deletes all MongoDB Entries where no Resolution was found inside the Database.
+        /// </summary>
+        internal void PurgeMongoDB()
+        {
+            var ids = _resolutions.Find(n => n.ID != null).ToList().Select(n => n.ID);
+            foreach(var id in ids)
+            {
+                var isInDatabase = Tools.Connection(_mySqlConnectionString).Resolution.HasEntry("id", id);
+                if (!isInDatabase)
+                {
+                    _resolutions.DeleteOne(n => n.ID == id);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Serches for Resolutions that are inside MongoDB but not the SQL Database and creates elements
+        /// for this resolutions inside the Database
+        /// </summary>
+        /// <param name="userid">You have to pass a user that should now own this documents</param>
+        internal void RestoreToDatabase(string userid)
+        {
+            var resolutions = _resolutions.Find(n => n.ID != null).ToList();
+            foreach (var resolution in resolutions)
+            {
+                
+                var isInDatabase = Tools.Connection(_mySqlConnectionString).Resolution.HasEntry("id", resolution.ID);
+                if (!isInDatabase)
+                {
+                    SaveResolutionInDatabase(resolution, false, false, userid);
+                }
+            }
         }
 
         public ResolutionService(string mysqlConnectionString, string mongoConnectionString, string mongoDatabaseName)

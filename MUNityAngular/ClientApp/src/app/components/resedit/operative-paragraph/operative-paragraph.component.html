@@ -1,15 +1,9 @@
 <ng-template #popContent>
   <button class="btn btn-danger" (click)="p.close();delete()">Löschen</button>
 </ng-template>
-<div class="notice-box" *ngIf="!hideNotices">
-  <div class="card border-warning">
-    <div class="card-header">
-      <div class="clearfix">
-        <h3 class="card-title float-left">Kommentare <span class="badge badge-secondary">Preview</span></h3>
-        <button class="btn btn-danger float-right" (click)="toggleNotices()">Close</button>
-      </div>
-      
-    </div>
+
+<app-munity-window *ngIf="!hideNotices" (onClose)="toggleNotices()" [title]="Notizen">
+  <div class="card">
     <div class="card-body">
       <ul class="list-unstyled">
         <li class="media" *ngFor="let notice of paragraph.Notices">
@@ -26,22 +20,23 @@
       <button class="btn btn-block btn-primary" (click)="addNotice()">Hinzufügen</button>
     </div>
   </div>
+</app-munity-window>
 
-</div>
+
 
 <div class="paragraph-box" [class.bg-info]="paragraph.IsVirtual === true">
   <div class="paragraph-title">
     {{ paragraph.Path }}
   </div>
 
-  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="toggleNotices()" *ngIf="paragraph.Notices != null"> 
+  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="toggleNotices()" *ngIf="paragraph.Notices != null">
     <span>N</span>
-    <span class="badge">{{ paragraph.Notices.length }}</span>
+    <span class="badge" *ngIf="paragraph.Notices.length > 0">{{ paragraph.Notices.length }}</span>
   </button>
 
   <div class="btn-group-vertical paragraph-tools">
     <button [disabled]="paragraph.IsVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left" [ngbPopover]="popContent" triggers="manual"
-      #p="ngbPopover" (click)="p.open()">
+            #p="ngbPopover" (click)="p.open()">
       X
     </button>
     <button [disabled]="paragraph.IsVirtual === true" (click)="moveUp()" type="button" class="btn btn-outline-primary btn-move btn-up" title="Nach oben verschieben">▲</button>
@@ -53,6 +48,6 @@
   </div>
 
   <div class="form-group paragraph-textarea">
-    <textarea class="form-control" id="operativeTextArea" rows="5" [disabled]="paragraph.IsVirtual === true" (keyup)="onKey($event)" maxlength="4000">{{ paragraph.Text }}</textarea>
+    <textarea class="form-control" #operativeTextArea id="operativeTextArea" rows="5" [disabled]="paragraph.IsVirtual === true" (keyup)="onKey($event)" maxlength="4000">{{ paragraph.Text }}</textarea>
   </div>
 </div>

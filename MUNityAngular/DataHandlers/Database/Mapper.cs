@@ -120,6 +120,8 @@ namespace MUNityAngular.DataHandlers.Database
 
         public DTable User { get => new DTable("user", ConnectionString); }
 
+        public DTable Resolution { get => new DTable("resolution", ConnectionString);  }
+
     }
 
     public static class Tools
@@ -225,12 +227,60 @@ namespace MUNityAngular.DataHandlers.Database
 
         public T First<T>(string conditionKey, object conditionValue)
         {
+            if (conditionKey == null)
+            {
+                throw new ArgumentException("The condition key can not be null");
+            }
+
+            var match = conditionKey.IndexOfAny("'\n\"#!§$%&/()=?`´~*,".ToCharArray()) != -1;
+            if (match)
+            {
+                throw new ArgumentException("The condition key has detected an illigal character");
+            }
+
             var cmdStr = "SELECT * FROM " + _name + " WHERE " + conditionKey + "=@conditionvalue;";
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 var cmd = new MySqlCommand(cmdStr, connection);
                 cmd.Parameters.AddWithValue("@conditionvalue", conditionValue);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return DataReaderConverter.ObjectFromReader<T>(reader);
+                    }
+                }
+            }
+            return default;
+        }
+
+        public T First<T>(Dictionary<string, object> filter)
+        {
+
+            var cmdStr = "SELECT * FROM " + _name;
+
+            if (filter.Count > 0)
+            {
+                cmdStr += " WHERE";
+                for (int i=0;i<filter.Count; i++)
+                {
+                    if (i > 0)
+                        cmdStr += " AND ";
+
+                    var valName = filter.ElementAt(i).Key;
+                    cmdStr += " " + valName + " = @" + valName;
+                }
+            }
+
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                foreach(var option in filter)
+                {
+                    cmd.Parameters.AddWithValue("@" + option.Key, option.Value);
+                }
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -258,6 +308,17 @@ namespace MUNityAngular.DataHandlers.Database
                 }
             }
             throw new NullReferenceException("No element found");
+        }
+
+        internal void ReplaceInto(object element)
+        {
+            var cmd = Connector.GetReplaceCommand(_name, element);
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                cmd.Connection = connection;
+                cmd.ExecuteNonQuery();
+            }
         }
 
         /// <summary>

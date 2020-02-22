@@ -63,6 +63,7 @@ import { ManageConferenceTeamRolesComponent } from './components/conference/mana
 import { ManageConferenceWebsiteComponent } from './components/conference/manage/manage-conference-website/manage-conference-website.component';
 import { ManageConferenceDelegationsComponent } from './components/conference/manage/manage-conference-delegations/manage-conference-delegations.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { MunityWindowComponent } from './components/components/munity-window/munity-window.component';
 
 
 @NgModule({
@@ -111,7 +112,8 @@ import { AdminDashboardComponent } from './components/admin/admin-dashboard/admi
     ManageConferenceTeamRolesComponent,
     ManageConferenceWebsiteComponent,
     ManageConferenceDelegationsComponent,
-    AdminDashboardComponent
+    AdminDashboardComponent,
+    MunityWindowComponent
   ],
   imports: [
     RouterModule,

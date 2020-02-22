@@ -1,4 +1,8 @@
 {
-	"ConnectionString": "server=127.0.0.1;userid=root;password='root'",
-	"DatabaseName": "munity-test"
+	"ConnectionString": "server=127.0.0.1;userid=root;password=''",
+	"DatabaseName": "munity-test",
+	"MunityMongoDatabaseSettings": {
+		"ConnectionString": "mongodb://localhost:27017",
+		"DatabaseName": "MunityDbTest"
+	}
 }
