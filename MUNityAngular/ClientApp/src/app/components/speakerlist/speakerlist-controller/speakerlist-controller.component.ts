@@ -26,7 +26,7 @@ export class SpeakerlistControllerComponent implements OnInit {
   interval: NodeJS.Timeout;
   timeLeft: number;
   deleteItems: any;
-
+  lastSpeakerOrder: Delegation[] = [];
 
   constructor(private conferenceService: ConferenceServiceService,
     private speakerlistService: SpeakerListService,
@@ -48,21 +48,27 @@ export class SpeakerlistControllerComponent implements OnInit {
       //Get the Speakerlist
       this.speakerlistService.getSpeakerlistById(id).subscribe(list => {
         //In the beginning the object should be set, because TimeSpan is not correctly converted.
-        const remainingTimeString: string = list.RemainingSpeakerTime.toString();
-        const remainingQuestionTimeString: string = list.RemainingQuestionTime.toString();
 
         this.speakerlist = list;
         this.speakerlistService.subscribeToSpeakerlist(list.PublicId.toString());
         this.speakerlistService.addSpeakerlistListener(this.speakerlist);
-        
 
+        list.Speakers.forEach(n => {
+          this.lastSpeakerOrder.push(n);
+        });
         
-        const sTime = new TimeSpan(0,0,0,0,0);
-        sTime.fromString(remainingTimeString);
+        const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds,0,0,0,0);
         this.speakerlist.RemainingSpeakerTime = sTime;
-        const qTime = new TimeSpan(0, 0, 0, 0, 0);
-        qTime.fromString(remainingQuestionTimeString);
+        const qTime = new TimeSpan(list.RemainingQuestionTime.TotalMilliseconds, 0, 0, 0, 0);
         this.speakerlist.RemainingQuestionTime = qTime;
+
+        const tsTime = new TimeSpan(0, 0, 0, 0, 0);
+        tsTime.addSeconds(list.Speakertime.TotalSeconds);
+        this.speakerlist.Speakertime = tsTime;
+
+        const tqTime = new TimeSpan(list.Questiontime.TotalMilliseconds, 0, 0, 0, 0);
+        this.speakerlist.Questiontime = tqTime;
+
       })
     }
 
@@ -92,20 +98,65 @@ export class SpeakerlistControllerComponent implements OnInit {
   }
 
   removeSpeaker() {
-    console.log('Remove Speaker:');
-    console.log(this.deleteItems);
+    const items: Delegation[] = this.deleteItems;
+    if (items != null && items.length > 0) {
+      items.forEach(n => {
+        console.log('remove: ');
+        console.log(n);
+        this.speakerlistService.removeSpeaker(this.speakerlist.ID, n.ID).subscribe();
+      });
+      this.deleteItems = [];
+    }
+    
     //this.speakerlistService.removeSpeaker(this.speakerlist.ID, id);
+  }
+
+  reorderSpeakers() {
+    //Zunächst ignorieren wir hier quereinsteiger
+    if (this.lastSpeakerOrder.length == this.speakerlist.Speakers.length) {
+      let orderChanged = false;
+
+      this.speakerlist.Speakers.forEach((val, index) => {
+
+        if (val.ID != this.lastSpeakerOrder[index].ID) {
+          orderChanged = true;
+        }
+      });
+      if (orderChanged) {
+        console.log('Reorder');
+
+        this.lastSpeakerOrder = [];
+        this.speakerlist.Speakers.forEach(n => {
+          this.lastSpeakerOrder.push(n);
+        });
+        this.speakerlistService.reorderSpeaker(this.speakerlist.ID, this.speakerlist.Speakers).subscribe();
+      }
+    } else {
+      this.lastSpeakerOrder = [];
+      this.speakerlist.Speakers.forEach(n => {
+        this.lastSpeakerOrder.push(n);
+      });
+    }
+    
   }
 
   addSpeaker() {
     const s = this.presetDelegations.find(n => n.Name == this.addSpeakerSelection);
-    this.speakerlistService.addSpeaker(this.speakerlist.ID, s.ID).subscribe();
+    if (s != null) {
+      this.speakerlistService.addSpeaker(this.speakerlist.ID, s.ID).subscribe();
+    } else {
+      const newDelegation: Delegation = new Delegation();
+      newDelegation.Name = this.addSpeakerSelection;
+      newDelegation.FullName = this.addSpeakerSelection;
+      this.speakerlistService.addSpeakerModel(this.speakerlist.ID, newDelegation).subscribe();
+    }
+    
   }
 
   onAddSpeakerSelected(val: TypeaheadMatch) {
     if (val !== null) {
       const del: Delegation = val.item;
-      this.speakerlistService.addSpeaker(this.speakerlist.ID, del.ID).subscribe(n => {
+      this.speakerlistService.addSpeakerModel(this.speakerlist.ID, del).subscribe(n => {
         this.addSpeakerSelection = '';
       });
     }
@@ -114,15 +165,20 @@ export class SpeakerlistControllerComponent implements OnInit {
   onAddQuestionSelected(val: TypeaheadMatch) {
     if (val !== null) {
       const del: Delegation = val.item;
-      this.speakerlistService.addQuestion(this.speakerlist.ID, del.ID).subscribe(n => {
+      this.speakerlistService.addQuestionModel(this.speakerlist.ID, del).subscribe(n => {
         this.addQuestionSelection = '';
       });
     }
   }
 
   addQuestion() {
-    const s = this.presetDelegations.find(n => n.Name == this.addQuestionSelection);
-    this.speakerlistService.addQuestion(this.speakerlist.ID, s.ID).subscribe();
+    let s = this.presetDelegations.find(n => n.Name == this.addQuestionSelection);
+    if (s == null) {
+      s = new Delegation();
+      s.Name = this.addQuestionSelection;
+      s.FullName = this.addQuestionSelection;
+    }
+    this.speakerlistService.addQuestionModel(this.speakerlist.ID, s).subscribe();
   }
 
   nextSpeaker() {

@@ -407,6 +407,7 @@ CREATE TABLE `delegation` (
   `abbreviation` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT '',
   `countryid` int(11) DEFAULT NULL,
+  `iconname` varchar(255) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

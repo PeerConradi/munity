@@ -6,4 +6,5 @@ export class Delegation {
   Name: string;
   FullName: string;
   TypeName: string;
+  IconName: string;
 }

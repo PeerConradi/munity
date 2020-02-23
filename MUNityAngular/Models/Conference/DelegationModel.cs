@@ -46,6 +46,9 @@ namespace MUNityAngular.Models.Conference
 
         public string ISO { get; set; }
 
+        [DatabaseSave("iconname")]
+        public string IconName { get; set; }
+
         public EDelegationTypes SetTypeByString(string s)
         {
             s = s.ToUpper();

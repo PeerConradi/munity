@@ -1,14 +1,18 @@
 
 <p *ngIf="!userSerivce.isLoggedIn">Für diese Funktion musst du eingeloggt sein!</p>
 <div class="row" *ngIf="userSerivce.isLoggedIn">
-  <p *ngIf="!resolutions">Resolutionen werden geladen!</p>
   <div class="col-12">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Meine Resolutionen</h3>
       </div>
       <div class="card-body">
-        <table class="table w-100">
+        <div *ngIf="!resolutions" class="d-flex justify-content-center">
+          <div class="spinner-border text-success" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <table class="table w-100" *ngIf="resolutions">
           <thead>
             <tr>
               <th>Name</th>

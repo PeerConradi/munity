@@ -36,9 +36,11 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status406NotAcceptable, "Account not created!");
         }
 
-        class LoginKey
+        public class LoginKey
         {
             public string Key { get; set; }
+
+            public UserModel User { get; set; }
         }
 
         /// <summary>
@@ -50,13 +52,14 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public ActionResult<string> Login([FromHeader]string username, [FromHeader]string password,
+        public ActionResult<LoginKey> Login([FromHeader]string username, [FromHeader]string password,
             [FromServices]AuthService authService)
         {
             var status = authService.Login(username, password);
             if (status.status)
             {
                 var key = new LoginKey() { Key = status.key };
+                key.User = authService.GetUserByUsername(username);
                 return StatusCode(StatusCodes.Status200OK, key);
             }
             else
@@ -256,6 +259,20 @@ namespace MUNityAngular.Controllers
             if (user == null)
                 return StatusCode(StatusCodes.Status404NotFound, "User with the given Username not found");
 
+            return StatusCode(StatusCodes.Status200OK, user);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public ActionResult<UserModel> GetUserOfAuth([FromHeader]string auth,
+            [FromServices]AuthService authService)
+        {
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation.valid == false)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "The Authcode is not valid!");
+            }
+            var user = authService.GetUserById(validation.userid);
             return StatusCode(StatusCodes.Status200OK, user);
         }
     }

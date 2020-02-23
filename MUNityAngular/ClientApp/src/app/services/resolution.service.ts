@@ -15,6 +15,7 @@ import { NotifierService } from 'angular-notifier';
 import { ResolutionAdvancedInfo } from '../models/resolution-advanced-info.model';
 import { AddAmendment } from '../models/add-amendment.model';
 import { ChangeResolutionHeaderRequest } from '../models/requests/change-resolution-header-request';
+import { Notice } from '../models/notice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -285,6 +286,15 @@ export class ResolutionService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection',
       paragraph, { headers: headers }).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public changeOperativeParagraphNotices(paragraph: OperativeSection, notice: Notice) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('resolutionid', paragraph.ResolutionID);
+    headers = headers.set('paragraphid', paragraph.ID);
+    this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotices',
+      notice, { headers: headers }).subscribe();
   }
 
   public changePreambleParagraph(paragraph: PreambleParagraph) {

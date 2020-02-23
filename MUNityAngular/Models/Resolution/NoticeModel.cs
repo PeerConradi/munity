@@ -18,6 +18,9 @@ namespace MUNityAngular.Models.Resolution
         /// </summary>
         public string AuthorName { get; set; }
 
+
+        public string AuthorId { get; set; }
+
         /// <summary>
         /// The DateTime when this Notice was created
         /// </summary>

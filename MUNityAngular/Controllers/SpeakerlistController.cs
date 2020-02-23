@@ -149,6 +149,58 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, speakerlist);
         }
 
+        [Route("[action]")]
+        [HttpPost]
+        public ActionResult<SpeakerlistModel> AddSpeakerModelToList([FromHeader]string auth,
+            [FromHeader]string listid, [FromBody]DelegationModel model, 
+            [FromServices]SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+            model.ID = Guid.NewGuid().ToString();
+            speakerlist.AddSpeaker(model);
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
+        }
+
+        [Route("[action]")]
+        [HttpPatch]
+        public ActionResult<SpeakerlistModel> SpeakersOrderChanged([FromHeader]string auth,
+            [FromHeader]string listid, [FromBody]List<DelegationModel> model,
+            [FromServices]SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+
+            model.ForEach(n =>
+            {
+                if (string.IsNullOrWhiteSpace(n.ID))
+                {
+                    n.ID = Guid.NewGuid().ToString();
+                }
+            });
+            speakerlist.Speakers = model;
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return speakerlist;
+        }
+
+        [Route("[action]")]
+        [HttpPost]
+        public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader]string auth,
+            [FromHeader]string listid, [FromBody]DelegationModel model,
+            [FromServices]SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+            model.ID = Guid.NewGuid().ToString();
+            speakerlist.AddQuestion(model);
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
+        }
+
         /// <summary>
         /// Adds a Question to the Speakerlist (Question Area)
         /// </summary>

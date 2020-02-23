@@ -515,6 +515,25 @@ namespace MUNityAngular.Services
             return Tools.Connection(_connectionString).Table(user_table_name).First<UserModel>("id", id);
         }
 
+        public UserModel GetUserByAuth(string auth)
+        {
+            var cmdStr = "SELECT `user`.* FROM `user` INNER JOIN auth ON auth.userid = `user`.id WHERE auth.authkey = @authkey";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@authkey", auth);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return DataReaderConverter.ObjectFromReader<UserModel>(reader);
+                    }
+                }
+            }
+            return null;
+        }
+
         public AUser User(string userid)
         {
             return new AUser(_connectionString, userid);

@@ -178,7 +178,54 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
 
             section.Text = paragraph.Text;
-            section.Notices = paragraph.Notices;
+            //section.Notices = paragraph.Notices;
+            var hubModel = new HUBOperativeParagraph(section);
+            _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, hubModel);
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public ActionResult<HUBOperativeParagraph> UpdateOperativeSectionNotices([FromHeader]string auth, 
+            [FromHeader]string resolutionid,
+            [FromHeader]string paragraphid,
+            [FromBody]NoticeModel notice,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
+            if (section == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
+
+            var foundNotice = section.Notices.FirstOrDefault(n => n.Id == notice.Id);
+            //Update
+            if (foundNotice != null)
+            {
+                foundNotice.Text = notice.Text;
+                foundNotice.Tags = notice.Tags;
+            }
+            else
+            {
+                //Add
+                notice.Id = new Guid().ToString();
+                notice.CreationDate = DateTime.Now;
+                var user = authService.GetUserByAuth(auth);
+                if (user != null)
+                {
+                    notice.AuthorName = user.Forename + " " + user.Lastname;
+                    notice.AuthorId = user.Id;
+                }
+                section.Notices.Add(notice);
+            }
+
             var hubModel = new HUBOperativeParagraph(section);
             _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
             resolutionService.RequestSave(resolution);

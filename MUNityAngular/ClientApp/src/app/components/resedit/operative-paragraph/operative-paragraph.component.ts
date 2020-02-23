@@ -62,7 +62,6 @@ export class OperativeParagraphComponent implements OnInit {
     notice.Title = 'Titel';
     notice.Text = this.newNoticeText;
     this.paragraph.Notices.push(notice);
-    this.service.changeOperativeParagraph(this.paragraph);
-    this.service.changeOperativeParagraph(this.paragraph);
+    this.service.changeOperativeParagraphNotices(this.paragraph, notice);
   }
 }

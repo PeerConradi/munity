@@ -37,6 +37,10 @@ export class ResViewComponent implements OnInit {
     }
   }
 
+  get presets(): string {
+    return "<style>ul { list-style-type: lower-alpha; margin-left: 50Px; }ul ul { list-style-type: lower-roman; } </style>";
+  }
+
   ngOnInit() {
   }
 

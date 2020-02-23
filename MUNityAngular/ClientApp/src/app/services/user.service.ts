@@ -14,6 +14,8 @@ export class UserService {
 
   private _loggedIn: boolean;
 
+  public currentUser: User = null;
+
   public get isLoggedIn(): boolean {
     if (this.sessionkey() != '' && this.sessionkey() != null) {
       return true;
@@ -35,8 +37,8 @@ export class UserService {
 
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
+    //Beim laden den letzten Auth-Key überprüfen
     this.validateKey(this.sessionkey()).subscribe(valid => {
-      console.log('session key still valid!');
     },
       err => {
         this.setSessionkey('');
@@ -77,8 +79,14 @@ export class UserService {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.sessionkey());
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/User/ValidateKey',
+    var cmd = this.http.get(this.baseUrl + 'api/User/ValidateKey',
       options);
+    //Whit every Auth-Key validation also update the user!
+    cmd.subscribe(n => {
+      this.getMe().subscribe(user => this.currentUser = user);
+    });
+
+    return cmd;
   }
 
   public logout() {
@@ -101,7 +109,8 @@ export class UserService {
     let error = false;
     let options = { headers: headers };
     await this.http.get<Login>(this.baseUrl + 'api/User/Login', options).toPromise().then(msg => {
-      localStorage.setItem('munity_session_key', msg.key);
+      this.setSessionkey(msg.Key);
+      this.currentUser = msg.User;
       this._loggedIn = true;
     }).catch(err => error = true);
     if (error == false)
@@ -141,8 +150,17 @@ export class UserService {
     headers = headers.set('auth', this.getAuthOrDefault());
     return this.http.patch(this.baseUrl + 'api/User/UpdateUserinfo', model, { headers: headers });
   }
+
+  //Updates the Auth-Key
+  //you can check if current user is not null!
+  public getMe() {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.getAuthOrDefault());
+    return this.http.get<User>(this.baseUrl + 'api/User/GetUserOfAuth', { headers: headers });
+  }
 }
 
 interface Login {
-  key: string;
+  Key: string;
+  User: User;
 }

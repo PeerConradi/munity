@@ -10,7 +10,10 @@
           <h3 class="card-title">Aktuell</h3>
         </div>
         <div class="card-body clearfix">
-          <h3 class="float-left" *ngIf="speakerlist.CurrentSpeaker float-left">{{ speakerlist.CurrentSpeaker.Name }}</h3>
+          <h3 class="float-left" *ngIf="speakerlist.CurrentSpeaker float-left">
+            <img [src]="getMediumImage(speakerlist.CurrentSpeaker)" style="height: 50Px" />
+            {{ speakerlist.CurrentSpeaker.Name }}
+          </h3>
           <h3 class="float-left" *ngIf="!speakerlist.CurrentSpeaker">Niemand</h3>
           <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"> {{ speakerlist.RemainingSpeakerTime.toString() }}</h3>
           <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime.TotalSeconds < 0"> Zum Ende kommen</h3>
@@ -24,7 +27,8 @@
           <h3 class="card-title">Warteliste</h3>
         </div>
         <div class="card-body" style="max-height: 300Px; overflow-y: auto;overflow-x: visible;">
-          <h4 *ngFor="let delegation of speakerlist.Speakers"> {{ delegation.Name }}</h4>
+          
+          <h4 *ngFor="let delegation of speakerlist.Speakers"><img [src]="getDelegationImagePath(delegation)" /> {{ delegation.Name }}</h4>
         </div>
       </div>
     </div>
@@ -36,7 +40,10 @@
           <h3 class="card-title">Aktuell</h3>
         </div>
         <div class="card-body clearfix">
-          <h4 class="float-left" *ngIf="speakerlist.CurrentQuestion">{{ speakerlist.CurrentQuestion.Name }}</h4>
+          <h4 class="float-left" *ngIf="speakerlist.CurrentQuestion">
+            <img [src]="getMediumImage(speakerlist.CurrentQuestion)" style="height: 50Px" />
+            {{ speakerlist.CurrentQuestion.Name }}
+          </h4>
           <h4 class="float-left" *ngIf="!speakerlist.CurrentQuestion">Niemand</h4>
           <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime.TotalSeconds >= 0">{{ speakerlist.RemainingQuestionTime.toString() }}</h3>
           <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime.TotalSeconds < 0">Zum Ende kommen</h3>
@@ -50,7 +57,7 @@
           <h3 class="card-title">Warteliste</h3>
         </div>
         <div class="card-body" style="max-height: 300Px; overflow-y: auto;overflow-x: visible;">
-          <h4 *ngFor="let delegation of speakerlist.Questions"> {{ delegation.Name }}</h4>
+          <h4 *ngFor="let delegation of speakerlist.Questions"><img [src]="getDelegationImagePath(delegation)" /> {{ delegation.Name }}</h4>
         </div>
       </div>
     </div>

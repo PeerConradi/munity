@@ -4,6 +4,7 @@ import { ConferenceServiceService } from '../../../services/conference-service.s
 import { ActivatedRoute } from '@angular/router';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { TimeSpan } from '../../../models/TimeSpan';
+import { Delegation } from '../../../models/delegation.model';
 
 @Component({
   selector: 'app-speakerlist-view',
@@ -31,9 +32,7 @@ export class SpeakerlistViewComponent implements OnInit {
     if (id != null) {
       //Get the Speakerlist
       this.speakerlistService.getSpeakerlistById(id).subscribe(list => {
-        //In the beginning the object should be set, because TimeSpan is not correctly converted.
-        const remainingTimeString: string = list.RemainingSpeakerTime.toString();
-        const remainingQuestionTimeString: string = list.RemainingQuestionTime.toString();
+
 
         this.speakerlist = list;
         this.speakerlistService.subscribeToSpeakerlist(list.PublicId.toString());
@@ -41,12 +40,17 @@ export class SpeakerlistViewComponent implements OnInit {
 
 
 
-        const sTime = new TimeSpan(0, 0, 0, 0, 0);
-        sTime.fromString(remainingTimeString);
+        const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds, 0, 0, 0, 0);
         this.speakerlist.RemainingSpeakerTime = sTime;
-        const qTime = new TimeSpan(0, 0, 0, 0, 0);
-        qTime.fromString(remainingQuestionTimeString);
+        const qTime = new TimeSpan(list.RemainingQuestionTime.TotalMilliseconds, 0, 0, 0, 0);
         this.speakerlist.RemainingQuestionTime = qTime;
+
+        //const tsTime = new TimeSpan(0, 0, 0, 0, 0);
+        //tsTime.addSeconds(list.Speakertime.TotalSeconds);
+        //this.speakerlist.Speakertime = tsTime;
+
+        //const tqTime = new TimeSpan(list.Questiontime.TotalMilliseconds, 0, 0, 0, 0);
+        //this.speakerlist.Questiontime = tqTime;
       })
     }
 
@@ -60,6 +64,22 @@ export class SpeakerlistViewComponent implements OnInit {
         this.speakerlist.RemainingQuestionTime.addSeconds(-1);
       }
     }, 1000);
+  }
+
+  getMediumImage(delegation: Delegation): string {
+    if (delegation.TypeName == 'COUNTRY') {
+      return '/assets/img/flags/medium/' + delegation.IconName + '.png';
+    }
+    //Default Image
+    return '/assets/img/flags/medium/un.png';
+  }
+
+  getDelegationImagePath(delegation: Delegation): string {
+    if (delegation.TypeName == 'COUNTRY') {
+      return '/assets/img/flags/small/' + delegation.IconName + '.png';
+    }
+    //Default Image
+    return '/assets/img/flags/small/un.png';
   }
 
 }

@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { Speakerlist } from '../models/speakerlist.model';
 import * as signalR from '@aspnet/signalr';
 import { TimeSpan } from '../models/TimeSpan';
+import { Delegation } from '../models/delegation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +59,7 @@ export class SpeakerListService {
     headers = headers.set('listid', listid);
     headers = headers.set('time', time);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/SetSpeakertime',
+    return this.http.patch(this.baseUrl + 'api/Speakerlist/SetSpeakertime', null,
       options);
   }
 
@@ -68,7 +69,7 @@ export class SpeakerListService {
     headers = headers.set('listid', listid);
     headers = headers.set('time', time);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/SetQuestiontime',
+    return this.http.patch(this.baseUrl + 'api/Speakerlist/SetQuestiontime', null,
       options);
   }
 
@@ -78,7 +79,25 @@ export class SpeakerListService {
     headers = headers.set('listid', listid);
     headers = headers.set('delegationid', delegationid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/AddSpeakerToList',
+    return this.http.post<Speakerlist>(this.baseUrl + 'api/Speakerlist/AddSpeakerToList', null,
+      options);
+  }
+
+  public addSpeakerModel(listid: string, model: Delegation) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    let options = { headers: headers };
+    return this.http.post<Speakerlist>(this.baseUrl + 'api/Speakerlist/AddSpeakerModelToList', model,
+      options);
+  }
+
+  public addQuestionModel(listid: string, model: Delegation) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    let options = { headers: headers };
+    return this.http.post<Speakerlist>(this.baseUrl + 'api/Speakerlist/AddQuestionModelToList', model,
       options);
   }
 
@@ -88,7 +107,7 @@ export class SpeakerListService {
     headers = headers.set('listid', listid);
     headers = headers.set('delegationid', delegationid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/AddQuestionToList',
+    return this.http.post<Speakerlist>(this.baseUrl + 'api/Speakerlist/AddQuestionToList', null,
       options);
   }
 
@@ -97,7 +116,7 @@ export class SpeakerListService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/NextSpeaker',
+    return this.http.post(this.baseUrl + 'api/Speakerlist/NextSpeaker', null,
       options);
   }
 
@@ -106,7 +125,7 @@ export class SpeakerListService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/NextQuestion',
+    return this.http.post(this.baseUrl + 'api/Speakerlist/NextQuestion', null,
       options);
   }
 
@@ -115,7 +134,7 @@ export class SpeakerListService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/StartSpeaker',
+    return this.http.post(this.baseUrl + 'api/Speakerlist/StartSpeaker', null,
       options);
   }
 
@@ -124,7 +143,7 @@ export class SpeakerListService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/ClearSpeaker',
+    return this.http.put(this.baseUrl + 'api/Speakerlist/ClearSpeaker', null,
       options);
   }
 
@@ -133,7 +152,7 @@ export class SpeakerListService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/ClearQuestion',
+    return this.http.put(this.baseUrl + 'api/Speakerlist/ClearQuestion', null,
       options);
   }
 
@@ -142,7 +161,7 @@ export class SpeakerListService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/StartAnswer',
+    return this.http.post(this.baseUrl + 'api/Speakerlist/StartAnswer', null,
       options);
   }
 
@@ -151,7 +170,7 @@ export class SpeakerListService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/StartQuestion',
+    return this.http.post(this.baseUrl + 'api/Speakerlist/StartQuestion', null,
       options);
   }
 
@@ -160,7 +179,7 @@ export class SpeakerListService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/PauseTimer',
+    return this.http.post(this.baseUrl + 'api/Speakerlist/PauseTimer', null,
       options);
   }
 
@@ -170,7 +189,16 @@ export class SpeakerListService {
     headers = headers.set('listid', listid);
     headers = headers.set('delegationid', delegationid);
     let options = { headers: headers };
-    return this.http.get(this.baseUrl + 'api/Speakerlist/AddSpeakerToList',
+    return this.http.delete(this.baseUrl + 'api/Speakerlist/RemoveSpeakerFromList',
+      options);
+  }
+
+  public reorderSpeaker(listid: string, items: Delegation[]) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    let options = { headers: headers };
+    return this.http.patch(this.baseUrl + 'api/Speakerlist/SpeakersOrderChanged', items,
       options);
   }
 
@@ -192,7 +220,7 @@ export class SpeakerListService {
         headers = headers.set('publicid', publicid);
         headers = headers.set('connectionid', this.connectionid);
         let options = { headers: headers };
-        this.http.get(this.baseUrl + 'api/Speakerlist/SubscribeToList',
+        this.http.post(this.baseUrl + 'api/Speakerlist/SubscribeToList', null,
           options).subscribe(data => {  }, err => { this.hasError = true; console.log(err); });
       })
       .catch(err => {

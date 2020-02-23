@@ -59,8 +59,7 @@ namespace MUNityAngular.Services
                 }
                 Tools.Connection(_mySqlConnectionString).Resolution.SetEntry("id", resolution.ID, "lastchangeddate", DateTime.Now);
             });
-            
-            this._resolutions.ReplaceOne(n => n.ID == resolution.ID, resolution);
+            this._resolutions.ReplaceOneAsync(n => n.ID == resolution.ID, resolution);
         }
 
         public ResolutionModel GetResolution(string id)

@@ -2,6 +2,8 @@
     <h3 class="text-danger">Fehler beim Laden der Resolution!</h3>
 </div>
 
+<markdown [data]="presets"></markdown>
+
 <div *ngIf="resolution" class="container">
   <div class="title-section">
       <h3> {{ resolution.Topic }}</h3>
@@ -36,7 +38,8 @@
     </p>
 
 
-    <markdown *ngIf="activeAmendment(oa)==null" class="operative-paragraph-text" [data]="oa.Text"></markdown>
+    <markdown *ngIf="activeAmendment(oa)==null" class="operative-paragraph-text"
+              [data]="oa.Text"></markdown>
     <!-- Wenn dieser Absatz gesrichen oder Verschoben werden soll -->
     <div *ngIf="activeAmendment(oa)!=null && (activeAmendment(oa).Type==='delete' || activeAmendment(oa).Type==='move')" style="margin-top: -20px; " class="operative-paragraph-text">
       <markdown style="text-decoration: line-through; color: darkred;" [data]="oa.Text"></markdown>

@@ -9,7 +9,7 @@
 </div>
 <div *ngIf="speakerlist">
   <div class="row">
-    <div class="col-12" *ngIf="speakerlist">
+    <div class="col-12">
       <div class="alert alert-primary" role="alert">
         Die Anzeige-Id für diese Redeliste lautet: {{ speakerlist.PublicId }}
       </div>
@@ -34,7 +34,7 @@
             <tr>
               <th scope="row">Redezeit</th>
               <td>
-                <input #speakertimeInput type="text" class="form-control" [value]="speakerlist.Speakertime" (keyup.enter)="setSpeakertime(speakertimeInput.value);" />
+                <input #speakertimeInput type="text" class="form-control" [value]="speakerlist.Speakertime.toString()" (keyup.enter)="setSpeakertime(speakertimeInput.value);" />
                 <small class="text-muted">Mit Enter bestätigen.</small>
               </td>
             </tr>
@@ -57,14 +57,15 @@
 
   </div>
 
-  <div class="row">
+  <!-- Da Namen frei eigegeben werden können sollten Gastredner etc. erst einmal so gemacht werden-->
+  <!--<div class="row">
     <div class="btn-group w-100" role="group" aria-label="Basic example">
       <button type="button" class="btn btn-secondary" (click)="openGuestSpeakerDialog();">Gastredner</button>
       <button type="button" class="btn btn-secondary" (click)="openSecretaryModal();">Generalsekretär</button>
       <button type="button" class="btn btn-secondary">Zeitbanner</button>
       <button type="button" class="btn btn-danger">Banner entfernen</button>
     </div>
-  </div>
+  </div>-->
 
   <div class="row">
     <div class="btn-group w-100" role="group" aria-label="Basic example">
@@ -96,7 +97,7 @@
           <!-- Redeliste Hinzufügen-->
           <div class="row">
             <label>Redner hinzufügen</label>
-            <input type="text" class="form-control" [(ngModel)]="addSpeakerSelection" [typeahead]="presetDelegations" typeaheadOptionField="Name" placeholder="Namen eingeben" (typeaheadOnSelect)="onAddSpeakerSelected($event)"/>
+            <input type="text" class="form-control" [(ngModel)]="addSpeakerSelection" [typeahead]="presetDelegations" typeaheadOptionField="Name" placeholder="Namen eingeben" (typeaheadOnSelect)="onAddSpeakerSelected($event)" />
             <button class="btn btn-success btn-block" (click)="addSpeaker();">Hinzufügen</button>
           </div>
           <!-- Redeliste Steuerung-->
@@ -108,20 +109,15 @@
             </div>
           </div>
 
-          <div class="row">
-            <bs-sortable [(ngModel)]="deleteItems" placeholderItem="Hierauf ziehen zum Entfernen."
-                         itemClass="sortable-item" itemActiveClass="sortable-item-active"
-                           placeholderClass="alert alert-danger w-100" wrapperClass="sortable-wrapper"
-                         (onChange)="removeSpeaker();">
-            </bs-sortable>
-          </div>
+
 
           <!-- Warteliste Redebeiträge -->
           <div class="row" style="margin-top: 20px;">
-            <div class="col-12" *ngIf="speakerlist">
+            <div class="col-12" >
               <bs-sortable [(ngModel)]="speakerlist.Speakers" fieldName="Name" itemClass="sortable-item"
                            itemActiveClass="sortable-item-active" placeholderItem="Drag here"
-                           placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper">
+                           placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper"
+                           (onChange)="reorderSpeakers()">
               </bs-sortable>
             </div>
           </div>
@@ -131,6 +127,7 @@
         </div>
       </div>
     </div>
+    <!-- Rechte Seite (FUK)-->
     <div class="col-lg-6 col-xs-12">
       <div class="card">
         <div class="card-header">
@@ -153,7 +150,7 @@
           <!-- Redeliste Hinzufügen-->
           <div class="row">
             <label>Frage hinzufügen</label>
-            <input type="text" class="form-control" [(ngModel)]="addQuestionSelection" [typeahead]="presetDelegations" typeaheadOptionField="Name" placeholder="Namen eingeben" (typeaheadOnSelect)="onAddQuestionSelected($event)"/>
+            <input type="text" class="form-control" [(ngModel)]="addQuestionSelection" [typeahead]="presetDelegations" typeaheadOptionField="Name" placeholder="Namen eingeben" (typeaheadOnSelect)="onAddQuestionSelected($event)" />
             <button class="btn btn-success btn-block" (click)="addQuestion();">Hinzufügen</button>
           </div>
           <!-- Fragen und Kurzbemerkungen Steuerung -->
@@ -165,7 +162,7 @@
           </div>
           <!-- Fragen und Kurzbemerkungen Liste -->
           <div class="row" style="margin-top: 20px;">
-            <div class="col-12" *ngIf="speakerlist">
+            <div class="col-12">
               <bs-sortable [(ngModel)]="speakerlist.Questions" fieldName="Name" itemClass="sortable-item"
                            itemActiveClass="sortable-item-active" placeholderItem="Drag here"
                            placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper">
@@ -179,17 +176,30 @@
       </div>
     </div> <!-- Ende Rechte Seite (Fragen und Kurzbemerkungen)-->
   </div>
+
+  <!-- Remove Area-->
+  <div class="row">
+    <bs-sortable class="w-100" [(ngModel)]="deleteItems" placeholderItem="Hierauf ziehen zum Entfernen."
+                 itemClass="sortable-item" itemActiveClass="sortable-item-active"
+                 placeholderClass="alert alert-danger w-100" wrapperClass="sortable-wrapper"
+                 (onChange)="removeSpeaker();">
+    </bs-sortable>
+  </div>
+
+  <!-- Tools -->
+  <div class="row">
+    <div class="col-12">
+      <div class="btn-group w-100">
+        <button class="btn btn-secondary" (click)="dockSpeakerlist();">Als aktuellen Kontext setzen.</button>
+        <a [routerLink]="['/s/view', speakerlist.ID]" class="btn btn-success" target="_blank">Teilnehmeransicht öffnen</a>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="btn-group w-100">
-      <button class="btn btn-secondary" (click)="dockSpeakerlist();">Als aktuellen Kontext setzen.</button>
-      <a [routerLink]="['/s/view', speakerlist.ID]" class="btn btn-success" target="_blank">Teilnehmeransicht öffnen</a>
-    </div>
-    
-  </div>
-</div>
+
 
 <!-- Add Guest Speaker -->
 <!-- Modal -->
