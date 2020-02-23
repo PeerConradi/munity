@@ -50,7 +50,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult Login([FromHeader]string username, [FromHeader]string password,
+        public ActionResult<string> Login([FromHeader]string username, [FromHeader]string password,
             [FromServices]AuthService authService)
         {
             var status = authService.Login(username, password);
@@ -69,8 +69,7 @@ namespace MUNityAngular.Controllers
         /// Changes the password of the given user
         /// </summary>
         /// <param name="auth"></param>
-        /// <param name="oldpassword"></param>
-        /// <param name="newpassword"></param>
+        /// <param name="request"></param>
         /// <param name="authService"></param>
         /// <returns></returns>
         [HttpPut]
@@ -132,12 +131,12 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetAuthUser([FromHeader]string auth, [FromServices]AuthService authService)
+        public ActionResult<UserModel> GetAuthUser([FromHeader]string auth, [FromServices]AuthService authService)
         {
             var validation = authService.ValidateAuthKey(auth);
             if (validation.valid == true)
             {
-                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid).AsNewtonsoftJson());
+                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid));
             }
             else
             {
@@ -147,14 +146,14 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpPatch]
-        public IActionResult UpdateUserinfo([FromHeader]string auth, [FromBody]UserModel userModel, [FromServices]AuthService authService)
+        public ActionResult<UserModel> UpdateUserinfo([FromHeader]string auth, [FromBody]UserModel userModel, [FromServices]AuthService authService)
         {
             var validation = authService.ValidateAuthKey(auth);
             if (validation.valid == true && validation.userid == userModel.Id)
             {
                 authService.SetForename(userModel.Id, userModel.Forename);
                 authService.SetLastname(userModel.Id, userModel.Lastname);
-                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid).AsNewtonsoftJson());
+                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid));
             }
             else
             {
@@ -170,7 +169,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult IsAdmin([FromHeader]string auth, [FromServices]AuthService authService)
+        public ActionResult<bool> IsAdmin([FromHeader]string auth, [FromServices]AuthService authService)
         {
             var authState = authService.ValidateAuthKey(auth);
             if (authState.valid == false)
@@ -197,7 +196,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult CheckUsername(string username, [FromServices]AuthService authService)
+        public ActionResult<bool> CheckUsername(string username, [FromServices]AuthService authService)
         {
             if (string.IsNullOrWhiteSpace(username))
                 return StatusCode(StatusCodes.Status406NotAcceptable, "The username cannot be empty.");
@@ -212,7 +211,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetRegistrationState([FromServices]AuthService authService)
+        public ActionResult<bool> GetRegistrationState([FromServices]AuthService authService)
         {
             return StatusCode(StatusCodes.Status200OK, authService.IsRegistrationOpened);
         }
@@ -226,10 +225,10 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetKeyAuths([FromHeader]string auth, [FromServices]AuthService authService)
+        public ActionResult<AuthService.UserAuths> GetKeyAuths([FromHeader]string auth, [FromServices]AuthService authService)
         {
             var authstate = authService.GetAuthsByAuthkey(auth);
-            return StatusCode(StatusCodes.Status200OK, authstate.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, authstate);
         }
 
         /// <summary>
@@ -242,7 +241,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetUserByUsername(
+        public ActionResult<UserModel> GetUserByUsername(
             [FromHeader]string auth,
             [FromHeader]string username,
             [FromServices]AuthService authService)
@@ -257,7 +256,7 @@ namespace MUNityAngular.Controllers
             if (user == null)
                 return StatusCode(StatusCodes.Status404NotFound, "User with the given Username not found");
 
-            return StatusCode(StatusCodes.Status200OK, user.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, user);
         }
     }
 }

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using MUNityAngular.Models;
+using MUNityAngular.Models.Conference;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 
@@ -34,7 +36,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult CreateSpeakerlist([FromHeader]string auth,
+        public ActionResult<SpeakerlistModel> CreateSpeakerlist([FromHeader]string auth,
             [FromHeader]string conferenceid,
             [FromHeader]string committeeid,
             [FromServices]AuthService authService,
@@ -45,7 +47,7 @@ namespace MUNityAngular.Controllers
             speakerlist.ConferenceId = conferenceid;
             speakerlist.CommitteeId = committeeid;
 
-            return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
         }
 
         /// <summary>
@@ -58,7 +60,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetSpeakerlist([FromHeader]string auth, [FromHeader]string id,
+        public ActionResult<SpeakerlistModel> GetSpeakerlist([FromHeader]string auth, [FromHeader]string id,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
@@ -69,7 +71,7 @@ namespace MUNityAngular.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist cannot be found!");
 
-            return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
         }
 
         /// <summary>
@@ -82,7 +84,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult ReadSpeakerlist([FromHeader]string auth, [FromHeader]string publicid,
+        public ActionResult<SpeakerlistModel> ReadSpeakerlist([FromHeader]string auth, [FromHeader]string publicid,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
@@ -90,7 +92,7 @@ namespace MUNityAngular.Controllers
             {
                 var speakerlist = speakerlistService.GetSpeakerlistByPublicId(id);
                 speakerlist.ID = "";
-                return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
+                return StatusCode(StatusCodes.Status200OK, speakerlist);
             }
 
             return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
@@ -127,7 +129,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult AddSpeakerToList([FromHeader]string auth,
+        public ActionResult<SpeakerlistModel> AddSpeakerToList([FromHeader]string auth,
             [FromHeader]string listid,
             [FromHeader]string delegationid,
             [FromServices]SpeakerlistService speakerlistService,
@@ -144,7 +146,7 @@ namespace MUNityAngular.Controllers
             speakerlist.AddSpeaker(delegation);
             this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
-            return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
         }
 
         /// <summary>
@@ -158,7 +160,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult AddQuestionToList([FromHeader]string auth,
+        public ActionResult<SpeakerlistModel> AddQuestionToList([FromHeader]string auth,
             [FromHeader]string listid, [FromHeader]string delegationid,
             [FromServices]SpeakerlistService speakerlistService,
             [FromServices]ConferenceService conferenceService)
@@ -174,7 +176,7 @@ namespace MUNityAngular.Controllers
             speakerlist.AddQuestion(delegation);
             this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
-            return StatusCode(StatusCodes.Status200OK, speakerlist.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
         }
 
         /// <summary>
@@ -469,7 +471,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetPossibleDelegations([FromHeader]string auth,
+        public ActionResult<List<DelegationModel>> GetPossibleDelegations([FromHeader]string auth,
             [FromHeader]string id,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService,

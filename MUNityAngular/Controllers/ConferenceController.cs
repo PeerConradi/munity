@@ -28,11 +28,11 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetNameOfAllConferences([FromHeader]string auth,
+        public ActionResult<List<string>> GetNameOfAllConferences([FromHeader]string auth,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
-            return StatusCode(StatusCodes.Status200OK, service.GetNameOfAllConferences().ToNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, service.GetNameOfAllConferences());
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetConference([FromHeader]string auth, [FromHeader]string id,
+        public ActionResult<ConferenceModel> GetConference([FromHeader]string auth, [FromHeader]string id,
             [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
@@ -59,7 +59,7 @@ namespace MUNityAngular.Controllers
             if (conference == null)
                 return StatusCode(StatusCodes.Status404NotFound, "I tried so hard and got so far, but in the end, I couldnt find this conference");
 
-            return StatusCode(StatusCodes.Status200OK, conference.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, conference);
 
         }
 
@@ -72,11 +72,11 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetConferences([FromHeader]string auth,
+        public ActionResult<List<ConferenceModel>> GetConferences([FromHeader]string auth,
             [FromServices]ConferenceService conferenceService,
             [FromServices]AuthService authService)
         {
-            return StatusCode(StatusCodes.Status200OK, conferenceService.GetAllConferencesOfAuth(auth).ToNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, conferenceService.GetAllConferencesOfAuth(auth));
         }
 
         /// <summary>
@@ -88,12 +88,11 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetConferencesFormatted([FromHeader]string auth,
+        public ActionResult<List<ConferenceModel>> GetConferencesFormatted([FromHeader]string auth,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
-            var text = JsonConvert.SerializeObject(service.GetAllConferencesOfAuth(auth), Newtonsoft.Json.Formatting.Indented);
-            return StatusCode(StatusCodes.Status200OK, text);
+            return StatusCode(StatusCodes.Status203NonAuthoritative, service.GetAllConferencesOfAuth(auth));
         }
 
         /// <summary>
@@ -106,18 +105,18 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpPatch]
         [Route("[action]")]
-        public IActionResult ChangeConferenceName([FromHeader]string auth, [FromBody]ChangeConferenceNameRequest request,
+        public ActionResult<ConferenceModel> ChangeConferenceName([FromHeader]string auth, [FromBody]ChangeConferenceNameRequest request,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
-            bool hasChangeAccess = false;
+            var authValidation = authService.ValidateAuthKey(auth);
+            if (authValidation.valid == false)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
 
-            //Auth not requered now but to be implemented later
-            if (service.CanAuthEditConference(auth, request.ConferenceID))
-                hasChangeAccess = true;
-
-            if (!hasChangeAccess)
-                return StatusCode(StatusCodes.Status401Unauthorized, "You are not allowed to do that. The password may be invalid!");
+            if (service.GetConferenceUserAuth(request.ConferenceID, request.ConferenceID).CanEdit == false)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
+            }
 
             var conference = service.GetConference(request.ConferenceID);
             if (conference != null)
@@ -149,7 +148,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult Create([FromHeader]string auth, [FromBody]CreateConferenceRequest request,
+        public ActionResult<ConferenceModel> Create([FromHeader]string auth, [FromBody]CreateConferenceRequest request,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
@@ -166,7 +165,7 @@ namespace MUNityAngular.Controllers
             model.StartDate = request.StartDate;
             model.EndDate = request.EndDate;
             service.CreateConference(model, authstate.UserId);
-            return StatusCode(StatusCodes.Status200OK, JsonConvert.SerializeObject(model));
+            return StatusCode(StatusCodes.Status200OK, model);
         }
 
         /// <summary>
@@ -180,7 +179,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult AddCommittee([FromHeader]string auth, [FromBody]AddCommitteeRequest request,
+        public ActionResult<CommitteeModel> AddCommittee([FromHeader]string auth, [FromBody]AddCommitteeRequest request,
             [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
@@ -200,7 +199,7 @@ namespace MUNityAngular.Controllers
             committee.Article = request.Article;
             committee.ResolutlyCommitteeID = (string.IsNullOrEmpty(request.ResolutlyCommittee)) ? request.ResolutlyCommittee : null;
             conferenceService.AddCommittee(conference, committee);
-            return StatusCode(StatusCodes.Status200OK, committee.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, committee);
         }
 
         /// <summary>
@@ -213,7 +212,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult CreateDelegation([FromHeader]string auth,
+        public ActionResult<DelegationModel> CreateDelegation([FromHeader]string auth,
             [FromBody]CreateDelegationRequest request,
             [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
@@ -229,7 +228,7 @@ namespace MUNityAngular.Controllers
             
             var delegation = conferenceService.CreateDelegation(request.Name, request.FullName, request.Abbreviation, request.Type.ToString());
             //conferenceService.AddDelegationToConference(conferenceid, delegation.ID);
-            return StatusCode(StatusCodes.Status200OK, delegation.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, delegation);
         }
 
         /// <summary>
@@ -244,7 +243,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult AddDelegationToConference([FromHeader]string auth, [FromHeader]string conferenceid, [FromHeader]string delegationid,
+        public ActionResult<DelegationModel> AddDelegationToConference([FromHeader]string auth, [FromHeader]string conferenceid, [FromHeader]string delegationid,
             [FromHeader]string mincount, [FromHeader]string maxcount,
             [FromServices]ConferenceService conferenceService)
         {
@@ -264,7 +263,7 @@ namespace MUNityAngular.Controllers
 
             conferenceService.AddDelegationToConference(conferenceid, delegationid, mincount.ToIntOrDefault(1), maxcount.ToIntOrDefault(1));
             conference.Delegations.Add(delegation);
-            return StatusCode(StatusCodes.Status200OK, delegation.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, delegation);
         }
 
         /// <summary>
@@ -279,10 +278,12 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult AddDelegationToCommittee([FromHeader]string auth, [FromHeader]string committeeid, [FromHeader]string delegationid,
+        public ActionResult<CommitteeModel> AddDelegationToCommittee([FromHeader]string auth, [FromHeader]string committeeid, [FromHeader]string delegationid,
             [FromHeader]string mincount, [FromHeader]string maxcount,
             [FromServices]ConferenceService conferenceService)
         {
+            
+
             var committee = conferenceService.GetCommittee(committeeid);
             if (committee == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Committee not found!");
@@ -305,7 +306,7 @@ namespace MUNityAngular.Controllers
 
             if (result == true)
             {
-                return StatusCode(StatusCodes.Status200OK, committeeInConferece.AsNewtonsoftJson());
+                return StatusCode(StatusCodes.Status200OK, committeeInConferece);
             }
             else
             {
@@ -322,32 +323,34 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetDelegationsOfCommittee([FromHeader]string auth, [FromHeader]string committeeid,
+        public ActionResult<DelegationModel> GetDelegationsOfCommittee([FromHeader]string auth, [FromHeader]string committeeid,
             [FromServices]ConferenceService conferenceService)
         {
             //Authentication egal
             var delegations = conferenceService.GetDelegationsOfCommittee(committeeid);
-            return StatusCode(StatusCodes.Status200OK, delegations.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, delegations);
         }
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetTeam([FromHeader]string auth, [FromHeader]string conferenceid,
+        public ActionResult<List<UserConferenceRoleModel>> GetTeam([FromHeader]string auth, [FromHeader]string conferenceid,
             [FromServices]ConferenceService conferenceService)
         {
+            //Das Team darf ersteinmal jeder sehen
             var conference = conferenceService.GetConference(conferenceid);
             if (conference == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
-            return StatusCode(StatusCodes.Status200OK, conferenceService.GetConferenceTeam(conference).AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, conferenceService.GetConferenceTeam(conference));
         }
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetTeamRoles([FromHeader]string auth,
+        public ActionResult<List<TeamRoleModel>> GetTeamRoles([FromHeader]string auth,
             [FromHeader]string conferenceid, [FromServices]ConferenceService conferenceService)
         {
+            //Die Rollen dürfen auch zunächst öffentlich sein
             var roles = conferenceService.GetRolesOfConference(conferenceid);
-            return StatusCode(StatusCodes.Status200OK, roles.ToNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, roles);
         }
 
         [Route("[action]")]
@@ -395,9 +398,9 @@ namespace MUNityAngular.Controllers
         //Returns a list of all public visible Delegations.
         [Route("[action]")]
         [HttpGet]
-        public IActionResult AllDelegations([FromServices]ConferenceService conferenceService)
+        public ActionResult<List<DelegationModel>> AllDelegations([FromServices]ConferenceService conferenceService)
         {
-            return StatusCode(StatusCodes.Status200OK, conferenceService.GetAllDelegations().ToNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, conferenceService.GetAllDelegations());
         }
     }
 }

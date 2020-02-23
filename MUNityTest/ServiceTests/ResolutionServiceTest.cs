@@ -92,5 +92,24 @@ namespace MUNityTest.ServiceTests
             Assert.IsTrue(info.PublicRead);
             Assert.IsFalse(string.IsNullOrEmpty(info.OnlineCode));
         }
+
+        [Test]
+        public void GiveUserEditRightsTest()
+        {
+            var service = new ResolutionService(_env.ConnectionString, _env.MunityMongoDatabaseSettings.ConnectionString, _env.MunityMongoDatabaseSettings.DatabaseName);
+            var userService = new AuthService(_env.ConnectionString);
+            userService.Register("test", "test", "test@mail.de");
+            userService.Register("test2", "test", "test2@mail.de");
+            var user = userService.GetUserByUsername("test");
+            var user2 = userService.GetUserByUsername("test2");
+            var resolution = service.CreateResolution(false, false, user.Id);
+            resolution.Name = "Name";
+            resolution.Topic = "Topic";
+            service.RequestSave(resolution);
+            service.GrandUserRights(resolution.ID, user2.Id, true, true);
+            var userTwoResolutions = service.GetResolutionsUserCanEdit(user2.Id);
+            Assert.NotZero(userTwoResolutions.Count);
+            Assert.NotNull(userTwoResolutions.Find(n => n.ID == resolution.ID));
+        }
     }
 }

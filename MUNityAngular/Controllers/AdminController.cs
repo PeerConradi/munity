@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MUNityAngular.Models.Conference;
+using MUNityAngular.Models.User;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 
@@ -30,7 +32,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetResolutionMongoCount([FromHeader]string auth, [FromServices]AuthService authService,
+        public ActionResult<int> GetResolutionMongoCount([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ResolutionService resolutionService)
         {
             var (valid, userid) = authService.ValidateAuthKey(auth);
@@ -60,7 +62,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetResolutionDatabaseCount([FromHeader]string auth, [FromServices]AuthService authService,
+        public ActionResult<int> GetResolutionDatabaseCount([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ResolutionService resolutionService)
         {
             var (valid, userid) = authService.ValidateAuthKey(auth);
@@ -82,7 +84,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetUserCount([FromHeader]string auth, [FromServices]AuthService authService)
+        public ActionResult<int> GetUserCount([FromHeader]string auth, [FromServices]AuthService authService)
         {
             var (valid, userid) = authService.ValidateAuthKey(auth);
             if (valid == false)
@@ -103,7 +105,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetConferenceCount([FromHeader]string auth, [FromServices]AuthService authService,
+        public ActionResult<int> GetConferenceCount([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
             var (valid, userid) = authService.ValidateAuthKey(auth);
@@ -125,7 +127,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetConferenceCacheCount([FromHeader]string auth, [FromServices]AuthService authService,
+        public ActionResult<int> GetConferenceCacheCount([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
             var (valid, userid) = authService.ValidateAuthKey(auth);
@@ -153,7 +155,7 @@ namespace MUNityAngular.Controllers
         /// <returns>403 - Forbidden if the auth is not valid or a list of all existing Users.</returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetAllUsers([FromHeader]string auth, [FromServices]AuthService authService)
+        public ActionResult<List<UserModel>> GetAllUsers([FromHeader]string auth, [FromServices]AuthService authService)
         {
             var (valid, userid) = authService.ValidateAuthKey(auth);
             if (valid == false)
@@ -164,7 +166,7 @@ namespace MUNityAngular.Controllers
             var state = authService.IsAdmin(userid);
             if (state == true)
             {
-                return StatusCode(StatusCodes.Status200OK, authService.GetAllUsers().AsNewtonsoftJson());
+                return StatusCode(StatusCodes.Status200OK, authService.GetAllUsers());
             }
             else
             {
@@ -203,10 +205,11 @@ namespace MUNityAngular.Controllers
         /// </summary>
         /// <param name="auth"></param>
         /// <param name="authService"></param>
+        /// <param name="conferenceService"></param>
         /// <returns>403 - Forbidden if the auth is not valid or a list of all existing Users.</returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetConferences([FromHeader]string auth, [FromServices]AuthService authService,
+        public ActionResult<List<ConferenceModel>> GetConferences([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
             var (valid, userid) = authService.ValidateAuthKey(auth);
@@ -218,7 +221,7 @@ namespace MUNityAngular.Controllers
             var state = authService.IsAdmin(userid);
             if (state == true)
             {
-                return StatusCode(StatusCodes.Status200OK, conferenceService.GetAll().AsNewtonsoftJson());
+                return StatusCode(StatusCodes.Status200OK, conferenceService.GetAll());
             }
             else
             {
@@ -266,35 +269,6 @@ namespace MUNityAngular.Controllers
             {
                 resolutionService.PurgeMongoDB();
                 return StatusCode(StatusCodes.Status200OK);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
-            }
-        }
-
-        /// <summary>
-        /// Removes an account from the Database and also all the things connected to this account.
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="id"></param>
-        /// <param name="authService"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpGet]
-        public IActionResult DeleteAccount ([FromHeader]string auth, [FromHeader]string id, 
-            [FromServices]AuthService authService)
-        {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
-            }
-
-            var state = authService.IsAdmin(userid);
-            if (state == true)
-            {
-                return StatusCode(StatusCodes.Status200OK, authService.GetAllUsers().ToNewtonsoftJson());
             }
             else
             {

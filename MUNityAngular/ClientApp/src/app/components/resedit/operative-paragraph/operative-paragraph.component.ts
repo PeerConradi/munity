@@ -25,7 +25,6 @@ export class OperativeParagraphComponent implements OnInit {
   constructor(private renderer: Renderer2, private service: ResolutionService) { }
 
   ngOnInit() {
-    console.log(this.paragraph);
   }
 
   onKey(event: any) {

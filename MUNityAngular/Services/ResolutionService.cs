@@ -162,19 +162,19 @@ namespace MUNityAngular.Services
         /// </summary>
         /// <param name="userid"></param>
         /// <returns>a touple with the first value as the id, and the second value is the name</returns>
-        internal List<ResolutionAdvancedInfoModel> GetResolutionsOfUser(string userid)
+        public List<ResolutionAdvancedInfoModel> GetResolutionsOfUser(string userid)
         {
             return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).GetElements<ResolutionAdvancedInfoModel>("user", userid);
         }
 
-        internal void UpdateResolutionName(string resolutionid, string newtitle)
+        public void UpdateResolutionName(string resolutionid, string newtitle)
         {
             Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "name", newtitle);
         }
 
         
 
-        internal string SetPublicReadMode(string resolutionid, bool mode)
+        public string SetPublicReadMode(string resolutionid, bool mode)
         {
             if (mode)
                 return ActivatePublicReadMode(resolutionid);
@@ -189,7 +189,7 @@ namespace MUNityAngular.Services
         /// <summary>
         /// Deletes all MongoDB Entries where no Resolution was found inside the Database.
         /// </summary>
-        internal void PurgeMongoDB()
+        public void PurgeMongoDB()
         {
             var ids = _resolutions.Find(n => n.ID != null).ToList().Select(n => n.ID);
             foreach(var id in ids)
@@ -207,7 +207,7 @@ namespace MUNityAngular.Services
         /// for this resolutions inside the Database
         /// </summary>
         /// <param name="userid">You have to pass a user that should now own this documents</param>
-        internal void RestoreToDatabase(string userid)
+        public void RestoreToDatabase(string userid)
         {
             var resolutions = _resolutions.Find(n => n.ID != null).ToList();
             foreach (var resolution in resolutions)
@@ -218,6 +218,44 @@ namespace MUNityAngular.Services
                 {
                     SaveResolutionInDatabase(resolution, false, false, userid);
                 }
+            }
+        }
+
+        public List<ResolutionAdvancedInfoModel> GetResolutionsUserCanEdit(string userid)
+        {
+            var list = new List<ResolutionAdvancedInfoModel>();
+            using (var connection = new MySqlConnection(_mySqlConnectionString))
+            {
+                connection.Open();
+                var cmdStr = "SELECT resolution.* FROM resolution " +
+                    "LEFT JOIN resolution_auth ON resolution_auth.resolutionid = resolution.id " +
+                    "WHERE resolution.`user` = @userid OR resolution_auth.userid = @userid " +
+                    "AND resolution_auth.canwrite = 1";
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(DataReaderConverter.ObjectFromReader<ResolutionAdvancedInfoModel>(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public void GrandUserRights(string resolutionid, string userid, bool canRead, bool canWrite)
+        {
+            var cmdStr = "REPLACE INTO resolution_auth (resolutionid, userid, canread, canwrite) VALUES (@resoid, @userid, @canread, @canwrite);";
+            using (var connection = new MySqlConnection(_mySqlConnectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@resoid", resolutionid);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@canread", canRead);
+                cmd.Parameters.AddWithValue("@canwrite", canWrite);
+                cmd.ExecuteNonQuery();
             }
         }
 

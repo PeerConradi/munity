@@ -324,6 +324,10 @@ namespace MUNityAngular.Services
                 return true;
 
             //Check if the user has the right to edit this document
+            //This is not the best way to do it, let me think of something better
+            var count = Tools.Connection(_connectionString).ResolutionAuth.CountWhere("resolutionid='" + resolution.ID + "' AND userid='" + userid + "'");
+            if (count >= 1)
+                return true;
 
             return false;
         }
@@ -509,6 +513,38 @@ namespace MUNityAngular.Services
         public UserModel GetUserById(string id)
         {
             return Tools.Connection(_connectionString).Table(user_table_name).First<UserModel>("id", id);
+        }
+
+        public AUser User(string userid)
+        {
+            return new AUser(_connectionString, userid);
+        }
+
+        public class AUser
+        {
+            private string _conenctionString;
+            private string _userid;
+
+            public AUser(string connectionString, string userid)
+            {
+                this._conenctionString = connectionString;
+            }
+
+            public bool CanEditResolution(string resolutionid)
+            {
+                var resolution = Tools.Connection(_conenctionString).Resolution.First<ResolutionAdvancedInfoModel>("id", resolutionid);
+                if (resolution.PublicWrite)
+                    return true;
+
+                if (resolution.UserId == this._userid)
+                    return true;
+
+                var count = Tools.Connection(_conenctionString).ResolutionAuth.CountWhere("resolutionid=" + resolution.ID + " AND userid=" + _userid);
+                if (count >= 1)
+                    return true;
+
+                return false;
+            }
         }
 
 

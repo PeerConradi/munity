@@ -320,8 +320,8 @@ DROP TABLE IF EXISTS `resolution_auth`;
 CREATE TABLE `resolution_auth` (
   `resolutionid` varchar(255) NOT NULL,
   `userid` varchar(255) DEFAULT NULL,
-  `read` bit(1) DEFAULT NULL,
-  `write` bit(1) DEFAULT NULL,
+  `canread` bit(1) DEFAULT NULL,
+  `canwrite` bit(1) DEFAULT NULL,
   PRIMARY KEY (`resolutionid`),
   KEY `resoauthuser` (`userid`),
   CONSTRAINT `resoauthreso` FOREIGN KEY (`resolutionid`) REFERENCES `resolution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

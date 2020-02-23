@@ -490,8 +490,11 @@ export class ResolutionService {
   }
 
   public addAddAmendment(amendment: AddAmendment) {
-    return this.httpClient.put<AddAmendment>(this.baseUrl + 'api/Resolution/AddAddAmendment?auth=' + this.userService.getAuthOrDefault(),
-      amendment);
+    let headers = new HttpHeaders();
+    headers = headers.set('content-type', 'application/json; charset=utf-8');
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    return this.httpClient.post<AddAmendment>(this.baseUrl + 'api/Resolution/AddAddAmendment',
+      amendment, { headers: headers });
   }
 
   removeAmendment(resolutionid: string, amendmentid: string) {

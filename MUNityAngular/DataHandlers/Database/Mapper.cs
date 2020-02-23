@@ -122,6 +122,8 @@ namespace MUNityAngular.DataHandlers.Database
 
         public DTable Resolution { get => new DTable("resolution", ConnectionString);  }
 
+        public DTable ResolutionAuth { get => new DTable("resolution_auth", ConnectionString); }
+
     }
 
     public static class Tools
@@ -149,6 +151,81 @@ namespace MUNityAngular.DataHandlers.Database
         {
             this._name = name;
             this._connectionString = connectionstring;
+        }
+
+        public List<T> Where<T>(string wherecommand)
+        {
+            var list = new List<T>();
+            var cmdStr = "SELECT * FROM " + _name + " WHERE " + wherecommand + ";";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(DataReaderConverter.ObjectFromReader<T>(reader));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public List<T> Select<T>(string columnname)
+        {
+            var list = new List<T>();
+            var cmdStr = "SELECT " + columnname + " FROM " + _name + ";";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(reader.GetFieldValue<T>(0));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public List<T> SelectWhere<T> (string columnname, string wherecommand) 
+        {
+            var list = new List<T>();
+            var cmdStr = "SELECT " + columnname + " FROM " + _name + " WHERE "+ wherecommand + ";";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(reader.GetFieldValue<T>(0));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public int CountWhere(string wherecommand)
+        {
+            var cmdStr = "SELECT COUNT(*) FROM " + _name + " WHERE " + wherecommand + ";";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return reader.GetInt32(0);
+                    }
+                }
+            }
+            return 0;
         }
 
         public bool HasEntry(string key, object value)

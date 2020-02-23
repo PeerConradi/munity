@@ -205,7 +205,7 @@ namespace MUNityAngular.Services
             return list;
         }
 
-        internal object GetAll()
+        internal List<ConferenceModel> GetAll()
         {
             return Tools.Connection(_connectionString).Table(conference_table_name).GetElements<ConferenceModel>();
         }

@@ -9,6 +9,7 @@ using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 using MUNityAngular.Models.Resolution;
 using MUNityAngular.Schema.Request;
+using MUNityAngular.Hubs.HubObjects;
 
 namespace MUNityAngular.Controllers
 {
@@ -29,22 +30,24 @@ namespace MUNityAngular.Controllers
         /// Creates a new Resolution
         /// </summary>
         /// <param name="auth">The authenticator-code </param>
+        /// <param name="resolutionService"></param>
+        /// <param name="authService"></param>
         /// <returns>The new created Resolution in a json format.</returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult Create([FromHeader]string auth, [FromServices]Services.ResolutionService resolutionService,
+        public ActionResult<HUBResolution> Create([FromHeader]string auth, [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
             if (!authService.CanCreateResolution(auth))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
 
-            string json;
+            ResolutionModel resolution;
             if (authService.IsDefaultAuth(auth))
-                json = resolutionService.CreateResolution(true, true).ToJson();
+                resolution = resolutionService.CreateResolution(true, true);
             else
-                json = resolutionService.CreateResolution(userid: authService.ValidateAuthKey(auth).userid).ToJson();
-            return StatusCode(StatusCodes.Status200OK, json);
+                resolution = resolutionService.CreateResolution(userid: authService.ValidateAuthKey(auth).userid);
+            return StatusCode(StatusCodes.Status200OK, new HUBResolution(resolution));
         }
 
         /// <summary>
@@ -57,8 +60,8 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult AddPreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
-            [FromServices]Services.ResolutionService resolutionService,
+        public ActionResult<HUBPreambleParagraph> AddPreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
+            [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
 
@@ -69,13 +72,12 @@ namespace MUNityAngular.Controllers
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-
             if (resolution != null)
             {
                 var newPP = resolution.Preamble.AddParagraph();
                 resolutionService.RequestSave(resolution);
                 _hubContext.Clients.Group(resolutionid).PreambleParagraphAdded(resolution.Preamble.Paragraphs.IndexOf(newPP), newPP.ID, newPP.Text);
-                return StatusCode(StatusCodes.Status200OK, newPP.AsNewtonsoftJson());
+                return StatusCode(StatusCodes.Status200OK, new HUBPreambleParagraph(newPP));
             }
 
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong, this should not have appened");
@@ -91,7 +93,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult AddOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
+        public ActionResult<HUBOperativeParagraph> AddOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -105,10 +107,10 @@ namespace MUNityAngular.Controllers
             if (resolution != null)
             {
                 var newPP = resolution.AddOperativeParagraph();
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(newPP);
                 resolutionService.RequestSave(resolution);
-                _hubContext.Clients.Group(resolutionid).OperativeParagraphAdded(resolution.OperativeSections.IndexOf(newPP), new Hubs.HubObjects.HUBOperativeParagraph(newPP));
-                return StatusCode(StatusCodes.Status200OK, json);
+                var hubModel = new HUBOperativeParagraph(newPP);
+                _hubContext.Clients.Group(resolutionid).OperativeParagraphAdded(resolution.OperativeSections.IndexOf(newPP), hubModel);
+                return StatusCode(StatusCodes.Status200OK, hubModel);
             }
 
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong, this should not have appened");
@@ -126,7 +128,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public IActionResult UpdatePreambleParagraph([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBPreambleParagraph paragraph,
+        public ActionResult<HUBPreambleParagraph> UpdatePreambleParagraph([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBPreambleParagraph paragraph,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -142,10 +144,11 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found!");
 
             pp.Text = paragraph.Text;
-            _hubContext.Clients.Group(resolution.ID).PreambleParagraphChanged(new Hubs.HubObjects.HUBPreambleParagraph(pp));
+            var hubElement = new HUBPreambleParagraph(pp);
+            _hubContext.Clients.Group(resolution.ID).PreambleParagraphChanged(hubElement);
             resolutionService.RequestSave(resolution);
 
-            return StatusCode(StatusCodes.Status200OK, pp.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, hubElement);
         }
 
         /// <summary>
@@ -159,7 +162,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public IActionResult UpdateOperativeSection([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBOperativeParagraph paragraph,
+        public ActionResult<HUBOperativeParagraph> UpdateOperativeSection([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBOperativeParagraph paragraph,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -176,9 +179,10 @@ namespace MUNityAngular.Controllers
 
             section.Text = paragraph.Text;
             section.Notices = paragraph.Notices;
-            _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(new Hubs.HubObjects.HUBOperativeParagraph(section));
+            var hubModel = new HUBOperativeParagraph(section);
+            _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, section.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, hubModel);
         }
 
         /// <summary>
@@ -491,7 +495,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
-        public IActionResult ChangePublicReadMode([FromHeader]string auth, [FromHeader]string resolutionid,
+        public ActionResult<string> ChangePublicReadMode([FromHeader]string auth, [FromHeader]string resolutionid,
             [FromHeader]string pmode,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
@@ -509,7 +513,7 @@ namespace MUNityAngular.Controllers
                 newMode = true;
 
             var code = resolutionService.SetPublicReadMode(resolutionid, newMode);
-            return StatusCode(StatusCodes.Status200OK, code.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, code);
         }
 
         #endregion
@@ -648,7 +652,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult AddAddAmendment([FromQuery]string auth, [FromBody]Hubs.HubObjects.HUBAddAmendment amendment,
+        public IActionResult AddAddAmendment([FromHeader]string auth, [FromBody]HUBAddAmendment amendment,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -866,7 +870,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult MyResolutions([FromHeader]string auth,
+        public ActionResult<List<ResolutionAdvancedInfoModel>> MyResolutions([FromHeader]string auth,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -875,7 +879,7 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, "The auth is not valid!");
 
             var resolutions = resolutionService.GetResolutionsOfUser(authresult.userid);
-            return StatusCode(StatusCodes.Status200OK, resolutions.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, resolutions);
         }
         
         /// <summary>
@@ -888,7 +892,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult Get([FromHeader]string auth, [FromHeader]string id,
+        public ActionResult<ResolutionModel> Get([FromHeader]string auth, [FromHeader]string id,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -899,7 +903,7 @@ namespace MUNityAngular.Controllers
                 if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                     return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-                return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
+                return StatusCode(StatusCodes.Status200OK, new HUBResolution(resolution));
             }
 
             //Wenn die Resolution nicht mit dieser id gefunden wurde handelt
@@ -914,7 +918,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            return StatusCode(StatusCodes.Status200OK, resolution.ToJson());
+            return StatusCode(StatusCodes.Status200OK, new HUBResolution(resolution));
         }
 
         /// <summary>
@@ -981,7 +985,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult CanAuthEditResolution([FromHeader]string auth, [FromHeader]string id,
+        public ActionResult<bool> CanAuthEditResolution([FromHeader]string auth, [FromHeader]string id,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -1015,7 +1019,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public IActionResult GetResolutionInfos([FromHeader]string auth, [FromHeader]string id,
+        public ActionResult<ResolutionAdvancedInfoModel> GetResolutionInfos([FromHeader]string auth, [FromHeader]string id,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -1024,7 +1028,7 @@ namespace MUNityAngular.Controllers
             {
                 return StatusCode(StatusCodes.Status404NotFound, "Resolution was not found");
             }
-            return StatusCode(StatusCodes.Status200OK, infos.AsNewtonsoftJson());
+            return StatusCode(StatusCodes.Status200OK, infos);
         }
     }
 }

@@ -16,6 +16,7 @@ export class MyConferencesOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.conferenceService.getAllConferences().subscribe(success => {
+      console.log(success);
       this.conferences = success;
     });
   }
