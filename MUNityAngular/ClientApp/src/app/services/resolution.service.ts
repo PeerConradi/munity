@@ -148,6 +148,8 @@ export class ResolutionService {
       model.MoveAmendments = resolution.MoveAmendments;
       model.DeleteAmendments = resolution.DeleteAmendments;
       model.AddAmendmentsSave = resolution.AddAmendmentsSave;
+
+      inspector.allAmendments = this.OrderAmendments(model);
     });
 
     /**
@@ -288,13 +290,20 @@ export class ResolutionService {
       paragraph, { headers: headers }).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
-  public changeOperativeParagraphNotices(paragraph: OperativeSection, notice: Notice) {
+  public changeOperativeParagraphNotice(paragraph: OperativeSection, notice: Notice) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('resolutionid', paragraph.ResolutionID);
     headers = headers.set('paragraphid', paragraph.ID);
-    this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotices',
-      notice, { headers: headers }).subscribe();
+    return this.httpClient.put<Notice>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotice',
+      notice, { headers: headers });
+  }
+
+  public changeOperativeParagraphNotices(paragraph: OperativeSection) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    return this.httpClient.patch<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotices',
+      paragraph, { headers: headers });
   }
 
   public changePreambleParagraph(paragraph: PreambleParagraph) {

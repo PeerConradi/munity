@@ -162,7 +162,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public ActionResult<HUBOperativeParagraph> UpdateOperativeSection([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBOperativeParagraph paragraph,
+        public ActionResult<HUBOperativeParagraph> UpdateOperativeSection([FromHeader]string auth, [FromBody]HUBOperativeParagraph paragraph,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -186,8 +186,32 @@ namespace MUNityAngular.Controllers
         }
 
         [Route("[action]")]
+        [HttpPatch]
+        public ActionResult<HUBOperativeParagraph> UpdateOperativeSectionNotices([FromHeader]string auth, [FromBody]HUBOperativeParagraph paragraph,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
+            if (section == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
+
+            section.Notices = paragraph.Notices;
+            var hubModel = new HUBOperativeParagraph(section);
+            _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, hubModel);
+        }
+
+        [Route("[action]")]
         [HttpPut]
-        public ActionResult<HUBOperativeParagraph> UpdateOperativeSectionNotices([FromHeader]string auth, 
+        public ActionResult<NoticeModel> UpdateOperativeSectionNotice([FromHeader]string auth, 
             [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromBody]NoticeModel notice,
@@ -211,6 +235,7 @@ namespace MUNityAngular.Controllers
             {
                 foundNotice.Text = notice.Text;
                 foundNotice.Tags = notice.Tags;
+                foundNotice.ReadBy = notice.ReadBy;
             }
             else
             {
@@ -229,7 +254,7 @@ namespace MUNityAngular.Controllers
             var hubModel = new HUBOperativeParagraph(section);
             _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
             resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, hubModel);
+            return StatusCode(StatusCodes.Status200OK, notice);
         }
 
         /// <summary>
@@ -503,7 +528,7 @@ namespace MUNityAngular.Controllers
             paragraph.Remove();
             resolutionService.RequestSave(resolution);
 
-            _hubContext.Clients.Groups(resolutionid).OperativeParagraphRemoved(new Hubs.HubObjects.HUBResolution(resolution));
+            _hubContext.Clients.Groups(resolutionid).OperativeParagraphRemoved(new HUBResolution(resolution));
             return StatusCode(StatusCodes.Status200OK);
         }
 

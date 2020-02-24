@@ -187,6 +187,30 @@ namespace MUNityAngular.Controllers
         }
 
         [Route("[action]")]
+        [HttpPatch]
+        public ActionResult<SpeakerlistModel> QuestionsOrderChanged([FromHeader]string auth,
+            [FromHeader]string listid, [FromBody]List<DelegationModel> model,
+            [FromServices]SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+
+            model.ForEach(n =>
+            {
+                if (string.IsNullOrWhiteSpace(n.ID))
+                {
+                    n.ID = Guid.NewGuid().ToString();
+                }
+            });
+            speakerlist.Questions = model;
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return speakerlist;
+        }
+
+
+
+        [Route("[action]")]
         [HttpPost]
         public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader]string auth,
             [FromHeader]string listid, [FromBody]DelegationModel model,

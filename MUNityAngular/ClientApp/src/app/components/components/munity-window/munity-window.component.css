@@ -1,5 +1,5 @@
 .window {
-    position: absolute;
+    position: fixed;
     z-index: 50;
     min-width: 200Px;
     width: 400Px;
@@ -14,4 +14,10 @@
 
 .window-body {
     padding: 0Px;
+}
+
+.close-btn {
+    margin-right: 10px;
+    width: 40Px;
+    height: 40Px;
 }

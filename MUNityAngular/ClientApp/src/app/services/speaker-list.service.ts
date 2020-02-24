@@ -202,6 +202,15 @@ export class SpeakerListService {
       options);
   }
 
+  public reorderQuestion(listid: string, items: Delegation[]) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('listid', listid);
+    let options = { headers: headers };
+    return this.http.patch(this.baseUrl + 'api/Speakerlist/QuestionsOrderChanged', items,
+      options);
+  }
+
   public subscribeToSpeakerlist(publicid: string) {
     const builder = new signalR.HubConnectionBuilder().withUrl(this.baseUrl + 'slsocket');
     this._hubConnection = builder.build();

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { WindowPosition } from '../../../models/window-position.model';
 
 @Component({
   selector: 'app-munity-window',
@@ -12,6 +13,8 @@ export class MunityWindowComponent implements OnInit {
   @Input() title: string;
 
   @Output() onClose: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output() moveStopped: EventEmitter<WindowPosition> = new EventEmitter<WindowPosition>();
 
   isMoving: boolean = false;
   startMoveMousePositionX: number;
@@ -40,10 +43,17 @@ export class MunityWindowComponent implements OnInit {
   }
 
   windowMouseUp(val) {
-    this.isMoving = false;
+    if (this.isMoving == true) {
+      const pos: WindowPosition = new WindowPosition();
+      pos.Left = this.leftVal;
+      pos.Top = this.topVal;
+      this.moveStopped.emit(pos);
+      this.isMoving = false;
+    }
   }
 
   closeClicked() {
     this.onClose.emit("");
   }
+
 }

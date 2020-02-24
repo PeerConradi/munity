@@ -165,7 +165,8 @@
             <div class="col-12">
               <bs-sortable [(ngModel)]="speakerlist.Questions" fieldName="Name" itemClass="sortable-item"
                            itemActiveClass="sortable-item-active" placeholderItem="Drag here"
-                           placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper">
+                           placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper"
+                           (onChange)="reorderQuestions();">
               </bs-sortable>
             </div>
           </div>

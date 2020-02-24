@@ -6,5 +6,6 @@ export class Notice {
   CreationDate: Date;
   Title: string;
   Text: string;
-  Tags: NoticeTag[];
+  Tags: NoticeTag[] = [];
+  ReadBy: string[] = [];
 }

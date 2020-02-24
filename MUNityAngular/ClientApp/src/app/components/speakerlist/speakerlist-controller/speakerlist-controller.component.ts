@@ -27,6 +27,7 @@ export class SpeakerlistControllerComponent implements OnInit {
   timeLeft: number;
   deleteItems: any;
   lastSpeakerOrder: Delegation[] = [];
+  lastQuestionOrder: Delegation[] = [];
 
   constructor(private conferenceService: ConferenceServiceService,
     private speakerlistService: SpeakerListService,
@@ -56,6 +57,10 @@ export class SpeakerlistControllerComponent implements OnInit {
         list.Speakers.forEach(n => {
           this.lastSpeakerOrder.push(n);
         });
+
+        list.Questions.forEach(n => {
+          this.lastQuestionOrder.push(n);
+        })
         
         const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds,0,0,0,0);
         this.speakerlist.RemainingSpeakerTime = sTime;
@@ -123,8 +128,6 @@ export class SpeakerlistControllerComponent implements OnInit {
         }
       });
       if (orderChanged) {
-        console.log('Reorder');
-
         this.lastSpeakerOrder = [];
         this.speakerlist.Speakers.forEach(n => {
           this.lastSpeakerOrder.push(n);
@@ -138,6 +141,31 @@ export class SpeakerlistControllerComponent implements OnInit {
       });
     }
     
+  }
+
+  reorderQuestions() {
+    if (this.lastQuestionOrder.length == this.speakerlist.Questions.length) {
+      let orderChanged = false;
+
+      this.speakerlist.Questions.forEach((val, index) => {
+
+        if (val.ID != this.lastQuestionOrder[index].ID) {
+          orderChanged = true;
+        }
+      });
+      if (orderChanged) {
+        this.lastQuestionOrder = [];
+        this.speakerlist.Questions.forEach(n => {
+          this.lastQuestionOrder.push(n);
+        });
+        this.speakerlistService.reorderQuestion(this.speakerlist.ID, this.speakerlist.Questions).subscribe();
+      }
+    } else {
+      this.lastQuestionOrder = [];
+      this.speakerlist.Questions.forEach(n => {
+        this.lastSpeakerOrder.push(n);
+      });
+    }
   }
 
   addSpeaker() {

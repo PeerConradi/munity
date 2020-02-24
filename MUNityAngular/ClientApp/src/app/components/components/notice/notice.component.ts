@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Notice } from '../../../models/notice.model';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-notice',
@@ -10,9 +11,23 @@ export class NoticeComponent implements OnInit {
 
   @Input() notice: Notice;
 
+  @Output()
+  onDelete: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output()
+  onRead: EventEmitter<any> = new EventEmitter<any>();
+
   constructor() { }
 
   ngOnInit() {
+
   }
 
+  deleteMe() {
+    this.onDelete.emit(this.notice);
+  }
+
+  markRead() {
+    this.onRead.emit(this.notice);
+  }
 }

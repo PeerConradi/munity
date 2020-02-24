@@ -41,9 +41,15 @@ namespace MUNityAngular.Models.Resolution
         /// </summary>
         public List<TagModel> Tags { get; set; }
 
+        /// <summary>
+        /// List of Fore.- and Lastnames of people that have read this comment.
+        /// </summary>
+        public List<string> ReadBy { get; set; }
+
         public NoticeModel()
         {
             this.Tags = new List<TagModel>();
+            ReadBy = new List<string>();
             this.Id = Guid.NewGuid().ToString();
         }
     }
