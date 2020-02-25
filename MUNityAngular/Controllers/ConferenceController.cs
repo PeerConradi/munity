@@ -202,6 +202,19 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK, committee);
         }
 
+
+        [Route("[action]")]
+        [HttpGet]
+        public ActionResult<List<CommitteeModel>> GetCommitteesOfConference([FromHeader]string auth, [FromHeader]string conferenceid,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var conference = conferenceService.GetConference(conferenceid);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+
+            return conference.Committees;
+        }
+
         /// <summary>
         /// Creates a new Delegation if the old one is not in the list.
         /// </summary>

@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, TemplateRef } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
-import { interval, Subscription } from 'rxjs';
+import { interval, Subscription, of } from 'rxjs';
 import { ResolutionService } from '../../../services/resolution.service';
 import { Resolution } from '../../../models/resolution.model';
 import { OperativeSection } from 'src/app/models/operative-section.model';
@@ -11,6 +11,10 @@ import { Title } from '@angular/platform-browser';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
 import { Delegation } from '../../../models/delegation.model';
 import { AddAmendment } from '../../../models/add-amendment.model';
+import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-resolution-header-request';
+import { Conference } from '../../../models/conference.model';
+import { Committee } from '../../../models/committee.model';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-editor',
@@ -33,8 +37,6 @@ export class EditorComponent implements OnInit {
   public amendmentInspector: AmendmentInspector = new AmendmentInspector();
 
   
-
-
   public get resolution(): Resolution {
     return this.model;
   }
@@ -58,6 +60,13 @@ export class EditorComponent implements OnInit {
   notFound = false;
 
   allDelegations: string[] = [];
+
+  userConferences: Conference[] = [];
+
+  selectedConference: Conference;
+
+  selectedCommittee: Committee;
+
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
     private titleService: Title, private conferenceService: ConferenceServiceService) {
@@ -114,7 +123,10 @@ export class EditorComponent implements OnInit {
         this.allDelegations.push(d.Name);
       });
     });
-    
+
+    this.conferenceService.getAllConferences().subscribe(n => {
+      this.userConferences = n;
+    });
   }
 
   pushResolution() {
@@ -194,5 +206,26 @@ export class EditorComponent implements OnInit {
     }
 
     this.amendmentModalActive = false;
+  }
+
+  updateTitle() {
+    const request = this.baseRequest();
+    if (request.title != null && request.title != '') {
+      this.service.updateHeader(request);
+    }
+  }
+
+  baseRequest(): ChangeResolutionHeaderRequest {
+    const r = new ChangeResolutionHeaderRequest();
+    r.committee = this.resolution.CommitteeName;
+    r.resolutionId = this.resolution.ID;
+    r.supporters = this.resolution.SupporterNames;
+    r.title = this.resolution.Topic;
+    r.submitterName = this.resolution.SubmitterName;
+    return r;
+  }
+
+  conferenceSelected() {
+    //console.log(this.selectedConference);
   }
 }

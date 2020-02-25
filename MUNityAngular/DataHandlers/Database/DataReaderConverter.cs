@@ -40,13 +40,13 @@ namespace MUNityAngular.DataHandlers.Database
                             setPropertySuccess = element.SetProperty(property.Name, reader.GetInt64(columnname));
                         else if (propType == typeof(string) || propType == typeof(String))
                         {
-                            try
+                            if (reader.IsDBNull(columnname))
+                            {
+                                setPropertySuccess = element.SetProperty(property.Name, null);
+                            }
+                            else
                             {
                                 setPropertySuccess = element.SetProperty(property.Name, reader.GetString(columnname));
-                            }
-                            catch (Exception)
-                            {
-                                setPropertySuccess = element.SetProperty(property.Name, string.Empty);
                             }
                         }
 
@@ -63,9 +63,9 @@ namespace MUNityAngular.DataHandlers.Database
                         else if (propType == typeof(int?))
                         {
                             if (reader.IsDBNull(columnname))
-                                element.SetProperty(property.Name, null);
+                                setPropertySuccess = element.SetProperty(property.Name, null);
                             else
-                                element.SetProperty(property.Name, reader.GetInt32(columnname));
+                                setPropertySuccess = element.SetProperty(property.Name, reader.GetInt32(columnname));
                         }
                         else
                         {

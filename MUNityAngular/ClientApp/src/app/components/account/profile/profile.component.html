@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-4">
         <div class="profile-img">
-          <img src="../../../../assets/img/profile/p.conradi.JPG" alt="" />
+          <img src="../../../../assets/img/flags/medium/un.png" alt="" />
           <!-- Show when own profile -->
           <!--<div class="file btn btn-lg btn-primary">
             Change Photo
@@ -18,22 +18,23 @@
           </h5>
           <small>{{ user.Username }}</small>
           <h6>
-            Founder & CEO
+            User Rank
           </h6>
-          <p class="proile-rating">Konferenzen : <span>10</span></p>
+          <p class="proile-rating">Konferenzen : <span>X</span></p>
         </div>
       </div>
-      <div class="col-md-2">
-        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile" />
+      <!-- Wenn der Benutzer selbst der angemeldete ist-->
+      <div *ngIf="isMe" class="col-md-2">
+        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Profil bearbeiten" />
       </div>
     </div>
     <div class="row">
       <div class="col-md-4">
         <div class="profile-work">
           <p>Funktionen</p>
-          <a href="">Freund hinzufügen</a><br />
-          <a href="">Abonnieren</a><br />
-          <a href="">Nachricht schreiben</a>
+          <a>Freund hinzufügen</a><br />
+          <a>Abonnieren</a><br />
+          <a>Nachricht schreiben</a>
         </div>
       </div>
       <!-- Profil Bereich-->
@@ -41,10 +42,8 @@
 
         <tabset #staticTabs>
           <tab heading="Profil">
-            <h3>Peer Conradi</h3>
-            <p>Peer ist der Gründer und Leiter des MUNity-Projects. Er hatte seine erste Model United Nations Konferenz im Jahre 2013
-            in Schleswig-Holstein. Dort war er Teilnehmer des Fernsehteams. Im Jahre 2014 wechselte er ins Team von Model United Nations Baden-Württemberg.
-            In den darauf folgenden Jahren leitete er die Sitzungstechnik bei den Konferenzen MUN-SH und MUNBB.</p>
+            <h3>{{ user.Forename }} {{ user.Lastname }}</h3>
+            <p>Profilbeschreibung</p>
           </tab>
           <tab heading="Konferenzen">
             <table class="table">
@@ -54,9 +53,9 @@
                 <th>Rolle</th>
               </tr>
               <tr>
-                <td>MUN-SH 2020</td>
+                <td>Example</td>
                 <td>2020</td>
-                <td>Fernsehteamlitung</td>
+                <td>Beispielrolle</td>
               </tr>
 
             </table>
@@ -64,10 +63,9 @@
           </tab>
           <tab heading="Beiträge">
             <div class="media">
-              <!--<img class="mr-3" src="..." alt="Generic placeholder image">-->
               <div class="media-body">
                 <h5 class="mt-0">Media heading</h5>
-                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                <p>Hier steht ein Beispiel Kommentar</p>
                 <small>0 Kommentare | <a>Kommentar schreiben</a> | <a>Melden</a></small>
               </div>
             </div>

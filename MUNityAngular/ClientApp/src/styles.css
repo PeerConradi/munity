@@ -1,6 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Provide sufficient contrast against white background */
+
+body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+footer {
+    height: 50px;
+    margin-top: auto;
+}
+
 .sortable-item {
   display: flex;
   margin-bottom: 4px;

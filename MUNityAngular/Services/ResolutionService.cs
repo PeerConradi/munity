@@ -23,7 +23,7 @@ namespace MUNityAngular.Services
 
         private readonly IMongoCollection<ResolutionModel> _resolutions;
 
-        public ResolutionModel CreateResolution(bool isPublicReadable = false, bool isPublicWriteable = false, string userid = "anon")
+        public ResolutionModel CreateResolution(bool isPublicReadable = false, bool isPublicWriteable = false, string userid = null)
         {
             var resolution = new ResolutionModel();
             this._resolutions.InsertOne(resolution);
@@ -52,12 +52,15 @@ namespace MUNityAngular.Services
             {
                 //An dieser Stelle könnte man auch einen Replace Into verwenden, aber ich bin mir zu 100% sicher, dass
                 //diese Funktion deutlich schneller ist!
+
                 var info = GetResolutionInfoForId(resolution.ID);
                 if (info.Name != resolution.Topic)
                 {
                     Tools.Connection(_mySqlConnectionString).Resolution.SetEntry("id", resolution.ID, "name", resolution.Topic);
                 }
                 Tools.Connection(_mySqlConnectionString).Resolution.SetEntry("id", resolution.ID, "lastchangeddate", DateTime.Now);
+
+                
             });
             this._resolutions.ReplaceOneAsync(n => n.ID == resolution.ID, resolution);
         }
@@ -65,6 +68,15 @@ namespace MUNityAngular.Services
         public ResolutionModel GetResolution(string id)
         {
             var resolution = this._resolutions.Find(n => n.ID == id).FirstOrDefault();
+            //Fix bugs etc.
+            foreach(var oa in resolution.OperativeSections)
+            {
+                oa.Resolution = resolution;
+            }
+            foreach(var ps in resolution.Preamble.Paragraphs)
+            {
+                ps.Preamble = resolution.Preamble;
+            }
             return resolution;
         }
 

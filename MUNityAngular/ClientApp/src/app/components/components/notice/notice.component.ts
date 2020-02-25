@@ -17,6 +17,9 @@ export class NoticeComponent implements OnInit {
   @Output()
   onRead: EventEmitter<any> = new EventEmitter<any>();
 
+  @Output()
+  onUpdate: EventEmitter<any> = new EventEmitter<any>();
+
   constructor() { }
 
   ngOnInit() {
@@ -29,5 +32,16 @@ export class NoticeComponent implements OnInit {
 
   markRead() {
     this.onRead.emit(this.notice);
+  }
+
+  update() {
+    this.onUpdate.emit(this.notice);
+  }
+
+  get readbyNames(): string {
+    let text = '';
+    this.notice.ReadBy.forEach(n => text += n + ', ');
+    text = text.substr(0, text.length - 2);
+    return text;
   }
 }

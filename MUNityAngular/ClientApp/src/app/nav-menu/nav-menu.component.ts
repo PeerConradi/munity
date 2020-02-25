@@ -16,9 +16,11 @@ export class NavMenuComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.userSerivce.getIsAdmin().subscribe(n => {
-      this.isAdmin = n;
-    });
+    if (this.userSerivce.isLoggedIn) {
+      this.userSerivce.getIsAdmin().subscribe(n => {
+        this.isAdmin = n;
+      });
+    }
   }
 
   collapse() {

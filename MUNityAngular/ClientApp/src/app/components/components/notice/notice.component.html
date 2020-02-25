@@ -9,7 +9,9 @@
       
       <p>{{ notice.AuthorName }}</p>
 
-      <markdown [data]="notice.Text"></markdown>
+      <markdown *ngIf="!isEditing" [data]="notice.Text"></markdown>
+
+      <textarea *ngIf="isEditing" [(ngModel)]="notice.Text" class="form-control"></textarea>
 
       <span class="fnt-smaller fnt-lighter fnt-arial" *ngIf="notice.Tags">
         <span *ngFor="let tag of notice.Tags" class="badge text-white"
@@ -19,10 +21,15 @@
               [class.bg-danger]="tag.Type == 'danger'">{{ tag.Text }}</span>
         
     </span>
-      <p> <a class="cursor-hand text-muted">Bearbeiten</a> | <a *ngIf="!askDeletion" class="cursor-hand text-muted" (click)="askDeletion = true;">Löschen</a>
-       <span *ngIf="askDeletion">Löschen: </span><a *ngIf="askDeletion" class="cursor-hand text-danger" (click)="deleteMe()"> Ja / </a> <a *ngIf="askDeletion" class="cursor-hand text-muted" (click)="askDeletion = false;">Nein </a>
-      | <a class="cursor-hand text-muted" (click)="markRead();">Als gelesen markieren</a></p>
-      <p>Gelesen von: <span *ngIf="notice.ReadBy != null">{{ notice.ReadBy.length }}</span></p>
+      <p>
+        <a *ngIf="!isEditing" class="cursor-hand text-muted" (click)="isEditing=true">Bearbeiten </a>
+        <a *ngIf="isEditing" class="cursor-hand text-success" (click)="isEditing=false;update();">Änderung speichern </a>
+
+        | <a *ngIf="!askDeletion" class="cursor-hand text-muted" (click)="askDeletion = true;">Löschen</a>
+        <span *ngIf="askDeletion">Löschen: </span><a *ngIf="askDeletion" class="cursor-hand text-danger" (click)="deleteMe()"> Ja / </a> <a *ngIf="askDeletion" class="cursor-hand text-muted" (click)="askDeletion = false;">Nein </a>
+        | <a class="cursor-hand text-muted" (click)="markRead();">Als gelesen markieren</a>
+      </p>
+      <p>Gelesen von: <span *ngIf="notice.ReadBy != null" [tooltip]="readbyNames">{{ notice.ReadBy.length }}</span></p>
     </div>
   </div>
 </div><!-- End Listing-->

@@ -32,6 +32,8 @@ import { ManageConferenceCommitteesComponent } from './components/conference/man
 import { ManageConferenceTeamRolesComponent } from './components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
+import { CommitteeDetailsComponent } from './components/conference/committee-details/committee-details.component';
+import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -42,7 +44,8 @@ const routes: Routes = [
     component: DefaultLayoutComponent,
     children: [
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'impressum', component: ImpressumComponent},
+      { path: 'impressum', component: ImpressumComponent },
+      { path: 'privacy', component: PrivacyTermsComponent },
 
       //Example
       { path: 'components', component: AllComponentsComponent },
@@ -68,6 +71,7 @@ const routes: Routes = [
       { path: 'conferences/:id', component: ConferenceDetailsComponent },
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
       { path: 'exploreconferences', component: ExploreConferencesComponent },
+      { path: 'committee/:id', component: CommitteeDetailsComponent },
       // mc for manage conference
       { path: 'mc/overview/:id', component: EditConferenceComponent },
       { path: 'mc/team/:id', component: ManageConferenceTeamComponent },

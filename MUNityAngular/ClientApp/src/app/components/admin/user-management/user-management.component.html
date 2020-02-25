@@ -23,7 +23,7 @@
           <tbody>
             <tr *ngFor="let user of allUsers">
               <th scope="row">{{ user.Id }}</th>
-              <td> {{ user.Username }}</td>
+              <td><a [routerLink]="['/u', user.Username]">{{ user.Username }}</a> </td>
               <td> {{ user.Forename }}</td>
               <td> {{ user.Lastname }}</td>
             </tr>

@@ -10,8 +10,18 @@
   </div>
 </div>
 
+<div *ngIf="conferenceService.committeeContext != null" class="committee-panel committee-panel-lg" [class.active]="showLeftPanel">
+  <button class="btn btn-outline-success right-dock-button" (click)="showLeftPanel = !showLeftPanel">
+    <span class="inner-left rotated-text">{{ conferenceService.committeeContext.Abbreviation }}</span>
+  </button>
+  <div class="speakerlist-panel-content">
+    
+  </div>
+</div>
+
 
 <div class="container">
     <router-outlet></router-outlet>
 </div>
+
 <app-footer></app-footer>

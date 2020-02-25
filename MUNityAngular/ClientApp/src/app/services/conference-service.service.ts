@@ -22,6 +22,8 @@ export class ConferenceServiceService {
 
   hasError: boolean = false;
 
+  public committeeContext: Committee = null;
+
   private baseUrl: string;
   constructor(private http: HttpClient, private userService: UserService, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -156,5 +158,12 @@ export class ConferenceServiceService {
     let options = { headers: headers };
     return this.http.post<Committee>(this.baseUrl + 'api/Conference/AddDelegationToCommittee', null,
       options);
+  }
+
+  public getCommitteesOfConferece(conferenceid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('conferenceid', conferenceid);
+    return this.http.get<Committee[]>(this.baseUrl + 'api/Conference/GetCommitteesOfConference', { headers: headers });
   }
 }

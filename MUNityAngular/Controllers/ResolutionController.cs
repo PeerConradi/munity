@@ -166,23 +166,32 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
-            if (resolution == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+            try
+            {
+                var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
+                if (resolution == null)
+                    return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+                if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                    return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
-            if (section == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
+                var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
+                if (section == null)
+                    return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
 
-            section.Text = paragraph.Text;
-            //section.Notices = paragraph.Notices;
-            var hubModel = new HUBOperativeParagraph(section);
-            _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
-            resolutionService.RequestSave(resolution);
-            return StatusCode(StatusCodes.Status200OK, hubModel);
+                section.Text = paragraph.Text;
+                //section.Notices = paragraph.Notices;
+                var hubModel = new HUBOperativeParagraph(section);
+                _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
+                resolutionService.RequestSave(resolution);
+                return StatusCode(StatusCodes.Status200OK, hubModel);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         [Route("[action]")]
@@ -201,6 +210,14 @@ namespace MUNityAngular.Controllers
             var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
             if (section == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
+
+            paragraph.Notices.ForEach(n =>
+            {
+                if (string.IsNullOrWhiteSpace(n.Id))
+                {
+                    n.Id = Guid.NewGuid().ToString();
+                }
+            });
 
             section.Notices = paragraph.Notices;
             var hubModel = new HUBOperativeParagraph(section);
@@ -240,7 +257,7 @@ namespace MUNityAngular.Controllers
             else
             {
                 //Add
-                notice.Id = new Guid().ToString();
+                notice.Id = Guid.NewGuid().ToString();
                 notice.CreationDate = DateTime.Now;
                 var user = authService.GetUserByAuth(auth);
                 if (user != null)

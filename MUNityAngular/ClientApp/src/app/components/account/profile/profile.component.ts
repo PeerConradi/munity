@@ -37,4 +37,8 @@ export class ProfileComponent implements OnInit {
     this.staticTabs.tabs[tabId].active = true;
   }
 
+  get isMe(): boolean {
+    return this.user.Id == this.userService.currentUser.Id;
+  }
+
 }

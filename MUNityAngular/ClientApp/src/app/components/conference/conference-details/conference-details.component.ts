@@ -18,7 +18,7 @@ export class ConferenceDetailsComponent implements OnInit {
   conference: Conference;
   
 
-  constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService,
+  constructor(private route: ActivatedRoute, public conferenceService: ConferenceServiceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService) { }
 
   ngOnInit() {

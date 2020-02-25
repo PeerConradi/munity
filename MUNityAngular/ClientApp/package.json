@@ -13,6 +13,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "8.0.0",
+    "@angular/cdk": "^9.1.0",
     "@angular/common": "8.0.0",
     "@angular/compiler": "8.0.0",
     "@angular/core": "8.0.0",
@@ -27,6 +28,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
     "@ng-bootstrap/ng-bootstrap": "^5.1.4",
     "@nguniversal/module-map-ngfactory-loader": "8.0.0-rc.1",
+    "@swimlane/ngx-charts": "^13.0.2",
     "angular-notifier": "^6.0.1",
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.3.1",

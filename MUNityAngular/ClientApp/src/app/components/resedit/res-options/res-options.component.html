@@ -1,50 +1,47 @@
-<app-munity-box title="Eigenschaften" toolbox="true" expand="false">
-  <form>
-    <div class="form-group">
-      <label for="inputName">Name</label>
-      <input type="text" class="form-control" #inputName id="inputName" aria-describedby="inputNameHelp"
-             (keyup.enter)="onEnterTitle(inputName.value)" [value]="resolution.Topic" placeholder="Name der Resolution">
-      <small id="inputNameHelp" class="form-text text-muted">
-        Dieser Name wird als Titel für die Resolution
-        verwendet. Bestätigung der Eingabe mit [ENTER].
-      </small>
-    </div>
-    <!-- Einbringer -->
-    <div class="form-group">
-      <label for="inputSubmitter">Einbringer</label>
-      <input class="form-control" id="inputSubmitter" #inputSubmitter placeholder="Delegationsname" [value]="resolution.SubmitterName"
-             [(ngModel)]="resolutionSubmitter" [ngModelOptions]="{standalone: true}"
-             (keyup.enter)="onEnterSubmitter(inputSubmitter.value)" aria-describedby="inputSubmitterHelp" [typeahead]="allDelegations" />
-      <small id="inputSubmitterHelp" class="form-text text-muted">
-        Der Name des Einbringers. Bestätigung der Eingabe mit [ENTER].
-      </small>
-    </div>
-    <!-- Beschlussfassendes Gremium -->
-    <div class="form-group">
-      <label for="resolultyCommittee">Beschlussfassendes Gremium</label>
-      <input class="form-control" id="resolutlyCommittee" #inputCommittee placeholder="Gremiumname" [value]="resolution.CommitteeName"
-             (keyup.enter)="onEnterCommittee(inputCommittee.value)" />
-    </div>
-    <!-- Online Tools-->
-    <div *ngIf="!documentInfo">
-      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      Online Informationen werden geladen
-    </div>
-    <div *ngIf="documentInfo" class="form-group form-check">
-      <input type="checkbox" [(ngModel)]="documentInfo.PublicRead" (change)="publicModeChanged($event);" [ngModelOptions]="{standalone: true}" class="form-check-input" id="display">
-      <label class="form-check-label" for="display">Online Ansicht erlauben</label>
-      <small *ngIf="documentInfo.PublicRead" id="emailHelp" class="form-text text-muted">
-        Die ID für die Ansicht lautet:
-        {{ documentInfo.OnlineCode }}
-      </small>
-      <small *ngIf="!documentInfo.PublicRead" id="emailHelp" class="form-text text-muted">
-        Diese Resolution ist nicht öffentlich einsehbar.
-      </small>
-    </div>
-    <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="allowAmendments">
-      <label class="form-check-label" for="allowAmendments">Online Einreichen von Änderungsanträgen erlauben</label>
-    </div>
-
-  </form>
-</app-munity-box>
+<form>
+  <div class="form-group">
+    <label for="inputName">Name</label>
+    <input type="text" class="form-control" #inputName id="inputName" aria-describedby="inputNameHelp"
+            (keyup.enter)="onEnterTitle(inputName.value)" [value]="resolution.Topic" placeholder="Name der Resolution">
+    <small id="inputNameHelp" class="form-text text-muted">
+      Dieser Name wird als Titel für die Resolution
+      verwendet. Bestätigung der Eingabe mit [ENTER].
+    </small>
+  </div>
+  <!-- Einbringer -->
+  <div class="form-group">
+    <label for="inputSubmitter">Einbringer</label>
+    <input class="form-control" id="inputSubmitter" #inputSubmitter placeholder="Delegationsname" [value]="resolution.SubmitterName"
+            [(ngModel)]="resolutionSubmitter" [ngModelOptions]="{standalone: true}"
+            (keyup.enter)="onEnterSubmitter(inputSubmitter.value)" aria-describedby="inputSubmitterHelp" [typeahead]="allDelegations" />
+    <small id="inputSubmitterHelp" class="form-text text-muted">
+      Der Name des Einbringers. Bestätigung der Eingabe mit [ENTER].
+    </small>
+  </div>
+  <!-- Beschlussfassendes Gremium -->
+  <div class="form-group">
+    <label for="resolultyCommittee">Beschlussfassendes Gremium</label>
+    <input class="form-control" id="resolutlyCommittee" #inputCommittee placeholder="Gremiumname" [value]="resolution.CommitteeName"
+            (keyup.enter)="onEnterCommittee(inputCommittee.value)" />
+  </div>
+  <!-- Online Tools-->
+  <div *ngIf="!documentInfo">
+    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    Online Informationen werden geladen
+  </div>
+  <div *ngIf="documentInfo" class="form-group form-check">
+    <input type="checkbox" [(ngModel)]="documentInfo.PublicRead" (change)="publicModeChanged($event);" [ngModelOptions]="{standalone: true}" class="form-check-input" id="display">
+    <label class="form-check-label" for="display">Online Ansicht erlauben</label>
+    <small *ngIf="documentInfo.PublicRead" id="emailHelp" class="form-text text-muted">
+      Die ID für die Ansicht lautet:
+      {{ documentInfo.OnlineCode }}
+    </small>
+    <small *ngIf="!documentInfo.PublicRead" id="emailHelp" class="form-text text-muted">
+      Diese Resolution ist nicht öffentlich einsehbar.
+    </small>
+  </div>
+  <div class="form-group form-check">
+    <input type="checkbox" class="form-check-input" id="allowAmendments">
+    <label class="form-check-label" for="allowAmendments">Online Einreichen von Änderungsanträgen erlauben</label>
+  </div>
+</form>

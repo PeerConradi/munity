@@ -66,6 +66,9 @@ import { AdminDashboardComponent } from './components/admin/admin-dashboard/admi
 import { MunityWindowComponent } from './components/components/munity-window/munity-window.component';
 import { NoticeComponent } from './components/components/notice/notice.component';
 
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
+import { TooltipModule } from 'ngx-bootstrap/tooltip'
 
 @NgModule({
   declarations: [
@@ -115,7 +118,8 @@ import { NoticeComponent } from './components/components/notice/notice.component
     ManageConferenceDelegationsComponent,
     AdminDashboardComponent,
     MunityWindowComponent,
-    NoticeComponent
+    NoticeComponent,
+    PrivacyTermsComponent
   ],
   imports: [
     RouterModule,
@@ -135,7 +139,10 @@ import { NoticeComponent } from './components/components/notice/notice.component
     MarkdownModule.forRoot(),
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    TabsModule.forRoot()
+    TabsModule.forRoot(),
+    NgxChartsModule,
+    TooltipModule.forRoot()
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

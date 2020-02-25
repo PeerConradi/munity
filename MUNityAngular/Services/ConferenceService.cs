@@ -605,6 +605,13 @@ namespace MUNityAngular.Services
             model.RoleId = role.Id.Value;
             model.UserId = user.Id;
             Tools.Connection(_connectionString).ConferenceTeam.Insert(model);
+            var auths = new ConferenceUserAuthModel();
+            auths.ConferenceId = conference.ID;
+            auths.UserId = user.Id;
+            auths.CanOpen = true;
+            auths.CanEdit = true;
+            auths.CanRemove = false;
+            Tools.Connection(_connectionString).ConferenceUserAuth.ReplaceInto(auths);
         }
 
         public List<UserModel> GetTeamUsers(ConferenceModel conference)

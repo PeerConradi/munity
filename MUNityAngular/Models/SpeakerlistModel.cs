@@ -87,7 +87,7 @@ namespace MUNityAngular.Models
             Speakers = new List<DelegationModel>();
             Questions = new List<DelegationModel>();
             Speakertime = new TimeSpan(0, 3, 0);
-            Questiontime = new TimeSpan(0, 1, 0);
+            Questiontime = new TimeSpan(0, 0, 30);
             LowTimeMark = new TimeSpan(0, 0, 10);
             RemainingSpeakerTime = new TimeSpan(0, 3, 0);
             RemainingQuestionTime = new TimeSpan(0, 1, 0);

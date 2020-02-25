@@ -133,6 +133,12 @@ export class OperativeParagraphComponent implements OnInit {
     this.service.changeOperativeParagraphNotice(this.paragraph, notice).subscribe();
   }
 
+  noticeUpdated(notice: Notice) {
+    console.log('Update notice');
+    console.log(notice);
+    this.service.changeOperativeParagraphNotice(this.paragraph, notice).subscribe();
+  }
+
   moveStopped(val: WindowPosition) {
     this.noticeWindowLeft = val.Left;
     this.noticeWindowTop = val.Top;

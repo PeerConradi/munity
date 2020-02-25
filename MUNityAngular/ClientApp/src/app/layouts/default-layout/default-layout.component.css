@@ -27,6 +27,43 @@
   right: 0px;
 } 
 
+.committee-panel {
+  position: fixed;
+  left: -175px;
+  top: 150px;
+  z-index: 1020;
+  background: #f2f2f2;
+  padding: 15px;
+  width: 230px;
+  -webkit-transition: left .2s linear;
+  -moz-transition: left .2s linear;
+  -ms-transition: left .2s linear;
+  -o-transition: left .2s linear;
+  transition: left .2s linear;
+  -webkit-border-radius: 4px 0 0 4px;
+  border-radius: 4px 0 0 4px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.committee-panel.committee-panel-lg {
+  top: 0px;
+  bottom: 0px;
+  width: 260px;
+  left: -260px;
+}
+
+.committee-panel.committee-panel-lg.active {
+  left: 0px;
+}
+
+.right-dock-button {
+  position: absolute;
+  right: -30px;
+  top: 10%;
+  width: 30px;
+  height: 120px;
+}
+
 
 .tool-button {
   position: absolute;
@@ -62,6 +99,12 @@
   position: absolute;
   top: 40%;
   left: -80%;
+}
+
+.inner-left {
+    position: absolute;
+    top: 40%;
+    left: -2%;
 }
 
 .rotated-text {

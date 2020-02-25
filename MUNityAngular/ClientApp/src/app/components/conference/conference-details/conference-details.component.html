@@ -20,20 +20,17 @@
       <h1>Gremien</h1>
     </div>
     <div *ngFor="let committee of conference.Committees" class="col-12">
+      <!-- Gremienbox -->
       <div class="card b-1 hover-shadow mb-20">
         <div class="media card-body">
-          <!--<div class="media-left pr-12">
-            <img class="avatar avatar-xl no-radius" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="...">
-          </div>-->
           <div class="media-body">
             <div class="mb-2">
-              <span class="fs-20 pr-16">{{ committee.Name }}</span>
+              <a class="fs-20 pr-16" [routerLink]="['/committee', committee.ID]">{{ committee.Name }}</a>
             </div>
             <small class="fs-16 fw-300 ls-1">Kein Status vorhanden</small>
           </div>
           <div class="media-right text-right d-none d-md-block">
             <p class="fs-14 text-fade mb-12"><i class="fa fa-map-marker pr-1"></i> {{ committee.Abbreviation }}</p>
-            <!--<span class="text-fade"><i class="fa fa-money pr-1"></i> $60 per hour</span>-->
           </div>
         </div>
         <footer class="card-footer flexbox align-items-center">
@@ -42,8 +39,9 @@
             <span>0/{{ committee.DelegationList.length }} (0%) - 01.01.2020</span>
           </div>
           <div class="card-hover-show">
-            <a class="btn btn-bold btn-primary" [routerLink]="['/p/check', committee.ID]">Anwesenheit feststellen</a>
-            <a class="btn btn-bold btn-warning" href="#">Resolutionen</a>
+            <button class="btn btn-primary" [routerLink]="['/p/check', committee.ID]">Anwesenheit feststellen</button>
+            <button class="btn btn-warning">Resolutionen</button>
+            <button class="btn btn-info" (click)="conferenceService.committeeContext = committee">Als Kontext setzen</button>
           </div>
         </footer>
       </div>

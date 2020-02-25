@@ -315,19 +315,28 @@ namespace MUNityAngular.Services
 
         public bool CanEditResolution(string userid, ResolutionModel resolution)
         {
-            //If the resolution is public edit return true
-            if (GetResolutionPublicState(resolution).writeable)
-                return true;
-            
-            //Check if the user is owner
-            if (GetOwnerId(resolution) == userid)
-                return true;
+            try
+            {
+                //If the resolution is public edit return true
+                if (GetResolutionPublicState(resolution).writeable)
+                    return true;
 
-            //Check if the user has the right to edit this document
-            //This is not the best way to do it, let me think of something better
-            var count = Tools.Connection(_connectionString).ResolutionAuth.CountWhere("resolutionid='" + resolution.ID + "' AND userid='" + userid + "'");
-            if (count >= 1)
-                return true;
+                //Check if the user is owner
+                if (GetOwnerId(resolution) == userid)
+                    return true;
+
+                //Check if the user has the right to edit this document
+                //This is not the best way to do it, let me think of something better
+                var count = Tools.Connection(_connectionString).ResolutionAuth.CountWhere("resolutionid='" + resolution.ID + "' AND userid='" + userid + "'");
+                if (count >= 1)
+                    return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
 
             return false;
         }
@@ -354,8 +363,17 @@ namespace MUNityAngular.Services
                 {
                     while (reader.Read())
                     {
-                        read = reader.GetBoolean(0);
-                        write = reader.GetBoolean(1);
+                        try
+                        {
+                            read = reader.GetBoolean(0);
+                            write = reader.GetBoolean(1);
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                        
                     }
                 }
             }

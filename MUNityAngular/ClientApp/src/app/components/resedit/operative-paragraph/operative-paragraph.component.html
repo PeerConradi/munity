@@ -7,7 +7,9 @@
                    [leftVal]="noticeWindowLeft" [topVal]="noticeWindowTop">
     <div style="max-height: 400Px; overflow-y: scroll; overflow-x: hidden">
       <div *ngIf="paragraph.Notices != null && paragraph.Notices.length > 0">
-        <app-notice *ngFor="let notice of paragraph.Notices" [notice]="notice" (onDelete)="deleteNotice(notice);" (onRead)="noticeRead(notice)"></app-notice>
+        <app-notice *ngFor="let notice of paragraph.Notices" [notice]="notice"
+                    (onDelete)="deleteNotice(notice);" (onRead)="noticeRead(notice)"
+                    (onUpdate)="noticeUpdated(notice);"></app-notice>
       </div>
       <p *ngIf="paragraph.Notices == null || paragraph.Notices.length == 0">Keine Kommentare vorhanden</p> 
     </div>
@@ -33,19 +35,29 @@
                 [class.bg-danger]="tag.Type == 'danger'"
                 (dblclick)="removeTag(tag);">{{ tag.Text }}</span>
         </div>
-        <div class="form-inline align-items-center">
-          <div class="col-4">
-            <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" [(ngModel)]="newTag.Type">
-              <option class="bg-primary text-white" value="primary">Blau</option>
-              <option class="bg-secondary text-white" value="secondary">Grau</option>
-              <option class="bg-success text-white" value="success">Grün</option>
-              <option class="bg-danger text-white" value="danger">Rot</option>
-            </select>
-          </div>
-          <div class="col-8">
-            <input class="form-control" [(ngModel)]="newTag.Text" (keyup.enter)="addTag();" type="text" />
+        <div class="col-12">
+          <h6>Tags hinzufügen: </h6>
+        </div>
+        <div class="col-12">
+          <div class="row ">
+            <!--form-inline align-items-center -->
+            <div class="col-4">
+              <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" [(ngModel)]="newTag.Type">
+                <option class="bg-primary text-white" value="primary">Blau</option>
+                <option class="bg-secondary text-white" value="secondary">Grau</option>
+                <option class="bg-success text-white" value="success">Grün</option>
+                <option class="bg-danger text-white" value="danger">Rot</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <input class="form-control" [(ngModel)]="newTag.Text" (keyup.enter)="addTag();" type="text" />
+            </div>
+            <div class="col-2">
+              <button class="btn btn-outline-primary" (click)="addTag();">+</button>
+            </div>
           </div>
         </div>
+        
         <button class="btn btn-block btn-primary" (click)="addNotice()">Hinzufügen</button>
       </div>
       
