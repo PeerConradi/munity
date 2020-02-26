@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
+using System.Threading;
 
 namespace MUNityAngular.Services
 {
@@ -41,7 +41,7 @@ namespace MUNityAngular.Services
             Speakerlists.Clear();
         }
 
-        private void CountDownTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void CountDownTimer_Elapsed(object sender)
         {
             TimeSpan oneSec = new TimeSpan(0, 0, 1);
             foreach (var speakerlist in this.Speakerlists)
@@ -60,9 +60,7 @@ namespace MUNityAngular.Services
         public SpeakerlistService()
         {
             Speakerlists = new List<Models.SpeakerlistModel>();
-            this.countDownTimer = new Timer(1000);
-            this.countDownTimer.Elapsed += CountDownTimer_Elapsed;
-            this.countDownTimer.Start();
+            this.countDownTimer = new Timer(CountDownTimer_Elapsed, new AutoResetEvent(false), 0, 1000);
             Console.WriteLine("Speakerlist Service Started!");
         }
     }
