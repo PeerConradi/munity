@@ -13,7 +13,7 @@ namespace MUNityTest.ServiceTests
     {
         private ConnectionInfo _env;
 
-        [SetUp]
+        //[SetUp]
         public void Setup()
         {
             //Testinformationen laden
@@ -57,7 +57,7 @@ namespace MUNityTest.ServiceTests
             client.GetDatabase(_env.MunityMongoDatabaseSettings.DatabaseName);
         }
 
-        [Test]
+        //[Test]
         public void CreateResolutionTest()
         {
             Console.WriteLine("This test is calling a method that is using Task.Run. This may causes it to fail!");
@@ -75,7 +75,7 @@ namespace MUNityTest.ServiceTests
             Assert.AreEqual(user.Id, info.UserId);
         }
 
-        [Test]
+        //[Test]
         public void SetResolutionToPublicReadTest()
         {
             Console.WriteLine("This test is calling a method that is using Task.Run. This may causes it to fail!");
@@ -93,7 +93,7 @@ namespace MUNityTest.ServiceTests
             Assert.IsFalse(string.IsNullOrEmpty(info.OnlineCode));
         }
 
-        [Test]
+        //[Test]
         public void GiveUserEditRightsTest()
         {
             var service = new ResolutionService(_env.ConnectionString, _env.MunityMongoDatabaseSettings.ConnectionString, _env.MunityMongoDatabaseSettings.DatabaseName);
