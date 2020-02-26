@@ -496,12 +496,7 @@ namespace MUNityAngular.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-
-            if (speakerlist.Status == Models.SpeakerlistModel.EStatus.SPEAKING)
-                speakerlist.Status = Models.SpeakerlistModel.EStatus.STOPPED;
-
             speakerlist.CurrentSpeaker = null;
-            speakerlist.RemainingSpeakerTime = speakerlist.Speakertime;
 
             this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             return StatusCode(StatusCodes.Status200OK);
@@ -525,11 +520,8 @@ namespace MUNityAngular.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            if (speakerlist.Status == Models.SpeakerlistModel.EStatus.QUESTION)
-                speakerlist.Status = Models.SpeakerlistModel.EStatus.STOPPED;
 
             speakerlist.CurrentQuestion = null;
-            speakerlist.RemainingQuestionTime = speakerlist.Speakertime;
 
             this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             return StatusCode(StatusCodes.Status200OK);

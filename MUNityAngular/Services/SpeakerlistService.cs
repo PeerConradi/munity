@@ -11,8 +11,6 @@ namespace MUNityAngular.Services
         Random _rnd = new Random();
         private List<Models.SpeakerlistModel> Speakerlists;
 
-        private Timer countDownTimer;
-
         public Models.SpeakerlistModel CreateSpeakerlist()
         {
             int id = _rnd.Next(100000, 999999);
@@ -41,26 +39,10 @@ namespace MUNityAngular.Services
             Speakerlists.Clear();
         }
 
-        private void CountDownTimer_Elapsed(object sender)
-        {
-            TimeSpan oneSec = new TimeSpan(0, 0, 1);
-            foreach (var speakerlist in this.Speakerlists)
-            {
-                if (speakerlist.IsSpeaking)
-                {
-                    speakerlist.RemainingSpeakerTime = speakerlist.RemainingSpeakerTime - oneSec;
-                }
-                if (speakerlist.IsQuestioning)
-                {
-                    speakerlist.RemainingQuestionTime = speakerlist.RemainingQuestionTime - oneSec;
-                }
-            }
-        }
 
         public SpeakerlistService()
         {
             Speakerlists = new List<Models.SpeakerlistModel>();
-            this.countDownTimer = new Timer(CountDownTimer_Elapsed, new AutoResetEvent(false), 0, 1000);
             Console.WriteLine("Speakerlist Service Started!");
         }
     }

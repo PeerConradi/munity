@@ -32,17 +32,79 @@ namespace MUNityAngular.Models
 
         public TimeSpan Questiontime { get; set; }
 
-        public TimeSpan RemainingSpeakerTime { get; set; }
 
-        public TimeSpan RemainingQuestionTime { get; set; }
+        private TimeSpan _remainingSpeakerTime;
+        public TimeSpan RemainingSpeakerTime
+        {
+            get
+            {
+                return _remainingSpeakerTime - new TimeSpan(0,0, (int)(DateTime.Now - StartSpeakerTime).TotalSeconds);
+            }
+            set
+            {
+                _remainingSpeakerTime = value;
+            }
+        }
+
+        private TimeSpan _remainingQuestionTime;
+        public TimeSpan RemainingQuestionTime { get
+            {
+                return _remainingQuestionTime - new TimeSpan(0,0,(int)(DateTime.Now - StartQuestionTime).TotalSeconds);
+            }
+            set
+            {
+                _remainingQuestionTime = value;
+            }
+        }
 
         public List<DelegationModel> Speakers { get; set; }
 
         public List<DelegationModel> Questions { get; set; }
 
-        public DelegationModel CurrentSpeaker { get; set; }
 
-        public DelegationModel CurrentQuestion { get; set; }
+        private DelegationModel _currentSpeaker;
+        public DelegationModel CurrentSpeaker { get => _currentSpeaker; 
+            set
+            {
+                _currentSpeaker = value;
+                if (value == null)
+                {
+                    if (Status != EStatus.QUESTION)
+                    {
+                        StartQuestionTime = DateTime.Now;
+                    }
+
+                    if (Status == EStatus.SPEAKING || Status == EStatus.QUESTION)
+                    {
+                        Status = EStatus.STOPPED;
+                    }
+                    StartSpeakerTime = DateTime.Now;
+                    RemainingSpeakerTime = Speakertime;
+                }
+            }
+        }
+
+        private DelegationModel _currenQuestion;
+        public DelegationModel CurrentQuestion { get => _currenQuestion; 
+            set
+            {
+                _currenQuestion = value;
+                if (value == null)
+                {
+                    if (Status != EStatus.SPEAKING && Status != EStatus.QUESTION)
+                    {
+                        StartSpeakerTime = DateTime.Now;
+                    }
+
+                    if (Status == EStatus.QUESTION)
+                    {
+                        Status = EStatus.STOPPED;
+                    }
+                    StartQuestionTime = DateTime.Now;
+                    RemainingQuestionTime = Questiontime;
+                }
+            }
+        }
 
         public EStatus Status { get; set; }
 
@@ -68,15 +130,35 @@ namespace MUNityAngular.Models
 
         public string CommitteeId { get; set; }
 
+        public DateTime StartSpeakerTime { get; set; }
+
+        public DateTime StartQuestionTime { get; set; }
+
 
         public void AddSpeaker(DelegationModel speaker)
         {
             Speakers.Add(speaker);
+            if (Status != EStatus.SPEAKING && Status != EStatus.ANSWER)
+            {
+                this.StartSpeakerTime = DateTime.Now;
+            }
+            if (Status != EStatus.QUESTION)
+            {
+                this.StartQuestionTime = DateTime.Now;
+            }
         }
 
         public void AddQuestion(DelegationModel question)
         {
             Questions.Add(question);
+            if (Status != EStatus.SPEAKING && Status != EStatus.ANSWER)
+            {
+                this.StartSpeakerTime = DateTime.Now;
+            }
+            if (Status != EStatus.QUESTION)
+            {
+                this.StartQuestionTime = DateTime.Now;
+            }
         }
 
         public SpeakerlistModel(string id = null, string name = newListName)
@@ -89,8 +171,12 @@ namespace MUNityAngular.Models
             Speakertime = new TimeSpan(0, 3, 0);
             Questiontime = new TimeSpan(0, 0, 30);
             LowTimeMark = new TimeSpan(0, 0, 10);
-            RemainingSpeakerTime = new TimeSpan(0, 3, 0);
-            RemainingQuestionTime = new TimeSpan(0, 1, 0);
+            _remainingSpeakerTime = new TimeSpan(Speakertime.Ticks);
+            _remainingQuestionTime = new TimeSpan(Questiontime.Ticks);
+            StartSpeakerTime = DateTime.Now;
+            StartQuestionTime = DateTime.Now;
+            //RemainingSpeakerTime = new TimeSpan(0, 3, 0);
+            //RemainingQuestionTime = new TimeSpan(0, 1, 0);
         }
 
         public SpeakerlistModel(TimeSpan n_speakertime, TimeSpan n_questiontime)
@@ -104,17 +190,21 @@ namespace MUNityAngular.Models
         public void StartSpeaker()
         {
             //TODO: Calculate finished time
+            this.StartSpeakerTime = DateTime.Now;
             Status = EStatus.SPEAKING;
         }
 
         public void PauseSpeaker()
         {
             Status = EStatus.STOPPED;
+            _remainingSpeakerTime = RemainingSpeakerTime;
+            _remainingQuestionTime = RemainingQuestionTime;
         }
 
         public void StartQuestion()
         {
             Status = EStatus.QUESTION;
+            this.StartQuestionTime = DateTime.Now;
         }
 
 
@@ -130,6 +220,7 @@ namespace MUNityAngular.Models
         public void StartAnswer()
         {
             RemainingSpeakerTime = Questiontime;
+            StartSpeakerTime = DateTime.Now;
             Status = EStatus.ANSWER;
         }
 
@@ -158,6 +249,7 @@ namespace MUNityAngular.Models
             }
             Status = EStatus.STOPPED;
             RemainingSpeakerTime = Speakertime;
+            StartSpeakerTime = DateTime.Now;
             Questions.Clear();
         }
 
@@ -175,6 +267,7 @@ namespace MUNityAngular.Models
 
             Status = EStatus.STOPPED;
             RemainingQuestionTime = Questiontime;
+            StartQuestionTime = DateTime.Now;
         }
 
         public void RemoveSpeaker(DelegationModel delegation)

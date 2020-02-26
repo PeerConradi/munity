@@ -68,15 +68,28 @@ namespace MUNityAngular.Services
         public ResolutionModel GetResolution(string id)
         {
             var resolution = this._resolutions.Find(n => n.ID == id).FirstOrDefault();
-            //Fix bugs etc.
-            foreach(var oa in resolution.OperativeSections)
+
+            //Fix. some loading bugs but maybe it doesnt...
+            if (resolution != null)
             {
-                oa.Resolution = resolution;
+                if (resolution.OperativeSections != null)
+                {
+                    foreach (var oa in resolution.OperativeSections)
+                    {
+                        oa.Resolution = resolution;
+                    }
+                }
+                
+                if (resolution.Preamble != null && resolution.Preamble.Paragraphs != null)
+                {
+                    foreach (var ps in resolution.Preamble.Paragraphs)
+                    {
+                        ps.Preamble = resolution.Preamble;
+                    }
+                }
             }
-            foreach(var ps in resolution.Preamble.Paragraphs)
-            {
-                ps.Preamble = resolution.Preamble;
-            }
+            
+            
             return resolution;
         }
 

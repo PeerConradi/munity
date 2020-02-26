@@ -26,7 +26,7 @@
         <div class="card-header">
           <h3 class="card-title">Warteliste</h3>
         </div>
-        <div class="card-body" style="max-height: 300Px; overflow-y: auto;overflow-x: visible;">
+        <div class="card-body" [class.list-closed]="ListClosed" style="max-height: 300Px; overflow-y: auto;overflow-x: visible;">
           
           <h4 *ngFor="let delegation of speakerlist.Speakers"><img [src]="getDelegationImagePath(delegation)" /> {{ delegation.Name }}</h4>
         </div>
@@ -56,7 +56,7 @@
         <div class="card-header">
           <h3 class="card-title">Warteliste</h3>
         </div>
-        <div class="card-body" style="max-height: 300Px; overflow-y: auto;overflow-x: visible;">
+        <div class="card-body" [class.list-closed]="QuestionsClosed" style="max-height: 300Px; overflow-y: auto;overflow-x: visible;">
           <h4 *ngFor="let delegation of speakerlist.Questions"><img [src]="getDelegationImagePath(delegation)" /> {{ delegation.Name }}</h4>
         </div>
       </div>

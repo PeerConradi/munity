@@ -2,3 +2,7 @@
     padding: 10Px;
     margin-top: -30Px;
 }
+
+.list-closed {
+  background-color: #e16d6d;
+}
