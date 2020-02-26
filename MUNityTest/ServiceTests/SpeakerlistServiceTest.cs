@@ -10,7 +10,7 @@ namespace MUNityTest.ServiceTests
     class SpeakerlistServiceTest
     {
         [Test]
-        public void TimerIsMinimizingTimeTest()
+        public void TimerIsDecrisingSpeakerTimeTest()
         {
             var service = new SpeakerlistService();
             var speakerlist = service.CreateSpeakerlist();
@@ -22,6 +22,7 @@ namespace MUNityTest.ServiceTests
             speakerlist.StartSpeaker();
             System.Threading.Thread.Sleep(5000);
             Assert.IsTrue(speakerlist.RemainingSpeakerTime < new TimeSpan(0, 1, 0));
+            Assert.IsTrue(speakerlist.RemainingSpeakerTime > new TimeSpan(0, 0, 50));
         }
     }
 }

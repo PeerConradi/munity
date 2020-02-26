@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost mariadb
+Source Server         : LocalHost-NoPW
 Source Server Version : 50505
 Source Host           : localhost:3306
-Source Database       : munity-test
+Source Database       : munity
 
 Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2020-02-19 13:56:33
+Date: 2020-02-25 23:28:55
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -29,6 +29,7 @@ CREATE TABLE `admin` (
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
+INSERT INTO `admin` VALUES ('peerconradi', '5');
 
 -- ----------------------------
 -- Table structure for auth
@@ -69,10 +70,6 @@ CREATE TABLE `committee` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
--- Records of committee
--- ----------------------------
-
--- ----------------------------
 -- Table structure for committee_lead
 -- ----------------------------
 DROP TABLE IF EXISTS `committee_lead`;
@@ -107,6 +104,7 @@ CREATE TABLE `conference` (
   `creationuser` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 -- ----------------------------
 -- Table structure for conference_delegation
 -- ----------------------------
@@ -115,18 +113,14 @@ CREATE TABLE `conference_delegation` (
   `linkid` int(11) NOT NULL AUTO_INCREMENT,
   `conference_id` varchar(255) DEFAULT NULL,
   `delegation_id` varchar(255) DEFAULT NULL,
-  `mincount` int(11) DEFAULT 1,
-  `maxcount` int(11) DEFAULT 1,
+  `mincount` int(11) DEFAULT '1',
+  `maxcount` int(11) DEFAULT '1',
   PRIMARY KEY (`linkid`),
   KEY `conference` (`conference_id`),
   KEY `delegation` (`delegation_id`),
   CONSTRAINT `conference` FOREIGN KEY (`conference_id`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `delegation` FOREIGN KEY (`delegation_id`) REFERENCES `delegation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of conference_delegation
--- ----------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Table structure for conference_team
@@ -144,8 +138,7 @@ CREATE TABLE `conference_team` (
   CONSTRAINT `conferenceteamconnection` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `roleLink` FOREIGN KEY (`role`) REFERENCES `conference_team_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `userteamconnection` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
-
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Table structure for conference_team_roles
@@ -183,9 +176,6 @@ CREATE TABLE `conference_user_auth` (
   CONSTRAINT `conferenceAuthUser` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Records of conference_user_auth
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for countries_de
@@ -224,9 +214,9 @@ CREATE TABLE `delegation` (
 -- ----------------------------
 -- Records of delegation
 -- ----------------------------
-INSERT INTO `delegation` VALUES ('default_afghanistan', 'Afghanistan', '	Islamische Republik Afghanistan', 'Afghanistan', 'COUNTRY', '4');
-INSERT INTO `delegation` VALUES ('default_albanien', 'Albanien', 'Albanien', 'Albanien', 'COUNTRY', '8');
-INSERT INTO `delegation` VALUES ('default_algerien', 'Andorra', 'Andorra', 'Andorra', 'COUNTRY', '20');
+INSERT INTO `delegation` VALUES ('default_afghanistan', 'Afghanistan', '	Islamische Republik Afghanistan', 'Afghanistan', 'COUNTRY', '4', 'af');
+INSERT INTO `delegation` VALUES ('default_albanien', 'Albanien', 'Albanien', 'Albanien', 'COUNTRY', '8', 'al');
+INSERT INTO `delegation` VALUES ('default_algerien', 'Algerien', 'Algerien', 'Algerien', 'COUNTRY', '12', 'dz');
 
 -- ----------------------------
 -- Table structure for delegation_in_committee
@@ -243,11 +233,7 @@ CREATE TABLE `delegation_in_committee` (
   KEY `committeelink` (`committeeid`),
   CONSTRAINT `committeelink` FOREIGN KEY (`committeeid`) REFERENCES `committee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `linker` FOREIGN KEY (`linkid`) REFERENCES `conference_delegation` (`linkid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of delegation_in_committee
--- ----------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Table structure for ngo
@@ -284,7 +270,7 @@ CREATE TABLE `participation_delegation` (
   CONSTRAINT `committee_link` FOREIGN KEY (`incommitteeid`) REFERENCES `delegation_in_committee` (`delincommitteeid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `link_del` FOREIGN KEY (`linkid`) REFERENCES `conference_delegation` (`linkid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `user_link` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of participation_delegation
@@ -310,9 +296,6 @@ CREATE TABLE `resolution` (
   CONSTRAINT `resolutionuser` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Records of resolution
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for resolution_auth
