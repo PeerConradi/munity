@@ -29,7 +29,6 @@ CREATE TABLE `admin` (
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES ('peerconradi', '5');
 
 -- ----------------------------
 -- Table structure for auth
