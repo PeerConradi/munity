@@ -17,6 +17,8 @@ namespace MUNityAngular.Models.Resolution
 
         public string ResolutionID { get; set; }
 
+        public List<NoticeModel> Notices { get; set; }
+
         [JsonIgnore]
         [BsonIgnore]
         public PreambleModel Preamble { get; set; }
@@ -56,7 +58,14 @@ namespace MUNityAngular.Models.Resolution
                 Preamble = preamble;
                 this.ResolutionID = preamble.ResolutionID;
             }
-           
+
+            Notices = new List<NoticeModel>();
+        }
+
+        public PreambleParagraphModel()
+        {
+            ID = Guid.NewGuid().ToString();
+            this.Notices = new List<NoticeModel>();
         }
 
         public override string ToString()

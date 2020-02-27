@@ -227,6 +227,38 @@ namespace MUNityAngular.Controllers
         }
 
         [Route("[action]")]
+        [HttpPatch]
+        public ActionResult<HUBOperativeParagraph> UpdatePreambleParagraphNotices([FromHeader]string auth, [FromBody]HUBPreambleParagraph paragraph,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault((Func<PreambleParagraphModel, bool>)(n => n.ID == paragraph.ID));
+            if (paragraph == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found!");
+
+            paragraph.Notices.ForEach(n =>
+            {
+                if (string.IsNullOrWhiteSpace(n.Id))
+                {
+                    n.Id = Guid.NewGuid().ToString();
+                }
+            });
+
+            paragraph.Notices = paragraph.Notices;
+            var hubModel = new HUBPreambleParagraph(paragraph);
+            _hubContext.Clients.Group(resolution.ID).PreambleParagraphChanged(hubModel);
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, hubModel);
+        }
+
+        [Route("[action]")]
         [HttpPut]
         public ActionResult<NoticeModel> UpdateOperativeSectionNotice([FromHeader]string auth,
             [FromHeader]string resolutionid,
@@ -270,6 +302,54 @@ namespace MUNityAngular.Controllers
 
             var hubModel = new HUBOperativeParagraph(section);
             _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, notice);
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public ActionResult<NoticeModel> UpdatePreambleParagraphNotice([FromHeader]string auth,
+            [FromHeader]string resolutionid,
+            [FromHeader]string paragraphid,
+            [FromBody]NoticeModel notice,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
+            if (paragraph == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found!");
+
+            var foundNotice = paragraph.Notices.FirstOrDefault(n => n.Id == notice.Id);
+            //Update
+            if (foundNotice != null)
+            {
+                foundNotice.Text = notice.Text;
+                foundNotice.Tags = notice.Tags;
+                foundNotice.ReadBy = notice.ReadBy;
+            }
+            else
+            {
+                //Add
+                notice.Id = Guid.NewGuid().ToString();
+                notice.CreationDate = DateTime.Now;
+                var user = authService.GetUserByAuth(auth);
+                if (user != null)
+                {
+                    notice.AuthorName = user.Forename + " " + user.Lastname;
+                    notice.AuthorId = user.Id;
+                }
+                paragraph.Notices.Add(notice);
+            }
+
+            var hubModel = new HUBPreambleParagraph(paragraph);
+            _hubContext.Clients.Group(resolution.ID).PreambleParagraphChanged(hubModel);
             resolutionService.RequestSave(resolution);
             return StatusCode(StatusCodes.Status200OK, notice);
         }

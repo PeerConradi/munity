@@ -20,16 +20,19 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public string ResolutionID { get; set; }
 
+        public List<NoticeModel> Notices { get; set; }
+
         public HUBPreambleParagraph(PreambleParagraphModel p)
         {
             this.ID = p.ID;
             this.Text = p.Text;
             this.ResolutionID = p.ResolutionID;
+            this.Notices = p.Notices;
         }
 
         public HUBPreambleParagraph()
         {
-
+            this.Notices = new List<NoticeModel>();
         }
     }
 }
