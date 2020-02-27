@@ -46,7 +46,6 @@ export class AllComponentsComponent implements OnInit {
     res.OperativeSections.push(oaTwo);
 
     this.reso = res;
-    console.log(this.reso);
   }
 
   ngOnInit() {

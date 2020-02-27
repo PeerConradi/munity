@@ -32,6 +32,12 @@ export class AmendmentControllerComponent implements OnInit {
     }
   }
 
+  denyAmendment() {
+    if (this.amendment != null && this.resolution != null) {
+      this.resolutionService.denyAmendment(this.resolution.ID, this.amendment.ID).subscribe();
+    }
+  }
+
   get paragraph(): OperativeSection {
     return AmendmentInspector.getSectionForAmendment(this.resolution, this.amendment);
   }

@@ -38,15 +38,12 @@ export class CreateConferenceComponent implements OnInit {
 
   ngOnInit() {
     this.userService.getUserAuths().subscribe(n => {
-      console.log(n);
       this.forbidden = !n.CreateConference;
     })
   }
 
   onSubmit(data) {
     //TODO: validate Timespan
-
-    console.log(data);
     let conference: Conference = new Conference();
     conference.Name = data.name;
     conference.FullName = data.fullname;
@@ -62,7 +59,6 @@ export class CreateConferenceComponent implements OnInit {
       //this.conferenceCreated = true;
       this.createdConference = n;
       this.router.navigateByUrl('/mc/overview/' + n.ID);
-      console.log(n);
     },
       err => {
         this.error = true;

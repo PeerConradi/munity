@@ -337,5 +337,24 @@ namespace MUNityAngular.Models.Resolution
         }
 
         public string SubmitterName { get; set; }
+
+        public void HotFix()
+        {
+            if (OperativeSections != null)
+            {
+                foreach (var oa in OperativeSections)
+                {
+                    oa.Resolution = this;
+                }
+            }
+
+            if (Preamble != null && Preamble.Paragraphs != null)
+            {
+                foreach (var ps in Preamble.Paragraphs)
+                {
+                    ps.Preamble = Preamble;
+                }
+            }
+        }
     }
 }

@@ -37,14 +37,12 @@ export class AccountSettingsComponent implements OnInit {
     } else {
       this.passdontmatch = false;
       this.userService.changePassword(data.oldpassword, data.newpassword).subscribe(n => {
-        console.log(n);
         this.userService.setSessionkey(n);
         this.notifier.notify('success', 'Passwort wurde geändert.')
       }, err => {
           this.notifier.notify('error', 'Passwort konnte nicht geändert werden.')
       });
     }
-    console.log(data);
   }
 
   

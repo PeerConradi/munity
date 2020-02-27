@@ -421,6 +421,14 @@ export class ResolutionService {
       options);
   }
 
+  public denyAmendment(resolutionid: string, amendmentid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('amendmentid', amendmentid);
+    return this.httpClient.patch(this.baseUrl + 'api/Resolution/DenyAmendment', null, { headers: headers });
+  }
+
   public changePublicReadMode(resolutionid: string, mode: boolean) {
     if (this.userService.isLoggedIn) {
       //Soll zunächst nur möglich sein wenn man auch eingeloggt ist.
@@ -558,6 +566,36 @@ export class ResolutionService {
     let options = { headers: headers };
     this.httpClient.patch(this.baseUrl + 'api/Resolution/SubmitAmendment', null,
       options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+  }
+
+  public getResolutionsOfConference(conferenceid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('conferenceid', conferenceid);
+    return this.httpClient.get<ResolutionAdvancedInfo[]>(this.baseUrl + 'api/Resolution/GetResolutionsOfConference',
+      { headers: headers });
+  }
+
+  public getResolutionsOfCommittee(committeeid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('committeeid', committeeid);
+    return this.httpClient.get<ResolutionAdvancedInfo[]>(this.baseUrl + 'api/Resolution/GetResolutionsOfCommittee',
+      { headers: headers });
+  }
+
+  public linkResolutionToConference(resolutionid: string, conferenceid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('conferenceid', conferenceid);
+    return this.httpClient.patch(this.baseUrl + 'api/Resolution/LinkResolutionToConference', null, { headers: headers });
+  }
+
+  public linkResolutionToCommittee(resolutionid: string, committeeid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('resolutionid', resolutionid);
+    headers = headers.set('committeeid', committeeid);
+    return this.httpClient.patch(this.baseUrl + 'api/Resolution/LinkResolutionToCommittee', null, { headers: headers });
   }
 
   public OnDeleteAmendmentAdded(resolution: Resolution, amendment: DeleteAmendment): AbstractAmendment[] {

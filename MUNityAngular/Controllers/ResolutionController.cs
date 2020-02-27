@@ -191,7 +191,7 @@ namespace MUNityAngular.Controllers
 
                 throw;
             }
-            
+
         }
 
         [Route("[action]")]
@@ -228,7 +228,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpPut]
-        public ActionResult<NoticeModel> UpdateOperativeSectionNotice([FromHeader]string auth, 
+        public ActionResult<NoticeModel> UpdateOperativeSectionNotice([FromHeader]string auth,
             [FromHeader]string resolutionid,
             [FromHeader]string paragraphid,
             [FromBody]NoticeModel notice,
@@ -764,7 +764,7 @@ namespace MUNityAngular.Controllers
             //The amendment gets its ID From the Controller thats why we create a new model.
             _hubContext.Clients.Group(resolution.ID).AddAmendmentAdded(new Hubs.HubObjects.HUBResolution(resolution), new Hubs.HubObjects.HUBAddAmendment(model));
             return StatusCode(StatusCodes.Status200OK);
-            
+
         }
 
         /// <summary>
@@ -944,7 +944,7 @@ namespace MUNityAngular.Controllers
             amendment.Deny();
             resolutionService.RequestSave(resolution);
 
-            _hubContext.Clients.Group(resolutionid).AmendmentDenied(new Hubs.HubObjects.HUBResolution(resolution), new Hubs.HubObjects.HUBAbstractAmendment(amendment));
+            _hubContext.Clients.Group(resolutionid).AmendmentDenied(new HUBResolution(resolution), new HUBAbstractAmendment(amendment));
             return StatusCode(StatusCodes.Status200OK);
         }
 
@@ -970,7 +970,7 @@ namespace MUNityAngular.Controllers
             var resolutions = resolutionService.GetResolutionsOfUser(authresult.userid);
             return StatusCode(StatusCodes.Status200OK, resolutions);
         }
-        
+
         /// <summary>
         /// Gets a specific resolution with all of its content.
         /// </summary>
@@ -1029,8 +1029,6 @@ namespace MUNityAngular.Controllers
             var resolution = resolutionService.GetResolution(id);
             if (resolution != null)
             {
-                
-
                 var isPublic = resolutionService.GetResolutionInfoForId(id);
                 if (isPublic.PublicRead)
                 {
@@ -1059,7 +1057,7 @@ namespace MUNityAngular.Controllers
 
             _hubContext.Groups.AddToGroupAsync(connectionid, id);
 
-            
+
 
             return StatusCode(StatusCodes.Status200OK);
         }
@@ -1118,6 +1116,90 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Resolution was not found");
             }
             return StatusCode(StatusCodes.Status200OK, infos);
+        }
+
+        [Route("[action]")]
+        [HttpPatch]
+        public ActionResult GrandUserRights([FromHeader]string auth,
+            [FromBody]GrandUserResolutionRights request,
+            [FromServices]ResolutionService resolutionService,
+            [FromServices]AuthService authService)
+        {
+            var resolution = resolutionService.GetResolution(request.ResolutionId);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var user = authService.GetUserByUsername(request.Username);
+            if (user == null)
+                return StatusCode(StatusCodes.Status404NotFound, "User not found");
+
+            resolutionService.GrandUserRights(request.ResolutionId, user.Id, request.CanRead, request.CanEdit);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpPatch]
+        public ActionResult LinkResolutionToConference([FromHeader]string auth,
+            [FromHeader]string resolutionid, [FromHeader]string conferenceid,
+            [FromServices]ResolutionService resolutionService, [FromServices]AuthService authService,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var conference = conferenceService.GetConference(conferenceid);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
+
+            resolutionService.LinkResolutionToConference(resolution, conference);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpPatch]
+        public ActionResult LinkResolutionToCommittee([FromHeader]string auth,
+            [FromHeader]string resolutionid, [FromHeader]string committeeid,
+            [FromServices]ResolutionService resolutionService, [FromServices]AuthService authService,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var resolution = resolutionService.GetResolution(resolutionid);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+
+            var committee = conferenceService.GetCommittee(committeeid);
+            if (committee == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
+
+            resolutionService.LinkResolutionToCommittee(resolution, committee);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public ActionResult<List<ResolutionAdvancedInfoModel>> GetResolutionsOfConference([FromHeader]string conferenceid,
+            [FromServices]ResolutionService resolutionService)
+        {
+            // An dieser Stelle wird auf eine Authentifizierung verzichtet, Resolutionen der Konferenz sind für alle
+            // Sichtbar!
+            return resolutionService.GetResolutionsOfConference(conferenceid);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public ActionResult<List<ResolutionAdvancedInfoModel>> GetResolutionsOfCommittee(
+            [FromHeader]string committeeid, [FromServices]ResolutionService resolutionService)
+        {
+            return resolutionService.GetResolutionsOfCommittee(committeeid);
         }
     }
 }

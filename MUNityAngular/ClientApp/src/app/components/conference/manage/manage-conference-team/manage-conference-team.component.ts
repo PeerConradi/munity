@@ -47,12 +47,9 @@ export class ManageConferenceTeamComponent implements OnInit {
         this.conference = n;
       });
       this.conferenceService.getTeamRoles(params.id).subscribe(n => {
-        console.log(n);
         this.roles = n;
       })
       this.conferenceService.getTeam(params.id).subscribe(n => {
-        console.log('Team');
-        console.log(n);
         this.team = n;
       });
     });
@@ -64,7 +61,6 @@ export class ManageConferenceTeamComponent implements OnInit {
   }
 
   addMember() {
-    console.log(this.addMemberForm.value);
     this.conferenceService.addTeamMember(this.addMemberForm.value.username, this.addMemberForm.value.role).subscribe(n => {
       this.addMemberForm.reset();
     })

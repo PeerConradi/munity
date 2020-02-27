@@ -23,7 +23,6 @@ export class ConferenceDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      console.log(params.id);
       this.conferenceService.getConference(params.id).subscribe(n => {
         this.conference = n;
       });

@@ -91,7 +91,7 @@ namespace MUNityAngular.Services
         }
 
         #region General Conference Settings
-        public bool CreateConference(ConferenceModel model, string userid)
+        public bool CreateConference(ConferenceModel model, string userid = null)
         {
             model.CreationDate = DateTime.Now;
             conferences.Add(model);
@@ -102,6 +102,13 @@ namespace MUNityAngular.Services
                 cmdInsert.Connection = connection;
                 cmdInsert.ExecuteNonQuery();
 
+                if (model.Committees != null)
+                {
+                    model.Committees.ForEach(n =>
+                    {
+                        AddCommittee(model, n);
+                    });
+                }
 
                 if (userid != null)
                 {

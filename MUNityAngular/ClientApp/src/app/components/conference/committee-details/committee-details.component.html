@@ -60,10 +60,10 @@
                 <th>Status</th>
                 <th>Zuletzt bearbeitet</th>
               </tr>
-              <tr>
-                <td>Beispiel</td>
-                <td>In Arbeit</td>
-                <td>12.01.2020 12:14</td>
+              <tr *ngFor="let resolution of resolutions">
+                <td><a [routerLink]="['/resedit', resolution.ID]">{{ resolution.Name }}</a></td>
+                <td>Unbekannt</td>
+                <td>{{ resolution.LastChangedDate }}</td>
               </tr>
             </table>
           </div>

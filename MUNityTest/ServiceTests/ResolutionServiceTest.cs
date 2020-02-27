@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityTest.ServiceTests
 {
@@ -13,7 +14,7 @@ namespace MUNityTest.ServiceTests
     {
         private ConnectionInfo _env;
 
-        //[SetUp]
+        [SetUp]
         public void Setup()
         {
             //Testinformationen laden
@@ -57,7 +58,7 @@ namespace MUNityTest.ServiceTests
             client.GetDatabase(_env.MunityMongoDatabaseSettings.DatabaseName);
         }
 
-        //[Test]
+        [Test]
         public void CreateResolutionTest()
         {
             Console.WriteLine("This test is calling a method that is using Task.Run. This may causes it to fail!");
@@ -75,7 +76,7 @@ namespace MUNityTest.ServiceTests
             Assert.AreEqual(user.Id, info.UserId);
         }
 
-        //[Test]
+        [Test]
         public void SetResolutionToPublicReadTest()
         {
             Console.WriteLine("This test is calling a method that is using Task.Run. This may causes it to fail!");
@@ -93,7 +94,7 @@ namespace MUNityTest.ServiceTests
             Assert.IsFalse(string.IsNullOrEmpty(info.OnlineCode));
         }
 
-        //[Test]
+        [Test]
         public void GiveUserEditRightsTest()
         {
             var service = new ResolutionService(_env.ConnectionString, _env.MunityMongoDatabaseSettings.ConnectionString, _env.MunityMongoDatabaseSettings.DatabaseName);
@@ -110,6 +111,46 @@ namespace MUNityTest.ServiceTests
             var userTwoResolutions = service.GetResolutionsUserCanEdit(user2.Id);
             Assert.NotZero(userTwoResolutions.Count);
             Assert.NotNull(userTwoResolutions.Find(n => n.ID == resolution.ID));
+        }
+
+        [Test]
+        public void LinkResolutionToConferenceTest()
+        {
+            var conference = new MUNityAngular.Models.Conference.ConferenceModel();
+            var conferenceCreated = new ConferenceService(_env.ConnectionString).CreateConference(conference, null);
+            Assert.IsTrue(conferenceCreated);
+            var resolutionService = new ResolutionService(_env.ConnectionString, 
+                _env.MunityMongoDatabaseSettings.ConnectionString, 
+                _env.MunityMongoDatabaseSettings.DatabaseName);
+            var resolution = resolutionService.CreateResolution();
+            resolutionService.LinkResolutionToConference(resolution, conference);
+            var linkCount = Tools.Connection(_env.ConnectionString).ResolutionConference.Count();
+            Assert.AreEqual(1, linkCount);
+            var linkedResolutions = resolutionService.GetResolutionsOfConference(conference.ID);
+            Assert.AreEqual(1, linkedResolutions.Count);
+            Assert.NotNull(linkedResolutions.Find(n => n.ID == resolution.ID));
+        }
+
+        [Test]
+        public void LinkResolutionToCommitteeTest()
+        {
+            var conference = new MUNityAngular.Models.Conference.ConferenceModel();
+            var committee = new MUNityAngular.Models.Conference.CommitteeModel();
+            conference.AddCommittee(committee);
+            var conferenceService = new ConferenceService(_env.ConnectionString);
+            var conferenceCreated = conferenceService.CreateConference(conference);
+            Assert.IsTrue(conferenceCreated);
+            var resolutionService = new ResolutionService(_env.ConnectionString, 
+                _env.MunityMongoDatabaseSettings.ConnectionString, 
+                _env.MunityMongoDatabaseSettings.DatabaseName);
+            var resolution = resolutionService.CreateResolution();
+            resolutionService.LinkResolutionToCommittee(resolution, committee);
+            var linkCount = Tools.Connection(_env.ConnectionString).ResolutionConference.Count();
+            Assert.AreEqual(1, linkCount);
+            var linkedResolutions = resolutionService.GetResolutionsOfCommittee(committee.ID);
+            Assert.AreEqual(1, linkedResolutions.Count);
+            Assert.NotNull(linkedResolutions.Find(n => n.ID == resolution.ID));
+
         }
     }
 }

@@ -69,10 +69,6 @@ export class ManageConferenceCommitteesComponent implements OnInit {
       this.newcommitteeparent = '';
     }
 
-    console.log('Start adding committee' + this.conference.ID + ', ' +
-      this.newcommitteename + ', ' +
-      this.newcommitteeabbreviation + ', ' +
-      this.newcommitteeparent);
     const newCommittee = new Committee();
     newCommittee.Name = this.newcommitteename;
     newCommittee.FullName = this.newcommitteename;
@@ -80,14 +76,8 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     newCommittee.Article = this.newcommitteearticle;
     newCommittee.ResolutlyCommittee = this.newcommitteeparent;
     this.conferenceService.addCommittee(this.conference.ID, newCommittee).subscribe(n => {
-      console.log(n);
       this.conference.Committees.push(n);
-    },
-      err => {
-        //this.notifier.notify('error', 'Committee was not added, something went wrong check the log for informations!');
-        console.error('Conference was not added:');
-        console.log(err);
-      });
+    });
   }
 
   onSearchKey(event: any) { // without type info

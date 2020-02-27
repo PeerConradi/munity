@@ -206,12 +206,13 @@
   </div>
 </div>
 
+<!-- Resolution mit Konferenz verknüpfen -->
 <div bsModal #conferenceConnectionModal="bs-modal" class="modal fade" tabindex="-1"
      role="dialog" aria-labelledby="dialog-sizes-name1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Eigenschaften bearbeiten</h4>
+        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Verknüpfung erstellen</h4>
         <button type="button" class="close pull-right" (click)="conferenceConnectionModal.hide()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -230,7 +231,7 @@
           </select>
         </div>
         <div class="form-group" *ngIf="selectedCommittee">
-          <button class="btn btn-primary btn-block">Verknüpfung erstellen</button>
+          <button class="btn btn-primary btn-block" (click)="createConferenceConnection(selectedCommittee);conferenceConnectionModal.hide();">Verknüpfung erstellen</button>
         </div>
       </div>
     </div>

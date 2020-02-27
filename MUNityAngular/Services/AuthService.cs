@@ -315,28 +315,41 @@ namespace MUNityAngular.Services
 
         public bool CanEditResolution(string userid, ResolutionModel resolution)
         {
-            try
+
+            //If the resolution is public edit return true
+            if (GetResolutionPublicState(resolution).writeable)
+                return true;
+
+            //Check if the user is owner
+            if (GetOwnerId(resolution) == userid)
+                return true;
+
+            //Check if the user has the right to edit this document
+            //This is not the best way to do it, let me think of something better
+            var count = Tools.Connection(_connectionString).ResolutionAuth.CountWhere("resolutionid='" + resolution.ID + "' AND userid='" + userid + "'");
+            if (count >= 1)
+                return true;
+
+            //Check of the resolution is bindet to a conferece where the user is part
+            var cmdStr = "SELECT resolution.* FROM resolution " +
+                "INNER JOIN resolution_conference ON resolution_conference.resolutionid = resolution.id " +
+                "INNER JOIN conference_team ON conference_team.conferenceid = resolution_conference.conferenceid " +
+                "WHERE userid=@userid AND resolution.id=@resoid;";
+            using (var connection = new MySqlConnection(_connectionString))
             {
-                //If the resolution is public edit return true
-                if (GetResolutionPublicState(resolution).writeable)
-                    return true;
-
-                //Check if the user is owner
-                if (GetOwnerId(resolution) == userid)
-                    return true;
-
-                //Check if the user has the right to edit this document
-                //This is not the best way to do it, let me think of something better
-                var count = Tools.Connection(_connectionString).ResolutionAuth.CountWhere("resolutionid='" + resolution.ID + "' AND userid='" + userid + "'");
-                if (count >= 1)
-                    return true;
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@resoid", resolution.ID);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        return true;
+                    }
+                }
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
-            
 
             return false;
         }

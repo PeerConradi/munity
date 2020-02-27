@@ -67,7 +67,6 @@ export class OperativeParagraphComponent implements OnInit {
 
   showNotices(val) {
     if (this.firstShowNitices) {
-      console.log(val);
       this.noticeWindowLeft = val.x;
       this.noticeWindowTop = val.y;
       this.firstShowNitices = false;
@@ -81,7 +80,6 @@ export class OperativeParagraphComponent implements OnInit {
   }
 
   addNotice() {
-    //console.log(this.newComment);
     //this.paragraph.Notices.push(notice);
     this.service.changeOperativeParagraphNotice(this.paragraph, this.newComment).subscribe(n => {
       //this.paragraph.Notices.push(n);
@@ -97,15 +95,12 @@ export class OperativeParagraphComponent implements OnInit {
     tagClone.Text = this.newTag.Text;
     tagClone.Type = this.newTag.Type;
     tagClone.Id = Date.now().toString();
-    console.log(this.newTag);
     this.newComment.Tags.push(tagClone);
     this.newTag.Text = '';
 
   }
 
   removeTag(tag: NoticeTag) {
-    //console.log('remove');
-    //console.log(tag);
     const index = this.newComment.Tags.indexOf(tag);
     this.newComment.Tags.splice(index, 1);
   }
@@ -134,8 +129,6 @@ export class OperativeParagraphComponent implements OnInit {
   }
 
   noticeUpdated(notice: Notice) {
-    console.log('Update notice');
-    console.log(notice);
     this.service.changeOperativeParagraphNotice(this.paragraph, notice).subscribe();
   }
 

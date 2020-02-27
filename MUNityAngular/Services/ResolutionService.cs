@@ -70,26 +70,7 @@ namespace MUNityAngular.Services
             var resolution = this._resolutions.Find(n => n.ID == id).FirstOrDefault();
 
             //Fix. some loading bugs but maybe it doesnt...
-            if (resolution != null)
-            {
-                if (resolution.OperativeSections != null)
-                {
-                    foreach (var oa in resolution.OperativeSections)
-                    {
-                        oa.Resolution = resolution;
-                    }
-                }
-                
-                if (resolution.Preamble != null && resolution.Preamble.Paragraphs != null)
-                {
-                    foreach (var ps in resolution.Preamble.Paragraphs)
-                    {
-                        ps.Preamble = resolution.Preamble;
-                    }
-                }
-            }
-            
-            
+            resolution?.HotFix();
             return resolution;
         }
 
@@ -196,8 +177,6 @@ namespace MUNityAngular.Services
             Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "name", newtitle);
         }
 
-        
-
         public string SetPublicReadMode(string resolutionid, bool mode)
         {
             if (mode)
@@ -283,6 +262,53 @@ namespace MUNityAngular.Services
             }
         }
 
+        public void LinkResolutionToConference(ResolutionModel resolution, Models.Conference.ConferenceModel conference)
+        {
+            if (resolution == null || conference == null)
+                return;
+
+            var model = new ResolutionConferenceModel() { ResolutionId = resolution.ID, ConferenceId=conference.ID};
+            Tools.Connection(_mySqlConnectionString).ResolutionConference.Insert(model);
+        }
+
+        public void LinkResolutionToCommittee(ResolutionModel resolution, Models.Conference.CommitteeModel committee)
+        {
+            if (resolution == null || committee == null)
+                return;
+            var model = new ResolutionConferenceModel() { ResolutionId = resolution.ID, ConferenceId = committee.ConferenceID, CommitteeId = committee.ID };
+            Tools.Connection(_mySqlConnectionString).ResolutionConference.Insert(model);
+        }
+
+        public List<ResolutionAdvancedInfoModel> GetResolutionsOfConference(string conferenceid)
+        {
+            var list = new List<ResolutionAdvancedInfoModel>();
+            var cmdStr = "SELECT resolution.* FROM resolution  INNER JOIN resolution_conference " +
+                "ON resolution_conference.resolutionid = resolution.id WHERE resolution_conference.conferenceid = @confid;";
+            using (var connection = new MySqlConnection(_mySqlConnectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@confid", conferenceid);
+                list = DataReaderConverter.ReadList<ResolutionAdvancedInfoModel>(cmd.ExecuteReader());
+            }
+            return list;
+        }
+
+        public List<ResolutionAdvancedInfoModel> GetResolutionsOfCommittee(string committeeid)
+        {
+            var list = new List<ResolutionAdvancedInfoModel>();
+            var cmdStr = "SELECT resolution.* FROM resolution  INNER JOIN resolution_conference " +
+                "ON resolution_conference.resolutionid = resolution.id WHERE resolution_conference.committeeid = @commid;";
+            using (var connection = new MySqlConnection(_mySqlConnectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@commid", committeeid);
+                list = DataReaderConverter.ReadList<ResolutionAdvancedInfoModel>(cmd.ExecuteReader());
+            }
+            return list;
+        }
+
         public ResolutionService(string mysqlConnectionString, string mongoConnectionString, string mongoDatabaseName)
         {
             //New Saving in MongoDB
@@ -296,6 +322,8 @@ namespace MUNityAngular.Services
 
             Console.WriteLine("Resolution Service Started!");
         }
+
+        
     }
 
     

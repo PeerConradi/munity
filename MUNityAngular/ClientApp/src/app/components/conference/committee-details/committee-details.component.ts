@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { ResolutionService } from '../../../services/resolution.service';
+import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ActivatedRoute } from '@angular/router';
+import { Committee } from '../../../models/committee.model';
+import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
 
 @Component({
   selector: 'app-committee-details',
@@ -6,6 +11,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./committee-details.component.css']
 })
 export class CommitteeDetailsComponent implements OnInit {
+
+  committee: Committee;
+
+  resolutions: ResolutionAdvancedInfo[] = [];
 
   colorScheme = {
     domain: ['#5AA454', '#A10A28']
@@ -24,9 +33,20 @@ export class CommitteeDetailsComponent implements OnInit {
     },
   ]
 
-  constructor() { }
+  constructor(private route: ActivatedRoute, private resolutionService: ResolutionService,
+    private conferenceSerivce: ConferenceServiceService) { }
 
   ngOnInit() {
+    this.route.params.subscribe(params => {
+      this.conferenceSerivce.getCommittee(params.id).subscribe(n => {
+        this.committee = n;
+      });
+
+      this.resolutionService.getResolutionsOfCommittee(params.id).subscribe(n => {
+        this.resolutions = n;
+      });
+    });
+
 
   }
 

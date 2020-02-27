@@ -39,8 +39,6 @@ export class ResOptionsComponent implements OnInit {
   updateOnlineInfos() {
     this.resolutionService.getAdvancedInfos(this.resolution.ID).subscribe(n => {
       this.documentInfo = n;
-      
-      console.log(n);
     });
 
     this.conferenceService.getAllDelegations().subscribe(n => {
@@ -63,14 +61,12 @@ export class ResOptionsComponent implements OnInit {
   }
 
   onEnterCommittee(value: string) {
-    console.log('change committee: ' + value);
     const request = this.baseRequest();
     request.committee = value;
     this.resolutionService.updateHeader(request);
   }
 
   onEnterSubmitter(value: string) {
-    console.log('changed Submitter' + value);
     const request = this.baseRequest();
     request.submitterName = value;
     this.resolutionService.updateHeader(request);

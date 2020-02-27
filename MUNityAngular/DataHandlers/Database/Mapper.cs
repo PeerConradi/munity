@@ -125,6 +125,8 @@ namespace MUNityAngular.DataHandlers.Database
         public DTable ResolutionAuth { get => new DTable("resolution_auth", ConnectionString); }
 
         public DTable ConferenceUserAuth { get => new DTable("conference_user_auth", ConnectionString); }
+    
+        public DTable ResolutionConference { get => new DTable("resolution_conference", ConnectionString); }
     }
 
     public static class Tools

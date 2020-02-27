@@ -23,7 +23,6 @@ export class ResolutionHomeComponent implements OnInit {
 
   createResolution() {
     this.service.createResolution().subscribe(n => {
-      console.log(n);
       if (n != null) {
         if (n.ID != null) {
           this.router.navigate(['/resedit', n.ID])

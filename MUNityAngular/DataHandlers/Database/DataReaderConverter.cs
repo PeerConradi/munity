@@ -14,6 +14,7 @@ namespace MUNityAngular.DataHandlers.Database
         {
             var type = typeof(T);
             T element = (T)Activator.CreateInstance(typeof(T));
+
             
             foreach(var property in type.GetProperties())
             {
@@ -49,7 +50,6 @@ namespace MUNityAngular.DataHandlers.Database
                                 setPropertySuccess = element.SetProperty(property.Name, reader.GetString(columnname));
                             }
                         }
-
                         else if (propType == typeof(DateTime))
                             setPropertySuccess = element.SetProperty(property.Name, reader.GetDateTime(columnname));
                         else if (propType == typeof(double))
@@ -75,6 +75,16 @@ namespace MUNityAngular.DataHandlers.Database
                 }
             }
             return element;
+        }
+
+        public static List<T> ReadList<T>(MySqlDataReader reader, string prefix = null)
+        {
+            var list = new List<T>();
+            while (reader.Read())
+            {
+                list.Add(ObjectFromReader<T>(reader, prefix));
+            }
+            return list;
         }
 
         public static bool SetProperty(this object o, string name, object value)

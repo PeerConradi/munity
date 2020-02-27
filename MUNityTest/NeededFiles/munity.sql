@@ -364,6 +364,17 @@ CREATE TABLE `user_clearance` (
   CONSTRAINT `userclearancelink` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Records of user_clearance
--- ----------------------------
+DROP TABLE IF EXISTS `resolution_conference`;
+CREATE TABLE `resolution_conference` (
+  `linkid` int(11) NOT NULL AUTO_INCREMENT,
+  `resolutionid` varchar(255) DEFAULT NULL,
+  `conferenceid` varchar(255) DEFAULT NULL,
+  `committeeid` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`linkid`),
+  KEY `linkresolutionresolution` (`resolutionid`),
+  KEY `linkresolutionconference` (`conferenceid`),
+  KEY `linkresolutioncommittee` (`committeeid`),
+  CONSTRAINT `linkresolutioncommittee` FOREIGN KEY (`committeeid`) REFERENCES `committee` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `linkresolutionconference` FOREIGN KEY (`conferenceid`) REFERENCES `conference` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `linkresolutionresolution` FOREIGN KEY (`resolutionid`) REFERENCES `resolution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

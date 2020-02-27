@@ -228,4 +228,8 @@ export class EditorComponent implements OnInit {
   conferenceSelected() {
     //console.log(this.selectedConference);
   }
+
+  createConferenceConnection(committee: Committee) {
+    this.service.linkResolutionToCommittee(this.resolution.ID, committee.ID).subscribe();
+  }
 }

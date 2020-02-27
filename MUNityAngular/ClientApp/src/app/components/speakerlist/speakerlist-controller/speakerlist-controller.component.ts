@@ -99,15 +99,13 @@ export class SpeakerlistControllerComponent implements OnInit {
   }
 
   listOrderChanged(newOrder) {
-    console.log(newOrder);
+    
   }
 
   removeSpeaker() {
     const items: Delegation[] = this.deleteItems;
     if (items != null && items.length > 0) {
       items.forEach(n => {
-        console.log('remove: ');
-        console.log(n);
         this.speakerlistService.removeSpeaker(this.speakerlist.ID, n.ID).subscribe();
       });
       this.deleteItems = [];

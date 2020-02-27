@@ -26,7 +26,6 @@ export class SignalrtestService {
     this._hubConnection.on('sendToAll', (name: string, message: string) => {
       let msg: string = message + " from " + name;
       this.msgs.push({name: name, content: message});
-      console.log(msg);
     });
   }
 

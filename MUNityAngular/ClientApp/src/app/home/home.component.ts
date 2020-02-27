@@ -20,7 +20,6 @@ export class HomeComponent {
   }
 
   onCheckResolution(val) {
-    console.log(val);
     this.router.navigate(['/resa/live/' + val.resolutionkey]);
   }
 

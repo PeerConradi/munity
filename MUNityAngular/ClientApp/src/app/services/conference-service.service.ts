@@ -166,4 +166,11 @@ export class ConferenceServiceService {
     headers = headers.set('conferenceid', conferenceid);
     return this.http.get<Committee[]>(this.baseUrl + 'api/Conference/GetCommitteesOfConference', { headers: headers });
   }
+
+  public getCommittee(committeeid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('committeeid', committeeid);
+    return this.http.get<Committee>(this.baseUrl + 'api/Conference/GetCommittee', { headers: headers });
+  }
 }

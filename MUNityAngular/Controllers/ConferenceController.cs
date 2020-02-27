@@ -408,6 +408,14 @@ namespace MUNityAngular.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        [Route("[action]")]
+        [HttpGet]
+        public ActionResult<CommitteeModel> GetCommittee([FromHeader]string auth, [FromHeader]string committeeid,
+            [FromServices]ConferenceService conferenceService)
+        {
+            return conferenceService.GetCommittee(committeeid);
+        }
+
         //Returns a list of all public visible Delegations.
         [Route("[action]")]
         [HttpGet]
