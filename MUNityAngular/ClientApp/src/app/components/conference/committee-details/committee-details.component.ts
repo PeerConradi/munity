@@ -4,6 +4,7 @@ import { ConferenceServiceService } from '../../../services/conference-service.s
 import { ActivatedRoute } from '@angular/router';
 import { Committee } from '../../../models/committee.model';
 import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
+import { CommitteeStatus } from '../../../models/committee-status.model';
 
 @Component({
   selector: 'app-committee-details',
@@ -15,6 +16,8 @@ export class CommitteeDetailsComponent implements OnInit {
   committee: Committee;
 
   resolutions: ResolutionAdvancedInfo[] = [];
+
+  status: CommitteeStatus;
 
   colorScheme = {
     domain: ['#5AA454', '#A10A28']
@@ -45,9 +48,19 @@ export class CommitteeDetailsComponent implements OnInit {
       this.resolutionService.getResolutionsOfCommittee(params.id).subscribe(n => {
         this.resolutions = n;
       });
+      this.status = new CommitteeStatus();
+      this.conferenceSerivce.getCommitteeStatus(params.id).subscribe(n => {
+        if (n != null) {
+          this.status = n;
+        }
+        
+      });
     });
+  }
 
-
+  updateStatus() {
+    this.status.CommitteeId = this.committee.ID;
+    this.conferenceSerivce.setCommitteeStatus(this.status).subscribe();
   }
 
 }

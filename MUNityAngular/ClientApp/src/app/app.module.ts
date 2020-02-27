@@ -68,7 +68,8 @@ import { NoticeComponent } from './components/components/notice/notice.component
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
-import { TooltipModule } from 'ngx-bootstrap/tooltip'
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { CommitteeCardComponent } from './components/conference/committee-card/committee-card.component'
 
 @NgModule({
   declarations: [
@@ -119,7 +120,8 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip'
     AdminDashboardComponent,
     MunityWindowComponent,
     NoticeComponent,
-    PrivacyTermsComponent
+    PrivacyTermsComponent,
+    CommitteeCardComponent
   ],
   imports: [
     RouterModule,

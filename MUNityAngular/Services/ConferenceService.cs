@@ -303,6 +303,31 @@ namespace MUNityAngular.Services
             return Tools.Connection(_connectionString).Table(committee_table_name).GetElements<CommitteeModel>("conferenceid", conference.ID);
         }
 
+        public void SetCommitteeStatus(CommitteeStatusModel status)
+        {
+            Tools.Connection(_connectionString).CommitteeStatus.Insert(status);
+        }
+
+        public CommitteeStatusModel GetCommitteeStatus(CommitteeModel committee)
+        {
+            var cmdStr = "SELECT * FROM committee_status WHERE committeeid=@committeeid AND " +
+                "timestamp = (SELECT MAX(timestamp) FROM committee_status WHERE committeeid=@committeeid)";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var cmd = new MySqlCommand(cmdStr, connection);
+                cmd.Parameters.AddWithValue("@committeeid", committee.ID);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return DataReaderConverter.ObjectFromReader<CommitteeStatusModel>(reader);
+                    }
+                }
+            }
+            return null;
+        }
+
         #endregion
 
         #region Delegation

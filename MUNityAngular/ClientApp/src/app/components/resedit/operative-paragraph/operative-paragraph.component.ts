@@ -23,8 +23,6 @@ export class OperativeParagraphComponent implements OnInit {
 
   hideNotices = true;
 
-  newNoticeText: string;
-
   newComment: Notice = new Notice();
 
   newTag: NoticeTag = new NoticeTag();
@@ -32,7 +30,7 @@ export class OperativeParagraphComponent implements OnInit {
   noticeWindowLeft = 0;
   noticeWindowTop = 0;
 
-  firstShowNitices = true;
+  firstShowNotices = true;
 
   constructor(private renderer: Renderer2, private service: ResolutionService, private userService: UserService) { }
 
@@ -66,16 +64,15 @@ export class OperativeParagraphComponent implements OnInit {
   }
 
   showNotices(val) {
-    if (this.firstShowNitices) {
+    if (this.firstShowNotices) {
       this.noticeWindowLeft = val.x;
       this.noticeWindowTop = val.y;
-      this.firstShowNitices = false;
+      this.firstShowNotices = false;
     }
     this.hideNotices = false;
   }
 
   toggleNotices() {
-    
     this.hideNotices = !this.hideNotices;
   }
 

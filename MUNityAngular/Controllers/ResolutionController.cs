@@ -166,31 +166,25 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            try
-            {
-                var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
-                if (resolution == null)
-                    return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-                if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
-                    return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+            var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
+            if (resolution == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-                var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
-                if (section == null)
-                    return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
+            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-                section.Text = paragraph.Text;
-                //section.Notices = paragraph.Notices;
-                var hubModel = new HUBOperativeParagraph(section);
-                _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
-                resolutionService.RequestSave(resolution);
-                return StatusCode(StatusCodes.Status200OK, hubModel);
-            }
-            catch (Exception)
-            {
+            var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
+            if (section == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Operative Section not found!");
 
-                throw;
-            }
+            section.Text = paragraph.Text;
+            //section.Notices = paragraph.Notices;
+            var hubModel = new HUBOperativeParagraph(section);
+            _hubContext.Clients.Group(resolution.ID).OperativeParagraphChanged(hubModel);
+            resolutionService.RequestSave(resolution);
+            return StatusCode(StatusCodes.Status200OK, hubModel);
+
 
         }
 
@@ -239,8 +233,8 @@ namespace MUNityAngular.Controllers
             if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault((Func<PreambleParagraphModel, bool>)(n => n.ID == paragraph.ID));
-            if (paragraph == null)
+            var pp = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraph.ID);
+            if (pp == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Preamble Paragraph not found!");
 
             paragraph.Notices.ForEach(n =>
@@ -251,8 +245,8 @@ namespace MUNityAngular.Controllers
                 }
             });
 
-            paragraph.Notices = paragraph.Notices;
-            var hubModel = new HUBPreambleParagraph(paragraph);
+            pp.Notices = paragraph.Notices;
+            var hubModel = new HUBPreambleParagraph(pp);
             _hubContext.Clients.Group(resolution.ID).PreambleParagraphChanged(hubModel);
             resolutionService.RequestSave(resolution);
             return StatusCode(StatusCodes.Status200OK, hubModel);

@@ -12,6 +12,7 @@ import { ChangeConferenceNameRequest } from '../models/requests/change-conferenc
 import { User } from '../models/user.model';
 import { TeamRole } from '../models/team-role.model';
 import { UserConferenceRole } from '../models/user-conference-role.model';
+import { CommitteeStatus } from '../models/committee-status.model';
 
 
 // Some day this thing should be renamed into ConferenceService!
@@ -172,5 +173,17 @@ export class ConferenceServiceService {
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('committeeid', committeeid);
     return this.http.get<Committee>(this.baseUrl + 'api/Conference/GetCommittee', { headers: headers });
+  }
+
+  public setCommitteeStatus(status: CommitteeStatus) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    return this.http.put(this.baseUrl + 'api/Conference/SetCommitteeStatus',status, { headers: headers });
+  }
+
+  public getCommitteeStatus(committeeid: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('committeeid', committeeid);
+    return this.http.get<CommitteeStatus>(this.baseUrl + 'api/Conference/GetCommitteeStatus', { headers: headers });
   }
 }

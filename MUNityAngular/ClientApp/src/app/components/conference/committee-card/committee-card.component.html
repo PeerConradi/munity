@@ -1,0 +1,24 @@
+<!-- Gremienbox -->
+<div class="card b-1 hover-shadow mb-20">
+  <div class="media card-body">
+    <div class="media-body">
+      <div class="mb-2">
+        <a class="fs-20 pr-16" [routerLink]="['/committee', committee.ID]">{{ committee.Name }}</a>
+      </div>
+      <small class="fs-16 fw-300 ls-1">Status: <b *ngIf="status">{{ status.Status }} ({{ status.AgendaItem }})</b></small>
+    </div>
+    <div class="media-right text-right d-none d-md-block">
+      <p class="fs-14 text-fade mb-12"><i class="fa fa-map-marker pr-1"></i> {{ committee.Abbreviation }}</p>
+    </div>
+  </div>
+  <footer class="card-footer flexbox align-items-center">
+    <div>
+      <strong>Letzte Anweseneheit: </strong>
+      <span>0/{{ committee.DelegationList.length }} (0%) - 01.01.2020</span>
+    </div>
+    <div class="card-hover-show">
+      <button class="btn btn-primary" [routerLink]="['/p/check', committee.ID]">Anwesenheit feststellen</button>
+      <button class="btn btn-info" (click)="conferenceService.committeeContext = committee">Als Kontext setzen</button>
+    </div>
+  </footer>
+</div>

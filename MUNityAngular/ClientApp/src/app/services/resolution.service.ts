@@ -100,6 +100,10 @@ export class ResolutionService {
       if (target != null && target.Text != paragraph.Text) {
         target.Text = paragraph.Text;
       }
+      if (target != null && target.Notices != paragraph.Notices) {
+        target.Notices = paragraph.Notices;
+      }
+
     });
 
     this._hubConnection.on('OperativeParagraphChanged', (paragraph: OperativeSection) => {
@@ -107,7 +111,7 @@ export class ResolutionService {
       let target = model.OperativeSections.find(n => n.ID == paragraph.ID);
       if (target != null && target.Text != paragraph.Text) {
         target.Text = paragraph.Text;
-        //Commends could also change but that has yet to come!
+        
       }
       if (target != null && target.Notices != paragraph.Notices) {
         target.Notices = paragraph.Notices;
@@ -299,10 +303,26 @@ export class ResolutionService {
       notice, { headers: headers });
   }
 
+  public changePreambleParagraphNotice(paragraph: PreambleParagraph, notice: Notice) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    headers = headers.set('resolutionid', paragraph.ResolutionID);
+    headers = headers.set('paragraphid', paragraph.ID);
+    return this.httpClient.put<Notice>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraphNotice',
+      notice, { headers: headers });
+  }
+
   public changeOperativeParagraphNotices(paragraph: OperativeSection) {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.userService.getAuthOrDefault());
     return this.httpClient.patch<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotices',
+      paragraph, { headers: headers });
+  }
+
+  public changePreambleParagraphNotices(paragraph: PreambleParagraph) {
+    let headers = new HttpHeaders();
+    headers = headers.set('auth', this.userService.getAuthOrDefault());
+    return this.httpClient.patch<OperativeSection>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraphNotices',
       paragraph, { headers: headers });
   }
 

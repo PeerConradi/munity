@@ -416,6 +416,44 @@ namespace MUNityAngular.Controllers
             return conferenceService.GetCommittee(committeeid);
         }
 
+        [Route("[action]")]
+        [HttpPut]
+        public ActionResult SetCommitteeStatus([FromHeader]string auth, [FromBody]CommitteeStatusModel status,
+            [FromServices]ConferenceService conferenceService, [FromServices]AuthService authService)
+        {
+            var user = authService.GetUserByAuth(auth);
+            if (user == null)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that");
+
+            var committee = conferenceService.GetCommittee(status.CommitteeId);
+            if (committee == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Committee not found");
+
+            var conference = conferenceService.GetConference(committee.ConferenceID);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference for the committee nout found");
+
+            var team = conferenceService.GetConferenceTeam(conference);
+            if (team.Find(n => n.User.Id == user.Id) == null)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
+
+            status.Id = null;
+            status.Timestamp = DateTime.Now;
+            conferenceService.SetCommitteeStatus(status);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public ActionResult<CommitteeStatusModel> GetCommitteeStatus([FromHeader]string committeeid,
+            [FromServices]ConferenceService conferenceService)
+        {
+            var committee = conferenceService.GetCommittee(committeeid);
+            if (committee == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Committee not found");
+            return conferenceService.GetCommitteeStatus(committee);
+        }
+
         //Returns a list of all public visible Delegations.
         [Route("[action]")]
         [HttpGet]

@@ -7,6 +7,8 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { NotifierService } from 'angular-notifier';
 import { Delegation } from '../../../models/delegation.model';
 import { Committee } from '../../../models/committee.model';
+import { CommitteeStatus } from '../../../models/committee-status.model';
+import { of, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-conference-details',
@@ -29,6 +31,11 @@ export class ConferenceDetailsComponent implements OnInit {
     });
   }
 
+  async getCommitteeStatus(committee: Committee) {
+    console.log('get Status')
+    const observable = await this.conferenceService.getCommitteeStatus(committee.ID).toPromise();
+    return observable;
+  }
   
 
 }
