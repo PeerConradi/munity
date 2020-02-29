@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Committee } from '../../../models/committee.model';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
 import { CommitteeStatus } from '../../../models/committee-status.model';
+import { Presence } from '../../../models/presence.model';
+import { PresenceService } from '../../../services/presence.service';
 
 @Component({
   selector: 'app-committee-card',
@@ -14,10 +16,13 @@ export class CommitteeCardComponent implements OnInit {
 
   status: CommitteeStatus
 
-  constructor(private service: ConferenceServiceService) { }
+  presence: Presence;
+
+  constructor(private service: ConferenceServiceService, private presenceService: PresenceService) { }
 
   ngOnInit() {
     this.service.getCommitteeStatus(this.committee.ID).subscribe(n => this.status = n);
+    this.presenceService.getLatestPresence(this.committee.ID).subscribe(n => this.presence = n); 
   }
 
 }

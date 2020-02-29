@@ -1,7 +1,7 @@
 <div class="row">
   <h1>Anwesenheit feststellen</h1>
 </div>
-<div class="row">
+<div class="row" *ngIf="presentDelegations && allDelegations && missingDelegations">
   <div class="col-12">
     <div class="card">
       <div class="card-header">
@@ -28,19 +28,25 @@
           <tr>
             <td><b>Absolute Mehrheit</b></td>
             <td>
-              {{ absoluteMajority }} Stimmen</td>
+              {{ absoluteMajority }} Stimmen
+            </td>
           </tr>
           <tr>
             <td><b>2/3 Mehrheit</b></td>
             <td>
-              {{ twoThirdMajority }} Stimmen</td>
+              {{ twoThirdMajority }} Stimmen
+            </td>
           </tr>
           <tr>
             <td><b>Anwesenheits-Verhältnis</b></td>
             <td>
-              {{ presentFactor }} %</td>
+              {{ presentFactor }} %
+            </td>
           </tr>
         </table>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block" (click)="saveList()">Anwesenheit speichern</button>
+        </div>
       </div>
     </div>
   </div>
@@ -50,6 +56,9 @@
         <h3 class="card-title">Feststellen</h3>
       </div>
       <div class="card-body">
+        <div class="form-group">
+          <button class="btn btn-primary" (click)="reset();">Zurücksetzen</button>
+        </div>
         <table class="table">
           <tr>
             <th>Delegation</th>
@@ -57,9 +66,7 @@
             <th>Abwesend</th>
           </tr>
           <tr *ngFor="let delegation of allDelegations">
-            <td>{{ delegation.Name
-              }}
-            </td>
+            <td> {{ delegation.Name }} </td>
             <td><button class="btn btn-outline-success btn-block" (click)="setPresent(delegation)">Anwesend</button></td>
             <td><button class="btn btn-outline-danger btn-block" (click)="setMissing(delegation)">Abwesend</button></td>
           </tr>
@@ -78,7 +85,24 @@
           </tr>
           <tr *ngFor="let delegation of presentDelegations">
             <td>{{ delegation.Name }}</td>
-            <td><button class="btn btn-outline-danger btn-block">Abwesend setzen</button></td>
+            <td><button class="btn btn-outline-danger btn-block" (click)="setMissing(delegation)">Abwesend setzen</button></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="card">
+      <div class="card-body">
+        <b>Anwesend</b>
+        <table class="table">
+          <tr>
+            <th>Delegation</th>
+            <th>Abwesend setzen</th>
+          </tr>
+          <tr *ngFor="let delegation of missingDelegations">
+            <td>{{ delegation.Name }}</td>
+            <td><button class="btn btn-outline-success btn-block" (click)="setPresent(delegation)">Anwesend setzen</button></td>
           </tr>
         </table>
       </div>

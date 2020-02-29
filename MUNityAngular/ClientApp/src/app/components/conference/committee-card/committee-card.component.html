@@ -14,7 +14,8 @@
   <footer class="card-footer flexbox align-items-center">
     <div>
       <strong>Letzte Anweseneheit: </strong>
-      <span>0/{{ committee.DelegationList.length }} (0%) - 01.01.2020</span>
+      <span *ngIf="presence">{{ presence.Present.length }}/{{ committee.DelegationList.length }} - {{ presence.CheckDate | date: 'dd.MM.yyyy HH:mm' }}</span>
+      <span *ngIf="!presence">Keine Anwesenheitsliste gefunden</span>
     </div>
     <div class="card-hover-show">
       <button class="btn btn-primary" [routerLink]="['/p/check', committee.ID]">Anwesenheit feststellen</button>

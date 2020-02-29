@@ -69,6 +69,12 @@ namespace MUNityAngular
                 var dbName = Configuration.GetValue<string>("MunityMongoDatabaseSettings:DatabaseName");
                 return new Services.ResolutionService(mySqlConnectionString, cs, dbName);
             });
+            services.AddSingleton(serviceProvider =>
+            {
+                var cs = Configuration.GetValue<string>("MunityMongoDatabaseSettings:ConnectionString");
+                var dbName = Configuration.GetValue<string>("MunityMongoDatabaseSettings:DatabaseName");
+                return new Services.PresenceService(mySqlConnectionString, cs, dbName);
+            });
             //Add the Conference Service, with the mySqlConnectionString
             services.AddSingleton(serviceProvider => new Services.ConferenceService(mySqlConnectionString));
             services.AddSingleton<Services.SpeakerlistService>();

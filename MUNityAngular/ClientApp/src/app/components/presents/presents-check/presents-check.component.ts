@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { Delegation } from '../../../models/delegation.model';
+import { PresenceService } from '../../../services/presence.service';
+import { Presence } from '../../../models/presence.model';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-presents-check',
@@ -36,7 +39,8 @@ export class PresentsCheckComponent implements OnInit {
     return Math.round(this.presentDelegations.length / (this.presentDelegations.length + this.missingDelegations.length) * 100);
   }
 
-  constructor(private conferenceSerivce: ConferenceServiceService, private route: ActivatedRoute) { }
+  constructor(private conferenceSerivce: ConferenceServiceService, private route: ActivatedRoute, private presenceService: PresenceService,
+  private notifier: NotifierService) { }
 
   ngOnInit() {
     //Get the ID of the context committee
@@ -56,18 +60,42 @@ export class PresentsCheckComponent implements OnInit {
   }
 
   setPresent(delegation: Delegation) {
-    const index = this.allDelegations.indexOf(delegation);
+    let index = this.allDelegations.indexOf(delegation);
     if (index > -1) {
       this.allDelegations.splice(index, 1);
+    }
+    index = this.missingDelegations.indexOf(delegation);
+    if (index > -1) {
+      this.missingDelegations.splice(index, 1);
     }
     this.presentDelegations.push(delegation);
   }
 
   setMissing(delegation: Delegation) {
-    const index = this.allDelegations.indexOf(delegation);
+    let index = this.allDelegations.indexOf(delegation);
     if (index > -1) {
       this.allDelegations.splice(index, 1);
     }
+    index = this.presentDelegations.indexOf(delegation);
+    if (index > -1) {
+      this.presentDelegations.splice(index, 1);
+    }
     this.missingDelegations.push(delegation);
+  }
+
+  reset() {
+    this.presentDelegations.forEach(n => this.allDelegations.push(n));
+    this.missingDelegations.forEach(n => this.allDelegations.push(n));
+    this.presentDelegations = [];
+    this.missingDelegations = [];
+  }
+
+  saveList() {
+    const model = new Presence();
+    model.Present = this.presentDelegations;
+    model.Absent = this.missingDelegations;
+    model.Remaining = this.allDelegations;
+    model.CommitteeId = this.committeeId;
+    this.presenceService.savePresence(model).subscribe(n => this.notifier.notify('success', 'Liste gespeichert!'));
   }
 }
