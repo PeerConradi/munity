@@ -1,0 +1,78 @@
+<div class="sidebar-header">
+  <h3>Verwaltung</h3>
+</div>
+
+<ul *ngIf="conference" class="list-unstyled components">
+  <p>{{ conference.Name }}</p>
+  <li>
+    <a [routerLink]="['/mc/dashboard', conference.ID]">Übersicht</a>
+  </li>
+  <li>
+    <a (click)="committeeMenuCollapse = !committeeMenuCollapse" class="dropable">Gremien</a>
+    <ul class="list-unstyled" [hidden]="committeeMenuCollapse">
+      <li>
+        <a>Gremium hinzufügen</a>
+      </li>
+      <li>
+        <a [routerLink]="['/mc/committees', conference.ID]">Gremien verwalten</a>
+      </li>
+      <li>
+        <a >Themen bearbeiten</a>
+      </li>
+      <li>
+        <a>Delegationen aufteilen</a>
+      </li>
+    </ul>
+  </li>
+
+  <li>
+    <a (click)="delegationMenuCollapse = !delegationMenuCollapse" class="dropable">Delegationen</a>
+    <ul class="list-unstyled" [hidden]="delegationMenuCollapse">
+      <li>
+        <a>Übersicht</a>
+      </li>
+      <li>
+        <a>Delegationen verwalten</a>
+      </li>
+      <li>
+        <a>Länderschilder generieren</a>
+      </li>
+    </ul>
+  </li>
+
+  <li>
+    <a (click)="teamMenuCollapse = !teamMenuCollapse" class="dropable">Team</a>
+    <ul class="list-unstyled" [hidden]="teamMenuCollapse">
+      <li>
+        <a [routerLink]="['/mc/TeamRoles', conference.ID]">Rollen</a>
+      </li>
+      <li>
+        <a [routerLink]="['/mc/team', conference.ID]">Mitglieder</a>
+      </li>
+    </ul>
+  </li>
+
+  <li>
+    <a (click)="participantsMenuCollapse = !participantsMenuCollapse" class="dropable">Teilnehmende</a>
+    <ul class="list-unstyled" [hidden]="participantsMenuCollapse">
+      <li>
+        <a>Übersicht</a>
+      </li>
+      <li>
+        <a>Dokumentengenerierung</a>
+      </li>
+    </ul>
+  </li>
+
+  <li>
+    <a (click)="publicRelationMenuCollapse = !publicRelationMenuCollapse" class="dropable">Public Relation</a>
+    <ul class="list-unstyled" [hidden]="publicRelationMenuCollapse">
+      <li>
+        <a>Website verwalten</a>
+      </li>
+      <li>
+        <a>Galerie verwalten</a>
+      </li>
+    </ul>
+  </li>
+</ul>

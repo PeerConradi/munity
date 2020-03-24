@@ -1,0 +1,16 @@
+.sidebar {
+  width: 200px;
+  position: fixed;
+  top: 55Px;
+  left: 0;
+  height: 100vh;
+  z-index: 999;
+  background: #007bff;
+  color: #fff;
+  transition: all 0.3s;
+}
+
+.content {
+  margin-left: 200px;
+  padding: 20px 30px;
+}

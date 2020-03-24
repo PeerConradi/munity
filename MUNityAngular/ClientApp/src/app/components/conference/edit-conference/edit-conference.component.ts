@@ -21,7 +21,7 @@ export class EditConferenceComponent implements OnInit {
       this.conferenceService.getConference(params.id).subscribe(n => {
         this.conference = n;
       });
-    })
+    });
   }
 
 }

@@ -1,0 +1,101 @@
+<div class="row">
+  <div class="col-12">
+    <h1>Konferenzverwaltung</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-munity-box title="Allgemein" toolbox="true">
+      <table class="table">
+        
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Status</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Name</td>
+            <td><app-xlabel value="Platzhalter"></app-xlabel></td>
+          </tr>
+          <tr>
+            <td>Vollständiger Name</td>
+            <td><app-xlabel value="Platzhalter"></app-xlabel></td>
+          </tr>
+          <tr>
+            <td>Zeitraum</td>
+            <td><form><input type="text"
+       placeholder="Zeitraum"
+       class="form-control"
+       formControlName="timespan"
+       bsDaterangepicker></form></td>
+          </tr>
+        </tbody>
+      </table>
+    </app-munity-box>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-munity-box title="Bewerbung" toolbox="true">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Teambewerbung</td>
+            <td><span style="color: green">Aktiviert</span></td>
+          </tr>
+          <tr>
+            <td>Teilnehmerbewerbung</td>
+            <td><span style="color: red">Deaktiviert</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </app-munity-box>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-munity-box title="Tools" toolbox="true">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Team-Board</td>
+            <td><span style="color: green">Aktiviert</span></td>
+          </tr>
+          <tr>
+            <td>Resolutionen</td>
+            <td><span style="color: green">Aktiviert</span></td>
+          </tr>
+          <tr>
+            <td>Redelisten</td>
+            <td><span style="color: green">Aktiviert</span></td>
+          </tr>
+          <tr>
+            <td>Gallerie <span class="badge badge-warning">MUNity Pro</span></td>
+            <td><span style="color: red">Deaktiviert</span></td>
+          </tr>
+          <tr>
+            <td>Website</td>
+            <td><span style="color: red">Deaktiviert</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </app-munity-box>
+  </div>
+</div>

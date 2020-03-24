@@ -1,7 +1,6 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-top: -15px;">
-    <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">MUNity</a><span class="badge badge-pill badge-primary">for MUN-SH</span>
+      <a class="navbar-brand" [routerLink]="['/']">MUNity</a><span class="badge badge-pill badge-primary">for MUNBW</span>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
         aria-label="Toggle navigation" [attr.aria-expanded]="isExpanded" (click)="toggle()">
         <span class="navbar-toggler-icon"></span>
@@ -32,13 +31,13 @@
               </button>
             </form>
 
-            <div class="btn-group" *ngIf="userSerivce.isLoggedIn" dropdown>
+            <div class="btn-group" container="body" *ngIf="userSerivce.isLoggedIn" dropdown>
               <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle"
-                      aria-controls="dropdown-basic">
+                      aria-controls="dropdown-container">
                 Menü <span class="caret"></span>
               </button>
-              <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
-                  role="menu" aria-labelledby="button-basic">
+              <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu submenu"
+                  role="menu" aria-labelledby="button-container">
                 <li role="menuitem"><a class="dropdown-item" [routerLink]="['/account/settings']"><fa-icon [icon]="['fas', 'user']"></fa-icon> Mein Profil</a></li>
                 <li role="menuitem"><a class="dropdown-item" [routerLink]="['/conference/my']" href="#"><fa-icon [icon]="['fas', 'flag']"></fa-icon> Meine Konferenzen</a></li>
                 <li role="menuitem"><a class="dropdown-item" [routerLink]="['/mydocs']" href="#"><fa-icon [icon]="['fas', 'file']"></fa-icon> Meine Resolutionen</a></li>
@@ -52,9 +51,7 @@
               </ul>
             </div>
           </li>
-
         </ul>
       </div>
-    </div>
   </nav>
 </header>

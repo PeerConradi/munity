@@ -112,3 +112,8 @@
   transform: rotate(-90deg);
   
 }
+
+.pagecontent {
+    padding-left: 10px;
+    padding-right: 10px;
+}

@@ -7,9 +7,20 @@ a.navbar-brand {
 html {
   font-size: 14px;
 }
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
+  }
+
+  
+}
+
+@media (min-width: 992px) {
+  .submenu {
+    position: absolute;
+    left: -100px;
+    width: 200px;
   }
 }
 
@@ -20,3 +31,4 @@ html {
 #loginButton {
     margin-right: 10px;
 }
+

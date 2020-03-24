@@ -1,0 +1,3 @@
+<a *ngIf="!isEditing" (click)="isEditing = true">{{ value }}</a>
+
+<input *ngIf="isEditing" class="form-control" [(ngModel)]="value" (keydown.enter)="valueChanged();" />

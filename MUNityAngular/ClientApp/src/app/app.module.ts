@@ -69,7 +69,12 @@ import { NoticeComponent } from './components/components/notice/notice.component
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { CommitteeCardComponent } from './components/conference/committee-card/committee-card.component'
+import { CommitteeCardComponent } from './components/conference/committee-card/committee-card.component';
+import { ConferenceMenuComponent } from './components/conference/conference-menu/conference-menu.component';
+import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/edit-conference-layout.component';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
+import { XlabelComponent } from './components/xlabel/xlabel.component'
 
 @NgModule({
   declarations: [
@@ -121,7 +126,11 @@ import { CommitteeCardComponent } from './components/conference/committee-card/c
     MunityWindowComponent,
     NoticeComponent,
     PrivacyTermsComponent,
-    CommitteeCardComponent
+    CommitteeCardComponent,
+    ConferenceMenuComponent,
+    EditConferenceLayoutComponent,
+    ConferenceOptionsComponent,
+    XlabelComponent
   ],
   imports: [
     RouterModule,
@@ -143,7 +152,8 @@ import { CommitteeCardComponent } from './components/conference/committee-card/c
     BsDatepickerModule.forRoot(),
     TabsModule.forRoot(),
     NgxChartsModule,
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
+    CollapseModule.forRoot()
     
   ],
   providers: [],

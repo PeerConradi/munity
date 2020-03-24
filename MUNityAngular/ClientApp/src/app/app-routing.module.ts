@@ -34,6 +34,8 @@ import { AdminDashboardComponent } from './components/admin/admin-dashboard/admi
 import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
 import { CommitteeDetailsComponent } from './components/conference/committee-details/committee-details.component';
 import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
+import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/edit-conference-layout.component';
+import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -68,15 +70,11 @@ const routes: Routes = [
       //Konferenz
       { path: 'createconference', component: CreateConferenceComponent },
       { path: 'conference/my', component: MyConferencesOverviewComponent },
-      { path: 'conferences/:id', component: ConferenceDetailsComponent },
+      
       { path: 'conferences/edit/:id', component: EditConferenceComponent },
       { path: 'exploreconferences', component: ExploreConferencesComponent },
       { path: 'committee/:id', component: CommitteeDetailsComponent },
-      // mc for manage conference
-      { path: 'mc/overview/:id', component: EditConferenceComponent },
-      { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
-      { path: 'mc/TeamRoles/:id', component: ManageConferenceTeamRolesComponent },
-      { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent},
+      
 
       //Admin
       { path: 'admin/dashboard', component: AdminDashboardComponent },
@@ -91,7 +89,20 @@ const routes: Routes = [
       { path: 'p/check/:id', component: PresentsCheckComponent }
       
     ]
-  }
+  },
+  {
+    path: '',
+    component: EditConferenceLayoutComponent,
+    children: [
+      { path: 'mc/dashboard/:id', component: ConferenceDetailsComponent },
+      { path: 'mc/general/:id', component: ConferenceOptionsComponent },
+      // mc for manage conference
+      { path: 'mc/overview/:id', component: EditConferenceComponent },
+      { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
+      { path: 'mc/TeamRoles/:id', component: ManageConferenceTeamRolesComponent },
+      { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent }
+    ]
+  },
 
 ]
 
