@@ -19,6 +19,9 @@
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/s/start']">Redeliste</a>
           </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['/s/start']">Simulation <span class="badge badge-success">Neu</span></a>
+          </li>
           <li>
             <form class="form-inline" *ngIf="!userSerivce.isLoggedIn">
               <button id="loginButton" class="btn btn-outline-success" type="button"
@@ -42,7 +45,7 @@
                 <li role="menuitem"><a class="dropdown-item" [routerLink]="['/conference/my']" href="#"><fa-icon [icon]="['fas', 'flag']"></fa-icon> Meine Konferenzen</a></li>
                 <li role="menuitem"><a class="dropdown-item" [routerLink]="['/mydocs']" href="#"><fa-icon [icon]="['fas', 'file']"></fa-icon> Meine Resolutionen</a></li>
                 <li role="menuitem"><a class="dropdown-item" href="#">Meine Redelisten</a></li>
-                <li *ngIf="isAdmin" class="divider dropdown-divider" ></li>
+                <li *ngIf="isAdmin" class="divider dropdown-divider"></li>
                 <li *ngIf="isAdmin" role="menuitem"><a class="dropdown-item text-danger" [routerLink]="['/admin/dashboard']" href="#"><fa-icon [icon]="['fas', 'file']"></fa-icon> Admin</a></li>
                 <li class="divider dropdown-divider"></li>
                 <li role="menuitem">

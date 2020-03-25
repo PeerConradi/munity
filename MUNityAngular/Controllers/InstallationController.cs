@@ -23,10 +23,8 @@ namespace MUNityAngular.Controllers
         [HttpGet]
         public IActionResult Install([FromServices]InstallationService service)
         {
-            if (service.IsInstalled)
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to install anything.");
 
-            //service.Install();
+            service.Install();
             return StatusCode(StatusCodes.Status200OK, service.InstallationLog);
         }
     }

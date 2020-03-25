@@ -74,7 +74,13 @@ import { ConferenceMenuComponent } from './components/conference/conference-menu
 import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/edit-conference-layout.component';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
-import { XlabelComponent } from './components/xlabel/xlabel.component'
+import { XlabelComponent } from './components/xlabel/xlabel.component';
+import { CreateSimSimComponent } from './components/simsim/create-sim-sim/create-sim-sim.component';
+import { JoinSimSimComponent } from './components/simsim/join-sim-sim/join-sim-sim.component';
+import { SimSimChatComponent } from './components/simsim/sim-sim-chat/sim-sim-chat.component';
+import { SimSimViewComponent } from './components/simsim/sim-sim-view/sim-sim-view.component';
+import { SimSimControlsComponent } from './components/simsim/sim-sim-controls/sim-sim-controls.component';
+import { SimSimDelegationComponent } from './components/simsim/sim-sim-delegation/sim-sim-delegation.component'
 
 @NgModule({
   declarations: [
@@ -130,7 +136,13 @@ import { XlabelComponent } from './components/xlabel/xlabel.component'
     ConferenceMenuComponent,
     EditConferenceLayoutComponent,
     ConferenceOptionsComponent,
-    XlabelComponent
+    XlabelComponent,
+    CreateSimSimComponent,
+    JoinSimSimComponent,
+    SimSimChatComponent,
+    SimSimViewComponent,
+    SimSimControlsComponent,
+    SimSimDelegationComponent
   ],
   imports: [
     RouterModule,

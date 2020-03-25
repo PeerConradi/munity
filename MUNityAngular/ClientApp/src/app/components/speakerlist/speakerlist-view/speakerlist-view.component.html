@@ -1,23 +1,42 @@
 <div class="speakerlist-view" *ngIf="speakerlist">
   <div class="row">
     <div class="col-12 bg-primary">
-      <h1 class="text-white">Redeliste</h1>
+
+      <h1 *ngIf="sizing=='big'" class="text-white">Redeliste</h1>
+      <h3 *ngIf="sizing=='medium'" class="text-white">Redeliste</h3>
+      <h5 *ngIf="sizing=='small'" class="text-white">Redeliste</h5>
     </div>
     <!-- Aktueller Redner-->
     <div class="col-12">
-      <div class="card bg-primary text-white" [class.bg-danger]="speakerlist.RemainingSpeakerTime.TotalSeconds <= 10">
+      <div class="card bg-primary text-white" [class.bg-danger]="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds <= 10">
         <div class="card-header">
-          <h3 class="card-title">Aktuell</h3>
+          <h3 *ngIf="sizing=='big'" class="card-title">Aktuell</h3>
+          <h5 *ngIf="sizing=='medium'" class="card-title">Aktuell</h5>
+          <h6 *ngIf="sizing=='small'" class="card-title">Aktuell</h6>
         </div>
-        <div class="card-body clearfix">
+        <div *ngIf="sizing=='big'" class="card-body clearfix">
+
           <h3 class="float-left" *ngIf="speakerlist.CurrentSpeaker float-left">
             <img [src]="getMediumImage(speakerlist.CurrentSpeaker)" style="height: 50Px" />
             {{ speakerlist.CurrentSpeaker.Name }}
           </h3>
+
           <h3 class="float-left" *ngIf="!speakerlist.CurrentSpeaker">Niemand</h3>
-          <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"> {{ speakerlist.RemainingSpeakerTime.toString() }}</h3>
-          <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime.TotalSeconds < 0"> Zum Ende kommen</h3>
+          <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"> {{ speakerlist.RemainingSpeakerTime.toString() }}</h3>
+          <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds < 0"> Zum Ende kommen</h3>
         </div>
+
+        <div *ngIf="sizing=='medium'" class="card-body clearfix">
+
+          <h5 class="float-left" *ngIf="speakerlist.CurrentSpeaker float-left">
+            <img [src]="getMediumImage(speakerlist.CurrentSpeaker)" style="height: 50Px" />
+            {{ speakerlist.CurrentSpeaker.Name }}
+          </h5>
+          <h5 class="float-left" *ngIf="!speakerlist.CurrentSpeaker">Niemand</h5>
+          <h5 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"> {{ speakerlist.RemainingSpeakerTime.toString() }}</h5>
+          <h5 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds < 0"> Zum Ende kommen</h5>
+        </div>
+
       </div>
     </div>
     <!-- Warteliste Redebeitrag-->
@@ -35,7 +54,7 @@
 
     <!-- Aktueller Frage-->
     <div class="col-12" style="margin-top: 20Px;">
-      <div class="card bg-info text-white" [class.bg-danger]="speakerlist.RemainingQuestionTime.TotalSeconds <= 10">
+      <div class="card bg-info text-white" [class.bg-danger]="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds <= 10">
         <div class="card-header">
           <h3 class="card-title">Aktuell</h3>
         </div>
@@ -45,8 +64,9 @@
             {{ speakerlist.CurrentQuestion.Name }}
           </h4>
           <h4 class="float-left" *ngIf="!speakerlist.CurrentQuestion">Niemand</h4>
-          <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime.TotalSeconds >= 0">{{ speakerlist.RemainingQuestionTime.toString() }}</h3>
-          <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime.TotalSeconds < 0">Zum Ende kommen</h3>
+          
+          <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds >= 0">{{ speakerlist.RemainingQuestionTime.toString() }}</h3>
+          <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds < 0">Zum Ende kommen</h3>
         </div>
       </div>
     </div>
@@ -65,3 +85,5 @@
 
   </div>
 </div>
+
+<p *ngIf="!speakerlist">Keine Redeliste geladen!</p>

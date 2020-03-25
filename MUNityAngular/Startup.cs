@@ -82,7 +82,7 @@ namespace MUNityAngular
             services.AddScoped<Services.ResolutionService>();
             services.AddScoped<Services.PresenceService>();
             services.AddScoped<Services.ConferenceService>();
-            services.AddScoped<Services.SpeakerlistService>();
+            services.AddSingleton<Services.SpeakerlistService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>

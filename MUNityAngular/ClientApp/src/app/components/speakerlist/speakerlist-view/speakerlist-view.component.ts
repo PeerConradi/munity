@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { SpeakerListService } from '../../../services/speaker-list.service';
 import { ConferenceServiceService } from '../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
@@ -13,7 +13,10 @@ import { Delegation } from '../../../models/delegation.model';
 })
 export class SpeakerlistViewComponent implements OnInit {
 
-  speakerlist: Speakerlist;
+  @Input() speakerlist: Speakerlist;
+
+  @Input() sizing: string = "big";
+
   interval: NodeJS.Timeout;
 
   constructor(private conferenceService: ConferenceServiceService,
@@ -32,13 +35,9 @@ export class SpeakerlistViewComponent implements OnInit {
     if (id != null) {
       //Get the Speakerlist
       this.speakerlistService.getSpeakerlistById(id).subscribe(list => {
-
-
         this.speakerlist = list;
         this.speakerlistService.subscribeToSpeakerlist(list.PublicId.toString());
         this.speakerlistService.addSpeakerlistListener(this.speakerlist);
-
-
 
         const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds, 0, 0, 0, 0);
         this.speakerlist.RemainingSpeakerTime = sTime;
@@ -51,13 +50,14 @@ export class SpeakerlistViewComponent implements OnInit {
 
         //const tqTime = new TimeSpan(list.Questiontime.TotalMilliseconds, 0, 0, 0, 0);
         //this.speakerlist.Questiontime = tqTime;
-      })
+      });
     }
 
     this.interval = setInterval(() => {
       //Status 0: Beide Listen gestoppt
       //Status 1: Redebeitrag
       //Status 2: Frage/Kurzbemerkung
+      if (this.speakerlist != null && this.speakerlist.RemainingSpeakerTime != null && this.speakerlist.RemainingQuestionTime != null)
       if (this.speakerlist.Status == 1) {
         this.speakerlist.RemainingSpeakerTime.addSeconds(-1);
       } else if (this.speakerlist.Status == 2) {

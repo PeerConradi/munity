@@ -7,13 +7,13 @@ export class Speakerlist {
 
   public Name: string 
 
-  public Speakertime: TimeSpan;
+  public Speakertime: TimeSpan = new TimeSpan(0,0,3,0,0);
 
-  public Questiontime: TimeSpan;
+  public Questiontime: TimeSpan = new TimeSpan(0, 30, 0, 0, 0);
 
-  public RemainingSpeakerTime: TimeSpan;
+  public RemainingSpeakerTime: TimeSpan = new TimeSpan(0, 0, 3, 0, 0);
 
-  public RemainingQuestionTime: TimeSpan;
+  public RemainingQuestionTime: TimeSpan = new TimeSpan(0, 30, 0, 0, 0);
 
   public Speakers: Delegation[]; 
 

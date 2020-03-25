@@ -36,6 +36,7 @@ import { CommitteeDetailsComponent } from './components/conference/committee-det
 import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
 import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/edit-conference-layout.component';
 import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
+import { SimSimViewComponent } from './components/simsim/sim-sim-view/sim-sim-view.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -86,7 +87,10 @@ const routes: Routes = [
       { path: 's/start', component: SpeakerlistStartupComponent },
       { path: 's/edit/:id', component: SpeakerlistControllerComponent },
 
-      { path: 'p/check/:id', component: PresentsCheckComponent }
+      { path: 'p/check/:id', component: PresentsCheckComponent },
+
+      // SimSim
+      { path: 'sim/:id', component: SimSimViewComponent}
       
     ]
   },
