@@ -6,6 +6,8 @@ using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityAngular.Models.Resolution
 {
+
+    [Obsolete("Use DataHandlers.EntityFramework.Models.Resolution")]
     public class ResolutionAdvancedInfoModel : ResolutionInformationModel
     {
 

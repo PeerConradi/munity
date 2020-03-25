@@ -15,6 +15,7 @@ namespace MUNityAngular.Models.Conference
     /// The Conference holds all needed Data to show Committees, NGOs
     /// 
     /// </summary>
+    [Obsolete("Use DataHandlers.EnitityFramework.Models.Conference")]
     public class ConferenceModel
     {
 

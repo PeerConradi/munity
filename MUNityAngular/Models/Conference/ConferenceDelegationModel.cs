@@ -6,6 +6,8 @@ using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityAngular.Models.Conference
 {
+
+    [Obsolete("This should be removed by the EntityFramework rework")]
     public class ConferenceDelegationModel
     {
 

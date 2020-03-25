@@ -47,7 +47,15 @@ namespace MUNityAngular.DataHandlers.Database
                             }
                             else
                             {
-                                setPropertySuccess = element.SetProperty(property.Name, reader.GetString(columnname));
+                                if (reader.GetFieldType(columnname) == typeof(string))
+                                {
+                                    setPropertySuccess = element.SetProperty(property.Name, reader.GetString(columnname));
+                                }
+                                else if (reader.GetFieldType(columnname) == typeof(int))
+                                {
+                                    setPropertySuccess = element.SetProperty(property.Name, reader.GetInt32(columnname).ToString());
+                                }
+                                
                             }
                         }
                         else if (propType == typeof(DateTime))

@@ -12,6 +12,8 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
 using System;
+using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace MUNityAngular
 {
@@ -59,9 +61,17 @@ namespace MUNityAngular
 
             var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
 
+            services.AddDbContextPool<DataHandlers.EntityFramework.MunityContext>(options =>
+            options.UseMySql("Server=localhost;Database=munitydb;User=root;Password=;", mySqlOptions => mySqlOptions
+                    // replace with your Server Version and Type
+                    .ServerVersion(new Version(10, 1, 26), ServerType.MariaDb)));
+
+            
+
             // All services that are used inside the controllers.
             services.AddSingleton<Services.InstallationService>();
-            services.AddSingleton(serviceProvider => new Services.AuthService(mySqlConnectionString));
+            services.AddSingleton<Services.AuthService>();
+            //services.AddSingleton(serviceProvider => new Services.AuthService(mySqlConnectionString));
             services.AddSingleton(serviceProvider =>
             {
                 //We pass the settings to this one!

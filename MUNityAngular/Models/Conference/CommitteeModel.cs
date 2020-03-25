@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 namespace MUNityAngular.Models.Conference
 {
 
+
+    [Obsolete("Use DataHandlers.EntityFramework.Committee")]
     [DataContract]
     public class CommitteeModel : BaseCommitteeModel
     {

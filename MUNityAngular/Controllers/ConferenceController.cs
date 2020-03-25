@@ -404,7 +404,7 @@ namespace MUNityAngular.Controllers
             if (value.Role.Id == null)
                 return StatusCode(StatusCodes.Status400BadRequest);
 
-            conferenceService.AddUserToConferenceTeam(user, conference, value.Role);
+            conferenceService.AddUserToConferenceTeam(user, value.Role);
             return StatusCode(StatusCodes.Status200OK);
         }
 

@@ -6,6 +6,8 @@ using MUNityAngular.DataHandlers.Database;
 
 namespace MUNityAngular.Models.Conference
 {
+
+    [Obsolete("Use DataHandlers.EntityFramework.Models.DelegationConference")]
     public class DelegationInCommitteeModel
     {
 

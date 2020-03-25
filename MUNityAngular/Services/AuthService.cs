@@ -7,15 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using MUNityAngular.DataHandlers.EntityFramework;
 
 namespace MUNityAngular.Services
 {
     public class AuthService
     {
-        private const string user_table_name = "user";
-        private const string auth_table_name = "auth";
 
-        private string _connectionString;
+        private MunityContext _context;
 
         private bool registrationOpened = true;
         public bool IsRegistrationOpened { get => registrationOpened; 
@@ -41,158 +40,57 @@ namespace MUNityAngular.Services
             var success = false;
             var customAuthKey = string.Empty;
 
-            var cmdStr = "SELECT id, password, salt FROM user WHERE username=@username";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                string userid = string.Empty;
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@username", username.ToLower());
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        userid = reader.GetString("id");
-                        var hash = reader.GetString("password");
-                        var salt = reader.GetString("salt");
-                        if (Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash))
-                            success = true;
-                    }
-                }
+            var user = _context.Users.FirstOrDefault(n => n.Username == username);
+            if (user == null)
+                return (false, null);
 
-                //Auth Key
-                if (success == true)
-                {
-                    RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
-                    byte[] randoms = new byte[64];
-                    rngCsp.GetBytes(randoms);
-                    customAuthKey = Convert.ToBase64String(randoms);
-                    cmdStr = "INSERT INTO " + auth_table_name + " (authkey, userid, createdate, expiredate) VALUES " +
-                        "(@key, @userid, @createdate, @expiredate);";
-                    cmd = new MySqlCommand(cmdStr, connection);
-                    cmd.Parameters.AddWithValue("@key", customAuthKey);
-                    cmd.Parameters.AddWithValue("@userid", userid);
-                    cmd.Parameters.AddWithValue("@createdate", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@expiredate", DateTime.Now.AddDays(1));
-                    cmd.ExecuteNonQuery();
-                }
+            if (Util.Hashing.PasswordHashing.CheckPassword(password, user.Salt, user.Password))
+            {
+                //Create new Auth Key
+                var key = new MUNityAngular.DataHandlers.EntityFramework.Models.AuthKey();
+                _context.AuthKey.Add(key);
+                _context.SaveChanges();
+                return (true, key.AuthId);
             }
 
-            return (success, customAuthKey);
+            return (false, null);
         }
 
-        public void DeleteAllUserKeys(string userid)
+        public void DeleteAllUserKeys(int userid)
         {
-            Tools.Connection(_connectionString).Table(auth_table_name).RemoveEntry("userid", userid);
+            _context.AuthKey.RemoveRange(_context.AuthKey.Where(n => n.User.UserId == userid));
+            _context.SaveChanges();
         }
 
-        public void DeleteAccount(string id)
+        public void DeleteAccount(int id)
         {
             //Delete all User Keys
             DeleteAllUserKeys(id);
-            Tools.Connection(_connectionString).Table(user_table_name).RemoveEntry("id", id);
+            _context.Users.Remove(_context.Users.FirstOrDefault(n => n.UserId == id));
+            _context.SaveChanges();
         }
 
-        public string GetHeadAdminId()
+        public int? GetHeadAdminId()
         {
-            var entries = Tools.Connection(_connectionString).Table("admin").GetEntries("rank", "5");
-            if (entries.ContainsKey("userid"))
-                return entries["userid"] as string;
-            return null;
+            return _context.Admins.FirstOrDefault()?.User.UserId ?? null;
         }
 
-
-
-        public (bool status, string key) LoginWithId(string userid, string password)
+        public (bool status, string key) LoginWithId(int userid, string password)
         {
-            var success = false;
-            var customAuthKey = string.Empty;
 
-            var cmdStr = "SELECT password, salt FROM user WHERE id=@userid";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var hash = reader.GetString("password");
-                        var salt = reader.GetString("salt");
-                        if (Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash))
-                            success = true;
-                    }
-                }
+            var user = _context.Users.FirstOrDefault(n => n.UserId == userid);
+            if (user == null)
+                return (false, null);
 
-                //Auth Key
-                if (success == true)
-                {
-                    RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
-                    byte[] randoms = new byte[64];
-                    rngCsp.GetBytes(randoms);
-                    customAuthKey = Convert.ToBase64String(randoms);
-                    cmdStr = "INSERT INTO " + auth_table_name + " (authkey, userid, createdate, expiredate) VALUES " +
-                        "(@key, @userid, @createdate, @expiredate);";
-                    cmd = new MySqlCommand(cmdStr, connection);
-                    cmd.Parameters.AddWithValue("@key", customAuthKey);
-                    cmd.Parameters.AddWithValue("@userid", userid);
-                    cmd.Parameters.AddWithValue("@createdate", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@expiredate", DateTime.Now.AddDays(1));
-                    cmd.ExecuteNonQuery();
-                }
-            }
-
-            return (success, customAuthKey);
+            return Login(user.Username, password);
         }
 
-        public (bool valid, string userid) CheckLoginData(string username, string password)
+        public bool CheckPasswordForUserid(int userid, string password)
         {
-            var success = false;
-            string userid = string.Empty;
-            var cmdStr = "SELECT id, password, salt FROM user WHERE username=@username";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@username", username);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        userid = reader.GetString("id");
-                        var hash = reader.GetString("password");
-                        var salt = reader.GetString("salt");
-                        success = Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash);
-                    }
-                }
-            }
-            return (success, userid);
-        }
-
-        public bool CheckPasswordForUserid(string userid, string password)
-        {
-            var success = false;
-            var cmdStr = "SELECT id, password, salt FROM user WHERE id=@userid";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var hash = reader.GetString("password");
-                        var salt = reader.GetString("salt");
-                        if (Util.Hashing.PasswordHashing.CheckPassword(password, salt, hash))
-                            success = true;
-                    }
-                }
-            }
-            return success;
+            var user = _context.Users.FirstOrDefault(n => n.UserId == userid);
+            if (user == null)
+                return false;
+            return Util.Hashing.PasswordHashing.CheckPassword(password, user.Salt, user.Password);
         }
 
         internal void Logout(string auth)
@@ -200,29 +98,14 @@ namespace MUNityAngular.Services
             if (string.IsNullOrEmpty(auth))
                 return;
 
-            var cmdStr = "DELETE FROM " + auth_table_name + " WHERE authkey=@authkey";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@authkey", auth);
-                cmd.ExecuteNonQuery();
-            }
+            _context.AuthKey.Remove(_context.AuthKey.FirstOrDefault(n => n.AuthId == auth));
+            _context.SaveChanges();
         }
 
-        public void DeleteAuthKeysForUser(string userid)
+        public void DeleteAuthKeysForUser(int userid)
         {
-            if (string.IsNullOrEmpty(userid))
-                return;
-
-            var cmdStr = "DELETE FROM " + auth_table_name + " WHERE userid=@userid";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                cmd.ExecuteNonQuery();
-            }
+            _context.AuthKey.RemoveRange(_context.AuthKey.Where(n => n.User.UserId == userid));
+            _context.SaveChanges();
         }
 
         public bool Register(string username, string password, string email)
@@ -230,75 +113,62 @@ namespace MUNityAngular.Services
             if (!UsernameAvailable(username))
                 return false;
 
-            var cmdStr = "INSERT INTO " + user_table_name + "(id, username, password, salt, mail, registerdate, status) VALUES " +
-                "(@id, @username, @password, @salt, @mail, @registerdate, @status)";
+            var user = new DataHandlers.EntityFramework.Models.User();
+            user.RegistrationDate = DateTime.Now;
 
             var hash = Util.Hashing.PasswordHashing.InitHashing(password);
-
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@id", username.ToLower());
-                cmd.Parameters.AddWithValue("@username", username.ToLower());
-                cmd.Parameters.AddWithValue("@password", hash.Key);
-                cmd.Parameters.AddWithValue("@salt", hash.Salt);
-                cmd.Parameters.AddWithValue("@mail", email.ToLower());
-                cmd.Parameters.AddWithValue("@registerdate", DateTime.Now);
-                cmd.Parameters.AddWithValue("@status", "OK");
-                cmd.ExecuteNonQuery();
-            }
+            user.Salt = hash.Salt;
+            user.Password = hash.Key;
+            _context.Users.Add(user);
+            _context.SaveChanges();
 
             return true;
         }
 
-        public void SetPassword(string userid, string newPassword)
+        public void SetPassword(int userid, string newPassword)
         {
             var hash = Util.Hashing.PasswordHashing.InitHashing(newPassword);
-            Tools.Connection(_connectionString).Table(user_table_name).SetEntry("id", userid, "password", hash.Key);
-            Tools.Connection(_connectionString).Table(user_table_name).SetEntry("id", userid, "salt", hash.Salt);
+            var user = _context.Users.FirstOrDefault(n => n.UserId == userid);
+            if (user == null)
+                return;
+            user.Salt = hash.Salt;
+            user.Password = hash.Key;
+            _context.SaveChanges();
         }
 
-        public void SetForename(string userid, string newForename) =>
-            Tools.Connection(_connectionString).User.SetEntry("id", userid, "forename", newForename);
+        public void SetForename(int userid, string newForename)
+        {
+            var user = _context.Users.FirstOrDefault(n => n.UserId == userid);
+            if (user != null)
+            {
+                user.Forename = newForename;
+                _context.SaveChanges();
+            }
+        }
+            
 
-        public void SetLastname(string userid, string newForename) =>
-            Tools.Connection(_connectionString).User.SetEntry("id", userid, "lastname", newForename);
+        public void SetLastname(int userid, string newLastname)
+        {
+            var user = _context.Users.FirstOrDefault(n => n.UserId == userid);
+            if (user != null)
+            {
+                user.Lastname = newLastname;
+                _context.SaveChanges();
+            }
+        }
 
         public bool UsernameAvailable(string username)
         {
-            return !Tools.Connection(_connectionString).Table(user_table_name).HasEntry("username", username.ToLower());
+            return _context.Users.FirstOrDefault(n => n.Username == username) == null;
         }
 
-        public (bool valid, string userid) ValidateAuthKey(string authkey)
+        public (bool valid, int? userid) ValidateAuthKey(string authkey)
         {
-            if (string.IsNullOrEmpty(authkey))
+            var auth = _context.AuthKey.FirstOrDefault(n => n.AuthId == authkey);
+            if (auth == null)
                 return (false, null);
 
-            var valid = false;
-            string user = null;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                var cmdStr = "SELECT COUNT(*), userid FROM auth WHERE authkey=@authkey;";
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@authkey",authkey);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        if (reader.GetInt16(0) == 1)
-                        {
-                            valid = true;
-                            user = reader.GetString(1);
-                        }
-                            
-
-                    }
-                }
-            }
-
-            return (valid, user);
+            return (true, auth.User.UserId);
         }
 
         #region Resolution
@@ -313,7 +183,7 @@ namespace MUNityAngular.Services
 
         
 
-        public bool CanEditResolution(string userid, ResolutionModel resolution)
+        public bool CanEditResolution(int userid, ResolutionModel resolution)
         {
 
             //If the resolution is public edit return true
@@ -321,37 +191,23 @@ namespace MUNityAngular.Services
                 return true;
 
             //Check if the user is owner
-            if (GetOwnerId(resolution) == userid)
+            if (GetOwnerId(resolution).Value == userid)
                 return true;
 
             //Check if the user has the right to edit this document
             //This is not the best way to do it, let me think of something better
-            var count = Tools.Connection(_connectionString).ResolutionAuth.CountWhere("resolutionid='" + resolution.ID + "' AND userid='" + userid + "'");
-            if (count >= 1)
-                return true;
+            bool inDocumentGroup =
+                _context.ResolutionUsers.FirstOrDefault(n => n.User.UserId == userid)?.CanEdit ?? false;
 
             //Check of the resolution is bindet to a conferece where the user is part
-            var cmdStr = "SELECT resolution.* FROM resolution " +
-                "INNER JOIN resolution_conference ON resolution_conference.resolutionid = resolution.id " +
-                "INNER JOIN conference_team ON conference_team.conferenceid = resolution_conference.conferenceid " +
-                "WHERE userid=@userid AND resolution.id=@resoid;";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                cmd.Parameters.AddWithValue("@resoid", resolution.ID);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                    {
-                        return true;
-                    }
-                }
-            }
+            // of the Team
+            // Get Conferences where the user is inside the team
+            var userConferences = _context.TeamUsers.Where(n => n.User.UserId == userid).Select(n => n.Role.Conference.ConferenceId);
+            // Get the Resolution Conferences
+            var resolutionConferences = _context.ConferenceResolutions.Where(n => n.Resolution.ResolutionId == resolution.ID).Select(n => n.Conference.ConferenceId);
+            var editBecauseInConference = resolutionConferences.Any(n => userConferences.Contains(n));
 
-
-            return false;
+            return editBecauseInConference || inDocumentGroup;
         }
 
         public (bool readable, bool writeable) GetResolutionPublicState(ResolutionModel resolution)
@@ -364,284 +220,73 @@ namespace MUNityAngular.Services
 
         public (bool readable, bool writeable) GetResolutionPublicState(string resolutionid)
         {
-            var read = false;
-            var write = false;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmdStr = "SELECT resolution.ispublicread, resolution.ispublicwrite FROM resolution WHERE resolution.id=@id";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@id", resolutionid);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        try
-                        {
-                            read = reader.GetBoolean(0);
-                            write = reader.GetBoolean(1);
-                        }
-                        catch (Exception)
-                        {
-
-                            throw;
-                        }
-                        
-                    }
-                }
-            }
-            return (read, write);
+            var resolution = _context.Resolutions.FirstOrDefault(n => n.ResolutionId == resolutionid);
+            if (resolution == null)
+                return (false, false);
+            return (resolution.PublicRead, resolution.PublicWrite);
         }
 
-        public string GetOwnerId(ResolutionModel resolution)
+        public int? GetOwnerId(ResolutionModel resolution)
         {
-            string owner = null;
-
-            if (resolution == null)
-                throw new ArgumentNullException("Resolution cant be null");
-
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmdStr = "SELECT `user` FROM resolution WHERE resolution.id=@resoid;";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@resoid", resolution.ID);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        owner = reader.GetString(0);
-                    }
-                }
-            }
-            return owner;
+            return _context.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID).CreationUser?.UserId ?? null;
         }
 
         #endregion
 
-        public UserAuths GetAuthsByAuthkey(string authkey)
+        public DataHandlers.EntityFramework.Models.UserAuths GetAuthsByAuthkey(string authkey)
         {
-            var auths = new UserAuths();
-            if (string.IsNullOrEmpty(authkey))
-                return auths;
+            var authUser = _context.AuthKey.FirstOrDefault(n => n.AuthId == authkey)?.User ?? null;
+            if (authUser == null)
+                return null;
 
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                var cmdStr = "SELECT user_clearance.* FROM `user`" +
-                    " INNER JOIN user_clearance ON user_clearance.userid = `user`.id" +
-                    " INNER JOIN auth ON auth.userid = `user`.id " +
-                    " WHERE auth.authkey=@authkey";
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@authkey", authkey);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        auths = DataReaderConverter.ObjectFromReader<UserAuths>(reader);
-                    }
-                }
-            }
-            var validation = ValidateAuthKey(authkey);
-            if (validation.valid)
-            {
-                if (IsAdmin(validation.userid))
-                {
-                    auths.SetAdmin();
-                }
-            }
-            return auths;
-
+            return _context.UserAuths.FirstOrDefault(n => n.User == authUser);
         }
 
-        public bool IsAdmin(string userid)
+        public bool IsAdmin(int userid)
         {
-            var cmdStr = "SELECT rank FROM admin WHERE userid=@userid";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (!reader.HasRows)
-                        return false;
-
-                    while (reader.Read())
-                    {
-                        if (reader.GetInt16(0) == 5)
-                            return true;
-                    }
-                    
-
-                    return false;
-                }
-            }
-        }
-
-        public class UserAuths
-        {
-            
-            [DatabaseSave("userid")]
-            public string UserId { get; set; } = null;
-
-            [DatabaseSave("CreateConference")]
-            public bool CreateConference { get; set; } = false;
-
-            internal void SetAdmin()
-            {
-                CreateConference = true;
-            }
+            return _context.Admins.Any(n => n.User.UserId == userid && n.PowerRank == 5);
         }
         
-        public List<UserModel> GetAllUsers()
+        public List<DataHandlers.EntityFramework.Models.User> GetAllUsers()
         {
-            var users = new List<UserModel>();
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmdStr = "SELECT * FROM user;";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var user = DataReaderConverter.ObjectFromReader<UserModel>(reader);
-                        users.Add(user);
-                    }
-                    
-                }
-            }
-            return users;
+            return _context.Users.ToList();
         }
 
         public int GetUserCount()
         {
-            return Tools.Connection(_connectionString).Table(user_table_name).Count();
+            return _context.Users.Count();
         }
 
-        public UserModel GetUserByUsername(string username)
+        public DataHandlers.EntityFramework.Models.User GetUserByUsername(string username)
         {
-            UserModel user = null;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmdStr = "SELECT * FROM user WHERE username=@username;";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@username", username);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        user = DataReaderConverter.ObjectFromReader<UserModel>(reader);
-                    }
-
-                }
-            }
-            return user;
+            return _context.Users.FirstOrDefault(n => n.Username == username);
         }
 
-        public UserModel GetUserById(string id)
+        public DataHandlers.EntityFramework.Models.User GetUserById(int id)
         {
-            return Tools.Connection(_connectionString).Table(user_table_name).First<UserModel>("id", id);
+            return _context.Users.FirstOrDefault(n => n.UserId == id);
         }
 
-        public UserModel GetUserByAuth(string auth)
+        public DataHandlers.EntityFramework.Models.User GetUserByAuth(string auth)
         {
-            var cmdStr = "SELECT `user`.* FROM `user` INNER JOIN auth ON auth.userid = `user`.id WHERE auth.authkey = @authkey";
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@authkey", auth);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        return DataReaderConverter.ObjectFromReader<UserModel>(reader);
-                    }
-                }
-            }
-            return null;
-        }
-
-        public AUser User(string userid)
-        {
-            return new AUser(_connectionString, userid);
-        }
-
-        public class AUser
-        {
-            private string _conenctionString;
-            private string _userid;
-
-            public AUser(string connectionString, string userid)
-            {
-                this._conenctionString = connectionString;
-            }
-
-            public bool CanEditResolution(string resolutionid)
-            {
-                var resolution = Tools.Connection(_conenctionString).Resolution.First<ResolutionAdvancedInfoModel>("id", resolutionid);
-                if (resolution.PublicWrite)
-                    return true;
-
-                if (resolution.UserId == this._userid)
-                    return true;
-
-                var count = Tools.Connection(_conenctionString).ResolutionAuth.CountWhere("resolutionid=" + resolution.ID + " AND userid=" + _userid);
-                if (count >= 1)
-                    return true;
-
-                return false;
-            }
+            return _context.AuthKey.FirstOrDefault(n => n.AuthId == auth).User;
         }
 
 
         #region Konferenz
 
-        public bool CanManageConference(string userid, string conferenceid)
+        public DataHandlers.EntityFramework.Models.ConferenceUserAuth CanManageConference(int userid, string conferenceid)
         {
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var cmdStr = "SELECT FROM conference WHERE id=@conferenceid And creationuser=@userid;";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@conferenceid", conferenceid);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                    {
-                        //Der Benutzer ist der Ersteller der Konferenz und hat somit alle notwendigen rechte
-                        return true;
-                    }
-                }
-                cmd.CommandText = "SELECT CanEdit FROM conference_user_auth WHERE conferenceid=@conferenceid And userid=@userid;";
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            return reader.GetBoolean(0);
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            return false;
+            var conferenceAuths = _context.ConferenceUserAuths.FirstOrDefault(n => n.User.UserId == userid && n.Conference.ConferenceId == conferenceid);
+            return conferenceAuths;
         }
 
         #endregion
 
 
-        public AuthService(string connectionString)
+        public AuthService(MunityContext context)
         {
-            _connectionString = connectionString;
+            _context = context;
             Console.WriteLine("Auth-Service Started!");
         }
     }

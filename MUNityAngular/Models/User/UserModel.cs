@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace MUNityAngular.Models.User
 {
+
+    [Obsolete("Use DataHandler.EntityFramework.Models.User")]
     public class UserModel
     {
 

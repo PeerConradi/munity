@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace MUNityAngular.Models.Conference
 {
+
+    [Obsolete("Use DataHandlers.EntityFramework.Models.ConferenceUserAuth")]
     public class ConferenceUserAuthModel
     {
 
