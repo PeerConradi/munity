@@ -13,6 +13,12 @@ namespace MUNityAngular.DataHandlers.EntityFramework.Models
 
         public string FullName { get; set; }
 
+        public string Abbreviation { get; set; }
+
+        public string Article { get; set; }
+
+        public Committee ResolutlyCommittee { get; set; }
+
         public Committee()
         {
             CommitteeId = Guid.NewGuid().ToString();

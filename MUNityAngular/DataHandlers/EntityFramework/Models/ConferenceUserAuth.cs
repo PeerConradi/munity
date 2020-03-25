@@ -7,7 +7,7 @@ namespace MUNityAngular.DataHandlers.EntityFramework.Models
 {
     public class ConferenceUserAuth
     {
-        public int AuthId { get; set; }
+        public int ConferenceUserAuthId { get; set; }
 
         public Conference Conference { get; set; }
 

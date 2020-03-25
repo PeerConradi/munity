@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using MUNityAngular.Models;
-using MUNityAngular.Models.Conference;
 using MUNityAngular.DataHandlers.Database;
 using MUNityAngular.Util.Extenstions;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityTest.Speakerlist
 {
@@ -22,8 +22,8 @@ namespace MUNityTest.Speakerlist
         public void TestNextQuestionsResetsTime()
         {
             var instance = new SpeakerlistModel();
-            var delegationOne = new DelegationModel();
-            var delegationTwo = new DelegationModel();
+            var delegationOne = new Delegation();
+            var delegationTwo = new Delegation();
             instance.AddQuestion(delegationOne);
             instance.AddQuestion(delegationTwo);
             instance.NextQuestion();
@@ -38,8 +38,8 @@ namespace MUNityTest.Speakerlist
         public void TestNextSpeakerResetsTime()
         {
             var instance = new SpeakerlistModel();
-            var delegationOne = new DelegationModel();
-            var delegationTwo = new DelegationModel();
+            var delegationOne = new Delegation();
+            var delegationTwo = new Delegation();
             instance.AddSpeaker(delegationOne);
             instance.AddSpeaker(delegationTwo);
             instance.NextSpeaker();
@@ -65,7 +65,7 @@ namespace MUNityTest.Speakerlist
         {
             var speakerlist = new SpeakerlistModel();
             speakerlist.Speakertime = new TimeSpan(0, 1, 0);
-            var delegation = new DelegationModel();
+            var delegation = new Delegation();
             delegation.Name = "Test";
             speakerlist.AddSpeaker(delegation);
             speakerlist.NextSpeaker();
@@ -81,7 +81,7 @@ namespace MUNityTest.Speakerlist
         {
             var speakerlist = new SpeakerlistModel();
             speakerlist.Speakertime = new TimeSpan(0, 1, 0);
-            var delegation = new DelegationModel();
+            var delegation = new Delegation();
             delegation.Name = "Test";
             speakerlist.AddSpeaker(delegation);
             speakerlist.NextSpeaker();
@@ -99,7 +99,7 @@ namespace MUNityTest.Speakerlist
         {
             var speakerlist = new SpeakerlistModel();
             speakerlist.Questiontime = new TimeSpan(0, 1, 0);
-            var delegation = new DelegationModel();
+            var delegation = new Delegation();
             delegation.Name = "Test";
             speakerlist.AddQuestion(delegation);
             speakerlist.NextQuestion();

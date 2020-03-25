@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 
 namespace MUNityAngular.DataHandlers.EntityFramework.Models
 {
-    public class Admin
+    public class MediaTag
     {
-        public int AdminId { get; set; }
+        public int MediaTagId { get; set; }
 
-        public User User { get; set; }
-
-        public int PowerRank { get; set; }
+        public string TagName { get; set; }
     }
 }

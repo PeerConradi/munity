@@ -37,7 +37,6 @@ namespace MUNityAngular.Services
 
         public (bool status, string key) Login(string username, string password)
         {
-            var success = false;
             var customAuthKey = string.Empty;
 
             var user = _context.Users.FirstOrDefault(n => n.Username == username);
@@ -50,7 +49,7 @@ namespace MUNityAngular.Services
                 var key = new MUNityAngular.DataHandlers.EntityFramework.Models.AuthKey();
                 _context.AuthKey.Add(key);
                 _context.SaveChanges();
-                return (true, key.AuthId);
+                return (true, key.AuthKeyValue);
             }
 
             return (false, null);
@@ -98,7 +97,7 @@ namespace MUNityAngular.Services
             if (string.IsNullOrEmpty(auth))
                 return;
 
-            _context.AuthKey.Remove(_context.AuthKey.FirstOrDefault(n => n.AuthId == auth));
+            _context.AuthKey.Remove(_context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == auth));
             _context.SaveChanges();
         }
 
@@ -164,7 +163,7 @@ namespace MUNityAngular.Services
 
         public (bool valid, int? userid) ValidateAuthKey(string authkey)
         {
-            var auth = _context.AuthKey.FirstOrDefault(n => n.AuthId == authkey);
+            var auth = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == authkey);
             if (auth == null)
                 return (false, null);
 
@@ -210,6 +209,23 @@ namespace MUNityAngular.Services
             return editBecauseInConference || inDocumentGroup;
         }
 
+        public bool CanAuthEditResolution(string auth, ResolutionModel resolution)
+        {
+            var user = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == auth)?.User ?? null;
+            if (user == null)
+            {
+                // Checke auf Public Resolution sonst darf jemand der nicht eingeloggt ist
+                // ohnehin nichts bearbeiten
+                var resDb = _context.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID);
+                if (resDb != null)
+                {
+                    return resDb.PublicWrite;
+                }
+                return false;
+            }
+            return CanEditResolution(user.UserId, resolution);
+        }
+
         public (bool readable, bool writeable) GetResolutionPublicState(ResolutionModel resolution)
         {
             if (resolution == null)
@@ -235,7 +251,7 @@ namespace MUNityAngular.Services
 
         public DataHandlers.EntityFramework.Models.UserAuths GetAuthsByAuthkey(string authkey)
         {
-            var authUser = _context.AuthKey.FirstOrDefault(n => n.AuthId == authkey)?.User ?? null;
+            var authUser = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == authkey)?.User ?? null;
             if (authUser == null)
                 return null;
 
@@ -269,7 +285,7 @@ namespace MUNityAngular.Services
 
         public DataHandlers.EntityFramework.Models.User GetUserByAuth(string auth)
         {
-            return _context.AuthKey.FirstOrDefault(n => n.AuthId == auth).User;
+            return _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == auth).User;
         }
 
 

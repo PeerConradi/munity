@@ -4,12 +4,12 @@ using MUNityAngular.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.DataHandlers;
 
 namespace MUNityAngular.Services
 {
     public class PresenceService
     {
-        string _mySqlConnectionString;
         private IMongoCollection<PresenceModel> _presences;
 
         public void SavePresence(PresenceModel model)
@@ -29,15 +29,12 @@ namespace MUNityAngular.Services
                 n1.CheckDate > n2.CheckDate ? n1 : n2);
         }
 
-        public PresenceService(string mysqlConnectionString, string mongoConnectionString, string mongoDatabaseName)
+        public PresenceService(IMunityMongoDatabaseSettings mongoSettings)
         {
-            _mySqlConnectionString = mysqlConnectionString;
+            var client = new MongoClient(mongoSettings.ConnectionString);
+            var database = client.GetDatabase(mongoSettings.DatabaseName);
 
-            var resolutionTableString = "Presence";
-            var client = new MongoClient(mongoConnectionString);
-            var database = client.GetDatabase(mongoDatabaseName);
-
-            this._presences = database.GetCollection<PresenceModel>(resolutionTableString);
+            this._presences = database.GetCollection<PresenceModel>(mongoSettings.PresenceCollectionName);
 
         }
     }

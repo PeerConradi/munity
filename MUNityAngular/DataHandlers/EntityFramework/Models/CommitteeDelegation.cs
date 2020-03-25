@@ -7,7 +7,7 @@ namespace MUNityAngular.DataHandlers.EntityFramework.Models
 {
     public class CommitteeDelegation
     {
-        public int LinkId { get; set; }
+        public int CommitteeDelegationId { get; set; }
 
         public Committee Committee { get; set; }
 

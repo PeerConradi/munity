@@ -9,8 +9,8 @@ using MUNityAngular.Models;
 using MUNityAngular.Services;
 using Newtonsoft.Json;
 using MUNityAngular.Util.Extenstions;
-using MUNityAngular.Models.Conference;
 using MUNityAngular.Schema.Request;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityAngular.Controllers
 {
@@ -47,7 +47,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public ActionResult<ConferenceModel> GetConference([FromHeader]string auth, [FromHeader]string id,
+        public ActionResult<Conference> GetConference([FromHeader]string auth, [FromHeader]string id,
             [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
@@ -72,7 +72,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public ActionResult<List<ConferenceModel>> GetConferences([FromHeader]string auth,
+        public ActionResult<List<Conference>> GetConferences([FromHeader]string auth,
             [FromServices]ConferenceService conferenceService,
             [FromServices]AuthService authService)
         {
@@ -88,7 +88,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public ActionResult<List<ConferenceModel>> GetConferencesFormatted([FromHeader]string auth,
+        public ActionResult<List<Conference>> GetConferencesFormatted([FromHeader]string auth,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
@@ -105,7 +105,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [HttpPatch]
         [Route("[action]")]
-        public ActionResult<ConferenceModel> ChangeConferenceName([FromHeader]string auth, [FromBody]ChangeConferenceNameRequest request,
+        public ActionResult<Conference> ChangeConferenceName([FromHeader]string auth, [FromBody]ChangeConferenceNameRequest request,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
@@ -113,23 +113,22 @@ namespace MUNityAngular.Controllers
             if (authValidation.valid == false)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
 
-            if (service.GetConferenceUserAuth(request.ConferenceID, request.ConferenceID).CanEdit == false)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
-            }
+
+            
 
             var conference = service.GetConference(request.ConferenceID);
             if (conference != null)
             {
-                var success = service.ChangeConferenceName(conference, request.NewName);
-                if (success)
+                var user = authService.GetUserByAuth(auth);
+
+                if (service.GetConferenceUserAuth(conference, user).CanEditSettings == false)
                 {
-                    return StatusCode(StatusCodes.Status200OK, conference);
+                    return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
                 }
-                else
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, "Unable to change Conference Name");
-                }
+
+                conference.Name = request.NewName;
+                service.UpdateConference(conference);
+                return StatusCode(StatusCodes.Status200OK, conference);
             }
             else
             {
@@ -148,23 +147,24 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public ActionResult<ConferenceModel> Create([FromHeader]string auth, [FromBody]CreateConferenceRequest request,
+        public ActionResult<Conference> Create([FromHeader]string auth, [FromBody]CreateConferenceRequest request,
             [FromServices]ConferenceService service,
             [FromServices]AuthService authService)
         {
+
             var authstate = authService.GetAuthsByAuthkey(auth);
 
-            if (!authstate.CreateConference)
+            if (!authstate.CanCreateConference)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to create a conference!");
 
-            var model = new ConferenceModel();
+            var model = new Conference();
             model.CreationDate = DateTime.Now;
             model.Name = request.Name;
             model.FullName = request.FullName;
             model.Abbreviation = request.Abbreviation;
             model.StartDate = request.StartDate;
             model.EndDate = request.EndDate;
-            service.CreateConference(model, authstate.UserId);
+            service.CreateConference(model, authService.GetUserByAuth(auth).UserId);
             return StatusCode(StatusCodes.Status200OK, model);
         }
 
@@ -179,7 +179,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public ActionResult<CommitteeModel> AddCommittee([FromHeader]string auth, [FromBody]AddCommitteeRequest request,
+        public ActionResult<Committee> AddCommittee([FromHeader]string auth, [FromBody]AddCommitteeRequest request,
             [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
@@ -192,12 +192,12 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
 
 
-            var committee = new CommitteeModel();
+            var committee = new Committee();
             committee.Name = request.Name;
             committee.FullName = request.FullName;
             committee.Abbreviation = request.Abbreviation;
             committee.Article = request.Article;
-            committee.ResolutlyCommitteeID = (string.IsNullOrEmpty(request.ResolutlyCommittee)) ? request.ResolutlyCommittee : null;
+            committee.ResolutlyCommittee = (string.IsNullOrEmpty(request.ResolutlyCommittee)) ? null : conferenceService.GetCommittee(request.ResolutlyCommittee);
             conferenceService.AddCommittee(conference, committee);
             return StatusCode(StatusCodes.Status200OK, committee);
         }
@@ -205,7 +205,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<List<CommitteeModel>> GetCommitteesOfConference([FromHeader]string auth, [FromHeader]string conferenceid,
+        public ActionResult<List<Committee>> GetCommitteesOfConference([FromHeader]string auth, [FromHeader]string conferenceid,
             [FromServices]ConferenceService conferenceService)
         {
             var conference = conferenceService.GetConference(conferenceid);
@@ -225,7 +225,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public ActionResult<DelegationModel> CreateDelegation([FromHeader]string auth,
+        public ActionResult<Delegation> CreateDelegation([FromHeader]string auth,
             [FromBody]CreateDelegationRequest request,
             [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
@@ -239,43 +239,8 @@ namespace MUNityAngular.Controllers
             if (!authCheck.valid)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
             
-            var delegation = conferenceService.CreateDelegation(request.Name, request.FullName, request.Abbreviation, request.Type.ToString());
+            var delegation = conferenceService.CreateDelegation(request.Name, request.FullName, request.Abbreviation, request.Type.ToString(), "");
             //conferenceService.AddDelegationToConference(conferenceid, delegation.ID);
-            return StatusCode(StatusCodes.Status200OK, delegation);
-        }
-
-        /// <summary>
-        /// Binds a Delegation to a conference
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="conferenceid"></param>
-        /// <param name="delegationid"></param>
-        /// <param name="mincount"></param>
-        /// <param name="maxcount"></param>
-        /// <param name="conferenceService"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpPost]
-        public ActionResult<DelegationModel> AddDelegationToConference([FromHeader]string auth, [FromHeader]string conferenceid, [FromHeader]string delegationid,
-            [FromHeader]string mincount, [FromHeader]string maxcount,
-            [FromServices]ConferenceService conferenceService)
-        {
-            var canEdit = conferenceService.CanAuthEditConference(auth, conferenceid);
-            if (!canEdit)
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
-
-            var delegation = conferenceService.GetDelegation(delegationid);
-            if (delegation == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Delegation not found with the given id");
-
-            var conference = conferenceService.GetConference(conferenceid);
-            if (conference == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
-
-
-
-            conferenceService.AddDelegationToConference(conferenceid, delegationid, mincount.ToIntOrDefault(1), maxcount.ToIntOrDefault(1));
-            conference.Delegations.Add(delegation);
             return StatusCode(StatusCodes.Status200OK, delegation);
         }
 
@@ -291,7 +256,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public ActionResult<CommitteeModel> AddDelegationToCommittee([FromHeader]string auth, [FromHeader]string committeeid, [FromHeader]string delegationid,
+        public ActionResult<Committee> AddDelegationToCommittee([FromHeader]string auth, [FromHeader]string committeeid, [FromHeader]string delegationid,
             [FromHeader]string mincount, [FromHeader]string maxcount,
             [FromServices]ConferenceService conferenceService)
         {
@@ -301,7 +266,11 @@ namespace MUNityAngular.Controllers
             if (committee == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Committee not found!");
 
-            var canEdit = conferenceService.CanAuthEditConference(auth, committee.ConferenceID);
+            var conference = conferenceService.GetConferenceOfCommittee(committee);
+            if (conference == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+
+            var canEdit = conferenceService.CanAuthEditConference(auth, conference.ConferenceId);
             if (!canEdit)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
 
@@ -309,17 +278,11 @@ namespace MUNityAngular.Controllers
             if (delegation == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Delegation not found with the given id");
 
-            var conference = conferenceService.GetConference(committee.ConferenceID);
-            if (conference == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
-
-
             var result = conferenceService.AddDelegationToCommittee(committee, delegation, mincount.ToIntOrDefault(1), maxcount.ToIntOrDefault(1));
-            var committeeInConferece = conferenceService.GetConference(committee.ConferenceID).Committees.FirstOrDefault(n => n.ID == committeeid);
 
             if (result == true)
             {
-                return StatusCode(StatusCodes.Status200OK, committeeInConferece);
+                return StatusCode(StatusCodes.Status200OK, committee);
             }
             else
             {
@@ -336,7 +299,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<DelegationModel> GetDelegationsOfCommittee([FromHeader]string auth, [FromHeader]string committeeid,
+        public ActionResult<Delegation> GetDelegationsOfCommittee([FromHeader]string auth, [FromHeader]string committeeid,
             [FromServices]ConferenceService conferenceService)
         {
             //Authentication egal
@@ -346,7 +309,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<List<UserConferenceRoleModel>> GetTeam([FromHeader]string auth, [FromHeader]string conferenceid,
+        public ActionResult<List<TeamUser>> GetTeam([FromHeader]string auth, [FromHeader]string conferenceid,
             [FromServices]ConferenceService conferenceService)
         {
             //Das Team darf ersteinmal jeder sehen
@@ -358,7 +321,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<List<TeamRoleModel>> GetTeamRoles([FromHeader]string auth,
+        public ActionResult<List<TeamRole>> GetTeamRoles([FromHeader]string auth,
             [FromHeader]string conferenceid, [FromServices]ConferenceService conferenceService)
         {
             //Die Rollen dürfen auch zunächst öffentlich sein
@@ -368,7 +331,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpPut]
-        public IActionResult AddTeamRole([FromHeader]string auth, [FromBody]TeamRoleModel role,
+        public IActionResult AddTeamRole([FromHeader]string auth, [FromBody]TeamRoleRequest role,
             [FromServices]ConferenceService conferenceService)
         {
             var canEdit = conferenceService.CanAuthEditConference(auth, role.ConferenceId);
@@ -379,38 +342,44 @@ namespace MUNityAngular.Controllers
             if (conference == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
 
-            role.Id = null;
-            conferenceService.AddTeamRole(role);
+            var model = new TeamRole();
+            model.Name = role.Name;
+            model.Description = role.Description;
+            model.MinCount = role.MinCount.ToIntOrDefault(1);
+            model.MaxCount = role.MaxCount.ToIntOrDefault(1);
+            model.Conference = conference;
+            if (!string.IsNullOrEmpty(role.ParentRoleId))
+            {
+                model.ParentRole = conferenceService.GetTeamRole(role.ParentRoleId.ToIntOrDefault(-1));
+            }
+            conferenceService.AddTeamRole(model);
             return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
         [HttpPut]
-        public IActionResult AddUserToTeam([FromHeader]string auth, [FromBody]AddTeamMemberModel value,
+        public IActionResult AddUserToTeam([FromHeader]string auth, [FromBody]AddTeamMemberRequestBody value,
             [FromServices]ConferenceService conferenceService, [FromServices]AuthService authService)
         {
-            var canEdit = conferenceService.CanAuthEditConference(auth, value.Role.ConferenceId);
+            var role = conferenceService.GetTeamRole(value.RoleId.ToIntOrDefault(-1));
+            if (role == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Role not found!");
+
+            var canEdit = conferenceService.CanAuthEditConference(auth, role.Conference.ConferenceId);
             if (!canEdit)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
-
-            var conference = conferenceService.GetConference(value.Role.ConferenceId);
-            if (conference == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
 
             var user = authService.GetUserByUsername(value.Username);
             if (user == null)
                 return StatusCode(StatusCodes.Status404NotFound, "User not found");
 
-            if (value.Role.Id == null)
-                return StatusCode(StatusCodes.Status400BadRequest);
-
-            conferenceService.AddUserToConferenceTeam(user, value.Role);
+            conferenceService.AddUserToConferenceTeam(user, role);
             return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<CommitteeModel> GetCommittee([FromHeader]string auth, [FromHeader]string committeeid,
+        public ActionResult<Committee> GetCommittee([FromHeader]string auth, [FromHeader]string committeeid,
             [FromServices]ConferenceService conferenceService)
         {
             return conferenceService.GetCommittee(committeeid);
@@ -418,7 +387,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpPut]
-        public ActionResult SetCommitteeStatus([FromHeader]string auth, [FromBody]CommitteeStatusModel status,
+        public ActionResult SetCommitteeStatus([FromHeader]string auth, [FromBody]CommitteeStatusRequestBody status,
             [FromServices]ConferenceService conferenceService, [FromServices]AuthService authService)
         {
             var user = authService.GetUserByAuth(auth);
@@ -429,23 +398,26 @@ namespace MUNityAngular.Controllers
             if (committee == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Committee not found");
 
-            var conference = conferenceService.GetConference(committee.ConferenceID);
+            var conference = conferenceService.GetConferenceOfCommittee(committee);
             if (conference == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Conference for the committee nout found");
 
-            var team = conferenceService.GetConferenceTeam(conference);
-            if (team.Find(n => n.User.Id == user.Id) == null)
+            var team = conferenceService.GetTeamUsers(conference);
+            if (team.Find(n => n == user) == null)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
 
-            status.Id = null;
-            status.Timestamp = DateTime.Now;
-            conferenceService.SetCommitteeStatus(status);
+            var model = new CommitteeStatus();
+            model.AgendaItem = status.AgendaItem;
+            model.Committee = committee;
+            model.Status = status.Status;
+            model.Timestamp = DateTime.Now;
+            conferenceService.SetCommitteeStatus(model);
             return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<CommitteeStatusModel> GetCommitteeStatus([FromHeader]string committeeid,
+        public ActionResult<CommitteeStatus> GetCommitteeStatus([FromHeader]string committeeid,
             [FromServices]ConferenceService conferenceService)
         {
             var committee = conferenceService.GetCommittee(committeeid);
@@ -457,7 +429,7 @@ namespace MUNityAngular.Controllers
         //Returns a list of all public visible Delegations.
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<List<DelegationModel>> AllDelegations([FromServices]ConferenceService conferenceService)
+        public ActionResult<List<Delegation>> AllDelegations([FromServices]ConferenceService conferenceService)
         {
             return StatusCode(StatusCodes.Status200OK, conferenceService.GetAllDelegations());
         }

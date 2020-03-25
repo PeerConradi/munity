@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityAngular.Models
 {
@@ -22,15 +22,15 @@ namespace MUNityAngular.Models
 
         public bool VotingDone { get; private set; }
 
-        public ObservableCollection<DelegationModel> Positiv { get; set; }
+        public ObservableCollection<Delegation> Positiv { get; set; }
 
-        public ObservableCollection<DelegationModel> Negativ { get; set; }
+        public ObservableCollection<Delegation> Negativ { get; set; }
 
-        public ObservableCollection<DelegationModel> Abstention { get; set; }
+        public ObservableCollection<Delegation> Abstention { get; set; }
 
-        private CommitteeModel Committee { get; set; }
+        private Committee Committee { get; set; }
 
-        public ObservableCollection<DelegationModel> RemainingVotes { get; set; }
+        public ObservableCollection<Delegation> RemainingVotes { get; set; }
 
         public bool CanAbstent { get; set; }
 
@@ -90,13 +90,13 @@ namespace MUNityAngular.Models
 
         public bool Valid { get; set; }
 
-        public VotingModel(CommitteeModel committee, string id = null)
+        public VotingModel(Committee committee, string id = null)
         {
             Committee = committee;
-            Positiv = new ObservableCollection<DelegationModel>();
-            Negativ = new ObservableCollection<DelegationModel>();
-            Abstention = new ObservableCollection<DelegationModel>();
-            RemainingVotes = new ObservableCollection<DelegationModel>();
+            Positiv = new ObservableCollection<Delegation>();
+            Negativ = new ObservableCollection<Delegation>();
+            Abstention = new ObservableCollection<Delegation>();
+            RemainingVotes = new ObservableCollection<Delegation>();
             Positiv.CollectionChanged += VoteChanged;
             Negativ.CollectionChanged += VoteChanged;
             Abstention.CollectionChanged += VoteChanged;

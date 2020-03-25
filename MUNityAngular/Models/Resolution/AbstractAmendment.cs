@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityAngular.Models.Resolution
 {
@@ -29,11 +29,11 @@ namespace MUNityAngular.Models.Resolution
 
         [JsonIgnore]
         [BsonIgnore]
-        public DelegationModel Submitter { get; set; }
+        public Delegation Submitter { get; set; }
 
         [JsonIgnore]
         [BsonIgnore]
-        public List<DelegationModel> Supporters { get; set; }
+        public List<Delegation> Supporters { get; set; }
 
         [JsonIgnore]
         [BsonIgnore]

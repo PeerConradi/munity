@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.DataHandlers.Database;
 using MySql.Data.MySqlClient;
-using MUNityAngular.Models.Conference;
 using MUNityAngular.Models.User;
 using MUNityAngular.DataHandlers.EntityFramework;
 using System.Text.RegularExpressions;
@@ -92,7 +91,7 @@ namespace MUNityAngular.Services
 
         public List<Conference> GetAllConferencesOfAuth(string authkey)
         {
-            var foundUser = _context.AuthKey.FirstOrDefault(n => n.AuthId == authkey)?.User;
+            var foundUser = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == authkey)?.User;
             if (foundUser == null)
                 return null;
             var conferences = _context.ConferenceUserAuths.Where(n => n.User == foundUser).Select(n => n.Conference);
@@ -107,7 +106,7 @@ namespace MUNityAngular.Services
 
         public bool CanAuthEditConference(string auth, string conferenceid)
         {
-            var foundUser = _context.AuthKey.FirstOrDefault(n => n.AuthId == auth)?.User;
+            var foundUser = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == auth)?.User;
             if (foundUser == null)
                 return false;
             return _context.ConferenceUserAuths.FirstOrDefault(n => n.User == foundUser && n.Conference.ConferenceId == conferenceid)?.CanEditSettings ?? false;
@@ -249,7 +248,7 @@ namespace MUNityAngular.Services
         {
             _context.TeamRoles.Add(role);
             _context.SaveChanges();
-            return Convert.ToInt32(role.Id);
+            return Convert.ToInt32(role.TeamRoleId);
         }
 
         internal List<TeamRole> GetRolesOfConference(string conferenceid)
@@ -297,6 +296,16 @@ namespace MUNityAngular.Services
         }
 
         #endregion
+
+        public Conference GetConferenceOfCommittee(Committee committee)
+        {
+            return _context.Conferences.FirstOrDefault(n => n.Committees.Contains(committee));
+        }
+
+        public TeamRole GetTeamRole(int id)
+        {
+            return _context.TeamRoles.FirstOrDefault(n => n.TeamRoleId == id);
+        }
 
         public ConferenceService(MunityContext context)
         {

@@ -4,11 +4,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
+
 namespace MUNityAngular.DataHandlers.EntityFramework.Models
 {
     public class AuthKey
-    {
-        public string AuthId { get; set; }
+    { 
+
+        public string AuthKeyValue { get; set; }
 
         public User User { get; set; }
 
@@ -23,7 +25,7 @@ namespace MUNityAngular.DataHandlers.EntityFramework.Models
             RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
             byte[] randoms = new byte[64];
             rngCsp.GetBytes(randoms);
-            AuthId = Convert.ToBase64String(randoms);
+            AuthKeyValue = Convert.ToBase64String(randoms);
         }
     }
 }

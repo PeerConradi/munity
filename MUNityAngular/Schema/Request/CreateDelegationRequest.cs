@@ -14,6 +14,6 @@ namespace MUNityAngular.Schema.Request
 
         public string Abbreviation { get; set; }
 
-        public Models.Conference.DelegationModel.EDelegationTypes Type { get; set; }
+        public string Type { get; set; }
     }
 }

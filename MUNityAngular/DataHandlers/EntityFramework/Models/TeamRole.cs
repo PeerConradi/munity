@@ -7,7 +7,7 @@ namespace MUNityAngular.DataHandlers.EntityFramework.Models
 {
     public class TeamRole
     {
-        public int Id { get; set; }
+        public int TeamRoleId { get; set; }
 
         public string Name { get; set; }
 

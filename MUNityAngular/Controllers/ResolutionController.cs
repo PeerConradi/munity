@@ -10,6 +10,7 @@ using MUNityAngular.Util.Extenstions;
 using MUNityAngular.Models.Resolution;
 using MUNityAngular.Schema.Request;
 using MUNityAngular.Hubs.HubObjects;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityAngular.Controllers
 {
@@ -69,18 +70,13 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            if (resolution != null)
-            {
-                var newPP = resolution.Preamble.AddParagraph();
-                resolutionService.RequestSave(resolution);
-                _hubContext.Clients.Group(resolutionid).PreambleParagraphAdded(resolution.Preamble.Paragraphs.IndexOf(newPP), newPP.ID, newPP.Text);
-                return StatusCode(StatusCodes.Status200OK, new HUBPreambleParagraph(newPP));
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong, this should not have appened");
+            var newPP = resolution.Preamble.AddParagraph();
+            resolutionService.RequestSave(resolution);
+            _hubContext.Clients.Group(resolutionid).PreambleParagraphAdded(resolution.Preamble.Paragraphs.IndexOf(newPP), newPP.ID, newPP.Text);
+            return StatusCode(StatusCodes.Status200OK, new HUBPreambleParagraph(newPP));
         }
 
         /// <summary>
@@ -101,19 +97,16 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            if (resolution != null)
-            {
-                var newPP = resolution.AddOperativeParagraph();
-                resolutionService.RequestSave(resolution);
-                var hubModel = new HUBOperativeParagraph(newPP);
-                _hubContext.Clients.Group(resolutionid).OperativeParagraphAdded(resolution.OperativeSections.IndexOf(newPP), hubModel);
-                return StatusCode(StatusCodes.Status200OK, hubModel);
-            }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong, this should not have appened");
+            var newPP = resolution.AddOperativeParagraph();
+            resolutionService.RequestSave(resolution);
+            var hubModel = new HUBOperativeParagraph(newPP);
+            _hubContext.Clients.Group(resolutionid).OperativeParagraphAdded(resolution.OperativeSections.IndexOf(newPP), hubModel);
+            return StatusCode(StatusCodes.Status200OK, hubModel);
+
 
         }
 
@@ -136,7 +129,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var pp = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraph.ID);
@@ -171,7 +164,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
@@ -198,7 +191,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraph.ID);
@@ -230,7 +223,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var pp = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraph.ID);
@@ -265,7 +258,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
@@ -289,7 +282,7 @@ namespace MUNityAngular.Controllers
                 if (user != null)
                 {
                     notice.AuthorName = user.Forename + " " + user.Lastname;
-                    notice.AuthorId = user.Id;
+                    notice.AuthorId = user.Username;
                 }
                 section.Notices.Add(notice);
             }
@@ -313,7 +306,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
@@ -337,7 +330,7 @@ namespace MUNityAngular.Controllers
                 if (user != null)
                 {
                     notice.AuthorName = user.Forename + " " + user.Lastname;
-                    notice.AuthorId = user.Id;
+                    notice.AuthorId = user.Username;
                 }
                 paragraph.Notices.Add(notice);
             }
@@ -368,7 +361,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
@@ -402,7 +395,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
@@ -437,7 +430,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.Preamble.Paragraphs.FirstOrDefault(n => n.ID == paragraphid);
@@ -472,7 +465,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
@@ -506,7 +499,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
@@ -541,7 +534,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
@@ -576,7 +569,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
@@ -609,7 +602,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var paragraph = resolution.OperativeSections.FirstOrDefault(n => n.ID == paragraphid);
@@ -635,7 +628,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             resolution.Topic = request.Title;
@@ -668,7 +661,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             bool newMode = false;
@@ -704,7 +697,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == sectionid);
@@ -742,7 +735,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == model.TargetSectionID);
@@ -783,7 +776,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var section = resolution.OperativeSections.FirstOrDefault(n => n.ID == sectionid);
@@ -824,7 +817,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var model = new AddAmendmentModel();
@@ -861,7 +854,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
@@ -897,7 +890,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
@@ -933,7 +926,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
@@ -970,7 +963,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
@@ -1006,7 +999,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var amendment = resolution.Amendments.FirstOrDefault(n => n.ID == amendmentid);
@@ -1033,7 +1026,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<List<ResolutionAdvancedInfoModel>> MyResolutions([FromHeader]string auth,
+        public ActionResult<List<Resolution>> MyResolutions([FromHeader]string auth,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -1041,7 +1034,7 @@ namespace MUNityAngular.Controllers
             if (authresult.valid == false)
                 return StatusCode(StatusCodes.Status403Forbidden, "The auth is not valid!");
 
-            var resolutions = resolutionService.GetResolutionsOfUser(authresult.userid);
+            var resolutions = resolutionService.GetResolutionsOfUser(authresult.userid.Value);
             return StatusCode(StatusCodes.Status200OK, resolutions);
         }
 
@@ -1063,7 +1056,7 @@ namespace MUNityAngular.Controllers
             //Wer die offizielle id angibt probiert das Dokument zu bearbeiten
             if (resolution != null)
             {
-                if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                if (!authService.CanAuthEditResolution(auth, resolution))
                     return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
                 return StatusCode(StatusCodes.Status200OK, new HUBResolution(resolution));
@@ -1075,7 +1068,7 @@ namespace MUNityAngular.Controllers
             var info = resolutionService.GetResolutionInfoForPublicId(id);
             if (info.PublicRead)
             {
-                resolution = resolutionService.GetResolution(info.ID);
+                resolution = resolutionService.GetResolution(info.ResolutionId);
             }
 
             if (resolution == null)
@@ -1111,7 +1104,7 @@ namespace MUNityAngular.Controllers
                 }
                 else
                 {
-                    if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+                    if (!authService.CanAuthEditResolution(auth, resolution))
                         return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
                 }
                 _hubContext.Groups.AddToGroupAsync(connectionid, id);
@@ -1123,7 +1116,7 @@ namespace MUNityAngular.Controllers
             var info = resolutionService.GetResolutionInfoForPublicId(id);
             if (info.PublicRead)
             {
-                resolution = resolutionService.GetResolution(info.ID);
+                resolution = resolutionService.GetResolution(info.ResolutionId);
             }
 
             if (resolution == null)
@@ -1155,16 +1148,18 @@ namespace MUNityAngular.Controllers
             {
                 //Offenbar die Public id
                 var info = resolutionService.GetResolutionInfoForPublicId(id);
-                if (!string.IsNullOrWhiteSpace(info.ID))
+                if (info == null)
+                    return StatusCode(StatusCodes.Status404NotFound, "Resolution not found!");
+                if (!string.IsNullOrWhiteSpace(info.ResolutionId))
                 {
-                    resolutionWithId = resolutionService.GetResolution(info.ID);
+                    resolutionWithId = resolutionService.GetResolution(info.ResolutionId);
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status404NotFound, "Resolution nicht gefunden!");
+                    return StatusCode(StatusCodes.Status404NotFound, "Resolution not found!");
                 }
             }
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolutionWithId))
+            if (!authService.CanAuthEditResolution(auth, resolutionWithId))
                 return StatusCode(StatusCodes.Status200OK, false);
             else
                 return StatusCode(StatusCodes.Status200OK, true);
@@ -1180,7 +1175,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<ResolutionAdvancedInfoModel> GetResolutionInfos([FromHeader]string auth, [FromHeader]string id,
+        public ActionResult<Resolution> GetResolutionInfos([FromHeader]string auth, [FromHeader]string id,
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
@@ -1203,14 +1198,14 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var user = authService.GetUserByUsername(request.Username);
             if (user == null)
                 return StatusCode(StatusCodes.Status404NotFound, "User not found");
 
-            resolutionService.GrandUserRights(request.ResolutionId, user.Id, request.CanRead, request.CanEdit);
+            resolutionService.GrandUserRights(request.ResolutionId, user.UserId, request.CanRead, request.CanEdit);
             return StatusCode(StatusCodes.Status200OK);
         }
 
@@ -1225,7 +1220,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var conference = conferenceService.GetConference(conferenceid);
@@ -1247,7 +1242,7 @@ namespace MUNityAngular.Controllers
             if (resolution == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanEditResolution(authService.ValidateAuthKey(auth).userid, resolution))
+            if (!authService.CanAuthEditResolution(auth, resolution))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
             var committee = conferenceService.GetCommittee(committeeid);
@@ -1260,7 +1255,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<List<ResolutionAdvancedInfoModel>> GetResolutionsOfConference([FromHeader]string conferenceid,
+        public ActionResult<List<Resolution>> GetResolutionsOfConference([FromHeader]string conferenceid,
             [FromServices]ResolutionService resolutionService)
         {
             // An dieser Stelle wird auf eine Authentifizierung verzichtet, Resolutionen der Konferenz sind für alle
@@ -1270,7 +1265,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<List<ResolutionAdvancedInfoModel>> GetResolutionsOfCommittee(
+        public ActionResult<List<Resolution>> GetResolutionsOfCommittee(
             [FromHeader]string committeeid, [FromServices]ResolutionService resolutionService)
         {
             return resolutionService.GetResolutionsOfCommittee(committeeid);

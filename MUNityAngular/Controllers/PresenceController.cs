@@ -27,7 +27,7 @@ namespace MUNityAngular.Controllers
             var committee = conferenceService.GetCommittee(presence.CommitteeId);
             if (committee == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Committee not found!");
-            var conference = conferenceService.GetConference(committee.ConferenceID);
+            var conference = conferenceService.GetConferenceOfCommittee(committee);
             if (conference == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
             var teamRole = conferenceService.GetUserTeamRolesAtConference(user, conference);
@@ -52,7 +52,7 @@ namespace MUNityAngular.Controllers
             var committee = conferenceService.GetCommittee(committeeid);
             if (committee == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Committee not found!");
-            var conference = conferenceService.GetConference(committee.ConferenceID);
+            var conference = conferenceService.GetConferenceOfCommittee(committee);
             if (conference == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
             var teamRole = conferenceService.GetUserTeamRolesAtConference(user, conference);

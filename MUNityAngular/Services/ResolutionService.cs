@@ -9,13 +9,15 @@ using Microsoft.AspNetCore.SignalR;
 using MUNityAngular.DataHandlers.Database;
 using MongoDB.Driver;
 using MUNityAngular.Models.Resolution;
+using MUNityAngular.DataHandlers;
+using MUNityAngular.DataHandlers.EntityFramework;
 
 namespace MUNityAngular.Services
 {
     public class ResolutionService : IDisposable
     {
-        private string _mySqlConnectionString;
-        private const string resolution_table_name = "resolution";
+
+        private MunityContext _mariadbcontext;
 
         public IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> HubContext { get; set; }
 
@@ -23,7 +25,7 @@ namespace MUNityAngular.Services
 
         private readonly IMongoCollection<ResolutionModel> _resolutions;
 
-        public ResolutionModel CreateResolution(bool isPublicReadable = false, bool isPublicWriteable = false, string userid = null)
+        public ResolutionModel CreateResolution(bool isPublicReadable = false, bool isPublicWriteable = false, int? userid = null)
         {
             var resolution = new ResolutionModel();
             this._resolutions.InsertOne(resolution);
@@ -39,29 +41,26 @@ namespace MUNityAngular.Services
         {
             
             this._resolutions.DeleteOne(n => n.ID == id);
-            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).RemoveEntry("id", id);
+            _mariadbcontext.Resolutions.Remove(_mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == id));
+            _mariadbcontext.SaveChanges();
         }
 
         public long SavedResolutionsCount { get => this._resolutions.CountDocuments(n => n.ID != null); }
 
-        public long DatabaseResolutionsCount { get => Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).Count(); }
+        public long DatabaseResolutionsCount { get => _mariadbcontext.Resolutions.Count(); }
 
         public void RequestSave(ResolutionModel resolution)
         {
-            Task.Run(() =>
+            var info = GetResolutionInfoForId(resolution.ID);
+            if (info != null)
             {
-                //An dieser Stelle könnte man auch einen Replace Into verwenden, aber ich bin mir zu 100% sicher, dass
-                //diese Funktion deutlich schneller ist!
-
-                var info = GetResolutionInfoForId(resolution.ID);
                 if (info.Name != resolution.Topic)
                 {
-                    Tools.Connection(_mySqlConnectionString).Resolution.SetEntry("id", resolution.ID, "name", resolution.Topic);
+                    info.Name = resolution.Topic;
                 }
-                Tools.Connection(_mySqlConnectionString).Resolution.SetEntry("id", resolution.ID, "lastchangeddate", DateTime.Now);
-
-                
-            });
+                info.LastChangedDate = DateTime.Now;
+                _mariadbcontext.SaveChangesAsync();
+            }
             this._resolutions.ReplaceOneAsync(n => n.ID == resolution.ID, resolution);
         }
 
@@ -74,9 +73,9 @@ namespace MUNityAngular.Services
             return resolution;
         }
 
-        public ResolutionAdvancedInfoModel GetResolutionInfoForPublicId(string publicid)
+        public DataHandlers.EntityFramework.Models.Resolution GetResolutionInfoForPublicId(string publicid)
         {
-            return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).First<ResolutionAdvancedInfoModel>("onlinecode", publicid);
+            return _mariadbcontext.Resolutions.FirstOrDefault(n => n.OnlineCode == publicid);
         }
 
         /// <summary>
@@ -84,9 +83,9 @@ namespace MUNityAngular.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Touple with infos publicid is null when the resolution can not be found!</returns>
-        public ResolutionAdvancedInfoModel GetResolutionInfoForId(string id)
+        public DataHandlers.EntityFramework.Models.Resolution GetResolutionInfoForId(string id)
         {
-            return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).First<ResolutionAdvancedInfoModel>("id", id);
+            return _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == id);
         }
 
         /// <summary>
@@ -104,32 +103,27 @@ namespace MUNityAngular.Services
                 publicid = GeneratePublicId();
             }
 
-            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "ispublicread", true);
-            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "onlinecode", publicid);
+
+            var info = GetResolutionInfoForId(resolutionid);
+            if (info != null)
+            {
+                info.PublicRead = true;
+                info.OnlineCode = publicid;
+                _mariadbcontext.SaveChanges();
+            }
             //Suche nach der Resolution in der Datenbank und schaue ob diese bereits eine PublicId hat
             return publicid;
         }
 
         public string GeneratePublicId()
         {
-            string id = new Random().Next(10000000, 99999999).ToString();
+            var rndm = new Random();
+            string id = rndm.Next(10000000, 99999999).ToString();
             bool containsId = false;
             do
             {
-                using (var connection = new MySqlConnection(_mySqlConnectionString))
-                {
-                    connection.Open();
-                    var cmdStr = "SELECT COUNT(*) FROM resolution WHERE onlinecode=@code";
-                    var cmd = new MySqlCommand(cmdStr, connection);
-                    cmd.Parameters.AddWithValue("@code", id);
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            containsId = (reader.GetInt16(0) > 0);
-                        }
-                    }
-                }
+                containsId = _mariadbcontext.Resolutions.Any(n => n.OnlineCode == id);
+                id = rndm.Next(10000000, 99999999).ToString();
             } while (containsId == true);
             
             return id;
@@ -137,7 +131,7 @@ namespace MUNityAngular.Services
 
         public string GetPublicIdForResolution(string resolutionid)
         {
-            return Tools.Connection(_mySqlConnectionString).Resolution.First<ResolutionAdvancedInfoModel>("id", resolutionid)?.OnlineCode ?? null;
+            return _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolutionid)?.OnlineCode ?? null;
         }
 
         public ResolutionModel GetResolutionFromJson(string json)
@@ -147,13 +141,21 @@ namespace MUNityAngular.Services
         }
 
         
-        private bool SaveResolutionInDatabase(ResolutionModel resolution, bool pread, bool pwrite, string userid = null)
+        private bool SaveResolutionInDatabase(ResolutionModel resolution, bool pread, bool pwrite, int? userid = null)
         {
-            var AdvancedInfo = new ResolutionAdvancedInfoModel(resolution, userid);
+            var AdvancedInfo = new DataHandlers.EntityFramework.Models.Resolution();
+            if (userid != null)
+            {
+                AdvancedInfo.CreationUser = _mariadbcontext.Users.FirstOrDefault(n => n.UserId == userid);
+            }
+            AdvancedInfo.ResolutionId = resolution.ID;
             AdvancedInfo.Name = resolution.Topic;
             AdvancedInfo.PublicRead = pread;
             AdvancedInfo.PublicWrite = pwrite;
-            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).Insert(AdvancedInfo);
+            AdvancedInfo.CreationDate = DateTime.Now;
+            AdvancedInfo.LastChangedDate = DateTime.Now;
+            _mariadbcontext.Resolutions.Add(AdvancedInfo);
+            _mariadbcontext.SaveChanges();
             return true;
         }
 
@@ -167,14 +169,9 @@ namespace MUNityAngular.Services
         /// </summary>
         /// <param name="userid"></param>
         /// <returns>a touple with the first value as the id, and the second value is the name</returns>
-        public List<ResolutionAdvancedInfoModel> GetResolutionsOfUser(string userid)
+        public List<DataHandlers.EntityFramework.Models.Resolution> GetResolutionsOfUser(int userid)
         {
-            return Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).GetElements<ResolutionAdvancedInfoModel>("user", userid);
-        }
-
-        public void UpdateResolutionName(string resolutionid, string newtitle)
-        {
-            Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "name", newtitle);
+            return _mariadbcontext.Resolutions.Where(n => n.CreationUser.UserId == userid).ToList();
         }
 
         public string SetPublicReadMode(string resolutionid, bool mode)
@@ -183,8 +180,16 @@ namespace MUNityAngular.Services
                 return ActivatePublicReadMode(resolutionid);
             else
             {
-                Tools.Connection(_mySqlConnectionString).Table(resolution_table_name).SetEntry("id", resolutionid, "ispublicread", false);
-                return Tools.Connection(_mySqlConnectionString).Resolution.First<ResolutionAdvancedInfoModel>("id", resolutionid).OnlineCode;
+                var info = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolutionid);
+                if (info != null)
+                {
+                    info.PublicRead = false;
+                    // We are not clearing the public Id at this point, this should happen later, so the user doesnt has to 
+                    // retype the Code every time it has been disabled for a short time...
+                    _mariadbcontext.SaveChanges();
+                }
+               
+                return info.OnlineCode;
             }
             
         }
@@ -197,7 +202,7 @@ namespace MUNityAngular.Services
             var ids = _resolutions.Find(n => n.ID != null).ToList().Select(n => n.ID);
             foreach(var id in ids)
             {
-                var isInDatabase = Tools.Connection(_mySqlConnectionString).Resolution.HasEntry("id", id);
+                var isInDatabase = _mariadbcontext.Resolutions.Any(n => n.ResolutionId == id);
                 if (!isInDatabase)
                 {
                     _resolutions.DeleteOne(n => n.ID == id);
@@ -210,13 +215,13 @@ namespace MUNityAngular.Services
         /// for this resolutions inside the Database
         /// </summary>
         /// <param name="userid">You have to pass a user that should now own this documents</param>
-        public void RestoreToDatabase(string userid)
+        public void RestoreToDatabase(int userid)
         {
             var resolutions = _resolutions.Find(n => n.ID != null).ToList();
             foreach (var resolution in resolutions)
             {
                 
-                var isInDatabase = Tools.Connection(_mySqlConnectionString).Resolution.HasEntry("id", resolution.ID);
+                var isInDatabase = _mariadbcontext.Resolutions.Any(n => n.ResolutionId == resolution.ID);
                 if (!isInDatabase)
                 {
                     SaveResolutionInDatabase(resolution, false, false, userid);
@@ -224,101 +229,86 @@ namespace MUNityAngular.Services
             }
         }
 
-        public List<ResolutionAdvancedInfoModel> GetResolutionsUserCanEdit(string userid)
+        public List<DataHandlers.EntityFramework.Models.Resolution> GetResolutionsUserCanEdit(int userid)
         {
-            var list = new List<ResolutionAdvancedInfoModel>();
-            using (var connection = new MySqlConnection(_mySqlConnectionString))
-            {
-                connection.Open();
-                var cmdStr = "SELECT resolution.* FROM resolution " +
-                    "LEFT JOIN resolution_auth ON resolution_auth.resolutionid = resolution.id " +
-                    "WHERE resolution.`user` = @userid OR resolution_auth.userid = @userid " +
-                    "AND resolution_auth.canwrite = 1";
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        list.Add(DataReaderConverter.ObjectFromReader<ResolutionAdvancedInfoModel>(reader));
-                    }
-                }
-            }
+            var list = new List<DataHandlers.EntityFramework.Models.Resolution>();
+            // Every resolution the the User is the owner
+            list.AddRange(_mariadbcontext.Resolutions.Where(n => n.CreationUser.UserId == userid));
+            // Every resolution where the user is inside the group
+            list.AddRange(_mariadbcontext.ResolutionUsers.Where(n => n.User.UserId == userid).Select(n => n.Resolution));
             return list;
         }
 
-        public void GrandUserRights(string resolutionid, string userid, bool canRead, bool canWrite)
+        public void GrandUserRights(string resolutionid, int userid, bool canRead, bool canWrite)
         {
-            var cmdStr = "REPLACE INTO resolution_auth (resolutionid, userid, canread, canwrite) VALUES (@resoid, @userid, @canread, @canwrite);";
-            using (var connection = new MySqlConnection(_mySqlConnectionString))
+            var isAlreadyIn = _mariadbcontext.ResolutionUsers.FirstOrDefault(n => n.User.UserId == userid && n.Resolution.ResolutionId == resolutionid);
+            if (isAlreadyIn != null)
             {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@resoid", resolutionid);
-                cmd.Parameters.AddWithValue("@userid", userid);
-                cmd.Parameters.AddWithValue("@canread", canRead);
-                cmd.Parameters.AddWithValue("@canwrite", canWrite);
-                cmd.ExecuteNonQuery();
+                isAlreadyIn.CanEdit = canWrite;
+                isAlreadyIn.canRead = canRead;
+                _mariadbcontext.SaveChanges();
+            }
+            else
+            {
+                var auth = new DataHandlers.EntityFramework.Models.ResolutionUser();
+                auth.Resolution = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolutionid);
+                auth.User = _mariadbcontext.Users.FirstOrDefault(n => n.UserId == userid);
+                auth.CanEdit = canWrite;
+                auth.canRead = canRead;
+                _mariadbcontext.ResolutionUsers.Add(auth);
+                _mariadbcontext.SaveChanges();
             }
         }
 
-        public void LinkResolutionToConference(ResolutionModel resolution, Models.Conference.ConferenceModel conference)
+        public void LinkResolutionToConference(ResolutionModel resolution, DataHandlers.EntityFramework.Models.Conference conference)
         {
             if (resolution == null || conference == null)
                 return;
 
-            var model = new ResolutionConferenceModel() { ResolutionId = resolution.ID, ConferenceId=conference.ID};
-            Tools.Connection(_mySqlConnectionString).ResolutionConference.Insert(model);
+            // is already connected to the conference!
+            if (_mariadbcontext.ConferenceResolutions.Any(n => n.Conference == conference && n.Resolution.ResolutionId == resolution.ID))
+                return;
+
+
+            var model = new DataHandlers.EntityFramework.Models.ResolutionConference();
+            model.Conference = conference;
+            model.Resolution = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID);
+            _mariadbcontext.ConferenceResolutions.Add(model);
+            _mariadbcontext.SaveChanges();
         }
 
-        public void LinkResolutionToCommittee(ResolutionModel resolution, Models.Conference.CommitteeModel committee)
+        public void LinkResolutionToCommittee(ResolutionModel resolution, DataHandlers.EntityFramework.Models.Committee committee)
         {
             if (resolution == null || committee == null)
                 return;
-            var model = new ResolutionConferenceModel() { ResolutionId = resolution.ID, ConferenceId = committee.ConferenceID, CommitteeId = committee.ID };
-            Tools.Connection(_mySqlConnectionString).ResolutionConference.Insert(model);
+
+            var model = new DataHandlers.EntityFramework.Models.ResolutionConference();
+            model.Conference = _mariadbcontext.Conferences.FirstOrDefault(n => n.Committees.Contains(committee));
+            model.Committee = committee;
+            model.Resolution = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID);
+            _mariadbcontext.ConferenceResolutions.Add(model);
+            _mariadbcontext.SaveChanges();
         }
 
-        public List<ResolutionAdvancedInfoModel> GetResolutionsOfConference(string conferenceid)
+        public List<DataHandlers.EntityFramework.Models.Resolution> GetResolutionsOfConference(string conferenceid)
         {
-            var list = new List<ResolutionAdvancedInfoModel>();
-            var cmdStr = "SELECT resolution.* FROM resolution  INNER JOIN resolution_conference " +
-                "ON resolution_conference.resolutionid = resolution.id WHERE resolution_conference.conferenceid = @confid;";
-            using (var connection = new MySqlConnection(_mySqlConnectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@confid", conferenceid);
-                list = DataReaderConverter.ReadList<ResolutionAdvancedInfoModel>(cmd.ExecuteReader());
-            }
-            return list;
+            return _mariadbcontext.ConferenceResolutions.Where(n => n.Conference.ConferenceId == conferenceid).Select(n => n.Resolution).ToList();
         }
 
-        public List<ResolutionAdvancedInfoModel> GetResolutionsOfCommittee(string committeeid)
+        public List<DataHandlers.EntityFramework.Models.Resolution> GetResolutionsOfCommittee(string committeeid)
         {
-            var list = new List<ResolutionAdvancedInfoModel>();
-            var cmdStr = "SELECT resolution.* FROM resolution  INNER JOIN resolution_conference " +
-                "ON resolution_conference.resolutionid = resolution.id WHERE resolution_conference.committeeid = @commid;";
-            using (var connection = new MySqlConnection(_mySqlConnectionString))
-            {
-                connection.Open();
-                var cmd = new MySqlCommand(cmdStr, connection);
-                cmd.Parameters.AddWithValue("@commid", committeeid);
-                list = DataReaderConverter.ReadList<ResolutionAdvancedInfoModel>(cmd.ExecuteReader());
-            }
-            return list;
+            return _mariadbcontext.ConferenceResolutions.Where(n => n.Committee.CommitteeId == committeeid).Select(n => n.Resolution).ToList();
         }
 
-        public ResolutionService(string mysqlConnectionString, string mongoConnectionString, string mongoDatabaseName)
+        public ResolutionService(MunityContext context, IMunityMongoDatabaseSettings mongoSettings)
         {
             //New Saving in MongoDB
-            _mySqlConnectionString = mysqlConnectionString;
+            _mariadbcontext = context;
 
-            var resolutionTableString = "Resolutions";
-            var client = new MongoClient(mongoConnectionString);
-            var database = client.GetDatabase(mongoDatabaseName);
+            var client = new MongoClient(mongoSettings.ConnectionString);
+            var database = client.GetDatabase(mongoSettings.DatabaseName);
 
-            this._resolutions = database.GetCollection<ResolutionModel>(resolutionTableString);
+            this._resolutions = database.GetCollection<ResolutionModel>(mongoSettings.ResolutionCollectionName);
 
             Console.WriteLine("Resolution Service Started!");
         }

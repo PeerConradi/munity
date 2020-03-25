@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNityAngular.Models;
-using MUNityAngular.Models.Conference;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityAngular.Controllers
 {
@@ -152,13 +152,13 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public ActionResult<SpeakerlistModel> AddSpeakerModelToList([FromHeader]string auth,
-            [FromHeader]string listid, [FromBody]DelegationModel model, 
+            [FromHeader]string listid, [FromBody]Delegation model, 
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-            model.ID = Guid.NewGuid().ToString();
+            model.DelegationId = Guid.NewGuid().ToString();
             speakerlist.AddSpeaker(model);
             this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             return StatusCode(StatusCodes.Status200OK, speakerlist);
@@ -167,7 +167,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPatch]
         public ActionResult<SpeakerlistModel> SpeakersOrderChanged([FromHeader]string auth,
-            [FromHeader]string listid, [FromBody]List<DelegationModel> model,
+            [FromHeader]string listid, [FromBody]List<Delegation> model,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -176,9 +176,9 @@ namespace MUNityAngular.Controllers
 
             model.ForEach(n =>
             {
-                if (string.IsNullOrWhiteSpace(n.ID))
+                if (string.IsNullOrWhiteSpace(n.DelegationId))
                 {
-                    n.ID = Guid.NewGuid().ToString();
+                    n.DelegationId = Guid.NewGuid().ToString();
                 }
             });
             speakerlist.Speakers = model;
@@ -189,7 +189,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPatch]
         public ActionResult<SpeakerlistModel> QuestionsOrderChanged([FromHeader]string auth,
-            [FromHeader]string listid, [FromBody]List<DelegationModel> model,
+            [FromHeader]string listid, [FromBody]List<Delegation> model,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -198,9 +198,9 @@ namespace MUNityAngular.Controllers
 
             model.ForEach(n =>
             {
-                if (string.IsNullOrWhiteSpace(n.ID))
+                if (string.IsNullOrWhiteSpace(n.DelegationId))
                 {
-                    n.ID = Guid.NewGuid().ToString();
+                    n.DelegationId = Guid.NewGuid().ToString();
                 }
             });
             speakerlist.Questions = model;
@@ -213,13 +213,13 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader]string auth,
-            [FromHeader]string listid, [FromBody]DelegationModel model,
+            [FromHeader]string listid, [FromBody]Delegation model,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-            model.ID = Guid.NewGuid().ToString();
+            model.DelegationId = Guid.NewGuid().ToString();
             speakerlist.AddQuestion(model);
             this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             return StatusCode(StatusCodes.Status200OK, speakerlist);
@@ -539,7 +539,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<List<DelegationModel>> GetPossibleDelegations([FromHeader]string auth,
+        public ActionResult<List<Delegation>> GetPossibleDelegations([FromHeader]string auth,
             [FromHeader]string id,
             [FromServices]AuthService authService,
             [FromServices]SpeakerlistService speakerlistService,

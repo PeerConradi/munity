@@ -1,11 +1,12 @@
-﻿using System;
+﻿using MUNityAngular.Models.Facades;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MUNityAngular.DataHandlers.EntityFramework.Models
 {
-    public class User
+    public class User : IUserFacade
     {
         public int UserId { get; set; }
 
@@ -33,7 +34,7 @@ namespace MUNityAngular.DataHandlers.EntityFramework.Models
 
         public string Housenumber { get; set; }
 
-        public MediaImage ProfileImage { get; set; }
+        public string ProfileImageName { get; set; }
 
         public DateTime RegistrationDate { get; set; }
 

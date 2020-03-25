@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityAngular.Models
 {
@@ -57,13 +57,13 @@ namespace MUNityAngular.Models
             }
         }
 
-        public List<DelegationModel> Speakers { get; set; }
+        public List<Delegation> Speakers { get; set; }
 
-        public List<DelegationModel> Questions { get; set; }
+        public List<Delegation> Questions { get; set; }
 
 
-        private DelegationModel _currentSpeaker;
-        public DelegationModel CurrentSpeaker { get => _currentSpeaker; 
+        private Delegation _currentSpeaker;
+        public Delegation CurrentSpeaker { get => _currentSpeaker; 
             set
             {
                 _currentSpeaker = value;
@@ -84,8 +84,8 @@ namespace MUNityAngular.Models
             }
         }
 
-        private DelegationModel _currenQuestion;
-        public DelegationModel CurrentQuestion { get => _currenQuestion; 
+        private Delegation _currenQuestion;
+        public Delegation CurrentQuestion { get => _currenQuestion; 
             set
             {
                 _currenQuestion = value;
@@ -135,7 +135,7 @@ namespace MUNityAngular.Models
         public DateTime StartQuestionTime { get; set; }
 
 
-        public void AddSpeaker(DelegationModel speaker)
+        public void AddSpeaker(Delegation speaker)
         {
             Speakers.Add(speaker);
             if (Status != EStatus.SPEAKING && Status != EStatus.ANSWER)
@@ -148,7 +148,7 @@ namespace MUNityAngular.Models
             }
         }
 
-        public void AddQuestion(DelegationModel question)
+        public void AddQuestion(Delegation question)
         {
             Questions.Add(question);
             if (Status != EStatus.SPEAKING && Status != EStatus.ANSWER)
@@ -166,8 +166,8 @@ namespace MUNityAngular.Models
 
             ID = id ?? Guid.NewGuid().ToString();
             Name = name;
-            Speakers = new List<DelegationModel>();
-            Questions = new List<DelegationModel>();
+            Speakers = new List<Delegation>();
+            Questions = new List<Delegation>();
             Speakertime = new TimeSpan(0, 3, 0);
             Questiontime = new TimeSpan(0, 0, 30);
             LowTimeMark = new TimeSpan(0, 0, 10);
@@ -181,8 +181,8 @@ namespace MUNityAngular.Models
 
         public SpeakerlistModel(TimeSpan n_speakertime, TimeSpan n_questiontime)
         {
-            Speakers = new List<DelegationModel>();
-            Questions = new List<DelegationModel>();
+            Speakers = new List<Delegation>();
+            Questions = new List<Delegation>();
             Speakertime = n_speakertime;
             Questiontime = n_questiontime;
         }
@@ -270,14 +270,14 @@ namespace MUNityAngular.Models
             StartQuestionTime = DateTime.Now;
         }
 
-        public void RemoveSpeaker(DelegationModel delegation)
+        public void RemoveSpeaker(Delegation delegation)
         {
             Speakers.Remove(delegation);
         }
 
         public bool RemoveSpeaker(string id)
         {
-            var speaker = Speakers.FirstOrDefault(n => n.ID == id);
+            var speaker = Speakers.FirstOrDefault(n => n.DelegationId == id);
             if (speaker != null)
             {
                 Speakers.Remove(speaker);
@@ -286,12 +286,12 @@ namespace MUNityAngular.Models
             return false;
         }
 
-        public void RemoveQuestion(DelegationModel delegation)
+        public void RemoveQuestion(Delegation delegation)
         {
             Questions.Remove(delegation);
         }
 
-        public void MoveSpeakerUp(DelegationModel delegation)
+        public void MoveSpeakerUp(Delegation delegation)
         {
             int index = Speakers.IndexOf(delegation);
             if (index == -1 || index == 0)
@@ -301,7 +301,7 @@ namespace MUNityAngular.Models
             Speakers.Insert(index - 1, delegation);
         }
 
-        public void MoveQuestionUp(DelegationModel delegation)
+        public void MoveQuestionUp(Delegation delegation)
         {
             int index = Questions.IndexOf(delegation);
             if (index == -1 || index == 0)
@@ -311,7 +311,7 @@ namespace MUNityAngular.Models
             Questions.Insert(index - 1, delegation);
         }
 
-        public void MoveSpeakerDown(DelegationModel delegation)
+        public void MoveSpeakerDown(Delegation delegation)
         {
             int index = Speakers.IndexOf(delegation);
             if (index == -1 || index + 1 == Speakers.Count)
@@ -321,7 +321,7 @@ namespace MUNityAngular.Models
             Speakers.Insert(index + 1, delegation);
         }
 
-        public void MoveQuestionDown(DelegationModel delegation)
+        public void MoveQuestionDown(Delegation delegation)
         {
             int index = Questions.IndexOf(delegation);
             if (index == -1 || index + 1 == Speakers.Count)

@@ -14,6 +14,10 @@ using System.IO;
 using System;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using MongoDB.Driver;
+using MUNityAngular.DataHandlers;
+using Microsoft.Extensions.Options;
+using MUNityAngular.DataHandlers.EntityFramework;
 
 namespace MUNityAngular
 {
@@ -61,33 +65,24 @@ namespace MUNityAngular
 
             var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
 
+            // Add Entity Framework MariaDB Database
             services.AddDbContextPool<DataHandlers.EntityFramework.MunityContext>(options =>
-            options.UseMySql("Server=localhost;Database=munitydb;User=root;Password=;", mySqlOptions => mySqlOptions
+            options.UseMySql(mySqlConnectionString, mySqlOptions => mySqlOptions
                     // replace with your Server Version and Type
                     .ServerVersion(new Version(10, 1, 26), ServerType.MariaDb)));
 
-            
+            // Add MongoDb Database
+            services.Configure<MunityMongoDatabaseSettings>(Configuration.GetSection(nameof(MunityMongoDatabaseSettings)));
+            services.AddSingleton<IMunityMongoDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<MunityMongoDatabaseSettings>>().Value);
 
             // All services that are used inside the controllers.
-            services.AddSingleton<Services.InstallationService>();
-            services.AddSingleton<Services.AuthService>();
-            //services.AddSingleton(serviceProvider => new Services.AuthService(mySqlConnectionString));
-            services.AddSingleton(serviceProvider =>
-            {
-                //We pass the settings to this one!
-                var cs = Configuration.GetValue<string>("MunityMongoDatabaseSettings:ConnectionString");
-                var dbName = Configuration.GetValue<string>("MunityMongoDatabaseSettings:DatabaseName");
-                return new Services.ResolutionService(mySqlConnectionString, cs, dbName);
-            });
-            services.AddSingleton(serviceProvider =>
-            {
-                var cs = Configuration.GetValue<string>("MunityMongoDatabaseSettings:ConnectionString");
-                var dbName = Configuration.GetValue<string>("MunityMongoDatabaseSettings:DatabaseName");
-                return new Services.PresenceService(mySqlConnectionString, cs, dbName);
-            });
-            //Add the Conference Service, with the mySqlConnectionString
-            services.AddSingleton(serviceProvider => new Services.ConferenceService(mySqlConnectionString));
-            services.AddSingleton<Services.SpeakerlistService>();
+            services.AddScoped<Services.InstallationService>();
+            services.AddScoped<Services.AuthService>();
+            services.AddScoped<Services.ResolutionService>();
+            services.AddScoped<Services.PresenceService>();
+            services.AddScoped<Services.ConferenceService>();
+            services.AddScoped<Services.SpeakerlistService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>
@@ -174,9 +169,20 @@ namespace MUNityAngular
                 }
             });
 
-           
+            UpdateDatabase(app);
+        }
 
-            //Connector.EnsureDatabaseExists();
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<MunityContext>())
+                {
+                    context.Database.Migrate();
+                }
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MUNityAngular.Models.Resolution;
-using MUNityAngular.Models.Conference;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityAngular.Models
 {
@@ -13,11 +13,11 @@ namespace MUNityAngular.Models
     {
         public string Id { get; set; }
 
-        public List<DelegationModel> Present { get; set; }
+        public List<Delegation> Present { get; set; }
 
-        public List<DelegationModel> Absent { get; set; }
+        public List<Delegation> Absent { get; set; }
 
-        public List<DelegationModel> Remaining { get; set; }
+        public List<Delegation> Remaining { get; set; }
 
         public string CommitteeId { get; set; }
 
@@ -26,9 +26,9 @@ namespace MUNityAngular.Models
         public PresenceModel()
         {
             this.Id = Guid.NewGuid().ToString();
-            Present = new List<DelegationModel>();
-            Absent = new List<DelegationModel>();
-            Remaining = new List<DelegationModel>();
+            Present = new List<Delegation>();
+            Absent = new List<Delegation>();
+            Remaining = new List<Delegation>();
         }
 
     }

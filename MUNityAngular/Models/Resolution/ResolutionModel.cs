@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
-using MUNityAngular.Models.Conference;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
 
 namespace MUNityAngular.Models.Resolution
 {
@@ -51,14 +51,14 @@ namespace MUNityAngular.Models.Resolution
 
         public DocumentTypeModel DocumentType { get; set; }
 
-        public BaseCommitteeModel ResolutlyCommittee { get; set; }
+        public Committee ResolutlyCommittee { get; set; }
         public int DocumentNumber { get; set; }
 
         public string CommitteeName { get; set; }
 
         public List<string> SupporterNames { get; set; }
 
-        public ObservableCollection<DelegationModel> Supporters { get; set; }
+        public ObservableCollection<Delegation> Supporters { get; set; }
 
         public string SubmitterID { get; set; }
 
@@ -107,7 +107,7 @@ namespace MUNityAngular.Models.Resolution
             this.ID = id ?? Guid.NewGuid().ToString();
             this.Topic = "No Name";
             OperativeSections = new ObservableCollection<OperativeParagraphModel>();
-            Supporters = new ObservableCollection<DelegationModel>();
+            Supporters = new ObservableCollection<Delegation>();
             Amendments = new ObservableCollection<AbstractAmendment>();
             Preamble = new PreambleModel();
             Preamble.ResolutionID = this.ID;

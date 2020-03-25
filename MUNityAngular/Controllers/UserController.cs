@@ -8,6 +8,8 @@ using MUNityAngular.Models.User;
 using MUNityAngular.Schema.Request;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
+using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityAngular.Models.Facades;
 
 namespace MUNityAngular.Controllers
 {
@@ -40,7 +42,7 @@ namespace MUNityAngular.Controllers
         {
             public string Key { get; set; }
 
-            public UserModel User { get; set; }
+            public User User { get; set; }
         }
 
         /// <summary>
@@ -82,7 +84,10 @@ namespace MUNityAngular.Controllers
         {
 
             var authstate = authService.ValidateAuthKey(auth);
-            var status = authService.CheckPasswordForUserid(authstate.userid, request.OldPassword);
+            if (authstate.valid == false)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not logged in or the auth is invalid");
+
+            var status = authService.CheckPasswordForUserid(authstate.userid.Value, request.OldPassword);
 
             if (status == false)
             {
@@ -90,9 +95,9 @@ namespace MUNityAngular.Controllers
             }
             else
             {
-                authService.SetPassword(authstate.userid, request.NewPassword);
-                authService.DeleteAllUserKeys(authstate.userid);
-                var login = authService.LoginWithId(authstate.userid, request.NewPassword);
+                authService.SetPassword(authstate.userid.Value, request.NewPassword);
+                authService.DeleteAllUserKeys(authstate.userid.Value);
+                var login = authService.LoginWithId(authstate.userid.Value, request.NewPassword);
                 return StatusCode(StatusCodes.Status200OK, login);
             }
         }
@@ -134,12 +139,12 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<UserModel> GetAuthUser([FromHeader]string auth, [FromServices]AuthService authService)
+        public ActionResult<User> GetAuthUser([FromHeader]string auth, [FromServices]AuthService authService)
         {
             var validation = authService.ValidateAuthKey(auth);
             if (validation.valid == true)
             {
-                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid));
+                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid.Value));
             }
             else
             {
@@ -149,14 +154,15 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpPatch]
-        public ActionResult<UserModel> UpdateUserinfo([FromHeader]string auth, [FromBody]UserModel userModel, [FromServices]AuthService authService)
+        public ActionResult<User> UpdateUserinfo([FromHeader]string auth, [FromBody]IUserFacade userModel, [FromServices]AuthService authService)
         {
             var validation = authService.ValidateAuthKey(auth);
-            if (validation.valid == true && validation.userid == userModel.Id)
+            var userOfAuth = authService.GetUserByAuth(auth);
+            if (validation.valid == true && userModel.Username == userOfAuth.Username)
             {
-                authService.SetForename(userModel.Id, userModel.Forename);
-                authService.SetLastname(userModel.Id, userModel.Lastname);
-                return StatusCode(StatusCodes.Status200OK, authService.GetUserById(validation.userid));
+                authService.SetForename(userOfAuth.UserId, userModel.Forename);
+                authService.SetLastname(userOfAuth.UserId, userModel.Lastname);
+                return StatusCode(StatusCodes.Status200OK, userOfAuth);
             }
             else
             {
@@ -180,7 +186,7 @@ namespace MUNityAngular.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(authState.userid);
+            var state = authService.IsAdmin(authState.userid.Value);
             if (state == true)
             {
                 return StatusCode(StatusCodes.Status200OK, true);
@@ -228,7 +234,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<AuthService.UserAuths> GetKeyAuths([FromHeader]string auth, [FromServices]AuthService authService)
+        public ActionResult<List<UserAuths>> GetKeyAuths([FromHeader]string auth, [FromServices]AuthService authService)
         {
             var authstate = authService.GetAuthsByAuthkey(auth);
             return StatusCode(StatusCodes.Status200OK, authstate);
@@ -244,7 +250,7 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<UserModel> GetUserByUsername(
+        public ActionResult<IUserFacade> GetUserByUsername(
             [FromHeader]string auth,
             [FromHeader]string username,
             [FromServices]AuthService authService)
@@ -259,12 +265,12 @@ namespace MUNityAngular.Controllers
             if (user == null)
                 return StatusCode(StatusCodes.Status404NotFound, "User with the given Username not found");
 
-            return StatusCode(StatusCodes.Status200OK, user);
+            return StatusCode(StatusCodes.Status200OK, user as IUserFacade);
         }
 
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<UserModel> GetUserOfAuth([FromHeader]string auth,
+        public ActionResult<User> GetUserOfAuth([FromHeader]string auth,
             [FromServices]AuthService authService)
         {
             var validation = authService.ValidateAuthKey(auth);
@@ -272,8 +278,8 @@ namespace MUNityAngular.Controllers
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "The Authcode is not valid!");
             }
-            var user = authService.GetUserById(validation.userid);
-            return StatusCode(StatusCodes.Status200OK, user);
+            var user = authService.GetUserById(validation.userid.Value);
+            return StatusCode(StatusCodes.Status200OK, user as IUserFacade);
         }
     }
 }
