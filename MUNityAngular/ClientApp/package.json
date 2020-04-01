@@ -27,6 +27,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@ng-bootstrap/ng-bootstrap": "^5.3.0",
+    "@nguniversal/aspnetcore-engine": "^9.1.0",
     "@nguniversal/module-map-ngfactory-loader": "8.0.0-rc.1",
     "@swimlane/ngx-charts": "^13.0.2",
     "angular-notifier": "^6.0.1",
