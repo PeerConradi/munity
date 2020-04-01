@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit {
     })
   }
 
-  @ViewChild('staticTabs', { static: false }) staticTabs: TabsetComponent;
+  @ViewChild('staticTabs') staticTabs: TabsetComponent;
 
   selectTab(tabId: number) {
     this.staticTabs.tabs[tabId].active = true;
