@@ -39,7 +39,7 @@
     "ngx-markdown": "^8.2.2",
     "oidc-client": "^1.9.0",
     "popper.js": "^1.14.3",
-    "rxjs": "^6.4.0",
+    "rxjs": "^6.5.4",
     "timespan": "^2.3.0",
     "zone.js": "~0.9.1"
   },
