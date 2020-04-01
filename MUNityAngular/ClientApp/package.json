@@ -41,6 +41,7 @@
     "popper.js": "^1.16.1",
     "rxjs": "^6.5.4",
     "timespan": "^2.3.0",
+    "tslib": "^1.11.1",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
@@ -48,7 +49,7 @@
     "@angular/cli": "8.0.6",
     "@angular/compiler-cli": "8.0.0",
     "@angular/language-service": "8.0.0",
-    "@types/jasmine": "^3.3.16",
+    "@types/jasmine": "^3.5.10",
     "@types/jasminewd2": "^2.0.8",
     "@types/node": "~11.10.5",
     "codelyzer": "^5.2.2",
@@ -56,10 +57,10 @@
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "^4.4.1",
     "karma-chrome-launcher": "~2.2.0",
-    "karma-coverage-istanbul-reporter": "^2.0.6",
+    "karma-coverage-istanbul-reporter": "^2.1.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.5.3",
-    "typescript": "3.4.5"
+    "typescript": "3.8.3"
   },
   "optionalDependencies": {
     "node-sass": "^4.9.3",
