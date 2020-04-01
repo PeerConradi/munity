@@ -19,7 +19,7 @@ export class OperativeParagraphComponent implements OnInit {
 
   @Input() index: number;
 
-  @ViewChild('operativeTextArea', null) textArea: ElementRef;
+  @ViewChild('operativeTextArea') textArea: ElementRef;
 
   hideNotices = true;
 

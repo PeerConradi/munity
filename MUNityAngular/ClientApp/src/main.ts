@@ -19,4 +19,7 @@ if (environment.production) {
 platformBrowserDynamic(providers).bootstrapModule(AppModule)
   .catch(err => console.log(err));
 
-export { renderModule, renderModuleFactory } from '@angular/platform-server';
+// removed due to:
+// Uncaught SyntaxError: Strict mode code may not include a with statement (vendor.js)
+// https://github.com/angular/angular/issues/34970
+//export { renderModule, renderModuleFactory } from '@angular/platform-server';

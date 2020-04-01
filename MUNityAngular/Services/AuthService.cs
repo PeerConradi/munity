@@ -182,12 +182,19 @@ namespace MUNityAngular.Services
 
         
 
-        public bool CanEditResolution(int userid, ResolutionModel resolution)
+        public bool CanEditResolution(int? userid, ResolutionModel resolution)
         {
 
             //If the resolution is public edit return true
             if (GetResolutionPublicState(resolution).writeable)
+            {
                 return true;
+            }
+                
+
+            //From this point on you need to be logged in
+            if (userid == null)
+                return false;
 
             //Check if the user is owner
             if (GetOwnerId(resolution).Value == userid)
@@ -211,18 +218,36 @@ namespace MUNityAngular.Services
 
         public bool CanAuthEditResolution(string auth, ResolutionModel resolution)
         {
+            // Zunächst eine einfache Cache Abfrage
+            if (_authResolutionCache.ContainsKey(resolution.ID))
+            {
+                if (_authResolutionCache[resolution.ID].Contains(auth))
+                    return true;
+            }
+
+            // Checke auf Public Resolution sonst darf jemand der nicht eingeloggt ist
+            // ohnehin nichts bearbeiten
+            var resDb = _context.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID);
+            if (resDb != null)
+            {
+                if (resDb.PublicWrite)
+                {
+                    if (!_authResolutionCache.ContainsKey(resolution.ID))
+                    {
+                        _authResolutionCache.Add(resolution.ID, new List<string>());
+                    }
+                    if (!_authResolutionCache[resolution.ID].Contains(auth)) _authResolutionCache[resolution.ID].Add(auth);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
             var user = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == auth)?.User ?? null;
             if (user == null)
-            {
-                // Checke auf Public Resolution sonst darf jemand der nicht eingeloggt ist
-                // ohnehin nichts bearbeiten
-                var resDb = _context.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID);
-                if (resDb != null)
-                {
-                    return resDb.PublicWrite;
-                }
                 return false;
-            }
             return CanEditResolution(user.UserId, resolution);
         }
 

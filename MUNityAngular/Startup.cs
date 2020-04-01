@@ -76,6 +76,9 @@ namespace MUNityAngular
             services.AddSingleton<IMunityMongoDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MunityMongoDatabaseSettings>>().Value);
 
+            // Init the Cache
+            services.AddSingleton<Services.CacheService>();
+            
             // All services that are used inside the controllers.
             services.AddScoped<Services.InstallationService>();
             services.AddScoped<Services.AuthService>();

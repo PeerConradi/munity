@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -39,24 +38,29 @@ import { AccountSettingsComponent } from './components/account/account-settings/
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faFile, faFlag, faUser } from '@fortawesome/free-solid-svg-icons';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
+import { ImpressumComponent } from './components/default/impressum/impressum.component';
+
+//ngx-Boostrap
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { SortableModule } from 'ngx-bootstrap/sortable';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
-import { UserManagementComponent } from './components/admin/user-management/user-management.component';
-import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { ImpressumComponent } from './components/default/impressum/impressum.component';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 import { MarkdownModule } from 'ngx-markdown';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
 import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-panel/speakerlist-panel.component';
 import { PresentsCheckComponent } from './components/presents/presents-check/presents-check.component';
 import { CommitteeDetailsComponent } from './components/conference/committee-details/committee-details.component';
 import { DelegationDetailsComponent } from './components/conference/delegation-details/delegation-details.component';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ProfileComponent } from './components/account/profile/profile.component';
-import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ManageConferenceCommitteesComponent } from './components/conference/manage/manage-conference-committees/manage-conference-committees.component';
 import { ManageConferenceTeamComponent } from './components/conference/manage/manage-conference-team/manage-conference-team.component';
 import { ManageConferenceTeamRolesComponent } from './components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component';
@@ -68,13 +72,15 @@ import { NoticeComponent } from './components/components/notice/notice.component
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { CommitteeCardComponent } from './components/conference/committee-card/committee-card.component';
 import { ConferenceMenuComponent } from './components/conference/conference-menu/conference-menu.component';
 import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/edit-conference-layout.component';
-import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
+
+// X-Controls
 import { XlabelComponent } from './components/xlabel/xlabel.component';
+
+//SimSim
 import { CreateSimSimComponent } from './components/simsim/create-sim-sim/create-sim-sim.component';
 import { JoinSimSimComponent } from './components/simsim/join-sim-sim/join-sim-sim.component';
 import { SimSimChatComponent } from './components/simsim/sim-sim-chat/sim-sim-chat.component';
@@ -146,7 +152,6 @@ import { SimSimDelegationComponent } from './components/simsim/sim-sim-delegatio
   ],
   imports: [
     RouterModule,
-    NgbModule,
     FontAwesomeModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
@@ -165,7 +170,8 @@ import { SimSimDelegationComponent } from './components/simsim/sim-sim-delegatio
     TabsModule.forRoot(),
     NgxChartsModule,
     TooltipModule.forRoot(),
-    CollapseModule.forRoot()
+    CollapseModule.forRoot(),
+    PopoverModule.forRoot()
     
   ],
   providers: [],

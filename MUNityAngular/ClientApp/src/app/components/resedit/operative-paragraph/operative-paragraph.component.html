@@ -77,8 +77,7 @@
   </button>
 
   <div class="btn-group-vertical paragraph-tools">
-    <button [disabled]="paragraph.IsVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left" [ngbPopover]="popContent" triggers="manual"
-            #p="ngbPopover" (click)="p.open()">
+    <button [disabled]="paragraph.IsVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left" popoverTitle="Entfernen" [popover]="popContent" triggers="manual">
       X
     </button>
     <button [disabled]="paragraph.IsVirtual === true" (click)="moveUp()" type="button" class="btn btn-outline-primary btn-move btn-up" title="Nach oben verschieben">▲</button>

@@ -1,5 +1,5 @@
 <ng-template #popContent>
-  <button class="btn btn-danger" (click)="p.close();removeAmendment()">Löschen</button>
+  <button class="btn btn-danger" (click)="removeAmendment()">Löschen</button>
 </ng-template>
 
 <div class="amendment-box">
@@ -10,8 +10,7 @@
     <b *ngIf="amendment.Type === 'change'" class="amendment-box-title">{{ paragraph.Path }} Ändern</b>
     <b *ngIf="amendment.Type === 'move'" class="amendment-box-title">{{ paragraph.Path }} Verschieben</b>
     <b *ngIf="amendment.Type === 'add'" class="amendment-box-title">Neuer Absatz</b>
-    <button class="btn btn-danger remove-button float-right" [ngbPopover]="popContent" triggers="manual"
-      #p="ngbPopover" (click)="p.open()">X</button>
+    <button class="btn btn-danger remove-button float-right" [popover]="popContent" triggers="manual">X</button>
   </div>
 
   <p *ngIf="!paragraph && amendment.Type !== 'add'">Finde den Operativen Absatz nicht o.O</p>

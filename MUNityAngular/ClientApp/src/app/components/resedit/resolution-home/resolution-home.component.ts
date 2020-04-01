@@ -11,6 +11,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ResolutionHomeComponent implements OnInit {
 
+  public creatingResolution: boolean = false;
+
   public workOnId: string = "default";
 
   public displayId: string = "";
@@ -22,6 +24,7 @@ export class ResolutionHomeComponent implements OnInit {
   }
 
   createResolution() {
+    this.creatingResolution = true;
     this.service.createResolution().subscribe(n => {
       if (n != null) {
         if (n.ID != null) {
@@ -29,11 +32,13 @@ export class ResolutionHomeComponent implements OnInit {
         }
         
       } else {
+        this.creatingResolution = false;
         this.nofitier.notify('error', 'Fehler beim Erstellen der Resolution.');
       }
     },
       err => {
-        this.nofitier.notify('error', 'Fehler beim Erstellen der Resolution.');
+        this.creatingResolution = false;
+        this.nofitier.notify('error', 'Fehler beim Erstellen der Resolution.' + err);
       }
     );
   }

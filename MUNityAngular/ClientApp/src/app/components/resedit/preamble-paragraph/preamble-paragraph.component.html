@@ -75,8 +75,7 @@
   </button>
 
   <div class="preamble-tools btn-group-vertical">
-    <button type="button" class="btn btn-danger" placement="left" [ngbPopover]="popContent" triggers="manual"
-            #p="ngbPopover" (click)="p.open()">
+    <button type="button" class="btn btn-danger" placement="left" [popover]="popContent" triggers="manual">
       X
     </button>
     <button type="button" class="btn btn-outline-primary" (click)="moveUp()">▲</button>
