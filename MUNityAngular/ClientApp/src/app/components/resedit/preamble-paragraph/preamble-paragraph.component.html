@@ -1,5 +1,5 @@
 <ng-template #popContent>
-  <button class="btn btn-danger" (click)="p.close();delete()">Löschen</button>
+  <button class="btn btn-danger" (click)="delete()">Löschen</button>
 </ng-template>
 
 <app-munity-window *ngIf="!hideNotices" (onClose)="toggleNotices()" title="Notizen"
@@ -75,7 +75,7 @@
   </button>
 
   <div class="preamble-tools btn-group-vertical">
-    <button type="button" class="btn btn-danger" placement="left" [popover]="popContent" triggers="manual">
+    <button type="button" class="btn btn-danger" placement="left" [popover]="popContent" >
       X
     </button>
     <button type="button" class="btn btn-outline-primary" (click)="moveUp()">▲</button>

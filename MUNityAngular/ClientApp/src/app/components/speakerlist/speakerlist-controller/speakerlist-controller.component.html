@@ -104,7 +104,10 @@
           <div class="row" style="margin-top: 20px;">
             <div class="btn-group btn-block" role="group" aria-label="First group">
               <button type="button" class="btn btn-primary" (click)="nextSpeaker();">Nächster</button>
-              <button type="button" class="btn btn-warning" (click)="toggleSpeaker();">Go/Pause</button>
+              <button type="button" class="btn" [class.btn-warning]="speakerlist.Status == 1" [class.btn-success]="speakerlist.Status != 1" (click)="toggleSpeaker();">
+                <span *ngIf="speakerlist.Status == 1">Pausieren</span>
+                <span *ngIf="speakerlist.Status != 1">Fortsetzen</span>
+              </button>
               <button type="button" class="btn btn-secondary" (click)="startAnswer();">Antworten</button>
             </div>
           </div>

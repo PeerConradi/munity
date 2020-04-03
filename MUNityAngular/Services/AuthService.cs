@@ -8,12 +8,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using MUNityAngular.DataHandlers.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 
 namespace MUNityAngular.Services
 {
     public class AuthService
     {
-
+        private CacheService _cacheService;
         private MunityContext _context;
 
         private bool registrationOpened = true;
@@ -47,6 +48,7 @@ namespace MUNityAngular.Services
             {
                 //Create new Auth Key
                 var key = new MUNityAngular.DataHandlers.EntityFramework.Models.AuthKey();
+                key.User = user;
                 _context.AuthKey.Add(key);
                 _context.SaveChanges();
                 return (true, key.AuthKeyValue);
@@ -54,6 +56,7 @@ namespace MUNityAngular.Services
 
             return (false, null);
         }
+
 
         public void DeleteAllUserKeys(int userid)
         {
@@ -114,7 +117,7 @@ namespace MUNityAngular.Services
 
             var user = new DataHandlers.EntityFramework.Models.User();
             user.RegistrationDate = DateTime.Now;
-
+            user.Username = username;
             var hash = Util.Hashing.PasswordHashing.InitHashing(password);
             user.Salt = hash.Salt;
             user.Password = hash.Key;
@@ -161,13 +164,10 @@ namespace MUNityAngular.Services
             return _context.Users.FirstOrDefault(n => n.Username == username) == null;
         }
 
-        public (bool valid, int? userid) ValidateAuthKey(string authkey)
+        public DataHandlers.EntityFramework.Models.AuthKey ValidateAuthKey(string authkey)
         {
-            var auth = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == authkey);
-            if (auth == null)
-                return (false, null);
-
-            return (true, auth.User.UserId);
+            var auth = _context.AuthKey.Include(n => n.User).FirstOrDefault(n => n.AuthKeyValue == authkey);
+            return auth;
         }
 
         #region Resolution
@@ -177,7 +177,7 @@ namespace MUNityAngular.Services
             if (auth == "default")
                 return true;
 
-            return ValidateAuthKey(auth).valid;
+            return ValidateAuthKey(auth) != null;
         }
 
         
@@ -219,9 +219,10 @@ namespace MUNityAngular.Services
         public bool CanAuthEditResolution(string auth, ResolutionModel resolution)
         {
             // Zunächst eine einfache Cache Abfrage
-            if (_authResolutionCache.ContainsKey(resolution.ID))
+            var cacheObject = _cacheService.ResolutionCache.FirstOrDefault(n => n.ResolutionId == resolution.ID);
+            if (cacheObject != null)
             {
-                if (_authResolutionCache[resolution.ID].Contains(auth))
+                if (cacheObject.AllowedAuths.Contains(auth))
                     return true;
             }
 
@@ -232,20 +233,20 @@ namespace MUNityAngular.Services
             {
                 if (resDb.PublicWrite)
                 {
-                    if (!_authResolutionCache.ContainsKey(resolution.ID))
+                    if (cacheObject == null)
                     {
-                        _authResolutionCache.Add(resolution.ID, new List<string>());
+                        cacheObject = new Models.Cache.ResolutionAuthCacheObject(resolution.ID);
+                        _cacheService.ResolutionCache.Add(cacheObject);
                     }
-                    if (!_authResolutionCache[resolution.ID].Contains(auth)) _authResolutionCache[resolution.ID].Add(auth);
+                        
+
+                    if (!cacheObject.AllowedAuths.Contains(auth))
+                        cacheObject.AllowedAuths.Add(auth);
                     return true;
-                }
-                else
-                {
-                    return false;
                 }
             }
 
-            var user = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == auth)?.User ?? null;
+            var user = _context.AuthKey.Include(n => n.User).FirstOrDefault(n => n.AuthKeyValue == auth)?.User ?? null;
             if (user == null)
                 return false;
             return CanEditResolution(user.UserId, resolution);
@@ -276,7 +277,7 @@ namespace MUNityAngular.Services
 
         public DataHandlers.EntityFramework.Models.UserAuths GetAuthsByAuthkey(string authkey)
         {
-            var authUser = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == authkey)?.User ?? null;
+            var authUser = _context.AuthKey.Include(n => n.User).FirstOrDefault(n => n.AuthKeyValue == authkey)?.User ?? null;
             if (authUser == null)
                 return null;
 
@@ -325,8 +326,9 @@ namespace MUNityAngular.Services
         #endregion
 
 
-        public AuthService(MunityContext context)
+        public AuthService(MunityContext context, CacheService cacheService)
         {
+            _cacheService = cacheService;
             _context = context;
             Console.WriteLine("Auth-Service Started!");
         }

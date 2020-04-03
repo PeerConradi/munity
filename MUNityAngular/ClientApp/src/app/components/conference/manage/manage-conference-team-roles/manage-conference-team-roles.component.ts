@@ -49,7 +49,7 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
     }
 
     const role = new TeamRole();
-    role.ConferenceId = this.conference.ID;
+    role.ConferenceId = this.conference.ConferenceId;
     role.Name = this.addRoleForm.value.name;
     role.Description = this.addRoleForm.value.description;
     role.MinCount = this.addRoleForm.value.minCount;

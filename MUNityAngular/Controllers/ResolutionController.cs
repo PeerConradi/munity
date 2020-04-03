@@ -47,7 +47,18 @@ namespace MUNityAngular.Controllers
             if (authService.IsDefaultAuth(auth))
                 resolution = resolutionService.CreateResolution(true, true);
             else
-                resolution = resolutionService.CreateResolution(userid: authService.ValidateAuthKey(auth).userid);
+            {
+                var validation = authService.ValidateAuthKey(auth);
+                if (validation == null)
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, "Invalid Auth Code");
+                }
+                else
+                {
+                    resolution = resolutionService.CreateResolution(userid: validation.User.UserId);
+                }
+            }
+                
             return StatusCode(StatusCodes.Status200OK, new HUBResolution(resolution));
         }
 
@@ -1031,10 +1042,10 @@ namespace MUNityAngular.Controllers
             [FromServices]AuthService authService)
         {
             var authresult = authService.ValidateAuthKey(auth);
-            if (authresult.valid == false)
+            if (authresult == null)
                 return StatusCode(StatusCodes.Status403Forbidden, "The auth is not valid!");
 
-            var resolutions = resolutionService.GetResolutionsOfUser(authresult.userid.Value);
+            var resolutions = resolutionService.GetResolutionsOfUser(authresult.User.UserId);
             return StatusCode(StatusCodes.Status200OK, resolutions);
         }
 
@@ -1096,7 +1107,7 @@ namespace MUNityAngular.Controllers
             var resolution = resolutionService.GetResolution(id);
             if (resolution != null)
             {
-                var isPublic = resolutionService.GetResolutionInfoForId(id);
+                var isPublic = resolutionService.GetResolutionDatabaseModel(id);
                 if (isPublic.PublicRead)
                 {
                     _hubContext.Groups.AddToGroupAsync(connectionid, id);
@@ -1179,7 +1190,7 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService,
             [FromServices]AuthService authService)
         {
-            var infos = resolutionService.GetResolutionInfoForId(id);
+            var infos = resolutionService.GetResolutionDatabaseModel(id);
             if (infos == null)
             {
                 return StatusCode(StatusCodes.Status404NotFound, "Resolution was not found");

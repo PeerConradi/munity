@@ -1,5 +1,5 @@
 <ng-template #popContent>
-  <button class="btn btn-danger" (click)="p.close();delete()">Löschen</button>
+  <button class="btn btn-danger" (click)="delete()">Löschen</button>
 </ng-template>
 
 <app-munity-window *ngIf="!hideNotices" (onClose)="toggleNotices()" title="Notizen"
@@ -77,7 +77,7 @@
   </button>
 
   <div class="btn-group-vertical paragraph-tools">
-    <button [disabled]="paragraph.IsVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left" popoverTitle="Entfernen" [popover]="popContent" triggers="manual">
+    <button [disabled]="paragraph.IsVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left" popoverTitle="Entfernen" [popover]="popContent" >
       X
     </button>
     <button [disabled]="paragraph.IsVirtual === true" (click)="moveUp()" type="button" class="btn btn-outline-primary btn-move btn-up" title="Nach oben verschieben">▲</button>

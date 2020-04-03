@@ -1,5 +1,5 @@
 export class ResolutionInformation {
-  public id: string;
+  public ResolutionId: string;
 
-  public name: string;
+  public Name: string;
 }

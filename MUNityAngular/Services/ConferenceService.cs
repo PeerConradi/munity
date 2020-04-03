@@ -8,6 +8,7 @@ using MUNityAngular.Models.User;
 using MUNityAngular.DataHandlers.EntityFramework;
 using System.Text.RegularExpressions;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MUNityAngular.Services
 {
@@ -21,7 +22,7 @@ namespace MUNityAngular.Services
 
         public Conference GetConference(string id)
         {
-            return _context.Conferences.FirstOrDefault(n => n.ConferenceId == id);   
+            return _context.Conferences.Include(n => n.Committees).FirstOrDefault(n => n.ConferenceId == id);   
         }
 
         
@@ -49,6 +50,18 @@ namespace MUNityAngular.Services
             if (userid != null)
             {
                 model.CreationUser = _context.Users.FirstOrDefault(n => n.UserId == userid);
+                var conferenceAuths = new ConferenceUserAuth();
+                conferenceAuths.Conference = model;
+                conferenceAuths.User = model.CreationUser;
+                conferenceAuths.CanDeleteConference = true;
+                conferenceAuths.CanEditGallerie = true;
+                conferenceAuths.CanEditPublicRelations = true;
+                conferenceAuths.CanEditSettings = true;
+                conferenceAuths.CanEditTeam = true;
+                conferenceAuths.CanLinkResolutions = true;
+                conferenceAuths.CanRead = true;
+                conferenceAuths.CanSendMails = true;
+                _context.ConferenceUserAuths.Add(conferenceAuths);
             }
 
             _context.Conferences.Add(model);
@@ -91,7 +104,7 @@ namespace MUNityAngular.Services
 
         public List<Conference> GetAllConferencesOfAuth(string authkey)
         {
-            var foundUser = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == authkey)?.User;
+            var foundUser = _context.AuthKey.Include(n => n.User).FirstOrDefault(n => n.AuthKeyValue == authkey)?.User;
             if (foundUser == null)
                 return null;
             var conferences = _context.ConferenceUserAuths.Where(n => n.User == foundUser).Select(n => n.Conference);
@@ -106,7 +119,7 @@ namespace MUNityAngular.Services
 
         public bool CanAuthEditConference(string auth, string conferenceid)
         {
-            var foundUser = _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == auth)?.User;
+            var foundUser = _context.AuthKey.Include(n => n.User).FirstOrDefault(n => n.AuthKeyValue == auth)?.User;
             if (foundUser == null)
                 return false;
             return _context.ConferenceUserAuths.FirstOrDefault(n => n.User == foundUser && n.Conference.ConferenceId == conferenceid)?.CanEditSettings ?? false;

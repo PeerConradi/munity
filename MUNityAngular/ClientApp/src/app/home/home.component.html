@@ -10,46 +10,86 @@
 </div>
 <hr />
 <div class="row">
-  <div class="col-lg-6 col-xs-12  d-flex align-items-stretch">
+  <div class="col-md-4 col-xs-12 d-flex align-items-stretch">
+    <div class="card text-center bg-primary text-white">
+      <div class="card-header">
+        Resolution erstellen
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Resolutionseditor</h5>
+        <p class="card-text">
+          Eine neue Resolution erstellen und Ansichten für ein Gremium bereitstellen.
+          Mit dem Editor auch Änderungsanträge und Notizen verwalten.
+          <b>Kostenlos und ohne Anmeldung</b>
+        </p>
+        <button class="btn btn-light">Resolution erstellen</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 col-xs-12  d-flex align-items-stretch">
     <div class="card text-center border-primary">
       <div class="card-header">
         Resolution ansehen
       </div>
       <div class="card-body">
         <h5 class="card-title">Resolution einsehen</h5>
-        <p class="card-text">Jetzt live mitlesen und Änderungsanträge einsehen/einreichen. Der dafür benötigte Code kann
-          vom Vorsitz bereitgestellt werden.</p>
+        <p class="card-text">
+          Jetzt live mitlesen und Änderungsanträge einsehen/einreichen. Der dafür benötigte Code kann
+          vom Vorsitz bereitgestellt werden.
+        </p>
         <form [formGroup]="checkResolutionForm" (ngSubmit)="onCheckResolution(checkResolutionForm.value)">
           <div class="form-group">
             <label for="resolutionid">Resolutions ID</label>
             <input type="number" formControlName="resolutionkey" class="form-control" id="resolutionid"
-              aria-describedby="resolutionNumberHelp" placeholder="12345678">
-            <small id="resolutionNumberHelp" class="form-text text-muted">Die Resolutions-ID wird vom Vorsitz bekannt
-              gegeben.</small>
+                   aria-describedby="resolutionNumberHelp" placeholder="12345678">
+            <small id="resolutionNumberHelp" class="form-text text-muted">
+              Die Resolutions-ID wird vom Vorsitz bekannt
+              gegeben.
+            </small>
           </div>
           <button type="submit" class="btn btn-primary">Einsehen</button>
         </form>
       </div>
     </div>
   </div>
-  <div class="col-lg-6 col-xs-12  d-flex align-items-stretch">
-    <div class="card text-center">
+  <div class="col-md-4 col-xs-12  d-flex align-items-stretch">
+    <div class="card text-center bg-secondary text-white">
+      <div class="card-header">
+        Redeliste erstellen
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Redeliste</h5>
+        <p class="card-text">
+          Eine neue Redeliste erstellen und verwalten. Redelisten können
+          auch neben anderen Tools dieser Plattform geführt werden.
+          <b>Kostenlos und ohne Anmeldung</b>
+        </p>
+        <button class="btn btn-light">Redeliste erstellen</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 col-xs-12  d-flex align-items-stretch">
+    <div class="card border-secondary text-center">
       <div class="card-header">
         Redeliste einsehen
       </div>
       <div class="card-body">
         <h5 class="card-title">Redeliste einsehen</h5>
-        <p class="card-text">Die Redeliste/Fragen und Kurzbemerkungen live verfolgen und sich per Knopfdruck auf eine
-          Liste setzen lassen.</p>
+        <p class="card-text">
+          Die Redeliste/Fragen und Kurzbemerkungen live verfolgen und sich per Knopfdruck auf eine
+          Liste setzen lassen.
+        </p>
         <form>
           <div class="form-group">
             <label for="speakerlistid">Redeliste-ID</label>
             <input type="number" class="form-control" id="speakerlistid" aria-describedby="emailHelp"
-              placeholder="1234567">
-            <small id="emailHelp" class="form-text text-muted">Die Redeliste-ID wird vom Vorsitz bekannt
-              gegeben.</small>
+                   placeholder="1234567">
+            <small id="emailHelp" class="form-text text-muted">
+              Die Redeliste-ID wird vom Vorsitz bekannt
+              gegeben.
+            </small>
           </div>
-          <button type="submit" class="btn btn-primary">Einsehen</button>
+          <button type="submit" class="btn btn-secondary">Einsehen</button>
         </form>
       </div>
     </div>

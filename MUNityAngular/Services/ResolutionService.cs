@@ -16,7 +16,7 @@ namespace MUNityAngular.Services
 {
     public class ResolutionService : IDisposable
     {
-
+        private CacheService _cacheService;
         private MunityContext _mariadbcontext;
 
         public IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> HubContext { get; set; }
@@ -31,15 +31,21 @@ namespace MUNityAngular.Services
             this._resolutions.InsertOne(resolution);
             //resolutions.Add(resolution);
             //Add To database
-            SaveResolutionInDatabase(resolution, isPublicReadable, isPublicWriteable, userid);
-
+            var dbmodel = SaveResolutionInDatabase(resolution, isPublicReadable, isPublicWriteable, userid);
+            var cacheModel = new Models.Cache.ResolutionAuthCacheObject(resolution.ID);
+            cacheModel.ResolutionModel = resolution;
+            cacheModel.DbResolution = dbmodel;
+            _cacheService.ResolutionCache.Add(cacheModel);
             //Create file
             return resolution;
         }
 
         public void DeleteResolution(string id)
         {
-            
+            _cacheService.ResolutionCache.Where(n => n.ResolutionId == id).ToList().ForEach(n =>
+            {
+                _cacheService.ResolutionCache.Remove(n);
+            });
             this._resolutions.DeleteOne(n => n.ID == id);
             _mariadbcontext.Resolutions.Remove(_mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == id));
             _mariadbcontext.SaveChanges();
@@ -51,7 +57,7 @@ namespace MUNityAngular.Services
 
         public void RequestSave(ResolutionModel resolution)
         {
-            var info = GetResolutionInfoForId(resolution.ID);
+            var info = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID);
             if (info != null)
             {
                 if (info.Name != resolution.Topic)
@@ -59,23 +65,41 @@ namespace MUNityAngular.Services
                     info.Name = resolution.Topic;
                 }
                 info.LastChangedDate = DateTime.Now;
-                _mariadbcontext.SaveChangesAsync();
+                _mariadbcontext.SaveChanges();
+
             }
             this._resolutions.ReplaceOneAsync(n => n.ID == resolution.ID, resolution);
         }
 
         public ResolutionModel GetResolution(string id)
         {
+            //Find the Resolution inside the cache
+            var cacheObject = _cacheService.ResolutionCache.FirstOrDefault(n => n.ResolutionId == id);
+            if (cacheObject != null)
+            {
+                if (cacheObject.ResolutionModel != null)
+                    return cacheObject.ResolutionModel;
+            }
             var resolution = this._resolutions.Find(n => n.ID == id).FirstOrDefault();
-
-            //Fix. some loading bugs but maybe it doesnt...
+            //Fix. some loading bugs but maybe it doesnt..
             resolution?.HotFix();
+            _cacheService.SetCacheObject(resolution);
+            
             return resolution;
         }
 
         public DataHandlers.EntityFramework.Models.Resolution GetResolutionInfoForPublicId(string publicid)
         {
-            return _mariadbcontext.Resolutions.FirstOrDefault(n => n.OnlineCode == publicid);
+            var cacheObject = _cacheService.ResolutionCache.FirstOrDefault(n => n.DbResolution != null &&
+                n.DbResolution.OnlineCode == publicid);
+            if (cacheObject != null)
+            {
+                return cacheObject.DbResolution;
+            }
+            var dbMododel = _mariadbcontext.Resolutions.FirstOrDefault(n => n.OnlineCode == publicid);
+            if (dbMododel != null)
+                _cacheService.SetCacheObject(dbMododel);
+            return dbMododel;
         }
 
         /// <summary>
@@ -83,9 +107,18 @@ namespace MUNityAngular.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Touple with infos publicid is null when the resolution can not be found!</returns>
-        public DataHandlers.EntityFramework.Models.Resolution GetResolutionInfoForId(string id)
+        public DataHandlers.EntityFramework.Models.Resolution GetResolutionDatabaseModel(string id)
         {
-            return _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == id);
+            // Cache Handling
+            var cacheObject = _cacheService.ResolutionCache.FirstOrDefault(n => n.ResolutionId == id);
+            if (cacheObject != null)
+            {
+                if (cacheObject.DbResolution != null)
+                    return cacheObject.DbResolution;
+            }
+            var dbModel = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == id);
+            cacheObject = _cacheService.SetCacheObject(dbModel);
+            return cacheObject.DbResolution;
         }
 
         /// <summary>
@@ -104,9 +137,10 @@ namespace MUNityAngular.Services
             }
 
 
-            var info = GetResolutionInfoForId(resolutionid);
+            var info = GetResolutionDatabaseModel(resolutionid);
             if (info != null)
             {
+                _mariadbcontext.Add(info);
                 info.PublicRead = true;
                 info.OnlineCode = publicid;
                 _mariadbcontext.SaveChanges();
@@ -131,6 +165,14 @@ namespace MUNityAngular.Services
 
         public string GetPublicIdForResolution(string resolutionid)
         {
+            // Cache Handling
+            var cacheObject = _cacheService.ResolutionCache.FirstOrDefault(n => n.ResolutionId == resolutionid);
+            if (cacheObject != null)
+            {
+                if (cacheObject.DbResolution != null)
+                    return cacheObject.DbResolution.OnlineCode;
+            }
+
             return _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolutionid)?.OnlineCode ?? null;
         }
 
@@ -141,7 +183,7 @@ namespace MUNityAngular.Services
         }
 
         
-        private bool SaveResolutionInDatabase(ResolutionModel resolution, bool pread, bool pwrite, int? userid = null)
+        private DataHandlers.EntityFramework.Models.Resolution SaveResolutionInDatabase(ResolutionModel resolution, bool pread, bool pwrite, int? userid = null)
         {
             var AdvancedInfo = new DataHandlers.EntityFramework.Models.Resolution();
             if (userid != null)
@@ -156,7 +198,7 @@ namespace MUNityAngular.Services
             AdvancedInfo.LastChangedDate = DateTime.Now;
             _mariadbcontext.Resolutions.Add(AdvancedInfo);
             _mariadbcontext.SaveChanges();
-            return true;
+            return AdvancedInfo;
         }
 
         public void Dispose()
@@ -300,8 +342,10 @@ namespace MUNityAngular.Services
             return _mariadbcontext.ConferenceResolutions.Where(n => n.Committee.CommitteeId == committeeid).Select(n => n.Resolution).ToList();
         }
 
-        public ResolutionService(MunityContext context, IMunityMongoDatabaseSettings mongoSettings)
+        public ResolutionService(MunityContext context, IMunityMongoDatabaseSettings mongoSettings, CacheService cacheService)
         {
+            _cacheService = cacheService;
+
             //New Saving in MongoDB
             _mariadbcontext = context;
 

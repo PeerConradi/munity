@@ -67,9 +67,10 @@ namespace MUNityAngular
 
             // Add Entity Framework MariaDB Database
             services.AddDbContextPool<DataHandlers.EntityFramework.MunityContext>(options =>
-            options.UseMySql(mySqlConnectionString, mySqlOptions => mySqlOptions
-                    // replace with your Server Version and Type
-                    .ServerVersion(new Version(10, 1, 26), ServerType.MariaDb)));
+                options.UseMySql(mySqlConnectionString, mySqlOptions => {
+                    mySqlOptions.ServerVersion(new Version(10, 1, 26), ServerType.MariaDb);
+                    mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                }));
 
             // Add MongoDb Database
             services.Configure<MunityMongoDatabaseSettings>(Configuration.GetSection(nameof(MunityMongoDatabaseSettings)));

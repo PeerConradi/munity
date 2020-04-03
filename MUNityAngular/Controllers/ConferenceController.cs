@@ -52,7 +52,7 @@ namespace MUNityAngular.Controllers
             [FromServices]ConferenceService conferenceService)
         {
             var validation = authService.ValidateAuthKey(auth);
-            if (!validation.valid && !authService.IsDefaultAuth(auth))
+            if (validation == null && !authService.IsDefaultAuth(auth))
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to perform this action");
 
             var conference = conferenceService.GetConference(id);
@@ -110,7 +110,7 @@ namespace MUNityAngular.Controllers
             [FromServices]AuthService authService)
         {
             var authValidation = authService.ValidateAuthKey(auth);
-            if (authValidation.valid == false)
+            if (authValidation == null)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
 
 
@@ -164,7 +164,7 @@ namespace MUNityAngular.Controllers
             model.Abbreviation = request.Abbreviation;
             model.StartDate = request.StartDate;
             model.EndDate = request.EndDate;
-            service.CreateConference(model, authService.GetUserByAuth(auth).UserId);
+            service.CreateConference(model, authstate.User.UserId);
             return StatusCode(StatusCodes.Status200OK, model);
         }
 
@@ -236,7 +236,7 @@ namespace MUNityAngular.Controllers
             //Dazu könnte es ein "See also" geben...
             var authCheck = authService.ValidateAuthKey(auth);
 
-            if (!authCheck.valid)
+            if (authCheck == null)
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that!");
             
             var delegation = conferenceService.CreateDelegation(request.Name, request.FullName, request.Abbreviation, request.Type.ToString(), "");

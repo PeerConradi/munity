@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ConferenceServiceService } from '../../../../services/conference-service.service';
 import { UserService } from '../../../../services/user.service';
 import { NotifierService } from 'angular-notifier';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-manage-conference-committees',
@@ -17,18 +18,24 @@ export class ManageConferenceCommitteesComponent implements OnInit {
 
   conference: Conference
   modalRef: BsModalRef;
-  newcommitteename: string;
-  newcommitteeabbreviation: string;
-  newcommitteeparent: string;
-  newcommitteearticle: string;
+  addCommitteeForm: FormGroup;
   presetDelegations: Delegation[] = [];
   filteredDelegations: Delegation[] = [];
   addDelegationSelection: Delegation = null;
+  addCommitteeSubmitted: boolean = false;
+  errorAddingCommittee: string = null;
 
   constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService,
-    private userService: UserService, private modalService: BsModalService, private notifier: NotifierService) { }
+    private userService: UserService, private modalService: BsModalService, private notifier: NotifierService,
+  private formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.addCommitteeForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      article: ['', Validators.required],
+      abbreviation: ['', [Validators.required, Validators.maxLength(6)]],
+      parentcommittee: [''],
+    });
     this.route.params.subscribe(params => {
       this.conferenceService.getConference(params.id).subscribe(n => {
         this.conference = n;
@@ -60,23 +67,29 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     this.modalRef = this.modalService.show(template);
   }
 
-  addCommittee() {
-    if (this.newcommitteename == null || this.newcommitteename == '') {
-      return;
-    }
+  get acf() { return this.addCommitteeForm.controls; }
 
-    if (this.newcommitteeparent == null) {
-      this.newcommitteeparent = '';
-    }
+  addCommittee() {
+    this.addCommitteeSubmitted = true;
+    if (this.addCommitteeForm.invalid)
+      return;
+
+    let data = this.addCommitteeForm.value;
 
     const newCommittee = new Committee();
-    newCommittee.Name = this.newcommitteename;
-    newCommittee.FullName = this.newcommitteename;
-    newCommittee.Abbreviation = this.newcommitteeabbreviation;
-    newCommittee.Article = this.newcommitteearticle;
-    newCommittee.ResolutlyCommittee = this.newcommitteeparent;
-    this.conferenceService.addCommittee(this.conference.ID, newCommittee).subscribe(n => {
+    newCommittee.Name = data.name;
+    newCommittee.FullName = data.name;
+    newCommittee.Abbreviation = data.abbreviation;
+    newCommittee.Article = data.article;
+    newCommittee.ResolutlyCommittee = data.parentcommittee;
+    this.conferenceService.addCommittee(this.conference.ConferenceId, newCommittee).subscribe(n => {
       this.conference.Committees.push(n);
+      this.addCommitteeSubmitted = false;
+      this.addCommitteeForm.reset();
+      this.errorAddingCommittee = null;
+    }, err => {
+        console.log(err);
+        this.errorAddingCommittee = err.error;
     });
   }
 
@@ -93,7 +106,7 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     if (this.addDelegationSelection == null) {
       this.notifier.notify('error', 'Zuerst muss eine Delegation ausgewählt werden. Ist diese nicht vorhanden lege bitte eine neue Delegation an.');
     } else {
-      this.conferenceService.addDelegationToConference(this.conference.ID, this.addDelegationSelection.ID, 1, 1).subscribe(n => {
+      this.conferenceService.addDelegationToConference(this.conference.ConferenceId, this.addDelegationSelection.ID, 1, 1).subscribe(n => {
         this.conference.Delegations.push(n);
       });
     }
@@ -108,6 +121,10 @@ export class ManageConferenceCommitteesComponent implements OnInit {
       });
     }
     
+  }
+
+  getCommitteeDelegationCount(committee: Committee): number {
+    return 0;
   }
 
 }

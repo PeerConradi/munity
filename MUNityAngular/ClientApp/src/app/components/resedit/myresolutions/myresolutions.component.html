@@ -3,8 +3,9 @@
 <div class="row" *ngIf="userSerivce.isLoggedIn">
   <div class="col-12">
     <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">Meine Resolutionen</h3>
+      <div class="card-header clearfix">
+        <h3 class="card-title pull-left">Meine Resolutionen</h3>
+        <button class="btn btn-primary pull-right" (click)="refreshList();">Aktualisieren</button>
       </div>
       <div class="card-body">
         <div *ngIf="!resolutions" class="d-flex justify-content-center">
@@ -22,8 +23,11 @@
           </thead>
           <tbody>
             <tr *ngFor="let reso of resolutions">
-              <td><a [routerLink]="['/resedit', reso.ID]">{{ reso.Name }}</a></td>
-              <td><a [routerLink]="['/resa/live', reso.OnlineCode]">{{ reso.OnlineCode }}</a></td>
+              <td><a [routerLink]="['/resedit', reso.ResolutionId]">{{ reso.Name }}</a></td>
+              <td>
+                <a *ngIf="reso.OnlineCode" [routerLink]="['/resa/live', reso.OnlineCode]">{{ reso.OnlineCode }}</a>
+                <span *ngIf="!reso.OnlineCode">-</span>
+              </td>
               <td>
                 <span *ngIf="reso.PublicRead == true" class="text-success">Ja</span>
                 <span *ngIf="reso.PublicRead == false" class="text-danger">Nein</span>

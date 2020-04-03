@@ -32,6 +32,7 @@ namespace MUNityAngular.DataHandlers.EntityFramework.Models
         public Conference()
         {
             ConferenceId = Guid.NewGuid().ToString();
+            Committees = new List<Committee>();
         }
     }
 }

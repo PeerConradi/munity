@@ -38,7 +38,7 @@ export class CreateConferenceComponent implements OnInit {
 
   ngOnInit() {
     this.userService.getUserAuths().subscribe(n => {
-      this.forbidden = !n.CreateConference;
+      this.forbidden = !n.CanCreateConference;
     })
   }
 
@@ -58,7 +58,7 @@ export class CreateConferenceComponent implements OnInit {
     this.service.createConference(conference).subscribe(n => {
       //this.conferenceCreated = true;
       this.createdConference = n;
-      this.router.navigateByUrl('/mc/overview/' + n.ID);
+      this.router.navigateByUrl('/mc/overview/' + n.ConferenceId);
     },
       err => {
         this.error = true;

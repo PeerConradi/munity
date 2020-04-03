@@ -2,7 +2,7 @@ import { Committee } from "./committee.model";
 import { Delegation } from "./delegation.model";
 
 export class Conference {
-  ID: string;
+  ConferenceId: string;
   Name: string;
   FullName: string;
   Abbreviation: string;

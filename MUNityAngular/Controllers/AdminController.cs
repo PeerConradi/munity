@@ -35,13 +35,13 @@ namespace MUNityAngular.Controllers
         public ActionResult<int> GetResolutionMongoCount([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ResolutionService resolutionService)
         {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
                 return StatusCode(StatusCodes.Status200OK, resolutionService.SavedResolutionsCount);
@@ -65,13 +65,13 @@ namespace MUNityAngular.Controllers
         public ActionResult<int> GetResolutionDatabaseCount([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ResolutionService resolutionService)
         {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
                 return StatusCode(StatusCodes.Status200OK, resolutionService.DatabaseResolutionsCount);
@@ -86,13 +86,13 @@ namespace MUNityAngular.Controllers
         [HttpGet]
         public ActionResult<int> GetUserCount([FromHeader]string auth, [FromServices]AuthService authService)
         {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
                 return StatusCode(StatusCodes.Status200OK, authService.GetUserCount());
@@ -108,13 +108,13 @@ namespace MUNityAngular.Controllers
         public ActionResult<int> GetConferenceCount([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
                 return StatusCode(StatusCodes.Status200OK, conferenceService.GetConferenceCount());
@@ -135,13 +135,13 @@ namespace MUNityAngular.Controllers
         [HttpGet]
         public ActionResult<List<User>> GetAllUsers([FromHeader]string auth, [FromServices]AuthService authService)
         {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
                 return StatusCode(StatusCodes.Status200OK, authService.GetAllUsers());
@@ -157,13 +157,13 @@ namespace MUNityAngular.Controllers
         public IActionResult GiveConferenceAuth([FromHeader]string auth, [FromHeader]string userid, [FromHeader]string conferenceid,
             [FromServices]AuthService authService, [FromServices]ConferenceService conferenceService) 
         {
-            var authState = authService.ValidateAuthKey(auth);
-            if (authState.valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(authState.userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
                 var conference = conferenceService.GetConference(conferenceid);
@@ -190,13 +190,13 @@ namespace MUNityAngular.Controllers
         public ActionResult<List<Conference>> GetConferences([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
                 return StatusCode(StatusCodes.Status200OK, conferenceService.GetAll());
@@ -213,16 +213,16 @@ namespace MUNityAngular.Controllers
         public IActionResult RestoreResolutions([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ResolutionService resolutionService)
         {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
-                resolutionService.RestoreToDatabase(userid.Value);
+                resolutionService.RestoreToDatabase(validation.User.UserId);
                 return StatusCode(StatusCodes.Status200OK);
             }
             else
@@ -236,13 +236,13 @@ namespace MUNityAngular.Controllers
         public IActionResult PurgeResolutions([FromHeader]string auth, [FromServices]AuthService authService,
             [FromServices]ResolutionService resolutionService)
         {
-            var (valid, userid) = authService.ValidateAuthKey(auth);
-            if (valid == false)
+            var validation = authService.ValidateAuthKey(auth);
+            if (validation == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to ask that!");
             }
 
-            var state = authService.IsAdmin(userid.Value);
+            var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
                 resolutionService.PurgeMongoDB();

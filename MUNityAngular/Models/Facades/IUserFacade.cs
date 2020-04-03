@@ -9,9 +9,12 @@ namespace MUNityAngular.Models.Facades
     {
         string Username { get; set; }
 
+        string Title { get; set; }
+
         string Forename { get; set; }
 
         string Lastname { get; set; }
 
+        string Gender { get; set; }
     }
 }

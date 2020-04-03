@@ -15,9 +15,13 @@ export class MyConferencesOverviewComponent implements OnInit {
   constructor(public userService: UserService, private conferenceService: ConferenceServiceService) { }
 
   ngOnInit() {
-    this.conferenceService.getAllConferences().subscribe(success => {
-      this.conferences = success;
-    });
+    this.conferenceService.getAllConferences().subscribe(n => {
+      console.log(n);
+      this.conferences = n;
+    },
+      err => {
+        console.log(err);
+      });
   }
 
 }

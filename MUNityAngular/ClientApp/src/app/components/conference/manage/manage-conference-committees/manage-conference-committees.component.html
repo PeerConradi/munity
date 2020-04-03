@@ -1,6 +1,3 @@
-
-
-
 <div *ngIf="!conference">
   <p>Konferenz wird geladen</p>
 </div>
@@ -10,7 +7,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Konferenzverwaltung</li>
-        <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ID]" *ngIf="conference">{{ conference.Name }}</a></li>
+        <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ConferenceId]" *ngIf="conference">{{ conference.Name }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">Gremien</li>
       </ol>
     </nav>
@@ -27,7 +24,8 @@
       <div class="card-body text-dark">
         <h5 class="card-title">Gremien</h5>
 
-        <p class="card-text">{{ conference.Committees.length }} Gremien gefunden.</p>
+        <p *ngIf="conference.Committees" class="card-text">{{ conference.Committees.length }} Gremien gefunden.</p>
+        <p *ngIf="!conference.Committees" class="card-text text-danger">Keine Gremien initialisiert!</p>
         <table class="table">
           <thead>
             <tr>
@@ -38,7 +36,7 @@
           <tbody>
             <tr *ngFor="let committee of conference.Committees">
               <td>{{ committee.Name}}</td>
-              <td>{{ committee.DelegationList.length }}</td>
+              <td>{{ getCommitteeDelegationCount(committee) }}</td>
             </tr>
           </tbody>
         </table>
@@ -84,7 +82,7 @@
         <tr *ngFor="let delegation of filteredDelegations">
           <td>{{ delegation.Name }}</td>
           <td *ngFor="let committee of conference.Committees" [class.bg-success]="isDelegationInCommittee(delegation, committee)">
-            <div class="checkbox" class="align-content-center">
+            <div class="checkbox align-content-center">
               <label style="font-size: 1em">
                   <input type="checkbox" value="" [checked]="isDelegationInCommittee(delegation, committee)" (change)="toggleDelegationInCommittee(delegation, committee)">
               </label>
@@ -102,58 +100,59 @@
 <!-- Add Committee Modal -->
 <ng-template #addCommitteeModal>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">Modal</h4>
+    <h4 class="modal-title pull-left">Gremium hinzufügen</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <!-- Name -->
-    <div class="row">
-      <label class="control-label">Anzeigename</label>
-      <div class="col-12">
-        <input [(ngModel)]="newcommitteename"
-               class="form-control"
-               [ngModelOptions]="{standalone: true}">
+    <form [formGroup]="addCommitteeForm"  (ngSubmit)="addCommittee()">
+      <!-- Name -->
+      <div class="form-group">
+        <label class="control-label">Anzeigename</label>
+        <div class="col-12">
+          <input formControlName="name"
+                 class="form-control" [class.is-invalid]="addCommitteeSubmitted && acf.name.errors">
+        </div>
       </div>
-    </div>
 
-    <!-- Abkürzung -->
-    <div class="row">
-      <label class="control-label">Abkürzung/Kurzform</label>
-      <div class="col-12">
-        <input [(ngModel)]="newcommitteeabbreviation"
-               class="form-control"
-               [ngModelOptions]="{standalone: true}">
+      <!-- Abkürzung -->
+      <div class="form-group">
+        <label class="control-label">Abkürzung/Kurzform</label>
+        <div class="col-12">
+          <input formControlName="abbreviation"
+                 class="form-control" [class.is-invalid]="addCommitteeSubmitted && acf.abbreviation.errors">
+        </div>
       </div>
-    </div>
 
-    <!-- Abkürzung -->
-    <div class="row">
-      <label class="control-label">Artikel (der/die/das)</label>
-      <div class="col-12">
-        <input [(ngModel)]="newcommitteearticle"
-               class="form-control"
-               [ngModelOptions]="{standalone: true}">
+      <!-- Abkürzung -->
+      <div class="form-group">
+        <label class="control-label">Artikel (der/die/das)</label>
+        <div class="col-12">
+          <input formControlName="article"
+                 class="form-control"  [class.is-invalid]="addCommitteeSubmitted && acf.article.errors">
+        </div>
       </div>
-    </div>
 
-    <!-- Übergeordnetes Gremium -->
-    <div class="row">
-      <label class="control-label">Übergeodnetes Gremium</label>
-      <div class="col-12">
-        <input [(ngModel)]="newcommitteeparent"
-               [typeahead]="conference.Committees"
-               typeaheadOptionField="Name"
-               class="form-control"
-               [ngModelOptions]="{standalone: true}"
-               aria-describedby="dsds">
-        <small id="dsds" class="text-muted">Wenn keines existiert Feld leer lassen</small>
+      <!-- Übergeordnetes Gremium -->
+      <div class="form-group">
+        <label class="control-label">Übergeodnetes Gremium</label>
+        <div class="col-12">
+          <input formControlName="parentcommittee"
+                 [typeahead]="conference.Committees"
+                 typeaheadOptionField="Name"
+                 class="form-control"
+                 aria-describedby="dsds">
+          <small id="dsds" class="text-muted">Wenn keines existiert Feld leer lassen</small>
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <button class="btn btn-block btn-primary" (click)="addCommittee()">Hinzufügen</button>
-    </div>
+      <div class="form-group">
+        <button class="btn btn-block btn-primary" (click)="addCommittee()">Hinzufügen</button>
+      </div>
+    </form>
+    <div *ngIf="errorAddingCommittee" class="alert alert-danger">
+      <b>Fehler</b>
+      <p>{{ errorAddingCommittee }}</p></div>
   </div>
 </ng-template>

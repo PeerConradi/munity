@@ -23,7 +23,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let conf of conferences">
-                <td><a [routerLink]="['/mc/dashboard', conf.ID]">{{ conf.Name }}</a></td>
+                <td><a [routerLink]="['/mc/dashboard', conf.ConferenceId]">{{ conf.Name }}</a></td>
                 <td>{{ conf.FullName }}</td>
               </tr>
             </tbody>
