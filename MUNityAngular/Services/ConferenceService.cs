@@ -139,6 +139,16 @@ namespace MUNityAngular.Services
 
             if (!conference.Committees.Contains(committee))
             {
+                //Auto generate an Id
+                string customid = conference.ConferenceId + "-" + committee.Abbreviation.ToLower();
+                customid = customid.Replace(" ", "");
+                var possible = Regex.IsMatch(customid, @"^[a-z0-9-]+$");
+                if (possible && !string.IsNullOrWhiteSpace(customid))
+                {
+                    if (!_context.Committees.Any(n => n.CommitteeId == customid))
+                        committee.CommitteeId = customid;
+                }
+
                 conference.Committees.Add(committee);
                 _context.Conferences.Update(conference);
                 if (!_context.Committees.Contains(committee))
@@ -163,7 +173,13 @@ namespace MUNityAngular.Services
 
         public CommitteeStatus GetCommitteeStatus(Committee committee)
         {
-            return _context.CommitteeStatuses.Where(n => n.Committee == committee).Aggregate((a, b) => a.Timestamp > b.Timestamp ? a : b);
+            var statuses = _context.CommitteeStatuses.Where(n => n.Committee == committee);
+            if (statuses.Count() == 0)
+                return null;
+            if (statuses.Count() == 1)
+                return statuses.First();
+            else
+                return statuses.Aggregate((a, b) => a.Timestamp > b.Timestamp ? a : b);
         }
 
         #endregion
@@ -200,7 +216,7 @@ namespace MUNityAngular.Services
 
         public List<Delegation> GetDelegationsOfCommittee(string committeeid)
         {
-            return _context.CommitteeDelegations.Where(n => n.Committee.CommitteeId == committeeid).Select(n => n.Delegation).ToList();
+            return _context.CommitteeDelegations.Include(n => n.Delegation).Where(n => n.Committee.CommitteeId == committeeid).Select(n => n.Delegation).ToList();
         }
 
         public bool AddDelegationToCommittee(Committee committee, Delegation delegation, int mincount, int maxcount)

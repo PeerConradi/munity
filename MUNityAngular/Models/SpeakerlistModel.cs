@@ -250,6 +250,10 @@ namespace MUNityAngular.Models
             Status = EStatus.STOPPED;
             RemainingSpeakerTime = Speakertime;
             StartSpeakerTime = DateTime.Now;
+            // Also reset the question timers!
+            RemainingQuestionTime = Questiontime;
+            StartQuestionTime = DateTime.Now;
+            CurrentQuestion = null;
             Questions.Clear();
         }
 
@@ -268,6 +272,9 @@ namespace MUNityAngular.Models
             Status = EStatus.STOPPED;
             RemainingQuestionTime = Questiontime;
             StartQuestionTime = DateTime.Now;
+
+            RemainingSpeakerTime = Speakertime;
+            StartSpeakerTime = DateTime.Now;
         }
 
         public void RemoveSpeaker(Delegation delegation)

@@ -230,6 +230,6 @@ export class EditorComponent implements OnInit {
   }
 
   createConferenceConnection(committee: Committee) {
-    this.service.linkResolutionToCommittee(this.resolution.ID, committee.ID).subscribe();
+    this.service.linkResolutionToCommittee(this.resolution.ID, committee.CommitteeId).subscribe();
   }
 }

@@ -33,7 +33,7 @@ export class ConferenceDetailsComponent implements OnInit {
 
   async getCommitteeStatus(committee: Committee) {
     console.log('get Status')
-    const observable = await this.conferenceService.getCommitteeStatus(committee.ID).toPromise();
+    const observable = await this.conferenceService.getCommitteeStatus(committee.CommitteeId).toPromise();
     return observable;
   }
   

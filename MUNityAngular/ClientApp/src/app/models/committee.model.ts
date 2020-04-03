@@ -1,5 +1,5 @@
 export class Committee {
-  ID: string;
+  CommitteeId: string;
   Abbreviation: string;
   Article: string;
   Conferenceid: string;

@@ -3,7 +3,7 @@
   <div class="media card-body">
     <div class="media-body">
       <div class="mb-2">
-        <a class="fs-20 pr-16" [routerLink]="['/committee', committee.ID]">{{ committee.Name }}</a>
+        <a class="fs-20 pr-16" [routerLink]="['/committee', committee.CommitteeId]">{{ committee.Name }}</a>
       </div>
       <small class="fs-16 fw-300 ls-1">Status: <b *ngIf="status">{{ status.Status }} ({{ status.AgendaItem }})</b></small>
     </div>
@@ -18,7 +18,7 @@
       <span *ngIf="!presence">Keine Anwesenheitsliste gefunden</span>
     </div>
     <div class="card-hover-show">
-      <button class="btn btn-primary" [routerLink]="['/p/check', committee.ID]">Anwesenheit feststellen</button>
+      <button class="btn btn-primary" [routerLink]="['/p/check', committee.CommitteeId]">Anwesenheit feststellen</button>
       <!--<button class="btn btn-info" (click)="conferenceService.committeeContext = committee">Als Kontext setzen</button>-->
     </div>
   </footer>

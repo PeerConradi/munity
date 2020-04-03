@@ -8,6 +8,7 @@ import { ConferenceServiceService } from '../../../../services/conference-servic
 import { UserService } from '../../../../services/user.service';
 import { NotifierService } from 'angular-notifier';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-manage-conference-committees',
@@ -24,6 +25,7 @@ export class ManageConferenceCommitteesComponent implements OnInit {
   addDelegationSelection: Delegation = null;
   addCommitteeSubmitted: boolean = false;
   errorAddingCommittee: string = null;
+  isAddingCommittee: boolean = false;
 
   constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService,
@@ -71,6 +73,7 @@ export class ManageConferenceCommitteesComponent implements OnInit {
 
   addCommittee() {
     this.addCommitteeSubmitted = true;
+    this.isAddingCommittee = true;
     if (this.addCommitteeForm.invalid)
       return;
 
@@ -87,9 +90,11 @@ export class ManageConferenceCommitteesComponent implements OnInit {
       this.addCommitteeSubmitted = false;
       this.addCommitteeForm.reset();
       this.errorAddingCommittee = null;
+      this.isAddingCommittee = false;
     }, err => {
         console.log(err);
         this.errorAddingCommittee = err.error;
+        this.isAddingCommittee = false;
     });
   }
 
@@ -103,6 +108,7 @@ export class ManageConferenceCommitteesComponent implements OnInit {
   }
 
   addDelegationClick() {
+
     if (this.addDelegationSelection == null) {
       this.notifier.notify('error', 'Zuerst muss eine Delegation ausgewählt werden. Ist diese nicht vorhanden lege bitte eine neue Delegation an.');
     } else {
@@ -114,17 +120,13 @@ export class ManageConferenceCommitteesComponent implements OnInit {
 
   toggleDelegationInCommittee(delegation: Delegation, committee: Committee) {
     if (committee.DelegationList.find(n => n == delegation.ID) == null) {
-      this.conferenceService.addDelegationToCommittee(committee.ID, delegation.ID, 1, 1).subscribe(n => {
+      this.conferenceService.addDelegationToCommittee(committee.CommitteeId, delegation.ID, 1, 1).subscribe(n => {
         if (committee.DelegationList.find(n => n == delegation.ID) == null) {
           committee.DelegationList.push(delegation.ID);
         }
       });
     }
     
-  }
-
-  getCommitteeDelegationCount(committee: Committee): number {
-    return 0;
   }
 
 }

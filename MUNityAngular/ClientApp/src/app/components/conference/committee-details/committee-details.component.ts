@@ -59,7 +59,7 @@ export class CommitteeDetailsComponent implements OnInit {
   }
 
   updateStatus() {
-    this.status.CommitteeId = this.committee.ID;
+    this.status.CommitteeId = this.committee.CommitteeId;
     this.conferenceSerivce.setCommitteeStatus(this.status).subscribe();
   }
 

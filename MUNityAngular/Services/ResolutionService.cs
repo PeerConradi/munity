@@ -137,10 +137,9 @@ namespace MUNityAngular.Services
             }
 
 
-            var info = GetResolutionDatabaseModel(resolutionid);
+            var info = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolutionid);
             if (info != null)
             {
-                _mariadbcontext.Add(info);
                 info.PublicRead = true;
                 info.OnlineCode = publicid;
                 _mariadbcontext.SaveChanges();
