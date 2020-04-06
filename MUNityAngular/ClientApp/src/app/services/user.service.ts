@@ -35,15 +35,7 @@ export class UserService {
   private baseUrl: string;
 
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    this.baseUrl = baseUrl;
-    //Beim laden den letzten Auth-Key überprüfen
-    this.validateKey(this.sessionkey()).subscribe(valid => {
-    },
-      err => {
-        this.setSessionkey('');
-      });
-  }
+  
 
   public sessionkey(): string {
     return localStorage.getItem('munity_session_key');
@@ -157,6 +149,16 @@ export class UserService {
     let headers = new HttpHeaders();
     headers = headers.set('auth', this.getAuthOrDefault());
     return this.http.get<User>(this.baseUrl + 'api/User/GetUserOfAuth', { headers: headers });
+  }
+
+  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    this.baseUrl = baseUrl;
+    //Beim laden den letzten Auth-Key überprüfen
+    this.validateKey(this.sessionkey()).subscribe(valid => {
+    },
+      err => {
+        this.setSessionkey('');
+      });
   }
 }
 

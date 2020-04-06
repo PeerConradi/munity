@@ -7,7 +7,9 @@ namespace MUNityAngular.Models.SimSim
 {
     public class AllChatMessage
     {
-        public int AllChatMessageId { get; set; }
+        public string AllChatMessageId { get; set; }
+
+        public string AuthorToken { get; set; }
 
         public string AuthorName { get; set; }
 
@@ -15,8 +17,18 @@ namespace MUNityAngular.Models.SimSim
 
         public DateTime Timestamp { get; set; }
 
-        public List<AllChatMessage> AllChat { get; set; }
+        public AllChatMessage()
+        {
+            AllChatMessageId = Guid.NewGuid().ToString();
+        }
 
-
+        public AllChatMessage(ISimSimUserFacade user, string message)
+        {
+            AllChatMessageId = Guid.NewGuid().ToString();
+            AuthorToken = user.UserToken;
+            AuthorName = user.DisplayName;
+            Text = message;
+            Timestamp = DateTime.Now;
+        }
     }
 }

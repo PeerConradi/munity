@@ -37,6 +37,7 @@ import { PrivacyTermsComponent } from './components/default/privacy-terms/privac
 import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/edit-conference-layout.component';
 import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
 import { SimSimViewComponent } from './components/simsim/sim-sim-view/sim-sim-view.component';
+import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-sim-startup.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -90,6 +91,7 @@ const routes: Routes = [
       { path: 'p/check/:id', component: PresentsCheckComponent },
 
       // SimSim
+      { path: 'simulator', component: SimSimStartupComponent },
       { path: 'sim/:id', component: SimSimViewComponent}
       
     ]

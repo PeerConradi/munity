@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace MUNityAngular.Models.SimSim
 {
-    interface ISimSimFacade
+    public interface ISimSimFacade
     {
 
         int SimSimId { get; set; }
         string Name { get; set; }
 
-        List<Delegation> Delegations { get; set; }
+        List<ISimSimUserFacade> Users { get; set; }
+
+        public bool UsingPassword { get; }
+
+        public bool CanJoin { get; set; }
     }
 }
