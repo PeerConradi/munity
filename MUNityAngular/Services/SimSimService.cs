@@ -81,7 +81,10 @@ namespace MUNityAngular.Services
             return simulation.Users.FirstOrDefault(n => n.UserToken == userToken);
         }
 
-        
+        public SimSimService()
+        {
+            _sims = new List<SimSimModel>();
+        }
 
     }
 }

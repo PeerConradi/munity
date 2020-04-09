@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using MUNityAngular.Models.SimSim;
 using MUNityAngular.Schema.Request.Simulation;
+using MUNityAngular.Schema.Response.Simulation;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 
@@ -15,11 +17,29 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class SimSimController : ControllerBase
     {
-        [Route("[action]")]
-        [HttpGet]
-        public ActionResult<ISimSimFacade> CreateSimSim([FromServices]SimSimService service)
+
+        IHubContext<Hubs.SimulationHub, Hubs.ITypedSimulationHub> _hubContext;
+
+        public SimSimController(IHubContext<Hubs.SimulationHub, Hubs.ITypedSimulationHub> hubContext)
         {
-            return StatusCode(StatusCodes.Status200OK, service.CreateSimSim() as ISimSimFacade);
+            this._hubContext = hubContext;
+        }
+
+        [Route("[action]")]
+        [HttpPost]
+        public ActionResult<SimSimCreationResponse> CreateSimSim([FromServices]SimSimService service, [FromBody]CreateSimulationRequest request)
+        {
+            var simulation = service.CreateSimSim();
+            simulation.Name = request.LobbyName;
+            if (!string.IsNullOrWhiteSpace(request.Password))
+            {
+                simulation.Password = request.Password;
+            }
+            var user = service.JoinSimulation(simulation, request.CreatorName, true);
+
+            var response = new SimSimCreationResponse() { SimulationId = simulation.SimSimId, HiddenToken = user.HiddenToken };
+
+            return StatusCode(StatusCodes.Status200OK, response);
         }
 
         [Route("[action]")]
@@ -58,7 +78,7 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public ActionResult AddChatMessage([FromBody]ISimulationChatMessageRequest body, [FromServices]SimSimService service)
+        public ActionResult AddChatMessage([FromBody]SimulationChatMessageRequest body, [FromServices]SimSimService service)
         {
             var simulation = service.GetSimSim(body.SimulationId.ToIntOrDefault(-1));
             if (simulation == null)
@@ -86,5 +106,7 @@ namespace MUNityAngular.Controllers
 
             return simulation.AllChat;
         }
+
+
     }
 }

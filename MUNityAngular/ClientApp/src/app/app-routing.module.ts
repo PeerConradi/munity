@@ -38,6 +38,7 @@ import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/
 import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
 import { SimSimViewComponent } from './components/simsim/sim-sim-view/sim-sim-view.component';
 import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-sim-startup.component';
+import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -92,6 +93,7 @@ const routes: Routes = [
 
       // SimSim
       { path: 'simulator', component: SimSimStartupComponent },
+      { path: 'simulator/create', component: SimSimCreateComponent },
       { path: 'sim/:id', component: SimSimViewComponent}
       
     ]

@@ -87,6 +87,7 @@ namespace MUNityAngular
             services.AddScoped<Services.PresenceService>();
             services.AddScoped<Services.ConferenceService>();
             services.AddSingleton<Services.SpeakerlistService>();
+            services.AddSingleton<Services.SimSimService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>
@@ -154,9 +155,9 @@ namespace MUNityAngular
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=index}/{id?}");
-                endpoints.MapHub<Hubs.TestHub>("/signalrtest");
                 endpoints.MapHub<Hubs.ResolutionHub>("/resasocket");
                 endpoints.MapHub<Hubs.SpeakerListHub>("/slsocket");
+                endpoints.MapHub<Hubs.SimulationHub>("/simsocket");
             });
 
 

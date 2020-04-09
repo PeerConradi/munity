@@ -1,0 +1,28 @@
+.lobbyelement {
+    position: relative;
+    margin-left: 10Px;
+    margin-right: 10Px;
+    border: 2px solid black;
+    height: 80Px;
+}
+
+.elementowner {
+    margin-left: 15px;
+}
+
+.elementtitle {
+    margin-left: 10Px;
+    margin-top: 5Px;
+}
+
+.membercount {
+    position: absolute;
+    right: 10Px;
+    top: 5Px;
+}
+
+.joinbutton {
+    position: absolute;
+    right: 10px;
+    bottom: 5Px;
+}

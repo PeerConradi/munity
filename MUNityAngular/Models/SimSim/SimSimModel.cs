@@ -14,7 +14,7 @@ namespace MUNityAngular.Models.SimSim
 
         public List<ISimSimUserFacade> Users { get; set; }
 
-        private Dictionary<string, ISimSimUserFacade> UserTokens { get; set; }
+        private Dictionary<string, ISimSimUserFacade> _userTokens { get; set; }
 
         public IReadOnlyCollection<ISimSimUserFacade> Leaders
         {
@@ -32,13 +32,11 @@ namespace MUNityAngular.Models.SimSim
 
         public bool AllowAnyDelegation { get; set; }
 
-        public bool AllowJoin { get; set; }
-
         public List<Delegation> AllowedDelegations { get; set; }
 
         public string Password { get; set; }
-        public bool UsingPassword { get => string.IsNullOrEmpty(Password); }
-        public bool CanJoin { get; set; }
+        public bool UsingPassword { get => !string.IsNullOrEmpty(Password); }
+        public bool CanJoin { get; set; } = true;
 
         public void AddUserToLeaders(SimSimUser user)
         {
@@ -48,15 +46,30 @@ namespace MUNityAngular.Models.SimSim
 
         public ISimSimUserFacade GetUserByToken(string token)
         {
-            if (!UserTokens.ContainsKey(token))
+            if (!_userTokens.ContainsKey(token))
                 return null;
-            return UserTokens[token];
+            return _userTokens[token];
         }
 
         public void AddUserWithToken(SimSimUser user)
         {
             Users.Add(user);
-            UserTokens.Add(user.HiddenToken, user);
+            _userTokens.Add(user.HiddenToken, user);
+        }
+
+        public bool HiddenTokenValid(string token)
+        {
+            return _userTokens.ContainsKey(token);
+        }
+
+        public SimSimModel()
+        {
+            Users = new List<ISimSimUserFacade>();
+            _userTokens = new Dictionary<string, ISimSimUserFacade>();
+            _leaderIds = new List<string>();
+            Requests = new Queue<SimSimRequestModel>();
+            AllChat = new List<AllChatMessage>();
+            AllowedDelegations = new List<Delegation>();
         }
     }
 }

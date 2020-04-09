@@ -88,7 +88,9 @@ import { SimSimViewComponent } from './components/simsim/sim-sim-view/sim-sim-vi
 import { SimSimControlsComponent } from './components/simsim/sim-sim-controls/sim-sim-controls.component';
 import { SimSimDelegationComponent } from './components/simsim/sim-sim-delegation/sim-sim-delegation.component';
 import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-sim-startup.component';
-import { SimSimOverviewListComponent } from './components/simsim/sim-sim-overview-list/sim-sim-overview-list.component'
+import { SimSimOverviewListComponent } from './components/simsim/sim-sim-overview-list/sim-sim-overview-list.component';
+import { SimSimLobbyElementComponent } from './components/simsim/sim-sim-lobby-element/sim-sim-lobby-element.component';
+import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component'
 
 @NgModule({
   declarations: [
@@ -152,7 +154,9 @@ import { SimSimOverviewListComponent } from './components/simsim/sim-sim-overvie
     SimSimControlsComponent,
     SimSimDelegationComponent,
     SimSimStartupComponent,
-    SimSimOverviewListComponent
+    SimSimOverviewListComponent,
+    SimSimLobbyElementComponent,
+    SimSimCreateComponent
   ],
   imports: [
     RouterModule,

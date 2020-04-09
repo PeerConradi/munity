@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="col-12">
+    <h1>Neue Simulation erstellen</h1>
+    <form  [formGroup]="createForm" (ngSubmit)="onSubmit(createForm.value)">
+      <div class="form-group">
+        <label>Raumname</label>
+        <input type="text" class="form-control" formControlName="lobbyname" />
+      </div>
+      <div class="form-group">
+        <label>Dein Anzeigename</label>
+        <input type="text" formControlName="username" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label>Lobby Passwort</label>
+        <input type="password" class="form-control" aria-describedby="passdescription" formControlName="password"/>
+        <small id="passdescription">Falls die Lobby öffentlich sein soll dieses Feld leer lassen.</small>
+      </div>
+      <div class="form-group">
+        <label>Modus</label>
+        <div class="form-check">
+          <input class="form-check-input" id="free4allrb" type="radio" value="Free4All" checked>
+          <label class="form-check-label" for="free4allrb">
+            Free4All - Jeder darf sich eine beliebige Delegation auswählen
+          </label>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" id="strictrb" type="radio" value="Free4All" disabled>
+          <label class="form-check-label" for="strictrb">
+            Strict - Delegation aus einer Liste von erlaubte Delegationen vorgeben (Comming soon)
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Lobby einrichten</button>
+      </div>
+    </form>
+  </div>
+</div>

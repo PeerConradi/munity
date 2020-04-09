@@ -74,9 +74,11 @@ export class UserService {
     var cmd = this.http.get(this.baseUrl + 'api/User/ValidateKey',
       options);
     //Whit every Auth-Key validation also update the user!
-    cmd.subscribe(n => {
-      this.getMe().subscribe(user => this.currentUser = user);
-    });
+    if (this.sessionkey() !== '') {
+      cmd.subscribe(n => {
+        this.getMe().subscribe(user => this.currentUser = user);
+      });
+    }
 
     return cmd;
   }
@@ -154,11 +156,15 @@ export class UserService {
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
     //Beim laden den letzten Auth-Key überprüfen
-    this.validateKey(this.sessionkey()).subscribe(valid => {
-    },
-      err => {
-        this.setSessionkey('');
-      });
+
+    if (this.sessionkey() != '') {
+      this.validateKey(this.sessionkey()).subscribe(valid => {
+      },
+        err => {
+          this.setSessionkey('');
+        });
+    }
+    
   }
 }
 

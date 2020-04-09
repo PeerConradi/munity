@@ -1,21 +1,32 @@
 <!-- Banner -->
 
-<div class="row bg-primary">
+<p *ngIf="!simulation">Simulation wird geladen</p>
+
+<div class="row bg-primary" *ngIf="simulation">
   <div class="col-3">
     <h3>MUNity Konferenz Simulator</h3>
   </div>
   <div class="col-3">
-    <h3>Raumname</h3>
+    <h3>{{ simulation.Name }}</h3>
   </div>
   <div class="col-3">
     <h3>Rolle</h3>
   </div>
   <div class="col-3">
-    <button class="btn btn-block btn-primary">Einstellungen</button>
+    <div class="btn-group w-100" dropdown>
+      <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+              aria-controls="dropdown-basic">
+        Einstellungen/Menü <span class="caret"></span>
+      </button>
+      <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+          role="menu" aria-labelledby="button-basic">
+        <li role="menuitem" class="dropdown-item"><button class="btn btn-block btn-primary" (click)="openModal(selectRoleModal)">Rolle/Delegation wechseln</button></li>
+      </ul>
+    </div>
   </div>
 </div>
 
-<div class="row">
+<div class="row" *ngIf="simulation">
   <div class="col-lg-3">
     <app-speakerlist-view speakerlist="speakerlist" sizing="medium"></app-speakerlist-view>
   </div>
@@ -24,24 +35,24 @@
     <div class="row m-top-50">
       <div class="col-3"></div>
       <div class="col-6 bg-secondary">
-        <h3>Vorsitz</h3>
+        <h3 class="text-white">Vorsitz</h3>
       </div>
       <div class="col-3"></div>
     </div>
     <div class="row">
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2" hasRequest="true"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-2"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6" hasRequest="true"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
     </div>
   </div>
 
@@ -49,6 +60,7 @@
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Chat</h3>
+        <small>{{ simulation.Users.length }} Teilnehmer</small>
       </div>
       <div class="card-body">
 
@@ -61,7 +73,7 @@
   </div>
 </div>
 
-<div class="row">
+<div class="row" *ngIf="simulation">
   <div class="col-12">
     <div class="card">
       <div class="card-header">
@@ -73,3 +85,15 @@
     </div>
   </div>
 </div>
+
+<ng-template #selectRoleModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Rolle auswählen</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    This is a modal.
+  </div>
+</ng-template>

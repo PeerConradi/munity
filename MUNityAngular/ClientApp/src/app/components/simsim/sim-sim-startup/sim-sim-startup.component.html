@@ -1,1 +1,40 @@
-<p>sim-sim-startup works!</p>
+<div class="row">
+  <div class="col-12">
+    <h1>MUNity Gremium Simulator </h1>
+    <span class="badge badge-primary"> Concept</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Neue Simulation</h3>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">
+          Simulation einleiten
+        </h3>
+        <p class="card-text">
+          Kostenlos eine neue Simulation einleiten. Mit dem Simulator ist es möglich ein Gremium mit bis zu 20 Teilnehmern
+          in den Rollen eines Delegierten oder des Vorsitzes zu spielen. Die erlaubte Delegationen können vorher festgelegt oder
+          den Benutzern frei überlassen werden.
+        </p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary btn-block" [routerLink]="['/simulator/create']">Neue Simulation erstellen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Lobbies</h3>
+      </div>
+      <div class="card-body">
+        <app-sim-sim-overview-list></app-sim-sim-overview-list>
+      </div>
+    </div>
+  </div>
+</div>

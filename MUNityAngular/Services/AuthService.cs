@@ -311,7 +311,7 @@ namespace MUNityAngular.Services
 
         public DataHandlers.EntityFramework.Models.User GetUserByAuth(string auth)
         {
-            return _context.AuthKey.FirstOrDefault(n => n.AuthKeyValue == auth).User;
+            return _context.AuthKey.Include(n => n.User).FirstOrDefault(n => n.AuthKeyValue == auth)?.User ?? null;
         }
 
 
