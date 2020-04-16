@@ -27,6 +27,11 @@ namespace MUNityAngular.Services
             return _sims.FirstOrDefault(n => n.SimSimId == id);
         }
 
+        internal SimSimModel GetGameWithConnectionInside(string connectionId)
+        {
+            return _sims.FirstOrDefault(n => n.SignalRConnections.ContainsKey(connectionId));
+        }
+
         public void RemoveSimSim(SimSimModel sim)
         {
             _sims.Remove(sim);
@@ -69,6 +74,13 @@ namespace MUNityAngular.Services
                 }
             }
             return false;
+        }
+
+
+
+        public List<SimSimModel> GetAll()
+        {
+            return this._sims;
         }
 
         public void AddChatMessage(SimSimModel simulation, AllChatMessage message)

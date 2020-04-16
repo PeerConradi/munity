@@ -55,6 +55,14 @@ namespace MUNityAngular.Controllers
 
         [Route("[action]")]
         [HttpGet]
+        public ActionResult<IEnumerable<SimSimInfo>> GetLobbies([FromServices]SimSimService service)
+        {
+            var res = service.GetAll().Select(n => new SimSimInfo(n));
+            return StatusCode(StatusCodes.Status200OK, res);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesErrorResponseType(typeof(NotFoundResult))]
@@ -73,7 +81,41 @@ namespace MUNityAngular.Controllers
             }
 
             var user = service.JoinSimulation(simulation, name, simulation.Users.Count == 0);
+            _hubContext.Clients.Group(id).UserJoined(user as ISimSimUserFacade);
             return user;
+        }
+
+        [Route("[action]")]
+        [HttpPost]
+        public ActionResult SetDelegation([FromBody]SetDelegationRequest body,
+            [FromServices]SimSimService simulationService, [FromServices]ConferenceService conferenceService)
+        {
+            var simulation = simulationService.GetSimSim(body.SimulationId.ToIntOrDefault(-1));
+            if (simulation == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Simulation with the given id not found");
+
+            var delegation = conferenceService.GetDelegation(body.DelegationId);
+            if (delegation == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Delegation with thge given id not found");
+
+            var user = simulation.GetUserByHiddenToken(body.Token);
+            if (user == null)
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to set a delegation");
+
+            user.Delegation = delegation;
+            _hubContext.Clients.Group(body.SimulationId).UserChangedDelegation(user.UserToken, delegation);
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public ActionResult<bool> IsHiddenTokenInside([FromHeader]string simulationid, [FromHeader]string hiddentoken,
+            [FromServices]SimSimService service)
+        {
+            var simulation = service.GetSimSim(simulationid.ToIntOrDefault(-1));
+            if (simulation == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Simulation not found!");
+            return StatusCode(StatusCodes.Status200OK, simulation.HiddenTokenValid(hiddentoken));
         }
 
         [Route("[action]")]
@@ -89,6 +131,7 @@ namespace MUNityAngular.Controllers
 
             var chatMessage = new AllChatMessage(actualUser, body.Text);
             service.AddChatMessage(simulation, chatMessage);
+            _hubContext.Clients.Group(simulation.SimSimId.ToString()).ChatMessageAdded(chatMessage);
             return StatusCode(StatusCodes.Status200OK);
         }
 

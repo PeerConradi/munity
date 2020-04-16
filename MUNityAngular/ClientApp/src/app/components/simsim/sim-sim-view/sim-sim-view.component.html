@@ -4,13 +4,13 @@
 
 <div class="row bg-primary" *ngIf="simulation">
   <div class="col-3">
-    <h3>MUNity Konferenz Simulator</h3>
+    <h3 class="text-white">MUNity Konferenz Simulator</h3>
   </div>
   <div class="col-3">
-    <h3>{{ simulation.Name }}</h3>
+    <h3 class="text-white">{{ simulation.Name }}</h3>
   </div>
   <div class="col-3">
-    <h3>Rolle</h3>
+    <h3 class="text-white">Rolle</h3>
   </div>
   <div class="col-3">
     <div class="btn-group w-100" dropdown>
@@ -40,22 +40,11 @@
       <div class="col-3"></div>
     </div>
     <div class="row">
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6" hasRequest="true"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-      <app-sim-sim-delegation class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+      <app-sim-sim-delegation *ngFor="let user of simulation.Users" [user]="user" class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
     </div>
   </div>
 
+  <!-- Chatfenster -->
   <div class="col-lg-3">
     <div class="card">
       <div class="card-header">
@@ -63,11 +52,17 @@
         <small>{{ simulation.Users.length }} Teilnehmer</small>
       </div>
       <div class="card-body">
-
+        <p class="text-danger" *ngIf="!simulation.AllChat">Chat konnte nicht geladen werden</p>
+        <div *ngIf="simulation.AllChat" class="max-height-80">
+          <p *ngFor="let message of simulation.AllChat">{{ message.Text }}</p>
+        </div>
       </div>
       <div class="card-footer">
-        <textarea class="form-control" placeholder="Neue Nachricht"></textarea>
-        <button class="btn btn-primary btn-block">Absenden</button>
+        <form [formGroup]="chatMessageForm" (ngSubmit)="postToChat(chatMessageForm.value)">
+          <textarea class="form-control" placeholder="Neue Nachricht" formControlName="message"></textarea>
+          <button type="submit" class="btn btn-primary btn-block">Absenden</button>
+        </form>
+        
       </div>
     </div>
   </div>
@@ -94,6 +89,21 @@
     </button>
   </div>
   <div class="modal-body">
-    This is a modal.
+    <form [formGroup]="changeRoleForm" (ngSubmit)="changeRole(changeRoleForm.value);">
+      <div class="form-group">
+        <label>Rolle</label>
+        <select formControlName="roletype" class="form-control">
+          <option value="Delegation">Delegation</option>
+        </select>
+      </div>
+      <div class="form-group" *ngIf="changeRoleForm.value.roletype == 'Delegation'">
+        <select *ngIf="possibleDelegations" class="form-control" formControlName="rolevalue">
+          <option *ngFor="let delegation of possibleDelegations" [value]="delegation.DelegationId">{{ delegation.Name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Wechseln</button>
+      </div>
+    </form>
   </div>
 </ng-template>

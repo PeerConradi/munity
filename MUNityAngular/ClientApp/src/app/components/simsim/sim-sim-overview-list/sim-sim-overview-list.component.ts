@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SimulationLobbyInfo } from '../../../models/simulation-lobby-info.model';
+import { SimulatorService } from '../../../services/simulator.service';
 
 @Component({
   selector: 'app-sim-sim-overview-list',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SimSimOverviewListComponent implements OnInit {
 
-  constructor() { }
+  lobbies: SimulationLobbyInfo[] = [];
+
+  constructor(private service: SimulatorService) { }
 
   ngOnInit(): void {
+    this.service.getLobbies().subscribe(l => {
+      this.lobbies = l;
+    });
   }
 
 }

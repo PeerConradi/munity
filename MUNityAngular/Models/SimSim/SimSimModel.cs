@@ -24,11 +24,28 @@ namespace MUNityAngular.Models.SimSim
             }
         }
 
+        /// <summary>
+        /// A list of User Tokens that are Leaders of the Lobby. The public Token
+        /// not the Hidden Token
+        /// </summary>
         private List<string> _leaderIds { get; set; }
 
         public List<AllChatMessage> AllChat { get; set; }
 
         public Queue<SimSimRequestModel> Requests { get; set; }
+
+        internal void RemoveUser(ISimSimUserFacade user)
+        {
+            _leaderIds.Remove(user.UserToken);
+            Users.Remove(user);
+            var signalRkey = SignalRConnections.FirstOrDefault(n => n.Value == user).Key ?? null;
+            if (signalRkey != null)
+                SignalRConnections.Remove(signalRkey);
+
+            var tokenKey = _userTokens.FirstOrDefault(n => n.Value == user).Key;
+            if (tokenKey != null)
+                _userTokens.Remove(tokenKey);
+        }
 
         public bool AllowAnyDelegation { get; set; }
 
@@ -37,6 +54,8 @@ namespace MUNityAngular.Models.SimSim
         public string Password { get; set; }
         public bool UsingPassword { get => !string.IsNullOrEmpty(Password); }
         public bool CanJoin { get; set; } = true;
+
+        public Dictionary<string, ISimSimUserFacade> SignalRConnections = new Dictionary<string, ISimSimUserFacade>();
 
         public void AddUserToLeaders(SimSimUser user)
         {
@@ -60,6 +79,13 @@ namespace MUNityAngular.Models.SimSim
         public bool HiddenTokenValid(string token)
         {
             return _userTokens.ContainsKey(token);
+        }
+
+        public ISimSimUserFacade GetUserByHiddenToken(string token)
+        {
+            if (_userTokens.ContainsKey(token))
+                return _userTokens[token];
+            return null;
         }
 
         public SimSimModel()

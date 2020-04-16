@@ -1,6 +1,28 @@
-<div class="lobbyelement">
-  <h3 class="elementtitle">Title</h3>
+<div *ngIf="lobby" class="lobbyelement">
+  <h3 class="elementtitle">{{ lobby.Name }}</h3>
   <p class="elementowner">Owner</p>
-  <small class="membercount">1/20</small>
-  <button class="btn btn-primary joinbutton">Beitreten</button>
+  <small class="membercount">{{ lobby.UserCount }}/20</small>
+  <button class="btn btn-primary joinbutton" (click)="openModal(joinModal)">Beitreten</button>
 </div>
+<p *ngIf="!lobby">Irgendetwas ist schief gelaufen</p>
+
+
+<ng-template #joinModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Der Lobby beitreten</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="joinForm" (ngSubmit)="join(joinForm.value)">
+      <div class="form-group">
+        <label>Anzeigename</label>
+        <input type="text" class="form-control" formControlName="displayName" />
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Beitreten</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

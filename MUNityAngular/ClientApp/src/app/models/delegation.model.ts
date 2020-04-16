@@ -1,4 +1,5 @@
 export class Delegation {
+  DelegationId: string;
   Abbreviation: string;
   CountryId: string;
   ID: string;

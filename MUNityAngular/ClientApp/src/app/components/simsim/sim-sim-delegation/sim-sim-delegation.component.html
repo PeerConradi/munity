@@ -1,13 +1,23 @@
-<div class="delegationcard">
+<div class="delegationcard" *ngIf="user">
 
   <div class="card">
     <img src="https://www.wallpaperup.com/uploads/wallpapers/2014/11/11/513629/3866bcdfcc1922c33051525e8c2d7856-1000.jpg" class="card-img-top" alt="...">
     <div class="card-body">
-      <p>Username</p>
-      <b>Delegationsname</b>
+      <p>{{ user.DisplayName }}</p>
+      <b *ngIf="user.Delegation">{{ user.Delegation.Name }}</b>
+      <b *ngIf="!user.Delegation">Keine Delegation gefunden</b>
     </div>
   </div>
   <div *ngIf="hasRequest" class="card-notification">Antrag</div>
+</div>
+
+<div class="delegationcard" *ngIf="!user">
+
+  <div class="card">
+    <div class="card-body">
+      <p>Nicht verifizierter Benutzer!</p>
+    </div>
+  </div>
 </div>
 
 
