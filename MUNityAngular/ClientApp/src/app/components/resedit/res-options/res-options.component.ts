@@ -3,7 +3,7 @@ import { Resolution } from '../../../models/resolution.model';
 import { UserService } from '../../../services/user.service';
 import { ResolutionService } from '../../../services/resolution.service';
 import { Delegation } from '../../../models/delegation.model';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-resolution-header-request';
 import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
 
@@ -29,7 +29,7 @@ export class ResOptionsComponent implements OnInit {
   documentInfo: ResolutionAdvancedInfo = null;
 
   constructor(private userService: UserService, private resolutionService: ResolutionService,
-  private conferenceService: ConferenceServiceService) { }
+  private conferenceService: ConferenceService) { }
 
   ngOnInit() {
     //this.updateOnlineInfos();

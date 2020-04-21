@@ -8,6 +8,22 @@ namespace MUNityAngular.Models.SimSim
 {
     public interface ISimSimUserFacade
     {
+        const string USER_ROLE_DELEGATION = "Delegation";
+
+        const string USER_ROLE_SPECTATOR = "Spectator";
+
+        const string USER_ROLE_CHAIRMAN = "Chairman";
+
+        static IEnumerable<string> POSSIBLE_ROLES
+        {
+            get
+            {
+                yield return USER_ROLE_DELEGATION;
+                yield return USER_ROLE_CHAIRMAN;
+                yield return USER_ROLE_SPECTATOR;
+            }
+        }
+
         string UserToken { get; set; }
 
         string DisplayName { get; set; }
@@ -15,5 +31,7 @@ namespace MUNityAngular.Models.SimSim
         Delegation Delegation { get; set; }
 
         bool IsChair { get; set; }
+
+        public string Role { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Conference } from '../../../models/conference.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { UserService } from '../../../services/user.service';
 
 @Component({
@@ -19,7 +19,7 @@ export class ConferenceMenuComponent implements OnInit {
 
   conference: Conference;
 
-  constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService, private router: Router) { }
+  constructor(private route: ActivatedRoute, private conferenceService: ConferenceService, private router: Router) { }
 
   ngOnInit() {
     const routes = this.router.url.split('/');

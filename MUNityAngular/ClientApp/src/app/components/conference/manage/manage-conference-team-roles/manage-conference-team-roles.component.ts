@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ConferenceServiceService } from '../../../../services/conference-service.service';
+import { ConferenceService } from '../../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { Conference } from '../../../../models/conference.model';
 import { TeamRole } from '../../../../models/team-role.model';
@@ -19,7 +19,7 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
 
   roles: TeamRole[] = [];
 
-  constructor(private formBuilder: FormBuilder, private conferenceService: ConferenceServiceService, private route: ActivatedRoute,
+  constructor(private formBuilder: FormBuilder, private conferenceService: ConferenceService, private route: ActivatedRoute,
   private notifier: NotifierService) { }
 
 

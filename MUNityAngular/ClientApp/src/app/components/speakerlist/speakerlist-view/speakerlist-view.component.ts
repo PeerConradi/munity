@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { SpeakerListService } from '../../../services/speaker-list.service';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { TimeSpan } from '../../../models/TimeSpan';
@@ -13,13 +13,48 @@ import { Delegation } from '../../../models/delegation.model';
 })
 export class SpeakerlistViewComponent implements OnInit {
 
-  @Input() speakerlist: Speakerlist;
+  private _speakerlist: Speakerlist;
+
+  @Input('speakerlist')
+  public set speakerlist(list: Speakerlist) {
+    console.log('Speakerlist changed: ')
+    console.log(list);
+    if (list != null) {
+      this._speakerlist = list;
+      if (list.PublicId != null) {
+        this.speakerlistService.subscribeToSpeakerlist(list.PublicId.toString());
+        this.speakerlistService.addSpeakerlistListener(this._speakerlist);
+      }
+      const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds, 0, 0, 0, 0);
+      this._speakerlist.RemainingSpeakerTime = sTime;
+      const qTime = new TimeSpan(list.RemainingQuestionTime.TotalMilliseconds, 0, 0, 0, 0);
+      this._speakerlist.RemainingQuestionTime = qTime;
+    } else {
+      this._speakerlist = null;
+    }
+  }
+
+  public get speakerlist(): Speakerlist {
+    return this._speakerlist;
+  }
+
+  public get RemainingSpeakerTime(): string {
+    if (this.speakerlist == null || this.speakerlist.RemainingSpeakerTime == null)
+      return '--:--';
+    return this.speakerlist.RemainingSpeakerTime.toString();
+  }
+
+  public get RemainingQuestionTime(): string {
+    if (this.speakerlist == null || this.speakerlist.RemainingQuestionTime == null)
+      return '--:--';
+    return this.speakerlist.RemainingQuestionTime.toString();
+  }
 
   @Input() sizing: string = "big";
 
   interval: NodeJS.Timeout;
 
-  constructor(private conferenceService: ConferenceServiceService,
+  constructor(private conferenceService: ConferenceService,
     private speakerlistService: SpeakerListService,
     private route: ActivatedRoute) { }
 
@@ -36,20 +71,8 @@ export class SpeakerlistViewComponent implements OnInit {
       //Get the Speakerlist
       this.speakerlistService.getSpeakerlistById(id).subscribe(list => {
         this.speakerlist = list;
-        this.speakerlistService.subscribeToSpeakerlist(list.PublicId.toString());
-        this.speakerlistService.addSpeakerlistListener(this.speakerlist);
-
-        const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds, 0, 0, 0, 0);
-        this.speakerlist.RemainingSpeakerTime = sTime;
-        const qTime = new TimeSpan(list.RemainingQuestionTime.TotalMilliseconds, 0, 0, 0, 0);
-        this.speakerlist.RemainingQuestionTime = qTime;
-
-        //const tsTime = new TimeSpan(0, 0, 0, 0, 0);
-        //tsTime.addSeconds(list.Speakertime.TotalSeconds);
-        //this.speakerlist.Speakertime = tsTime;
-
-        //const tqTime = new TimeSpan(list.Questiontime.TotalMilliseconds, 0, 0, 0, 0);
-        //this.speakerlist.Questiontime = tqTime;
+        //this.speakerlistService.subscribeToSpeakerlist(list.PublicId.toString());
+        //this.speakerlistService.addSpeakerlistListener(this.speakerlist);
       });
     }
 
@@ -67,7 +90,7 @@ export class SpeakerlistViewComponent implements OnInit {
   }
 
   getMediumImage(delegation: Delegation): string {
-    if (delegation.TypeName == 'COUNTRY') {
+    if (delegation.Type == 'COUNTRY') {
       return '/assets/img/flags/medium/' + delegation.IconName + '.png';
     }
     //Default Image
@@ -75,7 +98,7 @@ export class SpeakerlistViewComponent implements OnInit {
   }
 
   getDelegationImagePath(delegation: Delegation): string {
-    if (delegation.TypeName == 'COUNTRY') {
+    if (delegation.Type == 'COUNTRY') {
       return '/assets/img/flags/small/' + delegation.IconName + '.png';
     }
     //Default Image

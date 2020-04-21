@@ -1,8 +1,89 @@
 <!-- Banner -->
 
-<p *ngIf="!simulation">Simulation wird geladen</p>
+<p *ngIf="!simulation">Simulation wird geladen <button (click)="test()">Test</button></p>
 
-<div class="row bg-primary" *ngIf="simulation">
+<div class="simulationwindow" *ngIf="simulation">
+  <!-- Head Menu -->
+  <div class="simulationheader">
+    <h3 class="text-white simulation-roomname">{{ simulation.Name }}</h3>
+    <button class="btn btn-primary simulation-options-button" (click)="openModal(selectRoleModal)">Optionen</button>
+  </div>
+  <div class="simulation-middle">
+    <!-- Raum Simulation -->
+    <!-- Vorsitztisch -->
+    <div class="simulation-chairmandesk"></div>
+
+    <!-- Tisch oben links-->
+    <div class="simulation-desk simulation-desk-01">
+      <div class="simulation-seat simulation-seat-left"></div>
+      <div class="simulation-seat simulation-seat-right"></div>
+    </div>
+
+    <!-- Tisch vorne Links -->
+    <div class="simulation-desk simulation-desk-02">
+      <div class="simulation-seat simulation-seat-left"></div>
+      <div class="simulation-seat simulation-seat-right"></div>
+    </div>
+
+    <!-- Tisch vorne Rechts -->
+    <div class="simulation-desk simulation-desk-03">
+      <div class="simulation-seat simulation-seat-left"></div>
+      <div class="simulation-seat simulation-seat-right"></div>
+    </div>
+
+    <!-- Tisch vorne außen -->
+    <div class="simulation-desk simulation-desk-04">
+      <div class="simulation-seat simulation-seat-left"></div>
+      <div class="simulation-seat simulation-seat-right"></div>
+    </div>
+
+    <div class="simulation-desk simulation-desk-05">
+      <div class="simulation-seat simulation-seat-left"></div>
+      <div class="simulation-seat simulation-seat-right"></div>
+    </div>
+
+    <div class="simulation-speakerlist" [hidden]="!showSpeakerlist">
+      <app-speakerlist-view *ngIf="speakerlist" [speakerlist]="speakerlist" sizing="medium"></app-speakerlist-view>
+    </div>
+    <!-- Redeliste ein und ausblenden Schaltfläche -->
+    <div class="display-speakerlist-button" (click)="showSpeakerlist = !showSpeakerlist">R</div>
+
+
+  </div>
+  <div class="simuation-footer">
+    <app-sim-sim-controls></app-sim-sim-controls>
+  </div>
+</div>
+
+
+  <!--
+    <div class="simulation-left-panel">
+      
+    </div>
+  <div class="row simulation-view">
+    <div class="card bg-secondary col-12">
+      <div class="card-header">
+        <h3 class="card-title text-white">Vorsitz</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div *ngFor="let chairman of chairmen" class="card bg-primary">
+            <div class="card-body">
+              <h5 class="text-white">{{ chairman.DisplayName }}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row simulation-view">
+    <app-sim-sim-delegation *ngFor="let user of delegations" [user]="user" class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
+  </div>
+</div>
+<div class="simulation-right-panel"></div>
+  -->
+
+<!--<div class="row bg-primary" *ngIf="simulation">
   <div class="col-3">
     <h3 class="text-white">MUNity Konferenz Simulator</h3>
   </div>
@@ -20,32 +101,19 @@
       </button>
       <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
           role="menu" aria-labelledby="button-basic">
-        <li role="menuitem" class="dropdown-item"><button class="btn btn-block btn-primary" (click)="openModal(selectRoleModal)">Rolle/Delegation wechseln</button></li>
+        <li role="menuitem" class="dropdown-item"><button class="btn btn-block btn-primary">Rolle/Delegation wechseln</button></li>
+        <li role="menuitem" class="dropdown-item"><button class="btn btn-block btn-primary" (click)="test()">Test</button></li>
       </ul>
     </div>
   </div>
-</div>
+</div>-->
 
 <div class="row" *ngIf="simulation">
-  <div class="col-lg-3">
-    <app-speakerlist-view speakerlist="speakerlist" sizing="medium"></app-speakerlist-view>
-  </div>
 
-  <div class="col-lg-6">
-    <div class="row m-top-50">
-      <div class="col-3"></div>
-      <div class="col-6 bg-secondary">
-        <h3 class="text-white">Vorsitz</h3>
-      </div>
-      <div class="col-3"></div>
-    </div>
-    <div class="row">
-      <app-sim-sim-delegation *ngFor="let user of simulation.Users" [user]="user" class="col-xl-3 col-lg-3 col-md-4 col-sm-6"></app-sim-sim-delegation>
-    </div>
-  </div>
 
+  <!-- Hauptfenster/Gremiumansicht-->
   <!-- Chatfenster -->
-  <div class="col-lg-3">
+  <!--<div class="col-lg-3">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Chat</h3>
@@ -62,23 +130,10 @@
           <textarea class="form-control" placeholder="Neue Nachricht" formControlName="message"></textarea>
           <button type="submit" class="btn btn-primary btn-block">Absenden</button>
         </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="row" *ngIf="simulation">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h3>Aktionen</h3>
-      </div>
-      <div class="card-body">
-        <app-sim-sim-controls></app-sim-sim-controls>
       </div>
     </div>
-  </div>
+  </div>-->
 </div>
 
 <ng-template #selectRoleModal>
@@ -94,6 +149,8 @@
         <label>Rolle</label>
         <select formControlName="roletype" class="form-control">
           <option value="Delegation">Delegation</option>
+          <option value="Chairman">Vorsitz</option>
+          <option value="Spectator">Zuschauer</option>
         </select>
       </div>
       <div class="form-group" *ngIf="changeRoleForm.value.roletype == 'Delegation'">

@@ -16,5 +16,13 @@ namespace MUNityAngular.Hubs
         Task ChatMessageAdded(AllChatMessage message);
 
         Task UserChangedDelegation(string usertoken, Delegation delegation);
+
+        Task UserChangedRole(string usertoken, string role);
+
+        Task RequestAdded(SimSimRequestModel request);
+
+        Task RequestRemoved(SimSimRequestModel request);
+
+        Task RequestsChanged(List<SimSimRequestModel> requests);
     }
 }

@@ -3,11 +3,15 @@ import { Speakerlist } from '../../../models/speakerlist.model';
 import { TimeSpan } from '../../../models/TimeSpan';
 import { ActivatedRoute } from '@angular/router';
 import { Simulation } from '../../../models/simulation.model';
-import { SimulatorService } from '../../../services/simulator.service';
+import { SimulationService } from '../../../services/simulator.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Delegation } from '../../../models/delegation.model';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
+import { SpeakerListService } from '../../../services/speaker-list.service';
+import { SimulationUser } from '../../../models/simulation-user.model';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sim-sim-view',
@@ -18,9 +22,18 @@ export class SimSimViewComponent implements OnInit {
 
   modalRef: BsModalRef;
 
-  speakerlist: Speakerlist;
+  public get speakerlist(): Speakerlist {
+    if (this.simulation) {
+      return this.simulation.Speakerlist;
+    }
+    return null;
+  }
 
-  simulation: Simulation;
+  private _simulation: Simulation;
+
+  public get simulation(): Simulation {
+    return this._simulation;
+  }
 
   currentId: string;
 
@@ -30,11 +43,32 @@ export class SimSimViewComponent implements OnInit {
 
   possibleDelegations: Delegation[];
 
-  constructor(private route: ActivatedRoute, private simulationService: SimulatorService,
+  showSpeakerlist: boolean = false;
+
+  get chairmen(): SimulationUser[] {
+    if (this.simulation != null) {
+      return this.simulation.Users.filter(u => u.Role == 'Chairman');
+    } else {
+      return [];
+    }
+  }
+
+  get delegations(): SimulationUser[] {
+    if (this.simulation != null) {
+      return this.simulation.Users.filter(u => u.Role == 'Delegation');
+    } else {
+      return [];
+    }
+  }
+
+  constructor(private route: ActivatedRoute, private simulationService: SimulationService,
     private modalService: BsModalService, private formBuilder: FormBuilder,
-  private conferenceService: ConferenceServiceService) { }
+    private conferenceService: ConferenceService,
+  private speakerlistService: SpeakerListService) { }
 
   ngOnInit() {
+    // Load a Speakerlist Template!
+
     this.chatMessageForm = this.formBuilder.group({
       message: ''
     });
@@ -44,25 +78,20 @@ export class SimSimViewComponent implements OnInit {
       rolevalue: ''
     });
 
-    this.route.params.subscribe(n => {
-      this.currentId = n.id;
-      this.simulationService.getSimulation(n.id).subscribe(a => {
-        this.simulation = a;
-        console.log(a);
-        this.simulationService.joinSocket(a.SimSimId);
-        this.simulationService.addSocketListener(this.simulation);
-      });
+    //Testing with trivial Simuatlion right now
+    //this._simulation = this.simulationService.currentSimulation;
+    //this.simulationService.reloadCurrent().then(n => {
+    //  this.speakerlist = n.Speakerlist;
+    //  this.simulationService.currentSimulation = n;
+    //  this._simulation = this.simulationService.currentSimulation;
+    //});
+
+    this._simulation = this.testSimulation;
+
+    this.conferenceService.getAllDelegations().subscribe(n => {
+      this.possibleDelegations = n
     });
-
-    let slist = new Speakerlist();
-    slist.Speakertime = new TimeSpan(0, 0, 3, 0, 0);
-    slist.Questiontime = new TimeSpan(0, 30, 0, 0, 0);
-    slist.RemainingSpeakerTime = new TimeSpan(0, 0, 3, 0, 0);
-    slist.RemainingQuestionTime = new TimeSpan(0, 30, 0, 0, 0);
-    slist.Status = 0;
-    this.speakerlist = slist;
-
-    this.conferenceService.getAllDelegations().subscribe(n => this.possibleDelegations = n);
+    //this.simulation.pipe(map(r => this.speakerlist = r.Speakerlist));
   }
 
   openModal(template: TemplateRef<any>) {
@@ -70,7 +99,7 @@ export class SimSimViewComponent implements OnInit {
   }
 
   postToChat(val) {
-    this.simulationService.sendMessage(this.simulation.SimSimId.toString(), val.message).subscribe(n => {
+    this.simulationService.sendMessage(val.message).subscribe(n => {
       this.chatMessageForm.reset();
     });
   }
@@ -78,8 +107,39 @@ export class SimSimViewComponent implements OnInit {
   changeRole(val) {
     console.log(val);
     if (val.roletype == 'Delegation' && val.rolevalue != null) {
-      this.simulationService.setDelegation(this.simulation.SimSimId.toString(), val.rolevalue).subscribe();
+      this.simulationService.setDelegation(val.rolevalue).subscribe(s => {
+        this.modalRef.hide();
+      });
+    } else {
+      this.simulationService.setRole(val.roletype).subscribe(s => {
+        this.modalRef.hide();
+      });
     }
   }
 
+  test() {
+    console.log(this.simulationService.currentSimulation);
+    this.simulationService.getMe().subscribe(n => console.log(n));
+  }
+
+  private _testSim: Simulation;
+  
+  get testSimulation(): Simulation {
+    if (this._testSim == null) {
+      this._testSim = new Simulation();
+      this._testSim.Speakerlist = new Speakerlist();
+      this._testSim.Speakerlist.ID = 'testliste';
+      this._testSim.Speakerlist.RemainingQuestionTime = new TimeSpan(0, 30, 0, 0, 0);
+      this._testSim.Speakerlist.RemainingSpeakerTime = new TimeSpan(0, 30, 0, 0, 0);
+      this._testSim.Speakerlist.Questiontime = new TimeSpan(0, 30, 0, 0, 0);
+      this._testSim.Speakerlist.Speakertime = new TimeSpan(0, 30, 0, 0, 0);
+      this._testSim.Name = 'Test';
+
+      let chairmanOne = new SimulationUser();
+      chairmanOne.DisplayName = 'Vorsitzender 1';
+      chairmanOne.Role = 'Chairman';
+      this._testSim.Users.push(chairmanOne);
+    }
+    return this._testSim;
+  }
 }

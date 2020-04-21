@@ -8,7 +8,7 @@ import { NotifierService } from 'angular-notifier';
 import { AbstractAmendment } from '../../../models/abstract-amendment.model';
 import { AmendmentInspector } from '../../../models/amendment-inspector';
 import { Title } from '@angular/platform-browser';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { Delegation } from '../../../models/delegation.model';
 import { AddAmendment } from '../../../models/add-amendment.model';
 import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-resolution-header-request';
@@ -69,7 +69,7 @@ export class EditorComponent implements OnInit {
 
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
-    private titleService: Title, private conferenceService: ConferenceServiceService) {
+    private titleService: Title, private conferenceService: ConferenceService) {
     this.titleService.setTitle('ResaOnline')
   }
 

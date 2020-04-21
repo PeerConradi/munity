@@ -9,10 +9,17 @@ namespace MUNityAngular.Models.SimSim
     {
         public int SimSimRequestModelId { get; set; }
 
-        public string DelegationId { get; set; }
+        public string UserToken { get; set; }
 
         public string RequestType { get; set; }
 
+        public string Message { get; set; }
+
         public DateTime RequestTime { get; set; }
+
+        public SimSimRequestModel()
+        {
+            SimSimRequestModelId = new Random().Next(0, 100000000);
+        }
     }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Conference } from '../../models/conference.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConferenceServiceService } from '../../services/conference-service.service';
+import { ConferenceService } from '../../services/conference-service.service';
 
 @Component({
   selector: 'app-edit-conference-layout',

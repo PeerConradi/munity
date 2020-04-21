@@ -6,4 +6,5 @@ export class SimulationUser {
   Delegation: Delegation;
   IsChair: boolean;
   HiddenToken: string;
+  Role: string;
 }

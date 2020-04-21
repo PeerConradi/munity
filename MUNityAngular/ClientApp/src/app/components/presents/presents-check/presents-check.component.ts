@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { Delegation } from '../../../models/delegation.model';
 import { PresenceService } from '../../../services/presence.service';
@@ -39,7 +39,7 @@ export class PresentsCheckComponent implements OnInit {
     return Math.round(this.presentDelegations.length / (this.presentDelegations.length + this.missingDelegations.length) * 100);
   }
 
-  constructor(private conferenceSerivce: ConferenceServiceService, private route: ActivatedRoute, private presenceService: PresenceService,
+  constructor(private conferenceSerivce: ConferenceService, private route: ActivatedRoute, private presenceService: PresenceService,
   private notifier: NotifierService) { }
 
   ngOnInit() {

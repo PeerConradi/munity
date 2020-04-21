@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user.service';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 
 @Component({
   selector: 'app-my-conferences-overview',
@@ -12,7 +12,7 @@ export class MyConferencesOverviewComponent implements OnInit {
   conferences = [];
   
 
-  constructor(public userService: UserService, private conferenceService: ConferenceServiceService) { }
+  constructor(public userService: UserService, private conferenceService: ConferenceService) { }
 
   ngOnInit() {
     this.conferenceService.getAllConferences().subscribe(n => {

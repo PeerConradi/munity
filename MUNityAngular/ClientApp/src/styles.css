@@ -9,6 +9,11 @@
     flex-direction: column;
 }*/
 
+body {
+    top: 0;
+    left: 0;
+}
+
 footer {
     height: 50px;
     margin-top: auto;

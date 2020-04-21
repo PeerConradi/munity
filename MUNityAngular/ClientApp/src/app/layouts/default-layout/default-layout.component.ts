@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SpeakerListService } from '../../services/speaker-list.service';
-import { ConferenceServiceService } from '../../services/conference-service.service';
+import { ConferenceService } from '../../services/conference-service.service';
 
 @Component({
   selector: 'app-default-layout',
@@ -13,7 +13,7 @@ export class DefaultLayoutComponent implements OnInit {
 
   showLeftPanel: boolean = false;
 
-  constructor(public speakerListService: SpeakerListService, public conferenceService: ConferenceServiceService) { }
+  constructor(public speakerListService: SpeakerListService, public conferenceService: ConferenceService) { }
 
   ngOnInit() {
   }

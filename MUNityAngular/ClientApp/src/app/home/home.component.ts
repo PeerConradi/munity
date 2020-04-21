@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ConferenceServiceService } from '../services/conference-service.service';
+import { ConferenceService } from '../services/conference-service.service';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 

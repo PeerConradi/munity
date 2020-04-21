@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
@@ -11,7 +11,7 @@ export class ConferenceListComponent implements OnInit {
 
   public conferences = [];
 
-  constructor(private conferenceService: ConferenceServiceService, private adminService: AdminService) { }
+  constructor(private conferenceService: ConferenceService, private adminService: AdminService) { }
 
   ngOnInit() {
     this.conferences = null;

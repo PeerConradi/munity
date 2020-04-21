@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Conference } from '../../../models/conference.model';
 import { ActivatedRoute } from '@angular/router';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { UserService } from '../../../services/user.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class EditConferenceComponent implements OnInit {
 
   conference: Conference;
 
-  constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService,
+  constructor(private route: ActivatedRoute, private conferenceService: ConferenceService,
     private userService: UserService) { }
 
   ngOnInit() {

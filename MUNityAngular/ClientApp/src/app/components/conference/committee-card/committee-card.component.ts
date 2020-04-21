@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Committee } from '../../../models/committee.model';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { CommitteeStatus } from '../../../models/committee-status.model';
 import { Presence } from '../../../models/presence.model';
 import { PresenceService } from '../../../services/presence.service';
@@ -18,7 +18,7 @@ export class CommitteeCardComponent implements OnInit {
 
   presence: Presence;
 
-  constructor(private service: ConferenceServiceService, private presenceService: PresenceService) { }
+  constructor(private service: ConferenceService, private presenceService: PresenceService) { }
 
   ngOnInit() {
     this.service.getCommitteeStatus(this.committee.CommitteeId).subscribe(n => this.status = n);

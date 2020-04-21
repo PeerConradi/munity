@@ -32,7 +32,7 @@ namespace MUNityAngular.Models.SimSim
 
         public List<AllChatMessage> AllChat { get; set; }
 
-        public Queue<SimSimRequestModel> Requests { get; set; }
+        public List<SimSimRequestModel> Requests { get; set; }
 
         internal void RemoveUser(ISimSimUserFacade user)
         {
@@ -56,6 +56,8 @@ namespace MUNityAngular.Models.SimSim
         public bool CanJoin { get; set; } = true;
 
         public Dictionary<string, ISimSimUserFacade> SignalRConnections = new Dictionary<string, ISimSimUserFacade>();
+
+        public SpeakerlistModel Speakerlist { get; set; }
 
         public void AddUserToLeaders(SimSimUser user)
         {
@@ -93,7 +95,7 @@ namespace MUNityAngular.Models.SimSim
             Users = new List<ISimSimUserFacade>();
             _userTokens = new Dictionary<string, ISimSimUserFacade>();
             _leaderIds = new List<string>();
-            Requests = new Queue<SimSimRequestModel>();
+            Requests = new List<SimSimRequestModel>();
             AllChat = new List<AllChatMessage>();
             AllowedDelegations = new List<Delegation>();
         }

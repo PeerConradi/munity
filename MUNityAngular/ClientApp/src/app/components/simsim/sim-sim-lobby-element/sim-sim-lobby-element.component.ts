@@ -2,7 +2,7 @@ import { Component, OnInit, Input, TemplateRef } from '@angular/core';
 import { SimulationLobbyInfo } from '../../../models/simulation-lobby-info.model';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { FormBuilder, Validators } from '@angular/forms';
-import { SimulatorService } from '../../../services/simulator.service';
+import { SimulationService } from '../../../services/simulator.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -19,7 +19,7 @@ export class SimSimLobbyElementComponent implements OnInit {
 
   joinForm;
 
-  constructor(private modalService: BsModalService, private formBuilder: FormBuilder, private simulationService: SimulatorService,
+  constructor(private modalService: BsModalService, private formBuilder: FormBuilder, private simulationService: SimulationService,
     private router: Router) { }
 
   ngOnInit(): void {
@@ -34,7 +34,7 @@ export class SimSimLobbyElementComponent implements OnInit {
     this.simulationService.checkHiddenToken(this.lobby.SimSimId.toString()).subscribe(n => {
       if (n === true) {
         // If the User is already inside this simulation rejoin
-        this.router.navigate(['/sim/' + this.lobby.SimSimId]);
+        this.router.navigate(['/sim/']);
         this.modalRef.hide();
       } else {
         // If not then Open the Join Modal
@@ -48,13 +48,18 @@ export class SimSimLobbyElementComponent implements OnInit {
       console.log(n);
       if (n === true) {
         // If the User is already inside this simulation rejoin
-        this.router.navigate(['/sim/' + this.lobby.SimSimId]);
+        this.simulationService.getSimulation(this.lobby.SimSimId.toString());
+
+        this.router.navigate(['/sim/']);
+        
         this.modalRef.hide();
       } else {
         // If not then join as a new User
         this.simulationService.tryJoin(this.lobby.SimSimId.toString(), val.displayName).subscribe(res => {
-          this.simulationService.setMyToken(res.HiddenToken);
-          this.router.navigate(['/sim/' + this.lobby.SimSimId]);
+          this.simulationService.userToken = res.HiddenToken;
+          this.simulationService.currentUser = res;
+          localStorage.setItem('lastsimulation', this.lobby.SimSimId.toString());
+          this.router.navigate(['/sim/']);
           this.modalRef.hide();
         })
       }

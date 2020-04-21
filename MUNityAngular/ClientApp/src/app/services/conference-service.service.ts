@@ -19,7 +19,7 @@ import { CommitteeStatus } from '../models/committee-status.model';
 @Injectable({
   providedIn: 'root'
 })
-export class ConferenceServiceService {
+export class ConferenceService {
 
   hasError: boolean = false;
 
@@ -74,7 +74,7 @@ export class ConferenceServiceService {
     request.name = delegation.Name;
     request.fullName = delegation.FullName;
     request.abbreviation = delegation.Abbreviation;
-    request.type = this.getTypeNumberByName(delegation.TypeName);
+    request.type = this.getTypeNumberByName(delegation.Type);
     return this.http.post<Delegation>(this.baseUrl + 'api/Conference/CreateDelegation', request, { headers: headers });
   }
 

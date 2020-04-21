@@ -81,7 +81,6 @@ import { ConferenceOptionsComponent } from './components/conference/conference-o
 import { XlabelComponent } from './components/xlabel/xlabel.component';
 
 //SimSim
-import { CreateSimSimComponent } from './components/simsim/create-sim-sim/create-sim-sim.component';
 import { JoinSimSimComponent } from './components/simsim/join-sim-sim/join-sim-sim.component';
 import { SimSimChatComponent } from './components/simsim/sim-sim-chat/sim-sim-chat.component';
 import { SimSimViewComponent } from './components/simsim/sim-sim-view/sim-sim-view.component';
@@ -147,7 +146,6 @@ import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-si
     EditConferenceLayoutComponent,
     ConferenceOptionsComponent,
     XlabelComponent,
-    CreateSimSimComponent,
     JoinSimSimComponent,
     SimSimChatComponent,
     SimSimViewComponent,

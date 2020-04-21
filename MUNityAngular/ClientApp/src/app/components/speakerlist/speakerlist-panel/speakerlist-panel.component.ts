@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { SpeakerListService } from '../../../services/speaker-list.service';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { Delegation } from '../../../models/delegation.model';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead/public_api';
 
@@ -18,7 +18,7 @@ export class SpeakerlistPanelComponent implements OnInit {
 
   presetDelegations: Delegation[];
 
-  constructor(private speakerlistService: SpeakerListService, private conferenceService: ConferenceServiceService) { }
+  constructor(private speakerlistService: SpeakerListService, private conferenceService: ConferenceService) { }
 
   ngOnInit() {
     this.conferenceService.getAllDelegations().subscribe(n => {
@@ -34,9 +34,11 @@ export class SpeakerlistPanelComponent implements OnInit {
   onAddSpeakerSelected(val: TypeaheadMatch) {
     if (val !== null) {
       const del: Delegation = val.item;
-      this.speakerlistService.addSpeaker(this.speakerlist.ID, del.ID).subscribe(n => {
-        this.addSpeakerSelection = '';
-      });
+      if (del != null) {
+        this.speakerlistService.addSpeaker(this.speakerlist.ID, del.DelegationId).subscribe(n => {
+          this.addSpeakerSelection = '';
+        });
+      }
     }
   }
 

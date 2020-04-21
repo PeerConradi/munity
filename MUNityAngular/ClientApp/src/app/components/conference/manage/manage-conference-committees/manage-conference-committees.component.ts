@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { Delegation } from '../../../../models/delegation.model';
 import { Committee } from '../../../../models/committee.model';
 import { ActivatedRoute } from '@angular/router';
-import { ConferenceServiceService } from '../../../../services/conference-service.service';
+import { ConferenceService } from '../../../../services/conference-service.service';
 import { UserService } from '../../../../services/user.service';
 import { NotifierService } from 'angular-notifier';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -27,7 +27,7 @@ export class ManageConferenceCommitteesComponent implements OnInit {
   errorAddingCommittee: string = null;
   isAddingCommittee: boolean = false;
 
-  constructor(private route: ActivatedRoute, private conferenceService: ConferenceServiceService,
+  constructor(private route: ActivatedRoute, private conferenceService: ConferenceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService,
   private formBuilder: FormBuilder) { }
 

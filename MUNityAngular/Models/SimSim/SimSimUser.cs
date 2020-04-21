@@ -18,6 +18,8 @@ namespace MUNityAngular.Models.SimSim
 
         public bool IsChair { get; set; }
 
+        public string Role { get; set; }
+
         public SimSimUser()
         {
             UserToken = Guid.NewGuid().ToString();

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SimulatorService } from '../../../services/simulator.service';
+import { SimulationService } from '../../../services/simulator.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,7 +12,7 @@ export class SimSimCreateComponent implements OnInit {
 
   createForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private simulatorService: SimulatorService, private router: Router) { }
+  constructor(private formBuilder: FormBuilder, private simulatorService: SimulationService, private router: Router) { }
 
   public get f() { return this.createForm.controls; }
 
@@ -28,10 +28,12 @@ export class SimSimCreateComponent implements OnInit {
     if (this.createForm.valid == false)
       return;
 
-    this.simulatorService.createSimulation(val.lobbyname, val.username, val.password).subscribe(n => {
-      console.log(n);
-      this.simulatorService.setMyToken(n.HiddenToken);
-      this.router.navigate(['/sim/' + n.SimulationId]);
+    this.simulatorService.createSimulation(val.lobbyname, val.username, val.password).then(n => {
+      if (n != null) {
+        this.simulatorService.currentSimulation = n;
+        this.router.navigate(['/sim']);
+      }
+      
     });
     console.log(val);
   }

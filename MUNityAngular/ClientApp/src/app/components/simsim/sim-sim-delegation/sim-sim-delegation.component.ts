@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { SimulationUser } from '../../../models/simulation-user.model';
+import { SimulationService } from '../../../services/simulator.service';
+import { SimulationRequest } from '../../../models/simulation-request.model';
 
 @Component({
   selector: 'app-sim-sim-delegation',
@@ -8,13 +10,24 @@ import { SimulationUser } from '../../../models/simulation-user.model';
 })
 export class SimSimDelegationComponent implements OnInit {
 
-  @Input() hasRequest: boolean;
+  public get hasRequest(): boolean {
+    return this.simulationService.currentSimulation.Requests.find(n => n.UserToken == this.user.UserToken) != null;
+  }
 
   @Input() user: SimulationUser;
 
-  constructor() { }
+  isMe: boolean = false;
+
+  public get currentRequests(): SimulationRequest {
+    return this.simulationService.currentSimulation.Requests.find(n => n.UserToken == this.user.UserToken);
+  }
+
+  constructor(private simulationService: SimulationService) { }
 
   ngOnInit() {
+    this.simulationService.getMe().subscribe(n => {
+      this.isMe = (n.UserToken == this.user.UserToken);
+    }); 
   }
 
 }

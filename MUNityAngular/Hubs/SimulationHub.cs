@@ -44,11 +44,19 @@ namespace MUNityAngular.Hubs
                 if (game.HiddenTokenValid(token))
                 {
                     var user = game.GetUserByHiddenToken(token);
-                    if (user != null)
+                    if (user != null && !game.SignalRConnections.ContainsKey(this.Context.ConnectionId))
                     {
                         game.SignalRConnections.Add(this.Context.ConnectionId, user);
                     }
-                    this.Groups.AddToGroupAsync(this.Context.ConnectionId, gameid);
+                    try
+                    {
+                        this.Groups.AddToGroupAsync(this.Context.ConnectionId, gameid);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                    
                 }
             }
         }

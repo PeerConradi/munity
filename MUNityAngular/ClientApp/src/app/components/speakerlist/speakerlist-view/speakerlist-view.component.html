@@ -22,7 +22,7 @@
           </h3>
 
           <h3 class="float-left" *ngIf="!speakerlist.CurrentSpeaker">Niemand</h3>
-          <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"> {{ speakerlist.RemainingSpeakerTime.toString() }}</h3>
+          <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"> {{ RemainingSpeakerTime }}</h3>
           <h3 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds < 0"> Zum Ende kommen</h3>
         </div>
 
@@ -33,7 +33,7 @@
             {{ speakerlist.CurrentSpeaker.Name }}
           </h5>
           <h5 class="float-left" *ngIf="!speakerlist.CurrentSpeaker">Niemand</h5>
-          <h5 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"> {{ speakerlist.RemainingSpeakerTime.toString() }}</h5>
+          <h5 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"> {{ RemainingSpeakerTime }}</h5>
           <h5 class="float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds < 0"> Zum Ende kommen</h5>
         </div>
 
@@ -65,7 +65,7 @@
           </h4>
           <h4 class="float-left" *ngIf="!speakerlist.CurrentQuestion">Niemand</h4>
           
-          <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds >= 0">{{ speakerlist.RemainingQuestionTime.toString() }}</h3>
+          <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds >= 0">{{ RemainingQuestionTime }}</h3>
           <h3 class="float-right" *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds < 0">Zum Ende kommen</h3>
         </div>
       </div>

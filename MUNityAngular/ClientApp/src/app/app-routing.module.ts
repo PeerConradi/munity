@@ -41,9 +41,11 @@ import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-
 import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component';
 
 const routes: Routes = [
+  // Routes that have no default theme!
   { path: 'login', component: LoginComponent },
   { path: 'resa/read/:id', component: ResViewComponent },
   { path: 's/view/:id', component: SpeakerlistViewComponent },
+  { path: 'sim', component: SimSimViewComponent },
   {
     path: '',
     component: DefaultLayoutComponent,
@@ -93,9 +95,7 @@ const routes: Routes = [
 
       // SimSim
       { path: 'simulator', component: SimSimStartupComponent },
-      { path: 'simulator/create', component: SimSimCreateComponent },
-      { path: 'sim/:id', component: SimSimViewComponent}
-      
+      { path: 'simulator/create', component: SimSimCreateComponent }
     ]
   },
   {

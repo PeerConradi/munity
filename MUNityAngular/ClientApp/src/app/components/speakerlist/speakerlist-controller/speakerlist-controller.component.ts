@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Delegation } from 'src/app/models/delegation.model';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { TimeSpan } from '../../../models/TimeSpan';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { SpeakerListService } from '../../../services/speaker-list.service';
@@ -29,7 +29,7 @@ export class SpeakerlistControllerComponent implements OnInit {
   lastSpeakerOrder: Delegation[] = [];
   lastQuestionOrder: Delegation[] = [];
 
-  constructor(private conferenceService: ConferenceServiceService,
+  constructor(private conferenceService: ConferenceService,
     private speakerlistService: SpeakerListService,
     private route: ActivatedRoute,
     private notifier: NotifierService) {

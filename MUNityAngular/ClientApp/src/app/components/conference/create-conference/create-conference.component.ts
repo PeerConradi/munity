@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { ConferenceServiceService } from '../../../services/conference-service.service';
+import { ConferenceService } from '../../../services/conference-service.service';
 import { Conference } from '../../../models/conference.model';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
@@ -24,7 +24,7 @@ export class CreateConferenceComponent implements OnInit {
 
   forbidden = true;
 
-  constructor(private formBuilder: FormBuilder, private service: ConferenceServiceService, private router: Router, private userService: UserService) {
+  constructor(private formBuilder: FormBuilder, private service: ConferenceService, private router: Router, private userService: UserService) {
     this.createForm = this.formBuilder.group({
       name: '',
       fullname: '',
