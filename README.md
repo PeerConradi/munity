@@ -12,8 +12,17 @@ This application is under development and cannot be used at the moment. Please c
 You can open a preview at www.mun-tools.com.
 
 ## Setup Development Environment
-To start developing MUNity you need to clone the repository and have a mariaDb or mySql up and running.
-The basic Database structure can be found under ```MUNityTest\NeededFiles\munity.sql``` note that this is also the Test Database and which already contains someData (Countries and Delegations). Feel free to delete them.
+Requiered: 
+* Visual Studio Community Edtion 2019 or higher
+* MariaDb (MySql Version: 10.1.26)
+* NodeJS (12.16.xx) und AngularCLI (latest)
+* MongoDb (latest) 
+
+Look into the appsettings.json to change Database Connection Strings!
+After Starting the Databases for MySQL (MariaDb) and MongoDb will create itself.
+
+## Swagger
+The project uses swagger. Go to localhost:"port"/swagger to see the auto generated API Documentation.
 
 ## Roadmap
 
