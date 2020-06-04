@@ -2,9 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Conference;
 
-namespace MUNityAngular.DataHandlers.EntityFramework.Models
+namespace MUNityAngular.Models.Conference
 {
+
+    /// <summary>
+    /// A conference is as the name tells a single conference.
+    /// Like Model United Nations London 2021. This means it is a single
+    /// event of maybe a list of Model United Nation Conferences. If there are more
+    /// the conference, for example a conference every year, then this will can be
+    /// found by the Project
+    /// </summary>
     public class Conference
     {
         public string ConferenceId { get; set; }
@@ -19,15 +28,14 @@ namespace MUNityAngular.DataHandlers.EntityFramework.Models
 
         public DateTime EndDate { get; set; }
 
-        public string SecretaryGeneralTitle { get; set; }
-
-        public string SecretaryGeneralName { get; set; }
 
         public DateTime CreationDate { get; set; }
 
-        public User CreationUser { get; set; }
+        public DataHandlers.EntityFramework.Models.User CreationUser { get; set; }
 
         public List<Committee> Committees { get; set; }
+
+        public Project ConferenceProject { get; set; }
 
         public Conference()
         {

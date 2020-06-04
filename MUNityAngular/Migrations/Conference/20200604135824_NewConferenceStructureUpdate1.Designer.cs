@@ -3,14 +3,16 @@ using System;
 using MUNityAngular.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityAngular.Migrations.Conference
 {
     [DbContext(typeof(ConferenceContext))]
-    partial class ConferenceContextModelSnapshot : ModelSnapshot
+    [Migration("20200604135824_NewConferenceStructureUpdate1")]
+    partial class NewConferenceStructureUpdate1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -421,10 +423,9 @@ namespace MUNityAngular.Migrations.Conference
 
             modelBuilder.Entity("MUNityAngular.Models.Conference.Committee", b =>
                 {
-                    b.HasOne("MUNityAngular.Models.Conference.Conference", "Conference")
+                    b.HasOne("MUNityAngular.Models.Conference.Conference", null)
                         .WithMany("Committees")
-                        .HasForeignKey("ConferenceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ConferenceId");
 
                     b.HasOne("MUNityAngular.Models.Conference.Committee", "ResolutlyCommittee")
                         .WithMany()

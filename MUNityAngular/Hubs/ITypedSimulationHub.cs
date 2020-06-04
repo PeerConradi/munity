@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.Models.SimSim;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityAngular.Models.Conference;
 
 namespace MUNityAngular.Hubs
 {

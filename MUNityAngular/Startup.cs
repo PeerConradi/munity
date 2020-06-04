@@ -18,6 +18,7 @@ using MongoDB.Driver;
 using MUNityAngular.DataHandlers;
 using Microsoft.Extensions.Options;
 using MUNityAngular.DataHandlers.EntityFramework;
+using Microsoft.AspNetCore.SpaServices;
 
 namespace MUNityAngular
 {
@@ -66,7 +67,13 @@ namespace MUNityAngular
             var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
 
             // Add Entity Framework MariaDB Database
-            services.AddDbContextPool<DataHandlers.EntityFramework.MunityContext>(options =>
+            services.AddDbContextPool<MunityContext>(options =>
+                options.UseMySql(mySqlConnectionString, mySqlOptions => {
+                    mySqlOptions.ServerVersion(new Version(10, 1, 26), ServerType.MariaDb);
+                    mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                }));
+
+            services.AddDbContextPool<ConferenceContext>(options =>
                 options.UseMySql(mySqlConnectionString, mySqlOptions => {
                     mySqlOptions.ServerVersion(new Version(10, 1, 26), ServerType.MariaDb);
                     mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);

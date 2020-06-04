@@ -31,10 +31,11 @@ namespace MUNityAngular.Services
         public void Install()
         {
             InstallationLog.Add("Start Installation");
-            CreateDefaultDelegations();
+            //CreateDefaultDelegations();
             InstallationLog.Add("Added Default Delegations!");
         }
 
+        /*
         public void CreateDefaultDelegations()
         {
             _context.Delegations.Add(new Delegation() { DelegationId = "default_aegypten", Name = "Ägypten", FullName = "ArabischeRepublikÄgypten", Abbreviation = "Ägypten", Type = "COUNTRY", IconName = "eg" });
@@ -236,5 +237,8 @@ namespace MUNityAngular.Services
             _context.Delegations.Add(new Delegation() { DelegationId = "default_zentralafrikanische_republik", Name = "Zentral­afrikanischeRepublik", FullName = "ZentralafrikanischeRepublik", Abbreviation = "Zentral­afrikanischeRepublik", Type = "COUNTRY", IconName = "cf" });
             _context.SaveChanges();
         }
+
+        */
     }
+
 }

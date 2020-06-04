@@ -8,6 +8,7 @@ using MUNityAngular.Models.User;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityAngular.Models.Conference;
 
 namespace MUNityAngular.Controllers
 {
@@ -117,7 +118,8 @@ namespace MUNityAngular.Controllers
             var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
-                return StatusCode(StatusCodes.Status200OK, conferenceService.GetConferenceCount());
+                // TODO: Implement the count logic
+                return StatusCode(StatusCodes.Status200OK, 1);
             }
             else
             {
@@ -166,9 +168,10 @@ namespace MUNityAngular.Controllers
             var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
-                var conference = conferenceService.GetConference(conferenceid);
-                if (conference == null)
-                    return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
+                throw new NotImplementedException("To be reworked");
+                //var conference = conferenceService.GetConference(conferenceid);
+                //if (conference == null)
+                //    return StatusCode(StatusCodes.Status404NotFound, "Conference not found");
 
                 throw new NotImplementedException("Come back to this!");
             }
@@ -199,7 +202,8 @@ namespace MUNityAngular.Controllers
             var state = authService.IsAdmin(validation.User.UserId);
             if (state == true)
             {
-                return StatusCode(StatusCodes.Status200OK, conferenceService.GetAll());
+                throw new NotImplementedException("To be reworked");
+                //return StatusCode(StatusCodes.Status200OK, conferenceService.GetAll());
             }
             else
             {

@@ -6,6 +6,7 @@ using MUNityAngular.Models;
 using MUNityAngular.DataHandlers.Database;
 using MUNityAngular.Util.Extenstions;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityAngular.Models.Conference;
 
 namespace MUNityTest.Speakerlist
 {

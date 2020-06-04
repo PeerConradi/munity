@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityAngular.Models.Conference;
 
 namespace MUNityAngular.Models.Resolution
 {

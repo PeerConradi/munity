@@ -301,45 +301,6 @@ namespace MUNityAngular.Services
             }
         }
 
-        public void LinkResolutionToConference(ResolutionModel resolution, DataHandlers.EntityFramework.Models.Conference conference)
-        {
-            if (resolution == null || conference == null)
-                return;
-
-            // is already connected to the conference!
-            if (_mariadbcontext.ConferenceResolutions.Any(n => n.Conference == conference && n.Resolution.ResolutionId == resolution.ID))
-                return;
-
-
-            var model = new DataHandlers.EntityFramework.Models.ResolutionConference();
-            model.Conference = conference;
-            model.Resolution = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID);
-            _mariadbcontext.ConferenceResolutions.Add(model);
-            _mariadbcontext.SaveChanges();
-        }
-
-        public void LinkResolutionToCommittee(ResolutionModel resolution, DataHandlers.EntityFramework.Models.Committee committee)
-        {
-            if (resolution == null || committee == null)
-                return;
-
-            var model = new DataHandlers.EntityFramework.Models.ResolutionConference();
-            model.Conference = _mariadbcontext.Conferences.FirstOrDefault(n => n.Committees.Contains(committee));
-            model.Committee = committee;
-            model.Resolution = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolution.ID);
-            _mariadbcontext.ConferenceResolutions.Add(model);
-            _mariadbcontext.SaveChanges();
-        }
-
-        public List<DataHandlers.EntityFramework.Models.Resolution> GetResolutionsOfConference(string conferenceid)
-        {
-            return _mariadbcontext.ConferenceResolutions.Where(n => n.Conference.ConferenceId == conferenceid).Select(n => n.Resolution).ToList();
-        }
-
-        public List<DataHandlers.EntityFramework.Models.Resolution> GetResolutionsOfCommittee(string committeeid)
-        {
-            return _mariadbcontext.ConferenceResolutions.Where(n => n.Committee.CommitteeId == committeeid).Select(n => n.Resolution).ToList();
-        }
 
         public ResolutionService(MunityContext context, IMunityMongoDatabaseSettings mongoSettings, CacheService cacheService)
         {

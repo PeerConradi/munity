@@ -1227,19 +1227,20 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService, [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
-            var resolution = resolutionService.GetResolution(resolutionid);
-            if (resolution == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+            throw new NotImplementedException("To be reworked");
+            //var resolution = resolutionService.GetResolution(resolutionid);
+            //if (resolution == null)
+            //    return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanAuthEditResolution(auth, resolution))
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+            //if (!authService.CanAuthEditResolution(auth, resolution))
+            //    return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            var conference = conferenceService.GetConference(conferenceid);
-            if (conference == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
+            //var conference = conferenceService.GetConference(conferenceid);
+            //if (conference == null)
+            //    return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
 
-            resolutionService.LinkResolutionToConference(resolution, conference);
-            return StatusCode(StatusCodes.Status200OK);
+            //resolutionService.LinkResolutionToConference(resolution, conference);
+            //return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -1249,19 +1250,20 @@ namespace MUNityAngular.Controllers
             [FromServices]ResolutionService resolutionService, [FromServices]AuthService authService,
             [FromServices]ConferenceService conferenceService)
         {
-            var resolution = resolutionService.GetResolution(resolutionid);
-            if (resolution == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
+            throw new NotImplementedException("To be reworked");
+            //var resolution = resolutionService.GetResolution(resolutionid);
+            //if (resolution == null)
+            //    return StatusCode(StatusCodes.Status404NotFound, "Document not found or you have no right to do that.");
 
-            if (!authService.CanAuthEditResolution(auth, resolution))
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
+            //if (!authService.CanAuthEditResolution(auth, resolution))
+            //    return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to do that.");
 
-            var committee = conferenceService.GetCommittee(committeeid);
-            if (committee == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
+            //var committee = conferenceService.GetCommittee(committeeid);
+            //if (committee == null)
+            //    return StatusCode(StatusCodes.Status404NotFound, "Conference not found!");
 
-            resolutionService.LinkResolutionToCommittee(resolution, committee);
-            return StatusCode(StatusCodes.Status200OK);
+            //resolutionService.LinkResolutionToCommittee(resolution, committee);
+            //return StatusCode(StatusCodes.Status200OK);
         }
 
         [Route("[action]")]
@@ -1269,9 +1271,10 @@ namespace MUNityAngular.Controllers
         public ActionResult<List<Resolution>> GetResolutionsOfConference([FromHeader]string conferenceid,
             [FromServices]ResolutionService resolutionService)
         {
+            throw new NotImplementedException("To be reworked");
             // An dieser Stelle wird auf eine Authentifizierung verzichtet, Resolutionen der Konferenz sind für alle
             // Sichtbar!
-            return resolutionService.GetResolutionsOfConference(conferenceid);
+            //return resolutionService.GetResolutionsOfConference(conferenceid);
         }
 
         [Route("[action]")]
@@ -1279,7 +1282,8 @@ namespace MUNityAngular.Controllers
         public ActionResult<List<Resolution>> GetResolutionsOfCommittee(
             [FromHeader]string committeeid, [FromServices]ResolutionService resolutionService)
         {
-            return resolutionService.GetResolutionsOfCommittee(committeeid);
+            throw new NotImplementedException("To be reworked");
+            //return resolutionService.GetResolutionsOfCommittee(committeeid);
         }
     }
 }

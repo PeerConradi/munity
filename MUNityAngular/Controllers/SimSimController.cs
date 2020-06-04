@@ -11,6 +11,7 @@ using MUNityAngular.Schema.Response.Simulation;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityAngular.Models.Organisation;
 
 namespace MUNityAngular.Controllers
 {
@@ -88,28 +89,28 @@ namespace MUNityAngular.Controllers
             return user;
         }
 
-        [Route("[action]")]
-        [HttpPost]
-        public ActionResult<Delegation> SetDelegation([FromBody]SetDelegationRequest body,
-            [FromServices]SimSimService simulationService, [FromServices]ConferenceService conferenceService)
-        {
-            var simulation = simulationService.GetSimSim(body.SimulationId.ToIntOrDefault());
-            if (simulation == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Simulation with the given id not found");
+        //[Route("[action]")]
+        //[HttpPost]
+        //public ActionResult<Delegation> SetDelegation([FromBody]SetDelegationRequest body,
+        //    [FromServices]SimSimService simulationService, [FromServices]ConferenceService conferenceService)
+        //{
+        //    var simulation = simulationService.GetSimSim(body.SimulationId.ToIntOrDefault());
+        //    if (simulation == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Simulation with the given id not found");
 
-            var delegation = conferenceService.GetDelegation(body.DelegationId);
-            if (delegation == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Delegation with thge given id not found");
+        //    var delegation = conferenceService.GetDelegation(body.DelegationId);
+        //    if (delegation == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Delegation with thge given id not found");
 
-            var user = simulation.GetUserByHiddenToken(body.Token);
-            if (user == null)
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to set a delegation");
+        //    var user = simulation.GetUserByHiddenToken(body.Token);
+        //    if (user == null)
+        //        return StatusCode(StatusCodes.Status403Forbidden, "You are not allowed to set a delegation");
 
-            user.Delegation = delegation;
-            user.Role = ISimSimUserFacade.USER_ROLE_DELEGATION;
-            _hubContext.Clients.Group(body.SimulationId).UserChangedDelegation(user.UserToken, delegation);
-            return StatusCode(StatusCodes.Status200OK, delegation);
-        }
+        //    user.Delegation = delegation;
+        //    user.Role = ISimSimUserFacade.USER_ROLE_DELEGATION;
+        //    _hubContext.Clients.Group(body.SimulationId).UserChangedDelegation(user.UserToken, delegation);
+        //    return StatusCode(StatusCodes.Status200OK, delegation);
+        //}
 
         [Route("[action]")]
         [HttpPost]

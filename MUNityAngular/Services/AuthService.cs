@@ -205,15 +205,17 @@ namespace MUNityAngular.Services
             bool inDocumentGroup =
                 _context.ResolutionUsers.FirstOrDefault(n => n.User.UserId == userid)?.CanEdit ?? false;
 
-            //Check of the resolution is bindet to a conferece where the user is part
-            // of the Team
-            // Get Conferences where the user is inside the team
-            var userConferences = _context.TeamUsers.Where(n => n.User.UserId == userid).Select(n => n.Role.Conference.ConferenceId);
-            // Get the Resolution Conferences
-            var resolutionConferences = _context.ConferenceResolutions.Where(n => n.Resolution.ResolutionId == resolution.ID).Select(n => n.Conference.ConferenceId);
-            var editBecauseInConference = resolutionConferences.Any(n => userConferences.Contains(n));
+            throw new NotImplementedException("To be reworked");
 
-            return editBecauseInConference || inDocumentGroup;
+            ////Check of the resolution is bindet to a conferece where the user is part
+            //// of the Team
+            //// Get Conferences where the user is inside the team
+            //var userConferences = _context.TeamUsers.Where(n => n.User.UserId == userid).Select(n => n.Role.Conference.ConferenceId);
+            //// Get the Resolution Conferences
+            //var resolutionConferences = _context.ConferenceResolutions.Where(n => n.Resolution.ResolutionId == resolution.ID).Select(n => n.Conference.ConferenceId);
+            //var editBecauseInConference = resolutionConferences.Any(n => userConferences.Contains(n));
+
+            //return editBecauseInConference || inDocumentGroup;
         }
 
         public bool CanAuthEditResolution(string auth, ResolutionModel resolution)
@@ -317,11 +319,6 @@ namespace MUNityAngular.Services
 
         #region Konferenz
 
-        public DataHandlers.EntityFramework.Models.ConferenceUserAuth CanManageConference(int userid, string conferenceid)
-        {
-            var conferenceAuths = _context.ConferenceUserAuths.FirstOrDefault(n => n.User.UserId == userid && n.Conference.ConferenceId == conferenceid);
-            return conferenceAuths;
-        }
 
         #endregion
 

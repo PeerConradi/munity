@@ -3,14 +3,16 @@ using System;
 using MUNityAngular.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityAngular.Migrations.Conference
 {
     [DbContext(typeof(ConferenceContext))]
-    partial class ConferenceContextModelSnapshot : ModelSnapshot
+    [Migration("20200604143947_NewConferenceStructureUpdate2")]
+    partial class NewConferenceStructureUpdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

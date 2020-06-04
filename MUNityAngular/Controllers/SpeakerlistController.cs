@@ -127,103 +127,103 @@ namespace MUNityAngular.Controllers
         /// <param name="speakerlistService"></param>
         /// <param name="conferenceService"></param>
         /// <returns></returns>
-        [Route("[action]")]
-        [HttpPost]
-        public ActionResult<SpeakerlistModel> AddSpeakerToList([FromHeader]string auth,
-            [FromHeader]string listid,
-            [FromHeader]string delegationid,
-            [FromServices]SpeakerlistService speakerlistService,
-            [FromServices]ConferenceService conferenceService)
-        {
-            var delegation = conferenceService.GetDelegation(delegationid);
-            if (delegation == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Delegation not found!");
+        //[Route("[action]")]
+        //[HttpPost]
+        //public ActionResult<SpeakerlistModel> AddSpeakerToList([FromHeader]string auth,
+        //    [FromHeader]string listid,
+        //    [FromHeader]string delegationid,
+        //    [FromServices]SpeakerlistService speakerlistService,
+        //    [FromServices]ConferenceService conferenceService)
+        //{
+        //    var delegation = conferenceService.GetDelegation(delegationid);
+        //    if (delegation == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Delegation not found!");
 
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
+        //    if (speakerlist == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            speakerlist.AddSpeaker(delegation);
-            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-            //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
-            return StatusCode(StatusCodes.Status200OK, speakerlist);
-        }
+        //    speakerlist.AddSpeaker(delegation);
+        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+        //    //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
+        //    return StatusCode(StatusCodes.Status200OK, speakerlist);
+        //}
 
-        [Route("[action]")]
-        [HttpPost]
-        public ActionResult<SpeakerlistModel> AddSpeakerModelToList([FromHeader]string auth,
-            [FromHeader]string listid, [FromBody]Delegation model, 
-            [FromServices]SpeakerlistService speakerlistService)
-        {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-            model.DelegationId = Guid.NewGuid().ToString();
-            speakerlist.AddSpeaker(model);
-            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-            return StatusCode(StatusCodes.Status200OK, speakerlist);
-        }
+        //[Route("[action]")]
+        //[HttpPost]
+        //public ActionResult<SpeakerlistModel> AddSpeakerModelToList([FromHeader]string auth,
+        //    [FromHeader]string listid, [FromBody]Delegation model, 
+        //    [FromServices]SpeakerlistService speakerlistService)
+        //{
+        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
+        //    if (speakerlist == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        //    model.DelegationId = Guid.NewGuid().ToString();
+        //    speakerlist.AddSpeaker(model);
+        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+        //    return StatusCode(StatusCodes.Status200OK, speakerlist);
+        //}
 
-        [Route("[action]")]
-        [HttpPatch]
-        public ActionResult<SpeakerlistModel> SpeakersOrderChanged([FromHeader]string auth,
-            [FromHeader]string listid, [FromBody]List<Delegation> model,
-            [FromServices]SpeakerlistService speakerlistService)
-        {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        //[Route("[action]")]
+        //[HttpPatch]
+        //public ActionResult<SpeakerlistModel> SpeakersOrderChanged([FromHeader]string auth,
+        //    [FromHeader]string listid, [FromBody]List<Delegation> model,
+        //    [FromServices]SpeakerlistService speakerlistService)
+        //{
+        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
+        //    if (speakerlist == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            model.ForEach(n =>
-            {
-                if (string.IsNullOrWhiteSpace(n.DelegationId))
-                {
-                    n.DelegationId = Guid.NewGuid().ToString();
-                }
-            });
-            speakerlist.Speakers = model;
-            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-            return speakerlist;
-        }
+        //    model.ForEach(n =>
+        //    {
+        //        if (string.IsNullOrWhiteSpace(n.DelegationId))
+        //        {
+        //            n.DelegationId = Guid.NewGuid().ToString();
+        //        }
+        //    });
+        //    speakerlist.Speakers = model;
+        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+        //    return speakerlist;
+        //}
 
-        [Route("[action]")]
-        [HttpPatch]
-        public ActionResult<SpeakerlistModel> QuestionsOrderChanged([FromHeader]string auth,
-            [FromHeader]string listid, [FromBody]List<Delegation> model,
-            [FromServices]SpeakerlistService speakerlistService)
-        {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        //[Route("[action]")]
+        //[HttpPatch]
+        //public ActionResult<SpeakerlistModel> QuestionsOrderChanged([FromHeader]string auth,
+        //    [FromHeader]string listid, [FromBody]List<Delegation> model,
+        //    [FromServices]SpeakerlistService speakerlistService)
+        //{
+        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
+        //    if (speakerlist == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            model.ForEach(n =>
-            {
-                if (string.IsNullOrWhiteSpace(n.DelegationId))
-                {
-                    n.DelegationId = Guid.NewGuid().ToString();
-                }
-            });
-            speakerlist.Questions = model;
-            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-            return speakerlist;
-        }
+        //    model.ForEach(n =>
+        //    {
+        //        if (string.IsNullOrWhiteSpace(n.DelegationId))
+        //        {
+        //            n.DelegationId = Guid.NewGuid().ToString();
+        //        }
+        //    });
+        //    speakerlist.Questions = model;
+        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+        //    return speakerlist;
+        //}
 
 
 
-        [Route("[action]")]
-        [HttpPost]
-        public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader]string auth,
-            [FromHeader]string listid, [FromBody]Delegation model,
-            [FromServices]SpeakerlistService speakerlistService)
-        {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-            model.DelegationId = Guid.NewGuid().ToString();
-            speakerlist.AddQuestion(model);
-            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-            return StatusCode(StatusCodes.Status200OK, speakerlist);
-        }
+        //[Route("[action]")]
+        //[HttpPost]
+        //public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader]string auth,
+        //    [FromHeader]string listid, [FromBody]Delegation model,
+        //    [FromServices]SpeakerlistService speakerlistService)
+        //{
+        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
+        //    if (speakerlist == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        //    model.DelegationId = Guid.NewGuid().ToString();
+        //    speakerlist.AddQuestion(model);
+        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+        //    return StatusCode(StatusCodes.Status200OK, speakerlist);
+        //}
 
         /// <summary>
         /// Adds a Question to the Speakerlist (Question Area)
@@ -234,26 +234,26 @@ namespace MUNityAngular.Controllers
         /// <param name="speakerlistService"></param>
         /// <param name="conferenceService"></param>
         /// <returns></returns>
-        [Route("[action]")]
-        [HttpPost]
-        public ActionResult<SpeakerlistModel> AddQuestionToList([FromHeader]string auth,
-            [FromHeader]string listid, [FromHeader]string delegationid,
-            [FromServices]SpeakerlistService speakerlistService,
-            [FromServices]ConferenceService conferenceService)
-        {
-            var delegation = conferenceService.GetDelegation(delegationid);
-            if (delegation == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Delegation not found!");
+        //[Route("[action]")]
+        //[HttpPost]
+        //public ActionResult<SpeakerlistModel> AddQuestionToList([FromHeader]string auth,
+        //    [FromHeader]string listid, [FromHeader]string delegationid,
+        //    [FromServices]SpeakerlistService speakerlistService,
+        //    [FromServices]ConferenceService conferenceService)
+        //{
+        //    var delegation = conferenceService.GetDelegation(delegationid);
+        //    if (delegation == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Delegation not found!");
 
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
+        //    if (speakerlist == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            speakerlist.AddQuestion(delegation);
-            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-            //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
-            return StatusCode(StatusCodes.Status200OK, speakerlist);
-        }
+        //    speakerlist.AddQuestion(delegation);
+        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+        //    //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
+        //    return StatusCode(StatusCodes.Status200OK, speakerlist);
+        //}
 
         /// <summary>
         /// Removes a speaker from the speakerlist.
@@ -537,25 +537,25 @@ namespace MUNityAngular.Controllers
         /// <param name="speakerlistService"></param>
         /// <param name="conferenceService"></param>
         /// <returns></returns>
-        [Route("[action]")]
-        [HttpGet]
-        public ActionResult<List<Delegation>> GetPossibleDelegations([FromHeader]string auth,
-            [FromHeader]string id,
-            [FromServices]AuthService authService,
-            [FromServices]SpeakerlistService speakerlistService,
-            [FromServices]ConferenceService conferenceService)
-        {
-            //TODO: Auth stuff
+        //[Route("[action]")]
+        //[HttpGet]
+        //public ActionResult<List<Delegation>> GetPossibleDelegations([FromHeader]string auth,
+        //    [FromHeader]string id,
+        //    [FromServices]AuthService authService,
+        //    [FromServices]SpeakerlistService speakerlistService,
+        //    [FromServices]ConferenceService conferenceService)
+        //{
+        //    //TODO: Auth stuff
 
-            var speakerlist = speakerlistService.GetSpeakerlist(id);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        //    var speakerlist = speakerlistService.GetSpeakerlist(id);
+        //    if (speakerlist == null)
+        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            if (speakerlist.ConferenceId == null || speakerlist.ConferenceId == string.Empty)
-                return StatusCode(StatusCodes.Status428PreconditionRequired, "No Delegations found, because the Speaerklsit is not bound to a conference");
+        //    if (speakerlist.ConferenceId == null || speakerlist.ConferenceId == string.Empty)
+        //        return StatusCode(StatusCodes.Status428PreconditionRequired, "No Delegations found, because the Speaerklsit is not bound to a conference");
 
-            var delegations = conferenceService.GetDelegationsOfConference(speakerlist.ConferenceId);
-            return StatusCode(StatusCodes.Status200OK, delegations);
-        }
+        //    var delegations = conferenceService.GetDelegationsOfConference(speakerlist.ConferenceId);
+        //    return StatusCode(StatusCodes.Status200OK, delegations);
+        //}
     }
 }
