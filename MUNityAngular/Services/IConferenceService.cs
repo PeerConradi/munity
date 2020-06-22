@@ -9,10 +9,6 @@ namespace MUNityAngular.Services
 {
     public interface IConferenceService
     {
-        Organisation CreateOrganisation(string name, string abbreviation);
-
-        Task<Organisation> GetOrganisation(string id);
-
         Project CreateProject(string name, string abbreviation, Organisation organisation);
 
         Task<Project> GetProject(string id);

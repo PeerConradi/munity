@@ -23,6 +23,19 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class ConferenceController : ControllerBase
     {
-        
+
+        /// <summary>
+        /// Returns all the root information of a conference with the given id.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]")]
+        public Task<Conference> GetConference([FromServices]IConferenceService service, string id)
+        {
+            return service.GetConference(id);
+        }
+
     }
 }

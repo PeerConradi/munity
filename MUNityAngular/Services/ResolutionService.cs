@@ -11,6 +11,7 @@ using MongoDB.Driver;
 using MUNityAngular.Models.Resolution;
 using MUNityAngular.DataHandlers;
 using MUNityAngular.DataHandlers.EntityFramework;
+using MUNityAngular.Models.Core;
 
 namespace MUNityAngular.Services
 {
@@ -18,6 +19,7 @@ namespace MUNityAngular.Services
     {
         private CacheService _cacheService;
         private MunityContext _mariadbcontext;
+        private MunCoreContext _coreContext;
 
         public IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> HubContext { get; set; }
 
@@ -38,6 +40,18 @@ namespace MUNityAngular.Services
             _cacheService.ResolutionCache.Add(cacheModel);
             //Create file
             return resolution;
+        }
+
+        public ResolutionModel CreatePrivateResolution(User owner)
+        {
+            var resolution = new ResolutionModel();
+            this._resolutions.InsertOne(resolution);
+            return CreateResolution(userid: owner.UserId);
+        }
+
+        public ResolutionModel CreatePublicResulution()
+        {
+            return CreateResolution(true, true);
         }
 
         public void DeleteResolution(string id)
@@ -187,7 +201,7 @@ namespace MUNityAngular.Services
             var AdvancedInfo = new DataHandlers.EntityFramework.Models.Resolution();
             if (userid != null)
             {
-                AdvancedInfo.CreationUser = _mariadbcontext.Users.FirstOrDefault(n => n.UserId == userid);
+                AdvancedInfo.CreationUser = _coreContext.Users.FirstOrDefault(n => n.UserId == userid);
             }
             AdvancedInfo.ResolutionId = resolution.ID;
             AdvancedInfo.Name = resolution.Topic;
@@ -293,7 +307,7 @@ namespace MUNityAngular.Services
             {
                 var auth = new DataHandlers.EntityFramework.Models.ResolutionUser();
                 auth.Resolution = _mariadbcontext.Resolutions.FirstOrDefault(n => n.ResolutionId == resolutionid);
-                auth.User = _mariadbcontext.Users.FirstOrDefault(n => n.UserId == userid);
+                auth.User = _coreContext.Users.FirstOrDefault(n => n.UserId == userid);
                 auth.CanEdit = canWrite;
                 auth.canRead = canRead;
                 _mariadbcontext.ResolutionUsers.Add(auth);
@@ -302,12 +316,13 @@ namespace MUNityAngular.Services
         }
 
 
-        public ResolutionService(MunityContext context, IMunityMongoDatabaseSettings mongoSettings, CacheService cacheService)
+        public ResolutionService(MunityContext context, MunCoreContext coreContext, IMunityMongoDatabaseSettings mongoSettings, CacheService cacheService)
         {
             _cacheService = cacheService;
 
             //New Saving in MongoDB
             _mariadbcontext = context;
+            _coreContext = coreContext;
 
             var client = new MongoClient(mongoSettings.ConnectionString);
             var database = client.GetDatabase(mongoSettings.DatabaseName);

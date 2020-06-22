@@ -9,6 +9,8 @@ namespace MUNityAngular.Models.Conference.Roles
     {
         public int Group { get; set; }
 
+        public string NgoName { get; set; }
+
         public bool Leader { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace MUNityAngular.Models.Conference
 
         public DateTime CreationDate { get; set; }
 
-        public DataHandlers.EntityFramework.Models.User CreationUser { get; set; }
+        public Core.User CreationUser { get; set; }
 
         public List<Committee> Committees { get; set; }
 

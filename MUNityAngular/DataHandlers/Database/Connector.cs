@@ -12,6 +12,7 @@ namespace MUNityAngular.DataHandlers.Database
     /// The Connector Class handles every connection to the Database itself
     /// and has some functionality to allow quick checks for tables etc.
     /// </summary>
+    [Obsolete("Legacy Code: Was replaced with using the Entity Framework")]
     public class Connector
     {
         private const string DATABASE_NAME = "munity";

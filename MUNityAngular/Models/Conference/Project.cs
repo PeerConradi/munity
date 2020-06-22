@@ -15,6 +15,8 @@ namespace MUNityAngular.Models.Conference
 
         public Organisation.Organisation ProjectOrganisation { get; set; }
 
+        public List<Conference> Conferences { get; set; }
+
         public Project()
         {
             ProjectId = Guid.NewGuid().ToString();

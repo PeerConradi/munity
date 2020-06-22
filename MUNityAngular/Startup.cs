@@ -60,11 +60,12 @@ namespace MUNityAngular
                 options.MaximumReceiveMessageSize = 68000;
                 options.ClientTimeoutInterval = new System.TimeSpan(2,0,0);
             }).AddJsonProtocol(options => {
+                //this should also be removed later!
                 options.PayloadSerializerOptions.PropertyNamingPolicy = null;
-                
             });
 
             var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
+            var coreConnectionString = Configuration.GetValue<string>("CoreDatabase:ConnectionString");
 
             // Add Entity Framework MariaDB Database
             services.AddDbContextPool<MunityContext>(options =>
@@ -73,8 +74,9 @@ namespace MUNityAngular
                     mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 }));
 
-            services.AddDbContextPool<ConferenceContext>(options =>
-                options.UseMySql(mySqlConnectionString, mySqlOptions => {
+            // Create the core Context
+            services.AddDbContextPool<MunCoreContext>(options =>
+                options.UseMySql(coreConnectionString, mySqlOptions => {
                     mySqlOptions.ServerVersion(new Version(10, 1, 26), ServerType.MariaDb);
                     mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 }));
@@ -88,11 +90,12 @@ namespace MUNityAngular
             services.AddSingleton<Services.CacheService>();
             
             // All services that are used inside the controllers.
-            services.AddScoped<Services.InstallationService>();
+            //services.AddScoped<Services.InstallationService>();
             services.AddScoped<Services.AuthService>();
+            services.AddScoped<Services.UserService>();
             services.AddScoped<Services.ResolutionService>();
             services.AddScoped<Services.PresenceService>();
-            services.AddScoped<Services.ConferenceService>();
+            services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
             services.AddSingleton<Services.SpeakerlistService>();
             services.AddSingleton<Services.SimSimService>();
 
@@ -107,11 +110,6 @@ namespace MUNityAngular
                 c.IncludeXmlComments(xmlPath);
             });
 
-            //This should make "AnNewtonsoftJson" obsolete
-            services.AddMvc().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.PropertyNamingPolicy = null;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -191,6 +189,11 @@ namespace MUNityAngular
                 .CreateScope())
             {
                 using (var context = serviceScope.ServiceProvider.GetService<MunityContext>())
+                {
+                    context.Database.Migrate();
+                }
+
+                using (var context = serviceScope.ServiceProvider.GetService<MunCoreContext>())
                 {
                     context.Database.Migrate();
                 }

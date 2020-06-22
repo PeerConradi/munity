@@ -8,5 +8,9 @@ namespace MUNityAngular.Models.Conference.Roles
     public class TeamRole : AbstractRole
     {
         public TeamRole ParentTeamRole { get; set; }
+
+        public int TeamRoleGroup { get; set; }
+
+        public override bool AllowMultipleParticipations => true;
     }
 }

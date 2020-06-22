@@ -8,9 +8,6 @@ namespace MUNityAngular.DataHandlers.EntityFramework
 {
     public class MunityContext : DbContext
     {
-        public DbSet<Models.Admin> Admins { get; set; }
-
-        public DbSet<Models.AuthKey> AuthKey { get; set; }
 
         public DbSet<Models.Gallery> Galleries { get; set; }
 
@@ -21,10 +18,6 @@ namespace MUNityAngular.DataHandlers.EntityFramework
         public DbSet<Models.ResolutionConference> ConferenceResolutions { get; set; }
 
         public DbSet<Models.ResolutionUser> ResolutionUsers { get; set; }
-
-        public DbSet<Models.User> Users { get; set; }
-
-        public DbSet<Models.UserAuths> UserAuths { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

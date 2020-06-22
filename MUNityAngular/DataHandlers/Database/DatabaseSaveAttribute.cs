@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 namespace MUNityAngular.DataHandlers.Database
 {
+
+    [Obsolete("Legacy Code: Was removed with using the Entity Framework and should be deleted!")]
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
     public sealed class DatabaseSaveAttribute : Attribute
     {

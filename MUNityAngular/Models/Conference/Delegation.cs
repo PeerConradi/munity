@@ -11,6 +11,7 @@ namespace MUNityAngular.Models.Conference
 
         public string Name { get; set; }
 
+        public Conference Conference { get; set; }
 
         public Delegation()
         {

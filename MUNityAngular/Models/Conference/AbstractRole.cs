@@ -16,10 +16,14 @@ namespace MUNityAngular.Models.Conference
 
         public Conference Conference { get; set; }
 
+        public RoleAuth RoleAuth { get; set; }
+
         public string IconName { get; set; }
 
         public EApplicationStates ApplicationState { get; set; }
 
         public string ApplicationValue { get; set; }
+
+        public virtual bool AllowMultipleParticipations { get; }
     }
 }

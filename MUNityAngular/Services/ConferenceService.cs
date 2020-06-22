@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using MUNityAngular.Models.Conference;
+using MUNityAngular.Models.Conference.Roles;
 using MUNityAngular.Models.Organisation;
 using MUNityAngular.Util.Extenstions;
 
@@ -17,30 +18,7 @@ namespace MUNityAngular.Services
 {
     public class ConferenceService : IConferenceService
     {
-        private ConferenceContext _context;
-
-
-        
-
-        public Organisation CreateOrganisation(string name, string abbreviation)
-        {
-            var organisation = new Organisation();
-
-            organisation.OrganisationId = Guid.NewGuid().ToString();
-            if (!_context.Organisations.Any(n => n.OrganisationId == abbreviation))
-                organisation.OrganisationId = abbreviation;
-
-            organisation.OrganisationName = name;
-            organisation.OrganisationAbbreviation = abbreviation;
-            _context.Organisations.Add(organisation);
-            _context.SaveChangesAsync();
-            return organisation;
-        }
-
-        public Task<Organisation> GetOrganisation(string id)
-        {
-            return _context.Organisations.FirstOrDefaultAsync(n => n.OrganisationId == id);
-        }
+        private MunCoreContext _context;
 
         public Project CreateProject(string name, string abbreviation, Organisation organisation)
         {
@@ -116,7 +94,146 @@ namespace MUNityAngular.Services
             return _context.Committees.FirstOrDefaultAsync(n => n.CommitteeId == id);
         }
 
-        public ConferenceService(ConferenceContext context)
+        public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null, RoleAuth auth = null)
+        {
+            var role = new TeamRole();
+            role.Conference = conference;
+            role.RoleName = roleName;
+            role.RoleAuth = auth;
+
+            if (parentRole != null)
+                role.ParentTeamRole = parentRole;
+
+            _context.TeamRoles.Add(role);
+            _context.SaveChanges();
+            return role;
+        }
+
+        public SecretaryGeneralRole CreateSecretaryGeneralRole(Conference conference, string roleName, string title, RoleAuth auth = null)
+        {
+            var role = new SecretaryGeneralRole();
+            role.Title = title;
+            role.RoleName = roleName;
+            role.Conference = conference;
+
+            _context.SecretaryGenerals.Add(role);
+            _context.SaveChanges();
+            return role;
+        }
+
+        public IQueryable<TeamRole> GetTeamRoles(string conferenceId)
+        {
+            return _context.TeamRoles.Where(n => n.Conference.ConferenceId == conferenceId);
+        }
+
+        public Delegation CreateDelegation(Conference conference, string name)
+        {
+            var delegation = new Delegation();
+            delegation.Conference = conference;
+            delegation.Name = name;
+
+            _context.Delegation.Add(delegation);
+            _context.SaveChanges();
+
+            return delegation;
+        }
+
+        public IQueryable<Delegation> GetDelegations(string conferenceId)
+        {
+            return _context.Delegation.Where(c => c.Conference.ConferenceId == conferenceId);
+        }
+
+        public DelegateRole CreateDelegateRole(Committee committee, Delegation delegation, string name, bool isLeader = false)
+        {
+            var role = new DelegateRole();
+            role.RoleName = name;
+            role.Committee = committee;
+            role.Conference = committee.Conference;
+            role.Delegation = delegation;
+            role.IsDelegationLeader = isLeader;
+            role.Title = name;
+
+            _context.Delegates.Add(role);
+            _context.SaveChanges();
+            return role;
+        }
+
+        public IQueryable<DelegateRole> GetDelegateRolesOfConference(string conferenceId)
+        {
+            return _context.Delegates.Where(c => c.Conference.ConferenceId == conferenceId);
+        }
+
+        public IQueryable<DelegateRole> GetDelegateRolesOfCommittee(string committeeId)
+        {
+            return _context.Delegates.Where(n => n.Committee.CommitteeId == committeeId);
+        }
+
+        public IQueryable<DelegateRole> GetDelegateRolesOfDelegation(string delegationId)
+        {
+
+            return _context.Delegates.Where(n => n.Delegation.DelegationId == delegationId);
+        }
+
+        public NgoRole CreateNgoRole(Conference conference,string roleName, string ngoName)
+        {
+            var role = new NgoRole();
+            role.RoleName = roleName;
+            role.NgoName = ngoName;
+            role.Conference = conference;
+
+            _context.NgoRoles.Add(role);
+            _context.SaveChanges();
+            return role;
+
+        }
+
+        public IQueryable<NgoRole> GetNgoRoles(string conferenceId)
+        {
+            return _context.NgoRoles.Where(n => n.Conference.ConferenceId == conferenceId);
+        }
+
+        public PressRole CreatePressRole(Conference conference, PressRole.EPressCategories category, string roleName)
+        {
+            var role = new PressRole();
+            role.RoleName = roleName;
+            role.Conference = conference;
+            role.PressCategory = category;
+
+            _context.PressRoles.Add(role);
+            _context.SaveChanges();
+
+            return role;
+        }
+
+        public IQueryable<PressRole> GetPressRoles(string conferenceId)
+        {
+            return _context.PressRoles.Where(n => n.Conference.ConferenceId == conferenceId);
+        }
+
+        public Participation Participate(Models.Core.User user, AbstractRole role)
+        {
+            var participation = new Participation();
+            participation.User = user;
+            participation.Role = role;
+
+            _context.Participations.Add(participation);
+            _context.SaveChanges();
+
+            return participation;
+        }
+
+        public IQueryable<Participation> GetUserParticipations(Models.Core.User user)
+        {
+            return _context.Participations.Where(n => n.User == user);
+        }
+
+        public IQueryable<Participation> GetConferenceParticipations(string conferenceId)
+        {
+            var list = _context.Participations.Where(n => n.Role.Conference.ConferenceId == conferenceId);
+            return list;
+        }
+
+        public ConferenceService(MunCoreContext context)
         {
             this._context = context;
             Console.WriteLine("Conference-Service Started!");

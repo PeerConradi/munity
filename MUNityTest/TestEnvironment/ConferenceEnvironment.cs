@@ -2,66 +2,262 @@
 using System.Collections.Generic;
 using System.Text;
 using MUNityAngular.Models.Conference;
+using MUNityAngular.Models.Conference.Roles;
+using MUNityAngular.Models.Core;
 using MUNityAngular.Models.Organisation;
 
 namespace MUNityTest.TestEnvironment
 {
     class ConferenceEnvironment
     {
-        private static Organisation _organisation;
-        public static Project _project;
-        private static Conference _conference;
-        
+        public ConferenceEnvironment(MUNityAngular.DataHandlers.EntityFramework.MunCoreContext context)
+        {
+            context.Organisations.Add(TestOrganisation);
+            context.Projects.Add(TestProject);
+            context.Conferences.Add(TestConference);
+            context.Committees.Add(TestCommitteeGeneralAssembly);
+            context.Committees.Add(TestCommitteeSecurityCouncil);
+            context.Users.Add(TestUserMax);
+            context.Users.Add(TestUserMike);
+            context.Users.Add(TestUserMillie);
+            context.Users.Add(TestUserFinn);
+            context.TeamRoles.Add(TestRoleProjectLeader);
+            context.TeamRoles.Add(TestRoleSecretaryLeader);
+            context.SaveChanges();
+        }
 
-        public static Organisation TestOrganisation
+        private Organisation _organisation;
+        private Project _project;
+        private Conference _conference;
+        private Committee _committeeGeneralAssembly;
+        private Committee _committeeSecurityCouncil;
+        
+        public Organisation TestOrganisation
         {
             get
             {
                 if (_organisation == null)
                 {
-                    _organisation = new Organisation();
-                    _organisation.OrganisationName = "United Nations";
-                    _organisation.OrganisationAbbreviation = "UN";
+                    _organisation = new Organisation
+                    {
+                        OrganisationName = "United Nations", OrganisationAbbreviation = "UN"
+                    };
                 }
                 return _organisation;
             }
         }
 
-        public static Project TestProject
+        public Project TestProject
         {
             get
             {
                 if (_project == null)
                 {
-                    _project = new Project();
-                    _project.ProjectName = "Model United Nations";
-                    _project.ProjectAbbreviation = "MUN";
-                    _project.ProjectOrganisation = TestOrganisation;
+                    _project = new Project
+                    {
+                        ProjectName = "Model United Nations",
+                        ProjectAbbreviation = "MUN",
+                        ProjectOrganisation = TestOrganisation
+                    };
                 }
 
                 return _project;
             }
         }
 
-        public static Conference TestConference
+        public Conference TestConference
         {
             get
             {
                 if (_conference == null)
                 {
-                    _conference = new Conference();
-                    _conference.Name = "Model United Nations 2021";
-                    _conference.Abbreviation = "MUN 2021";
-                    _conference.FullName = "Official Model United Nations 2021";
-                    _conference.StartDate = new DateTime(2021,01,01);
-                    _conference.EndDate = new DateTime(2021,12,31);
-                    _conference.ConferenceProject = TestProject;
+                    _conference = new Conference
+                    {
+                        Name = "Model United Nations 2021",
+                        Abbreviation = "MUN 2021",
+                        FullName = "Official Model United Nations 2021",
+                        StartDate = new DateTime(2021, 01, 01),
+                        EndDate = new DateTime(2021, 12, 31),
+                        ConferenceProject = TestProject
+                    };
                 }
 
                 return _conference;
             }
         }
 
+        public Committee TestCommitteeGeneralAssembly
+        {
+            get
+            {
+                if (_committeeGeneralAssembly == null)
+                {
+                    _committeeGeneralAssembly = new Committee
+                    {
+                        Conference = _conference,
+                        Name = "Generalversammlung",
+                        FullName = "die Generalversammlung",
+                        Abbreviation = "GV"
+                    };
+                }
+
+                return _committeeGeneralAssembly;
+            }
+        }
+
+
+        public Committee TestCommitteeSecurityCouncil
+        {
+            get
+            {
+                if (_committeeSecurityCouncil == null)
+                {
+                    _committeeSecurityCouncil = new Committee
+                    {
+                        Conference = _conference,
+                        Name = "Sicherheitsrat",
+                        FullName = "der Sicherheitsrat",
+                        Abbreviation = "SR"
+                    };
+                }
+
+                return _committeeSecurityCouncil;
+            }
+        }
+
+        private User _userMax;
+        public User TestUserMax
+        {
+            get
+            {
+                if (_userMax == null)
+                {
+                    _userMax = new User
+                    {
+                        Username = "maxmustermann",
+                        Title = "",
+                        Forename = "Max",
+                        Lastname = "Mustermann",
+                        Mail = "max-mustermann@mail.com"
+                    };
+                }
+
+                return _userMax;
+            }
+        }
+
+        private User _userMike;
+        public User TestUserMike
+        {
+            get
+            {
+                if (_userMike == null)
+                {
+                    _userMike = new User
+                    {
+                        Username = "mikelitoris",
+                        Title = "",
+                        Forename = "Mike",
+                        Lastname = "Litoris",
+                        Mail = "mike@litoris.com"
+                    };
+                }
+
+                return _userMike;
+            }
+        }
+
+        private User _userMillie;
+        public User TestUserMillie
+        {
+            get
+            {
+                if (_userMillie == null)
+                {
+                    _userMillie = new User
+                    {
+                        Username = "mbb",
+                        Title = "",
+                        Forename = "Millie Bobby",
+                        Lastname = "Brown",
+                        Mail = "millie-brown@mail.com"
+                    };
+                }
+
+                return _userMillie;
+            }
+        }
+
+        private User _userFinn;
+        public User TestUserFinn
+        {
+            get
+            {
+                if (_userFinn == null)
+                {
+                    _userFinn = new User();
+                    _userFinn.Username = "f.wolfhard";
+                    _userFinn.Title = "";
+                    _userFinn.Forename = "Finn";
+                    _userFinn.Lastname = "Wolfhard";
+                    _userFinn.Mail = "finn@mail.com";
+                }
+
+                return _userFinn;
+            }
+        }
+
+        private TeamRole _teamRoleProjectLeader;
+
+        public TeamRole TestRoleProjectLeader
+        {
+            get
+            {
+                if (_teamRoleProjectLeader == null)
+                {
+                    _teamRoleProjectLeader = new TeamRole();
+                    _teamRoleProjectLeader.RoleName = "Projektleitung";
+                    _teamRoleProjectLeader.Conference = TestConference;
+                    _teamRoleProjectLeader.ApplicationState = EApplicationStates.Closed;
+                }
+
+                return _teamRoleProjectLeader;
+            }
+        }
+
+        private TeamRole _teamRoleSecretaryLeader;
+        public TeamRole TestRoleSecretaryLeader
+        {
+            get
+            {
+                if (_teamRoleSecretaryLeader == null)
+                {
+                    _teamRoleSecretaryLeader = new TeamRole();
+                    _teamRoleSecretaryLeader.Conference = TestConference;
+                    _teamRoleSecretaryLeader.ParentTeamRole = TestRoleProjectLeader;
+                }
+
+                return _teamRoleSecretaryLeader;
+            }
+        }
+
+        private PressRole _pressRole;
+
+        public PressRole TestPressRole
+        {
+            get
+            {
+                if (_pressRole == null)
+                {
+                    _pressRole = new PressRole();
+                    _pressRole.RoleName = "Zeitungs-Journalist";
+                    _pressRole.PressCategory = PressRole.EPressCategories.Print;
+                    _pressRole.Conference = TestConference;
+                }
+
+                return _pressRole;
+            }
+        }
 
     }
 }
