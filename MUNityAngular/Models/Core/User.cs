@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json;
+
 
 namespace MUNityAngular.Models.Core
 {
@@ -18,13 +19,14 @@ namespace MUNityAngular.Models.Core
         [DataMember]
         public string Username { get; set; }
 
-
+        [JsonIgnore]
         [IgnoreDataMember]
         public string Password { get; set; }
 
         [DataMember]
         public string Mail { get; set; }
 
+        [JsonIgnore]
         [IgnoreDataMember]
         public string Salt { get; set; }
 

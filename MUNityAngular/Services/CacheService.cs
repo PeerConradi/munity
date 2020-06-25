@@ -28,12 +28,6 @@ namespace MUNityAngular.Services
             return mdl;
         }
 
-        public ResolutionAuthCacheObject AddCacheObject(DataHandlers.EntityFramework.Models.Resolution model)
-        {
-            var mdl = AddCacheObject(model.ResolutionId);
-            mdl.DbResolution = model;
-            return mdl;
-        }
 
         public ResolutionAuthCacheObject SetCacheObject(Models.Resolution.ResolutionModel model)
         {
@@ -51,23 +45,6 @@ namespace MUNityAngular.Services
             return current;
         }
 
-        public ResolutionAuthCacheObject SetCacheObject(DataHandlers.EntityFramework.Models.Resolution model)
-        {
-            if (model == null)
-                return null;
-
-            var current = ResolutionCache.FirstOrDefault(n => n.ResolutionId == model.ResolutionId);
-            if (current == null)
-            {
-                current = AddCacheObject(model);
-            }
-
-            if (current != null)
-            {
-                current.DbResolution = model;
-            }
-            return current;
-        }
 
 
     }

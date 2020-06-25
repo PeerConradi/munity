@@ -214,7 +214,7 @@ namespace MUNityTest.Resolution
         //    //Load
         //    var loadedResolution = service.GetResolutionFromJson(safedText);
         //    //Document Info
-        //    Assert.AreEqual(resolution.ID, loadedResolution.ID);
+        //    Assert.AreEqual(resolution.ResolutionId, loadedResolution.ResolutionId);
         //    Assert.AreEqual(resolution.Name, loadedResolution.Name);
         //    Assert.AreEqual(resolution.FullName, loadedResolution.FullName);
         //    Assert.AreEqual(resolution.Topic, loadedResolution.Topic);
@@ -222,19 +222,19 @@ namespace MUNityTest.Resolution
         //    Assert.AreEqual(resolution.Session, loadedResolution.Session);
         //    Assert.AreEqual(resolution.DocumentNumber, loadedResolution.DocumentNumber);
         //    //Preamble
-        //    Assert.AreEqual(resolution.Preamble.ID, loadedResolution.Preamble.ID);
+        //    Assert.AreEqual(resolution.Preamble.ResolutionId, loadedResolution.Preamble.ResolutionId);
         //    Assert.AreEqual(resolution.Preamble.Paragraphs.Count, loadedResolution.Preamble.Paragraphs.Count);
-        //    Assert.AreEqual(resolution.Preamble.Paragraphs[0].ID, loadedResolution.Preamble.Paragraphs[0].ID);
+        //    Assert.AreEqual(resolution.Preamble.Paragraphs[0].ResolutionId, loadedResolution.Preamble.Paragraphs[0].ResolutionId);
         //    Assert.AreEqual(resolution.Preamble.Paragraphs[0].Text, loadedResolution.Preamble.Paragraphs[0].Text);
-        //    Assert.AreEqual(resolution.Preamble.Paragraphs[1].ID, loadedResolution.Preamble.Paragraphs[1].ID);
+        //    Assert.AreEqual(resolution.Preamble.Paragraphs[1].ResolutionId, loadedResolution.Preamble.Paragraphs[1].ResolutionId);
         //    Assert.AreEqual(resolution.Preamble.Paragraphs[1].Text, loadedResolution.Preamble.Paragraphs[1].Text);
         //    //Operative Sections
         //    Assert.AreEqual(resolution.OperativeSections.Count, loadedResolution.OperativeSections.Count);
-        //    Assert.AreEqual(resolution.OperativeSections[0].ID, loadedResolution.OperativeSections[0].ID);
+        //    Assert.AreEqual(resolution.OperativeSections[0].ResolutionId, loadedResolution.OperativeSections[0].ResolutionId);
         //    Assert.AreEqual(resolution.OperativeSections[0].Text, loadedResolution.OperativeSections[0].Text);
-        //    Assert.AreEqual(resolution.OperativeSections[1].ID, loadedResolution.OperativeSections[1].ID);
+        //    Assert.AreEqual(resolution.OperativeSections[1].ResolutionId, loadedResolution.OperativeSections[1].ResolutionId);
         //    Assert.AreEqual(resolution.OperativeSections[1].Text, loadedResolution.OperativeSections[1].Text);
-        //    Assert.AreEqual(resolution.OperativeSections[2].ID, loadedResolution.OperativeSections[2].ID);
+        //    Assert.AreEqual(resolution.OperativeSections[2].ResolutionId, loadedResolution.OperativeSections[2].ResolutionId);
         //    Assert.AreEqual(resolution.OperativeSections[2].Text, loadedResolution.OperativeSections[2].Text);
         //    Assert.AreEqual(sectionTwoOne.ParentID, loadedResolution.OperativeSections[2].ParentID);
         //    Assert.IsNotNull(loadedResolution.OperativeSections[2].Parent);
@@ -243,13 +243,13 @@ namespace MUNityTest.Resolution
            
         //    var loadedChangeAmendment = loadedResolution.Amendments[0] as ChangeAmendmentModel;
         //    Assert.NotNull(loadedChangeAmendment);
-        //    Assert.AreEqual(changeAmendment.ID, loadedChangeAmendment.ID);
+        //    Assert.AreEqual(changeAmendment.ResolutionId, loadedChangeAmendment.ResolutionId);
         //    Assert.AreEqual(changeAmendment.TargetSectionID, loadedChangeAmendment.TargetSectionID);
         //    Assert.AreEqual(loadedResolution.OperativeSections[0], loadedChangeAmendment.TargetSection);
 
         //    var loadedDeleteAmendment = loadedResolution.Amendments[1] as DeleteAmendmentModel;
         //    Assert.NotNull(loadedDeleteAmendment);
-        //    Assert.AreEqual(loadedDeleteAmendment.ID, deleteAmendment.ID);
+        //    Assert.AreEqual(loadedDeleteAmendment.ResolutionId, deleteAmendment.ResolutionId);
         //    Assert.AreEqual(loadedDeleteAmendment.TargetSectionID, deleteAmendment.TargetSectionID);
         //    Assert.AreEqual(loadedResolution.OperativeSections[0], loadedDeleteAmendment.TargetSection);
 

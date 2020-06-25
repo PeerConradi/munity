@@ -1,0 +1,111 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MongoDB.Driver;
+using MUNityAngular.DataHandlers;
+using MUNityAngular.DataHandlers.EntityFramework;
+using MUNityAngular.Models.Resolution;
+using MUNityAngular.Models.Resolution.V2;
+using MUNityAngular.Util.Extenstions;
+
+namespace MUNityAngular.Services
+{
+    public class NewResolutionService : IResolutionService
+    {
+        private readonly MunityContext _munityContext;
+
+        private readonly IMongoCollection<ResolutionV2> _resolutions;
+
+        public async Task<ResolutionV2> CreateResolution(string title)
+        {
+            var resolution = new ResolutionV2();
+            // Save in MongoDb
+            resolution.ResolutionId = Util.Tools.IdGenerator.RandomString(36);
+            resolution.Header.Topic = title;
+            await _resolutions.InsertOneAsync(resolution);
+
+            var auth = new ResolutionAuth(resolution);
+            await _munityContext.ResolutionAuths.AddAsync(auth);
+            return resolution;
+        }
+
+        public async Task<ResolutionV2> GetResolution(string id)
+        {
+            return await _resolutions.Find(n => n.ResolutionId == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<ResolutionV2> DeleteResolution(ResolutionV2 resolution)
+        {
+            return await _resolutions.FindOneAndDeleteAsync(n => n.ResolutionId == resolution.ResolutionId);
+        }
+
+        public async Task<IPreambleParagraph> AddPreambleParagraph(ResolutionV2 resolution, string text = "")
+        {
+            resolution.Preamble.Paragraphs ??= new List<PreambleParagraph>();
+            var paragraph = new PreambleParagraph();
+            paragraph.Text = text;
+            resolution.Preamble.Paragraphs.Add(paragraph);
+            await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
+            //await _resolutions.ReplaceOneAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
+            return paragraph;
+        }
+
+        public async Task<ResolutionV2> RemovePreambleParagraph(ResolutionV2 resolution, string paragraphId)
+        {
+            var paragraph = resolution.Preamble?.Paragraphs.FirstOrDefault(n =>
+                n.PreambleParagraphId == paragraphId);
+            if (paragraph != null) resolution.Preamble.Paragraphs.Remove(paragraph);
+            return await SaveResolution(resolution);
+        }
+
+        public async Task<ResolutionV2> MovePreambleParagraphUp(ResolutionV2 resolution, string paragraphId)
+        {
+            var paragraph = resolution.Preamble?.Paragraphs.FirstOrDefault(n =>
+                n.PreambleParagraphId == paragraphId);
+            if (paragraph != null)
+            {
+                var oldIndex = resolution.Preamble.Paragraphs.IndexOf(paragraph);
+                if (oldIndex > 0)
+                    resolution.Preamble.Paragraphs.Move(oldIndex, oldIndex - 1);
+            }
+            return await SaveResolution(resolution);
+        }
+
+        public async Task<ResolutionV2> MovePreambleParagraphDown(ResolutionV2 resolution, string paragraphId)
+        {
+            var paragraph = resolution.Preamble?.Paragraphs.FirstOrDefault(n =>
+                n.PreambleParagraphId == paragraphId);
+            if (paragraph != null)
+            {
+                var oldIndex = resolution.Preamble.Paragraphs.IndexOf(paragraph);
+                if (oldIndex < resolution.Preamble.Paragraphs.Count)
+                    resolution.Preamble.Paragraphs.Move(oldIndex, oldIndex + 1);
+            }
+
+            return await SaveResolution(resolution);
+        }
+
+        public async Task<ResolutionV2> SaveResolution(ResolutionV2 resolution)
+        {
+            return await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
+        }
+
+        public async Task<IOperativeParagraph> AddOperativeParagraph(ResolutionV2 resolution)
+        {
+            var paragraph = new OperativeParagraph();
+            resolution.OperativeSection.Paragraphs.Add(paragraph);
+            await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
+            await _resolutions.ReplaceOneAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
+            return paragraph;
+        }
+
+        public NewResolutionService(MunityContext munityContext, IMunityMongoDatabaseSettings mongoSettings)
+        {
+            _munityContext = munityContext;
+            var client = new MongoClient(mongoSettings.ConnectionString);
+            var database = client.GetDatabase(mongoSettings.DatabaseName);
+            _resolutions = database.GetCollection<ResolutionV2>(mongoSettings.ResolutionCollectionName);
+        }
+    }
+}

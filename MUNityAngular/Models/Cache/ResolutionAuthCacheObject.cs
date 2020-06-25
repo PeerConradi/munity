@@ -13,7 +13,6 @@ namespace MUNityAngular.Models.Cache
 
         public ResolutionModel ResolutionModel { get; set; }
 
-        public MUNityAngular.DataHandlers.EntityFramework.Models.Resolution DbResolution { get; set; }
 
         public List<string> AllowedAuths { get; set; }
 

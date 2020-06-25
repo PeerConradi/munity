@@ -38,8 +38,8 @@ namespace MUNityAngular.Models.Resolution
         }
 
         /// <summary>
-        /// This ID has to be unique inside each Resolution.
-        /// It is a Guid so it will be unique and you can find the Document with just one Operative Paragraph ID
+        /// This ResolutionId has to be unique inside each Resolution.
+        /// It is a Guid so it will be unique and you can find the Document with just one Operative Paragraph ResolutionId
         /// </summary>
         [DataMember]
         [BsonId]

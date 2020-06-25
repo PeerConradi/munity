@@ -15,7 +15,6 @@ namespace MUNityAngular.Services
         public User CreateUser(string username, string password, string mail, DateTime birthday)
         {
 
-
             if (!Util.Tools.InputCheck.IsOnlyCharsAndNumbers(username))
                 throw new ArgumentException("The username is not valid, you are only allowed to use a-z A-Z 0-9");
 

@@ -9,6 +9,8 @@ using MUNityAngular.Util.Extenstions;
 
 namespace MUNityAngular.Models.Resolution
 {
+
+    [Obsolete("Use PreambleParagraph in future implementations")]
     public class PreambleParagraphModel
     {
         public string ID { get; set; }

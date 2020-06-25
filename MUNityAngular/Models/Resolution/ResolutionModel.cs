@@ -353,7 +353,7 @@ namespace MUNityAngular.Models.Resolution
             {
                 foreach (var ps in Preamble.Paragraphs)
                 {
-                    ps.Preamble = Preamble;
+                    //ps.Preamble = Preamble;
                 }
             }
         }

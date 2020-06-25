@@ -12,6 +12,8 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
 using System;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using MongoDB.Driver;
@@ -19,6 +21,8 @@ using MUNityAngular.DataHandlers;
 using Microsoft.Extensions.Options;
 using MUNityAngular.DataHandlers.EntityFramework;
 using Microsoft.AspNetCore.SpaServices;
+using Microsoft.IdentityModel.Tokens;
+using MUNityAngular.Models;
 
 namespace MUNityAngular
 {
@@ -54,7 +58,33 @@ namespace MUNityAngular
                 options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
             });
 
+            // The App Settings contains information like the secret used to 
+            // Create the baerer authentication.
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
 
+            // JWT Authentication is done here!
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.UTF8.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            // SignalR is for the WebSockets, they are mainly used in the live Editors for example
+            // the Resa Editors etc.
             services.AddSignalR(options =>
             {
                 options.MaximumReceiveMessageSize = 68000;
@@ -96,13 +126,14 @@ namespace MUNityAngular
             services.AddScoped<Services.ResolutionService>();
             services.AddScoped<Services.PresenceService>();
             services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
+            services.AddScoped<Services.IResolutionService, Services.NewResolutionService>();
             services.AddSingleton<Services.SpeakerlistService>();
             services.AddSingleton<Services.SimSimService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MUNity-API", Version = "v0.4" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MUNity-API", Version = "v0.5" });
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -125,7 +156,7 @@ namespace MUNityAngular
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+
             
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -133,7 +164,7 @@ namespace MUNityAngular
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            app.UseAuthentication();
+            
 
             app.UseCors("CorsPolicy");
 
@@ -155,6 +186,10 @@ namespace MUNityAngular
             }
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

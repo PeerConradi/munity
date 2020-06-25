@@ -75,7 +75,7 @@ namespace MUNityAngular.Controllers
         }
 
         /// <summary>
-        /// Gets a speakerlist with the public ID
+        /// Gets a speakerlist with the public ResolutionId
         /// </summary>
         /// <param name="auth"></param>
         /// <param name="publicid"></param>

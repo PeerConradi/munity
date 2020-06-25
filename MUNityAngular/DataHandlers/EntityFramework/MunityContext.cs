@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Resolution.V2;
 
 namespace MUNityAngular.DataHandlers.EntityFramework
 {
@@ -13,16 +14,18 @@ namespace MUNityAngular.DataHandlers.EntityFramework
 
         public DbSet<Models.MediaImage> MediaImages { get; set; }
 
-        public DbSet<Models.Resolution> Resolutions { get; set; }
+        public DbSet<ResolutionAuth> ResolutionAuths { get; set; }
 
-        public DbSet<Models.ResolutionConference> ConferenceResolutions { get; set; }
+        public DbSet<ResolutionUser> ResolutionUsers { get; set; }
 
-        public DbSet<Models.ResolutionUser> ResolutionUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             modelBuilder.Entity<Models.AuthKey>().HasKey(n => n.AuthKeyValue);
+
+            // The ResolutionId is also the Primary Key.
+            modelBuilder.Entity<ResolutionAuth>().HasKey(n => n.ResolutionId);
             //modelBuilder.Entity<Models.ResolutionUser>().HasKey(n => new { n.User, n.Resolution });
             //modelBuilder.Entity<Models.UserAuths>().HasKey(n => n.User);
             //modelBuilder.Entity<Models.CommitteeDelegation>().HasKey(n => n.CommitteeDelegationId);

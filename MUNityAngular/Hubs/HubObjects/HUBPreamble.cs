@@ -14,6 +14,7 @@ namespace MUNityAngular.Hubs.HubObjects
     /// It only stores Data and has absolutly no logic. We need to create this class
     /// because SignalR will otherwise send Data that is tagged with [JsonIgnore].
     /// </summary>
+    [Obsolete("Use IPreamble in the future")]
     public class HUBPreamble
     {
         public string ID { get; set; }
@@ -23,7 +24,7 @@ namespace MUNityAngular.Hubs.HubObjects
         public HUBPreamble(PreambleModel preamble)
         {
             this.ID = preamble.ID;
-            this.Paragraphs = preamble.Paragraphs.ToHubParagraphs();
+            //this.Paragraphs = preamble.Paragraphs.ToHubParagraphs();
         }
 
         public HUBPreamble()
