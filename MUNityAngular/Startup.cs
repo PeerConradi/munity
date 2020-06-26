@@ -59,7 +59,7 @@ namespace MUNityAngular
             });
 
             // The App Settings contains information like the secret used to 
-            // Create the baerer authentication.
+            // CreatePublic the baerer authentication.
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
@@ -104,7 +104,7 @@ namespace MUNityAngular
                     mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 }));
 
-            // Create the core Context
+            // CreatePublic the core Context
             services.AddDbContextPool<MunCoreContext>(options =>
                 options.UseMySql(coreConnectionString, mySqlOptions => {
                     mySqlOptions.ServerVersion(new Version(10, 1, 26), ServerType.MariaDb);
@@ -122,7 +122,7 @@ namespace MUNityAngular
             // All services that are used inside the controllers.
             //services.AddScoped<Services.InstallationService>();
             services.AddScoped<Services.AuthService>();
-            services.AddScoped<Services.UserService>();
+            services.AddScoped<Services.IUserService, Services.UserService>();
             services.AddScoped<Services.ResolutionService>();
             services.AddScoped<Services.PresenceService>();
             services.AddScoped<Services.IConferenceService, Services.ConferenceService>();

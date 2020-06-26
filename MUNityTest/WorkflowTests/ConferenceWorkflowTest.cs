@@ -51,7 +51,7 @@ namespace MUNityTest.WorkflowTests
         [Test]
         [Order(2)]
         [Author("Peer Conradi")]
-        [Description("Test Create Project. A Project is kind of a group of Conferences.")]
+        [Description("Test CreatePublic Project. A Project is kind of a group of Conferences.")]
         public async Task TestCreateAndGetProject()
         {
             if (_organisation == null)

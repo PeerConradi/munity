@@ -1,132 +1,52 @@
 <div class="row">
-  <div class="col-12">
-    <h1>Willkommen</h1>
+  <div class="container">
+    <div class="card-columns">
+      <div class="card text-center border-dark shadow-lg">
+        <img src="../../../../assets/img/thumbs/committee-small.jpg" class="card-img-top" alt="...">
+        <div class="card-body ">
+          <h5 class="card-title">Konferenzen verwalten</h5>
+          <p class="card-text">
+            Kostenlos, schnell und unkompliziert Model United Nations Konferenzen anlegen und verwalten.
+            MUN-TOOLs bringt viele Funktionen für Bewerbungsphasen, Teamverwaltung, Dokumentenverwaltung und weiteres mit.
+          </p>
+          <button class="btn btn-dark" [routerLink]="['/cm/start']">Zum Konferenz-Manager</button>
+        </div>
+      </div>
+      <div class="card text-center border-dark shadow-lg">
+        <img src="../../../../assets/img/thumbs/speakerlist.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Redelisten führen</h5>
+          <p class="card-text">Ganz einfach Redelisten führen um im Gremium den Überblick zu behalten.</p>
+          <button class="btn btn-block btn-dark">Redeliste erstellen</button>
+          <button class="btn btn-block btn-outline-dark">Redeliste anzeigen</button>
+        </div>
+        
+      </div>
 
-  </div>
-  <div class="col-12">
-    <h5>MUNity (for MUN-SH)</h5>
-    <p>Willkommen zur MUNity Alpha. Diese Plattform erlebt ihren ersten Einsatz bei der Konferenz Model United Nations Schleswig-Holstein 2020.</p>
-  </div>
-</div>
-<hr />
-<div class="row">
-  <div class="col-md-4 col-xs-12 d-flex align-items-stretch">
-    <div class="card text-center bg-primary text-white">
-      <div class="card-header">
-        Resolution erstellen
+      <div class="card text-center border-dark shadow-lg">
+        <img src="../../../../assets/img/thumbs/working-on-mac.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Resolutionen führen</h5>
+          <p class="card-text">
+            Mit unserem besten Editor für Resolutionen wird die Dokumentenverwaltung ein Kinderspiel.
+            Viele umfangreiche Funktionen auch für das Behandeln von Änderungsanträgen und Notizen.
+          </p>
+          <button class="btn btn-block btn-dark">Resolution erstellen</button>
+          <button class="btn btn-block btn-outline-dark">Resolution anzeigen</button>
+        </div>
       </div>
-      <div class="card-body">
-        <h5 class="card-title">Resolutionseditor</h5>
-        <p class="card-text">
-          Eine neue Resolution erstellen und Ansichten für ein Gremium bereitstellen.
-          Mit dem Editor auch Änderungsanträge und Notizen verwalten.
-          <b>Kostenlos und ohne Anmeldung</b>
-        </p>
-        <button class="btn btn-light">Resolution erstellen</button>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4 col-xs-12  d-flex align-items-stretch">
-    <div class="card text-center border-primary">
-      <div class="card-header">
-        Resolution ansehen
-      </div>
-      <div class="card-body">
-        <h5 class="card-title">Resolution einsehen</h5>
-        <p class="card-text">
-          Jetzt live mitlesen und Änderungsanträge einsehen/einreichen. Der dafür benötigte Code kann
-          vom Vorsitz bereitgestellt werden.
-        </p>
-        <form [formGroup]="checkResolutionForm" (ngSubmit)="onCheckResolution(checkResolutionForm.value)">
-          <div class="form-group">
-            <label for="resolutionid">Resolutions ID</label>
-            <input type="number" formControlName="resolutionkey" class="form-control" id="resolutionid"
-                   aria-describedby="resolutionNumberHelp" placeholder="12345678">
-            <small id="resolutionNumberHelp" class="form-text text-muted">
-              Die Resolutions-ID wird vom Vorsitz bekannt
-              gegeben.
-            </small>
-          </div>
-          <button type="submit" class="btn btn-primary">Einsehen</button>
-        </form>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4 col-xs-12  d-flex align-items-stretch">
-    <div class="card text-center bg-secondary text-white">
-      <div class="card-header">
-        Redeliste erstellen
-      </div>
-      <div class="card-body">
-        <h5 class="card-title">Redeliste</h5>
-        <p class="card-text">
-          Eine neue Redeliste erstellen und verwalten. Redelisten können
-          auch neben anderen Tools dieser Plattform geführt werden.
-          <b>Kostenlos und ohne Anmeldung</b>
-        </p>
-        <button class="btn btn-light">Redeliste erstellen</button>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4 col-xs-12  d-flex align-items-stretch">
-    <div class="card border-secondary text-center">
-      <div class="card-header">
-        Redeliste einsehen
-      </div>
-      <div class="card-body">
-        <h5 class="card-title">Redeliste einsehen</h5>
-        <p class="card-text">
-          Die Redeliste/Fragen und Kurzbemerkungen live verfolgen und sich per Knopfdruck auf eine
-          Liste setzen lassen.
-        </p>
-        <form>
-          <div class="form-group">
-            <label for="speakerlistid">Redeliste-ID</label>
-            <input type="number" class="form-control" id="speakerlistid" aria-describedby="emailHelp"
-                   placeholder="1234567">
-            <small id="emailHelp" class="form-text text-muted">
-              Die Redeliste-ID wird vom Vorsitz bekannt
-              gegeben.
-            </small>
-          </div>
-          <button type="submit" class="btn btn-secondary">Einsehen</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-<hr />
-<div class="row">
-  <div class="col-lg-6 col-xs-12">
-    <div class="munity-box">
-      <div class="inverse-box-header bg-primary">
-        <h1 class="text-center text-white box-title">Über MUNity</h1>
-        <h3 class="box-subtitle">Was ist MUNity</h3>
-      </div>
-      <div class="inverse-box-body border-primary">
-        <p>MUNity ist eine Online-Plattform, welche Organisationen dabei unterstützen soll Model United Nations
-        Konferenzen zu organsisieren und durchzuführen. Die Plattform stellt hierfür Tools bereit um das Team einer Konferenz zu verwalten, Termine
-        und Aufgaben zu verteilen und auch diverse Tools für den Einsatz im Gremium wie zum Beispiel Redelisten mit Timern, einen Live anzeigbaren Resolutionseditor, sowie
-        Funktionen zur Feststellung von Anwesenheiten, sowie einige Funktionen zur Datenauswertung.</p>
-        <p> </p>
-        <p> </p>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-lg-6 col-xs-12">
-    <div class="munity-box">
-      <div class="inverse-box-header bg-primary">
-        <h1 class="text-center text-white box-title">MUNity nutzen</h1>
-        <h3 class="box-subtitle">[Open Alpha]</h3>
-      </div>
-      <div class="inverse-box-body border-primary">
-        <p><b>Kann ich MUNity für meine Konferenz nutzen?</b></p>
-        <p><b class="text-danger">Nein</b>, derzeit wird eine Nutzung von MUNity für Konferenzen nicht empfohlen.
-        Die Plattform befindet sich noch im Aufbau und an vielen Stellen sind daher noch Platzhalterelemente installiert.
-        Ein Großteil der Funktionen welche MUNity einmal bieten soll sind derzeit auch noch nicht verfügbar.</p>
-        <p class="text-danger"><b>Die Datenbank der Alpha Phase wird in regelmäßigen Abständen zurückgesetzt um Fehler zu vermeiden.
-           Auf dieser Seite bitte nur Testdaten angeben und keine komplette Konferenzstruktur.</b></p>
+      <div class="card text-center border-dark shadow-lg">
+        <img src="../../../../assets/img/thumbs/gv-view.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Simulationen</h5>
+          <p class="card-text">
+            Model United Nations müssen nicht immer an einer Stelle stattfinden. Probier ruhig mal
+            kostenlos unseren Simulator aus. Dieser kann ein Gremium mit bis zu 25 Delegierten darstellen.
+          </p>
+          <button class="btn btn-block btn-dark">Simulation erstellen</button>
+          <button class="btn btn-block btn-outline-dark">Einer Simulation beitreten</button>
+        </div>
       </div>
     </div>
   </div>

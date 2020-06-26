@@ -11,6 +11,7 @@ using MUNityAngular.Models.Conference;
 
 namespace MUNityAngular.Models.Resolution
 {
+    [Obsolete("Take a look at the new ResolutionV2")]
     public class ResolutionModel
     {
 

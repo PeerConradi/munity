@@ -8,7 +8,7 @@ using MUNityAngular.Models.Core;
 
 namespace MUNityAngular.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly MunCoreContext _context;
 
@@ -40,6 +40,23 @@ namespace MUNityAngular.Services
         {
             return _context.Users.FirstOrDefaultAsync(n => n.Username.ToLower() == username.ToLower());
         }
+
+        public async Task<int> UpdateUser(User user)
+        {
+            _context.Users.Update(user);
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> CheckUsername(string username)
+        {
+            return await _context.Users.AnyAsync(n => n.Username == username);
+        }
+
+        public async Task<bool> CheckMail(string mail)
+        {
+            return await _context.Users.AnyAsync(n => n.Mail == mail);
+        }
+
 
         public UserService(MunCoreContext context)
         {

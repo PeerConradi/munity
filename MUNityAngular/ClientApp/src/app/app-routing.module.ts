@@ -39,10 +39,11 @@ import { ConferenceOptionsComponent } from './components/conference/conference-o
 import { SimSimViewComponent } from './components/simsim/sim-sim-view/sim-sim-view.component';
 import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-sim-startup.component';
 import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component';
+import { ManagerStartupComponent } from "./components/conference/manager-startup/manager-startup.component"
 
 const routes: Routes = [
   // Routes that have no default theme!
-  { path: 'login', component: LoginComponent },
+  
   { path: 'resa/read/:id', component: ResViewComponent },
   { path: 's/view/:id', component: SpeakerlistViewComponent },
   { path: 'sim', component: SimSimViewComponent },
@@ -65,6 +66,7 @@ const routes: Routes = [
       { path: 'reshome', component: ResolutionHomeComponent },
       
       //Account
+      { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'logout', component: LogoutComponent },
       { path: 'account/settings', component: AccountSettingsComponent },
@@ -73,6 +75,7 @@ const routes: Routes = [
       //// Login is a custom form and not in this layout, register could also be moved someday
 
       //Konferenz
+      { path: 'cm/start', component: ManagerStartupComponent },
       { path: 'createconference', component: CreateConferenceComponent },
       { path: 'conference/my', component: MyConferencesOverviewComponent },
       

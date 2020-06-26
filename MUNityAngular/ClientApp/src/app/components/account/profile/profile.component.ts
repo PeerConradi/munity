@@ -38,7 +38,7 @@ export class ProfileComponent implements OnInit {
   }
 
   get isMe(): boolean {
-    return this.user.Id == this.userService.currentUser.Id;
+    return this.user.userId == this.userService.currentUser.userId;
   }
 
 }

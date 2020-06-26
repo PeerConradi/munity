@@ -14,14 +14,16 @@ using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.IO;
 using MUNityAngular.Models;
+using MUNityAngular.Models.Resolution.V2;
 using MUNityAngular.Schema.Request.Authentication;
 using MUNityAngular.Schema.Response.Authentication;
 
 namespace MUNityAngular.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly MunCoreContext _context;
+        private readonly MunityContext _munityContext;
         private readonly AppSettings _settings;
 
         public bool CanUserEditConference(User user, Conference conference)
@@ -29,8 +31,16 @@ namespace MUNityAngular.Services
             return true;
         }
 
-        public bool CanUserEditResolution(User user, ResolutionModel resolution)
+        public bool CanUserEditResolution(User user, ResolutionV2 resolution)
         {
+            // Is user the owner
+
+            // is user in the accepted group
+
+            // is user participant inside the conference that this document is linked to
+
+            // is user inside the committee that this document is lined to
+
             return true;
         }
 

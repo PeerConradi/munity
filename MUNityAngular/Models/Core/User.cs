@@ -5,12 +5,13 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
+using MUNityAngular.Models.Conference;
 
 
 namespace MUNityAngular.Models.Core
 {
     [DataContract]
-    public class User
+    public class User : IUserInformation
     {
 
         [DataMember]
@@ -44,6 +45,9 @@ namespace MUNityAngular.Models.Core
 
         [DataMember]
         public DateTime Birthday { get; set; }
+
+        //[DataMember]
+        //public string Country { get; set; }
 
         [DataMember]
         public string Street { get; set; }

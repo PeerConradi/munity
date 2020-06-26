@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MUNityAngular.DataHandlers;
 using MUNityAngular.DataHandlers.EntityFramework;
@@ -30,9 +31,30 @@ namespace MUNityAngular.Services
             return resolution;
         }
 
+        public async Task<ResolutionV2> CreatePublicResolution(string title)
+        {
+            var resolution = new ResolutionV2();
+            // Save in MongoDb
+            resolution.ResolutionId = Util.Tools.IdGenerator.RandomString(36);
+            resolution.Header.Topic = title;
+            await _resolutions.InsertOneAsync(resolution);
+            var auth = new ResolutionAuth(resolution);
+            auth.AllowPublicEdit = true;
+            auth.AllowPublicRead = true;
+            await _munityContext.ResolutionAuths.AddAsync(auth);
+            await _munityContext.SaveChangesAsync();
+
+            return resolution;
+        }
+
         public async Task<ResolutionV2> GetResolution(string id)
         {
             return await _resolutions.Find(n => n.ResolutionId == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<ResolutionAuth> GetResolutionAuth(string id)
+        {
+            return await _munityContext.ResolutionAuths.FirstOrDefaultAsync(n => n.ResolutionId == id);
         }
 
         public async Task<ResolutionV2> DeleteResolution(ResolutionV2 resolution)
@@ -88,7 +110,11 @@ namespace MUNityAngular.Services
 
         public async Task<ResolutionV2> SaveResolution(ResolutionV2 resolution)
         {
-            return await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
+            var options = new FindOneAndReplaceOptions<ResolutionV2>
+            {
+                ReturnDocument = ReturnDocument.After
+            };
+            return await _resolutions.FindOneAndReplaceAsync<ResolutionV2>(n => n.ResolutionId == resolution.ResolutionId, resolution, options);
         }
 
         public async Task<IOperativeParagraph> AddOperativeParagraph(ResolutionV2 resolution)

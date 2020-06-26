@@ -145,7 +145,7 @@ namespace MUNityAngular.Models.Resolution
         [JsonIgnore]
         public virtual int ORDER_LEVEL { get; } = 0;
 
-        public virtual string Type { get => "abstract"; }
+        public virtual string Type => "abstract";
 
         public AbstractAmendment()
         {

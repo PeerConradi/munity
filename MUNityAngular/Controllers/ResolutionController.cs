@@ -32,14 +32,65 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ResolutionV2> Create(string title, [FromServices]IResolutionService service)
+        public async Task<ResolutionV2> CreatePublic(string title, [FromServices]IResolutionService service)
         {
             if (User == null)
             {
                 // This should be called when the User is not logged in
             }
 
-            return await service.CreateResolution(title);
+            return await service.CreatePublicResolution(title);
+        }
+
+        [Route("[action]")]
+        [HttpPatch]
+        [Authorize]
+        public async Task<ResolutionV2> UpdateProtectedResolution([FromBody] ResolutionV2 resolution,
+            [FromServices]IAuthService authService,
+            [FromServices]IResolutionService resolutionService)
+        {
+            var user = authService.GetUserOfClaimPrincipal(User);
+            // Check if user is allowed to update this document
+            var canEdit = authService.CanUserEditResolution(user, resolution);
+
+            if (!canEdit)
+                return null;
+
+            // Update this document
+            return await resolutionService.SaveResolution(resolution);
+        }
+
+        /// <summary>
+        /// Updates a Resolution that has Public Access. 
+        /// </summary>
+        /// <param name="resolution"></param>
+        /// <param name="resolutionService"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [AllowAnonymous]
+        public async Task<ResolutionV2> UpdatePublicResolution([FromBody] ResolutionV2 resolution,
+            [FromServices] IResolutionService resolutionService)
+        {
+
+            // Check if the resolution is public
+            var auth = await resolutionService.GetResolutionAuth(resolution.ResolutionId);
+            if (auth.AllowPublicEdit)
+            {
+                // Update this document
+                return await resolutionService.SaveResolution(resolution);
+            }
+
+            return null;
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ResolutionV2> GetPublic(string id,
+            [FromServices] IResolutionService resolutionService)
+        {
+            return await resolutionService.GetResolution(id);
         }
 
         ///// <summary>
@@ -51,7 +102,7 @@ namespace MUNityAngular.Controllers
         ///// <returns>The new created Resolution in a json format.</returns>
         //[Route("[action]")]
         //[HttpGet]
-        //public ActionResult<HUBResolution> Create([FromHeader]string auth, [FromServices]ResolutionService resolutionService,
+        //public ActionResult<HUBResolution> CreatePublic([FromHeader]string auth, [FromServices]ResolutionService resolutionService,
         //    [FromServices]AuthService authService)
         //{
 

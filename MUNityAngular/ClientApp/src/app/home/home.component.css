@@ -1,0 +1,18 @@
+@media only screen and (max-width: 664px) {
+  .inner-section {
+    position: relative;
+    left: 10%;
+    right: 10%;
+    width: 80%;
+  }
+}
+
+@media only screen and (min-width: 664px) {
+  .inner-section {
+    position: relative;
+    left: 20%;
+    right: 20%;
+    width: 60%;
+  }
+}
+

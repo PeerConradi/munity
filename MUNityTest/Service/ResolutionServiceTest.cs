@@ -4,6 +4,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Core.Operations;
 using MUNityAngular.DataHandlers;
 using MUNityAngular.DataHandlers.EntityFramework;
+using MUNityAngular.Models.Resolution.V2;
 using MUNityAngular.Services;
 using NUnit.Framework;
 
@@ -177,6 +178,15 @@ namespace MUNityTest.Service
             reloadResolution = await service.GetResolution(resolution.ResolutionId);
             Assert.IsTrue(paragraphTwo.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[0].PreambleParagraphId, "The order is not as expected this element should be paragraphTwo");
             Assert.IsTrue(paragraphOne.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[1].PreambleParagraphId);
+        }
+
+        [Test]
+        public async Task TestSaveResolutionThatsNotCreated()
+        {
+            var service = new NewResolutionService(_munityContext, new MongoTestString());
+            var resolution = new ResolutionV2();
+            var result = await service.SaveResolution(resolution);
+            Assert.IsNull(result);
         }
 
     }

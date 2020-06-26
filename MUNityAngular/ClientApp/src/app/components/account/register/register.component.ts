@@ -24,6 +24,7 @@ export class RegisterComponent implements OnInit {
       email: ['', Validators.required, Validators.email],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmpassword: ['', [Validators.required, Validators.minLength(6)]],
+      birthday: ['', [Validators.required]],
       agb: [false, Validators.pattern('true')]
     });
   }
@@ -35,7 +36,7 @@ export class RegisterComponent implements OnInit {
     const data = this.registerForm.value;
     const username = data.username;
     this.authService.checkUsername(username).subscribe(n => {
-      if (n == true) {
+      if (n) {
         this.f.username.setErrors({ 'taken': true });
       } else {
         this.f.username.setErrors({ 'taken': false });
@@ -46,15 +47,20 @@ export class RegisterComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
+    this.checkUsername();
+
     // stop here if form is invalid
     if (this.registerForm.invalid) {
+      console.log('Es gibt fehler im registrierungsformular!');
+      console.log(this.registerForm.errors);
+      console.log(this.f.username.errors);
       return;
     }
 
     
     let data = this.registerForm.value;
 
-    if (data.password != data.confirmpassword) {
+    if (data.password !== data.confirmpassword) {
       this.f.password.setErrors({'incorrect': true});
       this.f.confirmpassword.setErrors({ 'incorrect': true });
       return;
@@ -62,12 +68,17 @@ export class RegisterComponent implements OnInit {
 
     this.loading = true;
     const model: Registration = new Registration();
-    model.Username = data.username;
-    model.Password = data.password;
-    model.Mail = data.email;
+    model.username = data.username;
+    model.password = data.password;
+    model.mail = data.email;
+    model.birthday = data.birthday;
     this.authService.register(model).subscribe(
       msg => { this.created = true; this.loading = false; },
-      error => { this.error = true; this.loading = false; });
+      error => { this.error = true; this.loading = false;
+        console.log(error);
+      });
   }
 
 }
+
+

@@ -22,9 +22,17 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+
+        /// <summary>
+        /// Get the basic information of a user.
+        /// </summary>
+        /// <param name="userService"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public async Task<User> GetUser([FromServices]UserService userService, string username)
+        [Authorize]
+        public async Task<IUserInformation> GetUser([FromServices]UserService userService, string username)
         {
             return await userService.GetUserByUsername(username);
         }
@@ -32,7 +40,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult<User> Register([FromServices] UserService userService, [FromBody]RegisterRequest body)
+        public ActionResult<User> Register([FromServices]IUserService userService, [FromBody]RegisterRequest body)
         {
             try
             {
@@ -40,7 +48,7 @@ namespace MUNityAngular.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest("Invalid username, password or to young!");
+                return BadRequest(e.Message);
             }
         }
 
@@ -60,6 +68,36 @@ namespace MUNityAngular.Controllers
             return Ok("Hallo du bist wohl wichtig!");
         }
 
+        /// <summary>
+        /// Whit this call you are able to update your user options.
+        /// Note that only the Forname, Lastname, Gender, City, Street,
+        /// Housenumber and Zipcode will be changed. You are not able
+        /// to change your age, password or username with this function!
+        /// This function will only work for the authorized user and change the
+        /// settings of this user.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userService"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [Authorize]
+        public async Task<int> UpdateMe([FromBody]User user, [FromServices]IUserService userService)
+        {
+            var username = User.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name)?.Value ?? "";
+            var dbUser = await userService.GetUserByUsername(username);
+            dbUser.Forename = user.Forename;
+            dbUser.Lastname = user.Lastname;
+            
+            dbUser.Gender = user.Gender;
+            dbUser.City = user.City;
+            dbUser.Street = user.Street;
+            dbUser.Housenumber = user.Housenumber;
+            dbUser.Zipcode = user.Zipcode;
+
+            return await userService.UpdateUser(dbUser);
+        }
+
         [Route("[action]")]
         [HttpGet]
         [Authorize]
@@ -67,6 +105,24 @@ namespace MUNityAngular.Controllers
         {
             var username = User.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name)?.Value ?? "";
             return await service.GetUserByUsername(username);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<bool> CheckUsername(string username,
+            [FromServices]IUserService userService)
+        {
+            return await userService.CheckUsername(username);
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<bool> CheckMail(string mail,
+            [FromServices] IUserService userService)
+        {
+            return await userService.CheckMail(mail);
         }
     }
 }

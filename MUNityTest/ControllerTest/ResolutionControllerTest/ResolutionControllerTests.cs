@@ -21,7 +21,7 @@ namespace MUNityTest.ControllerTest.ResolutionControllerTest
                 service.CreateResolution("test")).ReturnsAsync(GetTestResolution);
             var controller = new ResolutionController(null);
 
-            var result = await controller.Create("test", mockService.Object);
+            var result = await controller.CreatePublic("test", mockService.Object);
 
             Assert.NotNull(result);
             Assert.Equal("test", result.Header.Topic);

@@ -1,5 +1,6 @@
 export class Registration {
-  Username: string;
-  Password: string;
-  Mail: string;
+  username: string;
+  password: string;
+  mail: string;
+  birthday: Date;
 }

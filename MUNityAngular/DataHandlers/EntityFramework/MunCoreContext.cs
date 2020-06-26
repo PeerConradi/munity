@@ -15,6 +15,8 @@ namespace MUNityAngular.DataHandlers.EntityFramework
     {
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Country> Countries { get; set; }
+
         public DbSet<Organisation> Organisations { get; set; }
 
         public DbSet<OrganisationRole> OrganisationRoles { get; set; }
@@ -70,6 +72,8 @@ namespace MUNityAngular.DataHandlers.EntityFramework
 
             modelBuilder.Entity<Conference>().HasOne(n => n.ConferenceProject)
                 .WithMany(n => n.Conferences);
+
+
         }
 
         public MunCoreContext(DbContextOptions<MunCoreContext> options) : base(options)

@@ -35,8 +35,6 @@ export class UserService {
   private baseUrl: string;
 
 
-  
-
   public sessionkey(): string {
     return localStorage.getItem('munity_session_key');
   }
@@ -46,11 +44,15 @@ export class UserService {
   }
 
   public register(model: Registration) {
-    return this.http.put(this.baseUrl + 'api/User/Register', model);
+    return this.http.post<User>(this.baseUrl + 'api/User/Register', model);
   }
 
   public checkUsername(username: string) {
     return this.http.get<boolean>(this.baseUrl + 'api/User/CheckUsername?username=' + username);
+  }
+
+  public checkMail(username: string) {
+    return this.http.get<boolean>(this.baseUrl + 'api/User/CheckMail?mail=' + username);
   }
 
   public changePassword(oldpassword: string, newpassword: string) {

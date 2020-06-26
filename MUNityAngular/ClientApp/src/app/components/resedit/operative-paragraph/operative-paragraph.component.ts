@@ -111,18 +111,18 @@ export class OperativeParagraphComponent implements OnInit {
   }
 
   noticeRead(notice: Notice) {
-    if (this.userService.currentUser != null) {
-      let name = this.userService.currentUser.Username;
+    //if (this.userService.currentUser != null) {
+    //  let name = this.userService.currentUser.Username;
 
-      if (this.userService.currentUser.Forename != null && this.userService.currentUser.Lastname != null) {
-        name = this.userService.currentUser.Forename + ' ' + this.userService.currentUser.Lastname;
-      }
+    //  if (this.userService.currentUser.Forename != null && this.userService.currentUser.Lastname != null) {
+    //    name = this.userService.currentUser.Forename + ' ' + this.userService.currentUser.Lastname;
+    //  }
 
-      if (!notice.ReadBy.includes(name)) {
-        notice.ReadBy.push(name);
-      }
-    }
-    this.service.changeOperativeParagraphNotice(this.paragraph, notice).subscribe();
+    //  if (!notice.ReadBy.includes(name)) {
+    //    notice.ReadBy.push(name);
+    //  }
+    //}
+    //this.service.changeOperativeParagraphNotice(this.paragraph, notice).subscribe();
   }
 
   noticeUpdated(notice: Notice) {
