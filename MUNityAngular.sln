@@ -18,6 +18,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\installation.md = Documentation\installation.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{CE9F1419-1995-4900-8277-F494FB4334D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Conference", "Conference", "{E793C1D4-EDE1-4AC9-8508-BE411187A8FF}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\API\Conference\CreateConferences.md = Documentation\API\Conference\CreateConferences.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{1F5E6F9F-22EC-4EFA-B4BF-8F37CB519D6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +44,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CE9F1419-1995-4900-8277-F494FB4334D7} = {67012ED4-C8E9-443A-9415-20B5D990353C}
+		{E793C1D4-EDE1-4AC9-8508-BE411187A8FF} = {CE9F1419-1995-4900-8277-F494FB4334D7}
+		{1F5E6F9F-22EC-4EFA-B4BF-8F37CB519D6C} = {67012ED4-C8E9-443A-9415-20B5D990353C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {493C11FC-2B4C-4110-AF9A-D86B8BC05B47}

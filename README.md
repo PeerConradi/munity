@@ -15,8 +15,8 @@ This application is under development and cannot be used at the moment. Please c
 | ResaEditor | ![15%](https://progress-bar.dev/15) | Complete Rework needed |
 | Speakerlist | ![20%](https://progress-bar.dev/20) | Complete Rework in progress |
 | Simulation | ![5%](https://progress-bar.dev/5) | __ON HOLD__ |
-| Administration | ![0%](https://progress-bar.dev/0) | __Not stareted__ |
-| Dockerize | ![0%](https://progress-bar.dev/0) | __Not stareted__ |
+| Administration | ![0%](https://progress-bar.dev/0) | __Not started__ |
+| Dockerize | ![0%](https://progress-bar.dev/0) | __Not started__ |
 
 ## Setup Development Environment
 Requiered: 
