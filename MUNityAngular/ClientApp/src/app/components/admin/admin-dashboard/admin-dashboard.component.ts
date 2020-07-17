@@ -20,9 +20,9 @@ export class AdminDashboardComponent implements OnInit {
   constructor(private userService: UserService, public adminService: AdminService) { }
 
   ngOnInit() {
-    this.userService.getIsAdmin().subscribe(n => {
-      this.isAdmin = n;
-    });
+    //this.userService.getIsAdmin().subscribe(n => {
+    //  this.isAdmin = n;
+    //});
     this.adminService.getResolutionDatabaseCount().subscribe(n => this.resolutionsInSQL = n);
     this.adminService.getResolutionMongoDbCount().subscribe(n => this.resolutionsInMGDB = n);
     this.adminService.getUserCount().subscribe(n => this.userCount = n);

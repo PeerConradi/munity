@@ -13,8 +13,6 @@ import { AuthenticationResponse } from '../models/authentication-response.model'
 })
 export class UserService {
 
-  private _loggedIn: boolean;
-
   public currentUser: User = null;
 
   public session: AuthenticationResponse = null;

@@ -20,9 +20,9 @@ export class ResolutionsManagementComponent implements OnInit {
   constructor(private userService: UserService, private adminService: AdminService) { }
 
   ngOnInit() {
-    this.userService.getIsAdmin().subscribe(n => {
-      this.isAdmin = n;
-    });
+    //this.userService.getIsAdmin().subscribe(n => {
+    //  this.isAdmin = n;
+    //});
     this.adminService.getResolutionDatabaseCount().subscribe(n => this.resolutionsInSQL = n);
     this.adminService.getResolutionMongoDbCount().subscribe(n => this.resolutionsInMGDB = n);
 
@@ -34,7 +34,7 @@ export class ResolutionsManagementComponent implements OnInit {
       this.isRestoring = false;
       this.adminService.getResolutionDatabaseCount().subscribe(n => this.resolutionsInSQL = n);
       this.adminService.getResolutionMongoDbCount().subscribe(n => this.resolutionsInMGDB = n);
-    })
+    });
   }
 
   purgeResolutions() {

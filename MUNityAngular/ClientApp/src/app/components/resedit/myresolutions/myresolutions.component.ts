@@ -16,7 +16,7 @@ export class MyresolutionsComponent implements OnInit {
   constructor(public resolutionService: ResolutionService, public userSerivce: UserService) { }
 
   ngOnInit() {
-    if (this.userSerivce.isLoggedIn) {
+    if (this.userSerivce.session) {
       this.resolutionService.getMyResolutions().subscribe(n => {
         console.log(n);
         this.resolutions = n;

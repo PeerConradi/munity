@@ -25,10 +25,10 @@ export class ProfileComponent implements OnInit {
       id = this.route.snapshot.queryParamMap.get('id');
     }
 
-    this.userService.getUser(id).subscribe(n => {
-      this.user = n;
+    //this.userService.getUser(id).subscribe(n => {
+    //  this.user = n;
       
-    })
+    //})
   }
 
   @ViewChild('staticTabs') staticTabs: TabsetComponent;
