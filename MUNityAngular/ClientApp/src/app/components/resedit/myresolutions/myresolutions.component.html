@@ -1,5 +1,5 @@
 
-<p *ngIf="!userSerivce.isLoggedIn">Für diese Funktion musst du eingeloggt sein!</p>
+<p *ngIf="!userSerivce.session">Für diese Funktion musst du eingeloggt sein!</p>
 <div class="row" *ngIf="userSerivce.session">
   <div class="col-12">
     <div class="card">
