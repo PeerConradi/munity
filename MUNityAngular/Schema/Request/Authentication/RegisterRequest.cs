@@ -12,6 +12,12 @@ namespace MUNityAngular.Schema.Request.Authentication
         public string Username { get; set; }
 
         [Required]
+        public string Forename { get; set; }
+
+        [Required]
+        public string Lastname { get; set; }
+
+        [Required]
         public string Password { get; set; }
 
         [Required]

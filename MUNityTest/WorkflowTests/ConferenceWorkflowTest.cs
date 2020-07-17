@@ -240,7 +240,7 @@ namespace MUNityTest.WorkflowTests
             Assert.NotNull(role);
             
             var userService = new UserService(_context);
-            var user = userService.CreateUser("test", "123456", "test@mail.com", new DateTime(1990, 1, 1));
+            var user = userService.CreateUser("test", "Max", "Mustermann", "123456", "test@mail.com", new DateTime(1990, 1, 1));
             Assert.NotNull(user);
 
             var participation = service.Participate(user, role);

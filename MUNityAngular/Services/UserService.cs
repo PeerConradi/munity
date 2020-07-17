@@ -12,7 +12,7 @@ namespace MUNityAngular.Services
     {
         private readonly MunCoreContext _context;
 
-        public User CreateUser(string username, string password, string mail, DateTime birthday)
+        public User CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday)
         {
 
             if (!Util.Tools.InputCheck.IsOnlyCharsAndNumbers(username))
@@ -21,14 +21,29 @@ namespace MUNityAngular.Services
             if (_context.Users.Any(n => n.Username.ToLower() == username.ToLower()))
                 throw new ArgumentException("The username is already taken!");
 
-            
-            var user = new User();
-            user.Username = username;
-            user.Mail = mail;
+            // Save today's date.
+            var today = DateTime.Today;
+
+            // Calculate the age.
+            var age = today.Year - birthday.Year;
+
+            // Go back to the year the person was born in case of a leap year
+            if (birthday.Date > today.AddYears(-age)) age--;
+
+            if (age < 13)
+                throw new ArgumentException("you are to young to create an account!");
+
             var pass = Util.Hashing.PasswordHashing.InitHashing(password);
-            user.Password = pass.Key;
-            user.Salt = pass.Salt;
-            user.Birthday = birthday;
+            var user = new User
+            {
+                Username = username,
+                Mail = mail,
+                Forename = forename,
+                Lastname = lastname,
+                Password = pass.Key,
+                Salt = pass.Salt,
+                Birthday = birthday
+            };
 
             _context.Users.Add(user);
             _context.SaveChanges();

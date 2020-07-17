@@ -76,7 +76,7 @@ namespace MUNityTest.Service
             var options = Options.Create(settings);
             var service = new AuthService(_context, options);
             var userService = new UserService(_context);
-            userService.CreateUser("realuser", "realpass", "mail@rpovider.com", new DateTime(1990, 1, 1));
+            userService.CreateUser("realuser","Max", "Mustermann", "realpass", "mail@rpovider.com", new DateTime(1990, 1, 1));
 
             var model = new AuthenticateRequest();
             model.Username = "realuser";

@@ -31,7 +31,7 @@ namespace MUNityTest.Service
         public void TestCreateUser()
         {
             var service = new UserService(_context);
-            var user = service.CreateUser("MikeLitoris", "123456", "test@mail.com", new DateTime(1990, 1, 1));
+            var user = service.CreateUser("MikeLitoris", "Mike", "Litoris", "123456", "test@mail.com", new DateTime(1990, 1, 1));
             Assert.NotNull(user);
         }
 

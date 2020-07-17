@@ -8,7 +8,7 @@ namespace MUNityAngular.Services
 {
     public interface IUserService
     {
-        User CreateUser(string username, string password, string mail, DateTime birthday);
+        User CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday);
 
         Task<User> GetUserByUsername(string username);
 

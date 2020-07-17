@@ -10,19 +10,11 @@ namespace MUNityAngular.DataHandlers.EntityFramework
     public class MunityContext : DbContext
     {
 
-        public DbSet<Models.Gallery> Galleries { get; set; }
-
-        public DbSet<Models.MediaImage> MediaImages { get; set; }
-
         public DbSet<ResolutionAuth> ResolutionAuths { get; set; }
-
-        public DbSet<ResolutionUser> ResolutionUsers { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<Models.AuthKey>().HasKey(n => n.AuthKeyValue);
 
             // The ResolutionId is also the Primary Key.
             modelBuilder.Entity<ResolutionAuth>().HasKey(n => n.ResolutionId);

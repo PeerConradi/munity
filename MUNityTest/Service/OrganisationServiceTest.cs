@@ -66,7 +66,7 @@ namespace MUNityTest.Service
             var role = service.GetOrganisationRoles(_organisation.OrganisationId).FirstOrDefault();
             Assert.NotNull(role);
             var userService = new UserService(_context);
-            var user = userService.CreateUser("test", "123456", "test@mail.com", new DateTime(1990, 1, 1));
+            var user = userService.CreateUser("test", "Max", "Mustermann", "123456", "test@mail.com", new DateTime(1990, 1, 1));
             var result = service.AddUserToOrganisation(user, _organisation, role);
             Assert.NotNull(result);
             var reloadOrga = await service.GetOrganisation(_organisation.OrganisationId);
