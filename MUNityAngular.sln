@@ -12,13 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{73B0C415-518C-4A96-A8AA-CF36556A6B8A}"
-	ProjectSection(SolutionItems) = preProject
-		GettingStarted.md = GettingStarted.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{1AFD4FA1-1CAD-4999-8BDB-6150C56457B0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,9 +29,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{1AFD4FA1-1CAD-4999-8BDB-6150C56457B0} = {73B0C415-518C-4A96-A8AA-CF36556A6B8A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {493C11FC-2B4C-4110-AF9A-D86B8BC05B47}
