@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
       password: ['', Validators.required]
     });
 
-    if (this.userService.isLoggedIn) {
+    if (this.userService.session) {
       this.routerService.navigate(['/']);
     }
   }
@@ -43,7 +43,10 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+
     this.loading = true;
+
+
     this.userService.login(this.f.username.value, this.f.password.value).then(n => {
       this.loading = false;
       if (n) {

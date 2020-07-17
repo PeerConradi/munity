@@ -28,7 +28,11 @@ namespace MUNityAngular.Services
 
         public bool CanUserEditConference(User user, Conference conference)
         {
-            return true;
+            var participations = _context.Participations.Where(n => n.Role.Conference == conference &&
+                                                                    n.User == user);
+            var list = participations.ToList();
+            var canEdit = participations.Any(n => n.Role.RoleAuth.CanEditConferenceSettings);
+            return canEdit;
         }
 
         public bool CanUserEditResolution(User user, ResolutionV2 resolution)
@@ -47,11 +51,6 @@ namespace MUNityAngular.Services
         public bool CanCreateResolution(User user)
         {
             return true;
-        }
-
-        public User GetUserOfAuth(string authKey)
-        {
-            return null;
         }
 
         public AuthenticationResponse Authenticate(AuthenticateRequest model)

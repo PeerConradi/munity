@@ -27,7 +27,6 @@ export class SpeakerListService {
 
   public createSpeakerlist(conferenceid: string, committeeid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('conferenceid', conferenceid);
     headers = headers.set('committeeid', committeeid);
     let options = { headers: headers };
@@ -37,25 +36,17 @@ export class SpeakerListService {
 
   public getSpeakerlistById(id: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('id', id);
     let options = { headers: headers };
-    return this.http.get<Speakerlist>(this.baseUrl + 'api/Speakerlist/GetSpeakerlist',
-      options);
+    return this.http.get<Speakerlist>(this.baseUrl + 'api/Speakerlist/GetSpeakerlist');
   }
 
   public getSpeakerlistByPublicId(id: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    headers = headers.set('publicid', id);
-    let options = { headers: headers };
-    return this.http.get<Speakerlist>(this.baseUrl + 'api/Speakerlist/ReadSpeakerlist',
-      options);
+    return this.http.get<Speakerlist>(this.baseUrl + 'api/Speakerlist/ReadSpeakerlist');
   }
 
   public setSpeakertime(listid: string, time: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     headers = headers.set('time', time);
     let options = { headers: headers };
@@ -65,7 +56,6 @@ export class SpeakerListService {
 
   public setQuestionTime(listid: string, time: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     headers = headers.set('time', time);
     let options = { headers: headers };
@@ -75,7 +65,6 @@ export class SpeakerListService {
 
   public addSpeaker(listid: string, delegationid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     headers = headers.set('delegationid', delegationid);
     let options = { headers: headers };
@@ -85,7 +74,6 @@ export class SpeakerListService {
 
   public addSpeakerModel(listid: string, model: Delegation) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.post<Speakerlist>(this.baseUrl + 'api/Speakerlist/AddSpeakerModelToList', model,
@@ -94,7 +82,6 @@ export class SpeakerListService {
 
   public addQuestionModel(listid: string, model: Delegation) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.post<Speakerlist>(this.baseUrl + 'api/Speakerlist/AddQuestionModelToList', model,
@@ -103,7 +90,6 @@ export class SpeakerListService {
 
   public addQuestion(listid: string, delegationid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     headers = headers.set('delegationid', delegationid);
     let options = { headers: headers };
@@ -113,7 +99,6 @@ export class SpeakerListService {
 
   public nextSpeaker(listid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.post(this.baseUrl + 'api/Speakerlist/NextSpeaker', null,
@@ -122,7 +107,6 @@ export class SpeakerListService {
 
   public nextQuestion(listid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.post(this.baseUrl + 'api/Speakerlist/NextQuestion', null,
@@ -131,7 +115,6 @@ export class SpeakerListService {
 
   public startSpeaker(listid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.post(this.baseUrl + 'api/Speakerlist/StartSpeaker', null,
@@ -140,7 +123,6 @@ export class SpeakerListService {
 
   public clearSpeaker(listid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.put(this.baseUrl + 'api/Speakerlist/ClearSpeaker', null,
@@ -149,7 +131,6 @@ export class SpeakerListService {
 
   public clearQuestion(listid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.put(this.baseUrl + 'api/Speakerlist/ClearQuestion', null,
@@ -158,7 +139,6 @@ export class SpeakerListService {
 
   public startAnswer(listid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.post(this.baseUrl + 'api/Speakerlist/StartAnswer', null,
@@ -167,7 +147,6 @@ export class SpeakerListService {
 
   public startQuestion(listid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.post(this.baseUrl + 'api/Speakerlist/StartQuestion', null,
@@ -176,7 +155,6 @@ export class SpeakerListService {
 
   public stopTimer(listid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.post(this.baseUrl + 'api/Speakerlist/PauseTimer', null,
@@ -185,7 +163,6 @@ export class SpeakerListService {
 
   public removeSpeaker(listid: string, delegationid: string) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     headers = headers.set('delegationid', delegationid);
     let options = { headers: headers };
@@ -195,7 +172,6 @@ export class SpeakerListService {
 
   public reorderSpeaker(listid: string, items: Delegation[]) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.patch(this.baseUrl + 'api/Speakerlist/SpeakersOrderChanged', items,
@@ -204,7 +180,6 @@ export class SpeakerListService {
 
   public reorderQuestion(listid: string, items: Delegation[]) {
     let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
     headers = headers.set('listid', listid);
     let options = { headers: headers };
     return this.http.patch(this.baseUrl + 'api/Speakerlist/QuestionsOrderChanged', items,
@@ -225,7 +200,6 @@ export class SpeakerListService {
 
         let headers = new HttpHeaders();
         headers = headers.set('content-type', 'application/json; charset=utf-8');
-        headers = headers.set('auth', this.userService.getAuthOrDefault());
         headers = headers.set('publicid', publicid);
         headers = headers.set('connectionid', this.connectionid);
         let options = { headers: headers };

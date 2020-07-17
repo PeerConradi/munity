@@ -92,6 +92,8 @@ import { SimSimLobbyElementComponent } from './components/simsim/sim-sim-lobby-e
 import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component';
 import { ManagerStartupComponent } from './components/conference/manager-startup/manager-startup.component'
 
+import { AuthInterceptor } from './interceptor/AuthInterceptor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -182,7 +184,13 @@ import { ManagerStartupComponent } from './components/conference/manager-startup
     PopoverModule.forRoot()
     
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

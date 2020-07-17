@@ -24,6 +24,9 @@ namespace MUNityAngular.Models.Organisation
         public Organisation()
         {
             this.OrganisationId = Guid.NewGuid().ToString();
+            Roles = new List<OrganisationRole>();
+            Member = new List<OrganisationMember>();
+            Projects = new List<Project>();
         }
     }
 }

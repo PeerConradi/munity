@@ -24,25 +24,25 @@ export class AccountSettingsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userService.getCurrentUser().subscribe(n => this.user = n);
+    //this.userService.getCurrentUser().subscribe(n => this.user = n);
   }
 
   updateProfile() {
-    this.userService.updateUserinfo(this.user).subscribe();
+    //this.userService.updateUserinfo(this.user).subscribe();
   }
 
   onChangePassword(data) {
-    if (data.newpassword !== data.confirmpassword) {
-      this.passdontmatch = true;
-    } else {
-      this.passdontmatch = false;
-      this.userService.changePassword(data.oldpassword, data.newpassword).subscribe(n => {
-        this.userService.setSessionkey(n);
-        this.notifier.notify('success', 'Passwort wurde geändert.')
-      }, err => {
-          this.notifier.notify('error', 'Passwort konnte nicht geändert werden.')
-      });
-    }
+    //if (data.newpassword !== data.confirmpassword) {
+    //  this.passdontmatch = true;
+    //} else {
+    //  this.passdontmatch = false;
+    //  this.userService.changePassword(data.oldpassword, data.newpassword).subscribe(n => {
+    //    this.userService.setSessionkey(n);
+    //    this.notifier.notify('success', 'Passwort wurde geändert.')
+    //  }, err => {
+    //      this.notifier.notify('error', 'Passwort konnte nicht geändert werden.')
+    //  });
+    //}
   }
 
   

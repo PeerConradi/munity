@@ -4,24 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Schema.Request
+namespace MUNityAngular.Schema.Request.Conference
 {
-    public class CreateConferenceRequest
+    public class CreateProjectRequest
     {
         [Required]
-        public string ProjectId { get; set; }
+        public string OrganisationId { get; set; }
 
         [Required]
         public string Name { get; set; }
 
         [Required]
-        public string FullName { get; set; }
-
-        [Required]
         public string Abbreviation { get; set; }
-
-        public DateTime StartDate { get; set; }
-
-        public DateTime EndDate { get; set; }
     }
 }

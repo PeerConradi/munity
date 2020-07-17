@@ -16,11 +16,7 @@ export class NavMenuComponent implements OnInit{
   }
 
   ngOnInit() {
-    if (this.userSerivce.isLoggedIn) {
-      this.userSerivce.getIsAdmin().subscribe(n => {
-        this.isAdmin = n;
-      });
-    }
+    
   }
 
   collapse() {
@@ -29,5 +25,9 @@ export class NavMenuComponent implements OnInit{
 
   toggle() {
     this.isExpanded = !this.isExpanded;
+  }
+
+  vip() {
+    this.userSerivce.justForVIP().subscribe(n => console.log(n), err => console.log(err));
   }
 }

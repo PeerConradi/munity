@@ -6,6 +6,7 @@ import { resolve } from 'dns';
 import { Registration } from '../models/registration.model';
 import { User } from '../models/user.model';
 import { UserAuths } from '../models/user-auths.model';
+import { AuthenticationResponse } from '../models/authentication-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,35 +17,45 @@ export class UserService {
 
   public currentUser: User = null;
 
-  public get isLoggedIn(): boolean {
-    if (this.sessionkey() != '' && this.sessionkey() != null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public getAuthOrDefault(): string {
-    let key = this.sessionkey();
-    if (key == null || key == '') {
-      key = 'default';
-    }
-    return key;
-  }
+  public session: AuthenticationResponse = null;
 
   private baseUrl: string;
 
 
-  public sessionkey(): string {
-    return localStorage.getItem('munity_session_key');
+  public sessionkey(): AuthenticationResponse {
+    const val = localStorage.getItem('munity_session_key');
+    console.log(val);
+    if (val == null || val === "" || val === "undefined")
+      return null;
+    return JSON.parse(val);
   }
 
-  public setSessionkey(val: string) {
-    localStorage.setItem('munity_session_key', val);
+  public setSessionkey(val: AuthenticationResponse) {
+    console.log(val);
+    const str = JSON.stringify(val);
+    console.log(str);
+    localStorage.setItem('munity_session_key', str);
   }
 
   public register(model: Registration) {
     return this.http.post<User>(this.baseUrl + 'api/User/Register', model);
+  }
+
+  public async login(username: string, password: string): Promise<boolean> {
+    const auth = new AuthenticateRequest(username, password);
+    const result = await this.http.post<AuthenticationResponse>(this.baseUrl + 'api/user/login', auth).toPromise();
+    if (result != null) {
+      this.session = result;
+      this.setSessionkey(result);
+      return true;
+    } else {
+      this.setSessionkey(null);
+      return false;
+    }
+  }
+
+  public justForVIP() {
+    return this.http.get<string>(this.baseUrl + "api/user/justforvip");
   }
 
   public checkUsername(username: string) {
@@ -55,118 +66,21 @@ export class UserService {
     return this.http.get<boolean>(this.baseUrl + 'api/User/CheckMail?mail=' + username);
   }
 
-  public changePassword(oldpassword: string, newpassword: string) {
-    if (this.isLoggedIn == false) {
-      return;
-    }
-
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.sessionkey());
-    headers = headers.set('oldpassword', encodeURI(oldpassword + '|'));
-    headers = headers.set('newpassword', encodeURI(newpassword + '|'));
-    let options = { headers: headers };
-    return this.http.get<string>(this.baseUrl + 'api/User/ChangePassword',
-      options);
-  }
-
-  public validateKey(key: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.sessionkey());
-    let options = { headers: headers };
-    var cmd = this.http.get(this.baseUrl + 'api/User/ValidateKey',
-      options);
-    //Whit every Auth-Key validation also update the user!
-    if (this.sessionkey() !== '') {
-      cmd.subscribe(n => {
-        this.getMe().subscribe(user => this.currentUser = user);
-      });
-    }
-
-    return cmd;
-  }
-
   public logout() {
-    
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.sessionkey());
-    let options = { headers: headers };
-    this.http.post(this.baseUrl + 'api/User/Logout',null, options).subscribe(msg => {
-      this.setSessionkey('');
-      this._loggedIn = false;
-    }, err => {
-        console.log('Fehler beim abmelden')
-    });
-  }
-
-  public async login(username: string, password: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('username', username);
-    headers = headers.set('password', password);
-    let error = false;
-    let options = { headers: headers };
-    await this.http.get<Login>(this.baseUrl + 'api/User/Login', options).toPromise().then(msg => {
-      this.setSessionkey(msg.Key);
-      this.currentUser = msg.User;
-      this._loggedIn = true;
-    }).catch(err => error = true);
-    if (error == false)
-      return true;
-    else
-      return false;
-  }
-
-  public getUser(username: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.getAuthOrDefault());
-    headers = headers.set('username', username);
-    return this.http.get<User>(this.baseUrl + 'api/User/GetUserByUsername', { headers: headers });
-  }
-
-  public getUserAuths() {
-    //CanUserCreateConference
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.getAuthOrDefault());
-    return this.http.get<UserAuths>(this.baseUrl + 'api/User/GetKeyAuths', { headers: headers });
-  }
-
-  public getIsAdmin() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.getAuthOrDefault());
-    return this.http.get<boolean>(this.baseUrl + 'api/User/IsAdmin', { headers: headers });
-  }
-
-  public getCurrentUser() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.getAuthOrDefault());
-    return this.http.get<User>(this.baseUrl + 'api/User/GetAuthUser', { headers: headers });
-  }
-
-  public updateUserinfo(model: User) {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.getAuthOrDefault());
-    return this.http.patch(this.baseUrl + 'api/User/UpdateUserinfo', model, { headers: headers });
-  }
-
-  //Updates the Auth-Key
-  //you can check if current user is not null!
-  public getMe() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.getAuthOrDefault());
-    return this.http.get<User>(this.baseUrl + 'api/User/GetUserOfAuth', { headers: headers });
+    this.session = null;
+    this.setSessionkey(null);
   }
 
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
-    //Beim laden den letzten Auth-Key überprüfen
+    this.session = this.sessionkey();
+  }
+}
 
-    if (this.sessionkey() != '') {
-      this.validateKey(this.sessionkey()).subscribe(valid => {
-      },
-        err => {
-          this.setSessionkey('');
-        });
-    }
-    
+class AuthenticateRequest {
+
+  constructor(public username: string, public password: string) {
+
   }
 }
 

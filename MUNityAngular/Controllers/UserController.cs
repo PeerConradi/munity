@@ -25,6 +25,7 @@ namespace MUNityAngular.Controllers
 
         /// <summary>
         /// Get the basic information of a user.
+        /// This function can only used when authorized with a baerer token.
         /// </summary>
         /// <param name="userService"></param>
         /// <param name="username"></param>
@@ -37,6 +38,12 @@ namespace MUNityAngular.Controllers
             return await userService.GetUserByUsername(username);
         }
 
+        /// <summary>
+        /// Registers a new User.
+        /// </summary>
+        /// <param name="userService"></param>
+        /// <param name="body">a RegisterRequest Body</param>
+        /// <returns>The model of the created user himself with all importand informations.</returns>
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]

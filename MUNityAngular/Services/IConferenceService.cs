@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.Models.Conference;
+using MUNityAngular.Models.Conference.Roles;
 using MUNityAngular.Models.Organisation;
 
 namespace MUNityAngular.Services
@@ -20,6 +21,13 @@ namespace MUNityAngular.Services
         Committee CreateCommittee(Conference conference, string name, string fullname, string abbreviation);
 
         Task<Committee> GetCommittee(string id);
+
+        public TeamRole CreateLeaderRole(Conference conference);
+
+        public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null,
+            RoleAuth auth = null);
+
+        public Participation Participate(Models.Core.User user, AbstractRole role);
 
 
     }

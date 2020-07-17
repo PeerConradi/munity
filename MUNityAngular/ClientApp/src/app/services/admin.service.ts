@@ -17,60 +17,39 @@ export class AdminService {
 
   //Get the Count of Resolutions that exist inside the MongoDb
   public getResolutionMongoDbCount() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    let options = { headers: headers };
-    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetResolutionMongoCount', options);
+    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetResolutionMongoCount');
   }
 
   //Get the Count of Resolutions that exist inside the MySQL Database.
   public getResolutionDatabaseCount() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    let options = { headers: headers };
-    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetResolutionDatabaseCount', options);
+    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetResolutionDatabaseCount');
   }
 
   public getUsers() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    let options = { headers: headers };
-    return this.httpClient.get<User[]>(this.baseUrl + 'api/Admin/GetAllUsers', options);
+    return this.httpClient.get<User[]>(this.baseUrl + 'api/Admin/GetAllUsers');
   }
 
   public getUserCount() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetUserCount', { headers: headers });
+    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetUserCount');
   }
 
   public getConferenceCount() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetConferenceCount', { headers: headers });
+    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetConferenceCount');
   }
 
   public getConferenceCacheCount() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetConferenceCacheCount', { headers: headers });
+    return this.httpClient.get<number>(this.baseUrl + 'api/Admin/GetConferenceCacheCount');
   }
 
   public getConferences() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/GetConferences', { headers: headers });
+    return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/GetConferences');
   }
 
   public restoreResolutions() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/RestoreResolutions', { headers: headers });
+    return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/RestoreResolutions');
   }
 
   public purgeResolutions() {
-    let headers = new HttpHeaders();
-    headers = headers.set('auth', this.userService.getAuthOrDefault());
-    return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/PurgeResolutions', { headers: headers });
+    return this.httpClient.get<Conference[]>(this.baseUrl + 'api/Admin/PurgeResolutions');
   }
 }

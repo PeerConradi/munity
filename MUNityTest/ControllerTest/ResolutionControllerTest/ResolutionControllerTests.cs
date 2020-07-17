@@ -14,11 +14,11 @@ namespace MUNityTest.ControllerTest.ResolutionControllerTest
     public class ResolutionControllerTests
     {
         [Fact]
-        public async Task GetConferenceReturnsNull()
+        public async Task TestCreatePublicResolution()
         {
             var mockService = new Mock<IResolutionService>();
             mockService.Setup(service =>
-                service.CreateResolution("test")).ReturnsAsync(GetTestResolution);
+                service.CreatePublicResolution("test")).ReturnsAsync(GetTestResolution);
             var controller = new ResolutionController(null);
 
             var result = await controller.CreatePublic("test", mockService.Object);

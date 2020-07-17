@@ -9,6 +9,7 @@ using MUNityAngular.DataHandlers.EntityFramework;
 using System.Text.RegularExpressions;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
+using MUNityAngular.Exceptions.ConferenceExceptions;
 using MUNityAngular.Models.Conference;
 using MUNityAngular.Models.Conference.Roles;
 using MUNityAngular.Models.Organisation;
@@ -42,8 +43,23 @@ namespace MUNityAngular.Services
             return _context.Projects.FirstOrDefaultAsync(n => n.ProjectId == id);
         }
 
+        /// <summary>
+        /// Creates an empty conference. This conference does not contain any roles
+        /// participations etc.
+        /// </summary>
+        /// <param name="name">The name of the conference like MUN Schleswig-Holstein 2021</param>
+        /// <param name="fullname">The full name of the conference for example Model United Nations Schleswig-Holstein 2021</param>
+        /// <param name="abbreviation">A short name of the conference like: MUN-SH 2021</param>
+        /// <param name="project">The project that this conference belongs to. Like the Model United Nations Schleswig-Holstein projects.</param>
+        /// <returns></returns>
         public Conference CreateConference(string name, string fullname, string abbreviation, Project project)
         {
+            if (_context.Conferences.Any(n => n.Name == name || n.FullName == fullname))
+                throw new NameAlreadyTakenException("The conferencename or Fullname is already taken by another conference.");
+
+            if (project == null)
+                throw new ArgumentException("The project cannot be null!");
+
             var conference = new Conference();
             conference.Name = name;
             conference.FullName = fullname;
@@ -58,11 +74,24 @@ namespace MUNityAngular.Services
             return conference;
         }
 
+        /// <summary>
+        /// Gets a conference with the given id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Task<Conference> GetConference(string id)
         {
             return _context.Conferences.Include(n => n.Committees).FirstOrDefaultAsync(n => n.ConferenceId == id);
         }
 
+        /// <summary>
+        /// Creates a Committee for a conference.
+        /// </summary>
+        /// <param name="conference"></param>
+        /// <param name="name"></param>
+        /// <param name="fullname"></param>
+        /// <param name="abbreviation"></param>
+        /// <returns></returns>
         public Committee CreateCommittee(Conference conference, string name, string fullname, string abbreviation)
         {
             if (conference == null)
@@ -92,6 +121,34 @@ namespace MUNityAngular.Services
         public Task<Committee> GetCommittee(string id)
         {
             return _context.Committees.FirstOrDefaultAsync(n => n.CommitteeId == id);
+        }
+
+        public TeamRole CreateLeaderRole(Conference conference)
+        {
+            var roleAuth = new RoleAuth
+            {
+                RoleAuthName = "Leader",
+                Conference = conference,
+                CanEditConferenceSettings = true,
+                CanSeeApplications = true,
+                CanEditParticipations = true,
+                PowerLevel = 1
+            };
+            _context.RoleAuths.Add(roleAuth);
+            var role = new TeamRole
+            {
+                Conference = conference,
+                RoleAuth = roleAuth,
+                RoleName = "Leader",
+                ApplicationState = EApplicationStates.Closed,
+                ApplicationValue = "",
+                IconName = "default",
+                ParentTeamRole = null,
+                TeamRoleGroup = 1
+            };
+            _context.TeamRoles.Add(role);
+            _context.SaveChanges();
+            return role;
         }
 
         public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null, RoleAuth auth = null)

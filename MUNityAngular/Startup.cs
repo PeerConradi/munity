@@ -123,6 +123,7 @@ namespace MUNityAngular
             //services.AddScoped<Services.InstallationService>();
             services.AddScoped<Services.AuthService>();
             services.AddScoped<Services.IUserService, Services.UserService>();
+            services.AddScoped<Services.IOrganisationService, Services.OrganisationService>();
             services.AddScoped<Services.ResolutionService>();
             services.AddScoped<Services.PresenceService>();
             services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
@@ -214,7 +215,17 @@ namespace MUNityAngular
                 }
             });
 
-            UpdateDatabase(app);
+            try
+            {
+                UpdateDatabase(app);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine("Database-Service not found. Make sure that the MariaDB service is started and the app can access it.");
+                throw;
+            }
+            
         }
 
         private static void UpdateDatabase(IApplicationBuilder app)

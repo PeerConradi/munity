@@ -231,8 +231,8 @@ export class SimulationService {
     });
 
     this._hubConnection.on('UserLeft', (user: SimulationUser) => {
-      const inList = simulation.Users.findIndex(n => n.UserToken == user.UserToken);
-      if (inList != -1)
+      const inList = simulation.Users.findIndex((n => n.UserToken === user.UserToken) as any);
+      if (inList !== -1)
         simulation.Users = simulation.Users.splice(inList, 1);
     });
 
@@ -260,8 +260,8 @@ export class SimulationService {
     });
 
     this._hubConnection.on('RequestRemoved', (request: SimulationRequest) => {
-      let index = simulation.Requests.findIndex(n => n.SimSImRequestModelId == request.SimSImRequestModelId);
-      if (index != -1) {
+      let index = simulation.Requests.findIndex((n => n.SimSImRequestModelId === request.SimSImRequestModelId) as any);
+      if (index !== -1) {
         simulation.Requests = simulation.Requests.splice(index, 1);
       }
     });

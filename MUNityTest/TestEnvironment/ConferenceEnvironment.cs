@@ -21,6 +21,8 @@ namespace MUNityTest.TestEnvironment
             context.Users.Add(TestUserMike);
             context.Users.Add(TestUserMillie);
             context.Users.Add(TestUserFinn);
+            context.RoleAuths.Add(RoleAuthLeader);
+            context.RoleAuths.Add(RoleAuthPesant);
             context.TeamRoles.Add(TestRoleProjectLeader);
             context.TeamRoles.Add(TestRoleSecretaryLeader);
             context.SaveChanges();
@@ -207,6 +209,48 @@ namespace MUNityTest.TestEnvironment
             }
         }
 
+        private RoleAuth _roleAuthLeader;
+
+        public RoleAuth RoleAuthLeader
+        {
+            get
+            {
+                if (_roleAuthLeader == null)
+                {
+                    _roleAuthLeader = new RoleAuth
+                    {
+                        Conference = TestConference,
+                        CanEditConferenceSettings = true,
+                        CanEditParticipations = true,
+                        CanSeeApplications = true
+                    };
+                }
+
+                return _roleAuthLeader;
+            }
+        }
+
+        private RoleAuth _roleAuthPesant;
+
+        public RoleAuth RoleAuthPesant
+        {
+            get
+            {
+                if (_roleAuthPesant == null)
+                {
+                    _roleAuthPesant = new RoleAuth
+                    {
+                        Conference = TestConference,
+                        CanEditConferenceSettings = false,
+                        CanEditParticipations = false,
+                        CanSeeApplications = false
+                    };
+                }
+
+                return _roleAuthPesant;
+            }
+        }
+
         private TeamRole _teamRoleProjectLeader;
 
         public TeamRole TestRoleProjectLeader
@@ -218,6 +262,7 @@ namespace MUNityTest.TestEnvironment
                     _teamRoleProjectLeader = new TeamRole();
                     _teamRoleProjectLeader.RoleName = "Projektleitung";
                     _teamRoleProjectLeader.Conference = TestConference;
+                    _teamRoleProjectLeader.RoleAuth = RoleAuthLeader;
                     _teamRoleProjectLeader.ApplicationState = EApplicationStates.Closed;
                 }
 
@@ -253,6 +298,7 @@ namespace MUNityTest.TestEnvironment
                     _pressRole.RoleName = "Zeitungs-Journalist";
                     _pressRole.PressCategory = PressRole.EPressCategories.Print;
                     _pressRole.Conference = TestConference;
+                    _pressRole.RoleAuth = RoleAuthPesant;
                 }
 
                 return _pressRole;

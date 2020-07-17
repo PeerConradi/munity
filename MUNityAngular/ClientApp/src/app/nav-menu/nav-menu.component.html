@@ -19,11 +19,14 @@
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/s/start']">Redeliste</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
+          <!--<li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/simulator']">Simulation <span class="badge badge-success">Neu</span></a>
+          </li>-->
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" (click)="vip()">VIP-Test</a>
           </li>
           <li>
-            <form class="form-inline" *ngIf="!userSerivce.isLoggedIn">
+            <form class="form-inline" *ngIf="!userSerivce.session">
               <button id="loginButton" class="btn btn-outline-success" type="button"
                       [routerLink]="['/login']">
                 Anmelden
@@ -34,7 +37,7 @@
               </button>
             </form>
 
-            <div class="btn-group" container="body" *ngIf="userSerivce.isLoggedIn" dropdown>
+            <div class="btn-group" container="body" *ngIf="userSerivce.session" dropdown>
               <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-primary dropdown-toggle"
                       aria-controls="dropdown-container">
                 Menü <span class="caret"></span>

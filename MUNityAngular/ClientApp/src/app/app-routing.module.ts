@@ -41,6 +41,8 @@ import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-
 import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component';
 import { ManagerStartupComponent } from "./components/conference/manager-startup/manager-startup.component"
 
+import { AuthGuard } from "./shared/auth.guard";
+
 const routes: Routes = [
   // Routes that have no default theme!
   
@@ -69,7 +71,7 @@ const routes: Routes = [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'logout', component: LogoutComponent },
-      { path: 'account/settings', component: AccountSettingsComponent },
+      { path: 'account/settings', component: AccountSettingsComponent, canActivate: [AuthGuard] },
       { path: 'u/:id', component: ProfileComponent },
 
       //// Login is a custom form and not in this layout, register could also be moved someday

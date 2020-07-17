@@ -6,6 +6,7 @@ using MUNityAngular.Models;
 using MUNityAngular.Models.Core;
 using MUNityAngular.Schema.Request.Authentication;
 using MUNityAngular.Services;
+using MUNityTest.TestEnvironment;
 using NUnit.Framework;
 
 namespace MUNityTest.Service
@@ -66,6 +67,55 @@ namespace MUNityTest.Service
             model.Password = "password";
             var tokenResult = service.Authenticate(model);
             Assert.Null(tokenResult);
+        }
+
+        [Test]
+        public void TestLoginInvalidPassword()
+        {
+            var settings = new AppSettings() { Secret = "This key needs to be really long to actually work" };
+            var options = Options.Create(settings);
+            var service = new AuthService(_context, options);
+            var userService = new UserService(_context);
+            userService.CreateUser("realuser", "realpass", "mail@rpovider.com", new DateTime(1990, 1, 1));
+
+            var model = new AuthenticateRequest();
+            model.Username = "realuser";
+            model.Password = "password";
+            var tokenResult = service.Authenticate(model);
+            Assert.Null(tokenResult);
+        }
+
+        [Test]
+        public void TestUserCanEditConferece()
+        {
+            // Create the auth Service
+            var settings = new AppSettings() { Secret = "This key needs to be really long to actually work" };
+            var options = Options.Create(settings);
+            var service = new AuthService(_context, options);
+
+            var conferenceService = new ConferenceService(_context);
+
+            // Create Test Conference Environment!
+            var env = new ConferenceEnvironment(_context);
+
+            // Let Max Mustermann be the leader
+            conferenceService.Participate(env.TestUserMax, env.TestRoleProjectLeader);
+
+            // Max should be able to edit the conference Settings
+            Assert.True(service.CanUserEditConference(env.TestUserMax, env.TestConference));
+
+            // Let Mike be a Press Role Participant
+            conferenceService.Participate(env.TestUserMike, env.TestPressRole);
+
+            // Mike should not be able to edit the conference Settings
+            Assert.False(service.CanUserEditConference(env.TestUserMike, env.TestConference));
+
+            // Milli is has two roles she is the leader and is also a paticipant inside the
+            // PressTeam. This is unlikely to ever occur but this should cover that the highest of
+            // your roles is considered for authentication!
+            conferenceService.Participate(env.TestUserMillie, env.TestRoleProjectLeader);
+            conferenceService.Participate(env.TestUserMillie, env.TestPressRole);
+            Assert.True(service.CanUserEditConference(env.TestUserMillie, env.TestConference));
         }
     }
 }

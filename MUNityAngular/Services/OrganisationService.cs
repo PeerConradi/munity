@@ -9,7 +9,7 @@ using MUNityAngular.Models.Organisation;
 
 namespace MUNityAngular.Services
 {
-    public class OrganisationService
+    public class OrganisationService : IOrganisationService
     {
         private MunCoreContext _context;
 
