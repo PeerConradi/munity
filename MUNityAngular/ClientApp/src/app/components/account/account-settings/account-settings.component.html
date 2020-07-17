@@ -1,8 +1,8 @@
-<div *ngIf="!userService.isLoggedIn" class="alert alert-danger" role="alert">
+<div *ngIf="!userService.session" class="alert alert-danger" role="alert">
   Um diesen Bereich zu sehen müssen Sie angemeldet sein.
 </div>
 
-<div *ngIf="userService.isLoggedIn && user" class="row">
+<div *ngIf="userService.session && user" class="row">
   <div class="col-12">
     <app-munity-box title="Konto Informationen">
       <form>

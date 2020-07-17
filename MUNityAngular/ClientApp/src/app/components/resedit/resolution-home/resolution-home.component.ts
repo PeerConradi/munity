@@ -18,7 +18,7 @@ export class ResolutionHomeComponent implements OnInit {
   public displayId: string = "";
 
   constructor(public service: ResolutionService, private router: Router,
-    private readonly nofitier: NotifierService, public userService: UserService) { }
+    private nofitier: NotifierService, public userService: UserService) { }
 
   ngOnInit() {
   }

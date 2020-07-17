@@ -4,7 +4,7 @@
       <div class="card shadow-lg border-dark">
         <div class="card-header">Anmelden</div>
         <div class="card-body">
-          <form class="login-title" *ngIf="!success && !userService.isLoggedIn" [formGroup]="loginForm"
+          <form class="login-title" *ngIf="!success && !userService.session" [formGroup]="loginForm"
                 (ngSubmit)="onSubmit()">
             <h1>Anmeldung</h1>
             <div class="form-group">

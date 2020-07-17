@@ -29,8 +29,6 @@ export class MunityBoxComponent implements OnInit {
 
   closed = false;
 
-
-
   constructor() {
 
   }

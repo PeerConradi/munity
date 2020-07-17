@@ -1,6 +1,6 @@
 
 <p *ngIf="!userSerivce.isLoggedIn">Für diese Funktion musst du eingeloggt sein!</p>
-<div class="row" *ngIf="userSerivce.isLoggedIn">
+<div class="row" *ngIf="userSerivce.session">
   <div class="col-12">
     <div class="card">
       <div class="card-header clearfix">

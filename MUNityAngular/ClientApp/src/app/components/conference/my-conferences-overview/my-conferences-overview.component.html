@@ -1,4 +1,4 @@
-<p *ngIf="!this.userService.isLoggedIn">Um diesen Bereich sehen zu können musst du eingeloggt sein.</p>
+<p *ngIf="!this.userService.session">Um diesen Bereich sehen zu können musst du eingeloggt sein.</p>
 
 <div *ngIf="this.userService.isLoggedIn">
   <h3>Konferenzverwaltung</h3>

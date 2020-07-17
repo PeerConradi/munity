@@ -16,7 +16,7 @@ export class UserManagementComponent implements OnInit {
   ngOnInit() {
     this.adminService.getUsers().subscribe(n => {
       this.allUsers = n;
-    })
+    });
   }
 
 }
