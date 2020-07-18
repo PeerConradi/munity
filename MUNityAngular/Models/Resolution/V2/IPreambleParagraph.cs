@@ -8,6 +8,6 @@ namespace MUNityAngular.Models.Resolution.V2
 
         string Text { get; set; }
 
-        List<INoticeModel> Notices { get; set; }
+        List<Notice> Notices { get; set; }
     }
 }

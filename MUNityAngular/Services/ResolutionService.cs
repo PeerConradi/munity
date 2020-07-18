@@ -15,6 +15,8 @@ using MUNityAngular.Models.Core;
 
 namespace MUNityAngular.Services
 {
+
+    [Obsolete("Use the NewResolutionService in future implementations!")]
     public class ResolutionService
     {
         private CacheService _cacheService;

@@ -11,8 +11,8 @@ namespace MUNityAngular.Models.Resolution.V2
         public List<OperativeParagraph> Paragraphs { get; set; }
         public List<ChangeAmendmentModel> ChangeAmendments { get; set; }
         public List<AddAmendmentModel> AddAmendments { get; set; }
-        public List<MoveAmendment> MoveAmendments { get; set; }
-        public List<DeleteAmendmentModel> DeleteAmendments { get; set; }
+        public List<MoveAmendmentModel> MoveAmendments { get; set; }
+        public List<DeleteAmendment> DeleteAmendments { get; set; }
 
         public OperativeSection()
         {
@@ -20,8 +20,8 @@ namespace MUNityAngular.Models.Resolution.V2
             Paragraphs = new List<OperativeParagraph>();
             ChangeAmendments = new List<ChangeAmendmentModel>();
             AddAmendments = new List<AddAmendmentModel>();
-            MoveAmendments = new List<MoveAmendment>();
-            DeleteAmendments = new List<DeleteAmendmentModel>();
+            MoveAmendments = new List<MoveAmendmentModel>();
+            DeleteAmendments = new List<DeleteAmendment>();
         }
     }
 }

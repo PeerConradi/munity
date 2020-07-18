@@ -51,7 +51,9 @@ namespace MUNityAngular.Controllers
         {
             try
             {
-                return userService.CreateUser(body.Username, body.Forename, body.Lastname, body.Password, body.Mail, body.Birthday);
+                var user =
+                     userService.CreateUser(body.Username, body.Forename, body.Lastname, body.Password, body.Mail, body.Birthday);
+                return Ok(user);
             }
             catch (Exception e)
             {

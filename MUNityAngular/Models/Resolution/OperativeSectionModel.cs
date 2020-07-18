@@ -185,7 +185,7 @@ namespace MUNityAngular.Models.Resolution
         public int ChangeAmendmentCount { get => Amendments.OfType<ChangeAmendmentModel>().Count(); }
 
         [DataMember]
-        public int MoveAmendmentCount { get => Amendments.OfType<MoveAmendment>().Count(); }
+        public int MoveAmendmentCount { get => Amendments.OfType<MoveAmendmentModel>().Count(); }
 
 
         private static readonly string levelTwoLetters = "abcdefghijklmnopqrstuvwxyz";

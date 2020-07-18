@@ -9,12 +9,12 @@ namespace MUNityAngular.Models.Resolution.V2
     {
         public string PreambleParagraphId { get; set; }
         public string Text { get; set; }
-        public List<INoticeModel> Notices { get; set; }
+        public List<Notice> Notices { get; set; }
 
         public PreambleParagraph()
         {
             PreambleParagraphId = Util.Tools.IdGenerator.RandomString(36);
-            Notices = new List<INoticeModel>();
+            Notices = new List<Notice>();
         }
     }
 }

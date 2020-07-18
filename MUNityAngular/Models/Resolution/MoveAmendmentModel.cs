@@ -9,7 +9,9 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MUNityAngular.Models.Resolution
 {
-    public class MoveAmendment : AbstractAmendment
+
+    
+    public class MoveAmendmentModel : AbstractAmendment
     {
         public int NewPosition { get; set; }
 
@@ -80,7 +82,7 @@ namespace MUNityAngular.Models.Resolution
             base.Submit();
         }
 
-        public MoveAmendment(string id = null)
+        public MoveAmendmentModel(string id = null)
         {
             this.ID = id ?? Guid.NewGuid().ToString();
         }

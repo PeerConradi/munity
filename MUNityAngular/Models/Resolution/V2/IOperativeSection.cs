@@ -15,8 +15,8 @@ namespace MUNityAngular.Models.Resolution.V2
 
         List<AddAmendmentModel> AddAmendments { get; set; }
 
-        List<MoveAmendment> MoveAmendments { get; set; }
+        List<MoveAmendmentModel> MoveAmendments { get; set; }
 
-        List<DeleteAmendmentModel> DeleteAmendments { get; set; }
+        List<DeleteAmendment> DeleteAmendments { get; set; }
     }
 }

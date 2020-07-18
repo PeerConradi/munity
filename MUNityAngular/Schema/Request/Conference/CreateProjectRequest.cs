@@ -12,9 +12,11 @@ namespace MUNityAngular.Schema.Request.Conference
         public string OrganisationId { get; set; }
 
         [Required]
+        [MaxLength(300)]
         public string Name { get; set; }
 
         [Required]
+        [MaxLength(16)]
         public string Abbreviation { get; set; }
     }
 }

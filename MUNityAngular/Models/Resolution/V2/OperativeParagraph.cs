@@ -14,8 +14,6 @@ namespace MUNityAngular.Models.Resolution.V2
         public string Text { get; set; }
         public bool Visible { get; set; }
 
-        public string ActivatedAmendmentId { get; set; }
-
         public List<OperativeParagraph> Children { get; set; }
 
         public OperativeParagraph()

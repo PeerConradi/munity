@@ -9,10 +9,11 @@ namespace MUNityAngular.Schema.Request.Organisation
     public class CreateOrganisationRequest
     {
         [Required]
-        
+        [MaxLength(300)]
         public string OrganisationName { get; set; }
 
         [Required]
+        [MaxLength(16)]
         public string Abbreviation { get; set; }
     }
 }

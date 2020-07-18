@@ -112,7 +112,7 @@ namespace MUNityTest.Resolution
             var noiseOne = new DeleteAmendmentModel() { TargetSection = sectionOne };
             var noiseTwo = new ChangeAmendmentModel() { TargetSection = sectionOne };
             var noiseThree = new DeleteAmendmentModel() { TargetSection = sectionOneOne };
-            var noiseFour = new MoveAmendment() { TargetSection = sectionOneTwo };
+            var noiseFour = new MoveAmendmentModel() { TargetSection = sectionOneTwo };
 
             //Änderungsanträge die erhalten bleiben sollen
             var keepOne = new DeleteAmendmentModel() { TargetSection = sectionTwo };

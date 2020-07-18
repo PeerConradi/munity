@@ -880,7 +880,7 @@ namespace MUNityAngular.Controllers
 
         //    if (int.TryParse(newposition, out int np))
         //    {
-        //        var amendment = new MoveAmendment();
+        //        var amendment = new MoveAmendmentModel();
         //        amendment.SubmitterName = submittername.DecodeUrl();
         //        amendment.NewPosition = np;
         //        amendment.TargetSection = section;

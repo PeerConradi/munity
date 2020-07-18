@@ -17,7 +17,7 @@ namespace MUNityTest.Resolution
         [Test]
         public void TestCreateMoveAmendment()
         {
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             Assert.IsNotNull(amendment);
         }
 
@@ -27,7 +27,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("sectionOne");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionTwo;
             amendment.NewPosition = 0;
             Assert.IsTrue(resolution.Amendments.Contains(amendment));
@@ -41,7 +41,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("sectionOne");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionTwo;
             amendment.NewPosition = 0;
             Assert.IsTrue(resolution.Amendments.Contains(amendment));
@@ -61,7 +61,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("sectionOne");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionTwo;
             amendment.NewPosition = 0;
             amendment.Submit();
@@ -79,7 +79,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("sectionOne");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionTwo;
             amendment.NewPosition = 0;
             amendment.Activate();
@@ -98,7 +98,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("sectionOne");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionTwo;
             amendment.NewPosition = 0;
             amendment.Activate();
@@ -112,7 +112,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("sectionOne");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionTwo;
             amendment.NewPosition = 0;
             amendment.Activate();
@@ -128,7 +128,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("sectionOne");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionTwo;
             amendment.NewPosition = 0;
             amendment.Remove();
@@ -142,7 +142,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("section One");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionOne;
             amendment.NewPosition = 1;
             var sectionThree = resolution.AddOperativeParagraph("section Three");
@@ -155,7 +155,7 @@ namespace MUNityTest.Resolution
             var resolution = new ResolutionModel();
             var sectionOne = resolution.AddOperativeParagraph("section One");
             var sectionTwo = resolution.AddOperativeParagraph("sectionTwo");
-            var amendment = new MoveAmendment();
+            var amendment = new MoveAmendmentModel();
             amendment.TargetSection = sectionOne;
             amendment.NewPosition = 1;
             var sectionThree = resolution.AddOperativeParagraph(0);

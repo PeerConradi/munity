@@ -195,7 +195,7 @@ namespace MUNityTest.Resolution
         //    var deleteAmendment = new DeleteAmendmentModel();
         //    deleteAmendment.TargetSection = sectionOne;
 
-        //    var moveAmendment = new MoveAmendment();
+        //    var moveAmendment = new MoveAmendmentModel();
         //    moveAmendment.TargetSection = sectionOne;
         //    moveAmendment.NewPosition = 1;
 

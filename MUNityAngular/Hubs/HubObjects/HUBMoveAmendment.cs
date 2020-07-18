@@ -19,10 +19,10 @@ namespace MUNityAngular.Hubs.HubObjects
 
         public string NewSectionID { get; set; }
 
-        public HUBMoveAmendment(MoveAmendment amendment) : base (amendment)
+        public HUBMoveAmendment(MoveAmendmentModel amendmentModel) : base (amendmentModel)
         {
-            this.NewPosition = amendment.NewPosition;
-            this.NewSectionID = amendment.NewSectionID;
+            this.NewPosition = amendmentModel.NewPosition;
+            this.NewSectionID = amendmentModel.NewSectionID;
         }
 
         public HUBMoveAmendment()

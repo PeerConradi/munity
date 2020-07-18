@@ -4,15 +4,34 @@
     <div class="card-header">Registrierung</div>
     <div class="card-body">
       <form *ngIf="!created" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- Username -->
         <div class="form-group">
           <label>Username</label>
           <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors || f.username.errors.taken == true }" [class.is-valid]="f.username.errors.taken == false" (blur)="checkUsername()" />
           <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-            <div>Hier stimmt was nicht: {{f.username.errors }}</div>
             <div *ngIf="f.username.errors.required">Es muss ein Benutzername angegeben werden</div>
             <div *ngIf="f.username.errors.taken == true">Der Benutzername ist schon vergeben.</div>
           </div>
         </div>
+
+        <!-- Forename -->
+        <div class="form-group">
+          <label>Vorname</label>
+          <input type="text" formControlName="forename" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.forename.errors}" />
+          <div *ngIf="submitted && f.forename.errors" class="invalid-feedback">
+            <div *ngIf="f.forename.errors.required">Es muss ein Benutzername angegeben werden</div>
+          </div>
+        </div>
+
+        <!-- Lastname -->
+        <div class="form-group">
+          <label>Nachname</label>
+          <input type="text" formControlName="lastname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.lastname.errors}" />
+          <div *ngIf="submitted && f.lastname.errors" class="invalid-feedback">
+            <div *ngIf="f.lastname.errors.required">Es muss ein Benutzername angegeben werden</div>
+          </div>
+        </div>
+
         <div class="form-group">
           <label>E-Mail</label>
           <input type="email" formControlName="email" email="true" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
@@ -61,6 +80,7 @@
       </div>
       <div *ngIf="error" class="alert alert-danger" role="alert">
         <p>Der Account konnte nicht angelegt werden :(</p>
+        <p>{{ error }}</p>
       </div>
     </div>
   </div>

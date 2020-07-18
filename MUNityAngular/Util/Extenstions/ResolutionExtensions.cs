@@ -43,7 +43,7 @@ namespace MUNityAngular.Util.Extenstions
             return list;
         }
 
-        public static List<Hubs.HubObjects.HUBMoveAmendment> ToHubAmendments(this IEnumerable<MoveAmendment> a)
+        public static List<Hubs.HubObjects.HUBMoveAmendment> ToHubAmendments(this IEnumerable<MoveAmendmentModel> a)
         {
             var list = new List<Hubs.HubObjects.HUBMoveAmendment>();
             foreach(var element in a)

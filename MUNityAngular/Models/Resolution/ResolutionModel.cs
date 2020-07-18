@@ -308,11 +308,11 @@ namespace MUNityAngular.Models.Resolution
             }
         }
 
-        public IEnumerable<MoveAmendment> MoveAmendments
+        public IEnumerable<MoveAmendmentModel> MoveAmendments
         {
             get
             {
-                return  Amendments.OfType<MoveAmendment>();
+                return  Amendments.OfType<MoveAmendmentModel>();
             }
             set
             {

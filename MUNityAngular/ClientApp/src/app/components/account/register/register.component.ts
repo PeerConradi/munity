@@ -15,6 +15,7 @@ export class RegisterComponent implements OnInit {
   created = false;
   error = false;
   loading = false;
+  errmsg = "";
 
   constructor(private formBuilder: FormBuilder, private authService: UserService, private notifier: NotifierService) { }
 
@@ -78,7 +79,9 @@ export class RegisterComponent implements OnInit {
     model.birthday = data.birthday;
     this.authService.register(model).subscribe(
       msg => { this.created = true; this.loading = false; },
-      error => { this.error = true; this.loading = false;
+      error => {
+      this.error = true; this.loading = false;
+      this.errmsg = error;
         console.log(error);
       });
   }
