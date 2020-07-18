@@ -40,7 +40,7 @@ export class NoticeComponent implements OnInit {
 
   get readbyNames(): string {
     let text = '';
-    this.notice.ReadBy.forEach(n => text += n + ', ');
+    this.notice.readBy.forEach(n => text += n + ', ');
     text = text.substr(0, text.length - 2);
     return text;
   }

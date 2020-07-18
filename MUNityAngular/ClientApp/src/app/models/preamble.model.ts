@@ -1,7 +1,8 @@
 import { PreambleParagraph } from './preamble-paragraph.model';
 
 export class Preamble {
-  Paragraphs: PreambleParagraph[] = [];
+  preambleId: string;
 
-  ResolutionID: string;
+  paragraphs: PreambleParagraph[] = [];
+
 }

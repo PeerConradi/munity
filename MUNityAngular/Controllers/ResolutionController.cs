@@ -69,16 +69,22 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPatch]
         [AllowAnonymous]
-        public async Task<ResolutionV2> UpdatePublicResolution([FromBody] ResolutionV2 resolution,
+        public async Task<ActionResult<ResolutionV2>> UpdatePublicResolution([FromBody] ResolutionV2 resolution,
             [FromServices] IResolutionService resolutionService)
         {
+            // Check if a resolution with this Id exists
+            var res = await resolutionService.GetResolution(resolution.ResolutionId);
+
+            if (res == null)
+                return NotFound("Resolution not found");
 
             // Check if the resolution is public
             var auth = await resolutionService.GetResolutionAuth(resolution.ResolutionId);
             if (auth.AllowPublicEdit)
             {
                 // Update this document
-                return await resolutionService.SaveResolution(resolution);
+                var updatedDocument = await resolutionService.SaveResolution(resolution);
+                return Ok(updatedDocument);
             }
 
             return null;

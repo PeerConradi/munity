@@ -1,5 +1,5 @@
 export class NoticeTag {
-  Id: string;
-  Type: string;
-  Text: string;
+  id: string;
+  type: string;
+  text: string;
 }

@@ -1,4 +1,6 @@
-﻿namespace MUNityAngular.Models.Resolution.V2
+﻿using System.Collections.Generic;
+
+namespace MUNityAngular.Models.Resolution.V2
 {
     public interface IResolutionHeader
     {
@@ -15,5 +17,7 @@
         public string SubmitterName { get; set; }
 
         public string CommitteeName { get; set; }
+
+        public List<string> Supporters { get; set; }
     }
 }

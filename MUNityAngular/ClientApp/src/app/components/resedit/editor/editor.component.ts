@@ -15,6 +15,9 @@ import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-r
 import { Conference } from '../../../models/conference.model';
 import { Committee } from '../../../models/committee.model';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
+import { OperativeParagraph } from "../../../models/operative-paragraph.model";
+import { UserService } from "../../../services/user.service";
+import { PreambleParagraph } from "../../../models/preamble-paragraph.model";
 
 @Component({
   selector: 'app-editor',
@@ -27,9 +30,6 @@ export class EditorComponent implements OnInit {
   public set resolution(v: Resolution) {
     if (v != null) {
       this.model = v;
-      if (v.OperativeSections.length > 0) {
-        this.amendmentTargetSection = v.OperativeSections[0];
-      }
     }
   }
 
@@ -43,7 +43,7 @@ export class EditorComponent implements OnInit {
 
   public amendmentModalActive = false;
 
-  amendmentTargetSection: OperativeSection;
+  amendmentTargetSection: OperativeParagraph;
 
   newAmendmentNewText: string;
 
@@ -69,8 +69,8 @@ export class EditorComponent implements OnInit {
 
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
-    private titleService: Title, private conferenceService: ConferenceService) {
-    this.titleService.setTitle('ResaOnline')
+    private titleService: Title, private conferenceService: ConferenceService, private userService: UserService) {
+    this.titleService.setTitle('ResaOnline');
   }
 
   public model: Resolution;
@@ -81,41 +81,26 @@ export class EditorComponent implements OnInit {
     let id: string = null;
     this.route.params.subscribe(params => {
       id = params.id;
-    })
+    });
     if (id == null) {
       id = this.route.snapshot.queryParamMap.get('id');
     }
 
     if (id != null) {
-      //Überprüfen ob überhaupt bearbeitet werden darf
-      this.service.canIEditResolution(id).subscribe(canEditResolution => {
-        this.isLoading = false;
-        this.canEdit = canEditResolution;
+      // Get the public version of this document. If this returns forbidden you are not allowed
+      // to edit this resolution
+      if (!this.userService.session) {
+        this.service.getPublicResolution(id).subscribe(n => {
+          this.model = n;
 
-        if (canEditResolution) {
-          this.service.getResolution(id).subscribe(n => {
-            let readyState = this.service.connectionReady;
-            //this.service.OrderAmendments(n);
-            this.model = n;
-            this.service.subscribeToResolution(this.model.ID);
-            this.service.addResolutionListener(this.model, this.amendmentInspector);
-            this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
+          this.isLoading = false;
+          //this.service.subscribeToResolution(this.model.resolutionId);
+          //this.service.addResolutionListener(this.model, this.amendmentInspector);
+          //this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
+        });
 
-            if (n.OperativeSections.length > 0) {
-              this.amendmentTargetSection = n.OperativeSections[0];
-              this.newAmendmentNewText = n.OperativeSections[0].Text;
-            }
+      }
 
-            this.titleService.setTitle(this.model.Topic);
-          }, err => {
-              //TODO: 404 check or differet error
-              this.notFound = true;
-          });
-                  }
-      }, err => {
-        //TODO: 404 check or differet error
-        this.notFound = true;
-      });
     }
 
     this.conferenceService.getAllDelegations().subscribe(n => {
@@ -134,14 +119,10 @@ export class EditorComponent implements OnInit {
   }
 
   addPreambleParagraph() {
-    this.service.addPreambleParagraph(this.model.ID).subscribe(data => { }, err => {
-      if (err.status == 404) {
-        this.notifier.notify('error', 'Ohh nein - Es besteht keine Verbindung zum Server oder die Resolution exisitert nicht.');
-      }
-      else {
-        this.notifier.notify('error', 'Das hat aus unbekannten Gründen nicht geklappt');
-      }
-    });
+    const paragraph = new PreambleParagraph();
+    this.model.preamble.paragraphs.push(paragraph);
+
+    // TODO: Update from service!
   }
 
   openAddAmendmentModal() {
@@ -157,7 +138,7 @@ export class EditorComponent implements OnInit {
   }
 
   addAmendmentTargetSelected(target) {
-    this.newAmendmentNewText = this.amendmentTargetSection.Text;
+    this.newAmendmentNewText = this.amendmentTargetSection.operativeParagraphId;
   }
 
   addAmendmentTargetPositionSelected(target) {
@@ -165,7 +146,7 @@ export class EditorComponent implements OnInit {
   }
 
   addOperativeParagraph() {
-    this.service.addOperativeParagraph(this.model.ID).subscribe(data => { }, err => {
+    this.service.addOperativeParagraph(this.model.resolutionId).subscribe(data => { }, err => {
       if (err.status == 404) {
         this.notifier.notify('error', 'Ohh nein - Es besteht keine Verbindung zum Server oder die Resolution exisitert nicht.');
       }
@@ -176,29 +157,29 @@ export class EditorComponent implements OnInit {
   }
 
   addDeleteAmendment() {
-    const resolutionid = this.model.ID;
-    const sectionid = this.model.OperativeSections[0].ID;
+    const resolutionid = this.model.resolutionId;
+    const sectionid = this.model.operativeSection.paragraphs[0].operativeParagraphId;
     this.service.addDeleteAmendment(resolutionid, sectionid, 'Unknown');
   }
 
   get endIndex(): number {
-    return this.model.OperativeSections.length + 1;
+    return this.model.operativeSection.paragraphs.length + 1;
   }
 
   createNewAmendment() {
     const type: string = this.addAmendmentType;
-    const target: OperativeSection = this.amendmentTargetSection;
+    const target: OperativeParagraph = this.amendmentTargetSection;
     const newText: string = this.newAmendmentNewText;
 
     if (type === 'delete') {
-      this.service.addDeleteAmendment(this.model.ID, target.ID, this.newamendmentDelegation).subscribe();
+      this.service.addDeleteAmendment(this.model.resolutionId, target.operativeParagraphId, this.newamendmentDelegation).subscribe();
     } else if (type === 'change') {
-      this.service.addChangeAmendment(this.model.ID, target.ID, this.newamendmentDelegation, newText).subscribe();
+      this.service.addChangeAmendment(this.model.resolutionId, target.operativeParagraphId, this.newamendmentDelegation, newText).subscribe();
     } else if (type === 'move') {
-      this.service.addMoveAmendment(this.model.ID, target.ID, this.newamendmentDelegation, this.amendmentTargetPosition).subscribe();
+      this.service.addMoveAmendment(this.model.resolutionId, target.operativeParagraphId, this.newamendmentDelegation, this.amendmentTargetPosition).subscribe();
     } else if (type === 'add') {
       const amendment = new AddAmendment();
-      amendment.TargetResolutionID = this.resolution.ID;
+      amendment.TargetResolutionID = this.resolution.resolutionId;
       amendment.SubmitterName = this.newamendmentDelegation;
       amendment.NewText = newText;
       amendment.TargetPosition = this.amendmentTargetPosition;
@@ -217,11 +198,11 @@ export class EditorComponent implements OnInit {
 
   baseRequest(): ChangeResolutionHeaderRequest {
     const r = new ChangeResolutionHeaderRequest();
-    r.committee = this.resolution.CommitteeName;
-    r.resolutionId = this.resolution.ID;
-    r.supporters = this.resolution.SupporterNames;
-    r.title = this.resolution.Topic;
-    r.submitterName = this.resolution.SubmitterName;
+    r.committee = this.resolution.header.committeeName;
+    r.resolutionId = this.resolution.resolutionId;
+    r.supporters = this.resolution.header.supporters;
+    r.title = this.resolution.header.topic;
+    r.submitterName = this.resolution.header.submitterName;
     return r;
   }
 
@@ -230,6 +211,6 @@ export class EditorComponent implements OnInit {
   }
 
   createConferenceConnection(committee: Committee) {
-    this.service.linkResolutionToCommittee(this.resolution.ID, committee.CommitteeId).subscribe();
+    this.service.linkResolutionToCommittee(this.resolution.resolutionId, committee.CommitteeId).subscribe();
   }
 }

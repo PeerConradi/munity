@@ -16,10 +16,13 @@ namespace MUNityAngular.Models.Resolution.V2
 
         public List<OperativeParagraph> Children { get; set; }
 
+        public List<Notice> Notices { get; set; }
+
         public OperativeParagraph()
         {
             Children = new List<OperativeParagraph>();
             OperativeParagraphId = Util.Tools.IdGenerator.RandomString(36);
+            Notices = new List<Notice>();
         }
     }
 }

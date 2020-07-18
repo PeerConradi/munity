@@ -23,12 +23,12 @@ export class ResolutionHomeComponent implements OnInit {
   ngOnInit() {
   }
 
-  createResolution() {
+  createPublicResolution() {
     this.creatingResolution = true;
-    this.service.createResolution().subscribe(n => {
+    this.service.createPublicResolution().subscribe(n => {
       if (n != null) {
-        if (n.ID != null) {
-          this.router.navigate(['/resedit', n.ID])
+        if (n.resolutionId != null) {
+          this.router.navigate(['/resedit', n.resolutionId])
         }
         
       } else {

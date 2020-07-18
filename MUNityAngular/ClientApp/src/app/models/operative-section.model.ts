@@ -1,19 +1,22 @@
 import { Notice } from "./notice.model";
+import { OperativeParagraph } from "./operative-paragraph.model";
+import { ChangeAmendment } from "./change-amendment.model";
+import { AddAmendment } from "./add-amendment.model";
+import { MoveAmendment } from "./move-amendment.model";
+import { DeleteAmendment } from "./delete-amendment.model";
 
 export class OperativeSection {
-  ID: string;
-  Name: string;
-  IsLocked: boolean;
-  IsVirtual: boolean;
-  Text: string;
-  Path: string;
-  ParentID: string;
-  ResolutionID: string;
-  AmendmentParagraph: boolean;
-  Children: string[] = [];
-  DeleteAmendmentCount: number = 0;
-  ChangeAmendmentCount: number = 0;
-  MoveAmendmentCount: number = 0;
-  Notices: Notice[] = [];
 
+  operativeSectionId: string;
+
+  paragraphs: OperativeParagraph[] = [];
+
+  changeAmendments: ChangeAmendment[] = [];
+
+  addAmendments: AddAmendment[] = [];
+
+  moveAmendments: MoveAmendment[] = [];
+
+  deleteAmendments: DeleteAmendment[] = [];
+  
 }

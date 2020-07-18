@@ -33,11 +33,11 @@ export class ResOptionsComponent implements OnInit {
 
   ngOnInit() {
     //this.updateOnlineInfos();
-    this.resolutionSubmitter = this.resolution.SubmitterName;
+    this.resolutionSubmitter = this.resolution.header.submitterName;
   }
 
   updateOnlineInfos() {
-    this.resolutionService.getAdvancedInfos(this.resolution.ID).subscribe(n => {
+    this.resolutionService.getAdvancedInfos(this.resolution.resolutionId).subscribe(n => {
       this.documentInfo = n;
     });
 
@@ -49,7 +49,7 @@ export class ResOptionsComponent implements OnInit {
   }
 
   publicModeChanged(e) {
-    this.resolutionService.changePublicReadMode(this.resolution.ID, this.documentInfo.PublicRead).subscribe(n => {
+    this.resolutionService.changePublicReadMode(this.resolution.resolutionId, this.documentInfo.PublicRead).subscribe(n => {
       this.documentInfo.OnlineCode = n;
     });
   }
@@ -74,11 +74,11 @@ export class ResOptionsComponent implements OnInit {
 
   baseRequest(): ChangeResolutionHeaderRequest {
     const r = new ChangeResolutionHeaderRequest();
-    r.committee = this.resolution.CommitteeName;
-    r.resolutionId = this.resolution.ID;
-    r.supporters = this.resolution.SupporterNames;
-    r.title = this.resolution.Topic;
-    r.submitterName = this.resolution.SubmitterName;
+    r.committee = this.resolution.header.committeeName;
+    r.resolutionId = this.resolution.resolutionId;
+    r.supporters = this.resolution.header.supporters;
+    r.title = this.resolution.header.topic;
+    r.submitterName = this.resolution.header.submitterName;
     return r;
   }
 }

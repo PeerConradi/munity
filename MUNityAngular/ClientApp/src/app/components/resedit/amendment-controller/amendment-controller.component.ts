@@ -6,6 +6,7 @@ import { DeleteAmendment } from '../../../models/delete-amendment.model';
 import { ChangeAmendment } from '../../../models/change-amendment.model';
 import { OperativeSection } from '../../../models/operative-section.model';
 import { AmendmentInspector } from '../../../models/amendment-inspector';
+import { OperativeParagraph } from "../../../models/operative-paragraph.model";
 
 @Component({
   selector: 'app-amendment-controller',
@@ -28,31 +29,31 @@ export class AmendmentControllerComponent implements OnInit {
 
   removeAmendment() {
     if (this.amendment != null && this.resolution != null) {
-      this.resolutionService.removeAmendment(this.resolution.ID, this.amendment.ID);
+      this.resolutionService.removeAmendment(this.resolution.resolutionId, this.amendment.ID);
     }
   }
 
   denyAmendment() {
     if (this.amendment != null && this.resolution != null) {
-      this.resolutionService.denyAmendment(this.resolution.ID, this.amendment.ID).subscribe();
+      this.resolutionService.denyAmendment(this.resolution.resolutionId, this.amendment.ID).subscribe();
     }
   }
 
-  get paragraph(): OperativeSection {
+  get paragraph(): OperativeParagraph {
     return AmendmentInspector.getSectionForAmendment(this.resolution, this.amendment);
   }
 
   activeChanged(val) {
-    if (this.amendment.Activated === true) {
-      this.resolutionService.deactivateAmendment(this.resolution.ID, this.amendment.ID);
+    if (this.amendment.activated) {
+      this.resolutionService.deactivateAmendment(this.resolution.resolutionId, this.amendment.ID);
     } else {
-      this.resolutionService.activateAmendment(this.resolution.ID, this.amendment.ID);
+      this.resolutionService.activateAmendment(this.resolution.resolutionId, this.amendment.ID);
     }
       
   }
 
   submitAmendment() {
-    this.resolutionService.submitAmendment(this.resolution.ID, this.amendment.ID);
+    this.resolutionService.submitAmendment(this.resolution.resolutionId, this.amendment.ID);
   }
 
   isDeleteAmendment(val): boolean {

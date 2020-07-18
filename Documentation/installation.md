@@ -65,6 +65,48 @@ is a work in progress that is no stable version yet!
 https://github.com/PeerConradi/munity.git
 ```
 
+### Update the options
+
+Before building the application update the appsettings.json
+
+This has to be done to make the application more secure and configure your mysqldatabse user and options.
+
+Go and open the appsettings.json
+```
+cd munity/MUNityAngular
+vi appsettings.json
+```
+
+```json
+{
+  "MySqlSettings": {
+    "ConnectionString": "server=localhost;userid=root;password='';database='munitybase'"
+  },
+  "CoreDatabase": {
+    "ConnectionString": "server=localhost;userid=root;password='';database='munitycore'"
+  },
+  "AppSettings": {
+    "Secret": "REMEMBER TO CHANGE THIS KEY IN PRODUCTION EVERY TIME"
+  },
+  "MunityMongoDatabaseSettings": {
+    "ResolutionCollectionName": "Resolutions",
+    "PresenceCollectionName": "Presence",
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "MunityDb"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*"
+}
+```
+
+> __Info__ You can use the same ConnectionString for the MySqlSettings and CoreDatabase.
+
 ### Publish the application
 
 This command will build the application

@@ -5,20 +5,15 @@ import { AbstractAmendment } from './abstract-amendment.model';
 import { ChangeAmendment } from './change-amendment.model';
 import { MoveAmendment } from './move-amendment.model';
 import { AddAmendment } from './add-amendment.model';
+import { ResolutionHeader } from "./resolution-header.model";
 
 export class Resolution {
-  ID: string;
-  Topic: string;
-  Name: string;
-  OperativeSections: OperativeSection[];
-  Preamble: Preamble;
-  lastSaved: Date;
-  CommitteeName: string;
-  SubmitterName: string;
-  SupporterNames: string[] = [];
-  DeleteAmendments: DeleteAmendment[] = [];
-  ChangeAmendments: ChangeAmendment[] = [];
-  MoveAmendments: MoveAmendment[] = [];
-  AddAmendmentsSave: AddAmendment[] = [];
-  Level: number;
+  resolutionId: string;
+  date: Date;
+  header: ResolutionHeader;
+
+  preamble: Preamble;
+
+  operativeSection: OperativeSection;
+  
 }

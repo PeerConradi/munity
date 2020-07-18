@@ -33,10 +33,7 @@ export class PreambleParagraphComponent implements OnInit {
   constructor(private service: ResolutionService, private userService: UserService) { }
 
   onKey(event: any) {
-    if (this.paragraph.ResolutionID == null) {
-      this.paragraph.ResolutionID = this.resolutionid;
-    }
-    this.paragraph.Text = event.target.value;
+    this.paragraph.text = event.target.value;
     this.service.changePreambleParagraph(this.paragraph);
   }
 
@@ -44,15 +41,15 @@ export class PreambleParagraphComponent implements OnInit {
   }
 
   delete() {
-    this.service.removePrembleParagraph(this.resolutionid, this.paragraph.ID);
+    this.service.removePrembleParagraph(this.resolutionid, this.paragraph.preambleParagraphId);
   }
 
   moveUp() {
-    this.service.movePrembleParagraphUp(this.resolutionid, this.paragraph.ID);
+    this.service.movePrembleParagraphUp(this.resolutionid, this.paragraph.preambleParagraphId);
   }
 
   moveDown() {
-    this.service.movePrembleParagraphDown(this.resolutionid, this.paragraph.ID);
+    this.service.movePrembleParagraphDown(this.resolutionid, this.paragraph.preambleParagraphId);
   }
 
   showNotices(val) {
@@ -72,32 +69,32 @@ export class PreambleParagraphComponent implements OnInit {
     //this.paragraph.Notices.push(notice);
     this.service.changePreambleParagraphNotice(this.paragraph, this.newComment).subscribe(n => {
       //this.paragraph.Notices.push(n);
-      this.newComment.Text = '';
-      this.newComment.Title = '';
-      this.newComment.Tags = [];
+      this.newComment.text = '';
+      this.newComment.title = '';
+      this.newComment.tags = [];
 
     });
   }
 
   addTag() {
     const tagClone = new NoticeTag();
-    tagClone.Text = this.newTag.Text;
-    tagClone.Type = this.newTag.Type;
-    tagClone.Id = Date.now().toString();
-    this.newComment.Tags.push(tagClone);
-    this.newTag.Text = '';
+    tagClone.text = this.newTag.text;
+    tagClone.type = this.newTag.type;
+    tagClone.id = Date.now().toString();
+    this.newComment.tags.push(tagClone);
+    this.newTag.text = '';
 
   }
 
   removeTag(tag: NoticeTag) {
-    const index = this.newComment.Tags.indexOf(tag);
-    this.newComment.Tags.splice(index, 1);
+    const index = this.newComment.tags.indexOf(tag);
+    this.newComment.tags.splice(index, 1);
   }
 
   deleteNotice(notice: Notice) {
-    const index = this.paragraph.Notices.indexOf(notice);
+    const index = this.paragraph.notices.indexOf(notice);
     if (index != -1) {
-      this.paragraph.Notices.splice(index, 1);
+      this.paragraph.notices.splice(index, 1);
     }
     this.service.changePreambleParagraphNotices(this.paragraph).subscribe();
   }

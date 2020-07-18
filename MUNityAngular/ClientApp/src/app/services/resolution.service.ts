@@ -16,6 +16,7 @@ import { ResolutionAdvancedInfo } from '../models/resolution-advanced-info.model
 import { AddAmendment } from '../models/add-amendment.model';
 import { ChangeResolutionHeaderRequest } from '../models/requests/change-resolution-header-request';
 import { Notice } from '../models/notice.model';
+import { OperativeParagraph } from "../models/operative-paragraph.model";
 
 @Injectable({
   providedIn: 'root'
@@ -47,8 +48,15 @@ export class ResolutionService {
 
 
   public createResolution() {
-
     return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Create');
+  }
+
+  public createPublicResolution() {
+    return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/CreatePublic');
+  }
+
+  public getPublicResolution(id: string) {
+    return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/GetPublic?id=' + id);
   }
 
   public getResolution(id: string) {
@@ -71,169 +79,165 @@ export class ResolutionService {
   //SignalR Part
   public addResolutionListener = (model: Resolution, inspector: AmendmentInspector) => {
     this._hubConnection.on('ResolutionChanged', (resolution: Resolution) => {
-      model.Name = resolution.Name;
-      model.Topic = resolution.Topic;
-      model.CommitteeName = resolution.CommitteeName;
-      model.SubmitterName = resolution.SubmitterName;
-      model.SupporterNames = resolution.SupporterNames;
+      model.header = resolution.header;
+      model.operativeSection = resolution.operativeSection;
+      model.preamble = resolution.preamble;
     });
 
     this._hubConnection.on('PreambleParagraphAdded', (position: number, id: string, text: string) => {
       let paragraph: PreambleParagraph = new PreambleParagraph();
-      paragraph.ID = id;
-      paragraph.Text = text;
-      model.Preamble.Paragraphs.push(paragraph);
+      paragraph.preambleParagraphId = id;
+      paragraph.text = text;
+      model.preamble.paragraphs.push(paragraph);
       //this.resolution.OperativeSections.filter(n => n.ID == id)[0].Text = text;
     });
 
-    this._hubConnection.on('OperativeParagraphAdded', (position: number, sectionModel: OperativeSection) => {
-      model.OperativeSections.push(sectionModel);
+    this._hubConnection.on('OperativeParagraphAdded', (position: number, sectionModel: OperativeParagraph) => {
+      model.operativeSection.paragraphs.push(sectionModel);
       //this.resolution.OperativeSections.filter(n => n.ID == id)[0].Text = text;
     });
 
-    this._hubConnection.on('PreambleParagraphChanged', (paragraph: PreambleParagraph) => {
+    //this._hubConnection.on('PreambleParagraphChanged', (paragraph: PreambleParagraph) => {
 
-      let target = model.Preamble.Paragraphs.find(n => n.ID == paragraph.ID);
-      if (target != null && target.Text != paragraph.Text) {
-        target.Text = paragraph.Text;
-      }
-      if (target != null && target.Notices != paragraph.Notices) {
-        target.Notices = paragraph.Notices;
-      }
+    //  let target = model.Preamble.Paragraphs.find(n => n.ID == paragraph.ID);
+    //  if (target != null && target.Text != paragraph.Text) {
+    //    target.Text = paragraph.Text;
+    //  }
+    //  if (target != null && target.Notices != paragraph.Notices) {
+    //    target.Notices = paragraph.Notices;
+    //  }
 
-    });
+    //});
 
-    this._hubConnection.on('OperativeParagraphChanged', (paragraph: OperativeSection) => {
+    //this._hubConnection.on('OperativeParagraphChanged', (paragraph: OperativeSection) => {
 
-      let target = model.OperativeSections.find(n => n.ID == paragraph.ID);
-      if (target != null && target.Text != paragraph.Text) {
-        target.Text = paragraph.Text;
+    //  let target = model.OperativeSections.find(n => n.ID == paragraph.ID);
+    //  if (target != null && target.Text != paragraph.Text) {
+    //    target.Text = paragraph.Text;
         
-      }
-      if (target != null && target.Notices != paragraph.Notices) {
-        target.Notices = paragraph.Notices;
-      }
-    });
+    //  }
+    //  if (target != null && target.Notices != paragraph.Notices) {
+    //    target.Notices = paragraph.Notices;
+    //  }
+    //});
 
-    this._hubConnection.on('ResolutionSaved', (date: Date) => {
-      model.lastSaved = date;
-    });
+    //this._hubConnection.on('ResolutionSaved', (date: Date) => {
+    //  model.lastSaved = date;
+    //});
 
-    this._hubConnection.on('TitleChanged', (title: string) => {
-      model.Topic = title;
-    });
+    //this._hubConnection.on('TitleChanged', (title: string) => {
+    //  model.Topic = title;
+    //});
 
-    this._hubConnection.on('CommitteeChanged', (newcommitteename: string) => {
-      model.CommitteeName = newcommitteename;
-    });
+    //this._hubConnection.on('CommitteeChanged', (newcommitteename: string) => {
+    //  model.CommitteeName = newcommitteename;
+    //});
 
-    this._hubConnection.on('SubmitterChanged', (newsubmittername: string) => {
-      model.SubmitterName = newsubmittername;
-    })
+    //this._hubConnection.on('SubmitterChanged', (newsubmittername: string) => {
+    //  model.SubmitterName = newsubmittername;
+    //})
 
-    this._hubConnection.on('PreambleSectionOrderChanged', (paragraphs: PreambleParagraph[]) => {
-      model.Preamble.Paragraphs = paragraphs;
-    });
+    //this._hubConnection.on('PreambleSectionOrderChanged', (paragraphs: PreambleParagraph[]) => {
+    //  model.Preamble.Paragraphs = paragraphs;
+    //});
 
-    this._hubConnection.on('OperativeSectionOrderChanged', (paragraphs: OperativeSection[]) => {
-      model.OperativeSections = paragraphs;
-    });
+    //this._hubConnection.on('OperativeSectionOrderChanged', (paragraphs: OperativeSection[]) => {
+    //  model.OperativeSections = paragraphs;
+    //});
 
-    this._hubConnection.on('PreambleParaghraphRemoved', (paragraphs: PreambleParagraph[]) => {
-      model.Preamble.Paragraphs = paragraphs;
-    });
+    //this._hubConnection.on('PreambleParaghraphRemoved', (paragraphs: PreambleParagraph[]) => {
+    //  model.Preamble.Paragraphs = paragraphs;
+    //});
 
-    this._hubConnection.on('OperativeParagraphRemoved', (resolution: Resolution) => {
-      model.OperativeSections = resolution.OperativeSections;
-      model.ChangeAmendments = resolution.ChangeAmendments;
-      model.MoveAmendments = resolution.MoveAmendments;
-      model.DeleteAmendments = resolution.DeleteAmendments;
-      model.AddAmendmentsSave = resolution.AddAmendmentsSave;
+    //this._hubConnection.on('OperativeParagraphRemoved', (resolution: Resolution) => {
+    //  model.OperativeSections = resolution.OperativeSections;
+    //  model.ChangeAmendments = resolution.ChangeAmendments;
+    //  model.MoveAmendments = resolution.MoveAmendments;
+    //  model.DeleteAmendments = resolution.DeleteAmendments;
+    //  model.AddAmendmentsSave = resolution.AddAmendmentsSave;
 
-      inspector.allAmendments = this.OrderAmendments(model);
-    });
+    //  inspector.allAmendments = this.OrderAmendments(model);
+    //});
 
-    /**
-     * One Amendment was deleted (maybe because of a typo or it was wrong not because it was Denied!)
-     **/
-    this._hubConnection.on('AmendmentRemoved', (resolution: Resolution, amendment: AbstractAmendment) => {
-      //Fuck it! we update everything who cares about traffic?!
-      model.OperativeSections = resolution.OperativeSections;
-      model.ChangeAmendments = resolution.ChangeAmendments;
-      model.DeleteAmendments = resolution.DeleteAmendments;
-      model.MoveAmendments = resolution.MoveAmendments;
-      //this.OnAmendmentRemoved(model, amendment);
-      inspector.allAmendments = this.OrderAmendments(model);
-      //inspector.allAmendments = this.OnAmendmentRemoved(model, amendment);
-    });
+    ///**
+    // * One Amendment was deleted (maybe because of a typo or it was wrong not because it was Denied!)
+    // **/
+    //this._hubConnection.on('AmendmentRemoved', (resolution: Resolution, amendment: AbstractAmendment) => {
+    //  //Fuck it! we update everything who cares about traffic?!
+    //  model.OperativeSections = resolution.OperativeSections;
+    //  model.ChangeAmendments = resolution.ChangeAmendments;
+    //  model.DeleteAmendments = resolution.DeleteAmendments;
+    //  model.MoveAmendments = resolution.MoveAmendments;
+    //  //this.OnAmendmentRemoved(model, amendment);
+    //  inspector.allAmendments = this.OrderAmendments(model);
+    //  //inspector.allAmendments = this.OnAmendmentRemoved(model, amendment);
+    //});
 
-    this._hubConnection.on('AmendmentDenied', (resolution: Resolution, amendment: AbstractAmendment) => {
-      //Fuck it! we update everything who cares about traffic?!
-      model.OperativeSections = resolution.OperativeSections;
-      model.ChangeAmendments = resolution.ChangeAmendments;
-      model.DeleteAmendments = resolution.DeleteAmendments;
-      model.MoveAmendments = resolution.MoveAmendments;
-      //this.OnAmendmentRemoved(model, amendment);
-      inspector.allAmendments = this.OrderAmendments(model);
-      //inspector.allAmendments = this.OnAmendmentRemoved(model, amendment);
-    });
+    //this._hubConnection.on('AmendmentDenied', (resolution: Resolution, amendment: AbstractAmendment) => {
+    //  //Fuck it! we update everything who cares about traffic?!
+    //  model.OperativeSections = resolution.OperativeSections;
+    //  model.ChangeAmendments = resolution.ChangeAmendments;
+    //  model.DeleteAmendments = resolution.DeleteAmendments;
+    //  model.MoveAmendments = resolution.MoveAmendments;
+    //  //this.OnAmendmentRemoved(model, amendment);
+    //  inspector.allAmendments = this.OrderAmendments(model);
+    //  //inspector.allAmendments = this.OnAmendmentRemoved(model, amendment);
+    //});
 
-    /**
-     * Wenn ein Änderungsantrag eingeht wird eine OnAmendmendmentAdded aufgerufen, welcher
-     * diesen in eine der vier Listen einsortiert. Danach wird die Gesamtliste aller
-     * Änderungsanträge neu sortiert und zurückgegeben
-     **/
-    this._hubConnection.on('DeleteAmendmentAdded', (amendment: DeleteAmendment) => {
-      inspector.allAmendments = this.OnDeleteAmendmentAdded(model, amendment);
-    });
+    ///**
+    // * Wenn ein Änderungsantrag eingeht wird eine OnAmendmendmentAdded aufgerufen, welcher
+    // * diesen in eine der vier Listen einsortiert. Danach wird die Gesamtliste aller
+    // * Änderungsanträge neu sortiert und zurückgegeben
+    // **/
+    //this._hubConnection.on('DeleteAmendmentAdded', (amendment: DeleteAmendment) => {
+    //  inspector.allAmendments = this.OnDeleteAmendmentAdded(model, amendment);
+    //});
 
-    this._hubConnection.on('ChangeAmendmentAdded', (amendment: ChangeAmendment) => {
-      inspector.allAmendments = this.onChangeAmendmentAdded(model, amendment);
-    });
+    //this._hubConnection.on('ChangeAmendmentAdded', (amendment: ChangeAmendment) => {
+    //  inspector.allAmendments = this.onChangeAmendmentAdded(model, amendment);
+    //});
 
-    this._hubConnection.on('MoveAmendmentAdded', (resolution: Resolution, amendment: ChangeAmendment) => {
-      model.OperativeSections = resolution.OperativeSections;
-      model.MoveAmendments = resolution.MoveAmendments;
-      model.DeleteAmendments = resolution.DeleteAmendments;
-      model.ChangeAmendments = resolution.ChangeAmendments;
-      model.AddAmendmentsSave = resolution.AddAmendmentsSave;
-      inspector.allAmendments = this.OrderAmendments(model);
-    });
+    //this._hubConnection.on('MoveAmendmentAdded', (resolution: Resolution, amendment: ChangeAmendment) => {
+    //  model.OperativeSections = resolution.OperativeSections;
+    //  model.MoveAmendments = resolution.MoveAmendments;
+    //  model.DeleteAmendments = resolution.DeleteAmendments;
+    //  model.ChangeAmendments = resolution.ChangeAmendments;
+    //  model.AddAmendmentsSave = resolution.AddAmendmentsSave;
+    //  inspector.allAmendments = this.OrderAmendments(model);
+    //});
 
-    this._hubConnection.on('AddAmendmentAdded', (resolution: Resolution, amendment: ChangeAmendment) => {
-      model.OperativeSections = resolution.OperativeSections;
-      model.MoveAmendments = resolution.MoveAmendments;
-      model.DeleteAmendments = resolution.DeleteAmendments;
-      model.ChangeAmendments = resolution.ChangeAmendments;
-      model.AddAmendmentsSave = resolution.AddAmendmentsSave;
-      inspector.allAmendments = this.OrderAmendments(model);
-    });
+    //this._hubConnection.on('AddAmendmentAdded', (resolution: Resolution, amendment: ChangeAmendment) => {
+    //  model.OperativeSections = resolution.OperativeSections;
+    //  model.MoveAmendments = resolution.MoveAmendments;
+    //  model.DeleteAmendments = resolution.DeleteAmendments;
+    //  model.ChangeAmendments = resolution.ChangeAmendments;
+    //  model.AddAmendmentsSave = resolution.AddAmendmentsSave;
+    //  inspector.allAmendments = this.OrderAmendments(model);
+    //});
 
-    this._hubConnection.on('AmendmentActivated', (resolution: Resolution, amendment: AbstractAmendment) => {
-      //Diese beiden Änderungsanträge sind etwas komplexer und erfordern, dass die Struktur der
-      //Operativen Abschnitte neu geladen werden, da sich dort etwas in der Vorschau ändert
-      if (amendment.Type === 'move' || amendment.Type === 'add') {
-        model.OperativeSections = resolution.OperativeSections;
-      }
+    //this._hubConnection.on('AmendmentActivated', (resolution: Resolution, amendment: AbstractAmendment) => {
+    //  //Diese beiden Änderungsanträge sind etwas komplexer und erfordern, dass die Struktur der
+    //  //Operativen Abschnitte neu geladen werden, da sich dort etwas in der Vorschau ändert
+    //  if (amendment.Type === 'move' || amendment.Type === 'add') {
+    //    model.OperativeSections = resolution.OperativeSections;
+    //  }
 
-      const a = this.findAmendment(model, amendment.ID);
-      a.Activated = true;
-    });
+    //  const a = this.findAmendment(model, amendment.ID);
+    //  a.Activated = true;
+    //});
 
-    this._hubConnection.on('AmendmentDeactivated', (resolution: Resolution, amendment: AbstractAmendment) => {
-      if (amendment.Type === 'move' || amendment.Type === 'add') {
-        model.OperativeSections = resolution.OperativeSections;
-      }
-      const a = this.findAmendment(model, amendment.ID);
-      a.Activated = false;
-    });
+    //this._hubConnection.on('AmendmentDeactivated', (resolution: Resolution, amendment: AbstractAmendment) => {
+    //  if (amendment.Type === 'move' || amendment.Type === 'add') {
+    //    model.OperativeSections = resolution.OperativeSections;
+    //  }
+    //  const a = this.findAmendment(model, amendment.ID);
+    //  a.Activated = false;
+    //});
 
     this._hubConnection.on('AmendmentSubmitted', (resolution: Resolution) => {
-      model.OperativeSections = resolution.OperativeSections;
-      model.DeleteAmendments = resolution.DeleteAmendments;
-      model.ChangeAmendments = resolution.ChangeAmendments;
-      model.MoveAmendments = resolution.MoveAmendments;
-      model.AddAmendmentsSave = resolution.AddAmendmentsSave;
+      model.header = resolution.header;
+      model.operativeSection = resolution.operativeSection;
+      model.preamble = resolution.preamble;
       
       inspector.allAmendments = this.OrderAmendments(model);
     });
@@ -241,20 +245,20 @@ export class ResolutionService {
   }
 
   public findAmendment(resolution: Resolution, amendmentid: string): AbstractAmendment {
-    var a = resolution.DeleteAmendments.find(n => n.ID === amendmentid);
+    var a = resolution.operativeSection.deleteAmendments.find(n => n.ID === amendmentid);
     if (a == null) {
       //Search inside Change Amendments
-      a = resolution.ChangeAmendments.find(n => n.ID === amendmentid);
+      a = resolution.operativeSection.changeAmendments.find(n => n.ID === amendmentid);
     }
 
     if (a == null) {
       //Search inside Move Amendments
-      a = resolution.MoveAmendments.find(n => n.ID === amendmentid);
+      a = resolution.operativeSection.moveAmendments.find(n => n.ID === amendmentid);
     }
 
     if (a == null) {
       //Search inside Add Amendments
-      a = resolution.AddAmendmentsSave.find(n => n.ID === amendmentid);
+      a = resolution.operativeSection.addAmendments.find(n => n.ID === amendmentid);
     }
 
     return a;
@@ -281,54 +285,36 @@ export class ResolutionService {
     this.httpClient.patch(this.baseUrl + 'api/Resolution/ChangeHeader', request, options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
-  public changeOperativeParagraph(paragraph: OperativeSection) {
+  public changeOperativeParagraph(paragraph: OperativeParagraph) {
     let headers = new HttpHeaders();
     this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection',
       paragraph, { headers: headers }).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
-  public changeOperativeParagraphNotice(paragraph: OperativeSection, notice: Notice) {
-    let headers = new HttpHeaders();
-    headers = headers.set('resolutionid', paragraph.ResolutionID);
-    headers = headers.set('paragraphid', paragraph.ID);
-    return this.httpClient.put<Notice>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotice',
-      notice, { headers: headers });
+  public changeOperativeParagraphNotice(paragraph: OperativeParagraph, notice: Notice) {
+    return this.httpClient.put<Notice>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotice', notice);
   }
 
   public changePreambleParagraphNotice(paragraph: PreambleParagraph, notice: Notice) {
-    let headers = new HttpHeaders();
-    headers = headers.set('resolutionid', paragraph.ResolutionID);
-    headers = headers.set('paragraphid', paragraph.ID);
-    return this.httpClient.put<Notice>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraphNotice',
-      notice, { headers: headers });
+    return this.httpClient.put<Notice>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraphNotice', notice);
   }
 
-  public changeOperativeParagraphNotices(paragraph: OperativeSection) {
-    let headers = new HttpHeaders();
-    return this.httpClient.patch<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotices',
-      paragraph, { headers: headers });
+  public changeOperativeParagraphNotices(paragraph: OperativeParagraph) {
+    return this.httpClient.patch<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSectionNotices', paragraph);
   }
 
   public changePreambleParagraphNotices(paragraph: PreambleParagraph) {
-    let headers = new HttpHeaders();
-    return this.httpClient.patch<OperativeSection>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraphNotices',
-      paragraph, { headers: headers });
+    return this.httpClient.patch<OperativeSection>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraphNotices', paragraph);
   }
 
   public changePreambleParagraph(paragraph: PreambleParagraph) {
-    let headers = new HttpHeaders();
     this.httpClient.put<PreambleParagraph>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraph',
-      paragraph, { headers: headers }).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+      paragraph).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public movePrembleParagraphUp(resolutionid: string, paragraphid: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
-    headers = headers.set('resolutionid', resolutionid);
-    headers = headers.set('paragraphid', paragraphid);
-    let options = { headers: headers };
-    this.httpClient.patch(this.baseUrl + 'api/Resolution/MovePreambleParagraphUp', null,
-      options).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+
+    this.httpClient.patch(this.baseUrl + 'api/Resolution/MovePreambleParagraphUp', null).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
   }
 
   public movePrembleParagraphDown(resolutionid: string, paragraphid: string) {
@@ -583,24 +569,24 @@ export class ResolutionService {
     return this.httpClient.patch(this.baseUrl + 'api/Resolution/LinkResolutionToCommittee', null, { headers: headers });
   }
 
-  public OnDeleteAmendmentAdded(resolution: Resolution, amendment: DeleteAmendment): AbstractAmendment[] {
-    if (resolution.DeleteAmendments.find(n => n.ID == amendment.ID) == null) {
+  public onDeleteAmendmentAdded(resolution: Resolution, amendment: DeleteAmendment): AbstractAmendment[] {
+    if (resolution.operativeSection.deleteAmendments.find(n => n.ID === amendment.ID) == null) {
 
-      resolution.DeleteAmendments.push(amendment);
-      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID);
+      resolution.operativeSection.deleteAmendments.push(amendment);
+      const target = resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.TargetSectionID);
       if (target != null) {
-        target.DeleteAmendmentCount += 1;
+        // target.deleteAmendmentCount += 1;
       }
       return this.OrderAmendments(resolution);
     }
   }
 
   public onChangeAmendmentAdded(resolution: Resolution, amendment: ChangeAmendment): AbstractAmendment[] {
-    if (resolution.ChangeAmendments.find(n => n.ID == amendment.ID) == null) {
-      resolution.ChangeAmendments.push(amendment);
-      const target = resolution.OperativeSections.find(n => n.ID == amendment.TargetSectionID);
+    if (resolution.operativeSection.changeAmendments.find(n => n.ID == amendment.ID) == null) {
+      resolution.operativeSection.changeAmendments.push(amendment);
+      const target = resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId == amendment.TargetSectionID);
       if (target != null) {
-        target.ChangeAmendmentCount += 1;
+        // target.changeAmendmentCount += 1;
       }
       return this.OrderAmendments(resolution);
     }
@@ -609,20 +595,20 @@ export class ResolutionService {
   public OrderAmendments(resolution: Resolution): AbstractAmendment[] {
     const arr = [];
     //All Sections
-    resolution.OperativeSections.forEach(oa => {
+    resolution.operativeSection.paragraphs.forEach(oa => {
       //Delete Amendments
-      resolution.DeleteAmendments.forEach(n => { if (n.TargetSectionID == oa.ID) arr.push(n) });
+      resolution.operativeSection.deleteAmendments.forEach(n => { if (n.TargetSectionID === oa.operativeParagraphId) arr.push(n) });
 
       //Change Amendments
-      resolution.ChangeAmendments.forEach(n => { if (n.TargetSectionID == oa.ID) arr.push(n) });
+      resolution.operativeSection.changeAmendments.forEach(n => { if (n.TargetSectionID === oa.operativeParagraphId) arr.push(n) });
 
       //Move Amendments
-      resolution.MoveAmendments.forEach(n => { if (n.TargetSectionID == oa.ID) arr.push(n) });
+      resolution.operativeSection.moveAmendments.forEach(n => { if (n.TargetSectionID === oa.operativeParagraphId) arr.push(n) });
 
       
     });
     //Add Amendments
-    resolution.AddAmendmentsSave.forEach(n => arr.push(n))
+    resolution.operativeSection.addAmendments.forEach(n => arr.push(n));
     return arr;
   }
 

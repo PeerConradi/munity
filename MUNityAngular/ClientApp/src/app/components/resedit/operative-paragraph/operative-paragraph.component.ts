@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
 import { Notice } from '../../../models/notice.model';
-import { OperativeSection } from '../../../models/operative-section.model';
 import { NoticeTag } from '../../../models/notice-tag.model';
 import { UserService } from '../../../services/user.service';
 import { WindowPosition } from '../../../models/window-position.model';
+import { OperativeParagraph } from "../../../models/operative-paragraph.model";
 
 @Component({
   selector: 'app-operative-paragraph',
@@ -13,7 +13,7 @@ import { WindowPosition } from '../../../models/window-position.model';
 })
 export class OperativeParagraphComponent implements OnInit {
 
-  @Input() paragraph: OperativeSection;
+  @Input() paragraph: OperativeParagraph;
 
   @Input() resolutionid: string;
 
@@ -35,32 +35,32 @@ export class OperativeParagraphComponent implements OnInit {
   constructor(private renderer: Renderer2, private service: ResolutionService, private userService: UserService) { }
 
   ngOnInit() {
-    this.newTag.Type = "primary";
+    this.newTag.type = "primary";
   }
 
   onKey(event: any) {
-    this.paragraph.Text = event.target.value;
+    this.paragraph.text = event.target.value;
     this.service.changeOperativeParagraph(this.paragraph);
   }
 
   delete() {
-    this.service.removeOperativeParagraph(this.resolutionid, this.paragraph.ID);
+    this.service.removeOperativeParagraph(this.resolutionid, this.paragraph.operativeParagraphId);
   }
 
   moveUp() {
-    this.service.moveOperativeParagraphUp(this.resolutionid, this.paragraph.ID);
+    this.service.moveOperativeParagraphUp(this.resolutionid, this.paragraph.operativeParagraphId);
   }
 
   moveDown() {
-    this.service.moveOperativeParagraphDown(this.resolutionid, this.paragraph.ID);
+    this.service.moveOperativeParagraphDown(this.resolutionid, this.paragraph.operativeParagraphId);
   }
 
   moveLeft() {
-    this.service.moveOperativeParagraphLeft(this.resolutionid, this.paragraph.ID);
+    this.service.moveOperativeParagraphLeft(this.resolutionid, this.paragraph.operativeParagraphId);
   }
 
   moveRight() {
-    this.service.moveOperativeParagraphRight(this.resolutionid, this.paragraph.ID);
+    this.service.moveOperativeParagraphRight(this.resolutionid, this.paragraph.operativeParagraphId);
   }
 
   showNotices(val) {
@@ -80,32 +80,32 @@ export class OperativeParagraphComponent implements OnInit {
     //this.paragraph.Notices.push(notice);
     this.service.changeOperativeParagraphNotice(this.paragraph, this.newComment).subscribe(n => {
       //this.paragraph.Notices.push(n);
-      this.newComment.Text = '';
-      this.newComment.Title = '';
-      this.newComment.Tags = [];
+      this.newComment.text = '';
+      this.newComment.title = '';
+      this.newComment.tags = [];
 
     });
   }
 
   addTag() {
     const tagClone = new NoticeTag();
-    tagClone.Text = this.newTag.Text;
-    tagClone.Type = this.newTag.Type;
-    tagClone.Id = Date.now().toString();
-    this.newComment.Tags.push(tagClone);
-    this.newTag.Text = '';
+    tagClone.text = this.newTag.text;
+    tagClone.type = this.newTag.type;
+    tagClone.id = Date.now().toString();
+    this.newComment.tags.push(tagClone);
+    this.newTag.text = '';
 
   }
 
   removeTag(tag: NoticeTag) {
-    const index = this.newComment.Tags.indexOf(tag);
-    this.newComment.Tags.splice(index, 1);
+    const index = this.newComment.tags.indexOf(tag);
+    this.newComment.tags.splice(index, 1);
   }
 
   deleteNotice(notice: Notice) {
-    const index = this.paragraph.Notices.indexOf(notice);
+    const index = this.paragraph.notices.indexOf(notice);
     if (index != -1) {
-      this.paragraph.Notices.splice(index, 1);
+      this.paragraph.notices.splice(index, 1);
     }
     this.service.changeOperativeParagraphNotices(this.paragraph).subscribe();
   }

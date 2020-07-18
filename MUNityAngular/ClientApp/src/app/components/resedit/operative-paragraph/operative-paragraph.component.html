@@ -7,11 +7,11 @@
                    [leftVal]="noticeWindowLeft" [topVal]="noticeWindowTop">
     <div style="max-height: 400Px; overflow-y: scroll; overflow-x: hidden">
       <div *ngIf="paragraph.Notices != null && paragraph.Notices.length > 0">
-        <app-notice *ngFor="let notice of paragraph.Notices" [notice]="notice"
+        <app-notice *ngFor="let notice of paragraph.notices" [notice]="notice"
                     (onDelete)="deleteNotice(notice);" (onRead)="noticeRead(notice)"
                     (onUpdate)="noticeUpdated(notice);"></app-notice>
       </div>
-      <p *ngIf="paragraph.Notices == null || paragraph.Notices.length == 0">Keine Kommentare vorhanden</p> 
+      <p *ngIf="paragraph.notices == null || paragraph.notices.length == 0">Keine Kommentare vorhanden</p> 
     </div>
     <div class="card-footer">
       <button *ngIf="!showAddComment" (click)="showAddComment = !showAddComment" class="btn btn-outline-dark btn-block">Kommentar verfassen</button>
@@ -24,9 +24,9 @@
         </div>
         
         <label>Titel</label>
-        <input class="form-control" [(ngModel)]="newComment.Title" />
+        <input class="form-control" [(ngModel)]="newComment.title" />
 
-        <textarea class="form-control" [(ngModel)]="newComment.Text"></textarea>
+        <textarea class="form-control" [(ngModel)]="newComment.text"></textarea>
         <div class="row">
           <span *ngFor="let tag of newComment.Tags" class="badge text-white"
                 [class.bg-primary]="tag.Type == 'primary'"
@@ -42,7 +42,7 @@
           <div class="row ">
             <!--form-inline align-items-center -->
             <div class="col-4">
-              <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" [(ngModel)]="newTag.Type">
+              <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" [(ngModel)]="newTag.type">
                 <option class="bg-primary text-white" value="primary">Blau</option>
                 <option class="bg-secondary text-white" value="secondary">Grau</option>
                 <option class="bg-success text-white" value="success">Grün</option>
@@ -50,7 +50,7 @@
               </select>
             </div>
             <div class="col-6">
-              <input class="form-control" [(ngModel)]="newTag.Text" (keyup.enter)="addTag();" type="text" />
+              <input class="form-control" [(ngModel)]="newTag.text" (keyup.enter)="addTag();" type="text" />
             </div>
             <div class="col-2">
               <button class="btn btn-outline-primary" (click)="addTag();">+</button>
@@ -66,7 +66,7 @@
 
 
 
-<div class="paragraph-box" [class.bg-info]="paragraph.IsVirtual === true">
+<div class="paragraph-box" [class.bg-info]="paragraph.isVirtual === true">
   <div class="paragraph-title">
     {{ paragraph.Path }}
   </div>
@@ -77,11 +77,11 @@
   </button>
 
   <div class="btn-group-vertical paragraph-tools">
-    <button [disabled]="paragraph.IsVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left" popoverTitle="Entfernen" [popover]="popContent" >
+    <button [disabled]="paragraph.isVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left" popoverTitle="Entfernen" [popover]="popContent" >
       X
     </button>
-    <button [disabled]="paragraph.IsVirtual === true" (click)="moveUp()" type="button" class="btn btn-outline-primary btn-move btn-up" title="Nach oben verschieben">▲</button>
-    <button [disabled]="paragraph.IsVirtual === true" (click)="moveDown()" type="button" class="btn btn-outline-primary btn-move btn-down">▼</button>
+    <button [disabled]="paragraph.isVirtual === true" (click)="moveUp()" type="button" class="btn btn-outline-primary btn-move btn-up" title="Nach oben verschieben">▲</button>
+    <button [disabled]="paragraph.isVirtual === true" (click)="moveDown()" type="button" class="btn btn-outline-primary btn-move btn-down">▼</button>
 
     <!-- This buttons are disabled for now. The Editing should be made different! -->
     <!--<button [disabled]="paragraph.IsVirtual === true" (click)="moveLeft()" type="button" class="btn btn-outline-primary btn-move btn-left">◄</button>

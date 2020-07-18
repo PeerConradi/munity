@@ -16,7 +16,7 @@
   <!-- navigation -->
   <div class="row bg-primary resedit-menu">
     <div class="col-6">
-      <input type="text" [(ngModel)]="model.Topic" (blur)="updateTitle();" class="form-control" />
+      <input type="text" [(ngModel)]="model.topic" (blur)="updateTitle();" class="form-control" />
     </div>
     <div class="col-3">
       <button class="btn btn-outline-light btn-block" (click)="documentHeaderModal.show();">Kopfzeile bearbeiten</button>
@@ -29,7 +29,7 @@
         </button>
         <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
             role="menu" aria-labelledby="button-basic">
-          <li role="menuitem"><a [routerLink]="['/resa/read', model.ID]" class="dropdown-item text-success" target="_blank">Teilnehmeransicht öffnen</a></li>
+          <li role="menuitem"><a [routerLink]="['/resa/read', model.resolutionId]" class="dropdown-item text-success" target="_blank">Teilnehmeransicht öffnen</a></li>
           <li role="menuitem"><a class="dropdown-item" href="#">Freigabe</a></li>
           <li role="menuitem"><a class="dropdown-item" (click)="conferenceConnectionModal.show();">An Konferenz knüpfen</a></li>
           <li class="divider dropdown-divider"></li>
@@ -47,7 +47,7 @@
 
   <div class="row">
     <div class="col-12 clearfix">
-      <h6 class="float-left">ID: {{ model.ID }}</h6>
+      <h6 class="float-left">ID: {{ model.resolutionId }}</h6>
       <p class="float-right">Last Saved: {{ model.lastSaved | date:'medium' }} | <a href="#">Verlauf</a></p>
     </div>
   </div>
@@ -57,16 +57,16 @@
     <!-- Präambel -->
     <div class="col-lg-8 col-md-12">
       <app-munity-box toolbox="true" title="Präambel">
-        <div *ngFor="let pp of model.Preamble.Paragraphs; let i = index" [attr.data-index]="i">
-          <app-preamble-paragraph [paragraph]=pp [index]=i+1 [resolutionid]=model.ID></app-preamble-paragraph>
+        <div *ngFor="let pp of model.preamble.paragraphs; let i = index" [attr.data-index]="i">
+          <app-preamble-paragraph [paragraph]=pp [index]=i+1 [resolutionid]=model.resolutionId></app-preamble-paragraph>
         </div>
         <button class="btn btn-block btn-success add-button" (click)="addPreambleParagraph()">Paragraphen
           hinzufügen</button>
       </app-munity-box>
       <div class="row" style="height: 20Px"></div>
       <app-munity-box toolbox="true" title="Operativer Abschnitt" >
-        <div *ngFor="let pa of model.OperativeSections">
-          <app-operative-paragraph [paragraph]=pa [resolutionid]=model.ID></app-operative-paragraph>
+        <div *ngFor="let pa of model.operativeSection.paragraphs">
+          <app-operative-paragraph [paragraph]=pa [resolutionid]=model.resolutionId></app-operative-paragraph>
         </div>
         <button class="btn btn-block btn-success add-button" (click)="addOperativeParagraph()">Operativen Absatz hinzufügen</button>
       </app-munity-box>

@@ -6,6 +6,7 @@ import { AbstractAmendment } from '../../../models/abstract-amendment.model';
 import { AmendmentInspector } from '../../../models/amendment-inspector';
 import { OperativeSection } from '../../../models/operative-section.model';
 import { ChangeAmendment } from '../../../models/change-amendment.model';
+import { OperativeParagraph } from "../../../models/operative-paragraph.model";
 
 @Component({
   selector: 'app-res-view',
@@ -31,7 +32,7 @@ export class ResViewComponent implements OnInit {
       this.service.getResolution(id).subscribe(n => {
         let readyState = this.service.connectionReady;
         this.resolution = n;
-        this.service.subscribeToResolution(this.resolution.ID);
+        this.service.subscribeToResolution(this.resolution.resolutionId);
         this.service.addResolutionListener(this.resolution, new AmendmentInspector());
       });
     }
@@ -44,19 +45,19 @@ export class ResViewComponent implements OnInit {
   ngOnInit() {
   }
 
-  activeAmendment(section: OperativeSection): AbstractAmendment {
-    let amendment = this.resolution.DeleteAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
+  activeAmendment(section: OperativeParagraph): AbstractAmendment {
+    let amendment = this.resolution.operativeSection.deleteAmendments.find(n => n.TargetSectionID === section.operativeParagraphId && n.Activated);
     if (amendment == null) {
-      amendment = this.resolution.ChangeAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
+      amendment = this.resolution.operativeSection.changeAmendments.find(n => n.TargetSectionID === section.operativeParagraphId && n.Activated);
     }
     if (amendment == null) {
-      amendment = this.resolution.MoveAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
+      amendment = this.resolution.operativeSection.moveAmendments.find(n => n.TargetSectionID === section.operativeParagraphId && n.Activated);
     }
 
     return amendment;
   }
 
   activeChangeAmendment(section: OperativeSection): ChangeAmendment {
-    return this.resolution.ChangeAmendments.find(n => n.TargetSectionID == section.ID && n.Activated);
+    return this.resolution.operativeSection.changeAmendments.find(n => n.TargetSectionID === section.operativeSectionId && n.Activated);
   }
 }
