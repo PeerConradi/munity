@@ -6,7 +6,7 @@
                    (moveStopped)="moveStopped($event);"
                    [leftVal]="noticeWindowLeft" [topVal]="noticeWindowTop">
     <div style="max-height: 400Px; overflow-y: scroll; overflow-x: hidden">
-      <div *ngIf="paragraph.Notices != null && paragraph.Notices.length > 0">
+      <div *ngIf="paragraph.notices != null && paragraph.notices.length > 0">
         <app-notice *ngFor="let notice of paragraph.notices" [notice]="notice"
                     (onDelete)="deleteNotice(notice);" (onRead)="noticeRead(notice)"
                     (onUpdate)="noticeUpdated(notice);"></app-notice>
@@ -28,11 +28,11 @@
 
         <textarea class="form-control" [(ngModel)]="newComment.text"></textarea>
         <div class="row">
-          <span *ngFor="let tag of newComment.Tags" class="badge text-white"
-                [class.bg-primary]="tag.Type == 'primary'"
-                [class.bg-secondary]="tag.Type == 'secondary'"
-                [class.bg-success]="tag.Type == 'success'"
-                [class.bg-danger]="tag.Type == 'danger'"
+          <span *ngFor="let tag of newComment.tags" class="badge text-white"
+                [class.bg-primary]="tag.type == 'primary'"
+                [class.bg-secondary]="tag.type == 'secondary'"
+                [class.bg-success]="tag.type == 'success'"
+                [class.bg-danger]="tag.type == 'danger'"
                 (dblclick)="removeTag(tag);">{{ tag.Text }}</span>
         </div>
         <div class="col-12">
@@ -68,12 +68,12 @@
 
 <div class="paragraph-box" [class.bg-info]="paragraph.isVirtual === true">
   <div class="paragraph-title">
-    {{ paragraph.Path }}
+    {{ paragraph.name }}
   </div>
 
-  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="showNotices($event)" *ngIf="paragraph.Notices != null">
+  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="showNotices($event)" *ngIf="paragraph.notices != null">
     <span>N</span>
-    <span class="badge" *ngIf="paragraph.Notices.length > 0">{{ paragraph.Notices.length }}</span>
+    <span class="badge" *ngIf="paragraph.notices.length > 0">{{ paragraph.notices.length }}</span>
   </button>
 
   <div class="btn-group-vertical paragraph-tools">
@@ -89,6 +89,6 @@
   </div>
 
   <div class="form-group paragraph-textarea">
-    <textarea class="form-control" #operativeTextArea id="operativeTextArea" rows="5" [disabled]="paragraph.IsVirtual === true" (keyup)="onKey($event)" maxlength="4000">{{ paragraph.Text }}</textarea>
+    <textarea class="form-control" #operativeTextArea id="operativeTextArea" rows="5" [disabled]="paragraph.isVirtual === true" (keyup)="onKey($event)" maxlength="4000">{{ paragraph.text }}</textarea>
   </div>
 </div>

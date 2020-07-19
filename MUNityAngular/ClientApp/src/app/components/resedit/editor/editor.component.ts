@@ -67,6 +67,8 @@ export class EditorComponent implements OnInit {
 
   selectedCommittee: Committee;
 
+  isPublic: boolean = false;
+
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
     private titleService: Title, private conferenceService: ConferenceService, private userService: UserService) {
@@ -91,9 +93,11 @@ export class EditorComponent implements OnInit {
       // to edit this resolution
       if (!this.userService.session) {
         this.service.getPublicResolution(id).subscribe(n => {
+          console.log(n);
+          this.isPublic = true;
           this.model = n;
-
           this.isLoading = false;
+          console.log(this.model);
           //this.service.subscribeToResolution(this.model.resolutionId);
           //this.service.addResolutionListener(this.model, this.amendmentInspector);
           //this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
@@ -122,7 +126,9 @@ export class EditorComponent implements OnInit {
     const paragraph = new PreambleParagraph();
     this.model.preamble.paragraphs.push(paragraph);
 
-    // TODO: Update from service!
+    if (this.isPublic) {
+      this.service.savePublicResolution(this.model).subscribe();
+    }
   }
 
   openAddAmendmentModal() {
@@ -146,14 +152,13 @@ export class EditorComponent implements OnInit {
   }
 
   addOperativeParagraph() {
-    this.service.addOperativeParagraph(this.model.resolutionId).subscribe(data => { }, err => {
-      if (err.status == 404) {
-        this.notifier.notify('error', 'Ohh nein - Es besteht keine Verbindung zum Server oder die Resolution exisitert nicht.');
-      }
-      else {
-        this.notifier.notify('error', 'Das hat aus unbekannten Gründen nicht geklappt');
-      }
-    });
+    const paragraph = new OperativeParagraph();
+    paragraph.operativeParagraphId = this.service.generateId();
+    this.model.operativeSection.paragraphs.push(paragraph);
+
+    if (this.isPublic) {
+      this.service.savePublicResolution(this.model).subscribe();
+    }
   }
 
   addDeleteAmendment() {

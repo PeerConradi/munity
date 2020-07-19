@@ -45,7 +45,14 @@ export class ResolutionService {
     this.baseUrl = baseUrl;
   }
 
-
+  public generateId() {
+    let text = "";
+    let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUFVXYZ1234567890";
+    for (let i = 0; i < 30; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+  }
 
   public createResolution() {
     return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Create');
@@ -64,6 +71,10 @@ export class ResolutionService {
     headers = headers.set('id', id);
     let options = { headers: headers };
     return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/Get', options);
+  }
+
+  public savePublicResolution(resolution: Resolution) {
+    return this.httpClient.patch<Resolution>(this.baseUrl + 'api/Resolution/UpdatePublicResolution', resolution);
   }
 
   public getMyResolutions() {

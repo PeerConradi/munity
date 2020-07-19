@@ -6,34 +6,34 @@
 
 <div *ngIf="resolution" class="container">
   <div class="title-section">
-      <h3> {{ resolution.Topic }}</h3>
-      <p>Einbringer: {{ resolution.SubmitterName }}</p>
+      <h3> {{ resolution.header.topic }}</h3>
+      <p>Einbringer: {{ resolution.header.submitterName }}</p>
       <p>Unterstützer: </p>
       <ng-container *ngFor="let name of resolution.SupporterNames">{{ name }}, </ng-container>
       <br />
       <br />
-      <b>{{ resolution.CommitteeName | uppercase }},</b>
+      <b>{{ resolution.header.committeeName | uppercase }},</b>
       <br />
   </div>
 
   <!-- Präambel -->
-  <div *ngFor="let pre of resolution.Preamble.Paragraphs">
+  <div *ngFor="let pre of resolution.preamble.paragraphs">
     <markdown class="operative-paragraph-text" [data]="pre.Text"></markdown>
     <br />
   </div>
 
-  <div *ngFor="let oa of resolution.OperativeSections" [class.bg-success]="oa.IsVirtual === true" [class.text-white]="oa.IsVirtual === true">
+  <div *ngFor="let oa of resolution.operativeSection.paragraphs" [class.bg-success]="oa.isVirtual === true" [class.text-white]="oa.isVirtual === true">
     <!-- Kopfzeile -->
-    <p *ngIf="oa.IsVirtual === false" class="operative-paragraph-title">
+    <p *ngIf="oa.isVirtual === false" class="operative-paragraph-title">
       <span >
-        {{ oa.Path }}.
+       .
       </span>
       <span class=" badge badge-secondary">
-        Änderungsanträge: {{ oa.DeleteAmendmentCount}}
+        Änderungsanträge: {{ oa.deleteAmendmentCount}}
         Streichen,
-        {{ oa.ChangeAmendmentCount }}
+        {{ oa.changeAmendmentCount }}
         Textänderung,
-        {{ oa.MoveAmendmentCount }} Verschieben
+        {{ oa.moveAmendmentCount }} Verschieben
       </span>
     </p>
 
@@ -46,7 +46,7 @@
       <p>Einbringer: {{ activeAmendment(oa).SubmitterName }}</p>
     </div>
     <div *ngIf="activeAmendment(oa)!=null && activeAmendment(oa).Type==='change'" class="operative-paragraph-text">
-      <p style="margin-top: -20px; text-decoration: line-through; color: darkred;">{{ oa.Path }} {{ oa.Text }}</p>
+      <p style="margin-top: -20px; text-decoration: line-through; color: darkred;">{{ oa.Path }} {{ oa.text }}</p>
       <p class="operative-paragraph-text" style="color: darkgreen;">{{ activeChangeAmendment(oa).NewText }}</p>
       <p>Einbringer: {{ activeAmendment(oa).SubmitterName }}</p>
     </div>

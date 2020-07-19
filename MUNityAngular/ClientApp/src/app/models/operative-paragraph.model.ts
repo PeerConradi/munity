@@ -5,9 +5,9 @@ export class OperativeParagraph {
 
   name: string;
 
-  isLocked: string;
+  isLocked: boolean;
 
-  isVirtual: string;
+  isVirtual: boolean;
 
   text: string;
 
@@ -16,4 +16,5 @@ export class OperativeParagraph {
   children: OperativeParagraph[] = [];
 
   notices: Notice[] = [];
+
 }
