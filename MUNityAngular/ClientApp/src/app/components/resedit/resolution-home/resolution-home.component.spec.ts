@@ -4,7 +4,7 @@ import { ResolutionHomeComponent } from './resolution-home.component';
 
 describe('ResolutionHomeComponent', () => {
   let component: ResolutionHomeComponent;
-  let fixture: ComponentFixture<ResolutionHomeComponent>;
+  //let fixture: ComponentFixture<ResolutionHomeComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('ResolutionHomeComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ResolutionHomeComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(ResolutionHomeComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new ResolutionHomeComponent(null, null, null, null);
   });
 
   it('should create', () => {

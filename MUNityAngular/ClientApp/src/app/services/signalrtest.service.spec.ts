@@ -3,10 +3,13 @@ import { TestBed } from '@angular/core/testing';
 import { SignalrtestService } from './signalrtest.service';
 
 describe('SignalrtestService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+  let service: SignalrtestService;
+
+  beforeEach(() => {
+    service = new SignalrtestService('');
+  });
 
   it('should be created', () => {
-    const service: SignalrtestService = TestBed.get(SignalrtestService);
     expect(service).toBeTruthy();
   });
 });

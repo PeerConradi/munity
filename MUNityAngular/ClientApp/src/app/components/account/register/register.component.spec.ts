@@ -4,7 +4,7 @@ import { RegisterComponent } from './register.component';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
-  let fixture: ComponentFixture<RegisterComponent>;
+  //let fixture: ComponentFixture<RegisterComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,9 @@ describe('RegisterComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RegisterComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(RegisterComponent);
+    component = new RegisterComponent(null, null, null);
+    //fixture.detectChanges();
   });
 
   it('should create', () => {

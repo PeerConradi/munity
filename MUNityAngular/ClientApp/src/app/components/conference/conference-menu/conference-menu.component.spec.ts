@@ -4,7 +4,7 @@ import { ConferenceMenuComponent } from './conference-menu.component';
 
 describe('ConferenceMenuComponent', () => {
   let component: ConferenceMenuComponent;
-  let fixture: ComponentFixture<ConferenceMenuComponent>;
+  //let fixture: ComponentFixture<ConferenceMenuComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('ConferenceMenuComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConferenceMenuComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(ConferenceMenuComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new ConferenceMenuComponent(null, null, null);
   });
 
   it('should create', () => {

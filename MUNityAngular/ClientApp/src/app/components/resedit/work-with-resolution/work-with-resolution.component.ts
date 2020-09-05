@@ -27,6 +27,9 @@ export class WorkWithResolutionComponent implements OnInit {
   detailAmendments: AbstractAmendment[];
 
   constructor(public service: ResolutionService, private route: ActivatedRoute) {
+    if (route == null)
+      return;
+
     let id: string = null;
     this.route.params.subscribe(params => {
       id = params.id;

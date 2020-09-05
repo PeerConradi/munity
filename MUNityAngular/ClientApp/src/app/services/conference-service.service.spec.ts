@@ -1,12 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ConferenceService } from './conference-service.service';
+import { UserService } from "./user.service";
 
-describe('ConferenceServiceService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+describe('ConferenceService', () => {
+  let httpClientSpy: { get: jasmine.Spy };
+  let service: ConferenceService;
+  let userService: UserService;
+
+  beforeEach(() => {
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    userService = new UserService(httpClientSpy as any, '');
+    service = new ConferenceService(httpClientSpy as any, userService, '');
+  });
 
   it('should be created', () => {
-    const service: ConferenceService = TestBed.get(ConferenceService);
     expect(service).toBeTruthy();
   });
 });

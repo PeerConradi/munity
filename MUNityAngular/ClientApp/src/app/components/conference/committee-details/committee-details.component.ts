@@ -40,6 +40,9 @@ export class CommitteeDetailsComponent implements OnInit {
     private conferenceSerivce: ConferenceService) { }
 
   ngOnInit() {
+    if (this.route == null)
+      return;
+
     this.route.params.subscribe(params => {
       this.conferenceSerivce.getCommittee(params.id).subscribe(n => {
         this.committee = n;

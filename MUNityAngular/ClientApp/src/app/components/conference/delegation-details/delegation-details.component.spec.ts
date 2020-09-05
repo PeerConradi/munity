@@ -4,7 +4,7 @@ import { DelegationDetailsComponent } from './delegation-details.component';
 
 describe('DelegationDetailsComponent', () => {
   let component: DelegationDetailsComponent;
-  let fixture: ComponentFixture<DelegationDetailsComponent>;
+  //let fixture: ComponentFixture<DelegationDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('DelegationDetailsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DelegationDetailsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(DelegationDetailsComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new DelegationDetailsComponent();
   });
 
   it('should create', () => {

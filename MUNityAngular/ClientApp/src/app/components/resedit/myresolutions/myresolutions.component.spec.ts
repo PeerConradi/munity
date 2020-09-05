@@ -4,7 +4,7 @@ import { MyresolutionsComponent } from './myresolutions.component';
 
 describe('MyresolutionsComponent', () => {
   let component: MyresolutionsComponent;
-  let fixture: ComponentFixture<MyresolutionsComponent>;
+  //let fixture: ComponentFixture<MyresolutionsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('MyresolutionsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MyresolutionsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(MyresolutionsComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new MyresolutionsComponent(null, null);
   });
 
   it('should create', () => {

@@ -181,6 +181,7 @@ namespace MUNityTest.Service
         }
 
         [Test]
+        [Author(("Peer Conradi"))]
         public async Task TestSaveResolutionThatsNotCreated()
         {
             var service = new NewResolutionService(_munityContext, new MongoTestString());

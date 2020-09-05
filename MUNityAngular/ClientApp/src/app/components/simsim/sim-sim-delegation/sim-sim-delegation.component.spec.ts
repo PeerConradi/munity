@@ -4,7 +4,7 @@ import { SimSimDelegationComponent } from './sim-sim-delegation.component';
 
 describe('SimSimDelegationComponent', () => {
   let component: SimSimDelegationComponent;
-  let fixture: ComponentFixture<SimSimDelegationComponent>;
+  //let fixture: ComponentFixture<SimSimDelegationComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,9 @@ describe('SimSimDelegationComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SimSimDelegationComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(SimSimDelegationComponent);
+    component = new SimSimDelegationComponent(null);
+    //fixture.detectChanges();
   });
 
   it('should create', () => {

@@ -72,7 +72,10 @@ export class EditorComponent implements OnInit {
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
     private titleService: Title, private conferenceService: ConferenceService, private userService: UserService) {
-    this.titleService.setTitle('ResaOnline');
+    if (this.titleService != null) {
+      this.titleService.setTitle('ResaOnline');
+    }
+    
   }
 
   public model: Resolution;

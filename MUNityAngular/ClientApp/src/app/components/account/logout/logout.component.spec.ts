@@ -4,7 +4,7 @@ import { LogoutComponent } from './logout.component';
 
 describe('LogoutComponent', () => {
   let component: LogoutComponent;
-  let fixture: ComponentFixture<LogoutComponent>;
+  //let fixture: ComponentFixture<LogoutComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('LogoutComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LogoutComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(LogoutComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new LogoutComponent(null);
   });
 
   it('should create', () => {

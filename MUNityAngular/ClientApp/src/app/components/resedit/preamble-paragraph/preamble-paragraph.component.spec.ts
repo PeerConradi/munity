@@ -4,7 +4,7 @@ import { PreambleParagraphComponent } from './preamble-paragraph.component';
 
 describe('PreambleParagraphComponent', () => {
   let component: PreambleParagraphComponent;
-  let fixture: ComponentFixture<PreambleParagraphComponent>;
+  //let fixture: ComponentFixture<PreambleParagraphComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('PreambleParagraphComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PreambleParagraphComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(PreambleParagraphComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new PreambleParagraphComponent(null, null);
   });
 
   it('should create', () => {

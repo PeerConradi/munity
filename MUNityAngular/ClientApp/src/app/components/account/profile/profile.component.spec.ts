@@ -4,7 +4,7 @@ import { ProfileComponent } from './profile.component';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
-  let fixture: ComponentFixture<ProfileComponent>;
+  //let fixture: ComponentFixture<ProfileComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('ProfileComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProfileComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(ProfileComponent);
+    //component = fixture.componentInstance;
+    component = new ProfileComponent(null, null);
+    //fixture.detectChanges();
   });
 
   it('should create', () => {

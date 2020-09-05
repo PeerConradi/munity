@@ -4,7 +4,7 @@ import { SimSimViewComponent } from './sim-sim-view.component';
 
 describe('SimSimViewComponent', () => {
   let component: SimSimViewComponent;
-  let fixture: ComponentFixture<SimSimViewComponent>;
+ // let fixture: ComponentFixture<SimSimViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,9 @@ describe('SimSimViewComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SimSimViewComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(SimSimViewComponent);
+    component = new SimSimViewComponent(null, null, null, null, null, null);
+    //fixture.detectChanges();
   });
 
   it('should create', () => {

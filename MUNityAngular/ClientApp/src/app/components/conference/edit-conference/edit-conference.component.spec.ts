@@ -4,7 +4,7 @@ import { EditConferenceComponent } from './edit-conference.component';
 
 describe('EditConferenceComponent', () => {
   let component: EditConferenceComponent;
-  let fixture: ComponentFixture<EditConferenceComponent>;
+  //let fixture: ComponentFixture<EditConferenceComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('EditConferenceComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditConferenceComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(EditConferenceComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new EditConferenceComponent(null, null, null);
   });
 
   it('should create', () => {

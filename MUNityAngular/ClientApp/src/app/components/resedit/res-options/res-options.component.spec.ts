@@ -4,7 +4,7 @@ import { ResOptionsComponent } from './res-options.component';
 
 describe('ResOptionsComponent', () => {
   let component: ResOptionsComponent;
-  let fixture: ComponentFixture<ResOptionsComponent>;
+  //let fixture: ComponentFixture<ResOptionsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('ResOptionsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ResOptionsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(ResOptionsComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new ResOptionsComponent(null, null, null);
   });
 
   it('should create', () => {

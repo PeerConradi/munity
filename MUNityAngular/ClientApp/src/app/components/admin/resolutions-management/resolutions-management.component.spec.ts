@@ -4,7 +4,7 @@ import { ResolutionsManagementComponent } from './resolutions-management.compone
 
 describe('ResolutionsManagementComponent', () => {
   let component: ResolutionsManagementComponent;
-  let fixture: ComponentFixture<ResolutionsManagementComponent>;
+  //let fixture: ComponentFixture<ResolutionsManagementComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('ResolutionsManagementComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ResolutionsManagementComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(ResolutionsManagementComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new ResolutionsManagementComponent(null, null);
   });
 
   it('should create', () => {

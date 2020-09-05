@@ -4,7 +4,7 @@ import { ConferenceDetailsComponent } from './conference-details.component';
 
 describe('ConferenceDetailsComponent', () => {
   let component: ConferenceDetailsComponent;
-  let fixture: ComponentFixture<ConferenceDetailsComponent>;
+  //let fixture: ComponentFixture<ConferenceDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,9 +14,10 @@ describe('ConferenceDetailsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConferenceDetailsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    //fixture = TestBed.createComponent(ConferenceDetailsComponent);
+    //component = fixture.componentInstance;
+    //fixture.detectChanges();
+    component = new ConferenceDetailsComponent(null, null, null, null, null);
   });
 
   it('should create', () => {
