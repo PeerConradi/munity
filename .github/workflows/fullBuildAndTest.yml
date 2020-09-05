@@ -33,7 +33,7 @@ jobs:
     - name: Build Angular
       run: cd ./MUNityAngular/ClientApp && ng build
     # Tests bring Actions into a loop
-    #- name: Angular Test
-    #  run: cd ./MUNityAngular/ClientApp && ng test
+    - name: Angular Test
+      run: cd ./MUNityAngular/ClientApp && ng test
     
 
