@@ -34,6 +34,6 @@ jobs:
       run: cd ./MUNityAngular/ClientApp && ng build
     # Tests bring Actions into a loop
     - name: Angular Test
-      run: cd ./MUNityAngular/ClientApp && ng test
+      run: cd ./MUNityAngular/ClientApp && npm run test-headless
     
 
