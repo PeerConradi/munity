@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { EditorComponent } from './components/resedit/editor/editor.component';
 import { OperativeParagraphComponent } from './components/resedit/operative-paragraph/operative-paragraph.component';
@@ -12,20 +11,14 @@ import { PreambleParagraphComponent } from './components/resedit/preamble-paragr
 import { ResOptionsComponent } from './components/resedit/res-options/res-options.component';
 import { AmendmentControllerComponent } from './components/resedit/amendment-controller/amendment-controller.component';
 import { ResolutionHomeComponent } from './components/resedit/resolution-home/resolution-home.component';
-import { CreateConferenceComponent } from './components/conference/create-conference/create-conference.component';
 import { ConferenceListComponent } from './components/admin/conference-list/conference-list.component';
-import { FooterComponent } from './components/default/footer/footer.component';
 import { SignalrtestComponent } from './components/signalr/signalrtest/signalrtest.component';
 import { ResViewComponent } from './components/resedit/res-view/res-view.component';
-import { RegisterComponent } from './components/account/register/register.component';
-import { LoginComponent } from './components/account/login/login.component';
-import { LogoutComponent } from './components/account/logout/logout.component';
-import { MyConferencesOverviewComponent } from './components/conference/my-conferences-overview/my-conferences-overview.component';
-import { ConferenceDetailsComponent } from './components/conference/conference-details/conference-details.component';
+import { RegisterComponent } from './pages/account/register/register.component';
+import { LoginComponent } from './pages/account/login/login.component';
+import { LogoutComponent } from './pages/account/logout/logout.component';
 import { MyresolutionsComponent } from './components/resedit/myresolutions/myresolutions.component';
-import { EditConferenceComponent } from './components/conference/edit-conference/edit-conference.component';
-import { MunityBoxComponent } from './components/components/munity-box/munity-box.component';
-import { AllComponentsComponent } from './components/components/all-components/all-components.component';
+//import { AllComponentsComponent } from './components/components/all-components/all-components.component';
 import { NotifierModule } from "angular-notifier";
 import { DefaultLayoutComponent } from './layouts/default-layout/default-layout.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -40,7 +33,7 @@ import { faFile, faFlag, faUser } from '@fortawesome/free-solid-svg-icons';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
 import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
-import { ImpressumComponent } from './components/default/impressum/impressum.component';
+import { ImpressumComponent } from './pages/default/impressum/impressum.component';
 
 //ngx-Boostrap
 import { AlertModule } from 'ngx-bootstrap/alert';
@@ -55,30 +48,13 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 import { MarkdownModule } from 'ngx-markdown';
-import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
 import { SpeakerlistPanelComponent } from './components/speakerlist/speakerlist-panel/speakerlist-panel.component';
 import { PresentsCheckComponent } from './components/presents/presents-check/presents-check.component';
-import { CommitteeDetailsComponent } from './components/conference/committee-details/committee-details.component';
-import { DelegationDetailsComponent } from './components/conference/delegation-details/delegation-details.component';
 import { ProfileComponent } from './components/account/profile/profile.component';
-import { ManageConferenceCommitteesComponent } from './components/conference/manage/manage-conference-committees/manage-conference-committees.component';
-import { ManageConferenceTeamComponent } from './components/conference/manage/manage-conference-team/manage-conference-team.component';
-import { ManageConferenceTeamRolesComponent } from './components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component';
-import { ManageConferenceWebsiteComponent } from './components/conference/manage/manage-conference-website/manage-conference-website.component';
-import { ManageConferenceDelegationsComponent } from './components/conference/manage/manage-conference-delegations/manage-conference-delegations.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
-import { MunityWindowComponent } from './components/components/munity-window/munity-window.component';
-import { NoticeComponent } from './components/components/notice/notice.component';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
-import { CommitteeCardComponent } from './components/conference/committee-card/committee-card.component';
-import { ConferenceMenuComponent } from './components/conference/conference-menu/conference-menu.component';
-import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/edit-conference-layout.component';
-import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
-
-// X-Controls
-import { XlabelComponent } from './components/xlabel/xlabel.component';
+import { PrivacyTermsComponent } from './pages/default/privacy-terms/privacy-terms.component';
 
 //SimSim
 import { JoinSimSimComponent } from './components/simsim/join-sim-sim/join-sim-sim.component';
@@ -90,14 +66,17 @@ import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-
 import { SimSimOverviewListComponent } from './components/simsim/sim-sim-overview-list/sim-sim-overview-list.component';
 import { SimSimLobbyElementComponent } from './components/simsim/sim-sim-lobby-element/sim-sim-lobby-element.component';
 import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component';
-import { ManagerStartupComponent } from './components/conference/manager-startup/manager-startup.component'
 
 import { AuthInterceptor } from './interceptor/AuthInterceptor';
+import { LoginFormComponent } from './components/account/login-form/login-form.component';
+import { RegisterFormComponent } from './components/account/register-form/register-form.component';
+import { ConferenceRouting } from './routing/conference.routing';
+import { MunityControlsModule } from './modules/munitycontrols.module';
+import { MunityDefaultsModule } from './modules/munitydefaults.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavMenuComponent,
     HomeComponent,
     EditorComponent,
     //Todo: Auslagerung der ohnehin nur mit der EditorComponent genutzten Components in ein eigenes Module.
@@ -106,20 +85,14 @@ import { AuthInterceptor } from './interceptor/AuthInterceptor';
     ResOptionsComponent,
     AmendmentControllerComponent,
     ResolutionHomeComponent,
-    CreateConferenceComponent,
     ConferenceListComponent,
-    FooterComponent,
     SignalrtestComponent,
     ResViewComponent,
     RegisterComponent,
     LoginComponent,
     LogoutComponent,
-    MyConferencesOverviewComponent,
-    ConferenceDetailsComponent,
     MyresolutionsComponent,
-    EditConferenceComponent,
-    MunityBoxComponent,
-    AllComponentsComponent,
+    //AllComponentsComponent,
     DefaultLayoutComponent,
     SpeakerlistStartupComponent,
     SpeakerlistControllerComponent,
@@ -129,26 +102,11 @@ import { AuthInterceptor } from './interceptor/AuthInterceptor';
     UserManagementComponent,
     ResolutionsManagementComponent,
     ImpressumComponent,
-    ExploreConferencesComponent,
     SpeakerlistPanelComponent,
     PresentsCheckComponent,
-    CommitteeDetailsComponent,
-    DelegationDetailsComponent,
     ProfileComponent,
-    ManageConferenceCommitteesComponent,
-    ManageConferenceTeamComponent,
-    ManageConferenceTeamRolesComponent,
-    ManageConferenceWebsiteComponent,
-    ManageConferenceDelegationsComponent,
     AdminDashboardComponent,
-    MunityWindowComponent,
-    NoticeComponent,
     PrivacyTermsComponent,
-    CommitteeCardComponent,
-    ConferenceMenuComponent,
-    EditConferenceLayoutComponent,
-    ConferenceOptionsComponent,
-    XlabelComponent,
     JoinSimSimComponent,
     SimSimChatComponent,
     SimSimViewComponent,
@@ -158,10 +116,12 @@ import { AuthInterceptor } from './interceptor/AuthInterceptor';
     SimSimOverviewListComponent,
     SimSimLobbyElementComponent,
     SimSimCreateComponent,
-    ManagerStartupComponent
+    LoginFormComponent,
+    RegisterFormComponent
   ],
   imports: [
     RouterModule,
+    MunityDefaultsModule,
     FontAwesomeModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
@@ -170,6 +130,8 @@ import { AuthInterceptor } from './interceptor/AuthInterceptor';
     NotifierModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    MunityControlsModule,
+
     AlertModule.forRoot(),
     SortableModule.forRoot(),
     TypeaheadModule.forRoot(),
@@ -181,8 +143,8 @@ import { AuthInterceptor } from './interceptor/AuthInterceptor';
     NgxChartsModule,
     TooltipModule.forRoot(),
     CollapseModule.forRoot(),
-    PopoverModule.forRoot()
-    
+    PopoverModule.forRoot(),
+    ConferenceRouting,
   ],
   providers: [
     {

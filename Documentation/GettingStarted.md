@@ -14,7 +14,6 @@ Make sure that when installing you have checked the ASP.NET Webdevelopment packa
 the Crossplatform .NET Development.
 
 __.NET Core Runtime and SDK__
-
 Should the Runtime and SDK not be installed automatically with Visual Studio
 you can go here to Install the latest Version: https://dotnet.microsoft.com/download
 The project is created with Version 3.1.

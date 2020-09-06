@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../../services/user.service';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Registration } from '../../../models/registration.model';
+import { Registration } from 'src/app/models/registration.model';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { UserService } from 'src/app/services/user.service';
 import { NotifierService } from 'angular-notifier';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  selector: 'app-register-form',
+  templateUrl: './register-form.component.html',
+  styleUrls: ['./register-form.component.css']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterFormComponent implements OnInit {
+
   registerForm: FormGroup;
   submitted = false;
   created = false;
@@ -60,11 +61,11 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    
+
     let data = this.registerForm.value;
 
     if (data.password !== data.confirmpassword) {
-      this.f.password.setErrors({'incorrect': true});
+      this.f.password.setErrors({ 'incorrect': true });
       this.f.confirmpassword.setErrors({ 'incorrect': true });
       return;
     }
@@ -80,12 +81,10 @@ export class RegisterComponent implements OnInit {
     this.authService.register(model).subscribe(
       msg => { this.created = true; this.loading = false; },
       error => {
-      this.error = true; this.loading = false;
-      this.errmsg = error;
+        this.error = true; this.loading = false;
+        this.errmsg = error;
         console.log(error);
       });
   }
 
 }
-
-

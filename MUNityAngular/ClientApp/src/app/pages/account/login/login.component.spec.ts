@@ -8,16 +8,16 @@ describe('LoginComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LoginComponent ]
+      declarations: [LoginComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     //fixture = TestBed.createComponent(LoginComponent);
     //component = fixture.componentInstance;
     //fixture.detectChanges();
-    component = new LoginComponent(null, null, null);
+    component = new LoginComponent();
   });
 
   it('should create', () => {

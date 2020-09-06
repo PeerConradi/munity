@@ -15,7 +15,7 @@ describe('RegisterComponent', () => {
 
   beforeEach(() => {
     //fixture = TestBed.createComponent(RegisterComponent);
-    component = new RegisterComponent(null, null, null);
+    component = new RegisterComponent();
     //fixture.detectChanges();
   });
 

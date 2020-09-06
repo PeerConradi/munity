@@ -5,16 +5,12 @@ import { HomeComponent } from './home/home.component';
 import { EditorComponent } from './components/resedit/editor/editor.component';
 import { MyresolutionsComponent } from './components/resedit/myresolutions/myresolutions.component';
 import { ResolutionHomeComponent } from './components/resedit/resolution-home/resolution-home.component';
-import { CreateConferenceComponent } from './components/conference/create-conference/create-conference.component';
 import { ConferenceListComponent } from './components/admin/conference-list/conference-list.component';
 import { SignalrtestComponent } from './components/signalr/signalrtest/signalrtest.component';
-import { RegisterComponent } from './components/account/register/register.component';
-import { LoginComponent } from './components/account/login/login.component';
-import { LogoutComponent } from './components/account/logout/logout.component';
-import { MyConferencesOverviewComponent } from './components/conference/my-conferences-overview/my-conferences-overview.component';
-import { EditConferenceComponent } from './components/conference/edit-conference/edit-conference.component';
-import { ConferenceDetailsComponent } from './components/conference/conference-details/conference-details.component';
-import { AllComponentsComponent } from './components/components/all-components/all-components.component';
+import { RegisterComponent } from './pages/account/register/register.component';
+import { LoginComponent } from './pages/account/login/login.component';
+import { LogoutComponent } from './pages/account/logout/logout.component';
+//import { AllComponentsComponent } from './components/components/all-components/all-components.component';
 import { ResViewComponent } from './components/resedit/res-view/res-view.component';
 import { DefaultLayoutComponent } from './layouts/default-layout/default-layout.component';
 import { SpeakerlistStartupComponent } from './components/speakerlist/speakerlist-startup/speakerlist-startup.component';
@@ -23,29 +19,21 @@ import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-v
 import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component';
 import { AccountSettingsComponent } from './components/account/account-settings/account-settings.component';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
-import { ImpressumComponent } from './components/default/impressum/impressum.component';
-import { ExploreConferencesComponent } from './components/conference/explore-conferences/explore-conferences.component';
+import { ImpressumComponent } from './pages/default/impressum/impressum.component';
 import { PresentsCheckComponent } from './components/presents/presents-check/presents-check.component';
 import { ProfileComponent } from './components/account/profile/profile.component';
-import { ManageConferenceTeamComponent } from './components/conference/manage/manage-conference-team/manage-conference-team.component';
-import { ManageConferenceCommitteesComponent } from './components/conference/manage/manage-conference-committees/manage-conference-committees.component';
-import { ManageConferenceTeamRolesComponent } from './components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
-import { CommitteeDetailsComponent } from './components/conference/committee-details/committee-details.component';
-import { PrivacyTermsComponent } from './components/default/privacy-terms/privacy-terms.component';
-import { EditConferenceLayoutComponent } from './layouts/edit-conference-layout/edit-conference-layout.component';
-import { ConferenceOptionsComponent } from './components/conference/conference-options/conference-options.component';
+import { PrivacyTermsComponent } from './pages/default/privacy-terms/privacy-terms.component';
 import { SimSimViewComponent } from './components/simsim/sim-sim-view/sim-sim-view.component';
 import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-sim-startup.component';
 import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component';
-import { ManagerStartupComponent } from "./components/conference/manager-startup/manager-startup.component"
 
 import { AuthGuard } from "./shared/auth.guard";
 
 const routes: Routes = [
   // Routes that have no default theme!
-  
+
   { path: 'resa/read/:id', component: ResViewComponent },
   { path: 's/view/:id', component: SpeakerlistViewComponent },
   { path: 'sim', component: SimSimViewComponent },
@@ -58,7 +46,7 @@ const routes: Routes = [
       { path: 'privacy', component: PrivacyTermsComponent },
 
       //Example
-      { path: 'components', component: AllComponentsComponent },
+      //{ path: 'components', component: AllComponentsComponent },
       { path: 'test/signalr', component: SignalrtestComponent },
 
       //Resolutionen
@@ -66,25 +54,13 @@ const routes: Routes = [
       { path: 'resa/live/:id', component: WorkWithResolutionComponent },
       { path: 'mydocs', component: MyresolutionsComponent },
       { path: 'reshome', component: ResolutionHomeComponent },
-      
+
       //Account
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'logout', component: LogoutComponent },
       { path: 'account/settings', component: AccountSettingsComponent, canActivate: [AuthGuard] },
       { path: 'u/:id', component: ProfileComponent },
-
-      //// Login is a custom form and not in this layout, register could also be moved someday
-
-      //Konferenz
-      { path: 'cm/start', component: ManagerStartupComponent },
-      { path: 'createconference', component: CreateConferenceComponent },
-      { path: 'conference/my', component: MyConferencesOverviewComponent },
-      
-      { path: 'conferences/edit/:id', component: EditConferenceComponent },
-      { path: 'exploreconferences', component: ExploreConferencesComponent },
-      { path: 'committee/:id', component: CommitteeDetailsComponent },
-      
 
       //Admin
       { path: 'admin/dashboard', component: AdminDashboardComponent },
@@ -101,21 +77,14 @@ const routes: Routes = [
       // SimSim
       { path: 'simulator', component: SimSimStartupComponent },
       { path: 'simulator/create', component: SimSimCreateComponent }
-    ]
+    ],
+
   },
   {
-    path: '',
-    component: EditConferenceLayoutComponent,
-    children: [
-      { path: 'mc/dashboard/:id', component: ConferenceDetailsComponent },
-      { path: 'mc/general/:id', component: ConferenceOptionsComponent },
-      // mc for manage conference
-      { path: 'mc/overview/:id', component: EditConferenceComponent },
-      { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
-      { path: 'mc/TeamRoles/:id', component: ManageConferenceTeamRolesComponent },
-      { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent }
-    ]
-  },
+    path: 'conference',
+    loadChildren: () => import('./modules/conference.module').then(m => m.ConferenceModule)
+  }
+
 
 ]
 
