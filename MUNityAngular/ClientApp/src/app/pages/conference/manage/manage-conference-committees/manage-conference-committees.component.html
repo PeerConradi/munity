@@ -1,13 +1,20 @@
 <div *ngIf="!conference">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
   <p>Konferenz wird geladen</p>
 </div>
 
 <div *ngIf="conference">
+
+
+
   <div class="row">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Konferenzverwaltung</li>
-        <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ConferenceId]" *ngIf="conference">{{ conference.Name }}</a></li>
+        <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ConferenceId]"
+            *ngIf="conference">{{ conference.Name }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">Gremien</li>
       </ol>
     </nav>
@@ -17,38 +24,24 @@
     <h1>Gremien verwalten</h1>
   </div>
 
-  <!-- Übersicht -->
   <div class="row">
-    <div class="card border-dark w-100">
-      <div class="card-header">Gremien</div>
-      <div class="card-body text-dark">
-        <h5 class="card-title">Gremien</h5>
-
-        <p *ngIf="conference.Committees" class="card-text">{{ conference.Committees.length }} Gremien gefunden.</p>
-        <p *ngIf="!conference.Committees" class="card-text text-danger">Keine Gremien initialisiert!</p>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Id </th>
-              <th>Name </th>
-              <th>Abkürzung</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let committee of conference.Committees">
-              <td>{{ committee.CommitteeId}}</td>
-              <td>{{ committee.Name }}</td>
-              <td>{{ committee.Abbreviation }}</td>
-            </tr>
-          </tbody>
-        </table>
-
+    <div class="col-6">
+      <div class="card">
+        <div class="card-header">
+          Gremien
+        </div>
+        <div class="card-body">
+          <app-committee-list></app-committee-list>
+        </div>
+        <div class="card-footer">
+          <button type="button" class="btn btn-block btn-primary" (click)="openModal(addCommitteeModal)">Gremium
+            hinzufügen</button>
+        </div>
       </div>
-      <div class="card-footer">
-        <button type="button" class="btn btn-block btn-primary" (click)="openModal(addCommitteeModal)">Gremium hinzufügen</button>
-      </div>
+
     </div>
   </div>
+
   <div class="row">
     <div class="col-12">
       <div class="card border-primary">
@@ -83,10 +76,12 @@
         </tr>
         <tr *ngFor="let delegation of filteredDelegations">
           <td>{{ delegation.Name }}</td>
-          <td *ngFor="let committee of conference.Committees" [class.bg-success]="isDelegationInCommittee(delegation, committee)">
+          <td *ngFor="let committee of conference.Committees"
+            [class.bg-success]="isDelegationInCommittee(delegation, committee)">
             <div class="checkbox align-content-center">
               <label style="font-size: 1em">
-                  <input type="checkbox" value="" [checked]="isDelegationInCommittee(delegation, committee)" (change)="toggleDelegationInCommittee(delegation, committee)">
+                <input type="checkbox" value="" [checked]="isDelegationInCommittee(delegation, committee)"
+                  (change)="toggleDelegationInCommittee(delegation, committee)">
               </label>
             </div>
           </td>
@@ -108,13 +103,13 @@
     </button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="addCommitteeForm"  (ngSubmit)="addCommittee()">
+    <form [formGroup]="addCommitteeForm" (ngSubmit)="addCommittee()">
       <!-- Name -->
       <div class="form-group">
         <label class="control-label">Anzeigename</label>
         <div class="col-12">
-          <input formControlName="name"
-                 class="form-control" [class.is-invalid]="addCommitteeSubmitted && acf.name.errors">
+          <input formControlName="name" class="form-control"
+            [class.is-invalid]="addCommitteeSubmitted && acf.name.errors">
         </div>
       </div>
 
@@ -122,8 +117,8 @@
       <div class="form-group">
         <label class="control-label">Abkürzung/Kurzform</label>
         <div class="col-12">
-          <input formControlName="abbreviation"
-                 class="form-control" [class.is-invalid]="addCommitteeSubmitted && acf.abbreviation.errors">
+          <input formControlName="abbreviation" class="form-control"
+            [class.is-invalid]="addCommitteeSubmitted && acf.abbreviation.errors">
         </div>
       </div>
 
@@ -131,8 +126,8 @@
       <div class="form-group">
         <label class="control-label">Artikel (der/die/das)</label>
         <div class="col-12">
-          <input formControlName="article"
-                 class="form-control"  [class.is-invalid]="addCommitteeSubmitted && acf.article.errors">
+          <input formControlName="article" class="form-control"
+            [class.is-invalid]="addCommitteeSubmitted && acf.article.errors">
         </div>
       </div>
 
@@ -140,17 +135,15 @@
       <div class="form-group">
         <label class="control-label">Übergeodnetes Gremium</label>
         <div class="col-12">
-          <input formControlName="parentcommittee"
-                 [typeahead]="conference.Committees"
-                 typeaheadOptionField="Name"
-                 class="form-control"
-                 aria-describedby="dsds">
+          <input formControlName="parentcommittee" [typeahead]="conference.Committees" typeaheadOptionField="Name"
+            class="form-control" aria-describedby="dsds">
           <small id="dsds" class="text-muted">Wenn keines existiert Feld leer lassen</small>
         </div>
       </div>
 
       <div class="form-group">
-        <button class="btn btn-block btn-primary" (click)="addCommittee()" [disabled]="isAddingCommittee">Hinzufügen</button>
+        <button class="btn btn-block btn-primary" (click)="addCommittee()"
+          [disabled]="isAddingCommittee">Hinzufügen</button>
       </div>
     </form>
     <div *ngIf="errorAddingCommittee" class="alert alert-danger">

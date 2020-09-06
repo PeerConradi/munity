@@ -19,15 +19,13 @@ export class ConferenceMenuComponent implements OnInit {
 
   conference: Conference;
 
-  constructor(private route: ActivatedRoute, private conferenceService: ConferenceService, private router: Router) { }
+  constructor(private conferenceService: ConferenceService, private router: Router) { }
 
   ngOnInit() {
-    const routes = this.router.url.split('/');
-    const id = routes[routes.length - 1];
-    this.conferenceService.getConference(id).subscribe(n => {
-      console.log(n);
-      this.conference = n;
-    });
+
+    // this.conference = this.conferenceService.currentConference;
+    this.conference = new Conference();
+    
   }
 
 }

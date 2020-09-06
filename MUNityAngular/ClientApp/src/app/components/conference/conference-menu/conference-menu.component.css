@@ -13,12 +13,12 @@ a, a:hover, a:focus {
 
 .sidebar-header {
   padding: 20px;
-  background: #59a9ff;
+  background: black;
 }
 
 ul.components {
   padding: 20px 0;
-  border-bottom: 1px solid #59a9ff;
+  border-bottom: 1px solid #0e0e0e;
 }
 
 ul p {
@@ -39,13 +39,13 @@ ul li a:hover {
 
 ul li.active > a, a[aria-expanded="true"] {
   color: #fff;
-  background: #59a9ff;
+  background: #0e0e0e;
 }
 
 ul ul a {
   font-size: 0.9em !important;
   padding-left: 30px !important;
-  background: #59a9ff;
+  background: #0e0e0e;
 }
 
 a[data-toggle="collapse"] {
@@ -53,5 +53,5 @@ a[data-toggle="collapse"] {
 }
 
 .dropable {
-  background: #0065d1;
+  background: #3a3a3a;
 }

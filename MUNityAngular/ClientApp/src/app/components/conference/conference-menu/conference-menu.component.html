@@ -3,7 +3,7 @@
   <h6 *ngIf="conference && conference.Name">{{ conference.Name }}</h6>
 </div>
 
-<ul *ngIf="conference" class="list-unstyled components">
+<ul *ngIf="conference" class="list-unstyled components bg-dark">
   <li>
     <a [routerLink]="['/mc/dashboard', conference.ConferenceId]">Übersicht</a>
   </li>
@@ -17,7 +17,7 @@
         <a [routerLink]="['/mc/committees', conference.ConferenceId]">Gremien verwalten</a>
       </li>
       <li>
-        <a >Themen bearbeiten</a>
+        <a>Themen bearbeiten</a>
       </li>
       <li>
         <a>Delegationen aufteilen</a>

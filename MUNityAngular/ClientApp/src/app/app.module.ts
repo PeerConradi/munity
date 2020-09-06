@@ -29,7 +29,7 @@ import { SpeakerlistViewComponent } from './components/speakerlist/speakerlist-v
 import { WorkWithResolutionComponent } from './components/resedit/work-with-resolution/work-with-resolution.component';
 import { AccountSettingsComponent } from './components/account/account-settings/account-settings.component';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
-import { faFile, faFlag, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faFlag, faUser, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
 import { ResolutionsManagementComponent } from './components/admin/resolutions-management/resolutions-management.component';
@@ -158,7 +158,7 @@ import { MunityDefaultsModule } from './modules/munitydefaults.module';
 export class AppModule {
   constructor(library: FaIconLibrary) {
     // Add an icon to the library for convenient access in other components
-    library.addIcons(faFile, faFlag, faUser);
+    library.addIcons(faFile, faFlag, faUser, faCircle);
 
   }
 }

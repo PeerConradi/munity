@@ -5,12 +5,13 @@
   left: 0;
   height: 100vh;
   z-index: 999;
-  background: #007bff;
   color: #fff;
   transition: all 0.3s;
 }
 
-.content {
+.c-content {
   margin-left: 200px;
   padding: 20px 30px;
+  min-height: 100hv;
+  background: #b6c2c9;
 }

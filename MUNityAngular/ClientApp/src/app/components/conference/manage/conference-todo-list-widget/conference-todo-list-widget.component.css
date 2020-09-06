@@ -1,0 +1,317 @@
+.widget-todolist:after, .widget-todolist:before {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.widget-todolist:after, .widget-todolist:before {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.inverse-mode.widget-todolist {
+    background: #2d353c;
+}
+
+.widget-todolist.widget-todolist-rounded {
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.m-b-30 {
+    margin-bottom: 30px!important;
+}
+
+.pt-0, .py-0 {
+    padding-top: 0!important;
+}
+
+.widget-todolist .widget-todolist-header {
+    display: table;
+    width: 100%;
+}
+
+.widget-todolist .widget-todolist-header .widget-todolist-header-left, .widget-todolist .widget-todolist-header .widget-todolist-header-right {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 10px 15px;
+}
+
+.inverse-mode.widget-todolist .widget-todolist-header .widget-todolist-header-title, .inverse-mode.widget-todolist .widget-todolist-header .widget-todolist-header-total, .inverse-mode.widget-todolist .widget-todolist-item .widget-todolist-content .form-control, .inverse-mode.widget-todolist .widget-todolist-item .widget-todolist-title {
+    color: #fff;
+}
+
+.inverse-mode.widget-todolist .widget-todolist-body, .inverse-mode.widget-todolist .widget-todolist-item+.widget-todolist-item .widget-todolist-content, .inverse-mode.widget-todolist .widget-todolist-item+.widget-todolist-item .widget-todolist-icon {
+    border-color: #3d4852;
+}
+
+.widget-todolist .widget-todolist-header .widget-todolist-header-right {
+    width: 1%;
+    text-align: center;
+}
+
+.widget-todolist .widget-todolist-header .widget-todolist-header-total {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d353c;
+}
+
+.widget-todolist .widget-todolist-header .widget-todolist-header-right {
+    width: 1%;
+    text-align: center;
+}
+
+.widget-todolist .widget-todolist-body {
+    padding: 3px 0;
+    border-top: 1px solid #e4e7ea;
+    border-bottom: 1px solid #e4e7ea;
+    margin-bottom: 20px;
+}
+
+.widget-todolist .widget-todolist-item {
+    display: table;
+    width: 100%;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-input {
+    display: table-cell;
+    padding: 10px 15px;
+    vertical-align: middle;
+    width: 45px;
+    text-align: center;
+}
+
+.checkbox.checkbox-css {
+    line-height: 16px;
+    padding-top: 7px;
+}
+
+
+
+.widget-todolist .widget-todolist-item .widget-todolist-input {
+    display: table-cell;
+    padding: 10px 15px;
+    vertical-align: middle;
+    width: 45px;
+    text-align: center;
+}
+
+.checkbox.checkbox-css input, .page-sidebar-minified .sidebar .nav-header, .page-sidebar-minified .sidebar .nav-profile, .radio.radio-css input, .switcher input {
+    display: none;
+}
+
+input[type=checkbox], input[type=radio] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
+button, input {
+    overflow: visible;
+}
+
+button, input, optgroup, select, textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+input[type="checkbox" i] {
+    background-color: initial;
+    cursor: default;
+    appearance: checkbox;
+    box-sizing: border-box;
+    margin: 3px 3px 3px 4px;
+    padding: initial;
+    border: initial;
+}
+
+input {
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: -internal-light-dark(black, white);
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    appearance: textfield;
+    background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59));
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    margin: 0em;
+    font: 400 13.3333px Arial;
+    padding: 1px 2px;
+    border-width: 2px;
+    border-style: inset;
+    border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-image: initial;
+}
+
+.checkbox.checkbox-css {
+    line-height: 16px;
+    padding-top: 7px;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-input {
+    display: table-cell;
+    padding: 10px 15px;
+    vertical-align: middle;
+    width: 45px;
+    text-align: center;
+}
+
+.checkbox.checkbox-css label {
+    padding-left: 24px;
+    margin: 0;
+    position: relative;
+}
+
+.p-l-15 {
+    padding-left: 15px!important;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: .5rem;
+}
+
+label {
+    cursor: default;
+}
+
+.checkbox.checkbox-css {
+    line-height: 16px;
+    padding-top: 7px;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-input {
+    display: table-cell;
+    padding: 10px 15px;
+    vertical-align: middle;
+    width: 45px;
+    text-align: center;
+}
+
+.checkbox.checkbox-css label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    background: #d5dbe0;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+label::after, ::before {
+    box-sizing: border-box;
+}
+
+.widget-todolist .widget-todolist-item:first-child .widget-todolist-content, .widget-todolist .widget-todolist-item:first-child .widget-todolist-icon {
+    border-top: none;
+}
+
+.widget-chat .widget-chat-header>div+div, .widget-list .widget-list-item .widget-list-action+div, .widget-list .widget-list-item .widget-list-content+div, .widget-list .widget-list-item .widget-list-media+div, .widget-todolist .widget-todolist-item .widget-todolist-input+div {
+    padding-left: 0;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-content {
+    display: table-cell;
+    padding: 10px 15px;
+    vertical-align: middle;
+    border-top: 1px solid #e4e7ea;
+}
+
+.bootstrap-calendar .calendar .table.daysmonth tr td.event a, .inverse-mode.widget-todolist .widget-todolist-header .widget-todolist-header-title, .inverse-mode.widget-todolist .widget-todolist-header .widget-todolist-header-total, .inverse-mode.widget-todolist .widget-todolist-item .widget-todolist-content .form-control, .inverse-mode.widget-todolist .widget-todolist-item .widget-todolist-title {
+    color: #fff;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-desc, .widget-todolist .widget-todolist-item .widget-todolist-title {
+    font-size: 12px;
+    margin: 0;
+}
+
+.inverse-mode.widget-todolist .widget-todolist-item .widget-todolist-desc {
+    color: #c6ced5;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-desc, .widget-todolist .widget-todolist-item .widget-todolist-title {
+    font-size: 12px;
+    margin: 0;
+}
+
+.widget-todolist .widget-todolist-item:first-child .widget-todolist-content, .widget-todolist .widget-todolist-item:first-child .widget-todolist-icon {
+    border-top: none;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-icon {
+    display: table-cell;
+    padding: 10px 15px;
+    vertical-align: middle;
+    width: 1%;
+    text-align: center;
+    border-top: 1px solid #d5dbe0;
+}
+
+.checkbox.checkbox-css input:checked+label:before {
+    background: #348fe2;
+    border-color: #348fe2;
+}
+
+.checkbox.checkbox-css input:checked+label:after {
+    content: '';
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 50% 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #fff;
+    height: 16px;
+    width: 16px;
+    text-align: center;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-input {
+    display: table-cell;
+    padding: 10px 15px;
+    vertical-align: middle;
+    width: 45px;
+    text-align: center;
+}
+
+.inverse-mode.widget-todolist .widget-todolist-body, .inverse-mode.widget-todolist .widget-todolist-item+.widget-todolist-item .widget-todolist-content, .inverse-mode.widget-todolist .widget-todolist-item+.widget-todolist-item .widget-todolist-icon {
+    border-color: #3d4852;
+}
+
+.widget-todolist .widget-todolist-item .widget-todolist-content .form-control {
+    margin: -5px 0;
+    border: 0!important;
+    padding-left: 0;
+    background: 0 0;
+    -webkit-box-shadow: none!important;
+    box-shadow: none!important;
+    -webkit-border-radius: 0!important;
+    border-radius: 0!important;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 14px + 2px);
+    padding: 7px .75rem;
+    font-size: .75rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #2d353c;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #d5dbe0;
+    border-radius: 4px;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}

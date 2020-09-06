@@ -29,7 +29,7 @@ export class ManageConferenceCommitteesComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private conferenceService: ConferenceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService,
-  private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.addCommitteeForm = this.formBuilder.group({
@@ -46,8 +46,8 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     });
     this.conferenceService.getAllDelegations().subscribe(n => {
       this.presetDelegations = n;
-      
     });
+    this.conference = new Conference();
   }
 
   getDelegationById(id: string): Delegation {
@@ -92,9 +92,9 @@ export class ManageConferenceCommitteesComponent implements OnInit {
       this.errorAddingCommittee = null;
       this.isAddingCommittee = false;
     }, err => {
-        console.log(err);
-        this.errorAddingCommittee = err.error;
-        this.isAddingCommittee = false;
+      console.log(err);
+      this.errorAddingCommittee = err.error;
+      this.isAddingCommittee = false;
     });
   }
 
@@ -126,7 +126,7 @@ export class ManageConferenceCommitteesComponent implements OnInit {
         }
       });
     }
-    
+
   }
 
 }

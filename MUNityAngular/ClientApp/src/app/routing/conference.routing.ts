@@ -10,6 +10,8 @@ import { ConferenceDetailsComponent } from "../components/conference/conference-
 import { ManageConferenceTeamComponent } from "../components/conference/manage/manage-conference-team/manage-conference-team.component";
 import { ManageConferenceTeamRolesComponent } from "../components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component";
 import { EditConferenceLayoutComponent } from "../layouts/edit-conference-layout/edit-conference-layout.component";
+import { ManageConferenceDashboardComponent } from "../pages/conference/manage/manage-conference-dashboard/manage-conference-dashboard.component";
+import { ManageConferenceCommitteesComponent } from "../pages/conference/manage/manage-conference-committees/manage-conference-committees.component";
 
 export const routes: Routes = [
 
@@ -32,13 +34,13 @@ export const routes: Routes = [
         path: '',
         component: EditConferenceLayoutComponent,
         children: [
-            { path: 'mc/dashboard/:id', component: ConferenceDetailsComponent },
+            { path: 'mc/dashboard/:id', component: ManageConferenceDashboardComponent },
             { path: 'mc/general/:id', component: ConferenceDetailsComponent },
             // mc for manage conference
             { path: 'mc/overview/:id', component: CreateConferenceComponent },
             { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
             { path: 'mc/TeamRoles/:id', component: ManageConferenceTeamRolesComponent },
-            { path: 'mc/committees/:id', component: ManageConferenceTeamRolesComponent }
+            { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent }
         ]
     },
 

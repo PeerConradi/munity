@@ -25,6 +25,8 @@ export class ConferenceService {
 
   public committeeContext: Committee = null;
 
+  public currentConference: Conference = null;
+
   private baseUrl: string;
   constructor(private http: HttpClient, private userService: UserService, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -129,7 +131,7 @@ export class ConferenceService {
   }
 
   public addTeamMember(username: string, role: TeamRole) {
-    return this.http.put(this.baseUrl + 'api/Conference/AddUserToTeam', {Username: username, Role: role});
+    return this.http.put(this.baseUrl + 'api/Conference/AddUserToTeam', { Username: username, Role: role });
   }
 
   public addDelegationToCommittee(committeeid: string, delegationid: string, mincount: number, maxcount: number) {
@@ -156,7 +158,7 @@ export class ConferenceService {
   }
 
   public setCommitteeStatus(status: CommitteeStatus) {
-    return this.http.put(this.baseUrl + 'api/Conference/SetCommitteeStatus',status);
+    return this.http.put(this.baseUrl + 'api/Conference/SetCommitteeStatus', status);
   }
 
   public getCommitteeStatus(committeeid: string) {

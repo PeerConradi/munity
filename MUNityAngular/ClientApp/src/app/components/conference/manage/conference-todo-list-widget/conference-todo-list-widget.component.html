@@ -1,0 +1,52 @@
+<!-- begin widget-todolist -->
+<div class="widget-todolist widget-todolist-rounded inverse-mode">
+    <!-- begin widget-todolist-header -->
+    <div class="widget-todolist-header">
+        <div class="widget-todolist-header-left">
+            <h4 class="widget-todolist-header-title">Todolist</h4>
+        </div>
+        <div class="widget-todolist-header-right">
+            <div class="widget-todolist-header-total">
+                <span class="text-inverse">0</span><br>
+                <small>Done</small>
+            </div>
+        </div>
+    </div>
+    <!-- end widget-todolist-header -->
+
+    <!-- begin widget-todolist-body -->
+    <div class="widget-todolist-body">
+        <!-- begin widget-todolist-item -->
+        <div class="widget-todolist-item">
+            <div class="widget-todolist-input">
+                <div class="checkbox checkbox-css pt-0">
+                    <input type="checkbox" id="widget_todolist_1" />
+                    <label for="widget_todolist_1" class="p-l-15"> </label>
+                </div>
+            </div>
+            <div class="widget-todolist-content">
+                <h4 class="widget-todolist-title">Borrow Tony's travel guide</h4>
+                <p class="widget-todolist-desc">Vacation in Rome</p>
+            </div>
+            <div class="widget-todolist-icon">
+                <a href="#">
+                    <fa-icon [icon]="faQuestionCircle"></fa-icon>
+                </a>
+            </div>
+        </div>
+        <!-- end widget-todolist-item -->
+        ...
+        <!-- begin widget-todolist-item -->
+        <div class="widget-todolist-item">
+            <div class="widget-todolist-input">
+                <fa-icon [icon]="faPlus" class=text-muted></fa-icon>
+            </div>
+            <div class="widget-todolist-content">
+                <input type="text" class="form-control" placeholder="Write your task here..." />
+            </div>
+        </div>
+        <!-- end widget-todolist-item -->
+    </div>
+    <!-- end widget-todolist-body -->
+</div>
+<!-- end widget-todolist -->
