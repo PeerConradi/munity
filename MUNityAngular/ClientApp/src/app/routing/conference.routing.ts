@@ -12,6 +12,7 @@ import { ManageConferenceTeamRolesComponent } from "../components/conference/man
 import { EditConferenceLayoutComponent } from "../layouts/edit-conference-layout/edit-conference-layout.component";
 import { ManageConferenceDashboardComponent } from "../pages/conference/manage/manage-conference-dashboard/manage-conference-dashboard.component";
 import { ManageConferenceCommitteesComponent } from "../pages/conference/manage/manage-conference-committees/manage-conference-committees.component";
+import { ManageConferenceDelegationsComponent } from "../pages/conference/manage/manage-conference-delegations/manage-conference-delegations.component";
 
 export const routes: Routes = [
 
@@ -40,7 +41,8 @@ export const routes: Routes = [
             { path: 'mc/overview/:id', component: CreateConferenceComponent },
             { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
             { path: 'mc/TeamRoles/:id', component: ManageConferenceTeamRolesComponent },
-            { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent }
+            { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent },
+            { path: 'mc/delegations/:id', component: ManageConferenceDelegationsComponent }
         ]
     },
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.Models.Conference;
@@ -12,7 +13,7 @@ namespace MUNityAngular.Models.Conference
     /// needs to create its own list of committees, they should not be reused inside of other
     /// Conferences.
     /// </summary>
-    public class Committee
+    public class Committee : ICommitteeFacade
     {
         public string CommitteeId { get; set; }
 
@@ -25,6 +26,9 @@ namespace MUNityAngular.Models.Conference
         public string Article { get; set; }
 
         public Committee ResolutlyCommittee { get; set; }
+
+        //[NotMapped]
+        public string ResolutlyCommitteeId => ResolutlyCommittee?.ResolutlyCommitteeId ?? "";
 
         public Conference Conference { get; set; }
 

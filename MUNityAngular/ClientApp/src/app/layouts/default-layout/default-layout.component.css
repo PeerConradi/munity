@@ -116,5 +116,6 @@
 .pagecontent {
     padding-left: 10px;
     padding-right: 10px;
-
+    margin-top: 10px;
+    min-height: 92%;
 }

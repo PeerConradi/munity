@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
-import { Committee } from '../../../models/committee.model';
+import { Committee } from '../../../models/conference/committee.model';
 import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
-import { CommitteeStatus } from '../../../models/committee-status.model';
+import { CommitteeStatus } from '../../../models/conference/committee-status.model';
 
 @Component({
   selector: 'app-committee-details',

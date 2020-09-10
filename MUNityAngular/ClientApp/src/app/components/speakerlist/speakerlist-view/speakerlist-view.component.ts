@@ -4,7 +4,7 @@ import { ConferenceService } from '../../../services/conference-service.service'
 import { ActivatedRoute } from '@angular/router';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { TimeSpan } from '../../../models/TimeSpan';
-import { Delegation } from '../../../models/delegation.model';
+import { Delegation } from '../../../models/conference/delegation.model';
 
 @Component({
   selector: 'app-speakerlist-view',

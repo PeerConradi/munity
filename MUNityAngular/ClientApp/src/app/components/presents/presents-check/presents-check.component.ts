@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
-import { Delegation } from '../../../models/delegation.model';
+import { Delegation } from '../../../models/conference/delegation.model';
 import { PresenceService } from '../../../services/presence.service';
 import { Presence } from '../../../models/presence.model';
 import { NotifierService } from 'angular-notifier';

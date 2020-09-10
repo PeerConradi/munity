@@ -9,7 +9,7 @@ import { SimulationLobbyInfo } from '../models/simulation-lobby-info.model';
 import { of, Observable } from 'rxjs';
 import { SimulationMessage } from '../models/simulation-message.model';
 import { AddSimulationChatMessageRequest } from './requestSchema/add-simulation-chat-message-request';
-import { Delegation } from '../models/delegation.model';
+import { Delegation } from '../models/conference/delegation.model';
 import { SimulationRequest } from '../models/simulation-request.model';
 
 @Injectable({

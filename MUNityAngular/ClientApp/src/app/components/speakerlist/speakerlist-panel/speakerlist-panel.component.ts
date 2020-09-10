@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { SpeakerListService } from '../../../services/speaker-list.service';
 import { ConferenceService } from '../../../services/conference-service.service';
-import { Delegation } from '../../../models/delegation.model';
+import { Delegation } from '../../../models/conference/delegation.model';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead/public_api';
 
 @Component({

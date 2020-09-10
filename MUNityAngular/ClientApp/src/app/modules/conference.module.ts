@@ -10,7 +10,7 @@ import { DelegationDetailsComponent } from "../components/conference/delegation-
 import { EditConferenceComponent } from "../components/conference/edit-conference/edit-conference.component";
 import { ExploreConferencesComponent } from "../components/conference/explore-conferences/explore-conferences.component";
 import { ManageConferenceCommitteesComponent } from "../pages/conference/manage/manage-conference-committees/manage-conference-committees.component";
-import { ManageConferenceDelegationsComponent } from "../components/conference/manage/manage-conference-delegations/manage-conference-delegations.component";
+import { ManageConferenceDelegationsComponent } from "../pages/conference/manage/manage-conference-delegations/manage-conference-delegations.component";
 import { ManageConferenceTeamComponent } from "../components/conference/manage/manage-conference-team/manage-conference-team.component";
 import { ManageConferenceTeamRolesComponent } from "../components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component";
 import { ManageConferenceWebsiteComponent } from "../components/conference/manage/manage-conference-website/manage-conference-website.component";

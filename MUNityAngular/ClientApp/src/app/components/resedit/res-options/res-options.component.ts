@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Resolution } from '../../../models/resolution.model';
 import { UserService } from '../../../services/user.service';
 import { ResolutionService } from '../../../services/resolution.service';
-import { Delegation } from '../../../models/delegation.model';
+import { Delegation } from '../../../models/conference/delegation.model';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-resolution-header-request';
 import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';

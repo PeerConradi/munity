@@ -4,15 +4,15 @@ import { Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Conference } from '../models/conference.model';
 import { UserService } from './user.service';
-import { Committee } from '../models/committee.model';
-import { Delegation } from '../models/delegation.model';
+import { Committee } from '../models/conference/committee.model';
+import { Delegation } from '../models/conference/delegation.model';
 import { AddCommitteeRequest } from '../models/requests/add-committee-request';
 import { CreateDelegationRequest } from '../models/requests/create-delegation-request';
 import { ChangeConferenceNameRequest } from '../models/requests/change-conference-name-request';
 import { User } from '../models/user.model';
 import { TeamRole } from '../models/team-role.model';
 import { UserConferenceRole } from '../models/user-conference-role.model';
-import { CommitteeStatus } from '../models/committee-status.model';
+import { CommitteeStatus } from '../models/conference/committee-status.model';
 
 
 // Some day this thing should be renamed into ConferenceService!

@@ -1,4 +1,4 @@
-import { Delegation } from "./delegation.model";
+import { Delegation } from "./conference/delegation.model";
 
 export class SimulationUser {
   UserToken: string;

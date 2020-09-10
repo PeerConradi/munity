@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Committee } from '../../../models/committee.model';
+import { Committee } from '../../../models/conference/committee.model';
 import { ConferenceService } from '../../../services/conference-service.service';
-import { CommitteeStatus } from '../../../models/committee-status.model';
+import { CommitteeStatus } from '../../../models/conference/committee-status.model';
 import { Presence } from '../../../models/presence.model';
 import { PresenceService } from '../../../services/presence.service';
 

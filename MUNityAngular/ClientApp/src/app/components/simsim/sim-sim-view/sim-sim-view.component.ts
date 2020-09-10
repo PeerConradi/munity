@@ -6,7 +6,7 @@ import { Simulation } from '../../../models/simulation.model';
 import { SimulationService } from '../../../services/simulator.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Delegation } from '../../../models/delegation.model';
+import { Delegation } from '../../../models/conference/delegation.model';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { SpeakerListService } from '../../../services/speaker-list.service';
 import { SimulationUser } from '../../../models/simulation-user.model';

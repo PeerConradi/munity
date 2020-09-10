@@ -1,5 +1,5 @@
 import { TimeSpan } from "./TimeSpan";
-import { Delegation } from "./delegation.model";
+import { Delegation } from "./conference/delegation.model";
 
 export class Speakerlist {
   public ID: string;

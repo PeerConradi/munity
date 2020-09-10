@@ -8,16 +8,16 @@ describe('ConferenceMenuComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConferenceMenuComponent ]
+      declarations: [ConferenceMenuComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     //fixture = TestBed.createComponent(ConferenceMenuComponent);
     //component = fixture.componentInstance;
     //fixture.detectChanges();
-    component = new ConferenceMenuComponent(null, null, null);
+    component = new ConferenceMenuComponent(null, null);
   });
 
   it('should create', () => {

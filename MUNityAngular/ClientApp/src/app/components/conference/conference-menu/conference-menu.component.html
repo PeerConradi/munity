@@ -11,9 +11,6 @@
     <a (click)="committeeMenuCollapse = !committeeMenuCollapse" class="dropable">Gremien</a>
     <ul class="list-unstyled" [hidden]="committeeMenuCollapse">
       <li>
-        <a>Gremium hinzufügen</a>
-      </li>
-      <li>
         <a [routerLink]="['/mc/committees', conference.ConferenceId]">Gremien verwalten</a>
       </li>
       <li>
@@ -32,7 +29,7 @@
         <a>Übersicht</a>
       </li>
       <li>
-        <a>Delegationen verwalten</a>
+        <a [routerLink]="['/mc/delegations', conference.ConferenceId]">Delegationen verwalten</a>
       </li>
       <li>
         <a>Länderschilder generieren</a>

@@ -4,7 +4,7 @@ import { UserService } from './user.service';
 import { Speakerlist } from '../models/speakerlist.model';
 import * as signalR from '@aspnet/signalr';
 import { TimeSpan } from '../models/TimeSpan';
-import { Delegation } from '../models/delegation.model';
+import { Delegation } from '../models/conference/delegation.model';
 
 @Injectable({
   providedIn: 'root'

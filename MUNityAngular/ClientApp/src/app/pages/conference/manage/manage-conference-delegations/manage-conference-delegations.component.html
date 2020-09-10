@@ -1,0 +1,30 @@
+<div *ngIf="conference">
+
+
+    <div class="row">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Konferenzverwaltung</li>
+                <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ConferenceId]"
+                        *ngIf="conference">{{ conference.Name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Delegationen</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <h1>Delegationen Verwalten</h1>
+        <p>Eine Delegation ist eine Gruppe von Teilnehmern. Diese kann einen Staat, aber auch die Presse, eine NGO oder
+            jegliche andere Form der Gruppierung innerhalb der Konferenz definieren.</p>
+        <p>MUNity stellt euch ein paar vordefinierte Delegationen zur Verfügung, damit ihr nicht den Aufwand habt diese
+            selber erstellen
+            zu müssen. Sollte die Delegation welche ihr euch wünscht nicht in der Auswahl vorhanden sein könnt ihr eine
+            neue Delegation erstellen.
+        </p>
+    </div>
+
+    <div class="row">
+        
+    </div>
+
+</div>

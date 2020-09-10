@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Delegation } from 'src/app/models/delegation.model';
+import { Delegation } from 'src/app/models/conference/delegation.model';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { TimeSpan } from '../../../models/TimeSpan';
 import { Speakerlist } from '../../../models/speakerlist.model';

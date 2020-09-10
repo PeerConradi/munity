@@ -1,8 +1,8 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Conference } from '../../../../models/conference.model';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { Delegation } from '../../../../models/delegation.model';
-import { Committee } from '../../../../models/committee.model';
+import { Delegation } from '../../../../models/conference/delegation.model';
+import { Committee } from '../../../../models/conference/committee.model';
 import { ActivatedRoute } from '@angular/router';
 import { ConferenceService } from '../../../../services/conference-service.service';
 import { UserService } from '../../../../services/user.service';

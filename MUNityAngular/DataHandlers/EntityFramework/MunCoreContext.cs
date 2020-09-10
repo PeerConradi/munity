@@ -73,6 +73,7 @@ namespace MUNityAngular.DataHandlers.EntityFramework
             modelBuilder.Entity<Conference>().HasOne(n => n.ConferenceProject)
                 .WithMany(n => n.Conferences);
 
+            modelBuilder.Entity<Committee>().Ignore(n => n.ResolutlyCommitteeId);
 
         }
 
