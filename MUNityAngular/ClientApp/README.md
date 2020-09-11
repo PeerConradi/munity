@@ -6,6 +6,9 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+You can run parts of the front-end without starting the backend. When giving the word "test" in case of an actual id the site creates templates that you can use.
+For example ```http://localhost:4200/resedit/test``` will open the Resolution Editor with an empty Resolution file inside it.
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.

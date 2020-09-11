@@ -49,8 +49,10 @@ two project inside the Project-Explorer: MUNityAngular and MUNityTest.
 This project contains the frontend and the backend application of this project.
 It should be selected as the default start project and the name should appear bold.
 
-The folder ```ClientApp``` contains the code for the Angular9 frontend. Everything around it is the 
+The folder ```ClientApp``` contains the code for the Angular 9 frontend. Everything around it is the 
 backend code.
+
+You can find a little bit about how to work with Angular [here](../MUNityAngular/ClientApp/README.MD)
 
 ### MUNityTest
 
