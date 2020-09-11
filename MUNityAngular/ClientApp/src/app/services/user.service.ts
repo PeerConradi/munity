@@ -13,7 +13,7 @@ import { AuthenticationResponse } from '../models/authentication-response.model'
 })
 export class UserService {
 
-  public currentUser: User = null;
+  public currentUser: User = new User();
 
   public session: AuthenticationResponse = null;
 

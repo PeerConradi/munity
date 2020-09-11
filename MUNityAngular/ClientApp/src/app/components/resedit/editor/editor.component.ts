@@ -18,6 +18,9 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { OperativeParagraph } from "../../../models/resolution/operative-paragraph.model";
 import { UserService } from "../../../services/user.service";
 import { PreambleParagraph } from "../../../models/resolution/preamble-paragraph.model";
+import { ResolutionHeader } from 'src/app/models/resolution/resolution-header.model';
+import { Preamble } from 'src/app/models/resolution/preamble.model';
+import { timeStamp } from 'console';
 
 @Component({
   selector: 'app-editor',
@@ -84,6 +87,8 @@ export class EditorComponent implements OnInit {
 
   ngOnInit() {
     let id: string = null;
+
+
     this.route.params.subscribe(params => {
       id = params.id;
     });
@@ -92,6 +97,18 @@ export class EditorComponent implements OnInit {
     }
 
     if (id != null) {
+      // in testmode just create a new document
+      if (id === 'test') {
+        this.isLoading = false;
+        this.resolution = new Resolution();
+        this.resolution.header = new ResolutionHeader();
+        this.resolution.header.name = 'Test Resolution';
+        this.resolution.header.topic = 'Titel';
+        this.resolution.preamble = new Preamble();
+        this.resolution.operativeSection = new OperativeSection();
+        return;
+      }
+
       // Get the public version of this document. If this returns forbidden you are not allowed
       // to edit this resolution
       if (!this.userService.session) {

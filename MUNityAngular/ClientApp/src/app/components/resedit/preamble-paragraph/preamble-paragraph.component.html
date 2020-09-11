@@ -2,19 +2,18 @@
   <button class="btn btn-danger" (click)="delete()">Löschen</button>
 </ng-template>
 
-<app-munity-window *ngIf="!hideNotices" (onClose)="toggleNotices()" title="Notizen"
-                   (moveStopped)="moveStopped($event);"
-                   [leftVal]="noticeWindowLeft" [topVal]="noticeWindowTop">
+<app-munity-window *ngIf="!hideNotices" (onClose)="toggleNotices()" title="Notizen" (moveStopped)="moveStopped($event);"
+  [leftVal]="noticeWindowLeft" [topVal]="noticeWindowTop">
   <div style="max-height: 400Px; overflow-y: scroll; overflow-x: hidden">
     <div *ngIf="paragraph.notices != null && paragraph.notices.length > 0">
-      <app-notice *ngFor="let notice of paragraph.notices" [notice]="notice"
-                  (onDelete)="deleteNotice(notice);" (onRead)="noticeRead(notice)"
-                  (onUpdate)="noticeUpdated(notice);"></app-notice>
+      <app-notice *ngFor="let notice of paragraph.notices" [notice]="notice" (onDelete)="deleteNotice(notice);"
+        (onRead)="noticeRead(notice)" (onUpdate)="noticeUpdated(notice);"></app-notice>
     </div>
     <p *ngIf="paragraph.notices == null || paragraph.notices.length == 0">Keine Kommentare vorhanden</p>
   </div>
   <div class="card-footer">
-    <button *ngIf="!showAddComment" (click)="showAddComment = !showAddComment" class="btn btn-outline-dark btn-block">Kommentar verfassen</button>
+    <button *ngIf="!showAddComment" (click)="showAddComment = !showAddComment"
+      class="btn btn-outline-dark btn-block">Kommentar verfassen</button>
     <div *ngIf="showAddComment">
       <div class="clearfix">
         <h6 class="float-left">Kommentar schreiben</h6>
@@ -28,12 +27,9 @@
 
       <textarea class="form-control" [(ngModel)]="newComment.text"></textarea>
       <div class="row">
-        <span *ngFor="let tag of newComment.Tags" class="badge text-white"
-              [class.bg-primary]="tag.type == 'primary'"
-              [class.bg-secondary]="tag.type == 'secondary'"
-              [class.bg-success]="tag.type == 'success'"
-              [class.bg-danger]="tag.type == 'danger'"
-              (dblclick)="removeTag(tag);">{{ tag.Text }}</span>
+        <span *ngFor="let tag of newComment.Tags" class="badge text-white" [class.bg-primary]="tag.type == 'primary'"
+          [class.bg-secondary]="tag.type == 'secondary'" [class.bg-success]="tag.type == 'success'"
+          [class.bg-danger]="tag.type == 'danger'" (dblclick)="removeTag(tag);">{{ tag.Text }}</span>
       </div>
       <div class="col-12">
         <h6>Tags hinzufügen: </h6>
@@ -69,13 +65,14 @@
     {{ index }}
   </div>
 
-  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="showNotices($event)" *ngIf="paragraph.notices != null">
+  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="showNotices($event)"
+    *ngIf="paragraph.notices != null">
     <span>N</span>
     <span class="badge" *ngIf="paragraph.notices.length > 0">{{ paragraph.notices.length }}</span>
   </button>
 
   <div class="preamble-tools btn-group-vertical">
-    <button type="button" class="btn btn-danger" placement="left" [popover]="popContent" >
+    <button type="button" class="btn btn-danger" placement="left" [popover]="popContent">
       X
     </button>
     <button type="button" class="btn btn-outline-primary" (click)="moveUp()">▲</button>
@@ -85,8 +82,8 @@
 
 
   <div class="form-group preamble-textarea">
-    <textarea class="form-control" id="preambleTextArea" rows="3"
-              (keyup)="onKey($event)" maxlength="4000">{{ paragraph.text }}</textarea>
+    <textarea class="form-control" id="preambleTextArea" rows="3" (keyup)="onKey($event)" maxlength="4000"
+      [class.is-valid]="saveState === 'S'" [class.is-invalid]="saveState === 'E'">{{ paragraph.text }}</textarea>
 
   </div>
 </div>

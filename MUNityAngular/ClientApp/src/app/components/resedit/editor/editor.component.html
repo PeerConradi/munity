@@ -14,24 +14,26 @@
 
 <div *ngIf="model">
   <!-- navigation -->
-  <div class="row bg-primary resedit-menu">
+  <div class="row bg-secondary resedit-menu">
     <div class="col-6">
-      <input type="text" [(ngModel)]="model.topic" (blur)="updateTitle();" class="form-control" />
+      <input type="text" [(ngModel)]="model.header.topic" (blur)="updateTitle();" class="form-control" />
     </div>
     <div class="col-3">
-      <button class="btn btn-outline-light btn-block" (click)="documentHeaderModal.show();">Kopfzeile bearbeiten</button>
+      <button class="btn btn-outline-light btn-block" (click)="documentHeaderModal.show();">Kopfzeile
+        bearbeiten</button>
     </div>
     <div class="col-3">
       <div class="btn-group w-100" dropdown>
         <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
-                aria-controls="dropdown-basic">
+          aria-controls="dropdown-basic">
           Optionen <span class="caret"></span>
         </button>
-        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
-            role="menu" aria-labelledby="button-basic">
-          <li role="menuitem"><a [routerLink]="['/resa/read', model.resolutionId]" class="dropdown-item text-success" target="_blank">Teilnehmeransicht öffnen</a></li>
+        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+          <li role="menuitem"><a [routerLink]="['/resa/read', model.resolutionId]" class="dropdown-item text-success"
+              target="_blank">Teilnehmeransicht öffnen</a></li>
           <li role="menuitem"><a class="dropdown-item" href="#">Freigabe</a></li>
-          <li role="menuitem"><a class="dropdown-item" (click)="conferenceConnectionModal.show();">An Konferenz knüpfen</a></li>
+          <li role="menuitem"><a class="dropdown-item" (click)="conferenceConnectionModal.show();">An Konferenz
+              knüpfen</a></li>
           <li class="divider dropdown-divider"></li>
           <li role="menuitem">
             <a class="dropdown-item" href="#">Private Kopie erstellen</a>
@@ -52,7 +54,7 @@
     </div>
   </div>
 
-  
+
   <div class="row">
     <!-- Präambel -->
     <div class="col-lg-8 col-md-12">
@@ -64,11 +66,12 @@
           hinzufügen</button>
       </app-munity-box>
       <div class="row" style="height: 20Px"></div>
-      <app-munity-box toolbox="true" title="Operativer Abschnitt" >
+      <app-munity-box toolbox="true" title="Operativer Abschnitt">
         <div *ngFor="let pa of model.operativeSection.paragraphs">
           <app-operative-paragraph [paragraph]=pa [resolutionid]=model.resolutionId></app-operative-paragraph>
         </div>
-        <button class="btn btn-block btn-success add-button" (click)="addOperativeParagraph()">Operativen Absatz hinzufügen</button>
+        <button class="btn btn-block btn-success add-button" (click)="addOperativeParagraph()">Operativen Absatz
+          hinzufügen</button>
       </app-munity-box>
     </div>
     <div class="col-lg-4 col-md-12 col-xm-12 col-xs-12">
@@ -85,7 +88,7 @@
         <div *ngIf="!amendmentInspector">
           <p>Die Änderungsanträge wurden noch nicht initializiert.</p>
         </div>
-        
+
 
       </app-munity-box>
     </div>
@@ -128,9 +131,8 @@
               <div class="row">
                 <label class="control-label">Einbringer</label>
                 <div class="col-12">
-                  <input [(ngModel)]="newamendmentDelegation"
-                         [typeahead]="allDelegations"
-                         class="form-control" [ngModelOptions]="{standalone: true}" />
+                  <input [(ngModel)]="newamendmentDelegation" [typeahead]="allDelegations" class="form-control"
+                    [ngModelOptions]="{standalone: true}" />
                 </div>
               </div>
 
@@ -139,7 +141,8 @@
                 *ngIf="addAmendmentType === 'delete' || addAmendmentType === 'change' || addAmendmentType === 'move'">
                 <label class="col-12 control-label" for="selecttarget">Ziel</label>
                 <div class="col-12">
-                  <select #selectTarget name="selecttarget" class="form-control" [(ngModel)]="amendmentTargetSection" (change)="addAmendmentTargetSelected($event)">
+                  <select #selectTarget name="selecttarget" class="form-control" [(ngModel)]="amendmentTargetSection"
+                    (change)="addAmendmentTargetSelected($event)">
                     <option *ngFor="let s of model.OperativeSections" [ngValue]="s">{{ s.Path }}
                       {{ s.Text | slice:0:20 }}
                     </option>
@@ -148,16 +151,17 @@
               </div>
 
               <!-- Neue Position -->
-              <div class="row"
-                   *ngIf="addAmendmentType === 'move' || addAmendmentType === 'add'">
+              <div class="row" *ngIf="addAmendmentType === 'move' || addAmendmentType === 'add'">
                 <div class="col-12">
                   <label class="control-label" for="selectTargetPosition">Zielposition </label>
-                  <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="right" data-content="Nimmt die Position der Auswahl ein.">
+                  <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover"
+                    data-placement="right" data-content="Nimmt die Position der Auswahl ein.">
                     ?
                   </button>
                 </div>
                 <div class="col-12">
-                  <select #selectTargetPosition name="selectTargetPosition" class="form-control" [(ngModel)]="amendmentTargetPosition"  (change)="addAmendmentTargetPositionSelected($event)">
+                  <select #selectTargetPosition name="selectTargetPosition" class="form-control"
+                    [(ngModel)]="amendmentTargetPosition" (change)="addAmendmentTargetPositionSelected($event)">
                     <option *ngFor="let oa of model.OperativeSections; let i = index" [ngValue]="i">
                       {{ oa.Path }}
                     </option>
@@ -170,8 +174,8 @@
               <div class="row" *ngIf="addAmendmentType === 'change' || addAmendmentType === 'add'">
                 <label class="col-12 control-label" for="textarea">Neuer Text</label>
                 <div class="col-12">
-                  <textarea class="form-control" cols="4" name="newAmendmentNewTextTextArea"
-                    style="min-width: 100%" [(ngModel)]="newAmendmentNewText"></textarea>
+                  <textarea class="form-control" cols="4" name="newAmendmentNewTextTextArea" style="min-width: 100%"
+                    [(ngModel)]="newAmendmentNewText"></textarea>
                 </div>
               </div>
             </div>
@@ -183,14 +187,14 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal"
           (click)="closeAddAmendmentModal();">Close</button>
         <button type="button" class="btn btn-primary" (click)="createNewAmendment();">Hinzufügen</button>
-        
+
       </div>
     </div>
   </div>
 </div>
 
-<div bsModal #documentHeaderModal="bs-modal" class="modal fade" tabindex="-1"
-     role="dialog" aria-labelledby="dialog-sizes-name1">
+<div bsModal #documentHeaderModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -207,8 +211,8 @@
 </div>
 
 <!-- Resolution mit Konferenz verknüpfen -->
-<div bsModal #conferenceConnectionModal="bs-modal" class="modal fade" tabindex="-1"
-     role="dialog" aria-labelledby="dialog-sizes-name1">
+<div bsModal #conferenceConnectionModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -227,11 +231,14 @@
         <div class="form-group">
           <label>Gremium</label>
           <select class="form-control" *ngIf="selectedConference" [(ngModel)]="selectedCommittee">
-            <option *ngFor="let committee of selectedConference.Committees" [ngValue]="committee">{{ committee.Name }}</option>
+            <option *ngFor="let committee of selectedConference.Committees" [ngValue]="committee">{{ committee.Name }}
+            </option>
           </select>
         </div>
         <div class="form-group" *ngIf="selectedCommittee">
-          <button class="btn btn-primary btn-block" (click)="createConferenceConnection(selectedCommittee);conferenceConnectionModal.hide();">Verknüpfung erstellen</button>
+          <button class="btn btn-primary btn-block"
+            (click)="createConferenceConnection(selectedCommittee);conferenceConnectionModal.hide();">Verknüpfung
+            erstellen</button>
         </div>
       </div>
     </div>

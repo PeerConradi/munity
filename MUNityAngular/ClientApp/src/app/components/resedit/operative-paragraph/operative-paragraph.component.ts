@@ -27,10 +27,17 @@ export class OperativeParagraphComponent implements OnInit {
 
   newTag: NoticeTag = new NoticeTag();
 
+  // N for neutral nothing chaged, S for success, E for error
+  public saveState: string = 'N';
+
   noticeWindowLeft = 0;
   noticeWindowTop = 0;
 
   firstShowNotices = true;
+
+  waitToSave = false;
+
+  saveRequestCount = 0;
 
   constructor(private renderer: Renderer2, private service: ResolutionService, private userService: UserService) { }
 
@@ -40,7 +47,30 @@ export class OperativeParagraphComponent implements OnInit {
 
   onKey(event: any) {
     this.paragraph.text = event.target.value;
-    this.service.changeOperativeParagraph(this.paragraph);
+
+    if (!this.waitToSave) {
+      this.saveChanges();
+    }
+  }
+
+  async saveChanges() {
+    this.waitToSave = true;
+    await this.delay(3000);
+    //Wait for a few seconds before trying to save
+    this.service.changeOperativeParagraph(this.paragraph).subscribe(n => {
+      this.saveState = 'S';
+      this.waitToSave = false;
+    },
+      err => {
+        this.saveState = 'E';
+        this.saveRequestCount++;
+        // try to save again
+        this.saveChanges();
+      });
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   delete() {

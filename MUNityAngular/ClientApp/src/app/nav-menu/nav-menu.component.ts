@@ -6,17 +6,19 @@ import { UserService } from '../services/user.service';
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.css']
 })
-export class NavMenuComponent implements OnInit{
+export class NavMenuComponent implements OnInit {
   isExpanded = false;
 
   isAdmin = false;
 
+  showTopBox = false;
+
   constructor(public userSerivce: UserService) {
-    
+
   }
 
   ngOnInit() {
-    
+
   }
 
   collapse() {

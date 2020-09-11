@@ -22,7 +22,8 @@ export class CreateConferenceComponent implements OnInit {
   public requested: boolean = false;
   public conferenceCreated: boolean = false;
 
-  forbidden = true;
+  // To develope the frontend we set this property to true
+  forbidden = false;
 
   constructor(private formBuilder: FormBuilder, private service: ConferenceService, private router: Router, private userService: UserService) {
     this.createForm = this.formBuilder.group({
@@ -31,7 +32,6 @@ export class CreateConferenceComponent implements OnInit {
       abbreviation: '',
       timespan: null
     });
-
   }
 
 

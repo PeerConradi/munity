@@ -298,8 +298,8 @@ export class ResolutionService {
 
   public changeOperativeParagraph(paragraph: OperativeParagraph) {
     let headers = new HttpHeaders();
-    this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection',
-      paragraph, { headers: headers }).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+    return this.httpClient.put<OperativeSection>(this.baseUrl + 'api/Resolution/UpdateOperativeSection',
+      paragraph, { headers: headers });
   }
 
   public changeOperativeParagraphNotice(paragraph: OperativeParagraph, notice: Notice) {
@@ -319,8 +319,8 @@ export class ResolutionService {
   }
 
   public changePreambleParagraph(paragraph: PreambleParagraph) {
-    this.httpClient.put<PreambleParagraph>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraph',
-      paragraph).subscribe(data => { }, err => { this.notifyService.notify('error', 'Das hat nicht geklappt :('); });
+    return this.httpClient.put<PreambleParagraph>(this.baseUrl + 'api/Resolution/UpdatePreambleParagraph',
+      paragraph);
   }
 
   public movePrembleParagraphUp(resolutionid: string, paragraphid: string) {

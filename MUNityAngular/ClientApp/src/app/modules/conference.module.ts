@@ -5,7 +5,7 @@ import { CommitteeDetailsComponent } from "../components/conference/committee-de
 import { ConferenceDetailsComponent } from "../components/conference/conference-details/conference-details.component";
 import { ConferenceMenuComponent } from "../components/conference/conference-menu/conference-menu.component";
 import { ConferenceOptionsComponent } from "../components/conference/conference-options/conference-options.component";
-import { CreateConferenceComponent } from "../components/conference/create-conference/create-conference.component";
+import { CreateConferenceComponent } from "../pages/conference/create-conference/create-conference.component";
 import { DelegationDetailsComponent } from "../components/conference/delegation-details/delegation-details.component";
 import { EditConferenceComponent } from "../components/conference/edit-conference/edit-conference.component";
 import { ExploreConferencesComponent } from "../components/conference/explore-conferences/explore-conferences.component";

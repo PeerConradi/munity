@@ -1,6 +1,6 @@
 import { Routes, RouterModule } from "@angular/router";
 import { ManagerStartupComponent } from "../components/conference/manager-startup/manager-startup.component";
-import { CreateConferenceComponent } from "../components/conference/create-conference/create-conference.component";
+import { CreateConferenceComponent } from "../pages/conference/create-conference/create-conference.component";
 import { MyConferencesOverviewComponent } from "../components/conference/my-conferences-overview/my-conferences-overview.component";
 import { CommitteeDetailsComponent } from "../components/conference/committee-details/committee-details.component";
 import { ModuleWithProviders } from "@angular/core";

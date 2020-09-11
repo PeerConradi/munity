@@ -1,65 +1,67 @@
 <div class="row">
-  <div class="alert alert-danger">
-    <h3><b>Achtung Alpha</b></h3>
-    <p>
-      Derzeit befindet sich diese Plattform noch im Aufbau und die Konferenzen werden
-      ggf. wieder zurückgesetzt. Schaue später noch einmal vorbei falls du MUNity für deine Konferenz nutzen möchtest.
-    </p>
+  <div class="col-12">
+    <div class="alert alert-danger">
+      <h3><b>Achtung Alpha</b></h3>
+      <p>
+        Derzeit befindet sich diese Plattform noch im Aufbau und die Konferenzen werden
+        ggf. wieder zurückgesetzt. Schaue später noch einmal vorbei falls du MUNity für deine Konferenz nutzen möchtest.
+      </p>
+    </div>
   </div>
 </div>
-
-
 
 <div class="row" *ngIf="!forbidden">
   <div class="col-12">
     <h1>Neue Konferenz erstellen</h1>
   </div>
-  <div class="col-12" >
+  <div class="col-12">
     <div class="card">
       <form [formGroup]="createForm" (ngSubmit)="onSubmit(createForm.value)" *ngIf="!requested">
         <div class="form-group">
           <label for="inputName">Name</label>
           <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" formControlName="name">
-          <small id="nameHelp" class="form-text text-muted">Der Anzeigename der Konferenz zum Beispiel: MUN Schleswig-Holstein 2020</small>
+          <small id="nameHelp" class="form-text text-muted">Der Anzeigename der Konferenz zum Beispiel: MUN
+            Schleswig-Holstein 2020</small>
         </div>
         <div class="form-group">
           <label for="inputFullName">Full Name</label>
-          <input type="text" class="form-control" id="inputFullName" aria-describedby="fullnameHelp" formControlName="fullname">
-          <small id="fullnameHelp" class="form-text text-muted">Der vollständige Name der Konferenz zum Beispiel: Model United Nations Schleswig-Holstein 2020</small>
+          <input type="text" class="form-control" id="inputFullName" aria-describedby="fullnameHelp"
+            formControlName="fullname">
+          <small id="fullnameHelp" class="form-text text-muted">Der vollständige Name der Konferenz zum Beispiel: Model
+            United Nations Schleswig-Holstein 2020</small>
         </div>
         <div class="form-group">
           <label for="inputAbbreviation">Abkürzung</label>
-          <input type="text" class="form-control" id="inputAbbreviation" aria-describedby="abbreviationHelp" formControlName="abbreviation">
-          <small id="abbreviationHelp" class="form-text text-muted">Die Abkürzung der Konferenz zum Beispiel: MUN-SH 2020</small>
+          <input type="text" class="form-control" id="inputAbbreviation" aria-describedby="abbreviationHelp"
+            formControlName="abbreviation">
+          <small id="abbreviationHelp" class="form-text text-muted">Die Abkürzung der Konferenz zum Beispiel: MUN-SH
+            2020</small>
         </div>
         <!-- Zeitraum -->
         <div class="form-group">
           <label>Zeitraum</label>
-          <input type="text"
-                 placeholder="Zeitraum"
-                 class="form-control"
-                 formControlName="timespan"
-                 bsDaterangepicker>
+          <input type="text" placeholder="Zeitraum" class="form-control" formControlName="timespan" bsDaterangepicker>
         </div>
         <button type="submit" class="btn btn-primary">Konferenz anlegen</button>
       </form>
     </div>
   </div>
- 
+
 
   <div class="col-12">
     <p>Eine neu erstellte Konferenz ist zunächst nicht in der öffentlichen Liste sichtbar.</p>
     <p><b>Templates</b> sind derzeit deaktiviert. Es müssen alle Grundeinstellungen für zum Beispiel das Team
-    und Webstrukturen, Corporate-Design selbst eingefügt werden.</p>
+      und Webstrukturen, Corporate-Design selbst eingefügt werden.</p>
     <p>Konferenzen dürfen auf dieser Website nur durch den Veranstalter selbst hinzugefügt werden. Wenn ihr möchtet,
-    dass eine Konferenz diese Plattform nutzt bittet diese darum.</p>
+      dass eine Konferenz diese Plattform nutzt bittet diese darum.</p>
   </div>
 </div>
 
 <div class="row" *ngIf="forbidden">
   <div class="col-12">
     <div class="alert alert-danger">
-      <p><b>Zugriff verweigert </b>Du hast scheinbar keine Berechtigungen Konferenzen anzulegen. Kontaktiere einen Administrator um das zu ändern.</p>
+      <p><b>Zugriff verweigert </b>Du hast scheinbar keine Berechtigungen Konferenzen anzulegen. Kontaktiere einen
+        Administrator um das zu ändern.</p>
     </div>
   </div>
 </div>
@@ -77,6 +79,7 @@
 
 <div *ngIf="error">
   <h2>Fehler</h2>
-  <p>Tut uns leid, aber deine Konferenz konnte nicht angelegt werden, möglicherweise bist du nicht berechtigt neue Konferenzen zu erstellen.</p>
+  <p>Tut uns leid, aber deine Konferenz konnte nicht angelegt werden, möglicherweise bist du nicht berechtigt neue
+    Konferenzen zu erstellen.</p>
   <p>{{ error_msg }}</p>
 </div>

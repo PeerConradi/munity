@@ -30,11 +30,17 @@ export class PreambleParagraphComponent implements OnInit {
 
   firstShowNotices = true;
 
+  saveState = 'N';
+
   constructor(private service: ResolutionService, private userService: UserService) { }
 
   onKey(event: any) {
     this.paragraph.text = event.target.value;
-    this.service.changePreambleParagraph(this.paragraph);
+    this.service.changePreambleParagraph(this.paragraph).subscribe(n => {
+      this.saveState = 'S';
+    }, err => {
+      this.saveState = 'E';
+    });
   }
 
   ngOnInit() {
