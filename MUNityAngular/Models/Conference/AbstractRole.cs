@@ -25,5 +25,7 @@ namespace MUNityAngular.Models.Conference
         public string ApplicationValue { get; set; }
 
         public virtual bool AllowMultipleParticipations { get; }
+
+        public string RoleType => this.GetType().Name;
     }
 }

@@ -1,5 +1,6 @@
 import { Committee } from "./committee.model";
 import { Delegation } from "./delegation.model";
+import * as r from "./roles";
 
 export class Conference {
   public conferenceId: string;
@@ -17,6 +18,8 @@ export class Conference {
   public creationDate: Date;
 
   public committees: Committee[];
+
+  public roles: r.Roles.AbstractRole[];
 }
 
 export class ConferenceInfo {
@@ -31,6 +34,4 @@ export class ConferenceInfo {
   public startDate: Date;
 
   public endDate: Date;
-
-  public committees: Committee[];
 }

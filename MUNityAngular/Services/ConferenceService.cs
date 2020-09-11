@@ -144,7 +144,7 @@ namespace MUNityAngular.Services
                 ApplicationValue = "",
                 IconName = "default",
                 ParentTeamRole = null,
-                TeamRoleGroup = 1
+                TeamRoleGroup = "Headers"
             };
             _context.TeamRoles.Add(role);
             _context.SaveChanges();

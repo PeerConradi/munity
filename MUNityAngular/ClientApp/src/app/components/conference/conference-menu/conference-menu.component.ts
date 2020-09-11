@@ -16,6 +16,7 @@ export class ConferenceMenuComponent implements OnInit {
   teamMenuCollapse = true;
   publicRelationMenuCollapse = true;
   participantsMenuCollapse = true;
+  roleMenuCollapse = true;
 
   conference: Conference;
 

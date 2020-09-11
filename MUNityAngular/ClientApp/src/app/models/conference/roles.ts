@@ -1,16 +1,18 @@
-namespace Roles {
+export namespace Roles {
     export class AbstractRole {
-        roleId: number;
+        public roleId: number;
 
-        roleName: string;
+        public roleName: string;
 
-        iconName: string;
+        public iconName: string;
 
-        applicationState: EApplicationStates;
+        public applicationState: EApplicationStates;
 
-        applicationValue: string;
+        public applicationValue: string;
 
-        allowMultipleParticipations: boolean;
+        public allowMultipleParticipations: boolean;
+
+        public roleType: string;
     }
 
     export enum EApplicationStates {
@@ -40,6 +42,11 @@ namespace Roles {
         public committeeId: string;
 
         public delegateStateId: string;
+
+        constructor() {
+            super();
+            this.roleType = 'DelegateRole';
+        }
     }
 
     export class NgoRole extends AbstractRole {
@@ -48,23 +55,50 @@ namespace Roles {
         public ngoName: string;
 
         public leader: boolean;
+
+        constructor() {
+            super();
+            this.roleType = 'NgoRole';
+        }
     }
 
     export class PressRole extends AbstractRole {
         public pressCategory: EPressCategories;
+
+        constructor() {
+            super();
+            this.roleType = 'PressRole';
+        }
     }
 
     export class SecretaryGeneralRole extends AbstractRole {
         public title: string;
+
+        constructor() {
+            super();
+            this.roleType = 'SecretaryGeneralRole';
+        }
     }
 
     export class TeamRole extends AbstractRole {
         public parentTeamRoleId: number;
 
-        public teamRoleGroup: number;
+        public teamRoleLevel: number;
+
+        public teamRoleGroup: string;
+
+        constructor() {
+            super();
+            this.roleType = 'TeamRole';
+        }
     }
 
     export class VisitorRole extends AbstractRole {
         public organisation: string;
+
+        constructor() {
+            super();
+            this.roleType = 'VisitorRole';
+        }
     }
 }

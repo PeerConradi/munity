@@ -11,11 +11,14 @@ namespace MUNityAngular.Models.Conference.Roles
         [JsonIgnore]
         public TeamRole ParentTeamRole { get; set; }
 
-        public int TeamRoleGroup { get; set; }
+        public string TeamRoleGroup { get; set; }
+
+        public int TeamRoleLevel { get; set; }
 
         public override bool AllowMultipleParticipations => true;
 
         //NotMapped
         public int ParentTeamRoleId => ParentTeamRole?.RoleId ?? -1;
+
     }
 }

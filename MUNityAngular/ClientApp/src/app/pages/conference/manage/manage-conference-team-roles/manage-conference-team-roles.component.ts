@@ -24,14 +24,23 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
 
 
   ngOnInit() {
+    let id: string = null;
+
     this.route.params.subscribe(params => {
-      this.conferenceService.getConference(params.id).subscribe(n => {
+      id = params.id;
+    });
+
+    if (id === 'test') {
+      this.conference = this.conferenceService.getTestConference();
+    }
+    else {
+      this.conferenceService.getConference(id).subscribe(n => {
         this.conference = n;
       });
-      this.conferenceService.getTeamRoles(params.id).subscribe(n => {
+      this.conferenceService.getTeamRoles(id).subscribe(n => {
         this.roles = n;
       })
-    });
+    }
 
     this.addRoleForm = this.formBuilder.group({
       name: ['', Validators.required],

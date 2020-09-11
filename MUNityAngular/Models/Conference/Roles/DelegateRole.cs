@@ -12,7 +12,6 @@ namespace MUNityAngular.Models.Conference.Roles
         [JsonIgnore]
         public State DelegateState { get; set; }
 
-        
         public bool IsDelegationLeader { get; set; }
 
         public string Title { get; set; }
@@ -31,5 +30,7 @@ namespace MUNityAngular.Models.Conference.Roles
 
         //[NotMapped]
         public int DelegateStateId => DelegateState?.StateId ?? -1;
+
+        public override string RoleType => this.GetType().Name;
     }
 }

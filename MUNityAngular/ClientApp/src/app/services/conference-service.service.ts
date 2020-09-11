@@ -138,4 +138,14 @@ export class ConferenceService {
     headers = headers.set('committeeid', committeeid);
     return this.http.get<CommitteeStatus>(this.baseUrl + 'api/Conference/GetCommitteeStatus', { headers: headers });
   }
+
+  public getTestConference(): Conference {
+    let conference = new Conference();
+    conference.name = 'Test Conference';
+    conference.fullName = 'Conference to Test Everything';
+    conference.conferenceId = 'test';
+    conference.committees = [];
+    conference.roles = [];
+    return conference;
+  }
 }

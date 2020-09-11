@@ -8,5 +8,7 @@ namespace MUNityAngular.Models.Conference.Roles
     public class SecretaryGeneralRole : AbstractRole
     {
         public string Title { get; set; }
+
+        public override string RoleType => this.GetType().Name;
     }
 }

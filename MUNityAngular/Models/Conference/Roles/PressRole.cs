@@ -15,5 +15,7 @@ namespace MUNityAngular.Models.Conference.Roles
         }
 
         public EPressCategories PressCategory { get; set; }
+
+        public override string RoleType => this.GetType().Name;
     }
 }

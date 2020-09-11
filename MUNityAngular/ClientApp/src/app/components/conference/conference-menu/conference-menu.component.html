@@ -23,6 +23,21 @@
   </li>
 
   <li>
+    <a (click)="roleMenuCollapse = !roleMenuCollapse" class="dropable">Rollen</a>
+    <ul class="list-unstyled" [hidden]="roleMenuCollapse">
+      <li>
+        <a [routerLink]="['/mc/committees', conference.conferenceId]">Rollenübersicht</a>
+      </li>
+      <li>
+        <a [routerLink]="['/mc/committees', conference.conferenceId]">Team Rollen verwalten</a>
+      </li>
+      <li>
+        <a [routerLink]="['/mc/committees', conference.conferenceId]">Teilnehmerrollen verwalten</a>
+      </li>
+    </ul>
+  </li>
+
+  <li>
     <a (click)="delegationMenuCollapse = !delegationMenuCollapse" class="dropable">Delegationen</a>
     <ul class="list-unstyled" [hidden]="delegationMenuCollapse">
       <li>

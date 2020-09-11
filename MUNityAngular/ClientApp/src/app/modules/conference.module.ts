@@ -12,7 +12,7 @@ import { ExploreConferencesComponent } from "../components/conference/explore-co
 import { ManageConferenceCommitteesComponent } from "../pages/conference/manage/manage-conference-committees/manage-conference-committees.component";
 import { ManageConferenceDelegationsComponent } from "../pages/conference/manage/manage-conference-delegations/manage-conference-delegations.component";
 import { ManageConferenceTeamComponent } from "../components/conference/manage/manage-conference-team/manage-conference-team.component";
-import { ManageConferenceTeamRolesComponent } from "../components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component";
+import { ManageConferenceTeamRolesComponent } from "../pages/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component";
 import { ManageConferenceWebsiteComponent } from "../components/conference/manage/manage-conference-website/manage-conference-website.component";
 import { ManagerStartupComponent } from "../components/conference/manager-startup/manager-startup.component";
 import { MyConferencesOverviewComponent } from "../components/conference/my-conferences-overview/my-conferences-overview.component";
@@ -29,6 +29,7 @@ import { FontAwesomeModule, FaIconLibrary } from "@fortawesome/angular-fontaweso
 import { faFile, faFlag, faUser, faCircle, fas } from '@fortawesome/free-solid-svg-icons';
 import { ConferenceTodoListWidgetComponent } from '../components/conference/manage/conference-todo-list-widget/conference-todo-list-widget.component';
 import { CommitteeListComponent } from '../components/conference/committee-list/committee-list.component';
+import { ManageConferenceRolesDashboardComponent } from '../pages/conference/manage/manage-conference-roles-dashboard/manage-conference-roles-dashboard.component';
 
 @NgModule({
     imports: [
@@ -62,7 +63,8 @@ import { CommitteeListComponent } from '../components/conference/committee-list/
         EditConferenceLayoutComponent,
         ManageConferenceDashboardComponent,
         ConferenceTodoListWidgetComponent,
-        CommitteeListComponent
+        CommitteeListComponent,
+        ManageConferenceRolesDashboardComponent
     ],
     exports: [ConferenceMenuComponent]
 })

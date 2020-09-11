@@ -8,5 +8,6 @@ namespace MUNityAngular.Models.Conference.Roles
     public class VisitorRole : AbstractRole
     {
         public string Organisation { get; set; }
+
     }
 }

@@ -8,11 +8,12 @@ import { ExploreConferencesComponent } from "../components/conference/explore-co
 import { DefaultLayoutComponent } from "../layouts/default-layout/default-layout.component";
 import { ConferenceDetailsComponent } from "../components/conference/conference-details/conference-details.component";
 import { ManageConferenceTeamComponent } from "../components/conference/manage/manage-conference-team/manage-conference-team.component";
-import { ManageConferenceTeamRolesComponent } from "../components/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component";
+import { ManageConferenceTeamRolesComponent } from "../pages/conference/manage/manage-conference-team-roles/manage-conference-team-roles.component";
 import { EditConferenceLayoutComponent } from "../layouts/edit-conference-layout/edit-conference-layout.component";
 import { ManageConferenceDashboardComponent } from "../pages/conference/manage/manage-conference-dashboard/manage-conference-dashboard.component";
 import { ManageConferenceCommitteesComponent } from "../pages/conference/manage/manage-conference-committees/manage-conference-committees.component";
 import { ManageConferenceDelegationsComponent } from "../pages/conference/manage/manage-conference-delegations/manage-conference-delegations.component";
+import { ManageConferenceRolesDashboardComponent } from "../pages/conference/manage/manage-conference-roles-dashboard/manage-conference-roles-dashboard.component";
 
 export const routes: Routes = [
 
@@ -42,7 +43,8 @@ export const routes: Routes = [
             { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
             { path: 'mc/TeamRoles/:id', component: ManageConferenceTeamRolesComponent },
             { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent },
-            { path: 'mc/delegations/:id', component: ManageConferenceDelegationsComponent }
+            { path: 'mc/delegations/:id', component: ManageConferenceDelegationsComponent },
+            { path: 'mc/roles/:id', component: ManageConferenceRolesDashboardComponent }
         ]
     },
 
