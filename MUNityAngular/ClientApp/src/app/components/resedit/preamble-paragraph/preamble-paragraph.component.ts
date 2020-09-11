@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
-import { PreambleParagraph } from '../../../models/preamble-paragraph.model';
+import { PreambleParagraph } from '../../../models/resolution/preamble-paragraph.model';
 import { Notice } from '../../../models/notice.model';
 import { NoticeTag } from '../../../models/notice-tag.model';
 import { WindowPosition } from '../../../models/window-position.model';

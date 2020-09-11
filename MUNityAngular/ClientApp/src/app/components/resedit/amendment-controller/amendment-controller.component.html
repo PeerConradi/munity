@@ -4,25 +4,27 @@
 
 <div class="amendment-box">
   <!-- TODO: Den Background abhängig von der Art des Antrags machen -->
-  <div class="box-top text-white" [class.bg-warning]="amendment.Type === 'delete'" [class.bg-primary]="amendment.Type === 'change'"
-       [class.bg-secondary]="amendment.Type === 'move'" [class.bg-success]="amendment.Type === 'add'">
-    <b *ngIf="amendment.Type === 'delete'" class="amendment-box-title">{{ paragraph.Path }} Streichen</b>
-    <b *ngIf="amendment.Type === 'change'" class="amendment-box-title">{{ paragraph.Path }} Ändern</b>
-    <b *ngIf="amendment.Type === 'move'" class="amendment-box-title">{{ paragraph.Path }} Verschieben</b>
+  <div class="box-top text-white" [class.bg-warning]="amendment.Type === 'delete'"
+    [class.bg-primary]="amendment.Type === 'change'" [class.bg-secondary]="amendment.Type === 'move'"
+    [class.bg-success]="amendment.Type === 'add'">
+    <b *ngIf="amendment.Type === 'delete'" class="amendment-box-title"> Streichen</b>
+    <b *ngIf="amendment.Type === 'change'" class="amendment-box-title"> Ändern</b>
+    <b *ngIf="amendment.Type === 'move'" class="amendment-box-title"> Verschieben</b>
     <b *ngIf="amendment.Type === 'add'" class="amendment-box-title">Neuer Absatz</b>
     <button class="btn btn-danger remove-button float-right" [popover]="popContent">X</button>
   </div>
 
   <p *ngIf="!paragraph && amendment.Type !== 'add'">Finde den Operativen Absatz nicht o.O</p>
 
-  <p *ngIf="amendment.SubmitTime"><b>Zeit: </b> {{ amendment.SubmitTime | date:'dd.MM.yyyy HH:mm:ss' }}</p>
-  <p *ngIf="paragraph && amendment.Type !== 'add'"><b>Ziel: </b> {{ paragraph.Path }}</p>
-  <p *ngIf="amendment.Type === 'add'"><b>Ziel-Position: </b> {{ amendment.TargetPosition }}</p>
-  <p *ngIf="amendment"><b>Einbringer: </b> {{ amendment.SubmitterName }}</p>
+  <p *ngIf="amendment.SubmitTime"><b>Zeit: </b> {{ amendment.submitTime | date:'dd.MM.yyyy HH:mm:ss' }}</p>
+  <p *ngIf="paragraph && amendment.Type !== 'add'"><b>Ziel: </b> </p>
+  <p *ngIf="amendment.Type === 'add'"><b>Ziel-Position: </b> {{ amendment.targetPosition }}</p>
+  <p *ngIf="amendment"><b>Einbringer: </b> {{ amendment.submitterName }}</p>
   <label class="cb-container">
     Anzeigen
 
-    <input *ngIf="amendment.Activated !== null" type="checkbox" [checked]="amendment.Activated" (change)="activeChanged($event)">
+    <input *ngIf="amendment.Activated !== null" type="checkbox" [checked]="amendment.Activated"
+      (change)="activeChanged($event)">
     <span class="checkmark"></span>
   </label>
 

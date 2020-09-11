@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Resolution } from 'src/app/models/resolution.model';
-import { Preamble } from 'src/app/models/preamble.model';
-import { OperativeSection } from 'src/app/models/operative-section.model';
+import { Resolution } from 'src/app/models/resolution/resolution.model';
+import { Preamble } from 'src/app/models/resolution/preamble.model';
+import { OperativeSection } from 'src/app/models/resolution/operative-section.model';
 import { PreambleParagraph } from 'src/app/models/preamble-paragraph.model';
 
 @Component({

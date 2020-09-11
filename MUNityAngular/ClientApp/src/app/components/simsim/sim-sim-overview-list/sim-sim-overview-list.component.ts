@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SimulationLobbyInfo } from '../../../models/simulation-lobby-info.model';
+import { SimulationLobbyInfo } from '../../../models/simulation/simulation-lobby-info.model';
 import { SimulationService } from '../../../services/simulator.service';
 
 @Component({

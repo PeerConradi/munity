@@ -35,7 +35,7 @@ export class SpeakerlistPanelComponent implements OnInit {
     if (val !== null) {
       const del: Delegation = val.item;
       if (del != null) {
-        this.speakerlistService.addSpeaker(this.speakerlist.ID, del.DelegationId).subscribe(n => {
+        this.speakerlistService.addSpeaker(this.speakerlist.ID, del.delegationId).subscribe(n => {
           this.addSpeakerSelection = '';
         });
       }

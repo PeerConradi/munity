@@ -18,3 +18,19 @@ export class Conference {
 
   public committees: Committee[];
 }
+
+export class ConferenceInfo {
+  public conferenceId: string;
+
+  public name: string;
+
+  public fullName: string;
+
+  public abbreviation: string;
+
+  public startDate: Date;
+
+  public endDate: Date;
+
+  public committees: Committee[];
+}

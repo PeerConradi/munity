@@ -15,13 +15,13 @@ export class AmendmentInspector {
 
   public static getSectionForAmendment(resolution: Resolution, amendment: AbstractAmendment): OperativeParagraph {
     if (amendment.type === 'delete') {
-      return resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.TargetSectionID);
-    } else if (amendment.Type === 'change') {
-      return resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.TargetSectionID);
-    } else if (amendment.Type === 'move') {
-      return resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.TargetSectionID);
+      return resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.targetSectionId);
+    } else if (amendment.type === 'change') {
+      return resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.targetSectionId);
+    } else if (amendment.type === 'move') {
+      return resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.targetSectionId);
     }
-      
+
     return null;
   }
 }

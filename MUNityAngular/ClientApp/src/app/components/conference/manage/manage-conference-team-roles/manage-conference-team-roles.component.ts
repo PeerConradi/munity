@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConferenceService } from '../../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
-import { Conference } from '../../../../models/conference.model';
+import { Conference } from '../../../../models/conference/conference.model';
 import { TeamRole } from '../../../../models/team-role.model';
 import { NotifierService } from 'angular-notifier';
 
@@ -20,7 +20,7 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
   roles: TeamRole[] = [];
 
   constructor(private formBuilder: FormBuilder, private conferenceService: ConferenceService, private route: ActivatedRoute,
-  private notifier: NotifierService) { }
+    private notifier: NotifierService) { }
 
 
   ngOnInit() {
@@ -32,7 +32,7 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
         this.roles = n;
       })
     });
-    
+
     this.addRoleForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
@@ -49,7 +49,7 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
     }
 
     const role = new TeamRole();
-    role.ConferenceId = this.conference.ConferenceId;
+    role.ConferenceId = this.conference.conferenceId;
     role.Name = this.addRoleForm.value.name;
     role.Description = this.addRoleForm.value.description;
     role.MinCount = this.addRoleForm.value.minCount;

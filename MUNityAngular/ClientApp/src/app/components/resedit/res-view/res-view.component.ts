@@ -1,12 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
-import { Resolution } from 'src/app/models/resolution.model';
+import { Resolution } from 'src/app/models/resolution/resolution.model';
 import { ActivatedRoute } from '@angular/router';
-import { AbstractAmendment } from '../../../models/abstract-amendment.model';
-import { AmendmentInspector } from '../../../models/amendment-inspector';
-import { OperativeSection } from '../../../models/operative-section.model';
-import { ChangeAmendment } from '../../../models/change-amendment.model';
-import { OperativeParagraph } from "../../../models/operative-paragraph.model";
+import { AbstractAmendment } from '../../../models/resolution/abstract-amendment.model';
+import { AmendmentInspector } from '../../../models/resolution/amendment-inspector';
+import { OperativeSection } from '../../../models/resolution/operative-section.model';
+import { ChangeAmendment } from '../../../models/resolution/change-amendment.model';
+import { OperativeParagraph } from "../../../models/resolution/operative-paragraph.model";
 
 @Component({
   selector: 'app-res-view',
@@ -28,7 +28,7 @@ export class ResViewComponent implements OnInit {
     //if (id == null) {
     //  id = this.route.snapshot.queryParamMap.get('id');
     //}
-    
+
     if (id != null) {
       this.service.getResolution(id).subscribe(n => {
         if (n != null) {
@@ -49,18 +49,18 @@ export class ResViewComponent implements OnInit {
   }
 
   activeAmendment(section: OperativeParagraph): AbstractAmendment {
-    let amendment = this.resolution.operativeSection.deleteAmendments.find(n => n.TargetSectionID === section.operativeParagraphId && n.Activated);
+    let amendment = this.resolution.operativeSection.deleteAmendments.find(n => n.targetSectionId === section.operativeParagraphId && n.activated);
     if (amendment == null) {
-      amendment = this.resolution.operativeSection.changeAmendments.find(n => n.TargetSectionID === section.operativeParagraphId && n.Activated);
+      amendment = this.resolution.operativeSection.changeAmendments.find(n => n.targetSectionId === section.operativeParagraphId && n.activated);
     }
     if (amendment == null) {
-      amendment = this.resolution.operativeSection.moveAmendments.find(n => n.TargetSectionID === section.operativeParagraphId && n.Activated);
+      amendment = this.resolution.operativeSection.moveAmendments.find(n => n.targetSectionId === section.operativeParagraphId && n.activated);
     }
 
     return amendment;
   }
 
   activeChangeAmendment(section: OperativeSection): ChangeAmendment {
-    return this.resolution.operativeSection.changeAmendments.find(n => n.TargetSectionID === section.operativeSectionId && n.Activated);
+    return this.resolution.operativeSection.changeAmendments.find(n => n.targetSectionId === section.operativeSectionId && n.activated);
   }
 }

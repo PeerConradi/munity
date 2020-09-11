@@ -3,7 +3,7 @@ import { ResolutionService } from '../../../services/resolution.service';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { Committee } from '../../../models/conference/committee.model';
-import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
+import { ResolutionAdvancedInfo } from '../../../models/resolution/resolution-advanced-info.model';
 import { CommitteeStatus } from '../../../models/conference/committee-status.model';
 
 @Component({
@@ -56,13 +56,13 @@ export class CommitteeDetailsComponent implements OnInit {
         if (n != null) {
           this.status = n;
         }
-        
+
       });
     });
   }
 
   updateStatus() {
-    this.status.CommitteeId = this.committee.CommitteeId;
+    this.status.CommitteeId = this.committee.committeeId;
     this.conferenceSerivce.setCommitteeStatus(this.status).subscribe();
   }
 

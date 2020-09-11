@@ -1,12 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AbstractAmendment } from '../../../models/abstract-amendment.model';
+import { AbstractAmendment } from '../../../models/resolution/abstract-amendment.model';
 import { ResolutionService } from '../../../services/resolution.service';
-import { Resolution } from '../../../models/resolution.model';
-import { DeleteAmendment } from '../../../models/delete-amendment.model';
-import { ChangeAmendment } from '../../../models/change-amendment.model';
-import { OperativeSection } from '../../../models/operative-section.model';
-import { AmendmentInspector } from '../../../models/amendment-inspector';
-import { OperativeParagraph } from "../../../models/operative-paragraph.model";
+import { Resolution } from '../../../models/resolution/resolution.model';
+import { DeleteAmendment } from '../../../models/resolution/delete-amendment.model';
+import { ChangeAmendment } from '../../../models/resolution/change-amendment.model';
+import { OperativeSection } from '../../../models/resolution/operative-section.model';
+import { AmendmentInspector } from '../../../models/resolution/amendment-inspector';
+import { OperativeParagraph } from "../../../models/resolution/operative-paragraph.model";
 
 @Component({
   selector: 'app-amendment-controller',
@@ -24,18 +24,18 @@ export class AmendmentControllerComponent implements OnInit {
   constructor(private resolutionService: ResolutionService) { }
 
   ngOnInit() {
-    
+
   }
 
   removeAmendment() {
     if (this.amendment != null && this.resolution != null) {
-      this.resolutionService.removeAmendment(this.resolution.resolutionId, this.amendment.ID);
+      this.resolutionService.removeAmendment(this.resolution.resolutionId, this.amendment.id);
     }
   }
 
   denyAmendment() {
     if (this.amendment != null && this.resolution != null) {
-      this.resolutionService.denyAmendment(this.resolution.resolutionId, this.amendment.ID).subscribe();
+      this.resolutionService.denyAmendment(this.resolution.resolutionId, this.amendment.id).subscribe();
     }
   }
 
@@ -45,15 +45,15 @@ export class AmendmentControllerComponent implements OnInit {
 
   activeChanged(val) {
     if (this.amendment.activated) {
-      this.resolutionService.deactivateAmendment(this.resolution.resolutionId, this.amendment.ID);
+      this.resolutionService.deactivateAmendment(this.resolution.resolutionId, this.amendment.id);
     } else {
-      this.resolutionService.activateAmendment(this.resolution.resolutionId, this.amendment.ID);
+      this.resolutionService.activateAmendment(this.resolution.resolutionId, this.amendment.id);
     }
-      
+
   }
 
   submitAmendment() {
-    this.resolutionService.submitAmendment(this.resolution.resolutionId, this.amendment.ID);
+    this.resolutionService.submitAmendment(this.resolution.resolutionId, this.amendment.id);
   }
 
   isDeleteAmendment(val): boolean {

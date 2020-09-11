@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, TemplateRef } from '@angular/core';
-import { SimulationLobbyInfo } from '../../../models/simulation-lobby-info.model';
+import { SimulationLobbyInfo } from '../../../models/simulation/simulation-lobby-info.model';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { FormBuilder, Validators } from '@angular/forms';
 import { SimulationService } from '../../../services/simulator.service';
@@ -30,7 +30,7 @@ export class SimSimLobbyElementComponent implements OnInit {
   }
 
   openModal(template: TemplateRef<any>) {
-    
+
     this.simulationService.checkHiddenToken(this.lobby.SimSimId.toString()).subscribe(n => {
       if (n === true) {
         // If the User is already inside this simulation rejoin
@@ -51,7 +51,7 @@ export class SimSimLobbyElementComponent implements OnInit {
         this.simulationService.getSimulation(this.lobby.SimSimId.toString());
 
         this.router.navigate(['/sim/']);
-        
+
         this.modalRef.hide();
       } else {
         // If not then join as a new User
@@ -65,7 +65,7 @@ export class SimSimLobbyElementComponent implements OnInit {
       }
     });
 
-    
+
   }
 
 }

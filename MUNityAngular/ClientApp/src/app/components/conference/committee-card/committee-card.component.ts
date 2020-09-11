@@ -21,8 +21,8 @@ export class CommitteeCardComponent implements OnInit {
   constructor(private service: ConferenceService, private presenceService: PresenceService) { }
 
   ngOnInit() {
-    this.service.getCommitteeStatus(this.committee.CommitteeId).subscribe(n => this.status = n);
-    this.presenceService.getLatestPresence(this.committee.CommitteeId).subscribe(n => this.presence = n); 
+    this.service.getCommitteeStatus(this.committee.committeeId).subscribe(n => this.status = n);
+    this.presenceService.getLatestPresence(this.committee.committeeId).subscribe(n => this.presence = n);
   }
 
 }

@@ -1,4 +1,4 @@
-import { Notice } from "./notice.model";
+import { Notice } from "../notice.model";
 
 export class PreambleParagraph {
 

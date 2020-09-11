@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { SimulationUser } from '../../../models/simulation-user.model';
+import { SimulationUser } from '../../../models/simulation/simulation-user.model';
 import { SimulationService } from '../../../services/simulator.service';
-import { SimulationRequest } from '../../../models/simulation-request.model';
+import { SimulationRequest } from '../../../models/simulation/simulation-request.model';
 
 @Component({
   selector: 'app-sim-sim-delegation',
@@ -27,7 +27,7 @@ export class SimSimDelegationComponent implements OnInit {
   ngOnInit() {
     this.simulationService.getMe().subscribe(n => {
       this.isMe = (n.UserToken == this.user.UserToken);
-    }); 
+    });
   }
 
 }

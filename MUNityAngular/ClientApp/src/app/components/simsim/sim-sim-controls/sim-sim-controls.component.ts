@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SimulationService } from '../../../services/simulator.service';
-import { SimulationUser } from '../../../models/simulation-user.model';
+import { SimulationUser } from '../../../models/simulation/simulation-user.model';
 import { SpeakerListService } from '../../../services/speaker-list.service';
 
 @Component({

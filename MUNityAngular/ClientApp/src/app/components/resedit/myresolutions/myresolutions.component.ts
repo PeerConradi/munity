@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ResolutionService } from '../../../services/resolution.service';
 import { UserService } from '../../../services/user.service';
-import { ResolutionInformation } from '../../../models/resolution-information.model';
-import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
+import { ResolutionInformation } from '../../../models/resolution/resolution-information.model';
+import { ResolutionAdvancedInfo } from '../../../models/resolution/resolution-advanced-info.model';
 
 @Component({
   selector: 'app-myresolutions',

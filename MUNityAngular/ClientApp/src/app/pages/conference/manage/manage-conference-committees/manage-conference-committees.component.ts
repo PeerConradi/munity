@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { Conference } from '../../../../models/conference.model';
+import { Conference } from '../../../../models/conference/conference.model';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { Delegation } from '../../../../models/conference/delegation.model';
 import { Committee } from '../../../../models/conference/committee.model';
@@ -32,37 +32,19 @@ export class ManageConferenceCommitteesComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.addCommitteeForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      article: ['', Validators.required],
-      abbreviation: ['', [Validators.required, Validators.maxLength(6)]],
-      parentcommittee: [''],
-    });
-    this.route.params.subscribe(params => {
-      this.conferenceService.getConference(params.id).subscribe(n => {
-        this.conference = n;
-        this.filteredDelegations = this.conference.Delegations;
-      });
-    });
-    this.conferenceService.getAllDelegations().subscribe(n => {
-      this.presetDelegations = n;
-    });
     this.conference = new Conference();
   }
 
-  getDelegationById(id: string): Delegation {
-    return this.conference.Delegations.find(n => n.ID == id);
+  getDelegationById(id: string) {
+
   }
 
   removeDelegationFromCommittee(committee: Committee, delegationid: string) {
-    console.log('TODO: removeDelegationFromCommittee');
-    console.log(committee);
-    console.log(delegationid);
+
   }
 
   isDelegationInCommittee(delegation: Delegation, committee: Committee) {
-    const amount = committee.DelegationList.filter(n => n == delegation.ID).length;
-    return (amount > 0);
+
   }
 
   openModal(template: TemplateRef<any>) {
@@ -72,60 +54,18 @@ export class ManageConferenceCommitteesComponent implements OnInit {
   get acf() { return this.addCommitteeForm.controls; }
 
   addCommittee() {
-    this.addCommitteeSubmitted = true;
-    this.isAddingCommittee = true;
-    if (this.addCommitteeForm.invalid)
-      return;
 
-    let data = this.addCommitteeForm.value;
-
-    const newCommittee = new Committee();
-    newCommittee.Name = data.name;
-    newCommittee.FullName = data.name;
-    newCommittee.Abbreviation = data.abbreviation;
-    newCommittee.Article = data.article;
-    newCommittee.ResolutlyCommittee = data.parentcommittee;
-    this.conferenceService.addCommittee(this.conference.ConferenceId, newCommittee).subscribe(n => {
-      this.conference.Committees.push(n);
-      this.addCommitteeSubmitted = false;
-      this.addCommitteeForm.reset();
-      this.errorAddingCommittee = null;
-      this.isAddingCommittee = false;
-    }, err => {
-      console.log(err);
-      this.errorAddingCommittee = err.error;
-      this.isAddingCommittee = false;
-    });
   }
 
   onSearchKey(event: any) { // without type info
-    const filter: string = event.target.value;
-    if (filter != null && filter != '') {
-      this.filteredDelegations = this.conference.Delegations.filter(n => n.Name.includes(filter));
-    } else {
-      this.filteredDelegations = this.conference.Delegations;
-    }
+
   }
 
   addDelegationClick() {
 
-    if (this.addDelegationSelection == null) {
-      this.notifier.notify('error', 'Zuerst muss eine Delegation ausgewählt werden. Ist diese nicht vorhanden lege bitte eine neue Delegation an.');
-    } else {
-      this.conferenceService.addDelegationToConference(this.conference.ConferenceId, this.addDelegationSelection.ID, 1, 1).subscribe(n => {
-        this.conference.Delegations.push(n);
-      });
-    }
   }
 
   toggleDelegationInCommittee(delegation: Delegation, committee: Committee) {
-    if (committee.DelegationList.find(n => n == delegation.ID) == null) {
-      this.conferenceService.addDelegationToCommittee(committee.CommitteeId, delegation.ID, 1, 1).subscribe(n => {
-        if (committee.DelegationList.find(n => n == delegation.ID) == null) {
-          committee.DelegationList.push(delegation.ID);
-        }
-      });
-    }
 
   }
 

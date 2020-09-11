@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NotifierService } from 'angular-notifier';
 import { ConferenceService } from '../../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
-import { Conference } from '../../../../models/conference.model';
+import { Conference } from '../../../../models/conference/conference.model';
 import { TeamRole } from '../../../../models/team-role.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../../../services/user.service';

@@ -15,5 +15,5 @@ export class Resolution {
   preamble: Preamble;
 
   operativeSection: OperativeSection;
-  
+
 }

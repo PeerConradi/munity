@@ -2,22 +2,22 @@ import { Component, OnInit, Input, TemplateRef } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { interval, Subscription, of } from 'rxjs';
 import { ResolutionService } from '../../../services/resolution.service';
-import { Resolution } from '../../../models/resolution.model';
-import { OperativeSection } from 'src/app/models/operative-section.model';
+import { Resolution } from '../../../models/resolution/resolution.model';
+import { OperativeSection } from 'src/app/models/resolution/operative-section.model';
 import { NotifierService } from 'angular-notifier';
-import { AbstractAmendment } from '../../../models/abstract-amendment.model';
-import { AmendmentInspector } from '../../../models/amendment-inspector';
+import { AbstractAmendment } from '../../../models/resolution/abstract-amendment.model';
+import { AmendmentInspector } from '../../../models/resolution/amendment-inspector';
 import { Title } from '@angular/platform-browser';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { Delegation } from '../../../models/conference/delegation.model';
-import { AddAmendment } from '../../../models/add-amendment.model';
+import { AddAmendment } from '../../../models/resolution/add-amendment.model';
 import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-resolution-header-request';
-import { Conference } from '../../../models/conference.model';
+import { Conference } from '../../../models/conference/conference.model';
 import { Committee } from '../../../models/conference/committee.model';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
-import { OperativeParagraph } from "../../../models/operative-paragraph.model";
+import { OperativeParagraph } from "../../../models/resolution/operative-paragraph.model";
 import { UserService } from "../../../services/user.service";
-import { PreambleParagraph } from "../../../models/preamble-paragraph.model";
+import { PreambleParagraph } from "../../../models/resolution/preamble-paragraph.model";
 
 @Component({
   selector: 'app-editor',
@@ -36,7 +36,7 @@ export class EditorComponent implements OnInit {
 
   public amendmentInspector: AmendmentInspector = new AmendmentInspector();
 
-  
+
   public get resolution(): Resolution {
     return this.model;
   }
@@ -75,7 +75,7 @@ export class EditorComponent implements OnInit {
     if (this.titleService != null) {
       this.titleService.setTitle('ResaOnline');
     }
-    
+
   }
 
   public model: Resolution;
@@ -112,7 +112,7 @@ export class EditorComponent implements OnInit {
 
     this.conferenceService.getAllDelegations().subscribe(n => {
       n.forEach(d => {
-        this.allDelegations.push(d.Name);
+        this.allDelegations.push(d.name);
       });
     });
 
@@ -188,7 +188,7 @@ export class EditorComponent implements OnInit {
     } else if (type === 'add') {
       const amendment = new AddAmendment();
       amendment.TargetResolutionID = this.resolution.resolutionId;
-      amendment.SubmitterName = this.newamendmentDelegation;
+      amendment.submitterName = this.newamendmentDelegation;
       amendment.NewText = newText;
       amendment.TargetPosition = this.amendmentTargetPosition;
       this.service.addAddAmendment(amendment).subscribe();
@@ -219,6 +219,6 @@ export class EditorComponent implements OnInit {
   }
 
   createConferenceConnection(committee: Committee) {
-    this.service.linkResolutionToCommittee(this.resolution.resolutionId, committee.CommitteeId).subscribe();
+    this.service.linkResolutionToCommittee(this.resolution.resolutionId, committee.committeeId).subscribe();
   }
 }

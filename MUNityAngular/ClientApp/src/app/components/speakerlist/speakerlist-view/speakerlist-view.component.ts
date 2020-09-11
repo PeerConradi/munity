@@ -81,28 +81,28 @@ export class SpeakerlistViewComponent implements OnInit {
       //Status 1: Redebeitrag
       //Status 2: Frage/Kurzbemerkung
       if (this.speakerlist != null && this.speakerlist.RemainingSpeakerTime != null && this.speakerlist.RemainingQuestionTime != null)
-      if (this.speakerlist.Status == 1) {
-        this.speakerlist.RemainingSpeakerTime.addSeconds(-1);
-      } else if (this.speakerlist.Status == 2) {
-        this.speakerlist.RemainingQuestionTime.addSeconds(-1);
-      }
+        if (this.speakerlist.Status == 1) {
+          this.speakerlist.RemainingSpeakerTime.addSeconds(-1);
+        } else if (this.speakerlist.Status == 2) {
+          this.speakerlist.RemainingQuestionTime.addSeconds(-1);
+        }
     }, 1000);
   }
 
-  getMediumImage(delegation: Delegation): string {
-    if (delegation.Type == 'COUNTRY') {
-      return '/assets/img/flags/medium/' + delegation.IconName + '.png';
-    }
-    //Default Image
-    return '/assets/img/flags/medium/un.png';
-  }
+  // getMediumImage(delegation: Delegation): string {
+  //   if (delegation.type == 'COUNTRY') {
+  //     return '/assets/img/flags/medium/' + delegation.abbreviation + '.png';
+  //   }
+  //   //Default Image
+  //   return '/assets/img/flags/medium/un.png';
+  // }
 
-  getDelegationImagePath(delegation: Delegation): string {
-    if (delegation.Type == 'COUNTRY') {
-      return '/assets/img/flags/small/' + delegation.IconName + '.png';
-    }
-    //Default Image
-    return '/assets/img/flags/small/un.png';
-  }
+  // getDelegationImagePath(delegation: Delegation): string {
+  //   if (delegation.type == 'COUNTRY') {
+  //     return '/assets/img/flags/small/' + delegation.abbreviation + '.png';
+  //   }
+  //   //Default Image
+  //   return '/assets/img/flags/small/un.png';
+  // }
 
 }

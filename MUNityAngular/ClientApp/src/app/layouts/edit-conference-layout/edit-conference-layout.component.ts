@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Conference } from '../../models/conference.model';
+import { Conference } from '../../models/conference/conference.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConferenceService } from '../../services/conference-service.service';
 

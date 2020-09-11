@@ -1,17 +1,17 @@
 <div class="sidebar-header">
   <h3>Verwaltung</h3>
-  <h6 *ngIf="conference && conference.Name">{{ conference.Name }}</h6>
+  <h6 *ngIf="conference && conference.name">{{ conference.Name }}</h6>
 </div>
 
 <ul *ngIf="conference" class="list-unstyled components bg-dark">
   <li>
-    <a [routerLink]="['/mc/dashboard', conference.ConferenceId]">Übersicht</a>
+    <a [routerLink]="['/mc/dashboard', conference.conferenceId]">Übersicht</a>
   </li>
   <li>
     <a (click)="committeeMenuCollapse = !committeeMenuCollapse" class="dropable">Gremien</a>
     <ul class="list-unstyled" [hidden]="committeeMenuCollapse">
       <li>
-        <a [routerLink]="['/mc/committees', conference.ConferenceId]">Gremien verwalten</a>
+        <a [routerLink]="['/mc/committees', conference.conferenceId]">Gremien verwalten</a>
       </li>
       <li>
         <a>Themen bearbeiten</a>
@@ -29,7 +29,7 @@
         <a>Übersicht</a>
       </li>
       <li>
-        <a [routerLink]="['/mc/delegations', conference.ConferenceId]">Delegationen verwalten</a>
+        <a [routerLink]="['/mc/delegations', conference.conferenceId]">Delegationen verwalten</a>
       </li>
       <li>
         <a>Länderschilder generieren</a>
@@ -41,10 +41,10 @@
     <a (click)="teamMenuCollapse = !teamMenuCollapse" class="dropable">Team</a>
     <ul class="list-unstyled" [hidden]="teamMenuCollapse">
       <li>
-        <a [routerLink]="['/mc/TeamRoles', conference.ConferenceId]">Rollen</a>
+        <a [routerLink]="['/mc/TeamRoles', conference.conferenceId]">Rollen</a>
       </li>
       <li>
-        <a [routerLink]="['/mc/team', conference.ConferenceId]">Mitglieder</a>
+        <a [routerLink]="['/mc/team', conference.conferenceId]">Mitglieder</a>
       </li>
     </ul>
   </li>

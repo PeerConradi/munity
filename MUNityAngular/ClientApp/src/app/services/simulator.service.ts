@@ -1,16 +1,16 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Simulation } from '../models/simulation.model';
-import { SimulationUser } from '../models/simulation-user.model';
+import { Simulation } from '../models/simulation/simulation.model';
+import { SimulationUser } from '../models/simulation/simulation-user.model';
 import { CreateSimulationRequest } from './requestSchema/create-simulation-request';
 import * as signalR from '@aspnet/signalr';
 import { Session } from 'inspector';
-import { SimulationLobbyInfo } from '../models/simulation-lobby-info.model';
+import { SimulationLobbyInfo } from '../models/simulation/simulation-lobby-info.model';
 import { of, Observable } from 'rxjs';
-import { SimulationMessage } from '../models/simulation-message.model';
+import { SimulationMessage } from '../models/simulation/simulation-message.model';
 import { AddSimulationChatMessageRequest } from './requestSchema/add-simulation-chat-message-request';
 import { Delegation } from '../models/conference/delegation.model';
-import { SimulationRequest } from '../models/simulation-request.model';
+import { SimulationRequest } from '../models/simulation/simulation-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -59,7 +59,7 @@ export class SimulationService {
       this.addSocketListener(simulation);
       localStorage.setItem('lastsimulation', simulation.SimSimId);
     }
-    
+
   }
 
   public get currentSimulation(): Simulation {
@@ -109,7 +109,7 @@ export class SimulationService {
     if (storage != null) {
       return this.getSimulation(storage).toPromise();
     }
-    
+
   }
 
   public getLobbies() {

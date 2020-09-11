@@ -2,14 +2,14 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Speakerlist } from '../../../models/speakerlist.model';
 import { TimeSpan } from '../../../models/TimeSpan';
 import { ActivatedRoute } from '@angular/router';
-import { Simulation } from '../../../models/simulation.model';
+import { Simulation } from '../../../models/simulation/simulation.model';
 import { SimulationService } from '../../../services/simulator.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Delegation } from '../../../models/conference/delegation.model';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { SpeakerListService } from '../../../services/speaker-list.service';
-import { SimulationUser } from '../../../models/simulation-user.model';
+import { SimulationUser } from '../../../models/simulation/simulation-user.model';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -64,7 +64,7 @@ export class SimSimViewComponent implements OnInit {
   constructor(private route: ActivatedRoute, private simulationService: SimulationService,
     private modalService: BsModalService, private formBuilder: FormBuilder,
     private conferenceService: ConferenceService,
-  private speakerlistService: SpeakerListService) { }
+    private speakerlistService: SpeakerListService) { }
 
   ngOnInit() {
     // Load a Speakerlist Template!
@@ -123,7 +123,7 @@ export class SimSimViewComponent implements OnInit {
   }
 
   private _testSim: Simulation;
-  
+
   get testSimulation(): Simulation {
     if (this._testSim == null) {
       this._testSim = new Simulation();

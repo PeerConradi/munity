@@ -30,6 +30,9 @@ namespace MUNityAngular.Models.Conference
         //[NotMapped]
         public string ResolutlyCommitteeId => ResolutlyCommittee?.ResolutlyCommitteeId ?? "";
 
+        //NotMapped
+        public string ConferenceId => Conference?.ConferenceId ?? "";
+
         public Conference Conference { get; set; }
 
         public List<CommitteeTopic> Topics { get; set; }

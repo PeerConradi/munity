@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Conference } from '../models/conference.model';
+import { Conference } from '../models/conference/conference.model';
 import { UserService } from './user.service';
 import { Committee } from '../models/conference/committee.model';
 import { Delegation } from '../models/conference/delegation.model';
@@ -49,27 +49,11 @@ export class ConferenceService {
   }
 
   public addCommittee(conferenceid: string, committee: Committee) {
-    let headers = new HttpHeaders();
 
-    const request = new AddCommitteeRequest();
-    request.name = committee.Name;
-    request.fullName = committee.FullName;
-    request.abbreviation = committee.Abbreviation;
-    request.article = committee.Article;
-    request.conferenceId = conferenceid;
-    request.resolutlyCommittee = committee.ResolutlyCommittee;
-    return this.http.post<Committee>(this.baseUrl + 'api/Conference/AddCommittee', request, { headers: headers });
   }
 
   public createDelegation(delegation: Delegation) {
-    let headers = new HttpHeaders();
 
-    const request = new CreateDelegationRequest();
-    request.name = delegation.Name;
-    request.fullName = delegation.FullName;
-    request.abbreviation = delegation.Abbreviation;
-    request.type = this.getTypeNumberByName(delegation.Type);
-    return this.http.post<Delegation>(this.baseUrl + 'api/Conference/CreateDelegation', request, { headers: headers });
   }
 
   public getTypeNumberByName(name: string): number {
@@ -79,23 +63,11 @@ export class ConferenceService {
   }
 
   public addDelegationToConference(conferenceid: string, delegationid: string, mincount: number, maxcount: number) {
-    let headers = new HttpHeaders();
 
-    headers = headers.set('conferenceid', conferenceid);
-    headers = headers.set('delegationid', delegationid);
-    headers = headers.set('mincount', mincount.toString());
-    headers = headers.set('maxcount', maxcount.toString());
-    let options = { headers: headers };
-    return this.http.post<Delegation>(this.baseUrl + 'api/Conference/AddDelegationToConference', null,
-      options);
   }
 
   public changeConferenceName(conferenceid: string, newname: string) {
-    let headers = new HttpHeaders();
-    const request = new ChangeConferenceNameRequest();
-    request.conferenceID = conferenceid;
-    request.newName = newname;
-    return this.http.patch<Conference>(this.baseUrl + 'api/Conference/ChangeConferenceName', request, { headers: headers });
+
   }
 
   public getAllDelegations() {

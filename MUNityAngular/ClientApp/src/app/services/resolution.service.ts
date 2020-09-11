@@ -3,26 +3,26 @@ import * as signalR from "@aspnet/signalr";
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserService } from './user.service';
-import { Resolution } from '../models/resolution.model';
-import { PreambleParagraph } from '../models/preamble-paragraph.model';
-import { ResolutionInformation } from '../models/resolution-information.model';
-import { OperativeSection } from '../models/operative-section.model';
-import { DeleteAmendment } from '../models/delete-amendment.model';
-import { AbstractAmendment } from '../models/abstract-amendment.model';
-import { AmendmentInspector } from '../models/amendment-inspector';
-import { ChangeAmendment } from '../models/change-amendment.model';
+import { Resolution } from '../models/resolution/resolution.model';
+import { PreambleParagraph } from '../models/resolution/preamble-paragraph.model';
+import { ResolutionInformation } from '../models/resolution/resolution-information.model';
+import { OperativeSection } from '../models/resolution/operative-section.model';
+import { DeleteAmendment } from '../models/resolution/delete-amendment.model';
+import { AbstractAmendment } from '../models/resolution/abstract-amendment.model';
+import { AmendmentInspector } from '../models/resolution/amendment-inspector';
+import { ChangeAmendment } from '../models/resolution/change-amendment.model';
 import { NotifierService } from 'angular-notifier';
-import { ResolutionAdvancedInfo } from '../models/resolution-advanced-info.model';
-import { AddAmendment } from '../models/add-amendment.model';
+import { ResolutionAdvancedInfo } from '../models/resolution/resolution-advanced-info.model';
+import { AddAmendment } from '../models/resolution/add-amendment.model';
 import { ChangeResolutionHeaderRequest } from '../models/requests/change-resolution-header-request';
 import { Notice } from '../models/notice.model';
-import { OperativeParagraph } from "../models/operative-paragraph.model";
+import { OperativeParagraph } from "../models/resolution/operative-paragraph.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ResolutionService {
-    
+
   private _hubConnection: signalR.HubConnection;
 
   private baseUrl: string;
@@ -125,7 +125,7 @@ export class ResolutionService {
     //  let target = model.OperativeSections.find(n => n.ID == paragraph.ID);
     //  if (target != null && target.Text != paragraph.Text) {
     //    target.Text = paragraph.Text;
-        
+
     //  }
     //  if (target != null && target.Notices != paragraph.Notices) {
     //    target.Notices = paragraph.Notices;
@@ -249,27 +249,27 @@ export class ResolutionService {
       model.header = resolution.header;
       model.operativeSection = resolution.operativeSection;
       model.preamble = resolution.preamble;
-      
+
       inspector.allAmendments = this.OrderAmendments(model);
     });
-    
+
   }
 
   public findAmendment(resolution: Resolution, amendmentid: string): AbstractAmendment {
-    var a = resolution.operativeSection.deleteAmendments.find(n => n.ID === amendmentid);
+    var a = resolution.operativeSection.deleteAmendments.find(n => n.id === amendmentid);
     if (a == null) {
       //Search inside Change Amendments
-      a = resolution.operativeSection.changeAmendments.find(n => n.ID === amendmentid);
+      a = resolution.operativeSection.changeAmendments.find(n => n.id === amendmentid);
     }
 
     if (a == null) {
       //Search inside Move Amendments
-      a = resolution.operativeSection.moveAmendments.find(n => n.ID === amendmentid);
+      a = resolution.operativeSection.moveAmendments.find(n => n.id === amendmentid);
     }
 
     if (a == null) {
       //Search inside Add Amendments
-      a = resolution.operativeSection.addAmendments.find(n => n.ID === amendmentid);
+      a = resolution.operativeSection.addAmendments.find(n => n.id === amendmentid);
     }
 
     return a;
@@ -441,7 +441,7 @@ export class ResolutionService {
       return this.httpClient.patch<string>(this.baseUrl + 'api/Resolution/ChangePublicReadMode', null,
         options);
     }
-      
+
   }
 
   public subscribeToResolution(id: string) {
@@ -452,7 +452,7 @@ export class ResolutionService {
       .start()
       .then(() => {
         var hub = this._hubConnection;
-        
+
         var connectionUrl: string = hub["connection"].transport.webSocket.url;
         this.connectionid = connectionUrl.split('=')[1];
         this.connectionReady = true;
@@ -487,9 +487,9 @@ export class ResolutionService {
     headers = headers.set('content-type', 'application/json; charset=utf-8');
     headers = headers.set('resolutionid', resolutionid);
     const amendmentModel = new ChangeAmendment();
-    amendmentModel.TargetSectionID = paragraphid;
-    amendmentModel.NewText = newtext;
-    amendmentModel.SubmitterName = submitter;
+    amendmentModel.targetSectionId = paragraphid;
+    amendmentModel.newText = newtext;
+    amendmentModel.submitterName = submitter;
     let options = { headers: headers };
     return this.httpClient.post(this.baseUrl + 'api/Resolution/AddChangeAmendment', amendmentModel, options);
   }
@@ -581,10 +581,10 @@ export class ResolutionService {
   }
 
   public onDeleteAmendmentAdded(resolution: Resolution, amendment: DeleteAmendment): AbstractAmendment[] {
-    if (resolution.operativeSection.deleteAmendments.find(n => n.ID === amendment.ID) == null) {
+    if (resolution.operativeSection.deleteAmendments.find(n => n.id === amendment.id) == null) {
 
       resolution.operativeSection.deleteAmendments.push(amendment);
-      const target = resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.TargetSectionID);
+      const target = resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId === amendment.targetSectionId);
       if (target != null) {
         // target.deleteAmendmentCount += 1;
       }
@@ -593,9 +593,9 @@ export class ResolutionService {
   }
 
   public onChangeAmendmentAdded(resolution: Resolution, amendment: ChangeAmendment): AbstractAmendment[] {
-    if (resolution.operativeSection.changeAmendments.find(n => n.ID == amendment.ID) == null) {
+    if (resolution.operativeSection.changeAmendments.find(n => n.id == amendment.id) == null) {
       resolution.operativeSection.changeAmendments.push(amendment);
-      const target = resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId == amendment.TargetSectionID);
+      const target = resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId == amendment.targetSectionId);
       if (target != null) {
         // target.changeAmendmentCount += 1;
       }
@@ -608,22 +608,22 @@ export class ResolutionService {
     //All Sections
     resolution.operativeSection.paragraphs.forEach(oa => {
       //Delete Amendments
-      resolution.operativeSection.deleteAmendments.forEach(n => { if (n.TargetSectionID === oa.operativeParagraphId) arr.push(n) });
+      resolution.operativeSection.deleteAmendments.forEach(n => { if (n.targetSectionId === oa.operativeParagraphId) arr.push(n) });
 
       //Change Amendments
-      resolution.operativeSection.changeAmendments.forEach(n => { if (n.TargetSectionID === oa.operativeParagraphId) arr.push(n) });
+      resolution.operativeSection.changeAmendments.forEach(n => { if (n.targetSectionId === oa.operativeParagraphId) arr.push(n) });
 
       //Move Amendments
-      resolution.operativeSection.moveAmendments.forEach(n => { if (n.TargetSectionID === oa.operativeParagraphId) arr.push(n) });
+      resolution.operativeSection.moveAmendments.forEach(n => { if (n.targetSectionId === oa.operativeParagraphId) arr.push(n) });
 
-      
+
     });
     //Add Amendments
     resolution.operativeSection.addAmendments.forEach(n => arr.push(n));
     return arr;
   }
 
-  
+
 }
 
 export class stackElement {

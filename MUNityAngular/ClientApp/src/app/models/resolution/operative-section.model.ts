@@ -1,4 +1,4 @@
-import { Notice } from "./notice.model";
+import { Notice } from "../notice.model";
 import { OperativeParagraph } from "./operative-paragraph.model";
 import { ChangeAmendment } from "./change-amendment.model";
 import { AddAmendment } from "./add-amendment.model";

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Conference } from '../../../models/conference.model';
+import { Conference } from '../../../models/conference/conference.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { UserService } from '../../../services/user.service';
@@ -25,7 +25,7 @@ export class ConferenceMenuComponent implements OnInit {
 
     // this.conference = this.conferenceService.currentConference;
     this.conference = new Conference();
-    
+
   }
 
 }

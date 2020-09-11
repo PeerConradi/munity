@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Resolution } from '../../../models/resolution.model';
-import { AbstractAmendment } from '../../../models/abstract-amendment.model';
+import { Resolution } from '../../../models/resolution/resolution.model';
+import { AbstractAmendment } from '../../../models/resolution/abstract-amendment.model';
 import { ResolutionService } from '../../../services/resolution.service';
 import { ActivatedRoute } from '@angular/router';
-import { AmendmentInspector } from '../../../models/amendment-inspector';
-import { OperativeSection } from '../../../models/operative-section.model';
-import { OperativeParagraph } from "../../../models/operative-paragraph.model";
+import { AmendmentInspector } from '../../../models/resolution/amendment-inspector';
+import { OperativeSection } from '../../../models/resolution/operative-section.model';
+import { OperativeParagraph } from "../../../models/resolution/operative-paragraph.model";
 
 @Component({
   selector: 'app-work-with-resolution',
@@ -44,7 +44,7 @@ export class WorkWithResolutionComponent implements OnInit {
         this.service.subscribeToResolution(this.resolution.resolutionId);
         this.service.addResolutionListener(this.resolution, new AmendmentInspector());
       }, err => {
-          this.loadError = true;
+        this.loadError = true;
       });
     }
   }
@@ -53,13 +53,13 @@ export class WorkWithResolutionComponent implements OnInit {
   }
 
   getDeleteAmendment(val: OperativeParagraph) {
-    this.detailAmendments = this.resolution.operativeSection.deleteAmendments.filter(n => n.TargetSectionID === val.operativeParagraphId);
+    this.detailAmendments = this.resolution.operativeSection.deleteAmendments.filter(n => n.targetSectionId === val.operativeParagraphId);
     this.amendmentModalActive = true;
     this.amendmentDetailType = 'delete';
   }
 
   getChangeAmendment(val: OperativeParagraph) {
-    this.detailAmendments = this.resolution.operativeSection.changeAmendments.filter(n => n.TargetSectionID === val.operativeParagraphId);
+    this.detailAmendments = this.resolution.operativeSection.changeAmendments.filter(n => n.targetSectionId === val.operativeParagraphId);
     this.amendmentModalActive = true;
     this.amendmentDetailType = 'change';
   }

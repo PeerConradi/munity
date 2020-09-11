@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { ConferenceService } from '../../../services/conference-service.service';
-import { Conference } from '../../../models/conference.model';
+import { Conference } from '../../../models/conference/conference.model';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 
@@ -31,10 +31,10 @@ export class CreateConferenceComponent implements OnInit {
       abbreviation: '',
       timespan: null
     });
-    
+
   }
 
-  
+
 
   ngOnInit() {
 
@@ -43,20 +43,20 @@ export class CreateConferenceComponent implements OnInit {
   onSubmit(data) {
     //TODO: validate Timespan
     let conference: Conference = new Conference();
-    conference.Name = data.name;
-    conference.FullName = data.fullname;
-    conference.Abbreviation = data.abbreviation;
+    conference.name = data.name;
+    conference.fullName = data.fullname;
+    conference.abbreviation = data.abbreviation;
     let startDate: Date = data.timespan[0];
     let endDate: Date = data.timespan[1];
 
-    conference.StartDate = startDate;
-    conference.EndDate = endDate;
+    conference.startDate = startDate;
+    conference.endDate = endDate;
     //this.requested = true;
     //this.info = '';
     this.service.createConference(conference).subscribe(n => {
       //this.conferenceCreated = true;
       this.createdConference = n;
-      this.router.navigateByUrl('/mc/overview/' + n.ConferenceId);
+      this.router.navigateByUrl('/mc/overview/' + n.conferenceId);
     },
       err => {
         this.error = true;

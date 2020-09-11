@@ -4,7 +4,7 @@ import { Notice } from '../../../models/notice.model';
 import { NoticeTag } from '../../../models/notice-tag.model';
 import { UserService } from '../../../services/user.service';
 import { WindowPosition } from '../../../models/window-position.model';
-import { OperativeParagraph } from "../../../models/operative-paragraph.model";
+import { OperativeParagraph } from "../../../models/resolution/operative-paragraph.model";
 
 @Component({
   selector: 'app-operative-paragraph',

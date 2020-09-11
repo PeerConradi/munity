@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Conference } from 'src/app/models/conference.model';
+import { Conference } from 'src/app/models/conference/conference.model';
 import { Delegation } from 'src/app/models/conference/delegation.model';
 import { ConferenceService } from 'src/app/services/conference-service.service';
 
@@ -16,11 +16,11 @@ export class ManageConferenceDelegationsComponent implements OnInit {
 
   ngOnInit() {
     this.conference = new Conference();
-    this.conference.Name = "Test Konferenz";
+    this.conference.name = "Test Konferenz";
     let delegationOne = new Delegation();
-    delegationOne.Name = "Test Delegation";
-    this.conference.Delegations = [];
-    this.conference.Delegations.push(delegationOne);
+    delegationOne.name = "Test Delegation";
+    //this.conference.del = [];
+    //this.conference.Delegations.push(delegationOne);
     this.conferenceService.currentConference = this.conference;
   }
 

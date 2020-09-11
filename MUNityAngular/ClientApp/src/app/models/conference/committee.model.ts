@@ -8,4 +8,7 @@ export class Committee {
   public abbreviation: string;
 
   public article: string;
+
+  public resolutlyCommitteeId: string;
+
 }

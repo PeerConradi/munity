@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { UserService } from '../../../services/user.service';
-import { Conference } from '../../../models/conference.model';
+import { Conference } from '../../../models/conference/conference.model';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { NotifierService } from 'angular-notifier';
 import { Delegation } from '../../../models/conference/delegation.model';
@@ -18,7 +18,7 @@ import { of, Observable } from 'rxjs';
 export class ConferenceDetailsComponent implements OnInit {
 
   conference: Conference;
-  
+
 
   constructor(private route: ActivatedRoute, public conferenceService: ConferenceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService) { }
@@ -33,9 +33,9 @@ export class ConferenceDetailsComponent implements OnInit {
 
   async getCommitteeStatus(committee: Committee) {
     console.log('get Status')
-    const observable = await this.conferenceService.getCommitteeStatus(committee.CommitteeId).toPromise();
+    const observable = await this.conferenceService.getCommitteeStatus(committee.committeeId).toPromise();
     return observable;
   }
-  
+
 
 }

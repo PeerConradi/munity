@@ -54,6 +54,8 @@ namespace MUNityAngular.Models.Conference
 
         public List<Committee> Committees { get; set; }
 
+        public List<AbstractRole> Roles { get; set; }
+
         public Project ConferenceProject { get; set; }
 
         public EConferenceVisibilityMode Visibility { get; set; }

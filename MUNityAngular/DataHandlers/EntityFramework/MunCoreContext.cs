@@ -73,7 +73,14 @@ namespace MUNityAngular.DataHandlers.EntityFramework
             modelBuilder.Entity<Conference>().HasOne(n => n.ConferenceProject)
                 .WithMany(n => n.Conferences);
 
-            modelBuilder.Entity<Committee>().Ignore(n => n.ResolutlyCommitteeId);
+            modelBuilder.Entity<AbstractRole>().HasOne(n => n.Conference).WithMany(n => n.Roles);
+
+            modelBuilder.Entity<Committee>().Ignore(n => n.ResolutlyCommitteeId).Ignore(n => n.ConferenceId);
+
+            modelBuilder.Entity<DelegateRole>().Ignore(n => n.DelegateStateId).Ignore(n => n.CommitteeId)
+                .Ignore(n => n.DelegateStateId);
+
+            modelBuilder.Entity<TeamRole>().Ignore(n => n.ParentTeamRoleId);
 
         }
 

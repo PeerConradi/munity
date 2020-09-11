@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Resolution } from '../../../models/resolution.model';
+import { Resolution } from '../../../models/resolution/resolution.model';
 import { UserService } from '../../../services/user.service';
 import { ResolutionService } from '../../../services/resolution.service';
 import { Delegation } from '../../../models/conference/delegation.model';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { ChangeResolutionHeaderRequest } from '../../../models/requests/change-resolution-header-request';
-import { ResolutionAdvancedInfo } from '../../../models/resolution-advanced-info.model';
+import { ResolutionAdvancedInfo } from '../../../models/resolution/resolution-advanced-info.model';
 
 @Component({
   selector: 'app-res-options',
@@ -20,7 +20,7 @@ export class ResOptionsComponent implements OnInit {
     this._resolution = val;
     this.updateOnlineInfos();
   }
-  get resolution() { return this._resolution;}
+  get resolution() { return this._resolution; }
 
   allDelegations: string[] = [];
 
@@ -29,7 +29,7 @@ export class ResOptionsComponent implements OnInit {
   documentInfo: ResolutionAdvancedInfo = null;
 
   constructor(private userService: UserService, private resolutionService: ResolutionService,
-  private conferenceService: ConferenceService) { }
+    private conferenceService: ConferenceService) { }
 
   ngOnInit() {
     //this.updateOnlineInfos();
@@ -43,7 +43,7 @@ export class ResOptionsComponent implements OnInit {
 
     this.conferenceService.getAllDelegations().subscribe(n => {
       n.forEach(d => {
-        this.allDelegations.push(d.FullName);
+        this.allDelegations.push(d.fullName);
       });
     });
   }

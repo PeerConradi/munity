@@ -61,8 +61,8 @@ export class SpeakerlistControllerComponent implements OnInit {
         list.Questions.forEach(n => {
           this.lastQuestionOrder.push(n);
         })
-        
-        const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds,0,0,0,0);
+
+        const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds, 0, 0, 0, 0);
         this.speakerlist.RemainingSpeakerTime = sTime;
         const qTime = new TimeSpan(list.RemainingQuestionTime.TotalMilliseconds, 0, 0, 0, 0);
         this.speakerlist.RemainingQuestionTime = qTime;
@@ -99,18 +99,18 @@ export class SpeakerlistControllerComponent implements OnInit {
   }
 
   listOrderChanged(newOrder) {
-    
+
   }
 
   removeSpeaker() {
     const items: Delegation[] = this.deleteItems;
     if (items != null && items.length > 0) {
       items.forEach(n => {
-        this.speakerlistService.removeSpeaker(this.speakerlist.ID, n.ID).subscribe();
+        this.speakerlistService.removeSpeaker(this.speakerlist.ID, n.delegationId).subscribe();
       });
       this.deleteItems = [];
     }
-    
+
     //this.speakerlistService.removeSpeaker(this.speakerlist.ID, id);
   }
 
@@ -121,7 +121,7 @@ export class SpeakerlistControllerComponent implements OnInit {
 
       this.speakerlist.Speakers.forEach((val, index) => {
 
-        if (val.ID != this.lastSpeakerOrder[index].ID) {
+        if (val.delegationId != this.lastSpeakerOrder[index].delegationId) {
           orderChanged = true;
         }
       });
@@ -138,7 +138,7 @@ export class SpeakerlistControllerComponent implements OnInit {
         this.lastSpeakerOrder.push(n);
       });
     }
-    
+
   }
 
   reorderQuestions() {
@@ -147,7 +147,7 @@ export class SpeakerlistControllerComponent implements OnInit {
 
       this.speakerlist.Questions.forEach((val, index) => {
 
-        if (val.ID != this.lastQuestionOrder[index].ID) {
+        if (val.delegationId != this.lastQuestionOrder[index].delegationId) {
           orderChanged = true;
         }
       });
@@ -167,16 +167,16 @@ export class SpeakerlistControllerComponent implements OnInit {
   }
 
   addSpeaker() {
-    const s = this.presetDelegations.find(n => n.Name == this.addSpeakerSelection);
+    const s = this.presetDelegations.find(n => n.name == this.addSpeakerSelection);
     if (s != null) {
-      this.speakerlistService.addSpeaker(this.speakerlist.ID, s.ID).subscribe();
+      this.speakerlistService.addSpeaker(this.speakerlist.ID, s.delegationId).subscribe();
     } else {
       const newDelegation: Delegation = new Delegation();
-      newDelegation.Name = this.addSpeakerSelection;
-      newDelegation.FullName = this.addSpeakerSelection;
+      newDelegation.name = this.addSpeakerSelection;
+      newDelegation.fullName = this.addSpeakerSelection;
       this.speakerlistService.addSpeakerModel(this.speakerlist.ID, newDelegation).subscribe();
     }
-    
+
   }
 
   onAddSpeakerSelected(val: TypeaheadMatch) {
@@ -198,11 +198,11 @@ export class SpeakerlistControllerComponent implements OnInit {
   }
 
   addQuestion() {
-    let s = this.presetDelegations.find(n => n.Name == this.addQuestionSelection);
+    let s = this.presetDelegations.find(n => n.name == this.addQuestionSelection);
     if (s == null) {
       s = new Delegation();
-      s.Name = this.addQuestionSelection;
-      s.FullName = this.addQuestionSelection;
+      s.name = this.addQuestionSelection;
+      s.fullName = this.addQuestionSelection;
     }
     this.speakerlistService.addQuestionModel(this.speakerlist.ID, s).subscribe();
   }
