@@ -9,6 +9,5 @@ namespace MUNityAngular.Models.Conference.Roles
     {
         public string Title { get; set; }
 
-        public override string RoleType => this.GetType().Name;
     }
 }

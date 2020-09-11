@@ -13,6 +13,5 @@ namespace MUNityAngular.Models.Conference.Roles
 
         public bool Leader { get; set; }
 
-        public override string RoleType => this.GetType().Name;
     }
 }
