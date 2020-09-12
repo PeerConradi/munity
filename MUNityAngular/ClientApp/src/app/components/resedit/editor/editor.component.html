@@ -39,7 +39,8 @@
             <a class="dropdown-item" href="#">Private Kopie erstellen</a>
           </li>
           <li class="divider dropdown-divider"></li>
-          <li role="menuitem"><a class="dropdown-item">Download ChairPro Json</a></li>
+          <li role="menuitem"><a class="dropdown-item" (click)="downloadJson()">Download ChairPro
+              Json</a></li>
           <li role="menuitem"><a class="dropdown-item">Download RichTextFile</a></li>
         </ul>
       </div>
@@ -68,7 +69,8 @@
       <div class="row" style="height: 20Px"></div>
       <app-munity-box toolbox="true" title="Operativer Abschnitt">
         <div *ngFor="let pa of model.operativeSection.paragraphs">
-          <app-operative-paragraph [paragraph]=pa [resolutionid]=model.resolutionId></app-operative-paragraph>
+          <app-operative-paragraph [paragraph]=pa [resolution]="model">
+          </app-operative-paragraph>
         </div>
         <button class="btn btn-block btn-success add-button" (click)="addOperativeParagraph()">Operativen Absatz
           hinzufügen</button>

@@ -4,11 +4,11 @@
             {{ path }}.
         </span>
         <span class="badge badge-secondary">
-            Änderungsanträge: 0
+            Änderungsanträge: {{ deleteAmendmentCount }}
             Streichen,
-            0
+            {{ changeAmendmentCount }}
             Textänderung,
-            0 Verschieben
+            0 {{ MoveAmendmentCount }} Verschieben
         </span>
     </p>
 
@@ -16,15 +16,15 @@
     <markdown *ngIf="activeAmendment==null" class="operative-paragraph-text" [data]="paragraph.text">
     </markdown>
     <!-- Wenn dieser Absatz gesrichen oder Verschoben werden soll -->
-    <div *ngIf="activeAmendment!=null && (activeAmendment.ype==='DeleteAmendment' || activeAmendment.type==='MoveAmendment')"
+    <div *ngIf="activeAmendment!=null && (activeAmendment.type==='DeleteAmendment' || activeAmendment.type==='MoveAmendment')"
         style="margin-top: -20px; " class="operative-paragraph-text">
         <markdown style="text-decoration: line-through; color: darkred;" [data]="paragraph.text"></markdown>
-        <p>Einbringer: {{ activeAmendment(paragraph).submitterName }}</p>
+        <p><span class="badge badge-primary">Einbringer: {{ activeAmendment.submitterName }}</span></p>
     </div>
     <div *ngIf="activeAmendment!=null && activeAmendment.type==='ChangeAmendment'" class="operative-paragraph-text">
         <p style="margin-top: -20px; text-decoration: line-through; color: darkred;">X. {{ paragraph.text }}</p>
-        <p class="operative-paragraph-text" style="color: darkgreen;">{{ activeChangeAmendment(paragraph).newText }}</p>
-        <p>Einbringer: {{ activeAmendment(paragraph).submitterName }}</p>
+        <p class="operative-paragraph-text" style="color: darkgreen;">{{ activeChangeAmendment.newText }}</p>
+        <p>Einbringer: {{ activeAmendment.submitterName }}</p>
     </div>
 
     <ul>

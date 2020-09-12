@@ -64,16 +64,18 @@
 
 <div class="paragraph-box" [class.bg-info]="paragraph.isVirtual === true">
   <div class="paragraph-title">
-    {{ paragraph.name }}
+    {{ path }}
   </div>
 
-  <button type="button" class="btn-notice btn-warning tooltip-wide" (click)="showNotices($event)"
+  <button type="button" class="btn btn-n btn-warning tooltip-wide" (click)="showNotices($event)"
     *ngIf="paragraph.notices != null">
     <span>N</span>
     <span class="badge" *ngIf="paragraph.notices.length > 0">{{ paragraph.notices.length }}</span>
   </button>
 
   <div class="btn-group-vertical paragraph-tools">
+
+
     <button [disabled]="paragraph.isVirtual === true" type="button" class="btn btn-danger btn-delete" placement="left"
       popoverTitle="Entfernen" [popover]="popContent">
       X
@@ -97,3 +99,6 @@
     </div>
   </div>
 </div>
+
+<app-operative-paragraph *ngFor="let pra of paragraph.children" [paragraph]="pra" [resolution]="resolution">
+</app-operative-paragraph>

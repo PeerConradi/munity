@@ -5,6 +5,7 @@ import { NoticeTag } from '../../../models/notice-tag.model';
 import { UserService } from '../../../services/user.service';
 import { WindowPosition } from '../../../models/window-position.model';
 import { OperativeParagraph } from "../../../models/resolution/operative-paragraph.model";
+import { Resolution } from 'src/app/models/resolution/resolution.model';
 
 @Component({
   selector: 'app-operative-paragraph',
@@ -15,7 +16,7 @@ export class OperativeParagraphComponent implements OnInit {
 
   @Input() paragraph: OperativeParagraph;
 
-  @Input() resolutionid: string;
+  @Input() resolution: Resolution;
 
   @Input() index: number;
 
@@ -53,6 +54,10 @@ export class OperativeParagraphComponent implements OnInit {
     }
   }
 
+  get path(): string {
+    return this.service.getPathOfOperativeParagraph(this.paragraph, this.resolution);
+  }
+
   async saveChanges() {
     this.waitToSave = true;
     await this.delay(3000);
@@ -74,23 +79,23 @@ export class OperativeParagraphComponent implements OnInit {
   }
 
   delete() {
-    this.service.removeOperativeParagraph(this.resolutionid, this.paragraph.operativeParagraphId);
+    this.service.removeOperativeParagraph(this.resolution.resolutionId, this.paragraph.operativeParagraphId);
   }
 
   moveUp() {
-    this.service.moveOperativeParagraphUp(this.resolutionid, this.paragraph.operativeParagraphId);
+    this.service.moveOperativeParagraphUp(this.resolution.resolutionId, this.paragraph.operativeParagraphId);
   }
 
   moveDown() {
-    this.service.moveOperativeParagraphDown(this.resolutionid, this.paragraph.operativeParagraphId);
+    this.service.moveOperativeParagraphDown(this.resolution.resolutionId, this.paragraph.operativeParagraphId);
   }
 
   moveLeft() {
-    this.service.moveOperativeParagraphLeft(this.resolutionid, this.paragraph.operativeParagraphId);
+    this.service.moveOperativeParagraphLeft(this.resolution.resolutionId, this.paragraph.operativeParagraphId);
   }
 
   moveRight() {
-    this.service.moveOperativeParagraphRight(this.resolutionid, this.paragraph.operativeParagraphId);
+    this.service.moveOperativeParagraphRight(this.resolution.resolutionId, this.paragraph.operativeParagraphId);
   }
 
   showNotices(val) {

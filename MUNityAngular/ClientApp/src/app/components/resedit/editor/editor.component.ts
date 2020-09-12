@@ -7,7 +7,7 @@ import { OperativeSection } from 'src/app/models/resolution/operative-section.mo
 import { NotifierService } from 'angular-notifier';
 import { AbstractAmendment } from '../../../models/resolution/abstract-amendment.model';
 import { AmendmentInspector } from '../../../models/resolution/amendment-inspector';
-import { Title } from '@angular/platform-browser';
+import { DomSanitizer, Title } from '@angular/platform-browser';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { Delegation } from '../../../models/conference/delegation.model';
 import { AddAmendment } from '../../../models/resolution/add-amendment.model';
@@ -28,6 +28,12 @@ import { timeStamp } from 'console';
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent implements OnInit {
+  private setting = {
+    element: {
+      dynamicDownload: null as HTMLElement
+    }
+  }
+
 
   @Input('resolution')
   public set resolution(v: Resolution) {
@@ -72,9 +78,8 @@ export class EditorComponent implements OnInit {
 
   isPublic: boolean = false;
 
-
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
-    private titleService: Title, private conferenceService: ConferenceService, private userService: UserService) {
+    private titleService: Title, private conferenceService: ConferenceService, private userService: UserService, private sanitizer: DomSanitizer) {
     if (this.titleService != null) {
       this.titleService.setTitle('ResaOnline');
     }
@@ -97,18 +102,6 @@ export class EditorComponent implements OnInit {
     }
 
     if (id != null) {
-      // in testmode just create a new document
-      if (id === 'test') {
-        this.isLoading = false;
-        this.resolution = new Resolution();
-        this.resolution.header = new ResolutionHeader();
-        this.resolution.header.name = 'Test Resolution';
-        this.resolution.header.topic = 'Titel';
-        this.resolution.preamble = new Preamble();
-        this.resolution.operativeSection = new OperativeSection();
-        return;
-      }
-
       // Get the public version of this document. If this returns forbidden you are not allowed
       // to edit this resolution
       if (!this.userService.session) {
@@ -124,7 +117,6 @@ export class EditorComponent implements OnInit {
         });
 
       }
-
     }
 
     this.conferenceService.getAllDelegations().subscribe(n => {
@@ -237,5 +229,28 @@ export class EditorComponent implements OnInit {
 
   createConferenceConnection(committee: Committee) {
     this.service.linkResolutionToCommittee(this.resolution.resolutionId, committee.committeeId).subscribe();
+  }
+
+  downloadJson() {
+    this.dyanmicDownloadByHtmlTag({
+      fileName: this.model.header.topic + '.json',
+      text: JSON.stringify(this.model)
+    });
+  }
+
+  private dyanmicDownloadByHtmlTag(arg: {
+    fileName: string,
+    text: string
+  }) {
+    if (!this.setting.element.dynamicDownload) {
+      this.setting.element.dynamicDownload = document.createElement('a');
+    }
+    const element = this.setting.element.dynamicDownload;
+    const fileType = arg.fileName.indexOf('.json') > -1 ? 'text/json' : 'text/plain';
+    element.setAttribute('href', `data:${fileType};charset=utf-8,${encodeURIComponent(arg.text)}`);
+    element.setAttribute('download', arg.fileName);
+
+    var event = new MouseEvent("click");
+    element.dispatchEvent(event);
   }
 }

@@ -8,16 +8,16 @@ describe('EditorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditorComponent ]
+      declarations: [EditorComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     //fixture = TestBed.createComponent(EditorComponent);
     //component = fixture.componentInstance;
     //fixture.detectChanges();
-    component = new EditorComponent(null, null, null, null, null, null);
+    component = new EditorComponent(null, null, null, null, null, null, null);
   });
 
   it('should create', () => {

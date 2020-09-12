@@ -673,8 +673,19 @@ export class ResolutionService {
     operativeParagraphTwo.visible = true;
     resolution.operativeSection.paragraphs.push(operativeParagraphTwo);
 
+    let operativeParagraphThree = new OperativeParagraph();
+    operativeParagraphThree.operativeParagraphId = 'op3';
+    operativeParagraphThree.text = 'Ein dritter Absatz, welcher eine Textänderung anwenden soll!';
+    operativeParagraphThree.isVirtual = false;
+    operativeParagraphThree.notices = [];
+    operativeParagraphThree.children = [];
+    operativeParagraphThree.isLocked = false;
+    operativeParagraphThree.name = 'Test Paragraph';
+    operativeParagraphThree.visible = true;
+    resolution.operativeSection.paragraphs.push(operativeParagraphThree);
+
     let subParagraphOne = new OperativeParagraph();
-    subParagraphOne.operativeParagraphId = 'op2';
+    subParagraphOne.operativeParagraphId = 'subOa1';
     subParagraphOne.text = 'Dies ist ein weiterer Operativer Absatz und ich habe das Gefühl, dass in der mobilen Ansicht an sehr merkwürdigen stellen Umbrüche gemacht werden.';
     subParagraphOne.isVirtual = false;
     subParagraphOne.notices = [];
@@ -683,6 +694,31 @@ export class ResolutionService {
     subParagraphOne.name = 'Test Paragraph';
     subParagraphOne.visible = true;
     operativeParagraphOne.children.push(subParagraphOne);
+
+    let deleteAmendment = new DeleteAmendment();
+    deleteAmendment.id = 'da1';
+    deleteAmendment.targetSectionId = operativeParagraphOne.operativeParagraphId;
+    deleteAmendment.submitterName = 'Spanien';
+
+    let activatedDeleteAmendment = new DeleteAmendment();
+    activatedDeleteAmendment.id = 'da2';
+    activatedDeleteAmendment.targetSectionId = operativeParagraphTwo.operativeParagraphId;
+    activatedDeleteAmendment.submitterName = 'Finnland';
+    activatedDeleteAmendment.activated = true;
+
+
+    let activatedChamgeAmendment = new ChangeAmendment();
+    activatedChamgeAmendment.id = 'ca1';
+    activatedChamgeAmendment.targetSectionId = operativeParagraphThree.operativeParagraphId;
+    activatedChamgeAmendment.submitterName = 'Norwegen';
+    activatedChamgeAmendment.activated = true;
+    activatedChamgeAmendment.newText = 'Dies ist der neue Text des Operativen Absatz.'
+
+    resolution.operativeSection.changeAmendments.push(activatedChamgeAmendment);
+
+    resolution.operativeSection.deleteAmendments.push(activatedDeleteAmendment);
+
+    resolution.operativeSection.deleteAmendments.push(deleteAmendment);
 
     return resolution;
   }

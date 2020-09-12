@@ -27,11 +27,24 @@ export class OperativeParagraphViewComponent implements OnInit {
     paragraph.children.forEach(n => this.searchOperativeParagraph(id, n, pathArray));
   }
 
+  get deleteAmendmentCount(): number {
+    return this.resolution.operativeSection.deleteAmendments.filter(n => n.targetSectionId === this.paragraph.operativeParagraphId).length;
+  }
+
+  get changeAmendmentCount(): number {
+    return this.resolution.operativeSection.changeAmendments.filter(n => n.targetSectionId === this.paragraph.operativeParagraphId).length;
+  }
+
+  get moveAmendmentCount(): number {
+    return this.resolution.operativeSection.moveAmendments.filter(n => n.targetSectionId === this.paragraph.operativeParagraphId).length;
+  }
+
   constructor(private resolutionService: ResolutionService) { }
 
   ngOnInit(): void {
   }
 
+  // This method get called way to often, check if theres a way to only call all the logic only once
   get activeAmendment(): AbstractAmendment {
     let amendment = this.resolution.operativeSection.deleteAmendments.find(n => n.targetSectionId === this.paragraph.operativeParagraphId && n.activated);
     if (amendment == null) {
@@ -40,16 +53,11 @@ export class OperativeParagraphViewComponent implements OnInit {
     if (amendment == null) {
       amendment = this.resolution.operativeSection.moveAmendments.find(n => n.targetSectionId === this.paragraph.operativeParagraphId && n.activated);
     }
-
     return amendment;
   }
 
   get activeChangeAmendment(): ChangeAmendment {
     return this.resolution.operativeSection.changeAmendments.find(n => n.targetSectionId === this.paragraph.operativeParagraphId && n.activated);
-  }
-
-  get presets(): string {
-    return "<style>ul { list-style-type: lower-alpha; margin-left: 50Px; }ul ul { list-style-type: lower-roman; } </style>";
   }
 
 }

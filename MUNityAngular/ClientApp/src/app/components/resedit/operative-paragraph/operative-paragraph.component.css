@@ -73,3 +73,10 @@ textarea {
     max-height: 35px;
 }
 
+.btn-n {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  left: 60px;
+  top: auto;
+}
