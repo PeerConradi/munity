@@ -13,12 +13,3 @@
 .amendment-counts {
     font-size: 18px;
 }
-
-ul {
-    list-style-type: lower-alpha; margin-left: 50Px;
-
-}
-ul ul {
-    list-style-type: lower-roman;
-
-}

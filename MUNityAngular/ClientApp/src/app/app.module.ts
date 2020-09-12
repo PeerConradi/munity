@@ -73,6 +73,7 @@ import { RegisterFormComponent } from './components/account/register-form/regist
 import { ConferenceRouting } from './routing/conference.routing';
 import { MunityControlsModule } from './modules/munitycontrols.module';
 import { MunityDefaultsModule } from './modules/munitydefaults.module';
+import { OperativeParagraphViewComponent } from './components/resolution/view/operative-paragraph-view/operative-paragraph-view.component';
 
 @NgModule({
   declarations: [
@@ -117,7 +118,8 @@ import { MunityDefaultsModule } from './modules/munitydefaults.module';
     SimSimLobbyElementComponent,
     SimSimCreateComponent,
     LoginFormComponent,
-    RegisterFormComponent
+    RegisterFormComponent,
+    OperativeParagraphViewComponent
   ],
   imports: [
     RouterModule,

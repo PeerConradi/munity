@@ -41,6 +41,16 @@ export class ResViewComponent implements OnInit {
     }
   }
 
+  get supporters(): string {
+    if (this.resolution?.header?.supporters == null) return '';
+    let rtrn: string = '';
+    this.resolution.header.supporters.forEach(n => {
+      rtrn += n + ', ';
+    });
+    if (rtrn.length > 2) rtrn = rtrn.substr(0, rtrn.length - 2);
+    return rtrn;
+  }
+
   get presets(): string {
     return "<style>ul { list-style-type: lower-alpha; margin-left: 50Px; }ul ul { list-style-type: lower-roman; } </style>";
   }
@@ -48,19 +58,5 @@ export class ResViewComponent implements OnInit {
   ngOnInit() {
   }
 
-  activeAmendment(section: OperativeParagraph): AbstractAmendment {
-    let amendment = this.resolution.operativeSection.deleteAmendments.find(n => n.targetSectionId === section.operativeParagraphId && n.activated);
-    if (amendment == null) {
-      amendment = this.resolution.operativeSection.changeAmendments.find(n => n.targetSectionId === section.operativeParagraphId && n.activated);
-    }
-    if (amendment == null) {
-      amendment = this.resolution.operativeSection.moveAmendments.find(n => n.targetSectionId === section.operativeParagraphId && n.activated);
-    }
-
-    return amendment;
-  }
-
-  activeChangeAmendment(section: OperativeSection): ChangeAmendment {
-    return this.resolution.operativeSection.changeAmendments.find(n => n.targetSectionId === section.operativeSectionId && n.activated);
-  }
+  
 }

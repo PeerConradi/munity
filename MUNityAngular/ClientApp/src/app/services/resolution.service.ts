@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { UserService } from './user.service';
 import { Resolution } from '../models/resolution/resolution.model';
 import { PreambleParagraph } from '../models/resolution/preamble-paragraph.model';
@@ -17,6 +17,8 @@ import { AddAmendment } from '../models/resolution/add-amendment.model';
 import { ChangeResolutionHeaderRequest } from '../models/requests/change-resolution-header-request';
 import { Notice } from '../models/notice.model';
 import { OperativeParagraph } from "../models/resolution/operative-paragraph.model";
+import { ResolutionHeader } from '../models/resolution/resolution-header.model';
+import { Preamble } from '../models/resolution/preamble.model';
 
 @Injectable({
   providedIn: 'root'
@@ -63,10 +65,12 @@ export class ResolutionService {
   }
 
   public getPublicResolution(id: string) {
+    if (id === 'test') return of<Resolution>(this.getTestResolution());
     return this.httpClient.get<Resolution>(this.baseUrl + 'api/Resolution/GetPublic?id=' + id);
   }
 
   public getResolution(id: string) {
+    if (id === 'test') return of<Resolution>(this.getTestResolution());
     let headers = new HttpHeaders();
     headers = headers.set('id', id);
     let options = { headers: headers };
@@ -623,6 +627,122 @@ export class ResolutionService {
     return arr;
   }
 
+  public getTestResolution(): Resolution {
+    let resolution = new Resolution();
+    resolution.resolutionId = 'test';
+    resolution.date = new Date(Date.now());
+    resolution.header = new ResolutionHeader();
+    resolution.header.topic = 'Thema'
+    resolution.header.committeeName = 'die Generalversammlung';
+    resolution.header.submitterName = 'Deutschland';
+    resolution.header.supporters = [];
+    resolution.header.supporters.push('Frankreich', 'Österreich');
+    resolution.preamble = new Preamble();
+    resolution.preamble.paragraphs = [];
+    resolution.operativeSection = new OperativeSection();
+    resolution.operativeSection.addAmendments = [];
+    resolution.operativeSection.changeAmendments = [];
+    resolution.operativeSection.deleteAmendments = [];
+    resolution.operativeSection.moveAmendments = [];
+    resolution.operativeSection.paragraphs = [];
+
+    let preaParagraphOne = new PreambleParagraph();
+    preaParagraphOne.preambleParagraphId = 'prea1';
+    preaParagraphOne.text = 'Dies ist ein Preambel Absatz.';
+    resolution.preamble.paragraphs.push(preaParagraphOne);
+
+    let operativeParagraphOne = new OperativeParagraph();
+    operativeParagraphOne.operativeParagraphId = 'op1';
+    operativeParagraphOne.text = 'Dies ist ein Operativer Absatz. Er ist markdown fähig und kann daher mit einem Unterstrich _ markierte Worte _krusiv_ machen und mit zwei Worte __dick__';
+    operativeParagraphOne.isVirtual = false;
+    operativeParagraphOne.notices = [];
+    operativeParagraphOne.children = [];
+    operativeParagraphOne.isLocked = false;
+    operativeParagraphOne.name = 'Test Paragraph';
+    operativeParagraphOne.visible = true;
+    resolution.operativeSection.paragraphs.push(operativeParagraphOne);
+
+    let operativeParagraphTwo = new OperativeParagraph();
+    operativeParagraphTwo.operativeParagraphId = 'op2';
+    operativeParagraphTwo.text = 'Dies ist ein weiterer Operative Absatz';
+    operativeParagraphTwo.isVirtual = false;
+    operativeParagraphTwo.notices = [];
+    operativeParagraphTwo.children = [];
+    operativeParagraphTwo.isLocked = false;
+    operativeParagraphTwo.name = 'Test Paragraph';
+    operativeParagraphTwo.visible = true;
+    resolution.operativeSection.paragraphs.push(operativeParagraphTwo);
+
+    let subParagraphOne = new OperativeParagraph();
+    subParagraphOne.operativeParagraphId = 'op2';
+    subParagraphOne.text = 'Dies ist ein weiterer Operativer Absatz und ich habe das Gefühl, dass in der mobilen Ansicht an sehr merkwürdigen stellen Umbrüche gemacht werden.';
+    subParagraphOne.isVirtual = false;
+    subParagraphOne.notices = [];
+    subParagraphOne.children = [];
+    subParagraphOne.isLocked = false;
+    subParagraphOne.name = 'Test Paragraph';
+    subParagraphOne.visible = true;
+    operativeParagraphOne.children.push(subParagraphOne);
+
+    return resolution;
+  }
+
+  public getPathOfOperativeParagraph(paragraph: OperativeParagraph, resolution: Resolution): string {
+    let result = '';
+    let firstLevel = resolution.operativeSection.paragraphs.indexOf(paragraph);
+    if (firstLevel !== - 1) return (firstLevel + 1).toString();
+
+    let path: OperativeParagraph[] = [];
+
+    resolution.operativeSection.paragraphs.forEach(n => {
+      this.resolveOperativeParagraphPath(paragraph, n, path);
+    });
+
+    let reversedList = path.reverse();
+    let index: number = 0;
+    let lastParagraph: OperativeParagraph;
+    for (let p of reversedList) {
+      if (index === 0) {
+        let pIndex = resolution.operativeSection.paragraphs.indexOf(p);
+        result += (pIndex + 1).toString() + '.';
+        lastParagraph = p;
+
+      }
+      else {
+        let pIndex = lastParagraph.children.indexOf(p);
+        result += (pIndex + 1).toString() + '.'
+        lastParagraph = p;
+      }
+      index += 1;
+    }
+    if (result.endsWith('.')) result = result.substr(0, result.length - 1);
+
+    return result;
+  }
+
+  public resolveOperativeParagraphPath(paragraph: OperativeParagraph, currentParagraph: OperativeParagraph, path: OperativeParagraph[]): boolean {
+    // go recursive inside
+    if (currentParagraph == paragraph) {
+      path.push(currentParagraph);
+      return true;
+    }
+
+    if (currentParagraph.children === null || currentParagraph.children.length === 0) {
+      // dead end
+      return false;
+    }
+
+    // Go deeper
+    for (let p of currentParagraph.children) {
+      // If this path found some object add this paragraph
+      if (this.resolveOperativeParagraphPath(paragraph, p, path)) {
+        path.push(currentParagraph);
+      }
+    }
+
+    return false;
+
+  }
 
 }
 

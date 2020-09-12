@@ -32,15 +32,38 @@ export class PreambleParagraphComponent implements OnInit {
 
   saveState = 'N';
 
+  waitToSave = false;
+
+  saveRequestCount = 0;
+
   constructor(private service: ResolutionService, private userService: UserService) { }
 
   onKey(event: any) {
     this.paragraph.text = event.target.value;
+
+    if (!this.waitToSave) {
+      this.saveChanges();
+    }
+  }
+
+  async saveChanges() {
+    this.waitToSave = true;
+    await this.delay(3000);
+    //Wait for a few seconds before trying to save
     this.service.changePreambleParagraph(this.paragraph).subscribe(n => {
       this.saveState = 'S';
-    }, err => {
-      this.saveState = 'E';
-    });
+      this.waitToSave = false;
+    },
+      err => {
+        this.saveState = 'E';
+        this.saveRequestCount++;
+        // try to save again
+        this.saveChanges();
+      });
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   ngOnInit() {
