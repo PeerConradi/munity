@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { of } from 'rxjs';
 import { Conference } from 'src/app/models/conference/conference.model';
 import { Delegation } from 'src/app/models/conference/delegation.model';
 import { ConferenceService } from 'src/app/services/conference-service.service';

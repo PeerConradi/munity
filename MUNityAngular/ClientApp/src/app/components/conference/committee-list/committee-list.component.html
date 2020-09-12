@@ -1,33 +1,19 @@
 <!-- begin widget-list -->
 <div class="widget-list widget-list-rounded m-b-30">
     <!-- begin widget-list-item -->
-    <div class="widget-list-item">
-        <div class="widget-list-media">
-            <img src="../../../../assets/img/flags/small/un.png" class="rounded" />
-        </div>
-        <div class="widget-list-content">
-            <a href=#>
-                <h4 class="widget-list-title">Generalversammlung</h4>
-            </a>
-            <p class="widget-list-desc">die Generalversammlung (GV)</p>
-        </div>
-        <div class="widget-list-action">
-            <span class="text-muted pull-right">42 Delegationen</span>
-        </div>
-    </div>
 
-    <div class="widget-list-item">
+    <div class="widget-list-item" *ngFor="let committee of committees">
         <div class="widget-list-media">
             <img src="../../../../assets/img/flags/small/un.png" class="rounded" />
         </div>
         <div class="widget-list-content">
             <a href="#">
-                <h4 class="widget-list-title">Wirtschafts- und Sozialrat</h4>
+                <h4 class="widget-list-title">{{ committee.name }}</h4>
             </a>
-            <p class="widget-list-desc">der Wirtschafts- und Sozialrat (WiSo)</p>
+            <p class="widget-list-desc">{{ committee.fullName }} ({{ committee.abbreviation }})</p>
         </div>
         <div class="widget-list-action">
-            <span class="text-muted pull-right">26 Delegationen</span>
+            <span class="text-muted pull-right">?? Delegationen</span>
         </div>
     </div>
     <!-- end widget-list-item -->

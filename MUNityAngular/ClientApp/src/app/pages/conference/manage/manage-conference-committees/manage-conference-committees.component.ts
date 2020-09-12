@@ -8,7 +8,7 @@ import { ConferenceService } from '../../../../services/conference-service.servi
 import { UserService } from '../../../../services/user.service';
 import { NotifierService } from 'angular-notifier';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-manage-conference-committees',
@@ -29,10 +29,28 @@ export class ManageConferenceCommitteesComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private conferenceService: ConferenceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder) {
+    this.addCommitteeForm = formBuilder.group({
+      name: ['', Validators.required],
+      fullname: ['', Validators.required],
+      abbreviation: ['', Validators.required],
+      article: ['', Validators.required],
+      parentcommittee: [],
+    });
+  }
 
-  ngOnInit() {
-    this.conference = new Conference();
+  async ngOnInit() {
+    let id: string = null;
+
+    this.route.params.subscribe(params => {
+      id = params.id;
+    });
+
+    if (id != null) {
+      this.conference = await this.conferenceService.getConference(id).toPromise();
+      this.conferenceService.currentConference = this.conference;
+      console.log('current conference set!');
+    }
   }
 
   getDelegationById(id: string) {

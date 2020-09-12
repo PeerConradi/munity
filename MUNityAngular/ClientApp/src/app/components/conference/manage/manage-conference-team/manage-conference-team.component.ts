@@ -3,7 +3,7 @@ import { NotifierService } from 'angular-notifier';
 import { ConferenceService } from '../../../../services/conference-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { Conference } from '../../../../models/conference/conference.model';
-import { TeamRole } from '../../../../models/team-role.model';
+import * as r from '../../../../models/conference/roles';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../../../services/user.service';
 import { User } from '../../../../models/user.model';
@@ -18,7 +18,7 @@ export class ManageConferenceTeamComponent implements OnInit {
 
   conference: Conference;
 
-  roles: TeamRole[] = [];
+  roles: r.Roles.TeamRole[] = [];
 
   team: UserConferenceRole[] = [];
 

@@ -41,7 +41,7 @@ export const routes: Routes = [
             // mc for manage conference
             { path: 'mc/overview/:id', component: CreateConferenceComponent },
             { path: 'mc/team/:id', component: ManageConferenceTeamComponent },
-            { path: 'mc/TeamRoles/:id', component: ManageConferenceTeamRolesComponent },
+            { path: 'mc/teamroles/:id', component: ManageConferenceTeamRolesComponent },
             { path: 'mc/committees/:id', component: ManageConferenceCommitteesComponent },
             { path: 'mc/delegations/:id', component: ManageConferenceDelegationsComponent },
             { path: 'mc/roles/:id', component: ManageConferenceRolesDashboardComponent }

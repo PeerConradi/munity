@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
+import { Committee } from 'src/app/models/conference/committee.model';
 
 @Component({
   selector: 'app-committee-list',
@@ -8,6 +9,8 @@ import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./committee-list.component.css']
 })
 export class CommitteeListComponent implements OnInit {
+
+  @Input() committees: Committee[];
 
   public faEllipsisH = faEllipsisH;
 

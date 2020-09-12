@@ -3,6 +3,7 @@ import { Conference } from '../../../models/conference/conference.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConferenceService } from '../../../services/conference-service.service';
 import { UserService } from '../../../services/user.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-conference-menu',
@@ -18,14 +19,13 @@ export class ConferenceMenuComponent implements OnInit {
   participantsMenuCollapse = true;
   roleMenuCollapse = true;
 
-  conference: Conference;
+  public conference: Conference;
 
-  constructor(private conferenceService: ConferenceService, private router: Router) { }
+  constructor(public conferenceService: ConferenceService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
-
-    // this.conference = this.conferenceService.currentConference;
-    this.conference = new Conference();
+    console.log('ask for current conference')
+    this.conference = this.conferenceService.currentConference;
 
   }
 

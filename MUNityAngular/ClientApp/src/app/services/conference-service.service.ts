@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Conference } from '../models/conference/conference.model';
 import { UserService } from './user.service';
 import { Committee } from '../models/conference/committee.model';
@@ -10,10 +10,9 @@ import { AddCommitteeRequest } from '../models/requests/add-committee-request';
 import { CreateDelegationRequest } from '../models/requests/create-delegation-request';
 import { ChangeConferenceNameRequest } from '../models/requests/change-conference-name-request';
 import { User } from '../models/user.model';
-import { TeamRole } from '../models/team-role.model';
 import { UserConferenceRole } from '../models/user-conference-role.model';
 import { CommitteeStatus } from '../models/conference/committee-status.model';
-
+import * as r from '../models/conference/roles';
 
 // Some day this thing should be renamed into ConferenceService!
 @Injectable({
@@ -25,7 +24,14 @@ export class ConferenceService {
 
   public committeeContext: Committee = null;
 
-  public currentConference: Conference = null;
+  private _currentConference: Conference = null;
+  public get currentConference(): Conference {
+    return this._currentConference;
+  }
+
+  public set currentConference(val: Conference) {
+    this._currentConference = val;
+  }
 
   private baseUrl: string;
   constructor(private http: HttpClient, private userService: UserService, @Inject('BASE_URL') baseUrl: string) {
@@ -41,6 +47,7 @@ export class ConferenceService {
   }
 
   public getConference(id: string) {
+    if (id === 'test') return of(this.getTestConference())
     let headers = new HttpHeaders();
     headers = headers.set('id', id);
     let options = { headers: headers };
@@ -91,18 +98,19 @@ export class ConferenceService {
   }
 
   public getTeamRoles(conferenceid: string) {
+    if (conferenceid === 'test') return of(this.getTestTeamRoles());
     let headers = new HttpHeaders();
     headers = headers.set('conferenceid', conferenceid);
     let options = { headers: headers };
-    return this.http.get<TeamRole[]>(this.baseUrl + 'api/Conference/GetTeamRoles',
+    return this.http.get<r.Roles.TeamRole[]>(this.baseUrl + 'api/Conference/GetTeamRoles',
       options);
   }
 
-  public addTeamRole(role: TeamRole) {
+  public addTeamRole(role: r.Roles.TeamRole) {
     return this.http.put(this.baseUrl + 'api/Conference/AddTeamRole', role);
   }
 
-  public addTeamMember(username: string, role: TeamRole) {
+  public addTeamMember(username: string, role: r.Roles.TeamRole) {
     return this.http.put(this.baseUrl + 'api/Conference/AddUserToTeam', { Username: username, Role: role });
   }
 
@@ -145,7 +153,41 @@ export class ConferenceService {
     conference.fullName = 'Conference to Test Everything';
     conference.conferenceId = 'test';
     conference.committees = [];
+
+    let committeeOne = new Committee();
+    committeeOne.committeeId = 'gv';
+    committeeOne.name = 'Generalversammlung';
+    committeeOne.fullName = 'die Generalversammlung der Vereinten Nationen';
+    committeeOne.abbreviation = 'GV';
+    committeeOne.article = 'die';
+    conference.committees.push(committeeOne);
+
+    let committeeTwo = new Committee();
+    committeeTwo.committeeId = 'sr';
+    committeeTwo.name = 'Sicherheitsrat';
+    committeeTwo.fullName = 'der UN Sicherheitsrat';
+    committeeTwo.abbreviation = 'SR';
+    committeeTwo.article = 'der';
+    conference.committees.push(committeeTwo);
+
+
+
     conference.roles = [];
+    this.getTestTeamRoles().forEach(n => conference.roles.push(n));
     return conference;
+  }
+
+  public getTestTeamRoles(): r.Roles.TeamRole[] {
+    let roles: r.Roles.TeamRole[] = [];
+
+    let leaderRole: r.Roles.TeamRole = new r.Roles.TeamRole();
+    leaderRole.roleId = 1;
+    leaderRole.roleName = 'Projektleiter';
+    leaderRole.teamRoleLevel = 1;
+    leaderRole.teamRoleGroup = 'Projektleitung'
+
+    roles.push(leaderRole);
+
+    return roles;
   }
 }

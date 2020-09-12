@@ -14,7 +14,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Konferenzverwaltung</li>
         <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ConferenceId]"
-            *ngIf="conference">{{ conference.Name }}</a></li>
+            *ngIf="conference">{{ conference.name }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">Gremien</li>
       </ol>
     </nav>
@@ -31,7 +31,7 @@
           Gremien
         </div>
         <div class="card-body">
-          <app-committee-list></app-committee-list>
+          <app-committee-list [committees]='conference.committees'></app-committee-list>
         </div>
         <div class="card-footer">
           <button type="button" class="btn btn-block btn-secondary" (click)="openModal(addCommitteeModal)">Gremium
@@ -40,55 +40,6 @@
       </div>
 
     </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <div class="card border-primary">
-        <div class="card-header">
-          <h3 class="card-title">Delegation zur Konferenz hinzufügen</h3>
-        </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label>Delegation auswählen</label>
-            <select class="form-control" [(ngModel)]="addDelegationSelection" [ngModelOptions]="{standalone: true}">
-              <option *ngFor="let delegation of presetDelegations" [ngValue]="delegation">{{ delegation.Name }}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <button class="btn btn-block btn-primary" (click)="addDelegationClick()">Auswahl Hinzufügen</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <label>Suche: </label>
-      <input type="text" class="form-control" placeholder="Suchbegriff" (keyup)="onSearchKey($event)" />
-    </div>
-    <div class="col-12">
-      <table class="table table-hover">
-        <tr>
-          <th>Delegation\Gremium</th>
-          <th *ngFor="let committee of conference.Committees" class="text-center">{{ committee.Abbreviation }}</th>
-        </tr>
-        <tr *ngFor="let delegation of filteredDelegations">
-          <td>{{ delegation.Name }}</td>
-          <td *ngFor="let committee of conference.Committees"
-            [class.bg-success]="isDelegationInCommittee(delegation, committee)">
-            <div class="checkbox align-content-center">
-              <label style="font-size: 1em">
-                <input type="checkbox" value="" [checked]="isDelegationInCommittee(delegation, committee)"
-                  (change)="toggleDelegationInCommittee(delegation, committee)">
-              </label>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
-
   </div>
 
 </div>
@@ -109,6 +60,15 @@
         <label class="control-label">Anzeigename</label>
         <div class="col-12">
           <input formControlName="name" class="form-control"
+            [class.is-invalid]="addCommitteeSubmitted && acf.name.errors">
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label class="control-label">Vollständiger Name</label>
+        <div class="col-12">
+          <input formControlName="fullname" class="form-control"
             [class.is-invalid]="addCommitteeSubmitted && acf.name.errors">
         </div>
       </div>
@@ -135,7 +95,7 @@
       <div class="form-group">
         <label class="control-label">Übergeodnetes Gremium</label>
         <div class="col-12">
-          <input formControlName="parentcommittee" [typeahead]="conference.Committees" typeaheadOptionField="Name"
+          <input formControlName="parentcommittee" [typeahead]="conference.committees" typeaheadOptionField="name"
             class="form-control" aria-describedby="dsds">
           <small id="dsds" class="text-muted">Wenn keines existiert Feld leer lassen</small>
         </div>

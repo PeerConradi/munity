@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faFile, faFlag, faUser, faCircle, faCarrot, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { Conference } from 'src/app/models/conference/conference.model';
+import { ConferenceService } from 'src/app/services/conference-service.service';
 
 @Component({
   selector: 'app-manage-conference-dashboard',
@@ -14,11 +17,24 @@ export class ManageConferenceDashboardComponent implements OnInit {
 
   public faCaretUp = faCaretUp
 
-  constructor() {
+  public conference: Conference;
+
+  constructor(private conferenceService: ConferenceService, private route: ActivatedRoute) {
 
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    let id: string = null;
+
+    this.route.params.subscribe(params => {
+      id = params.id;
+    });
+
+    if (id != null) {
+      this.conference = await this.conferenceService.getConference(id).toPromise();
+      this.conferenceService.currentConference = this.conference;
+      console.log('current conference set!');
+    }
   }
 
 }

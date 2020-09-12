@@ -47,14 +47,14 @@
 }
 
 .widget-list .widget-list-item .widget-list-title {
-    font-size: 18px;
+    font-size: 24px;
     line-height: 16px;
     margin: 0;
 }
 
 .widget-list .widget-list-item .widget-list-desc {
-    font-size: 11px;
-    margin: 0;
+    font-size: 14px;
+    margin-top: 5px;
     color: #6f8293;
 }
 
