@@ -30,13 +30,17 @@ export class ManageConferenceCommitteesComponent implements OnInit {
   constructor(private route: ActivatedRoute, private conferenceService: ConferenceService,
     private userService: UserService, private modalService: BsModalService, private notifier: NotifierService,
     private formBuilder: FormBuilder) {
-    this.addCommitteeForm = formBuilder.group({
-      name: ['', Validators.required],
-      fullname: ['', Validators.required],
-      abbreviation: ['', Validators.required],
-      article: ['', Validators.required],
-      parentcommittee: [],
-    });
+
+    if (formBuilder != null) {
+      this.addCommitteeForm = formBuilder.group({
+        name: ['', Validators.required],
+        fullname: ['', Validators.required],
+        abbreviation: ['', Validators.required],
+        article: ['', Validators.required],
+        parentcommittee: [],
+      });
+    }
+
   }
 
   async ngOnInit() {

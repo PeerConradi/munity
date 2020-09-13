@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder } from '@angular/forms';
 
 import { ManageConferenceCommitteesComponent } from './manage-conference-committees.component';
 
@@ -8,16 +9,17 @@ describe('ManageConferenceCommitteesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ManageConferenceCommitteesComponent ]
+      declarations: [ManageConferenceCommitteesComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     //fixture = TestBed.createComponent(ManageConferenceCommitteesComponent);
     //component = fixture.componentInstance;
     //fixture.detectChanges();
-    component = new ManageConferenceCommitteesComponent(null, null, null, null, null, null);
+    let formBuilder = new FormBuilder();
+    component = new ManageConferenceCommitteesComponent(null, null, null, null, null, formBuilder);
   });
 
   it('should create', () => {

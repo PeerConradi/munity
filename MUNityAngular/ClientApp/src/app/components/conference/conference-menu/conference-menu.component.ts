@@ -21,7 +21,7 @@ export class ConferenceMenuComponent implements OnInit {
 
   public conference: Conference;
 
-  constructor(public conferenceService: ConferenceService, private router: Router, private route: ActivatedRoute) { }
+  constructor(public conferenceService: ConferenceService, private router: Router) { }
 
   ngOnInit() {
     console.log('ask for current conference')
