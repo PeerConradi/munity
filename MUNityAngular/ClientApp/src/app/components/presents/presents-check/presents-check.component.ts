@@ -40,7 +40,7 @@ export class PresentsCheckComponent implements OnInit {
   }
 
   constructor(private conferenceSerivce: ConferenceService, private route: ActivatedRoute, private presenceService: PresenceService,
-  private notifier: NotifierService) { }
+    private notifier: NotifierService) { }
 
   ngOnInit() {
     //Get the ID of the context committee
@@ -52,11 +52,7 @@ export class PresentsCheckComponent implements OnInit {
       id = this.route.snapshot.queryParamMap.get('id');
     }
     this.committeeId = id;
-    if (id != null) {
-      this.conferenceSerivce.getDelegationsOfCommittee(id).subscribe(n => {
-        this.allDelegations = n;
-      });
-    }
+
   }
 
   setPresent(delegation: Delegation) {

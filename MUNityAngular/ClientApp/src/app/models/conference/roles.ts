@@ -4,6 +4,10 @@ export namespace Roles {
 
         public roleName: string;
 
+        public roleFullName: string;
+
+        public abbreviation: string;
+
         public iconName: string;
 
         public applicationState: EApplicationStates;
@@ -16,14 +20,14 @@ export namespace Roles {
     }
 
     export enum EApplicationStates {
-        CLOSED,
-        DIRECT_APPLICATION,
-        CATEGORY_APPLICATION,
-        REGISTRATION,
-        DELEGATION_APPLICATION,
-        COMMITTEE_APPLICATION,
-        CLOSED_TO_PUBLIC,
-        CUSTOM
+        CLOSED = 0,
+        DIRECT_APPLICATION = 1,
+        CATEGORY_APPLICATION = 2,
+        REGISTRATION = 3,
+        DELEGATION_APPLICATION = 4,
+        COMMITTEE_APPLICATION = 5,
+        CLOSED_TO_PUBLIC = 6,
+        CUSTOM = 7
     }
 
     export enum EPressCategories {
@@ -85,7 +89,7 @@ export namespace Roles {
 
         public teamRoleLevel: number;
 
-        public teamRoleGroup: string;
+        public teamRoleGroupId: number;
 
         constructor() {
             super();
@@ -100,5 +104,17 @@ export namespace Roles {
             super();
             this.roleType = 'VisitorRole';
         }
+    }
+
+    export class TeamRoleGroup {
+        public teamRoleGroupId: number;
+
+        public name: string;
+
+        public fullName: string;
+
+        public abbreviation: string;
+
+        public groupLevel: number;
     }
 }

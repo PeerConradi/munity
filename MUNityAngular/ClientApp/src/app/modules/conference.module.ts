@@ -30,6 +30,7 @@ import { faFile, faFlag, faUser, faCircle, fas } from '@fortawesome/free-solid-s
 import { ConferenceTodoListWidgetComponent } from '../components/conference/manage/conference-todo-list-widget/conference-todo-list-widget.component';
 import { CommitteeListComponent } from '../components/conference/committee-list/committee-list.component';
 import { ManageConferenceRolesDashboardComponent } from '../pages/conference/manage/manage-conference-roles-dashboard/manage-conference-roles-dashboard.component';
+import { ManageConferenceRolesComponent } from '../pages/conference/manage/manage-conference-roles/manage-conference-roles.component';
 
 @NgModule({
     imports: [
@@ -64,7 +65,8 @@ import { ManageConferenceRolesDashboardComponent } from '../pages/conference/man
         ManageConferenceDashboardComponent,
         ConferenceTodoListWidgetComponent,
         CommitteeListComponent,
-        ManageConferenceRolesDashboardComponent
+        ManageConferenceRolesDashboardComponent,
+        ManageConferenceRolesComponent
     ],
     exports: [ConferenceMenuComponent]
 })

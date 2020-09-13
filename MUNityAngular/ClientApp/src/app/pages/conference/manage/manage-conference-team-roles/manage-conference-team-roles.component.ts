@@ -20,10 +20,11 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
 
   roles: r.Roles.TeamRole[] = [];
 
-  public groups: string[] = [];
 
   constructor(private formBuilder: FormBuilder, private conferenceService: ConferenceService, private route: ActivatedRoute,
     private notifier: NotifierService) { }
+
+
 
 
   async ngOnInit() {
@@ -43,6 +44,7 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
 
     }
 
+
     this.addRoleForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
@@ -50,6 +52,12 @@ export class ManageConferenceTeamRolesComponent implements OnInit {
       maxCount: ['', Validators.required]
     });
   }
+
+  getTeamRolesOfGroup(g: r.Roles.TeamRoleGroup): r.Roles.TeamRole[] {
+    if (this.roles == null) return [];
+    return this.roles.filter(n => n.teamRoleGroupId == g.teamRoleGroupId);
+  }
+
 
   get f() { return this.addRoleForm.controls; }
 

@@ -2,74 +2,62 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">Konferenzverwaltung</li>
-      <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ID]" *ngIf="conference">{{ conference.Name }}</a></li>
+      <li class="breadcrumb-item"><a [routerLink]="['/mc/overview',conference.ID]"
+          *ngIf="conference">{{ conference.Name }}</a></li>
       <li class="breadcrumb-item active" aria-current="page">Team-Rollen</li>
     </ol>
   </nav>
 </div>
 
-<div class="row">
+<div class="row" *ngIf="conference?.teamRoleGroups">
   <div class="col-12">
-    <h1>Rollenverwaltung</h1>
-  </div>
-  <div class="col-12" *ngIf="conference">
-    <a [routerLink]="['/mc/team', conference.ID]">Teammitgielder verwalten</a>
-  </div>
-  <!-- Hinzufügen Form -->
-  <div class="col-12">
-    <h3>Rolle hinzufügen</h3>
-    <form [formGroup]="addRoleForm" (ngSubmit)="addRole()">
-      <!-- Name -->
-      <div class="form-group">
-        <label for="nameInput">Name</label>
-        <input type="text" #nameInput formControlName="name" class="form-control" />
-        <div *ngIf="f.name.errors" class="invalid-feedback">
-          <div *ngIf="f.email.errors.required">Es muss ein Name angegeben werden.</div>
-        </div>
-      </div>
-      <!-- Beschreibung -->
-      <div class="form-group">
-        <label for="descriptionInput">Beschreibung</label>
-        <input type="text" #descriptionInput formControlName="description" class="form-control" />
-        <div *ngIf="f.description.errors" class="invalid-feedback">
-          <div *ngIf="f.description.errors.required">Es muss eine Beschreibung angegeben werden.</div>
-        </div>
-      </div>
-      <!-- Mindestanzahl -->
-      <div class="form-group">
-        <label for="minInput">Mindestanzahl Vertreter</label>
-        <input type="number" #minInput formControlName="minCount" class="form-control" />
-        <div *ngIf="f.minCount.errors" class="invalid-feedback">
-          <div *ngIf="f.minCount.errors.required">Es muss eine Mindestanzahl angegeben werden.</div>
-        </div>
-      </div>
-      <!-- MaxCount -->
-      <div class="form-group">
-        <label for="miaxInput">Maximalanzahl Vertreter</label>
-        <input type="number" #minInput formControlName="maxCount" class="form-control" />
-        <div *ngIf="f.maxCount.errors" class="invalid-feedback">
-          <div *ngIf="f.maxCount.errors.required">Es muss eine Maximalanzahl angegeben werden.</div>
-        </div>
-      </div>
-
-      <button class="btn btn-primary">Erstellen</button>
-    </form>
+    <h1>Eingeragene Rollen</h1>
   </div>
 
   <div class="col-12">
-    <table class="table">
-      <tr>
-        <th>Rollenname</th>
-        <th>Beschreibung</th>
-        <th>Mindestanzahl</th>
-        <th>Maxanzahl</th>
-      </tr>
-      <tr *ngFor="let role of roles">
-        <td>{{ role.Name }}</td>
-        <td>{{ role.Description }}</td>
-        <td>{{ role.MinCount }}</td>
-        <td>{{ role.MaxCount }}</td>
-      </tr>
-    </table>
+    <div class="card">
+      <div class="card-header">
+        <button class="btn btn-block btn-primary">Rollengruppe hinzufügen</button>
+      </div>
+    </div>
   </div>
+
+  <div class="col-12" *ngFor="let group of conference.teamRoleGroups">
+    <div class="card">
+      <div class="card-header">
+        {{ group.name }} ({{ getTeamRolesOfGroup(group).length }})
+      </div>
+
+      <div class="card-body">
+        <div class="row">
+          <div class="col card-group">
+            <div class="card" *ngFor="let role of getTeamRolesOfGroup(group)">
+              <div class="card-body">
+                <h5 class="card-title">{{ role.roleName }}</h5>
+                <p class="card-text">{{ role.roleFullName }}</p>
+                <p class="card-text">
+                  <small class="text-muted" *ngIf="role.applicationState == 0">Keine Bewerbung möglich/Posten
+                    vergeben</small>
+                  <small class="text-muted" *ngIf="role.applicationState == 1">Direkte Bewerbung auf den Posten</small>
+                  <small class="text-muted" *ngIf="role.applicationState == 2">Bewerbung auf die Kategorie
+                    (Gruppe)</small>
+                  <small class="text-muted" *ngIf="role.applicationState == 3">Registrierung für die Stelle</small>
+                  <small class="text-muted" *ngIf="role.applicationState == 6">Nur intern ausgeschrieben</small>
+                </p>
+                <a href="#" class="btn btn-primary">Posten besetzen</a>
+
+              </div>
+            </div>
+
+            <div class="card border-success text-center">
+              <div class="card-body">
+                <button class="btn btn-success card-text">Rolle hinzufügen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

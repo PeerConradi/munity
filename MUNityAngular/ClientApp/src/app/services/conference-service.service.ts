@@ -38,6 +38,8 @@ export class ConferenceService {
     this.baseUrl = baseUrl;
   }
 
+  public knownAbbreviations: string[] = ['ad', 'ae', 'af', 'ag', 'al', 'am', 'ao', 'ar', 'at', 'au', 'az', 'ba', 'bb', 'bd', 'be', 'bf', 'bg', 'bh', 'bi', 'bj', 'bn', 'bo', 'br', 'bs', 'bt', 'bw', 'by', 'bz', 'ca', 'cd', 'cf', 'cg', 'ch', 'ci', 'ck', 'cl', 'cm', 'cn', 'co', 'cr', 'cu', 'cv', 'cy', 'cz', 'de', 'dj', 'dk', 'dm', 'do', 'dz', 'ec', 'ee', 'eg', 'eh', 'er', 'es', 'et', 'fi', 'fj', 'fm', 'fr', 'ga', 'gb', 'gd', 'ge', 'gh', 'gm', 'gn', 'gq', 'gr', 'gt', 'gw', 'gy', 'hn', 'hr', 'ht', 'hu', 'id', 'ie', 'il', 'in', 'iq', 'ir', 'is', 'it', 'jm', 'jo', 'jp', 'ke', 'kg', 'kh', 'ki', 'km', 'kn', 'kp', 'kr', 'kw', 'kz', 'la', 'lb', 'lc', 'li', 'lk', 'lr', 'ls', 'lt', 'lu', 'lv', 'ly', 'ma', 'mc', 'md', 'me', 'mg', 'mh', 'mk', 'ml', 'mm', 'mn', 'mr', 'mt', 'mu', 'mv', 'mw', 'mx', 'my', 'mz', 'na', 'ne', 'ng', 'ni', 'nl', 'no', 'np', 'nr', 'nu', 'nz', 'om', 'pa', 'pe', 'pg', 'ph', 'pk', 'pl', 'ps', 'pt', 'pw', 'py', 'qa', 'ro', 'rs', 'ru', 'rw', 'sa', 'sb', 'sc', 'sd', 'se', 'sg', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sr', 'ss', 'st', 'sv', 'sy', 'sz', 'td', 'tg', 'th', 'tj', 'tl', 'tm', 'tn', 'to', 'tr', 'tt', 'tv', 'tw', 'tz', 'ua', 'ug', 'un', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vn', 'vu', 'ws', 'xk', 'ye', 'za', 'zm', 'zw'];
+
   public getAllConferences(): Observable<Conference[]> {
     return this.http.get<Conference[]>(this.baseUrl + 'api/conference/GetConferences');
   }
@@ -69,24 +71,13 @@ export class ConferenceService {
     return -1;
   }
 
-  public addDelegationToConference(conferenceid: string, delegationid: string, mincount: number, maxcount: number) {
-
-  }
-
-  public changeConferenceName(conferenceid: string, newname: string) {
-
-  }
-
   public getAllDelegations() {
     return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/AllDelegations');
   }
 
-  public getDelegationsOfCommittee(committeeid: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('committeeid', committeeid);
-    let options = { headers: headers };
-    return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/GetDelegationsOfCommittee',
-      options);
+  public getDelegationsOfConference(conferenceId: string) {
+    if (conferenceId == 'test') return of(this.getTestDelegations());
+    return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/DelegationsOfConference?id=' + conferenceId);
   }
 
   public getTeam(conferenceid: string) {
@@ -147,12 +138,26 @@ export class ConferenceService {
     return this.http.get<CommitteeStatus>(this.baseUrl + 'api/Conference/GetCommitteeStatus', { headers: headers });
   }
 
+  public generateId(len: number): string {
+    let allowedChars: string = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let returnVal: string = "";
+    for (let i = 0; i < len; i++) {
+      let charIndex = Math.random();
+      charIndex = charIndex * allowedChars.length;
+      charIndex = Math.round(charIndex);
+      returnVal += allowedChars.charAt(charIndex);
+    }
+    return returnVal;
+  }
+
   public getTestConference(): Conference {
     let conference = new Conference();
     conference.name = 'Test Conference';
     conference.fullName = 'Conference to Test Everything';
     conference.conferenceId = 'test';
+    conference.roles = [];
     conference.committees = [];
+    conference.teamRoleGroups = [];
 
     let committeeOne = new Committee();
     committeeOne.committeeId = 'gv';
@@ -171,10 +176,30 @@ export class ConferenceService {
     conference.committees.push(committeeTwo);
 
 
-
-    conference.roles = [];
+    this.getTestTeamRoleGroups().forEach(n => conference.teamRoleGroups.push(n));
     this.getTestTeamRoles().forEach(n => conference.roles.push(n));
     return conference;
+  }
+
+  public getTestTeamRoleGroups(): r.Roles.TeamRoleGroup[] {
+    let groups: r.Roles.TeamRoleGroup[] = [];
+    let plGroup = new r.Roles.TeamRoleGroup();
+    plGroup.teamRoleGroupId = 0;
+    plGroup.name = 'Projektleitung';
+    plGroup.fullName = 'die Projektleitung';
+    plGroup.groupLevel = 1;
+    plGroup.abbreviation = 'PL';
+
+    let gsGroup = new r.Roles.TeamRoleGroup();
+    gsGroup.teamRoleGroupId = 1;
+    gsGroup.name = 'Generalsekretariat';
+    gsGroup.fullName = 'Generalsekretariat';
+    gsGroup.groupLevel = 2;
+    gsGroup.abbreviation = 'GS';
+
+    groups.push(plGroup);
+    groups.push(gsGroup);
+    return groups;
   }
 
   public getTestTeamRoles(): r.Roles.TeamRole[] {
@@ -184,10 +209,46 @@ export class ConferenceService {
     leaderRole.roleId = 1;
     leaderRole.roleName = 'Projektleiter';
     leaderRole.teamRoleLevel = 1;
-    leaderRole.teamRoleGroup = 'Projektleitung'
+    leaderRole.roleFullName = 'Leiter des Projekts';
+    leaderRole.teamRoleGroupId = 0;
+    leaderRole.applicationState = r.Roles.EApplicationStates.CLOSED;
+
+    let leaderRole2: r.Roles.TeamRole = new r.Roles.TeamRole();
+    leaderRole2.roleId = 2;
+    leaderRole2.roleName = 'Projektleiterin';
+    leaderRole2.teamRoleLevel = 1;
+    leaderRole2.roleFullName = 'Leiterin des Projekts';
+    leaderRole2.teamRoleGroupId = 0;
+    leaderRole.applicationState = r.Roles.EApplicationStates.CLOSED;
+
+    let gsRole: r.Roles.TeamRole = new r.Roles.TeamRole();
+    gsRole.roleId = 2;
+    gsRole.roleName = 'Generalsekretär';
+    gsRole.teamRoleLevel = 1;
+    gsRole.roleFullName = 'Generalsekretär';
+    gsRole.teamRoleGroupId = 1;
+    gsRole.applicationState = r.Roles.EApplicationStates.CLOSED_TO_PUBLIC;
 
     roles.push(leaderRole);
+    roles.push(leaderRole2);
+    roles.push(gsRole);
 
     return roles;
   }
+
+  public getTestDelegations(): Delegation[] {
+    let delegations: Delegation[] = [];
+
+    let delGermany: Delegation = new Delegation();
+    delGermany.delegationId = 'delGer';
+    delGermany.name = 'Deutschland';
+    delGermany.fullName = 'Bundesrepublik Deutschland';
+    delGermany.abbreviation = 'DE';
+
+    delegations.push(delGermany);
+
+    return delegations;
+  }
+
+
 }

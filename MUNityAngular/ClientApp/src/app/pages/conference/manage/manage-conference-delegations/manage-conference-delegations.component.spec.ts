@@ -17,7 +17,7 @@ describe('ManageConferenceDelegationsComponent', () => {
     // fixture = TestBed.createComponent(ManageConferenceDelegationsComponent);
     // component = fixture.componentInstance;
     // fixture.detectChanges();
-    component = new ManageConferenceDelegationsComponent(null);
+    component = new ManageConferenceDelegationsComponent(null, null);
   });
 
   it('should create', () => {

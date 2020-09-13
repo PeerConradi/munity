@@ -20,6 +20,8 @@ export class Conference {
   public committees: Committee[];
 
   public roles: r.Roles.AbstractRole[];
+
+  public teamRoleGroups: r.Roles.TeamRoleGroup[];
 }
 
 export class ConferenceInfo {

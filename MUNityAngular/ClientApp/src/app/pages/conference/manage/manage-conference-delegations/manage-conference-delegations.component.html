@@ -24,7 +24,46 @@
     </div>
 
     <div class="row">
-        
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Delegationen
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Name</th>
+                            <th>Vollständiger Name</th>
+                            <th>Kürzel</th>
+                            <th>Bild</th>
+                        </tr>
+                        <tr *ngFor="let del of delegations">
+                            <td>{{ del.name }}</td>
+                            <td>{{ del.fullName }}</td>
+                            <td>{{ del.abbreviation }}</td>
+                            <td><img [src]='getDelegationImagePath(del)'></td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">
+                                <input type="text" class="form-control" #newDelegationNameInput
+                                    [(ngModel)]="newDelegationName" />
+                            </td>
+                            <td class="table-active">
+                                <input type="text" class="form-control" [(ngModel)]="newDelegationFullName" />
+                            </td>
+                            <td class="table-active">
+                                <input type="text" class="form-control" [(ngModel)]="newDelegationAbbreviation"
+                                    (keyup.enter)="addDelegation()" />
+                            </td>
+                            <td class="table-active">
+                                <button class="btn btn-success btn-block" (click)="addDelegation()">Hinzufügen</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
     </div>
 
 </div>
