@@ -30,6 +30,7 @@ import { SimSimStartupComponent } from './components/simsim/sim-sim-startup/sim-
 import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-sim-create.component';
 
 import { AuthGuard } from "./shared/auth.guard";
+import { SimulationMobileComponent } from './pages/simulation/simulation-mobile/simulation-mobile.component';
 
 const routes: Routes = [
   // Routes that have no default theme!
@@ -37,6 +38,7 @@ const routes: Routes = [
   { path: 'resa/read/:id', component: ResViewComponent },
   { path: 's/view/:id', component: SpeakerlistViewComponent },
   { path: 'sim', component: SimSimViewComponent },
+  { path: 'msim', component: SimulationMobileComponent },
   {
     path: '',
     component: DefaultLayoutComponent,

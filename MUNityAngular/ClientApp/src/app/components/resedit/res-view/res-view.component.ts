@@ -15,30 +15,12 @@ import { OperativeParagraph } from "../../../models/resolution/operative-paragra
 })
 export class ResViewComponent implements OnInit {
 
-  @Input() resolution: Resolution;
+  @Input() public resolution: Resolution;
 
   @Input() allAmendments: AbstractAmendment[];
 
   constructor(public service: ResolutionService, private route: ActivatedRoute) {
 
-    let id: string = null;
-    this.route.params.subscribe(params => {
-      id = params.id;
-    })
-    //if (id == null) {
-    //  id = this.route.snapshot.queryParamMap.get('id');
-    //}
-
-    if (id != null) {
-      this.service.getResolution(id).subscribe(n => {
-        if (n != null) {
-          let readyState = this.service.connectionReady;
-          this.resolution = n;
-          this.service.subscribeToResolution(this.resolution.resolutionId);
-          this.service.addResolutionListener(this.resolution, new AmendmentInspector());
-        }
-      });
-    }
   }
 
   get supporters(): string {
@@ -56,7 +38,30 @@ export class ResViewComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.resolution != null) {
+
+      // loading a resolution from a given id is not needed if the resolution is bounded
+      let id: string = null;
+      this.route.params.subscribe(params => {
+        id = params.id;
+      })
+      //if (id == null) {
+      //  id = this.route.snapshot.queryParamMap.get('id');
+      //}
+
+      if (id != null) {
+        this.service.getResolution(id).subscribe(n => {
+          if (n != null) {
+            let readyState = this.service.connectionReady;
+            this.resolution = n;
+            this.service.subscribeToResolution(this.resolution.resolutionId);
+            this.service.addResolutionListener(this.resolution, new AmendmentInspector());
+          }
+        });
+      }
+    }
+
   }
 
-  
+
 }

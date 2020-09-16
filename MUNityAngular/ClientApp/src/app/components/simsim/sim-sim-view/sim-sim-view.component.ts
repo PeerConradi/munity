@@ -45,22 +45,6 @@ export class SimSimViewComponent implements OnInit {
 
   showSpeakerlist: boolean = false;
 
-  get chairmen(): SimulationUser[] {
-    if (this.simulation != null) {
-      return this.simulation.Users.filter(u => u.Role == 'Chairman');
-    } else {
-      return [];
-    }
-  }
-
-  get delegations(): SimulationUser[] {
-    if (this.simulation != null) {
-      return this.simulation.Users.filter(u => u.Role == 'Delegation');
-    } else {
-      return [];
-    }
-  }
-
   constructor(private route: ActivatedRoute, private simulationService: SimulationService,
     private modalService: BsModalService, private formBuilder: FormBuilder,
     private conferenceService: ConferenceService,
@@ -92,6 +76,22 @@ export class SimSimViewComponent implements OnInit {
       this.possibleDelegations = n
     });
     //this.simulation.pipe(map(r => this.speakerlist = r.Speakerlist));
+  }
+
+  get chairmen(): SimulationUser[] {
+    if (this.simulation != null) {
+      return this.simulation.Users.filter(u => u.Role == 'Chairman');
+    } else {
+      return [];
+    }
+  }
+
+  get delegations(): SimulationUser[] {
+    if (this.simulation != null) {
+      return this.simulation.Users.filter(u => u.Role == 'Delegation');
+    } else {
+      return [];
+    }
   }
 
   openModal(template: TemplateRef<any>) {
