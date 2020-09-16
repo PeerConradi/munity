@@ -1,3 +1,43 @@
 .m-t-min-10 {
-    margin-top: -15px;
+    margin-top: -16px;
+}
+
+.m-5 {
+    margin: 5px;
+}
+
+.player-box {
+    position: inherit;
+    width: 100%;
+    height: auto;
+}
+
+.player-avatar {
+    position: relative;
+}
+
+.player-flag {
+    position: relative;
+    top: auto;
+    bottom: 40px;
+    width: 100%;
+    height: auto;
+    max-height: 50px;
+    min-height: 40px;
+}
+
+.player-flag-hu {
+    position: absolute;
+    width: 30px;
+    height: auto;
+    transform: rotate(-110deg);
+    top: 10px;
+    left: -5px;
+}
+
+.memberlist {
+    margin-top: 20px;
+}
+.m-l-5 {
+    margin-left: 5px;
 }
