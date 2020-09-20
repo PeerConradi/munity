@@ -35,9 +35,26 @@
     left: -5px;
 }
 
+.player-name {
+    position: absolute;
+    top: auto;
+    bottom: 0px;
+    text-align: center;
+}
+
 .memberlist {
     margin-top: 20px;
 }
 .m-l-5 {
     margin-left: 5px;
+}
+
+.sticky-bottom {
+    position: fixed;
+    top: auto;
+    bottom: 0px;
+}
+
+.space-last-player {
+    height: 300px;
 }

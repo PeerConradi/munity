@@ -5,7 +5,7 @@
                 Delegationen
             </div>
             <div class="card-body">
-                <button class="btn btn-block btn-primary">Delegationen aktivieren</button>
+                <button class="btn btn-block btn-success">Delegationen aktivieren</button>
             </div>
         </div>
     </div>
@@ -16,7 +16,7 @@
                 Nicht-Regierungs-Organisationen (NGOs)
             </div>
             <div class="card-body">
-                <button class="btn btn-block btn-primary">NGOs aktivieren</button>
+                <button class="btn btn-block btn-success">NGOs aktivieren</button>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
                 Presse
             </div>
             <div class="card-body">
-                <button class="btn btn-block btn-primary">Presse aktivieren</button>
+                <button class="btn btn-block btn-success">Presse aktivieren</button>
             </div>
         </div>
     </div>
@@ -42,13 +42,13 @@
                 Besucher
             </div>
             <div class="card-body">
-                <button class="btn btn-block btn-primary">Besucher aktivieren</button>
+                <button class="btn btn-block btn-success">Besucher aktivieren</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="col-12 m-t-10">
+<div class="row  m-t-10">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
@@ -59,34 +59,123 @@
                 <p class="card-text">Es ist ebenfalls möglich diese einer Delegation zuzurodnen, dabei müssen nicht alle
                     Rollen in der Delegation den gleichen Staat vertreten. Es ist zum Beispiel möglich eine Delegation
                     "Präsidenten" zu erstellen und dort mehrere Rollen von Präsidenten unterschiedlicher Staaten zu
-                    speichern.
+                    speichern. Ebenfalls kann eine Delegation soetwas wie Klasse 5a vom Heinrich-Heine-Gymnasium sein,
+                    oder
+                    Delegiertenpaket 1.
                 </p>
-                <table class="table">
-                    <tr>
-                        <th>Rollenname</th>
-                        <th>Staat</th>
-                        <th>Delegation</th>
-                        <th>Gremium</th>
-                        <th>Ändern</th>
-                    </tr>
-                    <tbody>
-                        <tr>
-                            <td>Abgeordneter Deutschland <fa-icon [icon]="faEdit"></fa-icon>
-                            </td>
-                            <td>Deutschland</td>
-                            <td>Deutschland</td>
-                            <td>Generalversammlung</td>
-                            <td><a href="#">bearbeiten</a></td>
-                        </tr>
-                        <tr>
-                            <td>Präsident der vereinigten Staaten</td>
-                            <td>Vereinigte Staaten</td>
-                            <td>Vereinigte Staaten</td>
-                            <td>Generalversammlung</td>
-                            <td><a href="#">bearbeiten</a></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-3">
+                                <b>Rollenname</b>
+                            </div>
+
+                            <div class="col-3">
+                                <b>Staat</b>
+                            </div>
+
+                            <div class="col-3">
+                                <b>Delegation</b>
+                            </div>
+
+                            <div class="col-2">
+                                <b>Gremium</b>
+                            </div>
+
+                            <div class="col-1">
+                                <b>Bearbeiten</b>
+                            </div>
+                        </div>
+                    </li>
+                    <li *ngFor="let role of delegateRoles" class="list-group-item"
+                        [class.list-group-item-warning]="role.roleName == ''">
+                        <app-edit-delegation-row [role]="role" [conference]="conference" [delegations]="delegations">
+                        </app-edit-delegation-row>
+                    </li>
+                    <li class="list-group-item">
+                        <button class="btn btn-block btn-primary" (click)="addDelegate()">Delegierte(n) Rolle
+                            hinzufügen</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row m-t-10">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                Nicht-Regierungs-Organisationen (NGO)
+            </div>
+            <div class="card-body">
+                <p class="card-title">Über NGOs</p>
+                <p class="card-text">NGOs können als einzelne Rolle für eine bestimmte NGO angelegt werden. Wenn eine
+                    NGO von zwei Personen vertreten werden können, ist es auch möglich zwei Rollen mit der selben
+                    Orgnaisation zu hinterlegen. Eine NGO-Rolle kann einem bestimmten Gremium zugeordnet werden oder
+                    unabhängig von einem Gremium stattfinden.</p>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-3"><b>Rollenname</b></div>
+                            <div class="col-3"><b>NGO</b></div>
+                            <div class="col-3"><b>Gremium</b></div>
+                            <div class="col-3"><b>Bearbeiten</b></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row m-t-10">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                Presse Rollen
+            </div>
+            <div class="card-body">
+                <p class="card-title">Über Presserollen</p>
+                <p class="card-text">Presserollen werden in die Arten: Print, TV und Online unterschieden. Innerhalb der
+                    Plattform ist eine weitere Unterteilung in Redakteure, Fotografen, Reporter etc. nicht vorgesehen.
+                </p>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4"><b>Rollenname</b></div>
+                            <div class="col-4"><b>Presseart</b></div>
+                            <div class="col-4"><b>Bearbeiten</b></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row m-t-10">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                Besucher-Rollen
+            </div>
+            <div class="card-body">
+                <p class="card-title">Über Besucherrollen</p>
+                <p class="card-text">Besucher können Personen sein, welche als Gäste geladen sind und sich mit
+                    einem Besucherausweis auf der Konferenz bewegen können. Die Art kann dabei frei definiert werden,
+                    wie zum Beispiel: Gast, Presse...
+                </p>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4"><b>Rollenname</b></div>
+                            <div class="col-4"><b>Kategiorie/Beschreibung</b></div>
+                            <div class="col-4"><b>Bearbeiten</b></div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

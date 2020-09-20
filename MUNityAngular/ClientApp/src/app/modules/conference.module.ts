@@ -31,6 +31,7 @@ import { ConferenceTodoListWidgetComponent } from '../components/conference/mana
 import { CommitteeListComponent } from '../components/conference/committee-list/committee-list.component';
 import { ManageConferenceRolesDashboardComponent } from '../pages/conference/manage/manage-conference-roles-dashboard/manage-conference-roles-dashboard.component';
 import { ManageConferenceRolesComponent } from '../pages/conference/manage/manage-conference-roles/manage-conference-roles.component';
+import { EditDelegationRowComponent } from '../components/conference/manage/edit-delegation-row/edit-delegation-row.component';
 
 @NgModule({
     imports: [
@@ -66,7 +67,8 @@ import { ManageConferenceRolesComponent } from '../pages/conference/manage/manag
         ConferenceTodoListWidgetComponent,
         CommitteeListComponent,
         ManageConferenceRolesDashboardComponent,
-        ManageConferenceRolesComponent
+        ManageConferenceRolesComponent,
+        EditDelegationRowComponent
     ],
     exports: [ConferenceMenuComponent]
 })

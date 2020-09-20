@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerGestureConfig, HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -57,6 +57,16 @@ import { OperativeParagraphViewComponent } from './components/resolution/view/op
 import { SimulationModule } from './modules/simulation.module';
 import { ResolutionModule } from './modules/resolution.module';
 
+
+import * as Hammer from 'hammerjs';
+
+// making hammer config (3)
+export class MyHammerConfig extends HammerGestureConfig {
+  overrides = <any>{
+    swipe: { direction: Hammer.DIRECTION_ALL },
+  };
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -96,7 +106,7 @@ import { ResolutionModule } from './modules/resolution.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     MunityControlsModule,
-
+    HammerModule,
     AlertModule.forRoot(),
     SortableModule.forRoot(),
     TypeaheadModule.forRoot(),
@@ -118,7 +128,8 @@ import { ResolutionModule } from './modules/resolution.module';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    { provide: HAMMER_GESTURE_CONFIG, useClass: MyHammerConfig }
   ],
   bootstrap: [AppComponent]
 })

@@ -80,6 +80,11 @@ export class ConferenceService {
     return this.http.get<Delegation[]>(this.baseUrl + 'api/Conference/DelegationsOfConference?id=' + conferenceId);
   }
 
+  public getDelegateRolesOfConferece(conferenceId: string) {
+    if (conferenceId == 'test') return of(this.getTestDelegateRoles());
+    return this.http.get<r.Roles.DelegateRole[]>(this.baseUrl + 'api/Conference/DelegateRolesOfConferece?id=' + conferenceId);
+  }
+
   public getTeam(conferenceid: string) {
     let headers = new HttpHeaders();
     headers = headers.set('conferenceid', conferenceid);
@@ -250,5 +255,17 @@ export class ConferenceService {
     return delegations;
   }
 
+  public getTestDelegateRoles(): r.Roles.DelegateRole[] {
+    let roles: r.Roles.DelegateRole[] = [];
+
+    let delDe = new r.Roles.DelegateRole();
+    delDe.roleId = 1;
+    delDe.roleName = "Abgeordneter Deutschland"
+    delDe.committeeId = 'gv';
+
+    roles.push(delDe);
+
+    return roles;
+  }
 
 }

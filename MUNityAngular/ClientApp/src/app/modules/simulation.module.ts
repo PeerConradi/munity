@@ -16,6 +16,7 @@ import { ResolutionModule } from "./resolution.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MunityDefaultsModule } from "./munitydefaults.module";
 import { RouterModule } from "@angular/router";
+import { HammerModule } from "@angular/platform-browser";
 
 // TODO
 @NgModule({
@@ -25,6 +26,7 @@ import { RouterModule } from "@angular/router";
         FormsModule,
         ReactiveFormsModule,
         ResolutionModule,
+        HammerModule,
     ],
     declarations: [
         JoinSimSimComponent,

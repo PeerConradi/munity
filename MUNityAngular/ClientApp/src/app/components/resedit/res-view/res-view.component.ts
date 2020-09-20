@@ -15,12 +15,17 @@ import { OperativeParagraph } from "../../../models/resolution/operative-paragra
 })
 export class ResViewComponent implements OnInit {
 
-  @Input() public resolution: Resolution;
+  @Input() public resolution: Resolution = null;
 
   @Input() allAmendments: AbstractAmendment[];
 
-  constructor(public service: ResolutionService, private route: ActivatedRoute) {
+  private resolutionRouteId: string;
 
+  constructor(public service: ResolutionService, private route: ActivatedRoute) {
+    let id: string = null;
+    this.route.params.subscribe(params => {
+      this.resolutionRouteId = params.id;
+    })
   }
 
   get supporters(): string {
@@ -38,19 +43,17 @@ export class ResViewComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.resolution != null) {
+    if (this.resolution == null) {
 
       // loading a resolution from a given id is not needed if the resolution is bounded
-      let id: string = null;
-      this.route.params.subscribe(params => {
-        id = params.id;
-      })
+
+      console.log('Lade Resolution: ' + this.resolutionRouteId);
       //if (id == null) {
       //  id = this.route.snapshot.queryParamMap.get('id');
       //}
 
-      if (id != null) {
-        this.service.getResolution(id).subscribe(n => {
+      if (this.resolutionRouteId != null) {
+        this.service.getResolution(this.resolutionRouteId).subscribe(n => {
           if (n != null) {
             let readyState = this.service.connectionReady;
             this.resolution = n;
@@ -59,6 +62,10 @@ export class ResViewComponent implements OnInit {
           }
         });
       }
+    }
+    else {
+      console.log('Resolution ist schon gesetzt!')
+      console.log(this.resolution);
     }
 
   }
