@@ -27,9 +27,14 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             var mockService = new Mock<IConferenceService>();
             mockService.Setup(service =>
                 service.GetConference("yolo")).ReturnsAsync(GetTestConference);
-            var controller = new ConferenceController();
 
-            var result = await controller.GetConference(mockService.Object, "yolo");
+            var mockAuthService = new Mock<IAuthService>();
+
+            var mockOrgansiationService = new Mock<IOrganisationService>();
+
+            var controller = new ConferenceController(mockService.Object, mockAuthService.Object, mockOrgansiationService.Object);
+
+            var result = await controller.GetConference("yolo");
 
             Assert.NotNull(result);
             Assert.Equal(GetTestConference().Name, result.Name);
@@ -146,7 +151,8 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
 
             var mockOrganisationService = new Mock<IOrganisationService>();
             var mockConferenceService = new Mock<IConferenceService>();
-            var controller = new ConferenceController();
+            var mockAuthService = new Mock<IAuthService>();
+            var controller = new ConferenceController(mockConferenceService.Object, mockAuthService.Object, mockOrganisationService.Object);
             // Mocking the get Organisation to return a valid organisation
             var getOrgaMock = mockOrganisationService.Setup(service =>
                 service.GetOrganisation("testorga")).ReturnsAsync(GetTestOrganisation);
@@ -164,8 +170,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             request.Abbreviation = "test";
             request.OrganisationId = "testorga";
 
-            var call = await controller.CreateProject(mockOrganisationService.Object,
-                mockConferenceService.Object, request);
+            var call = await controller.CreateProject(request);
 
             var result = call.Result as OkObjectResult;
             Assert.NotNull(result);
@@ -178,7 +183,8 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
         {
             var mockAuthService = new Mock<IAuthService>();
             var mockConferenceService = new Mock<IConferenceService>();
-            var controller = new ConferenceController();
+            var mockOrganisationService = new Mock<IOrganisationService>();
+            var controller = new ConferenceController(mockConferenceService.Object, mockAuthService.Object, mockOrganisationService.Object);
 
             
             // The method tries to get the project that this conference should be contained in
@@ -216,9 +222,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
                 ProjectId = "testproject"
             };
 
-            var call = await controller.CreateConference(mockConferenceService.Object,
-                mockAuthService.Object,
-                request);
+            var call = await controller.CreateConference(request);
 
             var result = call.Result as OkObjectResult;
             Assert.NotNull(result);

@@ -31,6 +31,8 @@ namespace MUNityAngular.Controllers
 
         private readonly Services.IConferenceService _conferenceService;
 
+        private readonly IOrganisationService _organisationService;
+
         private readonly IAuthService _authService;
 
         /// <summary>
@@ -42,9 +44,9 @@ namespace MUNityAngular.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public Task<Conference> GetConference([FromServices]IConferenceService service, string id)
+        public Task<Conference> GetConference(string id)
         {
-            return service.GetConference(id);
+            return this._conferenceService.GetConference(id);
         }
 
         /// <summary>
@@ -70,9 +72,9 @@ namespace MUNityAngular.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        public async Task<ActionResult<Project>> CreateProject([FromServices] IOrganisationService organisationService, [FromBody] CreateProjectRequest body)
+        public async Task<ActionResult<Project>> CreateProject([FromBody] CreateProjectRequest body)
         {
-            var organisation = await organisationService.GetOrganisation(body.OrganisationId);
+            var organisation = await _organisationService.GetOrganisation(body.OrganisationId);
             if (organisation == null)
                 return NotFound("Not organisation with the given Id was found.");
 
@@ -117,9 +119,7 @@ namespace MUNityAngular.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        public async Task<ActionResult<Conference>> CreateConference(
-            [FromServices] IAuthService authService,
-            CreateConferenceRequest body)
+        public async Task<ActionResult<Conference>> CreateConference(CreateConferenceRequest body)
         {
             // Find the parent Project
             var project = await _conferenceService.GetProject(body.ProjectId);
@@ -137,7 +137,7 @@ namespace MUNityAngular.Controllers
             if (!orgaUser.Role.CanCreateProject)
                 return Forbid();
 
-            var user = authService.GetUserOfClaimPrincipal(User);
+            var user = _authService.GetUserOfClaimPrincipal(User);
 
             var conference = _conferenceService.CreateConference(body.Name, body.FullName, body.Abbreviation, project);
             if (conference != null)
@@ -181,10 +181,11 @@ namespace MUNityAngular.Controllers
             return Ok(res);
         }
 
-        public ConferenceController(IConferenceService conferenceService, IAuthService authService)
+        public ConferenceController(IConferenceService conferenceService, IAuthService authService, IOrganisationService organisationService)
         {
             this._conferenceService = conferenceService;
             this._authService = authService;
+            this._organisationService = organisationService;
         }
 
     }
