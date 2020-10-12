@@ -6,7 +6,7 @@ export namespace Roles {
 
         public roleFullName: string;
 
-        public abbreviation: string;
+        public roleShort: string;
 
         public iconName: string;
 
@@ -115,6 +115,7 @@ export namespace Roles {
 
         public abbreviation: string;
 
-        public groupLevel: number;
+      public groupLevel: number;
+
     }
 }

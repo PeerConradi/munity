@@ -1,33 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using MUNityAngular.Models.Conference.Roles;
 
 namespace MUNityAngular.Models.Conference
 {
-    public class Delegation
+    public class TeamRoleGroup
     {
-        [Column(TypeName = "varchar(80)")]
-        public string DelegationId { get; set; }
+        public int TeamRoleGroupId { get; set; }
 
-        [Column(TypeName = "varchar(150)")]
+        [Column(TypeName = "varchar(100)")]
         public string Name { get; set; }
 
-        [Column(TypeName = "varchar(250)")]
+        [Column(TypeName = "varchar(200)")]
         public string FullName { get; set; }
 
         [Column(TypeName = "varchar(10)")]
         public string Abbreviation { get; set; }
 
+        public int GroupLevel { get; set; }
+
+        public List<TeamRole> TeamRoles { get; set; }
+
+        [Timestamp]
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
-        public Conference Conference { get; set; }
-
-        public Delegation()
-        {
-            DelegationId = Guid.NewGuid().ToString();
-        }
+        public byte[] TeamRoleGroupTimestamp { get; set; }
     }
 }

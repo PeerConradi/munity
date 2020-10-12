@@ -45,7 +45,7 @@ export class CreateConferenceComponent implements OnInit {
     let conference: Conference = new Conference();
     conference.name = data.name;
     conference.fullName = data.fullname;
-    conference.abbreviation = data.abbreviation;
+    conference.abbreviation = data.roleShort;
     let startDate: Date = data.timespan[0];
     let endDate: Date = data.timespan[1];
 

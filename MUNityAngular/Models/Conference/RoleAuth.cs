@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MongoDB.Bson.IO;
 
@@ -27,6 +29,8 @@ namespace MUNityAngular.Models.Conference
         /// because a lot of conferences will share the same structure but thats
         /// not a problem
         /// </summary>
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Conference Conference { get; set; }
 
         /// <summary>
@@ -47,6 +51,9 @@ namespace MUNityAngular.Models.Conference
         /// </summary>
         public bool CanEditParticipations { get; set; }
 
-
+        [Timestamp]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public byte[] RoleAuthTimestamp { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MUNityAngular.Models.Conference
@@ -17,10 +19,16 @@ namespace MUNityAngular.Models.Conference
     /// </summary>
     public class GroupedRoleApplication
     {
+
         public int GroupedRoleApplicationId { get; set; }
 
         public List<RoleApplication> Applications { get; set; }
 
         public DateTime CreateTime { get; set; }
+
+        [Timestamp]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public byte[] GroupedRoleApplicationTimestamp { get; set; }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.Models.Conference;
@@ -35,12 +37,16 @@ namespace MUNityAngular.Models.Conference
             Public
         }
 
+        [Column(TypeName = "varchar(80)")]
         public string ConferenceId { get; set; }
-
+        
+        [Column(TypeName = "varchar(150)")]
         public string Name { get; set; }
 
+        [Column(TypeName = "varchar(250)")]
         public string FullName { get; set; }
 
+        [Column(TypeName = "varchar(10)")]
         public string Abbreviation { get; set; }
 
         public DateTime StartDate { get; set; }
@@ -59,6 +65,9 @@ namespace MUNityAngular.Models.Conference
         public Project ConferenceProject { get; set; }
 
         public EConferenceVisibilityMode Visibility { get; set; }
+
+        [Timestamp]
+        public byte[] ConferenceTimestamp { get; set; }
 
         public Conference()
         {

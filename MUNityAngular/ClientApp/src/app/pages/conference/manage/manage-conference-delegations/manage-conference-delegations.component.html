@@ -40,7 +40,7 @@
                         <tr *ngFor="let del of delegations">
                             <td>{{ del.name }}</td>
                             <td>{{ del.fullName }}</td>
-                            <td>{{ del.abbreviation }}</td>
+                            <td>{{ del.roleShort }}</td>
                             <td><img [src]='getDelegationImagePath(del)'></td>
                         </tr>
                         <tr>

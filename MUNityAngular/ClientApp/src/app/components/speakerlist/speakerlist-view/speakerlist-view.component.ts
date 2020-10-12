@@ -91,7 +91,7 @@ export class SpeakerlistViewComponent implements OnInit {
 
   // getMediumImage(delegation: Delegation): string {
   //   if (delegation.type == 'COUNTRY') {
-  //     return '/assets/img/flags/medium/' + delegation.abbreviation + '.png';
+  //     return '/assets/img/flags/medium/' + delegation.roleShort + '.png';
   //   }
   //   //Default Image
   //   return '/assets/img/flags/medium/un.png';
@@ -99,7 +99,7 @@ export class SpeakerlistViewComponent implements OnInit {
 
   // getDelegationImagePath(delegation: Delegation): string {
   //   if (delegation.type == 'COUNTRY') {
-  //     return '/assets/img/flags/small/' + delegation.abbreviation + '.png';
+  //     return '/assets/img/flags/small/' + delegation.roleShort + '.png';
   //   }
   //   //Default Image
   //   return '/assets/img/flags/small/un.png';

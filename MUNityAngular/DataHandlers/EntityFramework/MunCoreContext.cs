@@ -55,6 +55,8 @@ namespace MUNityAngular.DataHandlers.EntityFramework
 
         public DbSet<GroupedRoleApplication> GroupedRoleApplications { get; set; }
 
+        public DbSet<TeamRoleGroup> TeamRoleGroups { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -82,6 +84,9 @@ namespace MUNityAngular.DataHandlers.EntityFramework
 
             modelBuilder.Entity<TeamRole>().Ignore(n => n.ParentTeamRoleId);
 
+            modelBuilder.Entity<TeamRole>().Ignore(n => n.ParentTeamRoleId);
+
+            modelBuilder.Entity<TeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
         }
 
         public MunCoreContext(DbContextOptions<MunCoreContext> options) : base(options)
