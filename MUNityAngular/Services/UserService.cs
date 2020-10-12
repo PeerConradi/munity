@@ -72,10 +72,30 @@ namespace MUNityAngular.Services
             return await _context.Users.AnyAsync(n => n.Mail == mail);
         }
 
+        public IEnumerable<User> GetBannedUsers()
+        {
+            return this._context.Users.Where(n => n.UserState == User.EUserState.BANNED);
+        }
+
+        public IEnumerable<User> GetUserBlock(int blockid)
+        {
+            return this._context.Users.OrderBy(n => n.Lastname).Skip(blockid).Take(100);
+        }
+
+        public Task<int> GetUserCount()
+        {
+            return this._context.Users.CountAsync();
+        }
 
         public UserService(MunCoreContext context)
         {
             _context = context;
+        }
+
+        public void RemoveUser(User user)
+        {
+            this._context.Users.Remove(user);
+            this._context.SaveChanges();
         }
     }
 }

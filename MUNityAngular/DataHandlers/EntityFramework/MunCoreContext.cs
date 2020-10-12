@@ -87,6 +87,8 @@ namespace MUNityAngular.DataHandlers.EntityFramework
             modelBuilder.Entity<TeamRole>().Ignore(n => n.ParentTeamRoleId);
 
             modelBuilder.Entity<TeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
+
+            modelBuilder.Entity<User>().HasOne(n => n.Auth).WithMany(n => n.Users);
         }
 
         public MunCoreContext(DbContextOptions<MunCoreContext> options) : base(options)

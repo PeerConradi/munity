@@ -29,6 +29,10 @@ namespace MUNityAngular.Services
 
         public Participation Participate(Models.Core.User user, AbstractRole role);
 
+        public IQueryable<AbstractRole> GetUserRolesOnConference(string username, string conferenceid);
 
+        Task<bool> SetConferenceName(string conferenceid, string newname);
+
+        Task<bool> IsConferenceNameTaken(string name);
     }
 }

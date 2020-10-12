@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MUNityAngular.DataHandlers.Database;
 using MUNityAngular.Models;
 using MUNityAngular.Services;
@@ -27,6 +28,10 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class ConferenceController : ControllerBase
     {
+
+        private readonly Services.IConferenceService _conferenceService;
+
+        private readonly IAuthService _authService;
 
         /// <summary>
         /// Returns all the root information of a conference with the given id.
@@ -65,8 +70,7 @@ namespace MUNityAngular.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        public async Task<ActionResult<Project>> CreateProject([FromServices] IOrganisationService organisationService,
-            [FromServices] IConferenceService conferenceService, [FromBody] CreateProjectRequest body)
+        public async Task<ActionResult<Project>> CreateProject([FromServices] IOrganisationService organisationService, [FromBody] CreateProjectRequest body)
         {
             var organisation = await organisationService.GetOrganisation(body.OrganisationId);
             if (organisation == null)
@@ -83,7 +87,7 @@ namespace MUNityAngular.Controllers
                 return Forbid();
 
 
-            var project = conferenceService.CreateProject(body.Name, body.Abbreviation, organisation);
+            var project = _conferenceService.CreateProject(body.Name, body.Abbreviation, organisation);
             if (project != null)
             {
                 return Ok(project);
@@ -114,12 +118,11 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [Authorize]
         public async Task<ActionResult<Conference>> CreateConference(
-            [FromServices] IConferenceService conferenceService,
             [FromServices] IAuthService authService,
             CreateConferenceRequest body)
         {
             // Find the parent Project
-            var project = await conferenceService.GetProject(body.ProjectId);
+            var project = await _conferenceService.GetProject(body.ProjectId);
 
             // The parent project does not exist so return 404
             if (project == null)
@@ -136,16 +139,16 @@ namespace MUNityAngular.Controllers
 
             var user = authService.GetUserOfClaimPrincipal(User);
 
-            var conference = conferenceService.CreateConference(body.Name, body.FullName, body.Abbreviation, project);
+            var conference = _conferenceService.CreateConference(body.Name, body.FullName, body.Abbreviation, project);
             if (conference != null)
             {
                 
                 // Create the Leader Role
-                var role = conferenceService.CreateLeaderRole(conference);
+                var role = _conferenceService.CreateLeaderRole(conference);
                 if (role == null)
                     return StatusCode(500);
 
-                conferenceService.Participate(user, role);
+                _conferenceService.Participate(user, role);
 
                 return Ok(conference);
             }
@@ -153,7 +156,35 @@ namespace MUNityAngular.Controllers
 
             // When getting to this point something broke
             return StatusCode(500);
-            
+        }
+
+        /// <summary>
+        /// Changes the name of a conference.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [Authorize]
+        public async Task<ActionResult<bool>> SetConferenceName([FromBody] ConferenceRequests.ChangeConferenceName body)
+        {
+            var user = this._authService.GetUserOfClaimPrincipal(User);
+            var roles = this._conferenceService.GetUserRolesOnConference(user.Username, body.ConferenceId)
+                .Include(n => n.RoleAuth);
+            if (!roles.Any(n => n.RoleAuth.CanEditConferenceSettings))
+                return Forbid("You are not allowed to change the conference settings");
+
+            var taken = await this._conferenceService.IsConferenceNameTaken(body.NewName);
+            if (taken) return Conflict("The new conference name is already taken by another conference.");
+
+            var res = this._conferenceService.SetConferenceName(body.ConferenceId, body.NewName);
+            return Ok(res);
+        }
+
+        public ConferenceController(IConferenceService conferenceService, IAuthService authService)
+        {
+            this._conferenceService = conferenceService;
+            this._authService = authService;
         }
 
     }

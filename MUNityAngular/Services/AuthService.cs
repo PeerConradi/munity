@@ -11,12 +11,14 @@ using MUNityAngular.Models.Core;
 using System.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.CodeAnalysis.Options;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.IO;
 using MUNityAngular.Models;
 using MUNityAngular.Models.Resolution.V2;
 using MUNityAngular.Schema.Request.Authentication;
 using MUNityAngular.Schema.Response.Authentication;
+using System.Threading.Tasks;
 
 namespace MUNityAngular.Services
 {
@@ -101,11 +103,55 @@ namespace MUNityAngular.Services
             return user;
         }
 
+        public Task<UserAuth> GetAuth(int authid)
+        {
+            return this._context.UserAuths.FirstOrDefaultAsync(n => n.UserAuthId == authid);
+        }
+
+        public Task<int> SetUserAuth(User user, UserAuth auth)
+        {
+            user.Auth = auth;
+            return this._context.SaveChangesAsync();
+        }
+
+        public User GetUserWithAuthByClaimPrincipal(ClaimsPrincipal principal)
+        {
+            var claimUsername = principal.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name);
+            if (claimUsername == null)
+                return null;
+
+            var username = claimUsername.Value;
+            var user = _context.Users.Include(n => n.Auth).FirstOrDefault(n => n.Username == username);
+            return user;
+        }
+
+        public bool IsUserPrincipalAdmin(ClaimsPrincipal principal)
+        {
+            var claimUsername = principal.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name);
+            if (claimUsername == null) return false;
+
+            var username = claimUsername.Value;
+            var user = _context.Users.Include(n => n.Auth).FirstOrDefault(n => n.Username == username);
+
+            if (user.Auth == null) return false;
+
+            return user.Auth.AuthLevel == UserAuth.EAuthLevel.Headadmin || user.Auth.AuthLevel == UserAuth.EAuthLevel.Admin;
+        }
+
+        
 
         public AuthService(MunCoreContext context, IOptions<AppSettings> appSettings)
         {
             _settings = appSettings.Value;
             _context = context;
+        }
+
+        public UserAuth CreateAuth(string name)
+        {
+            var auth = new UserAuth(name);
+            this._context.UserAuths.Add(auth);
+            this._context.SaveChanges();
+            return auth;
         }
     }
 }

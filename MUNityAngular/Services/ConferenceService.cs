@@ -143,8 +143,7 @@ namespace MUNityAngular.Services
                 ApplicationState = EApplicationStates.Closed,
                 ApplicationValue = "",
                 IconName = "default",
-                ParentTeamRole = null,
-                TeamRoleGroup = "Headers"
+                ParentTeamRole = null
             };
             _context.TeamRoles.Add(role);
             _context.SaveChanges();
@@ -288,6 +287,26 @@ namespace MUNityAngular.Services
         {
             var list = _context.Participations.Where(n => n.Role.Conference.ConferenceId == conferenceId);
             return list;
+        }
+
+        public IQueryable<AbstractRole> GetUserRolesOnConference(string username, string conferenceid)
+        {
+            return this._context.Participations.Where(n =>
+                n.Role.Conference.ConferenceId == conferenceid && n.User.Username == username).Select(n => n.Role);
+        }
+
+        public async Task<bool> SetConferenceName(string conferenceid, string newname)
+        {
+            var conference = await this._context.Conferences.FirstOrDefaultAsync();
+            if (conference == null) return false;
+            conference.Name = newname;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
+        public Task<bool> IsConferenceNameTaken(string name)
+        {
+            return this._context.Conferences.AnyAsync(n => n.Name.ToLower() == name.ToLower());
         }
 
         public ConferenceService(MunCoreContext context)
