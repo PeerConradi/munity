@@ -31,8 +31,18 @@ namespace MUNityAngular.Services
 
         public IQueryable<AbstractRole> GetUserRolesOnConference(string username, string conferenceid);
 
+        Task SaveDatabaseChanges();
+
         Task<bool> SetConferenceName(string conferenceid, string newname);
 
         Task<bool> IsConferenceNameTaken(string name);
+
+        Task<bool> IsConferenceFullNameTaken(string fullname);
+
+        Task<bool> SetConferenceFullName(string conferenceid, string newfullname);
+
+        Task<bool> SetConferenceAbbreviation(string conferenceid, string abbreviation);
+
+        Task<bool> SetConferenceDate(string conferenceid, DateTime startDate, DateTime endDate);
     }
 }

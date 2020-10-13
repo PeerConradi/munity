@@ -113,9 +113,7 @@ namespace MUNityAngular.Services
             _context.Committees.Add(committee);
 
             _context.SaveChanges();
-
             return committee;
-
         }
 
         public Task<Committee> GetCommittee(string id)
@@ -148,6 +146,11 @@ namespace MUNityAngular.Services
             _context.TeamRoles.Add(role);
             _context.SaveChanges();
             return role;
+        }
+
+        public Task SaveDatabaseChanges()
+        {
+            return this._context.SaveChangesAsync();
         }
 
         public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null, RoleAuth auth = null)
@@ -304,10 +307,45 @@ namespace MUNityAngular.Services
             return true;
         }
 
+        public async Task<bool> SetConferenceFullName(string conferenceid, string newfullname)
+        {
+            var conference = await this._context.Conferences.FirstOrDefaultAsync();
+            if (conference == null) return false;
+            conference.FullName = newfullname;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetConferenceAbbreviation(string conferenceid, string newabbreviation)
+        {
+            var conference = await this._context.Conferences.FirstOrDefaultAsync();
+            if (conference == null) return false;
+            conference.Abbreviation = newabbreviation;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetConferenceDate(string conferenceid, DateTime startDate, DateTime endDate)
+        {
+            if (startDate > endDate) return false;
+            var conference = await this._context.Conferences.FirstOrDefaultAsync();
+            if (conference == null) return false;
+            conference.StartDate = startDate;
+            conference.EndDate = endDate;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
         public Task<bool> IsConferenceNameTaken(string name)
         {
             return this._context.Conferences.AnyAsync(n => n.Name.ToLower() == name.ToLower());
         }
+
+        public Task<bool> IsConferenceFullNameTaken(string fullname)
+        {
+            return this._context.Conferences.AnyAsync(n => n.FullName.ToLower() == fullname.ToLower());
+        }
+
 
         public ConferenceService(MunCoreContext context)
         {

@@ -46,7 +46,7 @@ namespace MUNityAngular.Models.Conference
         [Column(TypeName = "varchar(250)")]
         public string FullName { get; set; }
 
-        [Column(TypeName = "varchar(10)")]
+        [Column(TypeName = "varchar(18)")]
         public string Abbreviation { get; set; }
 
         public DateTime StartDate { get; set; }

@@ -52,4 +52,4 @@ export const routes: Routes = [
 
 ]
 
-export const ConferenceRouting: ModuleWithProviders = RouterModule.forChild(routes)
+export const ConferenceRouting: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes)

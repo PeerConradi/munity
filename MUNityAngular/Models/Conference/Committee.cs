@@ -54,6 +54,15 @@ namespace MUNityAngular.Models.Conference
         [Newtonsoft.Json.JsonIgnore]
         public byte[] CommitteeTimestamp { get; set; }
 
+        public Committee(MUNityAngular.Schema.Request.Conference.ConferenceRequests.CreateCommittee request)
+        {
+            CommitteeId = Guid.NewGuid().ToString();
+            Article = request.Article;
+            Name = request.Name;
+            FullName = request.FullName;
+            Abbreviation = request.Abbreviation;
+        }
+
         public Committee()
         {
             CommitteeId = Guid.NewGuid().ToString();

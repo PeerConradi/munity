@@ -119,6 +119,9 @@ namespace MUNityAngular.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Conference>> CreateConference(CreateConferenceRequest body)
         {
             // Find the parent Project
@@ -160,25 +163,136 @@ namespace MUNityAngular.Controllers
 
         /// <summary>
         /// Changes the name of a conference.
+        /// Max-Length 150 characters
+        /// The name has to be unique for each conference that exists on this page.
+        /// An Example name could be: MUN Berlin 2021
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<bool>> SetConferenceName([FromBody] ConferenceRequests.ChangeConferenceName body)
         {
-            var user = this._authService.GetUserOfClaimPrincipal(User);
-            var roles = this._conferenceService.GetUserRolesOnConference(user.Username, body.ConferenceId)
-                .Include(n => n.RoleAuth);
-            if (!roles.Any(n => n.RoleAuth.CanEditConferenceSettings))
+            if (!CanUserEditConference(body.ConferenceId))
                 return Forbid("You are not allowed to change the conference settings");
 
             var taken = await this._conferenceService.IsConferenceNameTaken(body.NewName);
             if (taken) return Conflict("The new conference name is already taken by another conference.");
 
-            var res = this._conferenceService.SetConferenceName(body.ConferenceId, body.NewName);
+            var res =await this._conferenceService.SetConferenceName(body.ConferenceId, body.NewName);
             return Ok(res);
+        }
+
+        /// <summary>
+        /// Changes the full name (long name) of a conference.
+        /// Max: 250 characters
+        /// Conference Full Names have to be unique. For Example: Model United Nations Berlin 2021
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<bool>> SetConferenceFullName([FromBody] ConferenceRequests.ChangeConferenceFullName body)
+        {
+            if (!CanUserEditConference(body.ConferenceId))
+                return Forbid("You are not allowed to change the conference settings");
+
+            var taken = await this._conferenceService.IsConferenceFullNameTaken(body.NewFullName);
+            if (taken) return Conflict("The new conference full name is already taken by another conference.");
+
+            var res = await this._conferenceService.SetConferenceFullName(body.ConferenceId, body.NewFullName);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// Change the short name of the conference. You need to be allowed to Edit the Conference Settings to do this.
+        /// The maxLenght for the conferenceid is 80 characters  and the max-Length of the abbreviation is 18 chars.
+        /// An Example could be MUN-BER 2021
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<bool>> SetConferenceAbbreviation([FromBody] ConferenceRequests.ChangeConferenceAbbreviation body)
+        {
+            if (!CanUserEditConference(body.ConferenceId))
+                return Forbid("You are not allowed to change the conference settings");
+
+            var res = await this._conferenceService.SetConferenceAbbreviation(body.ConferenceId, body.NewAbbreviation);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// Changes the Dates when the conference will take place.
+        /// This is a DateTime so make sure you give it a Date in the needed format
+        /// and the start Date is before the end Date. You are only allowed to use this route when you
+        /// are logged in and are allowed to Edit Conference Settings!
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<bool>> SetConferenceDate([FromBody] ConferenceRequests.ChangeConferenceDate body)
+        {
+            if (body.StartDate > body.EndDate)
+                return BadRequest("The Start Date has to be before the End Date!");
+            if (!CanUserEditConference(body.ConferenceId))
+                return Forbid("You are not allowed to change the conference settings");
+
+            var res = await this._conferenceService.SetConferenceDate(body.ConferenceId, body.StartDate, body.EndDate);
+            return Ok(res);
+        }
+
+        [Route("[action]")]
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<Committee>> CreateCommittee([FromBody] ConferenceRequests.CreateCommittee body)
+        {
+            if (!CanUserEditConference(body.ConferenceId))
+                return Forbid("You are not allowed to change the conference settings");
+
+            var conference = await this._conferenceService.GetConference(body.ConferenceId);
+            if (conference == null) return NotFound("Conference with the given id not found!");
+
+            if (conference.Committees.Any(n => n.Name.ToLower() == body.Name.ToLower()
+                                               || n.FullName.ToLower() == body.FullName.ToLower()))
+                return Conflict("There is already a committee with the given name in this conference.");
+
+            var newCommittee = new Committee(body);
+            if (!string.IsNullOrEmpty(body.ResolutlyCommitteeId))
+            {
+                var parentCommittee = await this._conferenceService.GetCommittee(body.ResolutlyCommitteeId);
+                if (parentCommittee == null) return NotFound("The parent committee was not found!");
+
+                newCommittee.ResolutlyCommittee = parentCommittee;
+            }
+
+            conference.Committees.Add(newCommittee);
+            await this._conferenceService.SaveDatabaseChanges();
+            return Ok(newCommittee);
+        }
+
+        public bool CanUserEditConference(string conferenceid)
+        {
+            var user = this._authService.GetUserOfClaimPrincipal(User);
+            var roles = this._conferenceService.GetUserRolesOnConference(user.Username, conferenceid)
+                .Include(n => n.RoleAuth);
+            if (!roles.Any(n => n.RoleAuth.CanEditConferenceSettings)) return true;
+
+            return false;
         }
 
         public ConferenceController(IConferenceService conferenceService, IAuthService authService, IOrganisationService organisationService)
