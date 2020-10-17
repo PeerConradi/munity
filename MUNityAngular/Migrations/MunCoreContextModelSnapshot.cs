@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace MUNityAngular.Migrations.MunCore
+namespace MUNityAngular.Migrations
 {
     [DbContext(typeof(MunCoreContext))]
     partial class MunCoreContextModelSnapshot : ModelSnapshot
@@ -27,23 +27,40 @@ namespace MUNityAngular.Migrations.MunCore
                         .HasColumnType("int");
 
                     b.Property<string>("ApplicationValue")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("ConferenceId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(80) CHARACTER SET utf8mb4");
 
                     b.Property<string>("IconName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<int?>("RoleAuthId")
                         .HasColumnType("int");
 
+                    b.Property<string>("RoleFullName")
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
+
                     b.Property<string>("RoleName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
+
+                    b.Property<string>("RoleShort")
+                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
+                        .HasMaxLength(10);
+
+                    b.Property<DateTime?>("RoleTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
+                    b.Property<string>("RoleType")
+                        .IsRequired()
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.HasKey("RoleId");
 
@@ -53,7 +70,7 @@ namespace MUNityAngular.Migrations.MunCore
 
                     b.ToTable("AbstractRole");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("AbstractRole");
+                    b.HasDiscriminator<string>("RoleType").HasValue("AbstractRole");
                 });
 
             modelBuilder.Entity("MUNityAngular.Models.Conference.Committee", b =>
@@ -62,26 +79,36 @@ namespace MUNityAngular.Migrations.MunCore
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<string>("Abbreviation")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
+                        .HasMaxLength(10);
 
                     b.Property<string>("Article")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
+                        .HasMaxLength(10);
 
-                    b.Property<string>("ConferenceId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                    b.Property<DateTime?>("CommitteeTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
+                    b.Property<string>("ConferenceId1")
+                        .HasColumnType("varchar(80) CHARACTER SET utf8mb4");
 
                     b.Property<string>("FullName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.Property<string>("ResolutlyCommitteeCommitteeId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.HasKey("CommitteeId");
 
-                    b.HasIndex("ConferenceId");
+                    b.HasIndex("ConferenceId1");
 
                     b.HasIndex("ResolutlyCommitteeCommitteeId");
 
@@ -94,20 +121,28 @@ namespace MUNityAngular.Migrations.MunCore
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("CommiteeTopicTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
                     b.Property<string>("CommitteeId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<string>("TopicCode")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(18) CHARACTER SET utf8mb4")
+                        .HasMaxLength(18);
 
                     b.Property<string>("TopicDescription")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("TopicFullName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("TopicName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.HasKey("CommitteeTopicId");
 
@@ -119,13 +154,20 @@ namespace MUNityAngular.Migrations.MunCore
             modelBuilder.Entity("MUNityAngular.Models.Conference.Conference", b =>
                 {
                     b.Property<string>("ConferenceId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(80) CHARACTER SET utf8mb4")
+                        .HasMaxLength(80);
 
                     b.Property<string>("Abbreviation")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(18) CHARACTER SET utf8mb4")
+                        .HasMaxLength(18);
 
                     b.Property<string>("ConferenceProjectProjectId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime?>("ConferenceTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
@@ -137,13 +179,18 @@ namespace MUNityAngular.Migrations.MunCore
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("FullName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("int");
 
                     b.HasKey("ConferenceId");
 
@@ -154,20 +201,61 @@ namespace MUNityAngular.Migrations.MunCore
                     b.ToTable("Conferences");
                 });
 
+            modelBuilder.Entity("MUNityAngular.Models.Conference.Country", b =>
+                {
+                    b.Property<int>("CountryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Continent")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CountryTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Iso")
+                        .HasColumnType("varchar(3) CHARACTER SET utf8mb4")
+                        .HasMaxLength(3);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
+
+                    b.HasKey("CountryId");
+
+                    b.ToTable("Countries");
+                });
+
             modelBuilder.Entity("MUNityAngular.Models.Conference.Delegation", b =>
                 {
                     b.Property<string>("DelegationId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("ConferenceId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                    b.Property<string>("Abbreviation")
+                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
+                        .HasMaxLength(10);
+
+                    b.Property<string>("ConferenceId1")
+                        .HasColumnType("varchar(80) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.HasKey("DelegationId");
 
-                    b.HasIndex("ConferenceId");
+                    b.HasIndex("ConferenceId1");
 
                     b.ToTable("Delegation");
                 });
@@ -187,11 +275,18 @@ namespace MUNityAngular.Migrations.MunCore
                     b.Property<string>("DelegationId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
+                    b.Property<DateTime?>("GroupApplicationTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.HasKey("GroupApplicationId");
 
@@ -210,6 +305,11 @@ namespace MUNityAngular.Migrations.MunCore
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("GroupedRoleApplicationTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
 
                     b.HasKey("GroupedRoleApplicationId");
 
@@ -232,9 +332,15 @@ namespace MUNityAngular.Migrations.MunCore
                         .HasColumnType("double");
 
                     b.Property<string>("ParticipationSecret")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
+                        .HasMaxLength(200);
 
-                    b.Property<int?>("RoleId")
+                    b.Property<DateTime?>("ParticipationTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
+                    b.Property<int?>("RoleId1")
                         .HasColumnType("int");
 
                     b.Property<int?>("UserId")
@@ -242,7 +348,7 @@ namespace MUNityAngular.Migrations.MunCore
 
                     b.HasKey("ParticipationId");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId1");
 
                     b.HasIndex("UserId");
 
@@ -255,13 +361,20 @@ namespace MUNityAngular.Migrations.MunCore
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<string>("ProjectAbbreviation")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
+                        .HasMaxLength(10);
 
                     b.Property<string>("ProjectName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
+                        .HasMaxLength(200);
 
                     b.Property<string>("ProjectOrganisationOrganisationId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime?>("ProjectTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
 
                     b.HasKey("ProjectId");
 
@@ -285,11 +398,18 @@ namespace MUNityAngular.Migrations.MunCore
                     b.Property<int?>("GroupedRoleApplicationId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RoleId")
+                    b.Property<DateTime?>("RoleApplicationTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
+                    b.Property<int?>("RoleId1")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
+                        .HasMaxLength(200);
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -298,7 +418,7 @@ namespace MUNityAngular.Migrations.MunCore
 
                     b.HasIndex("GroupedRoleApplicationId");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId1");
 
                     b.HasIndex("UserId");
 
@@ -320,40 +440,58 @@ namespace MUNityAngular.Migrations.MunCore
                     b.Property<bool>("CanSeeApplications")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("ConferenceId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+                    b.Property<string>("ConferenceId1")
+                        .HasColumnType("varchar(80) CHARACTER SET utf8mb4");
 
                     b.Property<int>("PowerLevel")
                         .HasColumnType("int");
 
                     b.Property<string>("RoleAuthName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
+
+                    b.Property<DateTime?>("RoleAuthTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
 
                     b.HasKey("RoleAuthId");
 
-                    b.HasIndex("ConferenceId");
+                    b.HasIndex("ConferenceId1");
 
                     b.ToTable("RoleAuths");
                 });
 
-            modelBuilder.Entity("MUNityAngular.Models.Conference.State", b =>
+            modelBuilder.Entity("MUNityAngular.Models.Conference.TeamRoleGroup", b =>
                 {
-                    b.Property<int>("StateId")
+                    b.Property<int>("TeamRoleGroupId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("StateFullName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<string>("Abbreviation")
+                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
+                        .HasMaxLength(10);
 
-                    b.Property<string>("StateIso")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<string>("FullName")
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
-                    b.Property<string>("StateName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<int>("GroupLevel")
+                        .HasColumnType("int");
 
-                    b.HasKey("StateId");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
-                    b.ToTable("State");
+                    b.Property<DateTime?>("TeamRoleGroupTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
+                    b.HasKey("TeamRoleGroupId");
+
+                    b.ToTable("TeamRoleGroups");
                 });
 
             modelBuilder.Entity("MUNityAngular.Models.Core.User", b =>
@@ -362,58 +500,84 @@ namespace MUNityAngular.Migrations.MunCore
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("AuthUserAuthId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Birthday")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("City")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4")
+                        .HasMaxLength(300);
 
                     b.Property<string>("Forename")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Gender")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<int?>("GroupApplicationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Housenumber")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
 
                     b.Property<DateTime>("LastOnline")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Lastname")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Mail")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Password")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("ProfileImageName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Salt")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Street")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4")
+                        .HasMaxLength(300);
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("UserState")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UserTimestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
 
                     b.Property<string>("Username")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(40) CHARACTER SET utf8mb4")
+                        .HasMaxLength(40);
 
                     b.Property<string>("Zipcode")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(50) CHARACTER SET utf8mb4")
+                        .HasMaxLength(50);
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("AuthUserAuthId");
 
                     b.HasIndex("GroupApplicationId");
 
@@ -426,15 +590,17 @@ namespace MUNityAngular.Migrations.MunCore
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int>("AuthLevel")
+                        .HasColumnType("int");
+
                     b.Property<bool>("CanCreateOrganisation")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserAuthName")
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.HasKey("UserAuthId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("UserAuths");
                 });
@@ -445,10 +611,12 @@ namespace MUNityAngular.Migrations.MunCore
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<string>("OrganisationAbbreviation")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(18) CHARACTER SET utf8mb4")
+                        .HasMaxLength(18);
 
                     b.Property<string>("OrganisationName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.HasKey("OrganisationId");
 
@@ -461,7 +629,7 @@ namespace MUNityAngular.Migrations.MunCore
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("OrganisationId")
+                    b.Property<string>("OrganisationId1")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<int?>("RoleOrganisationRoleId")
@@ -472,7 +640,7 @@ namespace MUNityAngular.Migrations.MunCore
 
                     b.HasKey("OrganisationMemberId");
 
-                    b.HasIndex("OrganisationId");
+                    b.HasIndex("OrganisationId1");
 
                     b.HasIndex("RoleOrganisationRoleId");
 
@@ -490,15 +658,16 @@ namespace MUNityAngular.Migrations.MunCore
                     b.Property<bool>("CanCreateProject")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("OrganisationId")
+                    b.Property<string>("OrganisationId1")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<string>("RoleName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
+                        .HasMaxLength(150);
 
                     b.HasKey("OrganisationRoleId");
 
-                    b.HasIndex("OrganisationId");
+                    b.HasIndex("OrganisationId1");
 
                     b.ToTable("OrganisationRoles");
                 });
@@ -507,26 +676,27 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     b.HasBaseType("MUNityAngular.Models.Conference.AbstractRole");
 
-                    b.Property<string>("CommitteeId")
+                    b.Property<string>("CommitteeId1")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
-                    b.Property<int?>("DelegateStateStateId")
+                    b.Property<int?>("DelegateStateCountryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("DelegationId")
+                    b.Property<string>("DelegationId1")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<bool>("IsDelegationLeader")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
+                        .HasMaxLength(200);
 
-                    b.HasIndex("CommitteeId");
+                    b.HasIndex("CommitteeId1");
 
-                    b.HasIndex("DelegateStateStateId");
+                    b.HasIndex("DelegateStateCountryId");
 
-                    b.HasIndex("DelegationId");
+                    b.HasIndex("DelegationId1");
 
                     b.HasDiscriminator().HasValue("DelegateRole");
                 });
@@ -542,7 +712,8 @@ namespace MUNityAngular.Migrations.MunCore
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("NgoName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
+                        .HasMaxLength(100);
 
                     b.HasDiscriminator().HasValue("NgoRole");
                 });
@@ -563,7 +734,8 @@ namespace MUNityAngular.Migrations.MunCore
 
                     b.Property<string>("Title")
                         .HasColumnName("SecretaryGeneralRole_Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
+                        .HasMaxLength(200);
 
                     b.HasDiscriminator().HasValue("SecretaryGeneralRole");
                 });
@@ -575,10 +747,15 @@ namespace MUNityAngular.Migrations.MunCore
                     b.Property<int?>("ParentTeamRoleRoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TeamRoleGroup")
+                    b.Property<int?>("TeamRoleGroupId1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamRoleLevel")
                         .HasColumnType("int");
 
                     b.HasIndex("ParentTeamRoleRoleId");
+
+                    b.HasIndex("TeamRoleGroupId1");
 
                     b.HasDiscriminator().HasValue("TeamRole");
                 });
@@ -588,7 +765,8 @@ namespace MUNityAngular.Migrations.MunCore
                     b.HasBaseType("MUNityAngular.Models.Conference.AbstractRole");
 
                     b.Property<string>("Organisation")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
+                        .HasMaxLength(100);
 
                     b.HasDiscriminator().HasValue("VisitorRole");
                 });
@@ -596,7 +774,7 @@ namespace MUNityAngular.Migrations.MunCore
             modelBuilder.Entity("MUNityAngular.Models.Conference.AbstractRole", b =>
                 {
                     b.HasOne("MUNityAngular.Models.Conference.Conference", "Conference")
-                        .WithMany()
+                        .WithMany("Roles")
                         .HasForeignKey("ConferenceId");
 
                     b.HasOne("MUNityAngular.Models.Conference.RoleAuth", "RoleAuth")
@@ -608,7 +786,7 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     b.HasOne("MUNityAngular.Models.Conference.Conference", "Conference")
                         .WithMany("Committees")
-                        .HasForeignKey("ConferenceId")
+                        .HasForeignKey("ConferenceId1")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MUNityAngular.Models.Conference.Committee", "ResolutlyCommittee")
@@ -618,7 +796,7 @@ namespace MUNityAngular.Migrations.MunCore
 
             modelBuilder.Entity("MUNityAngular.Models.Conference.CommitteeTopic", b =>
                 {
-                    b.HasOne("MUNityAngular.Models.Conference.Committee", null)
+                    b.HasOne("MUNityAngular.Models.Conference.Committee", "Committee")
                         .WithMany("Topics")
                         .HasForeignKey("CommitteeId");
                 });
@@ -638,7 +816,7 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     b.HasOne("MUNityAngular.Models.Conference.Conference", "Conference")
                         .WithMany()
-                        .HasForeignKey("ConferenceId");
+                        .HasForeignKey("ConferenceId1");
                 });
 
             modelBuilder.Entity("MUNityAngular.Models.Conference.GroupApplication", b =>
@@ -656,7 +834,7 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     b.HasOne("MUNityAngular.Models.Conference.AbstractRole", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("RoleId1");
 
                     b.HasOne("MUNityAngular.Models.Core.User", "User")
                         .WithMany()
@@ -678,7 +856,7 @@ namespace MUNityAngular.Migrations.MunCore
 
                     b.HasOne("MUNityAngular.Models.Conference.AbstractRole", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("RoleId1");
 
                     b.HasOne("MUNityAngular.Models.Core.User", "User")
                         .WithMany()
@@ -689,28 +867,25 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     b.HasOne("MUNityAngular.Models.Conference.Conference", "Conference")
                         .WithMany()
-                        .HasForeignKey("ConferenceId");
+                        .HasForeignKey("ConferenceId1");
                 });
 
             modelBuilder.Entity("MUNityAngular.Models.Core.User", b =>
                 {
+                    b.HasOne("MUNityAngular.Models.Core.UserAuth", "Auth")
+                        .WithMany("Users")
+                        .HasForeignKey("AuthUserAuthId");
+
                     b.HasOne("MUNityAngular.Models.Conference.GroupApplication", null)
                         .WithMany("Users")
                         .HasForeignKey("GroupApplicationId");
-                });
-
-            modelBuilder.Entity("MUNityAngular.Models.Core.UserAuth", b =>
-                {
-                    b.HasOne("MUNityAngular.Models.Core.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("MUNityAngular.Models.Organisation.OrganisationMember", b =>
                 {
                     b.HasOne("MUNityAngular.Models.Organisation.Organisation", "Organisation")
                         .WithMany("Member")
-                        .HasForeignKey("OrganisationId");
+                        .HasForeignKey("OrganisationId1");
 
                     b.HasOne("MUNityAngular.Models.Organisation.OrganisationRole", "Role")
                         .WithMany()
@@ -725,22 +900,22 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     b.HasOne("MUNityAngular.Models.Organisation.Organisation", "Organisation")
                         .WithMany("Roles")
-                        .HasForeignKey("OrganisationId");
+                        .HasForeignKey("OrganisationId1");
                 });
 
             modelBuilder.Entity("MUNityAngular.Models.Conference.Roles.DelegateRole", b =>
                 {
                     b.HasOne("MUNityAngular.Models.Conference.Committee", "Committee")
                         .WithMany()
-                        .HasForeignKey("CommitteeId");
+                        .HasForeignKey("CommitteeId1");
 
-                    b.HasOne("MUNityAngular.Models.Conference.State", "DelegateState")
+                    b.HasOne("MUNityAngular.Models.Conference.Country", "DelegateState")
                         .WithMany()
-                        .HasForeignKey("DelegateStateStateId");
+                        .HasForeignKey("DelegateStateCountryId");
 
                     b.HasOne("MUNityAngular.Models.Conference.Delegation", "Delegation")
                         .WithMany()
-                        .HasForeignKey("DelegationId");
+                        .HasForeignKey("DelegationId1");
                 });
 
             modelBuilder.Entity("MUNityAngular.Models.Conference.Roles.TeamRole", b =>
@@ -748,6 +923,10 @@ namespace MUNityAngular.Migrations.MunCore
                     b.HasOne("MUNityAngular.Models.Conference.Roles.TeamRole", "ParentTeamRole")
                         .WithMany()
                         .HasForeignKey("ParentTeamRoleRoleId");
+
+                    b.HasOne("MUNityAngular.Models.Conference.TeamRoleGroup", "TeamRoleGroup")
+                        .WithMany("TeamRoles")
+                        .HasForeignKey("TeamRoleGroupId1");
                 });
 #pragma warning restore 612, 618
         }

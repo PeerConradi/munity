@@ -77,18 +77,52 @@ namespace MUNityAngular.DataHandlers.EntityFramework
 
             modelBuilder.Entity<AbstractRole>().HasOne(n => n.Conference).WithMany(n => n.Roles);
 
-            modelBuilder.Entity<Committee>().Ignore(n => n.ResolutlyCommitteeId).Ignore(n => n.ConferenceId);
-
-            modelBuilder.Entity<DelegateRole>().Ignore(n => n.DelegateStateId).Ignore(n => n.CommitteeId)
-                .Ignore(n => n.DelegateStateId);
-
-            modelBuilder.Entity<TeamRole>().Ignore(n => n.ParentTeamRoleId);
-
-            modelBuilder.Entity<TeamRole>().Ignore(n => n.ParentTeamRoleId);
-
             modelBuilder.Entity<TeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
 
             modelBuilder.Entity<User>().HasOne(n => n.Auth).WithMany(n => n.Users);
+
+            modelBuilder.Entity<AbstractRole>().HasDiscriminator(n => n.RoleType)
+                .HasValue<DelegateRole>("DelegateRole")
+                .HasValue<NgoRole>("NgoRole")
+                .HasValue<PressRole>("PressRole")
+                .HasValue<SecretaryGeneralRole>("SecretaryGeneralRole")
+                .HasValue<TeamRole>("TeamRole")
+                .HasValue<VisitorRole>("VisitorRole");
+
+            // Ignore a lot of Data Members to use them inside the Object Model of the API
+            modelBuilder.Entity<OrganisationRole>().Ignore(n => n.OrganisationId);
+
+            modelBuilder.Entity<OrganisationMember>().Ignore(n => n.Username)
+                .Ignore(n => n.OrganisationId)
+                .Ignore(n => n.RoleId);
+
+            modelBuilder.Entity<Project>().Ignore(n => n.ProjectOrganisationId);
+
+            modelBuilder.Entity<Committee>().Ignore(n => n.ResolutlyCommitteeId)
+                .Ignore(n => n.ConferenceId);
+
+            modelBuilder.Entity<Delegation>().Ignore(n => n.ConferenceId);
+
+
+
+            modelBuilder.Entity<DelegateRole>().Ignore(n => n.DelegateStateId)
+                .Ignore(n => n.CommitteeId)
+                .Ignore(n => n.DelegateStateId);
+
+            modelBuilder.Entity<TeamRole>().Ignore(n => n.ParentTeamRoleId)
+                .Ignore(n => n.ParentTeamRoleId);
+
+            modelBuilder.Entity<Conference>().Ignore(n => n.ConferenceProjectId);
+
+            modelBuilder.Entity<Participation>().Ignore(n => n.RoleId)
+                .Ignore(n => n.Username);
+
+            modelBuilder.Entity<RoleAuth>().Ignore(n => n.ConferenceId);
+
+            modelBuilder.Entity<RoleApplication>().Ignore(n => n.Username)
+                .Ignore(n => n.RoleId);
+
+
         }
 
         public MunCoreContext(DbContextOptions<MunCoreContext> options) : base(options)

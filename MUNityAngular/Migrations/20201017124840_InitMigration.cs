@@ -2,19 +2,39 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace MUNityAngular.Migrations.MunCore
+namespace MUNityAngular.Migrations
 {
-    public partial class NewCore : Migration
+    public partial class InitMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Countries",
+                columns: table => new
+                {
+                    CountryId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Continent = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(maxLength: 150, nullable: true),
+                    FullName = table.Column<string>(maxLength: 250, nullable: true),
+                    Iso = table.Column<string>(maxLength: 3, nullable: true),
+                    CountryTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Countries", x => x.CountryId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "GroupedRoleApplications",
                 columns: table => new
                 {
                     GroupedRoleApplicationId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    CreateTime = table.Column<DateTime>(nullable: false)
+                    CreateTime = table.Column<DateTime>(nullable: false),
+                    GroupedRoleApplicationTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
@@ -26,8 +46,8 @@ namespace MUNityAngular.Migrations.MunCore
                 columns: table => new
                 {
                     OrganisationId = table.Column<string>(nullable: false),
-                    OrganisationName = table.Column<string>(nullable: true),
-                    OrganisationAbbreviation = table.Column<string>(nullable: true)
+                    OrganisationName = table.Column<string>(maxLength: 150, nullable: true),
+                    OrganisationAbbreviation = table.Column<string>(maxLength: 18, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -35,18 +55,36 @@ namespace MUNityAngular.Migrations.MunCore
                 });
 
             migrationBuilder.CreateTable(
-                name: "State",
+                name: "TeamRoleGroups",
                 columns: table => new
                 {
-                    StateId = table.Column<int>(nullable: false)
+                    TeamRoleGroupId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    StateName = table.Column<string>(nullable: true),
-                    StateFullName = table.Column<string>(nullable: true),
-                    StateIso = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(maxLength: 150, nullable: false),
+                    FullName = table.Column<string>(maxLength: 250, nullable: true),
+                    Abbreviation = table.Column<string>(maxLength: 10, nullable: true),
+                    GroupLevel = table.Column<int>(nullable: false),
+                    TeamRoleGroupTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_State", x => x.StateId);
+                    table.PrimaryKey("PK_TeamRoleGroups", x => x.TeamRoleGroupId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAuths",
+                columns: table => new
+                {
+                    UserAuthId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserAuthName = table.Column<string>(maxLength: 150, nullable: true),
+                    CanCreateOrganisation = table.Column<bool>(nullable: false),
+                    AuthLevel = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAuths", x => x.UserAuthId);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,16 +93,16 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     OrganisationRoleId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    RoleName = table.Column<string>(nullable: true),
-                    OrganisationId = table.Column<string>(nullable: true),
+                    RoleName = table.Column<string>(maxLength: 150, nullable: true),
+                    OrganisationId1 = table.Column<string>(nullable: true),
                     CanCreateProject = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrganisationRoles", x => x.OrganisationRoleId);
                     table.ForeignKey(
-                        name: "FK_OrganisationRoles_Organisations_OrganisationId",
-                        column: x => x.OrganisationId,
+                        name: "FK_OrganisationRoles_Organisations_OrganisationId1",
+                        column: x => x.OrganisationId1,
                         principalTable: "Organisations",
                         principalColumn: "OrganisationId",
                         onDelete: ReferentialAction.Restrict);
@@ -75,9 +113,11 @@ namespace MUNityAngular.Migrations.MunCore
                 columns: table => new
                 {
                     ProjectId = table.Column<string>(nullable: false),
-                    ProjectName = table.Column<string>(nullable: true),
-                    ProjectAbbreviation = table.Column<string>(nullable: true),
-                    ProjectOrganisationOrganisationId = table.Column<string>(nullable: true)
+                    ProjectName = table.Column<string>(maxLength: 200, nullable: true),
+                    ProjectAbbreviation = table.Column<string>(maxLength: 10, nullable: true),
+                    ProjectOrganisationOrganisationId = table.Column<string>(nullable: true),
+                    ProjectTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
@@ -98,9 +138,11 @@ namespace MUNityAngular.Migrations.MunCore
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     RoleId = table.Column<int>(nullable: true),
                     DelegationId = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true),
+                    Title = table.Column<string>(maxLength: 150, nullable: false),
                     Content = table.Column<string>(nullable: true),
-                    ApplicationDate = table.Column<DateTime>(nullable: false)
+                    ApplicationDate = table.Column<DateTime>(nullable: false),
+                    GroupApplicationTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
@@ -113,27 +155,37 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     UserId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Username = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true),
-                    Mail = table.Column<string>(nullable: true),
-                    Salt = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true),
-                    Forename = table.Column<string>(nullable: true),
-                    Lastname = table.Column<string>(nullable: true),
-                    Gender = table.Column<string>(nullable: true),
+                    Username = table.Column<string>(maxLength: 40, nullable: true),
+                    Password = table.Column<string>(maxLength: 250, nullable: true),
+                    Mail = table.Column<string>(maxLength: 250, nullable: true),
+                    Salt = table.Column<string>(maxLength: 250, nullable: true),
+                    Title = table.Column<string>(maxLength: 100, nullable: true),
+                    Forename = table.Column<string>(maxLength: 250, nullable: true),
+                    Lastname = table.Column<string>(maxLength: 250, nullable: true),
+                    Gender = table.Column<string>(maxLength: 250, nullable: true),
                     Birthday = table.Column<DateTime>(nullable: false),
-                    Street = table.Column<string>(nullable: true),
-                    Zipcode = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    Housenumber = table.Column<string>(nullable: true),
-                    ProfileImageName = table.Column<string>(nullable: true),
+                    Street = table.Column<string>(maxLength: 300, nullable: true),
+                    Zipcode = table.Column<string>(maxLength: 50, nullable: true),
+                    City = table.Column<string>(maxLength: 300, nullable: true),
+                    Housenumber = table.Column<string>(maxLength: 20, nullable: true),
+                    ProfileImageName = table.Column<string>(maxLength: 250, nullable: true),
                     RegistrationDate = table.Column<DateTime>(nullable: false),
                     LastOnline = table.Column<DateTime>(nullable: false),
+                    AuthUserAuthId = table.Column<int>(nullable: true),
+                    UserState = table.Column<int>(nullable: false),
+                    UserTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     GroupApplicationId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_Users_UserAuths_AuthUserAuthId",
+                        column: x => x.AuthUserAuthId,
+                        principalTable: "UserAuths",
+                        principalColumn: "UserAuthId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Users_GroupApplications_GroupApplicationId",
                         column: x => x.GroupApplicationId,
@@ -146,15 +198,18 @@ namespace MUNityAngular.Migrations.MunCore
                 name: "Conferences",
                 columns: table => new
                 {
-                    ConferenceId = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    FullName = table.Column<string>(nullable: true),
-                    Abbreviation = table.Column<string>(nullable: true),
+                    ConferenceId = table.Column<string>(maxLength: 80, nullable: false),
+                    Name = table.Column<string>(maxLength: 150, nullable: true),
+                    FullName = table.Column<string>(maxLength: 250, nullable: true),
+                    Abbreviation = table.Column<string>(maxLength: 18, nullable: true),
                     StartDate = table.Column<DateTime>(nullable: false),
                     EndDate = table.Column<DateTime>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     CreationUserUserId = table.Column<int>(nullable: true),
-                    ConferenceProjectProjectId = table.Column<string>(nullable: true)
+                    ConferenceProjectProjectId = table.Column<string>(nullable: true),
+                    Visibility = table.Column<int>(nullable: false),
+                    ConferenceTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
@@ -180,15 +235,15 @@ namespace MUNityAngular.Migrations.MunCore
                     OrganisationMemberId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: true),
-                    OrganisationId = table.Column<string>(nullable: true),
+                    OrganisationId1 = table.Column<string>(nullable: true),
                     RoleOrganisationRoleId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrganisationMember", x => x.OrganisationMemberId);
                     table.ForeignKey(
-                        name: "FK_OrganisationMember_Organisations_OrganisationId",
-                        column: x => x.OrganisationId,
+                        name: "FK_OrganisationMember_Organisations_OrganisationId1",
+                        column: x => x.OrganisationId1,
                         principalTable: "Organisations",
                         principalColumn: "OrganisationId",
                         onDelete: ReferentialAction.Restrict);
@@ -207,43 +262,25 @@ namespace MUNityAngular.Migrations.MunCore
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAuths",
-                columns: table => new
-                {
-                    UserAuthId = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<int>(nullable: true),
-                    CanCreateOrganisation = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAuths", x => x.UserAuthId);
-                    table.ForeignKey(
-                        name: "FK_UserAuths_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Committees",
                 columns: table => new
                 {
                     CommitteeId = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    FullName = table.Column<string>(nullable: true),
-                    Abbreviation = table.Column<string>(nullable: true),
-                    Article = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 150, nullable: false),
+                    FullName = table.Column<string>(maxLength: 250, nullable: true),
+                    Abbreviation = table.Column<string>(maxLength: 10, nullable: true),
+                    Article = table.Column<string>(maxLength: 10, nullable: true),
                     ResolutlyCommitteeCommitteeId = table.Column<string>(nullable: true),
-                    ConferenceId = table.Column<string>(nullable: true)
+                    ConferenceId1 = table.Column<string>(nullable: true),
+                    CommitteeTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Committees", x => x.CommitteeId);
                     table.ForeignKey(
-                        name: "FK_Committees_Conferences_ConferenceId",
-                        column: x => x.ConferenceId,
+                        name: "FK_Committees_Conferences_ConferenceId1",
+                        column: x => x.ConferenceId1,
                         principalTable: "Conferences",
                         principalColumn: "ConferenceId",
                         onDelete: ReferentialAction.Cascade);
@@ -260,15 +297,17 @@ namespace MUNityAngular.Migrations.MunCore
                 columns: table => new
                 {
                     DelegationId = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    ConferenceId = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(maxLength: 150, nullable: false),
+                    FullName = table.Column<string>(maxLength: 250, nullable: true),
+                    Abbreviation = table.Column<string>(maxLength: 10, nullable: true),
+                    ConferenceId1 = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Delegation", x => x.DelegationId);
                     table.ForeignKey(
-                        name: "FK_Delegation_Conferences_ConferenceId",
-                        column: x => x.ConferenceId,
+                        name: "FK_Delegation_Conferences_ConferenceId1",
+                        column: x => x.ConferenceId1,
                         principalTable: "Conferences",
                         principalColumn: "ConferenceId",
                         onDelete: ReferentialAction.Restrict);
@@ -280,19 +319,21 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     RoleAuthId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    RoleAuthName = table.Column<string>(nullable: true),
+                    RoleAuthName = table.Column<string>(maxLength: 150, nullable: true),
                     PowerLevel = table.Column<int>(nullable: false),
-                    ConferenceId = table.Column<string>(nullable: true),
+                    ConferenceId1 = table.Column<string>(nullable: true),
                     CanEditConferenceSettings = table.Column<bool>(nullable: false),
                     CanSeeApplications = table.Column<bool>(nullable: false),
-                    CanEditParticipations = table.Column<bool>(nullable: false)
+                    CanEditParticipations = table.Column<bool>(nullable: false),
+                    RoleAuthTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RoleAuths", x => x.RoleAuthId);
                     table.ForeignKey(
-                        name: "FK_RoleAuths_Conferences_ConferenceId",
-                        column: x => x.ConferenceId,
+                        name: "FK_RoleAuths_Conferences_ConferenceId1",
+                        column: x => x.ConferenceId1,
                         principalTable: "Conferences",
                         principalColumn: "ConferenceId",
                         onDelete: ReferentialAction.Restrict);
@@ -304,10 +345,12 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     CommitteeTopicId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TopicName = table.Column<string>(nullable: true),
-                    TopicFullName = table.Column<string>(nullable: true),
+                    TopicName = table.Column<string>(maxLength: 150, nullable: true),
+                    TopicFullName = table.Column<string>(maxLength: 250, nullable: true),
                     TopicDescription = table.Column<string>(nullable: true),
-                    TopicCode = table.Column<string>(nullable: true),
+                    TopicCode = table.Column<string>(maxLength: 18, nullable: true),
+                    CommiteeTopicTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     CommitteeId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -327,26 +370,31 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     RoleId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    RoleName = table.Column<string>(nullable: true),
+                    RoleName = table.Column<string>(maxLength: 150, nullable: true),
+                    RoleFullName = table.Column<string>(maxLength: 250, nullable: true),
+                    RoleShort = table.Column<string>(maxLength: 10, nullable: true),
                     ConferenceId = table.Column<string>(nullable: true),
                     RoleAuthId = table.Column<int>(nullable: true),
-                    IconName = table.Column<string>(nullable: true),
+                    IconName = table.Column<string>(maxLength: 250, nullable: true),
                     ApplicationState = table.Column<int>(nullable: false),
-                    ApplicationValue = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false),
-                    DelegateStateStateId = table.Column<int>(nullable: true),
+                    ApplicationValue = table.Column<string>(maxLength: 250, nullable: true),
+                    RoleType = table.Column<string>(maxLength: 150, nullable: false),
+                    RoleTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
+                    DelegateStateCountryId = table.Column<int>(nullable: true),
                     IsDelegationLeader = table.Column<bool>(nullable: true),
-                    Title = table.Column<string>(nullable: true),
-                    DelegationId = table.Column<string>(nullable: true),
-                    CommitteeId = table.Column<string>(nullable: true),
+                    Title = table.Column<string>(maxLength: 200, nullable: true),
+                    DelegationId1 = table.Column<string>(nullable: true),
+                    CommitteeId1 = table.Column<string>(nullable: true),
                     Group = table.Column<int>(nullable: true),
-                    NgoName = table.Column<string>(nullable: true),
+                    NgoName = table.Column<string>(maxLength: 100, nullable: true),
                     Leader = table.Column<bool>(nullable: true),
                     PressCategory = table.Column<int>(nullable: true),
-                    SecretaryGeneralRole_Title = table.Column<string>(nullable: true),
+                    SecretaryGeneralRole_Title = table.Column<string>(maxLength: 200, nullable: true),
                     ParentTeamRoleRoleId = table.Column<int>(nullable: true),
-                    TeamRoleGroup = table.Column<int>(nullable: true),
-                    Organisation = table.Column<string>(nullable: true)
+                    TeamRoleLevel = table.Column<int>(nullable: true),
+                    TeamRoleGroupId1 = table.Column<int>(nullable: true),
+                    Organisation = table.Column<string>(maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -364,20 +412,20 @@ namespace MUNityAngular.Migrations.MunCore
                         principalColumn: "RoleAuthId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AbstractRole_Committees_CommitteeId",
-                        column: x => x.CommitteeId,
+                        name: "FK_AbstractRole_Committees_CommitteeId1",
+                        column: x => x.CommitteeId1,
                         principalTable: "Committees",
                         principalColumn: "CommitteeId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AbstractRole_State_DelegateStateStateId",
-                        column: x => x.DelegateStateStateId,
-                        principalTable: "State",
-                        principalColumn: "StateId",
+                        name: "FK_AbstractRole_Countries_DelegateStateCountryId",
+                        column: x => x.DelegateStateCountryId,
+                        principalTable: "Countries",
+                        principalColumn: "CountryId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AbstractRole_Delegation_DelegationId",
-                        column: x => x.DelegationId,
+                        name: "FK_AbstractRole_Delegation_DelegationId1",
+                        column: x => x.DelegationId1,
                         principalTable: "Delegation",
                         principalColumn: "DelegationId",
                         onDelete: ReferentialAction.Restrict);
@@ -387,6 +435,12 @@ namespace MUNityAngular.Migrations.MunCore
                         principalTable: "AbstractRole",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AbstractRole_TeamRoleGroups_TeamRoleGroupId1",
+                        column: x => x.TeamRoleGroupId1,
+                        principalTable: "TeamRoleGroups",
+                        principalColumn: "TeamRoleGroupId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -395,19 +449,21 @@ namespace MUNityAngular.Migrations.MunCore
                 {
                     ParticipationId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    RoleId = table.Column<int>(nullable: true),
+                    RoleId1 = table.Column<int>(nullable: true),
                     UserId = table.Column<int>(nullable: true),
                     IsMainRole = table.Column<bool>(nullable: false),
                     Cost = table.Column<double>(nullable: false),
                     Paid = table.Column<double>(nullable: false),
-                    ParticipationSecret = table.Column<string>(nullable: true)
+                    ParticipationSecret = table.Column<string>(maxLength: 200, nullable: true),
+                    ParticipationTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Participations", x => x.ParticipationId);
                     table.ForeignKey(
-                        name: "FK_Participations_AbstractRole_RoleId",
-                        column: x => x.RoleId,
+                        name: "FK_Participations_AbstractRole_RoleId1",
+                        column: x => x.RoleId1,
                         principalTable: "AbstractRole",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Restrict);
@@ -426,10 +482,12 @@ namespace MUNityAngular.Migrations.MunCore
                     RoleApplicationId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: true),
-                    RoleId = table.Column<int>(nullable: true),
+                    RoleId1 = table.Column<int>(nullable: true),
                     ApplyDate = table.Column<DateTime>(nullable: false),
-                    Title = table.Column<string>(nullable: true),
+                    Title = table.Column<string>(maxLength: 200, nullable: false),
                     Content = table.Column<string>(nullable: true),
+                    RoleApplicationTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     GroupedRoleApplicationId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -442,8 +500,8 @@ namespace MUNityAngular.Migrations.MunCore
                         principalColumn: "GroupedRoleApplicationId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_RoleApplications_AbstractRole_RoleId",
-                        column: x => x.RoleId,
+                        name: "FK_RoleApplications_AbstractRole_RoleId1",
+                        column: x => x.RoleId1,
                         principalTable: "AbstractRole",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Restrict);
@@ -466,19 +524,19 @@ namespace MUNityAngular.Migrations.MunCore
                 column: "RoleAuthId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AbstractRole_CommitteeId",
+                name: "IX_AbstractRole_CommitteeId1",
                 table: "AbstractRole",
-                column: "CommitteeId");
+                column: "CommitteeId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AbstractRole_DelegateStateStateId",
+                name: "IX_AbstractRole_DelegateStateCountryId",
                 table: "AbstractRole",
-                column: "DelegateStateStateId");
+                column: "DelegateStateCountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AbstractRole_DelegationId",
+                name: "IX_AbstractRole_DelegationId1",
                 table: "AbstractRole",
-                column: "DelegationId");
+                column: "DelegationId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AbstractRole_ParentTeamRoleRoleId",
@@ -486,9 +544,14 @@ namespace MUNityAngular.Migrations.MunCore
                 column: "ParentTeamRoleRoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Committees_ConferenceId",
+                name: "IX_AbstractRole_TeamRoleGroupId1",
+                table: "AbstractRole",
+                column: "TeamRoleGroupId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Committees_ConferenceId1",
                 table: "Committees",
-                column: "ConferenceId");
+                column: "ConferenceId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Committees_ResolutlyCommitteeCommitteeId",
@@ -511,9 +574,9 @@ namespace MUNityAngular.Migrations.MunCore
                 column: "CreationUserUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Delegation_ConferenceId",
+                name: "IX_Delegation_ConferenceId1",
                 table: "Delegation",
-                column: "ConferenceId");
+                column: "ConferenceId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GroupApplications_DelegationId",
@@ -526,9 +589,9 @@ namespace MUNityAngular.Migrations.MunCore
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrganisationMember_OrganisationId",
+                name: "IX_OrganisationMember_OrganisationId1",
                 table: "OrganisationMember",
-                column: "OrganisationId");
+                column: "OrganisationId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganisationMember_RoleOrganisationRoleId",
@@ -541,14 +604,14 @@ namespace MUNityAngular.Migrations.MunCore
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrganisationRoles_OrganisationId",
+                name: "IX_OrganisationRoles_OrganisationId1",
                 table: "OrganisationRoles",
-                column: "OrganisationId");
+                column: "OrganisationId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Participations_RoleId",
+                name: "IX_Participations_RoleId1",
                 table: "Participations",
-                column: "RoleId");
+                column: "RoleId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Participations_UserId",
@@ -566,9 +629,9 @@ namespace MUNityAngular.Migrations.MunCore
                 column: "GroupedRoleApplicationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleApplications_RoleId",
+                name: "IX_RoleApplications_RoleId1",
                 table: "RoleApplications",
-                column: "RoleId");
+                column: "RoleId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleApplications_UserId",
@@ -576,14 +639,14 @@ namespace MUNityAngular.Migrations.MunCore
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleAuths_ConferenceId",
+                name: "IX_RoleAuths_ConferenceId1",
                 table: "RoleAuths",
-                column: "ConferenceId");
+                column: "ConferenceId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAuths_UserId",
-                table: "UserAuths",
-                column: "UserId");
+                name: "IX_Users_AuthUserAuthId",
+                table: "Users",
+                column: "AuthUserAuthId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_GroupApplicationId",
@@ -614,15 +677,15 @@ namespace MUNityAngular.Migrations.MunCore
                 table: "AbstractRole");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Committees_Conferences_ConferenceId",
+                name: "FK_Committees_Conferences_ConferenceId1",
                 table: "Committees");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Delegation_Conferences_ConferenceId",
+                name: "FK_Delegation_Conferences_ConferenceId1",
                 table: "Delegation");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_RoleAuths_Conferences_ConferenceId",
+                name: "FK_RoleAuths_Conferences_ConferenceId1",
                 table: "RoleAuths");
 
             migrationBuilder.DropTable(
@@ -636,9 +699,6 @@ namespace MUNityAngular.Migrations.MunCore
 
             migrationBuilder.DropTable(
                 name: "RoleApplications");
-
-            migrationBuilder.DropTable(
-                name: "UserAuths");
 
             migrationBuilder.DropTable(
                 name: "OrganisationRoles");
@@ -659,6 +719,9 @@ namespace MUNityAngular.Migrations.MunCore
                 name: "Organisations");
 
             migrationBuilder.DropTable(
+                name: "UserAuths");
+
+            migrationBuilder.DropTable(
                 name: "GroupApplications");
 
             migrationBuilder.DropTable(
@@ -671,10 +734,13 @@ namespace MUNityAngular.Migrations.MunCore
                 name: "Committees");
 
             migrationBuilder.DropTable(
-                name: "State");
+                name: "Countries");
 
             migrationBuilder.DropTable(
                 name: "Delegation");
+
+            migrationBuilder.DropTable(
+                name: "TeamRoleGroups");
         }
     }
 }

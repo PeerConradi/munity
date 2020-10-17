@@ -3,11 +3,12 @@
     <div class="form-group">
         <label>Benutzername (Anzeigename)</label>
         <input type="text" formControlName="username" class="form-control"
-            [ngClass]="{ 'is-invalid': submitted && f.username.errors || f.username.errors.taken == true }"
-            [class.is-valid]="f.username.errors.taken == false" (blur)="checkUsername()" />
+            [ngClass]="{ 'is-invalid': submitted && f.username.errors || f.username.errors != null && f.username.errors.taken == true }"
+            [class.is-valid]="f.username.errors != null && f.username.errors.taken == false" (blur)="checkUsername()" />
         <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
             <div *ngIf="f.username.errors.required">Es muss ein Benutzername angegeben werden</div>
-            <div *ngIf="f.username.errors.taken == true">Der Benutzername ist schon vergeben.</div>
+            <div *ngIf="f.username.errors != null && f.username.errors.taken == true">Der Benutzername ist schon
+                vergeben.</div>
         </div>
     </div>
 
@@ -85,5 +86,5 @@
 </div>
 <div *ngIf="error" class="alert alert-danger" role="alert">
     <p>Der Account konnte nicht angelegt werden :(</p>
-    <p>{{ error }}</p>
+    <p>{{ errmsg }}</p>
 </div>

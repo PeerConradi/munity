@@ -110,10 +110,15 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public async Task<User> WhoAmI([FromServices]UserService service)
+        public async Task<ActionResult<User>> WhoAmI([FromServices]IUserService service)
         {
+
             var username = User.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name)?.Value ?? "";
-            return await service.GetUserByUsername(username);
+            var result = await service.GetUserByUsername(username);
+            if (result != null)
+                return Ok(result);
+
+            return Forbid("A user has no name.");
         }
 
         [Route("[action]")]

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MUNityAngular.Models.Core;
 using MUNityAngular.Models.Organisation;
@@ -18,6 +19,6 @@ namespace MUNityAngular.Services
 
         OrganisationMember AddUserToOrganisation(User user, Organisation organisation, OrganisationRole role);
 
-
+        IEnumerable<Organisation> GetOrganisationsOfUser(User user);
     }
 }

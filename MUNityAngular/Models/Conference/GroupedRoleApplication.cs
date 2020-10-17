@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -17,18 +18,22 @@ namespace MUNityAngular.Models.Conference
     ///
     /// <seealso cref="RoleApplication"/>
     /// </summary>
+    [DataContract]
     public class GroupedRoleApplication
     {
-
+        [DataMember]
         public int GroupedRoleApplicationId { get; set; }
 
+        [DataMember]
         public List<RoleApplication> Applications { get; set; }
 
+        [DataMember]
         public DateTime CreateTime { get; set; }
 
         [Timestamp]
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
+        [IgnoreDataMember]
         public byte[] GroupedRoleApplicationTimestamp { get; set; }
     }
 }

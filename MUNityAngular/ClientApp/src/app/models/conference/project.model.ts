@@ -7,16 +7,7 @@ export class Project {
 
     public projectAbbreviation: string;
 
+    public projectOrganisationId: string;
+
     public conferences: Conference[];
-}
-
-
-export class ProjectInfo {
-    public projectId: string;
-
-    public projectName: string;
-
-    public projectAbbreviation: string;
-
-    public conferences: ConferenceInfo[];
 }

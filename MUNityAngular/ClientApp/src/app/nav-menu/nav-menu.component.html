@@ -26,7 +26,7 @@
           <a class="nav-link text-dark" (click)="vip()">VIP-Test</a>
         </li>
         <li>
-          <form class="form-inline" *ngIf="!userSerivce.currentUser">
+          <form class="form-inline" *ngIf="!userSerivce.isLoggedIn">
             <button id="loginButton" class="btn btn-outline-success" type="button" [routerLink]="['/login']">
               Anmelden
             </button>
@@ -36,7 +36,7 @@
             </button>
           </form>
 
-          <button *ngIf="userSerivce.currentUser" (click)="this.showTopBox = !this.showTopBox"
+          <button *ngIf="userSerivce.isLoggedIn" (click)="this.showTopBox = !this.showTopBox"
             class="btn btn-outline-secondary">Menü</button>
 
           <div class="menubox" *ngIf="showTopBox">
@@ -51,10 +51,12 @@
                   Aufgaben
                   <span class="badge badge-primary badge-pill">14</span>
                 </a>
+                <a href="" [routerLink]="['/orga/myorgas']" class="list-group-item list-group-item-action">Meine
+                  Organisationen</a>
                 <a href="#" class="list-group-item list-group-item-action">Meine Resolutionen</a>
                 <a href="#" class="list-group-item list-group-item-action">Nachrichten</a>
                 <a href="#" class="list-group-item list-group-item-action">Neutzerverwaltung</a>
-                <a href="#" class="list-group-item list-group-item-action list-group-item-danger">Abmelden</a>
+                <a href="/logout" class="list-group-item list-group-item-action list-group-item-danger">Abmelden</a>
               </div>
             </div>
           </div>

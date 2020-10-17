@@ -59,6 +59,10 @@ import { ResolutionModule } from './modules/resolution.module';
 
 
 import * as Hammer from 'hammerjs';
+import { StepsToConferenceComponent } from './components/conference/steps-to-conference/steps-to-conference.component';
+
+import { NgWizardModule, NgWizardConfig, THEME } from 'ng-wizard';
+import { OrganisationRouting } from './routing/organisation.routing';
 
 // making hammer config (3)
 @Injectable()
@@ -67,6 +71,10 @@ export class MyHammerConfig extends HammerGestureConfig {
     swipe: { direction: Hammer.DIRECTION_ALL },
   };
 }
+
+const ngWizardConfig: NgWizardConfig = {
+  theme: THEME.default
+};
 
 @NgModule({
   declarations: [
@@ -93,7 +101,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     AdminDashboardComponent,
     PrivacyTermsComponent,
     LoginFormComponent,
-    RegisterFormComponent
+    RegisterFormComponent,
+    StepsToConferenceComponent
   ],
   imports: [
     RouterModule,
@@ -122,7 +131,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     PopoverModule.forRoot(),
     ResolutionModule,
     ConferenceRouting,
+    OrganisationRouting,
     SimulationModule,
+    NgWizardModule.forRoot(ngWizardConfig)
   ],
   providers: [
     {

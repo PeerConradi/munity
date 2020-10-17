@@ -22,7 +22,6 @@ namespace MUNityAngular.Models.Core
 
 
         [DataMember]
-        [MaxLength(80)]
         public int UserId { get; set; }
 
         [DataMember]

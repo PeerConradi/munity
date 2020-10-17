@@ -19,7 +19,7 @@ namespace MUNityAngular.Controllers
         //public ActionResult SavePresence([FromHeader]string auth, [FromBody]PresenceModel presence,
         //    [FromServices]PresenceService presenceService,
         //    [FromServices]ConferenceService conferenceService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var user = authService.GetUserByAuth(auth);
         //    if (user == null)
@@ -44,7 +44,7 @@ namespace MUNityAngular.Controllers
         //public ActionResult<PresenceModel> GetCommitteePresence([FromHeader]string auth, [FromHeader]string committeeid,
         //    [FromServices]PresenceService presenceService,
         //    [FromServices]ConferenceService conferenceService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var user = authService.GetUserByAuth(auth);
         //    if (user == null)

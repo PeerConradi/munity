@@ -1,0 +1,26 @@
+<!-- <div class="row">
+    <div class="col-12">
+        <a [routerLink]="['/orga/create']" class="btn btn-block btn-primary">Organisation erstellen</a>
+    </div>
+</div> -->
+
+<div class="row" *ngIf="organisations">
+    <div class="col-12">
+        <p>Du bist Mitglied in {{ organisations.length }} Organisationen</p>
+    </div>
+
+    <div class="col-6" *ngFor="let orga of organisations">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">{{ orga.organisationName }}</p>
+                <p>Diese Organisation ist sehr gut</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" *ngIf="!organisations">
+    <div class="col-12">
+        <div class="alert alert-danger">Es konnten keine Organisationen gefunden werden.</div>
+    </div>
+</div>

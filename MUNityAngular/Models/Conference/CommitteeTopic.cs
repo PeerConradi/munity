@@ -12,16 +12,15 @@ namespace MUNityAngular.Models.Conference
     {
         public int CommitteeTopicId { get; set; }
 
-        [Column(TypeName = "varchar(100)")]
+        [MaxLength(150)]
         public string TopicName { get; set; }
 
-        [Column(TypeName = "varchar(250)")]
+        [MaxLength(250)]
         public string TopicFullName { get; set; }
 
-        [Column(TypeName = "varchar(600)")]
         public string TopicDescription { get; set; }
 
-        [Column(TypeName = "varchar(25)")]
+        [MaxLength(18)]
         public string TopicCode { get; set; }
 
         [Timestamp]

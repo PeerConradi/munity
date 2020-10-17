@@ -31,6 +31,8 @@ import { SimSimCreateComponent } from './components/simsim/sim-sim-create/sim-si
 
 import { AuthGuard } from "./shared/auth.guard";
 import { SimulationMobileComponent } from './pages/simulation/simulation-mobile/simulation-mobile.component';
+import { StepsToConferenceComponent } from './components/conference/steps-to-conference/steps-to-conference.component';
+import { OrganisationModule } from './modules/organisation.module';
 
 const routes: Routes = [
   // Routes that have no default theme!
@@ -78,7 +80,10 @@ const routes: Routes = [
 
       // SimSim
       { path: 'simulator', component: SimSimStartupComponent },
-      { path: 'simulator/create', component: SimSimCreateComponent }
+      { path: 'simulator/create', component: SimSimCreateComponent },
+
+      // Conference
+      { path: 'stepsToConference', component: StepsToConferenceComponent }
     ],
 
   },
@@ -93,7 +98,8 @@ const routes: Routes = [
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule, RouterModule.forRoot(routes)
+    CommonModule,
+    RouterModule.forRoot(routes),
   ],
   exports: [RouterModule],
 })

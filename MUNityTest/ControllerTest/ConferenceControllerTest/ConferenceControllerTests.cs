@@ -37,7 +37,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             var result = await controller.GetConference("yolo");
 
             Assert.NotNull(result);
-            Assert.Equal(GetTestConference().Name, result.Name);
+            Assert.Equal(GetTestConference().Name, result.Value.Name);
         }
 
         private Conference GetTestConference()

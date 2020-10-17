@@ -49,12 +49,8 @@ export class ConferenceService {
   }
 
   public getConference(id: string) {
-    if (id === 'test') return of(this.getTestConference())
-    let headers = new HttpHeaders();
-    headers = headers.set('id', id);
-    let options = { headers: headers };
-    return this.http.get<Conference>(this.baseUrl + 'api/Conference/GetConference',
-      options);
+    if (id === 'test') return of(this.getTestConference());
+    return this.http.get<Conference>(this.baseUrl + 'api/Conference/GetConference?id=' + id);
   }
 
   public addCommittee(conferenceid: string, committee: Committee) {

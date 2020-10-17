@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MUNityAngular.Models.Conference;
 
@@ -16,6 +18,7 @@ namespace MUNityAngular.Models.Conference
     /// the conference, for example a conference every year, then this will can be
     /// found by the Project
     /// </summary>
+    [DataContract]
     public class Conference
     {
         public enum EConferenceVisibilityMode
@@ -37,36 +40,48 @@ namespace MUNityAngular.Models.Conference
             Public
         }
 
-        [Column(TypeName = "varchar(80)")]
+        [DataMember]
+        [MaxLength(80)]
         public string ConferenceId { get; set; }
         
-        [Column(TypeName = "varchar(150)")]
+        [DataMember]
+        [MaxLength(150)]
         public string Name { get; set; }
 
-        [Column(TypeName = "varchar(250)")]
+        [DataMember]
+        [MaxLength(250)]
         public string FullName { get; set; }
 
-        [Column(TypeName = "varchar(18)")]
+        [DataMember]
+        [MaxLength(18)]
         public string Abbreviation { get; set; }
 
+        [DataMember]
         public DateTime StartDate { get; set; }
 
+        [DataMember]
         public DateTime EndDate { get; set; }
 
-
+        [DataMember]
         public DateTime CreationDate { get; set; }
 
+        [IgnoreDataMember]
         public Core.User CreationUser { get; set; }
 
         public List<Committee> Committees { get; set; }
 
         public List<AbstractRole> Roles { get; set; }
 
+        [IgnoreDataMember]
         public Project ConferenceProject { get; set; }
 
+        [NotMapped] public string ConferenceProjectId => ConferenceProject?.ProjectId ?? "";
+
+        [IgnoreDataMember]
         public EConferenceVisibilityMode Visibility { get; set; }
 
         [Timestamp]
+        [IgnoreDataMember]
         public byte[] ConferenceTimestamp { get; set; }
 
         public Conference()

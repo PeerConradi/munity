@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MUNityAngular.Models.Conference;
@@ -15,40 +16,51 @@ namespace MUNityAngular.Models.Conference
     /// needs to create its own list of committees, they should not be reused inside of other
     /// Conferences.
     /// </summary>
+    [DataContract]
     public class Committee : ICommitteeFacade
     {
 
-        [Column(TypeName = "varchar(80)")]
+        [DataMember]
         public string CommitteeId { get; set; }
 
-        [Column(TypeName = "varchar(150)")]
+        [DataMember]
+        [Required]
+        [MaxLength(150)]
         public string Name { get; set; }
 
-        [Column(TypeName = "varchar(250)")]
+        [DataMember]
+        [MaxLength(250)]
         public string FullName { get; set; }
 
-        [Column(TypeName = "varchar(10)")]
+        [DataMember]
+        [MaxLength(10)]
         public string Abbreviation { get; set; }
 
-        [Column(TypeName = "varchar(10)")]
+        [DataMember]
+        [MaxLength(10)]
         public string Article { get; set; }
 
+        [IgnoreDataMember]
         [Newtonsoft.Json.JsonIgnore]
         [JsonIgnore]
         public Committee ResolutlyCommittee { get; set; }
 
+        [DataMember]
         [NotMapped]
         public string ResolutlyCommitteeId => ResolutlyCommittee?.ResolutlyCommitteeId ?? "";
 
+        [DataMember]
         [NotMapped]
         public string ConferenceId => Conference?.ConferenceId ?? "";
 
+        [IgnoreDataMember]
         [Newtonsoft.Json.JsonIgnore]
         [JsonIgnore]
         public Conference Conference { get; set; }
 
         public List<CommitteeTopic> Topics { get; set; }
 
+        [IgnoreDataMember]
         [Timestamp]
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]

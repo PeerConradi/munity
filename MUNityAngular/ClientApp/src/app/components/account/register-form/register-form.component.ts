@@ -23,7 +23,7 @@ export class RegisterFormComponent implements OnInit {
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
       username: ['', Validators.required],
-      forname: ['', Validators.required],
+      forename: ['', Validators.required],
       lastname: ['', Validators.required],
       email: ['', Validators.required, Validators.email],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -36,22 +36,22 @@ export class RegisterFormComponent implements OnInit {
   // convenience getter for easy access to form fields
   get f() { return this.registerForm.controls; }
 
-  checkUsername() {
+  async checkUsername() {
     const data = this.registerForm.value;
     const username = data.username;
-    this.authService.checkUsername(username).subscribe(n => {
-      if (n) {
-        this.f.username.setErrors({ 'taken': true });
-      } else {
-        this.f.username.setErrors({ 'taken': false });
-      }
-    });
+    let result = await this.authService.checkUsername(username);
+    let taken = await result.toPromise();
+    this.f.username.setErrors({ 'taken': taken });
+    return taken;
   }
 
-  onSubmit() {
+  async onSubmit() {
     this.submitted = true;
 
-    this.checkUsername();
+    let usernameTaken = await this.checkUsername();
+
+    if (usernameTaken)
+      return;
 
     // stop here if form is invalid
     if (this.registerForm.invalid) {

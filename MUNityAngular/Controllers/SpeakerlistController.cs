@@ -39,7 +39,7 @@ namespace MUNityAngular.Controllers
         public ActionResult<SpeakerlistModel> CreateSpeakerlist([FromHeader]string auth,
             [FromHeader]string conferenceid,
             [FromHeader]string committeeid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService,
             [FromServices]ConferenceService conferenceSerivce)
         {
@@ -61,7 +61,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpGet]
         public ActionResult<SpeakerlistModel> GetSpeakerlist([FromHeader]string auth, [FromHeader]string id,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             //var authstate = authService.ValidateAuthKey(auth);
@@ -85,7 +85,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpGet]
         public ActionResult<SpeakerlistModel> ReadSpeakerlist([FromHeader]string auth, [FromHeader]string publicid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             if (int.TryParse(publicid, out int id))
@@ -111,7 +111,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public IActionResult SubscribeToList([FromHeader]string auth, [FromHeader]string publicid, [FromHeader]string connectionid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             _hubContext.Groups.AddToGroupAsync(connectionid, "s-list-" + publicid);
@@ -270,7 +270,7 @@ namespace MUNityAngular.Controllers
         [HttpDelete]
         public IActionResult RemoveSpeakerFromList([FromHeader]string auth,
             [FromHeader]string listid, [FromHeader]string delegationid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -293,7 +293,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public IActionResult NextSpeaker([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -316,7 +316,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public IActionResult StartSpeaker([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -339,7 +339,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public IActionResult NextQuestion([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -362,7 +362,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public IActionResult StartQuestion([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -385,7 +385,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public IActionResult StartAnswer([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -408,7 +408,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public IActionResult PauseTimer([FromHeader]string auth, [FromHeader]string listid,
-           [FromServices]AuthService authService,
+           [FromServices]IAuthService authService,
            [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -432,7 +432,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPatch]
         public IActionResult SetSpeakertime([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string time,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -461,7 +461,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPatch]
         public IActionResult SetQuestiontime([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string time,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -489,7 +489,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPut]
         public IActionResult ClearSpeaker([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -513,7 +513,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPut]
         public IActionResult ClearQuestion([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]AuthService authService,
+            [FromServices]IAuthService authService,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -541,7 +541,7 @@ namespace MUNityAngular.Controllers
         //[HttpGet]
         //public ActionResult<List<Delegation>> GetPossibleDelegations([FromHeader]string auth,
         //    [FromHeader]string id,
-        //    [FromServices]AuthService authService,
+        //    [FromServices]IAuthService authService,
         //    [FromServices]SpeakerlistService speakerlistService,
         //    [FromServices]ConferenceService conferenceService)
         //{

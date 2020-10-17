@@ -121,7 +121,7 @@ namespace MUNityAngular
             
             // All services that are used inside the controllers.
             //services.AddScoped<Services.InstallationService>();
-            services.AddScoped<Services.AuthService>();
+            services.AddScoped<Services.IAuthService, Services.AuthService>();
             services.AddScoped<Services.IUserService, Services.UserService>();
             services.AddScoped<Services.IOrganisationService, Services.OrganisationService>();
             services.AddScoped<Services.ResolutionService>();

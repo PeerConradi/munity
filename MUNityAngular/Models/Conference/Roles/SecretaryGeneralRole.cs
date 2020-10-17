@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace MUNityAngular.Models.Conference.Roles
 {
+
+    [DataContract]
     public class SecretaryGeneralRole : AbstractRole
     {
-        [Column(TypeName = "varchar(200)")]
+        [MaxLength(200)]
         public string Title { get; set; }
 
     }

@@ -25,13 +25,13 @@ namespace MUNityAngular.Models.Conference
 
         public EContinent Continent { get; set; }
 
-        [Column(TypeName = "varchar(150)")]
+        [MaxLength(150)]
         public string Name { get; set; }
 
-        [Column(TypeName = "varchar(250)")]
+        [MaxLength(250)]
         public string FullName { get; set; }
 
-        [Column(TypeName = "varchar(3)")]
+        [MaxLength(3)]
         public string Iso { get; set; }
 
         [Timestamp]

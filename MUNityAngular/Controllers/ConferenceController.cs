@@ -44,9 +44,22 @@ namespace MUNityAngular.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public Task<Conference> GetConference(string id)
+        public async Task<ActionResult<Conference>> GetConference(string id)
         {
-            return this._conferenceService.GetConference(id);
+            var conference = await this._conferenceService.GetConference(id);
+            if (conference == null)
+                return NotFound("Conference not found");
+
+            // Check if the conference is visible, then give out the data
+            if (conference.Visibility == Conference.EConferenceVisibilityMode.Public)
+                return Ok(conference);
+            else if (conference.Visibility == Conference.EConferenceVisibilityMode.Users)
+            {
+                if (User != null)
+                    return Ok(conference);
+            }
+
+            return BadRequest("Unable to get the conference, maybe its not opened to the public.");
         }
 
         /// <summary>
@@ -285,7 +298,9 @@ namespace MUNityAngular.Controllers
             return Ok(newCommittee);
         }
 
-        public bool CanUserEditConference(string conferenceid)
+
+        [NonAction]
+        private bool CanUserEditConference(string conferenceid)
         {
             var user = this._authService.GetUserOfClaimPrincipal(User);
             var roles = this._conferenceService.GetUserRolesOnConference(user.Username, conferenceid)

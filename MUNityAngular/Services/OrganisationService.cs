@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -13,18 +14,22 @@ namespace MUNityAngular.Services
     {
         private MunCoreContext _context;
 
-        public Organisation CreateOrganisation(string name, string abbreviation)
+        public Organisation CreateOrganisation([NotNull]string name, [NotNull]string abbreviation)
         {
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(abbreviation))
+                return null;
+
             var organisation = new Organisation();
 
             organisation.OrganisationId = Guid.NewGuid().ToString();
-            if (!_context.Organisations.Any(n => n.OrganisationId == abbreviation))
-                organisation.OrganisationId = abbreviation;
+            var shortAsKey = Util.Tools.IdGenerator.AsPrimaryKey(abbreviation);
+            if (!_context.Organisations.Any(n => n.OrganisationId == shortAsKey))
+                organisation.OrganisationId = shortAsKey;
 
             organisation.OrganisationName = name;
             organisation.OrganisationAbbreviation = abbreviation;
             _context.Organisations.Add(organisation);
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
             return organisation;
         }
 
@@ -62,6 +67,16 @@ namespace MUNityAngular.Services
             _context.SaveChanges();
 
             return membership;
+        }
+
+        public IEnumerable<Organisation> GetOrganisationsOfUser(User user)
+        {
+            var organisations = from membership in _context.OrganisationMember
+                where membership.User.UserId == user.UserId
+                join role in _context.OrganisationRoles on membership.Role equals role
+                join organisation in _context.Organisations on role.Organisation equals organisation
+                select organisation;
+            return organisations;
         }
 
         public OrganisationService(MunCoreContext context)

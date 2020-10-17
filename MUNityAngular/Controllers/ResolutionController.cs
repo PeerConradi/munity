@@ -110,7 +110,7 @@ namespace MUNityAngular.Controllers
         //[Route("[action]")]
         //[HttpGet]
         //public ActionResult<HUBResolution> CreatePublic([FromHeader]string auth, [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
 
         //    if (string.IsNullOrEmpty(auth))
@@ -146,7 +146,7 @@ namespace MUNityAngular.Controllers
         //[HttpPost]
         //public ActionResult<HUBPreambleParagraph> AddPreambleParagraph([FromBody]ChangeResolutionRequest body,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
 
         //    var resolution = resolutionService.GetResolution(body.ResolutionId);
@@ -175,7 +175,7 @@ namespace MUNityAngular.Controllers
         //[HttpGet]
         //public ActionResult<HUBOperativeParagraph> AddOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -208,7 +208,7 @@ namespace MUNityAngular.Controllers
         //[HttpPut]
         //public ActionResult<HUBPreambleParagraph> UpdatePreambleParagraph([FromHeader]string auth, [FromBody]Hubs.HubObjects.HUBPreambleParagraph paragraph,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
         //    if (resolution == null)
@@ -243,7 +243,7 @@ namespace MUNityAngular.Controllers
         //[HttpPut]
         //public ActionResult<HUBOperativeParagraph> UpdateOperativeSection([FromHeader]string auth, [FromBody]HUBOperativeParagraph paragraph,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
 
         //    var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
@@ -272,7 +272,7 @@ namespace MUNityAngular.Controllers
         //[HttpPatch]
         //public ActionResult<HUBOperativeParagraph> UpdateOperativeSectionNotices([FromHeader]string auth, [FromBody]HUBOperativeParagraph paragraph,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
         //    if (resolution == null)
@@ -305,7 +305,7 @@ namespace MUNityAngular.Controllers
         //[HttpPatch]
         //public ActionResult<HUBOperativeParagraph> UpdatePreambleParagraphNotices([FromHeader]string auth, [FromBody]HUBPreambleParagraph paragraph,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(paragraph.ResolutionID);
         //    if (resolution == null)
@@ -341,7 +341,7 @@ namespace MUNityAngular.Controllers
         //    [FromHeader]string paragraphid,
         //    [FromBody]NoticeModel notice,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -389,7 +389,7 @@ namespace MUNityAngular.Controllers
         //    [FromHeader]string paragraphid,
         //    [FromBody]NoticeModel notice,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -444,7 +444,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult RemovePreambleParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string paragraphid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -479,7 +479,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult MovePreambleParagraphUp([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string paragraphid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -515,7 +515,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult MovePreambleParahraphDown([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string paragraphid,
         //    [FromServices] ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -550,7 +550,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult MoveOperativeParagraphUp([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string paragraphid,
         //    [FromServices] ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
 
@@ -586,7 +586,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult MoveOperativeParagraphDown([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string paragraphid,
         //    [FromServices] ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -622,7 +622,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult MoveOperativeParagraphLeft([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string paragraphid,
         //    [FromServices] ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -658,7 +658,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult MoveOperativeParagraphRight([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string paragraphid,
         //    [FromServices] ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -692,7 +692,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult RemoveOperativeParagraph([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string paragraphid,
         //    [FromServices] ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -719,7 +719,7 @@ namespace MUNityAngular.Controllers
         //[HttpPatch]
         //public IActionResult ChangeHeader([FromHeader]string auth, [FromBody]UpdateResolutionHeaderRequest request,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(request.ResolutionId);
         //    if (resolution == null)
@@ -752,7 +752,7 @@ namespace MUNityAngular.Controllers
         //public ActionResult<string> ChangePublicReadMode([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string pmode,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
 
         //    var resolution = resolutionService.GetResolution(resolutionid);
@@ -790,7 +790,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult AddDeleteAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string sectionid, [FromHeader]string submittername,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -828,7 +828,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult AddChangeAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromBody]Hubs.HubObjects.HUBChangeAmendment model,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
 
         //    var resolution = resolutionService.GetResolution(resolutionid);
@@ -870,7 +870,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult AddMoveAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string sectionid, [FromHeader]string submittername, [FromHeader]string newposition,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
 
         //    var resolution = resolutionService.GetResolution(resolutionid);
@@ -912,7 +912,7 @@ namespace MUNityAngular.Controllers
         //[HttpPost]
         //public IActionResult AddAddAmendment([FromHeader]string auth, [FromBody]HUBAddAmendment amendment,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
 
         //    var resolution = resolutionService.GetResolution(amendment.TargetResolutionID);
@@ -951,7 +951,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult RemoveAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string amendmentid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -988,7 +988,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult ActivateAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string amendmentid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -1025,7 +1025,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult DeactivateAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string amendmentid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -1063,7 +1063,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult SubmitAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string amendmentid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -1100,7 +1100,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult DenyAmendment([FromHeader]string auth, [FromHeader]string resolutionid,
         //    [FromHeader]string amendmentid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(resolutionid);
         //    if (resolution == null)
@@ -1136,7 +1136,7 @@ namespace MUNityAngular.Controllers
         //[HttpGet]
         //public ActionResult<List<Resolution>> MyResolutions([FromHeader]string auth,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var user = authService.GetUserOfAuth(auth);
         //    var resolutions = resolutionService.GetResolutionsOfUser(user.UserId);
@@ -1155,7 +1155,7 @@ namespace MUNityAngular.Controllers
         //[HttpGet]
         //public ActionResult<ResolutionModel> Get([FromHeader]string auth, [FromHeader]string id,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(id);
         //    //Wer die offizielle id angibt probiert das Dokument zu bearbeiten
@@ -1197,7 +1197,7 @@ namespace MUNityAngular.Controllers
         //public IActionResult SubscribeToResolution([FromHeader]string auth, [FromHeader]string id,
         //    [FromHeader]string connectionid,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolution = resolutionService.GetResolution(id);
         //    if (resolution != null)
@@ -1248,7 +1248,7 @@ namespace MUNityAngular.Controllers
         //[HttpGet]
         //public ActionResult<bool> CanAuthEditResolution([FromHeader]string auth, [FromHeader]string id,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var resolutionWithId = resolutionService.GetResolution(id);
         //    if (resolutionWithId == null)
@@ -1286,7 +1286,7 @@ namespace MUNityAngular.Controllers
         //[HttpGet]
         //public ActionResult<Resolution> GetResolutionInfos([FromHeader]string auth, [FromHeader]string id,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService)
+        //    [FromServices]IAuthService authService)
         //{
         //    var infos = resolutionService.GetResolutionDatabaseModel(id);
         //    if (infos == null)
@@ -1301,7 +1301,7 @@ namespace MUNityAngular.Controllers
         //public ActionResult GrandUserRights([FromHeader]string auth,
         //    [FromBody]GrandUserResolutionRights request,
         //    [FromServices]ResolutionService resolutionService,
-        //    [FromServices]AuthService authService,
+        //    [FromServices]IAuthService authService,
         //    [FromServices]UserService userService)
         //{
         //    var resolution = resolutionService.GetResolution(request.ResolutionId);
@@ -1324,7 +1324,7 @@ namespace MUNityAngular.Controllers
         //[HttpPatch]
         //public ActionResult LinkResolutionToConference([FromHeader]string auth,
         //    [FromHeader]string resolutionid, [FromHeader]string conferenceid,
-        //    [FromServices]ResolutionService resolutionService, [FromServices]AuthService authService,
+        //    [FromServices]ResolutionService resolutionService, [FromServices]IAuthService authService,
         //    [FromServices]ConferenceService conferenceService)
         //{
         //    throw new NotImplementedException("To be reworked");
@@ -1347,7 +1347,7 @@ namespace MUNityAngular.Controllers
         //[HttpPatch]
         //public ActionResult LinkResolutionToCommittee([FromHeader]string auth,
         //    [FromHeader]string resolutionid, [FromHeader]string committeeid,
-        //    [FromServices]ResolutionService resolutionService, [FromServices]AuthService authService,
+        //    [FromServices]ResolutionService resolutionService, [FromServices]IAuthService authService,
         //    [FromServices]ConferenceService conferenceService)
         //{
         //    throw new NotImplementedException("To be reworked");

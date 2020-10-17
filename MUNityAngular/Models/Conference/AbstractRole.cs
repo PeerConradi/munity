@@ -14,13 +14,13 @@ namespace MUNityAngular.Models.Conference
         [Key]
         public int RoleId { get; set; }
 
-        [Column(TypeName = "varchar(100)")]
+        [MaxLength(150)]
         public string RoleName { get; set; }
 
-        [Column(TypeName = "varchar(200)")]
+        [MaxLength(250)]
         public string RoleFullName { get; set; }
 
-        [Column(TypeName = "varchar(10)")]
+        [MaxLength(10)]
         public string RoleShort { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
@@ -31,18 +31,18 @@ namespace MUNityAngular.Models.Conference
         [JsonIgnore]
         public RoleAuth RoleAuth { get; set; }
 
-        [Column(TypeName = "varchar(200)")]
+        [MaxLength(250)]
         public string IconName { get; set; }
 
         public EApplicationStates ApplicationState { get; set; }
 
-        [Column(TypeName = "varchar(255)")]
+        [MaxLength(250)]
         public string ApplicationValue { get; set; }
 
         public virtual bool AllowMultipleParticipations { get; }
 
-        [Column(TypeName = "varchar(100)")]
-        public string RoleType => this.GetType().Name;
+        [MaxLength(150)]
+        public string RoleType { get; set; }
 
         [Timestamp]
         [JsonIgnore]

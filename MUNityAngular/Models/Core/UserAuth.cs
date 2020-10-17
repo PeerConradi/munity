@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MUNityAngular.Models.Core
 {
+
+    [DataContract]
     public class UserAuth
     {
         public enum EAuthLevel
@@ -18,15 +22,22 @@ namespace MUNityAngular.Models.Core
             New
         }
 
+        [DataMember]
         public int UserAuthId { get; set; }
 
+        [DataMember]
         [MaxLength(150)]
         public string UserAuthName { get; set; }
 
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<User> Users { get; set; }
 
+        [DataMember]
         public bool CanCreateOrganisation { get; set; }
 
+        [DataMember]
         public EAuthLevel AuthLevel { get; set; }
 
         public UserAuth()
