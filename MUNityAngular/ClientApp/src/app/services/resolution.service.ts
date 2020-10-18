@@ -100,8 +100,6 @@ export class ResolutionService {
   //SignalR Part
   public addResolutionListener = (model: Resolution, inspector: AmendmentInspector) => {
     this._hubConnection.on('ResolutionChanged', (resolution: Resolution) => {
-      console.log('Update erhalten:');
-      console.log(resolution);
       // Nothing to do if thats not the subscribed resolution!
       if (resolution.resolutionId !== model.resolutionId)
         return;
@@ -128,9 +126,16 @@ export class ResolutionService {
           if (modelPart != null) {
             if (this.currentPreambleParagraph != null) {
               if (this.currentPreambleParagraph.preambleParagraphId == modelPart.preambleParagraphId) {
-                console.log('Hier darf ich nicht überschreiben!')
+                if (this.currentPreambleParagraph.text != modelPart.text) {
+                  this.currentPreambleParagraph.differsFromServer = true;
+                  modelPart.differsFromServer = true;
+                } else {
+                  this.currentPreambleParagraph.differsFromServer = false;
+                  modelPart.differsFromServer = false;
+                }
               } else {
                 if (modelPart.text != n.text) modelPart.text = n.text;
+
               }
             }
             else {
@@ -141,8 +146,44 @@ export class ResolutionService {
           // if the else branch is reached here the model is not up to date and the
           // page should be reloaded!
         });
-
       }
+
+      if (resolution.operativeSection.paragraphs.length !== model.operativeSection.paragraphs.length) {
+        model.operativeSection.paragraphs = resolution.operativeSection.paragraphs;
+      }
+      else {
+        // Maybe only the text of one has changed. Update if different
+        resolution.operativeSection.paragraphs.forEach(n => {
+          var modelPart = model.operativeSection.paragraphs.find(a => a.operativeParagraphId == n.operativeParagraphId);
+          if (modelPart != null) {
+            if (this.currentOperativeParagraph != null) {
+              if (this.currentOperativeParagraph.operativeParagraphId == modelPart.operativeParagraphId) {
+                if (this.currentOperativeParagraph.text != modelPart.text) {
+                  this.currentOperativeParagraph.differsFromServer = true;
+                  modelPart.differsFromServer = true;
+                } else {
+                  this.currentOperativeParagraph.differsFromServer = false;
+                  modelPart.differsFromServer = false;
+                }
+              } else {
+                if (modelPart.text != n.text) modelPart.text = n.text;
+
+              }
+            }
+            else {
+              // If the user is not editing anything you can feel free to overwrite everything!
+              if (modelPart.text != n.text) modelPart.text = n.text;
+            }
+          }
+          // if the else branch is reached here the model is not up to date and the
+          // page should be reloaded!
+        });
+      }
+
+      model.operativeSection.addAmendments = resolution.operativeSection.addAmendments;
+      model.operativeSection.changeAmendments = resolution.operativeSection.changeAmendments;
+      model.operativeSection.deleteAmendments = resolution.operativeSection.deleteAmendments;
+      model.operativeSection.moveAmendments = resolution.operativeSection.moveAmendments;
 
       // if (resolution.resolutionId === model.resolutionId) {
 

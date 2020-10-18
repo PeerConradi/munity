@@ -11,7 +11,6 @@ using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 using MUNityAngular.Models.Resolution;
 using MUNityAngular.Schema.Request;
-using MUNityAngular.Hubs.HubObjects;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
 using MUNityAngular.Models.Resolution.V2;
 using MUNityAngular.Schema.Request.Resolution;
@@ -22,11 +21,11 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class ResolutionController : ControllerBase
     {
-        IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> _hubContext;
+        readonly IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> _hubContext;
 
-        private IResolutionService _resolutionService;
+        private readonly IResolutionService _resolutionService;
 
-        private IAuthService _authService;
+        private readonly IAuthService _authService;
 
         public ResolutionController(IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> hubContext, 
             IResolutionService resolutionService,
@@ -70,7 +69,6 @@ namespace MUNityAngular.Controllers
         /// Updates a Resolution that has Public Access. 
         /// </summary>
         /// <param name="resolution"></param>
-        /// <param name="resolutionService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
@@ -117,7 +115,7 @@ namespace MUNityAngular.Controllers
         ///// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public async Task<IActionResult> SubscribeToResolution([FromHeader] string auth, [FromHeader] string id,
+        public async Task<IActionResult> SubscribeToResolution([FromHeader] string id,
             [FromHeader] string connectionid)
         {
             var resolution = _resolutionService.GetResolution(id);
@@ -128,7 +126,7 @@ namespace MUNityAngular.Controllers
             {
                 if (infoModel.AllowPublicRead)
                 {
-                    _hubContext.Groups.AddToGroupAsync(connectionid, id);
+                    await _hubContext.Groups.AddToGroupAsync(connectionid, id);
                     return StatusCode(StatusCodes.Status200OK);
                 }
                 else

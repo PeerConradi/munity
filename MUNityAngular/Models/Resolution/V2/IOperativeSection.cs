@@ -11,11 +11,11 @@ namespace MUNityAngular.Models.Resolution.V2
 
         List<OperativeParagraph> Paragraphs { get; set; }
 
-        List<ChangeAmendmentModel> ChangeAmendments { get; set; }
+        List<ChangeAmendment> ChangeAmendments { get; set; }
 
-        List<AddAmendmentModel> AddAmendments { get; set; }
+        List<AddAmendment> AddAmendments { get; set; }
 
-        List<MoveAmendmentModel> MoveAmendments { get; set; }
+        List<MoveAmendment> MoveAmendments { get; set; }
 
         List<DeleteAmendment> DeleteAmendments { get; set; }
     }

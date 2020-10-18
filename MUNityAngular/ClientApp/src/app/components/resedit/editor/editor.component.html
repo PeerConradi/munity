@@ -19,7 +19,7 @@
       <input type="text" [(ngModel)]="model.header.topic" (blur)="updateTitle();" class="form-control" />
     </div>
     <div class="col-3">
-      <button class="btn btn-outline-light btn-block" (click)="documentHeaderModal.show();">Kopfzeile
+      <button class="btn btn-outline-light btn-block" (click)="openModal(documentHeaderModal)">Kopfzeile
         bearbeiten</button>
     </div>
     <div class="col-3">
@@ -32,7 +32,7 @@
           <li role="menuitem"><a [routerLink]="['/resa/read', model.resolutionId]" class="dropdown-item text-success"
               target="_blank">Teilnehmeransicht öffnen</a></li>
           <li role="menuitem"><a class="dropdown-item" href="#">Freigabe</a></li>
-          <li role="menuitem"><a class="dropdown-item" (click)="conferenceConnectionModal.show();">An Konferenz
+          <li role="menuitem"><a class="dropdown-item" (click)="openModal(conferenceConnectionModal);">An Konferenz
               knüpfen</a></li>
           <li class="divider dropdown-divider"></li>
           <li role="menuitem">
@@ -78,12 +78,12 @@
     </div>
     <div class="col-lg-4 col-md-12 col-xm-12 col-xs-12">
       <app-munity-box toolbox="true" title="Änderungsanträge">
-        <h4> {{ amendmentInspector.allAmendments.length }} Änderungsanträge gefunden </h4>
+        <h4> {{ amendmentCount }} Änderungsanträge gefunden </h4>
         <!-- Dieser Button soll gewollt oberhalb der Liste sein! -->
-        <button class="btn btn-block btn-success add-button" (click)="openAddAmendmentModal();">Änderungsantrag
+        <button class="btn btn-block btn-success add-button" (click)="openModal(addAmendmentModal)">Änderungsantrag
           hinzufügen</button>
         <div *ngIf="amendmentInspector" class="amendments-area">
-          <div *ngFor="let amendment of amendmentInspector.allAmendments">
+          <div *ngFor="let amendment of amendmentsInOrder">
             <app-amendment-controller [amendment]="amendment" [resolution]="model"></app-amendment-controller>
           </div>
         </div>
@@ -99,104 +99,99 @@
 
 <!-- Amendment Create Modal -->
 <!-- TODO: replace with ngx-bootstrap modal -->
-<div class="modal-backdrop fade-in" style="opacity: 0.9;" [style.display]="amendmentModalActive ? 'block' : 'none'">
-</div>
-<div class="modal" [style.display]="amendmentModalActive ? 'block' : 'none'" tabindex="-1" role="dialog" *ngIf="model">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Änderungsantrag hinzufügen</h5>
-        <button type="button" class="close" (click)="closeAddAmendmentModal();" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form class="form-horizontal">
-          <fieldset>
-
-            <!-- Select Basic -->
-            <div class="form-group">
-              <div class="row">
-                <label class="col-12 control-label" for="selecttype">Art</label>
-                <div class="col-12">
-                  <select id="selectbasic" name="selecttype" class="form-control"
-                    (change)="addAmendmentTypeSelected($event.target.value)">
-                    <option value="delete" [selected]>Streichen</option>
-                    <option value="change">Ändern</option>
-                    <option value="move">Verschieben</option>
-                    <option value="add">Hinzufügen</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Einbringer-->
-              <div class="row">
-                <label class="control-label">Einbringer</label>
-                <div class="col-12">
-                  <input [(ngModel)]="newamendmentDelegation" [typeahead]="allDelegations" class="form-control"
-                    [ngModelOptions]="{standalone: true}" />
-                </div>
-              </div>
-
-              <!-- Ziel Operativer Absatz -->
-              <div class="row"
-                *ngIf="addAmendmentType === 'delete' || addAmendmentType === 'change' || addAmendmentType === 'move'">
-                <label class="col-12 control-label" for="selecttarget">Ziel</label>
-                <div class="col-12">
-                  <select #selectTarget name="selecttarget" class="form-control" [(ngModel)]="amendmentTargetSection"
-                    (change)="addAmendmentTargetSelected($event)">
-                    <option *ngFor="let s of model.OperativeSections" [ngValue]="s">{{ s.Path }}
-                      {{ s.Text | slice:0:20 }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Neue Position -->
-              <div class="row" *ngIf="addAmendmentType === 'move' || addAmendmentType === 'add'">
-                <div class="col-12">
-                  <label class="control-label" for="selectTargetPosition">Zielposition </label>
-                  <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover"
-                    data-placement="right" data-content="Nimmt die Position der Auswahl ein.">
-                    ?
-                  </button>
-                </div>
-                <div class="col-12">
-                  <select #selectTargetPosition name="selectTargetPosition" class="form-control"
-                    [(ngModel)]="amendmentTargetPosition" (change)="addAmendmentTargetPositionSelected($event)">
-                    <option *ngFor="let oa of model.OperativeSections; let i = index" [ngValue]="i">
-                      {{ oa.Path }}
-                    </option>
-                    <option [ngValue]="endIndex">Ans Ende</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Neuer Text -->
-              <div class="row" *ngIf="addAmendmentType === 'change' || addAmendmentType === 'add'">
-                <label class="col-12 control-label" for="textarea">Neuer Text</label>
-                <div class="col-12">
-                  <textarea class="form-control" cols="4" name="newAmendmentNewTextTextArea" style="min-width: 100%"
-                    [(ngModel)]="newAmendmentNewText"></textarea>
-                </div>
-              </div>
-            </div>
-
-          </fieldset>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal"
-          (click)="closeAddAmendmentModal();">Close</button>
-        <button type="button" class="btn btn-primary" (click)="createNewAmendment();">Hinzufügen</button>
-
-      </div>
-    </div>
+<ng-template #addAmendmentModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Änderungsantrag hinzufügen</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
-</div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+      <fieldset>
 
-<div bsModal #documentHeaderModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
-  aria-labelledby="dialog-sizes-name1">
+        <!-- Select Basic -->
+        <div class="form-group">
+          <div class="row">
+            <label class="col-12 control-label" for="selecttype">Art</label>
+            <div class="col-12">
+              <select id="selectbasic" name="selecttype" class="form-control"
+                (change)="addAmendmentTypeSelected($event.target.value)">
+                <option value="delete" [selected]>Streichen</option>
+                <option value="change">Ändern</option>
+                <option value="move">Verschieben</option>
+                <option value="add">Hinzufügen</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Einbringer-->
+          <div class="row">
+            <label class="control-label">Einbringer</label>
+            <div class="col-12">
+              <input [(ngModel)]="newamendmentDelegation" [typeahead]="allDelegations" class="form-control"
+                [ngModelOptions]="{standalone: true}" />
+            </div>
+          </div>
+
+          <!-- Ziel Operativer Absatz -->
+          <div class="row"
+            *ngIf="addAmendmentType === 'delete' || addAmendmentType === 'change' || addAmendmentType === 'move'">
+            <label class="col-12 control-label" for="selecttarget">Ziel</label>
+            <div class="col-12">
+              <select #selectTarget name="selecttarget" class="form-control" [(ngModel)]="amendmentTargetSection"
+                (change)="addAmendmentTargetSelected($event)"
+                *ngIf="model.operativeSection != null && model.operativeSection.paragraphs != null">
+                <option *ngFor="let s of model.operativeSection.paragraphs" [ngValue]="s">
+                  {{ s.text | slice:0:40 }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Neue Position -->
+          <div class="row" *ngIf="addAmendmentType === 'move' || addAmendmentType === 'add'">
+            <div class="col-12">
+              <label class="control-label" for="selectTargetPosition">Zielposition </label>
+              <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover"
+                data-placement="right" data-content="Nimmt die Position der Auswahl ein.">
+                ?
+              </button>
+            </div>
+            <div class="col-12">
+              <select #selectTargetPosition name="selectTargetPosition" class="form-control"
+                *ngIf="model.operativeSection != null && model.operativeSection.paragraphs.length > 0"
+                [(ngModel)]="amendmentTargetPosition" (change)="addAmendmentTargetPositionSelected($event)">
+                <option *ngFor="let oa of model.operativeSection.paragraphs">
+                  <!--  [ngValue]="oa.operativeParagraphId" -->
+                  {{ oa.text }}
+                </option>
+                <option [ngValue]="endIndex">Ans Ende</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Neuer Text -->
+          <div class="row" *ngIf="addAmendmentType === 'change' || addAmendmentType === 'add'">
+            <label class="col-12 control-label" for="textarea">Neuer Text</label>
+            <div class="col-12">
+              <textarea class="form-control" cols="4" name="newAmendmentNewTextTextArea" style="min-width: 100%"
+                [(ngModel)]="newAmendmentNewText"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </fieldset>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="modalRef.hide();">Close</button>
+    <button type="button" class="btn btn-primary" (click)="createNewAmendment();">Hinzufügen</button>
+
+  </div>
+</ng-template>
+
+<ng-template #documentHeaderModal>
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -210,11 +205,10 @@
       </div>
     </div>
   </div>
-</div>
+</ng-template>
 
 <!-- Resolution mit Konferenz verknüpfen -->
-<div bsModal #conferenceConnectionModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
-  aria-labelledby="dialog-sizes-name1">
+<ng-template #conferenceConnectionModal>
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -245,4 +239,4 @@
       </div>
     </div>
   </div>
-</div>
+</ng-template>

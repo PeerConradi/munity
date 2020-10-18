@@ -16,8 +16,7 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class SpeakerlistController : ControllerBase
     {
-
-        IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> _hubContext;
+        readonly IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> _hubContext;
 
         public SpeakerlistController(IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> hubContext)
         {
@@ -27,21 +26,16 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Creates a new Speakerlist and returns it.
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="conferenceid"></param>
         /// <param name="committeeid"></param>
-        /// <param name="authService"></param>
         /// <param name="speakerlistService"></param>
-        /// <param name="conferenceSerivce"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<SpeakerlistModel> CreateSpeakerlist([FromHeader]string auth,
+        public ActionResult<SpeakerlistModel> CreateSpeakerlist(
             [FromHeader]string conferenceid,
             [FromHeader]string committeeid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService,
-            [FromServices]ConferenceService conferenceSerivce)
+            [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.CreateSpeakerlist();
             speakerlist.ConferenceId = conferenceid;
@@ -377,15 +371,12 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Starts the Answer Timer for the speaker.
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
-        /// <param name="authService"></param>
         /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult StartAnswer([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]IAuthService authService,
+        public IActionResult StartAnswer([FromHeader]string listid,
             [FromServices]SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);

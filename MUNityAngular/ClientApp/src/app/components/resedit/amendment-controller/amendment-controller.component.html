@@ -17,13 +17,13 @@
   <p *ngIf="!paragraph && amendment.type !== 'add'">Finde den Operativen Absatz nicht o.O</p>
 
   <p *ngIf="amendment.submitTime"><b>Zeit: </b> {{ amendment.submitTime | date:'dd.MM.yyyy HH:mm:ss' }}</p>
-  <p *ngIf="paragraph && amendment.type !== 'add'"><b>Ziel: </b> </p>
-  <p *ngIf="amendment.type === 'add'"><b>Ziel-Position: </b> {{ amendment.targetPosition }}</p>
+  <p *ngIf="paragraph && amendment.type !== 'add'"><b>Ziel: </b> {{ amendment.targetSectionId }} </p>
+  <p *ngIf="amendment.type === 'add'"><b>Ziel-Position: </b> {{ amendment.targetSectionId }}</p>
   <p *ngIf="amendment"><b>Einbringer: </b> {{ amendment.submitterName }}</p>
   <label class="cb-container">
     Anzeigen
 
-    <input *ngIf="amendment.activated !== null" type="checkbox" [checked]="amendment.activated"
+    <input *ngIf="amendment.activated !== null" type="checkbox" [(ngModel)]="amendment.activated"
       (change)="activeChanged($event)">
     <span class="checkmark"></span>
   </label>

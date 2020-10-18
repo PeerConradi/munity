@@ -93,7 +93,8 @@
   <div class="form-group paragraph-textarea">
     <textarea class="form-control" #operativeTextArea id="operativeTextArea" rows="5"
       [disabled]="paragraph.isVirtual === true" (keyup)="onKey($event)" maxlength="4000"
-      [class.is-valid]="saveState === 'S'" [class.is-invalid]="saveState === 'E'">{{ paragraph.text }}</textarea>
+      [class.is-valid]="saveState === 'S'" [class.is-invalid]="saveState === 'E'" (blur)="textAreaBlur()"
+      (focus)="textAreaFocus()">{{ paragraph.text }}</textarea>
     <div *ngIf="saveState === 'E'" class="invalid-feedback">
       Speichern fehlgeschlagen, Anlauf {{ saveRequestCount }}
     </div>

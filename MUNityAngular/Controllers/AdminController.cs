@@ -25,9 +25,9 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private Services.AuthService _authService;
+        private readonly Services.AuthService _authService;
 
-        private Services.UserService _userService;
+        private readonly Services.UserService _userService;
 
         [Route("[action]")]
         [HttpGet]

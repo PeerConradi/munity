@@ -65,6 +65,7 @@
   <ItemGroup>
     <Folder Include="ClientApp\src\app\components\resedit\" />
     <Folder Include="ClientApp\src\app\shared\" />
+    <Folder Include="Models\Cache\" />
   </ItemGroup>
 
   <ItemGroup>

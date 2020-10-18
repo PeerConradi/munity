@@ -61,8 +61,8 @@ export class OperativeParagraphComponent implements OnInit {
   async saveChanges() {
     this.waitToSave = true;
     await this.delay(3000);
-    //Wait for a few seconds before trying to save
-    this.service.changeOperativeParagraph(this.paragraph).subscribe(n => {
+
+    this.service.savePublicResolution(this.resolution).subscribe(n => {
       this.saveState = 'S';
       this.waitToSave = false;
     },
@@ -72,6 +72,18 @@ export class OperativeParagraphComponent implements OnInit {
         // try to save again
         this.saveChanges();
       });
+
+    //Wait for a few seconds before trying to save
+    // this.service.changeOperativeParagraph(this.paragraph).subscribe(n => {
+    //   this.saveState = 'S';
+    //   this.waitToSave = false;
+    // },
+    //   err => {
+    //     this.saveState = 'E';
+    //     this.saveRequestCount++;
+    //     // try to save again
+    //     this.saveChanges();
+    //   });
   }
 
   delay(ms: number) {
@@ -167,5 +179,13 @@ export class OperativeParagraphComponent implements OnInit {
   moveStopped(val: WindowPosition) {
     this.noticeWindowLeft = val.Left;
     this.noticeWindowTop = val.Top;
+  }
+
+  textAreaBlur() {
+    this.service.currentOperativeParagraph = null;
+  }
+
+  textAreaFocus() {
+    this.service.currentOperativeParagraph = this.paragraph;
   }
 }

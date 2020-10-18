@@ -40,14 +40,17 @@ export class AmendmentControllerComponent implements OnInit {
   }
 
   get paragraph(): OperativeParagraph {
-    return AmendmentInspector.getSectionForAmendment(this.resolution, this.amendment);
+    return this.resolution.operativeSection.paragraphs.find(n => n.operativeParagraphId == this.amendment.targetSectionId);
   }
 
   activeChanged(val) {
+    //this.amendment.activated = val;
+    this.resolutionService.savePublicResolution(this.resolution).subscribe();
     if (this.amendment.activated) {
-      this.resolutionService.deactivateAmendment(this.resolution.resolutionId, this.amendment.id);
+      //this.resolutionService.savePublicResolution(this.resolution);
+      //this.resolutionService.deactivateAmendment(this.resolution.resolutionId, this.amendment.id);
     } else {
-      this.resolutionService.activateAmendment(this.resolution.resolutionId, this.amendment.id);
+      //this.resolutionService.activateAmendment(this.resolution.resolutionId, this.amendment.id);
     }
 
   }

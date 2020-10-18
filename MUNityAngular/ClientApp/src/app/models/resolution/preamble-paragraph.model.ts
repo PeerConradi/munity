@@ -6,4 +6,6 @@ export class PreambleParagraph {
   text: string;
 
   notices: Notice[] = [];
+
+  differsFromServer: boolean = false;
 }

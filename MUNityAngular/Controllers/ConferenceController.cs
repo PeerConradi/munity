@@ -38,7 +38,6 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Returns all the root information of a conference with the given id.
         /// </summary>
-        /// <param name="service"></param>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
@@ -78,8 +77,6 @@ namespace MUNityAngular.Controllers
         /// <seealso cref="CreateConference"/>
         /// <seealso cref="OrganisationController"/>
         /// </summary>
-        /// <param name="organisationService"></param>
-        /// <param name="conferenceService"></param>
         /// <param name="body"></param>
         /// <returns></returns>
         [HttpPost]
@@ -146,8 +143,6 @@ namespace MUNityAngular.Controllers
         /// <seealso cref="CreateProject"/>
         /// <seealso cref="Conference"/>
         /// </summary>
-        /// <param name="conferenceService"></param>
-        /// <param name="authService"></param>
         /// <param name="body"></param>
         /// <returns></returns>
         [HttpPost]

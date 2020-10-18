@@ -12,7 +12,7 @@ This application is under development and cannot be used at the moment. Please c
 |------|--------|-------|
 | User Managment | ![10%](https://progress-bar.dev/10) | Started |
 | ConferenceManagment | ![21%](https://progress-bar.dev/21) | API Routes needed |
-| ResaEditor | ![23%](https://progress-bar.dev/23) | Complete Rework needed |
+| ResaEditor | ![38%](https://progress-bar.dev/38) | Move And Add Amendment missing. Performance improvments neeeded. |
 | Speakerlist | ![20%](https://progress-bar.dev/20) | Complete Rework in progress |
 | Simulation | ![5%](https://progress-bar.dev/5) | __ON HOLD__ |
 | Administration | ![2%](https://progress-bar.dev/2) | First API Endpoints |

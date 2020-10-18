@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, TemplateRef } from '@angular/core';
+import { Component, OnInit, Input, TemplateRef, ElementRef } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { interval, Subscription, of } from 'rxjs';
 import { ResolutionService } from '../../../services/resolution.service';
@@ -21,6 +21,8 @@ import { PreambleParagraph } from "../../../models/resolution/preamble-paragraph
 import { ResolutionHeader } from 'src/app/models/resolution/resolution-header.model';
 import { Preamble } from 'src/app/models/resolution/preamble.model';
 import { timeStamp } from 'console';
+import { DeleteAmendment } from 'src/app/models/resolution/delete-amendment.model';
+import { ChangeAmendment } from 'src/app/models/resolution/change-amendment.model';
 
 @Component({
   selector: 'app-editor',
@@ -34,6 +36,7 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  modalRef: BsModalRef;
 
   @Input('resolution')
   public set resolution(v: Resolution) {
@@ -42,6 +45,9 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template);
+  }
 
   public amendmentInspector: AmendmentInspector = new AmendmentInspector();
 
@@ -79,11 +85,18 @@ export class EditorComponent implements OnInit {
   isPublic: boolean = false;
 
   constructor(private service: ResolutionService, private route: ActivatedRoute, private notifier: NotifierService,
-    private titleService: Title, private conferenceService: ConferenceService, private userService: UserService, private sanitizer: DomSanitizer) {
+    private titleService: Title, private conferenceService: ConferenceService, private userService: UserService, private modalService: BsModalService) {
     if (this.titleService != null) {
       this.titleService.setTitle('ResaOnline');
     }
 
+  }
+
+  get amendmentCount() {
+    return this.model.operativeSection.deleteAmendments.length +
+      this.model.operativeSection.addAmendments.length +
+      this.model.operativeSection.changeAmendments.length +
+      this.model.operativeSection.moveAmendments.length;
   }
 
   public model: Resolution;
@@ -145,14 +158,6 @@ export class EditorComponent implements OnInit {
     }
   }
 
-  openAddAmendmentModal() {
-    this.amendmentModalActive = true;
-  }
-
-  closeAddAmendmentModal() {
-    this.amendmentModalActive = false;
-  }
-
   addAmendmentTypeSelected(newValue) {
     this.addAmendmentType = newValue;
   }
@@ -175,6 +180,19 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  get amendmentsInOrder(): AbstractAmendment[] {
+    var result: AbstractAmendment[] = [];
+    this.model.operativeSection.paragraphs.forEach(para => {
+      // Delete Amendments
+      var delets = this.model.operativeSection.deleteAmendments.filter(n => n.targetSectionId == para.operativeParagraphId);
+      delets.forEach(n => result.push(n));
+
+      var change = this.model.operativeSection.changeAmendments.filter(n => n.targetSectionId == para.operativeParagraphId);
+      change.forEach(n => result.push(n));
+    });
+    return result;
+  }
+
   addDeleteAmendment() {
     const resolutionid = this.model.resolutionId;
     const sectionid = this.model.operativeSection.paragraphs[0].operativeParagraphId;
@@ -191,9 +209,29 @@ export class EditorComponent implements OnInit {
     const newText: string = this.newAmendmentNewText;
 
     if (type === 'delete') {
-      this.service.addDeleteAmendment(this.model.resolutionId, target.operativeParagraphId, this.newamendmentDelegation).subscribe();
+      let amendment = new DeleteAmendment();
+      amendment.id = this.service.generateId();
+      amendment.targetSectionId = target.operativeParagraphId;
+      amendment.submitterName = this.newamendmentDelegation;
+      amendment.type = 'DeleteAmendment';
+      this.model.operativeSection.deleteAmendments.push(amendment);
+      this.service.savePublicResolution(this.model).subscribe(n => {
+        this.modalRef.hide();
+      });
+
+      //this.service.addDeleteAmendment(this.model.resolutionId, target.operativeParagraphId, this.newamendmentDelegation).subscribe();
     } else if (type === 'change') {
-      this.service.addChangeAmendment(this.model.resolutionId, target.operativeParagraphId, this.newamendmentDelegation, newText).subscribe();
+      let amendment = new ChangeAmendment();
+      amendment.id = this.service.generateId();
+      amendment.targetSectionId = target.operativeParagraphId;
+      amendment.newText = newText;
+      amendment.submitterName = this.newamendmentDelegation;
+      amendment.type = 'ChangeAmendment';
+      this.model.operativeSection.changeAmendments.push(amendment);
+      this.service.savePublicResolution(this.model).subscribe(n => {
+        this.modalRef.hide();
+      });
+      //this.service.addChangeAmendment(this.model.resolutionId, target.operativeParagraphId, this.newamendmentDelegation, newText).subscribe();
     } else if (type === 'move') {
       this.service.addMoveAmendment(this.model.resolutionId, target.operativeParagraphId, this.newamendmentDelegation, this.amendmentTargetPosition).subscribe();
     } else if (type === 'add') {
@@ -205,7 +243,7 @@ export class EditorComponent implements OnInit {
       this.service.addAddAmendment(amendment).subscribe();
     }
 
-    this.amendmentModalActive = false;
+
   }
 
   updateTitle() {
@@ -227,6 +265,7 @@ export class EditorComponent implements OnInit {
 
   conferenceSelected() {
     //console.log(this.selectedConference);
+
   }
 
   createConferenceConnection(committee: Committee) {

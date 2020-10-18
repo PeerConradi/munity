@@ -17,4 +17,6 @@ export class OperativeParagraph {
 
   notices: Notice[] = [];
 
+  // internal for front End
+  differsFromServer: boolean = false;
 }

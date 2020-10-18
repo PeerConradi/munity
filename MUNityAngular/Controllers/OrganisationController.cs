@@ -15,8 +15,8 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class OrganisationController : ControllerBase
     {
-        private IAuthService _authService;
-        private IOrganisationService _organisationService;
+        private readonly IAuthService _authService;
+        private readonly IOrganisationService _organisationService;
 
         [HttpGet]
         [Route("[action]")]
