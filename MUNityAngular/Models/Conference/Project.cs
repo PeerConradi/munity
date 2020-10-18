@@ -32,9 +32,6 @@ namespace MUNityAngular.Models.Conference
         [NotMapped]
         public string ProjectOrganisationId => ProjectOrganisation?.OrganisationId ?? null;
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public List<Conference> Conferences { get; set; }
 
         [IgnoreDataMember]

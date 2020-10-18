@@ -79,6 +79,7 @@ export class UserService {
     this.globalsService.session = null;
     this.currentUser = null;
     this.setSessionkey(null);
+    this.isLoggedIn = false;
   }
 
   public getMe() {
@@ -91,8 +92,12 @@ export class UserService {
     if (this.globalsService.session != null) {
       this.isLoggedIn = true;
       this.getMe().subscribe(n => {
+        if (n == null) {
+          this.setSessionkey(null);
+          this.isLoggedIn = false;
+        }
         this.currentUser = n;
-      })
+      });
     }
   }
 }

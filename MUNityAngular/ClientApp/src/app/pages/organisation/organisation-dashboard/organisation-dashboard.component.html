@@ -1,0 +1,75 @@
+<div *ngIf="organisation">
+    <div class="row">
+        <div class="col-12">
+            <div class="jumbotron">
+                <h1 class="display-4">{{ organisation.organisationName }}</h1>
+                <p class="lead">{{ organisation.organisationAbbreviation }}</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info">Hier könnte eine Akutelle Meldung stehen, die gut für alle Mitglieder sichtbar
+                ist.</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8">
+            <h1 *ngIf="organisation.projects">Projekte ({{ organisation.projects.length }})</h1>
+            <h1 *ngIf="!organisation.projects">Projekte (wird geladen)</h1>
+        </div>
+        <div class="col-4">
+            <button class="btn btn-block btn-secondary" (click)="openModal(newProjectModal)">Neues Projekt</button>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="organisation.projects">
+        <div class="col-6" *ngFor="let project of organisation.projects">
+            <div class="card">
+                <img src="https://www.mun-sh.de/tools/files/images/cards/munsh-generalversammlung1.jpg"
+                    class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.projectName }}</h5>
+                    <p class="card-text">Die Konferenz im Norden</p>
+                    <a href="#" class="btn btn-primary btn-block">Konferenzen anzeigen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" *ngIf="!organisation">
+    <div class="col-12">
+        <div class="alert alert-danger">Keine Organisation geladen</div>
+    </div>
+</div>
+
+<ng-template #newProjectModal>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Projekt hinzufügen</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="newProjectForm" (ngSubmit)="createProject(newProjectForm.value)">
+            <div class="form-group">
+                <label for="inputNewProjectName">Projektname</label>
+                <input type="text" #inputNewProjectName class="form-control" formControlName="name">
+                <small class="text-muted">Der Name des Projekts. Dies ist nicht der Konferenz Name.</small>
+            </div>
+            <div class="form-group">
+                <label for="inputNewProjectShort">Projekt Kürzel</label>
+                <input type="text" #inputNewProjectShort class="form-control" formControlName="short">
+                <small class="text-muted">Ein Maximal 16 Zeichen langes Kürzel für das Porjekt.</small>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Projekt erstellen</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

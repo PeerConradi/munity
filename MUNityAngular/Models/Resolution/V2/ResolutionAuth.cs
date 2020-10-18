@@ -24,9 +24,7 @@ namespace MUNityAngular.Models.Resolution.V2
 
         public DateTime LastChangeTime { get; set; }
 
-        public List<ResolutionUser> AllowedEditors { get; set; }
-
-        public List<ResolutionUser> AllowedSpectators { get; set; }
+        public List<ResolutionUser> Users { get; set; }
 
         public bool AllowPublicRead { get; set; }
 
@@ -38,9 +36,14 @@ namespace MUNityAngular.Models.Resolution.V2
 
         public string PublicShortKey { get; set; }
 
-
+        /// <summary>
+        /// Links to a MUN Core Conference
+        /// </summary>
         public string ConferenceId { get; set; }
 
+        /// <summary>
+        /// Links to a MUN Core Committee
+        /// </summary>
         public string CommitteeId { get; set; }
 
 

@@ -111,23 +111,25 @@ export class EditorComponent implements OnInit {
           this.model = n;
           this.isLoading = false;
           console.log(this.model);
-          //this.service.subscribeToResolution(this.model.resolutionId);
-          //this.service.addResolutionListener(this.model, this.amendmentInspector);
-          //this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
+          this.service.subscribeToResolution(this.model.resolutionId);
+          this.service.addResolutionListener(this.model, this.amendmentInspector);
+          this.amendmentInspector.allAmendments = this.service.OrderAmendments(this.model);
         });
 
       }
     }
 
-    this.conferenceService.getAllDelegations().subscribe(n => {
-      n.forEach(d => {
-        this.allDelegations.push(d.name);
-      });
-    });
+    this.allDelegations = [];
+    this.userConferences = [];
+    // this.conferenceService.getAllDelegations().subscribe(n => {
+    //   n.forEach(d => {
+    //     this.allDelegations.push(d.name);
+    //   });
+    // });
 
-    this.conferenceService.getAllConferences().subscribe(n => {
-      this.userConferences = n;
-    });
+    // this.conferenceService.getAllConferences().subscribe(n => {
+    //   this.userConferences = n;
+    // });
   }
 
   pushResolution() {

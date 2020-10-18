@@ -17,5 +17,9 @@ import { NavMenuComponent } from "../nav-menu/nav-menu.component";
     ],
     exports: [
         FooterComponent,
-        NavMenuComponent]
+        NavMenuComponent,
+        RouterModule,
+        CommonModule
+    ],
+
 }) export class MunityDefaultsModule { }

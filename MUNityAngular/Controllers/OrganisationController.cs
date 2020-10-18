@@ -27,8 +27,6 @@ namespace MUNityAngular.Controllers
 
         [HttpPost]
         [Route("[action]")]
-
-        // While in Testing phase you dont need to be logged in to create an Organisation!
         [Authorize]
         public ActionResult<Organisation> CreateOrganisation([FromServices] IOrganisationService service,
             [FromServices]IAuthService authService,
@@ -37,7 +35,7 @@ namespace MUNityAngular.Controllers
             // TODO: Needs to check of the user is allowed to create an organisation
             var user = authService.GetUserOfClaimPrincipal(User);
             if (user == null)
-                Forbid("You are not allowed to create an organisation!");
+                return Forbid();
 
             var organisation = service.CreateOrganisation(body.OrganisationName, body.Abbreviation);
 

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using MUNityAngular.Models.Core;
 using MUNityAngular.Models.Resolution;
 using MUNityAngular.Models.Resolution.V2;
+using MUNityAngular.Schema.Request.Authentication;
+using MUNityAngular.Schema.Response.Authentication;
 
 namespace MUNityAngular.Services
 {
@@ -15,5 +17,6 @@ namespace MUNityAngular.Services
 
         public User GetUserOfClaimPrincipal(ClaimsPrincipal principal);
 
+        AuthenticationResponse Authenticate(AuthenticateRequest model);
     }
 }

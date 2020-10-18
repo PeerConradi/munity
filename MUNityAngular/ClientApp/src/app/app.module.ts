@@ -63,6 +63,7 @@ import { StepsToConferenceComponent } from './components/conference/steps-to-con
 
 import { NgWizardModule, NgWizardConfig, THEME } from 'ng-wizard';
 import { OrganisationRouting } from './routing/organisation.routing';
+import { OrganisationModule } from './modules/organisation.module';
 
 // making hammer config (3)
 @Injectable()

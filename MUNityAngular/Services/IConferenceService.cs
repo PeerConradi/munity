@@ -14,6 +14,8 @@ namespace MUNityAngular.Services
 
         Task<Project> GetProject(string id);
 
+        Task<Project> GetProjectWithConferences(string id);
+
         Conference CreateConference(string name, string fullname, string abbreviation, Project project);
 
         Task<Conference> GetConference(string id);

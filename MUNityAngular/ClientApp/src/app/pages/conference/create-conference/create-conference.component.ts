@@ -53,15 +53,15 @@ export class CreateConferenceComponent implements OnInit {
     conference.endDate = endDate;
     //this.requested = true;
     //this.info = '';
-    this.service.createConference(conference).subscribe(n => {
-      //this.conferenceCreated = true;
-      this.createdConference = n;
-      this.router.navigateByUrl('/mc/overview/' + n.conferenceId);
-    },
-      err => {
-        this.error = true;
-        this.error_msg = err;
-      });
+    // this.service.createConference(conference).subscribe(n => {
+    //   //this.conferenceCreated = true;
+    //   this.createdConference = n;
+    //   this.router.navigateByUrl('/mc/overview/' + n.conferenceId);
+    // },
+    //   err => {
+    //     this.error = true;
+    //     this.error_msg = err;
+    //   });
   }
 
 }

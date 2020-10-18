@@ -53,7 +53,7 @@ export class ResViewComponent implements OnInit {
       //}
 
       if (this.resolutionRouteId != null) {
-        this.service.getResolution(this.resolutionRouteId).subscribe(n => {
+        this.service.getPublicResolution(this.resolutionRouteId).subscribe(n => {
           if (n != null) {
             let readyState = this.service.connectionReady;
             this.resolution = n;

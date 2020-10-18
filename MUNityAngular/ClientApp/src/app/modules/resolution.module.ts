@@ -23,21 +23,24 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { PopoverModule } from 'ngx-bootstrap/popover';
+import { BrowserModule } from '@angular/platform-browser';
+import { BsDropdownModule } from 'ngx-bootstrap';
 
-// TODO
 @NgModule({
     imports: [
         CommonModule,
+        //BrowserModule,
         FormsModule,
         ReactiveFormsModule,
-        //BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+        BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
         MarkdownModule.forRoot(),
         MunityControlsModule,
         MunityDefaultsModule,
         FontAwesomeModule,
         ModalModule,
         TypeaheadModule,
-        PopoverModule
+        PopoverModule,
+        BsDropdownModule
     ],
     declarations: [
         ResViewComponent,

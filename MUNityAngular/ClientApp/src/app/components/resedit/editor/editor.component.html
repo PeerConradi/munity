@@ -61,7 +61,7 @@
     <div class="col-lg-8 col-md-12">
       <app-munity-box toolbox="true" title="Präambel">
         <div *ngFor="let pp of model.preamble.paragraphs; let i = index" [attr.data-index]="i">
-          <app-preamble-paragraph [paragraph]=pp [index]=i+1 [resolutionid]=model.resolutionId></app-preamble-paragraph>
+          <app-preamble-paragraph [paragraph]=pp [index]=i+1 [resolution]=model></app-preamble-paragraph>
         </div>
         <button class="btn btn-block btn-success add-button" (click)="addPreambleParagraph()">Paragraphen
           hinzufügen</button>

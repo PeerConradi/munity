@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject, ElementRef } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -33,7 +33,13 @@ export class ResolutionService {
 
   public hasError: boolean = false;
 
-  //public resolution: Resolution;
+  public currentResolution: Resolution;
+
+  public currentPreambleParagraph: PreambleParagraph = null;
+
+  public currentOperativeParagraph: OperativeParagraph = null;
+
+  public currentParagraphTextArea: ElementRef = null;
 
   public orderedAmendments: AbstractAmendment[] = [];
 
@@ -94,9 +100,57 @@ export class ResolutionService {
   //SignalR Part
   public addResolutionListener = (model: Resolution, inspector: AmendmentInspector) => {
     this._hubConnection.on('ResolutionChanged', (resolution: Resolution) => {
-      model.header = resolution.header;
-      model.operativeSection = resolution.operativeSection;
-      model.preamble = resolution.preamble;
+      console.log('Update erhalten:');
+      console.log(resolution);
+      // Nothing to do if thats not the subscribed resolution!
+      if (resolution.resolutionId !== model.resolutionId)
+        return;
+
+      if (resolution.header != null && model.header != null) {
+        if (resolution.header.agendaItem !== model.header.agendaItem) model.header.agendaItem = resolution.header.agendaItem;
+        if (resolution.header.committeeName !== model.header.committeeName) model.header.committeeName = resolution.header.committeeName;
+        if (resolution.header.fullName !== model.header.fullName) model.header.fullName = resolution.header.fullName;
+        if (resolution.header.name !== model.header.name) model.header.name = resolution.header.name;
+        if (resolution.header.session !== model.header.session) model.header.session = resolution.header.session;
+        if (resolution.header.submitterName !== model.header.submitterName) model.header.submitterName = resolution.header.submitterName;
+        if (resolution.header.topic !== model.header.topic) model.header.topic = resolution.header.topic;
+        model.header.supporters = resolution.header.supporters;
+      }
+
+      // When one is added or removed change update everything
+      if (resolution.preamble.paragraphs.length !== model.preamble.paragraphs.length) {
+        model.preamble.paragraphs = resolution.preamble.paragraphs;
+      }
+      else {
+        // Maybe only the text of one has changed. Update if different
+        resolution.preamble.paragraphs.forEach(n => {
+          var modelPart = model.preamble.paragraphs.find(a => a.preambleParagraphId == n.preambleParagraphId);
+          if (modelPart != null) {
+            if (this.currentPreambleParagraph != null) {
+              if (this.currentPreambleParagraph.preambleParagraphId == modelPart.preambleParagraphId) {
+                console.log('Hier darf ich nicht überschreiben!')
+              } else {
+                if (modelPart.text != n.text) modelPart.text = n.text;
+              }
+            }
+            else {
+              // If the user is not editing anything you can feel free to overwrite everything!
+              if (modelPart.text != n.text) modelPart.text = n.text;
+            }
+          }
+          // if the else branch is reached here the model is not up to date and the
+          // page should be reloaded!
+        });
+
+      }
+
+      // if (resolution.resolutionId === model.resolutionId) {
+
+
+      //   if (resolution.operativeSection != null)
+      //     model.operativeSection = resolution.operativeSection;
+      //   model.date = resolution.date;
+      // }
     });
 
     this._hubConnection.on('PreambleParagraphAdded', (position: number, id: string, text: string) => {
@@ -256,7 +310,6 @@ export class ResolutionService {
 
       inspector.allAmendments = this.OrderAmendments(model);
     });
-
   }
 
   public findAmendment(resolution: Resolution, amendmentid: string): AbstractAmendment {

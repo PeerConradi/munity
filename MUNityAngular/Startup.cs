@@ -89,9 +89,6 @@ namespace MUNityAngular
             {
                 options.MaximumReceiveMessageSize = 68000;
                 options.ClientTimeoutInterval = new System.TimeSpan(2,0,0);
-            }).AddJsonProtocol(options => {
-                //this should also be removed later!
-                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
             });
 
             var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
@@ -111,6 +108,9 @@ namespace MUNityAngular
                     mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 }));
 
+            
+             
+
             // Add MongoDb Database
             services.Configure<MunityMongoDatabaseSettings>(Configuration.GetSection(nameof(MunityMongoDatabaseSettings)));
             services.AddSingleton<IMunityMongoDatabaseSettings>(sp =>
@@ -124,7 +124,6 @@ namespace MUNityAngular
             services.AddScoped<Services.IAuthService, Services.AuthService>();
             services.AddScoped<Services.IUserService, Services.UserService>();
             services.AddScoped<Services.IOrganisationService, Services.OrganisationService>();
-            services.AddScoped<Services.ResolutionService>();
             services.AddScoped<Services.PresenceService>();
             services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
             services.AddScoped<Services.IResolutionService, Services.NewResolutionService>();
@@ -158,14 +157,10 @@ namespace MUNityAngular
                 app.UseHsts();
             }
 
-            
-
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-
-            
 
             app.UseCors("CorsPolicy");
 
@@ -176,7 +171,7 @@ namespace MUNityAngular
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
             });
 
             app.UseHttpsRedirection();
@@ -201,7 +196,6 @@ namespace MUNityAngular
                 endpoints.MapHub<Hubs.SimulationHub>("/simsocket");
             });
 
-
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
@@ -214,6 +208,21 @@ namespace MUNityAngular
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+            // Check the Database connection
+            //using (var serviceScrop = app.ApplicationServices
+            //    .GetRequiredService<IServiceScopeFactory>().CreateScope())
+            //{
+            //    using (var munityContext = serviceScrop.ServiceProvider.GetService<MunityContext>())
+            //    {
+            //        if (!munityContext.Database.CanConnect())
+            //        {
+            //            Console.WriteLine("Unable to connect to the Munity Database. " + munityContext.Database.ProviderName);
+            //            Console.WriteLine("Application shuts down!");
+            //            Environment.Exit(-1);
+            //        }
+            //    }
+            //}
 
             try
             {
@@ -245,5 +254,7 @@ namespace MUNityAngular
                 }
             }
         }
+
+        
     }
 }

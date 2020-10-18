@@ -5,6 +5,7 @@ import { Notice } from '../../../models/notice.model';
 import { NoticeTag } from '../../../models/notice-tag.model';
 import { WindowPosition } from '../../../models/window-position.model';
 import { UserService } from '../../../services/user.service';
+import { Resolution } from 'src/app/models/resolution/resolution.model';
 
 @Component({
   selector: 'app-preamble-paragraph',
@@ -15,7 +16,7 @@ export class PreambleParagraphComponent implements OnInit {
 
   @Input() paragraph: PreambleParagraph;
 
-  @Input() resolutionid: string;
+  @Input() resolution: Resolution;
 
   @Input() index: number;
 
@@ -50,7 +51,8 @@ export class PreambleParagraphComponent implements OnInit {
     this.waitToSave = true;
     await this.delay(3000);
     //Wait for a few seconds before trying to save
-    this.service.changePreambleParagraph(this.paragraph).subscribe(n => {
+
+    this.service.savePublicResolution(this.resolution).subscribe(n => {
       this.saveState = 'S';
       this.waitToSave = false;
     },
@@ -60,6 +62,17 @@ export class PreambleParagraphComponent implements OnInit {
         // try to save again
         this.saveChanges();
       });
+
+    // this.service.changePreambleParagraph(this.paragraph).subscribe(n => {
+    //   this.saveState = 'S';
+    //   this.waitToSave = false;
+    // },
+    //   err => {
+    //     this.saveState = 'E';
+    //     this.saveRequestCount++;
+    //     // try to save again
+    //     this.saveChanges();
+    //   });
   }
 
   delay(ms: number) {
@@ -70,15 +83,15 @@ export class PreambleParagraphComponent implements OnInit {
   }
 
   delete() {
-    this.service.removePrembleParagraph(this.resolutionid, this.paragraph.preambleParagraphId);
+    this.service.removePrembleParagraph(this.resolution.resolutionId, this.paragraph.preambleParagraphId);
   }
 
   moveUp() {
-    this.service.movePrembleParagraphUp(this.resolutionid, this.paragraph.preambleParagraphId);
+    this.service.movePrembleParagraphUp(this.resolution.resolutionId, this.paragraph.preambleParagraphId);
   }
 
   moveDown() {
-    this.service.movePrembleParagraphDown(this.resolutionid, this.paragraph.preambleParagraphId);
+    this.service.movePrembleParagraphDown(this.resolution.resolutionId, this.paragraph.preambleParagraphId);
   }
 
   showNotices(val) {
@@ -150,5 +163,13 @@ export class PreambleParagraphComponent implements OnInit {
   moveStopped(val: WindowPosition) {
     this.noticeWindowLeft = val.Left;
     this.noticeWindowTop = val.Top;
+  }
+
+  textAreaBlur() {
+    this.service.currentPreambleParagraph = null;
+  }
+
+  textAreaFocus() {
+    this.service.currentPreambleParagraph = this.paragraph;
   }
 }

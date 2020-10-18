@@ -83,7 +83,8 @@
 
   <div class="form-group preamble-textarea">
     <textarea class="form-control" id="preambleTextArea" rows="3" (keyup)="onKey($event)" maxlength="4000"
-      [class.is-valid]="saveState === 'S'" [class.is-invalid]="saveState === 'E'">{{ paragraph.text }}</textarea>
+      [class.is-valid]="saveState === 'S'" [class.is-invalid]="saveState === 'E'" (blur)="textAreadBlur()"
+      (focus)="textAreaFocus()">{{ paragraph.text }}</textarea>
 
   </div>
 </div>

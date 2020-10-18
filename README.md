@@ -11,11 +11,11 @@ This application is under development and cannot be used at the moment. Please c
 | Name | Status | Stage |
 |------|--------|-------|
 | User Managment | ![10%](https://progress-bar.dev/10) | Started |
-| ConferenceManagment | ![20%](https://progress-bar.dev/20) | API Routes needed |
-| ResaEditor | ![19%](https://progress-bar.dev/17) | Complete Rework needed |
+| ConferenceManagment | ![21%](https://progress-bar.dev/21) | API Routes needed |
+| ResaEditor | ![23%](https://progress-bar.dev/23) | Complete Rework needed |
 | Speakerlist | ![20%](https://progress-bar.dev/20) | Complete Rework in progress |
 | Simulation | ![5%](https://progress-bar.dev/5) | __ON HOLD__ |
-| Administration | ![0%](https://progress-bar.dev/0) | __Not started__ |
+| Administration | ![2%](https://progress-bar.dev/2) | First API Endpoints |
 | Dockerize | ![0%](https://progress-bar.dev/0) | __Not started__ |
 
 ## Setup Development Environment
@@ -37,6 +37,6 @@ be found [here](Documentation/installation.md)
 
 ## Swagger
 
-The project uses swagger. Go to localhost:"port"/swagger to see the auto generated API Documentation.
+The project uses swagger. Go to localhost:[port]/swagger to see the auto generated API Documentation.
 
 

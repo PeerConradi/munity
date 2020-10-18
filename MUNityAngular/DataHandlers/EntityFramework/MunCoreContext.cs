@@ -69,6 +69,8 @@ namespace MUNityAngular.DataHandlers.EntityFramework
             modelBuilder.Entity<OrganisationMember>().HasOne(n => n.Organisation)
                 .WithMany(n => n.Member);
 
+            modelBuilder.Entity<OrganisationRole>().HasMany(n => n.MembersWithRole).WithOne(n => n.Role);
+
             modelBuilder.Entity<Project>().HasOne(n => n.ProjectOrganisation)
                 .WithMany(n => n.Projects);
 

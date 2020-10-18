@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityAngular.DataHandlers.EntityFramework;
+using MUNityAngular.Models.Conference;
 using MUNityAngular.Models.Core;
 using MUNityAngular.Models.Organisation;
 
@@ -37,6 +38,31 @@ namespace MUNityAngular.Services
         {
             return _context.Organisations.FirstOrDefaultAsync(n => n.OrganisationId == id);
         }
+
+        public Task<Organisation> GetOrganisationWithMembers(string id)
+        {
+            return _context.Organisations.Include(n => n.Member)
+                .ThenInclude(n => n.User)
+                .FirstOrDefaultAsync(n => n.OrganisationId == id);
+        }
+
+        public Task<Project> GetProjectWithOrganisation(string id)
+        {
+            return _context.Projects
+                .Include(n => n.ProjectOrganisation)
+                .FirstOrDefaultAsync(n => n.ProjectId == id);
+        }
+
+        public bool CanUserCreateProject(string username, string organisationId)
+        {
+            var result = _context.OrganisationMember.Any(n => n.User.Username == username &&
+                                                 n.Organisation.OrganisationId == organisationId &&
+                                                 n.Role.CanCreateProject == true);
+            return result;
+        }
+
+        public IQueryable<Project> GetOrganisationProjects(string organisationId) =>
+            this._context.Projects.Where(n => n.ProjectOrganisation.OrganisationId == organisationId);
 
         public OrganisationRole AddOrganisationRole(Organisation organisation, string rolename, bool canCreateConferences = false)
         {

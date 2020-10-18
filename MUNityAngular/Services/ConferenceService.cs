@@ -30,8 +30,10 @@ namespace MUNityAngular.Services
                 ProjectOrganisation = organisation
             };
 
-            if (!_context.Projects.Any(n => n.ProjectId == abbreviation))
-                project.ProjectId = abbreviation;
+            var idFromShort = Util.Tools.IdGenerator.AsPrimaryKey(abbreviation);
+
+            if (!_context.Projects.Any(n => n.ProjectId == idFromShort))
+                project.ProjectId = idFromShort;
 
             _context.Projects.Add(project);
             _context.SaveChanges();
@@ -41,6 +43,13 @@ namespace MUNityAngular.Services
         public Task<Project> GetProject(string id)
         {
             return _context.Projects.FirstOrDefaultAsync(n => n.ProjectId == id);
+        }
+
+        public Task<Project> GetProjectWithConferences(string id)
+        {
+            return _context.Projects
+                .Include(n => n.Conferences)
+                .FirstOrDefaultAsync(n => n.ProjectId == id);
         }
 
         /// <summary>
@@ -64,6 +73,9 @@ namespace MUNityAngular.Services
             conference.Name = name;
             conference.FullName = fullname;
             conference.Abbreviation = abbreviation;
+            conference.CreationDate = DateTime.Now;
+            conference.StartDate = new DateTime(1980,1,1);
+            conference.EndDate = new DateTime(1980, 1, 4);
             if (!_context.Conferences.Any(n => n.ConferenceId == abbreviation))
                 conference.ConferenceId = abbreviation;
             conference.ConferenceProject = project;

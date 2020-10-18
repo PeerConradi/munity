@@ -66,18 +66,25 @@ namespace MUNityAngular.Models.Conference
         public DateTime CreationDate { get; set; }
 
         [IgnoreDataMember]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Core.User CreationUser { get; set; }
 
         public List<Committee> Committees { get; set; }
 
+
         public List<AbstractRole> Roles { get; set; }
 
         [IgnoreDataMember]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Project ConferenceProject { get; set; }
 
         [NotMapped] public string ConferenceProjectId => ConferenceProject?.ProjectId ?? "";
 
         [IgnoreDataMember]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public EConferenceVisibilityMode Visibility { get; set; }
 
         [Timestamp]

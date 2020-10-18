@@ -13,6 +13,7 @@ import { User } from '../models/user.model';
 import { UserConferenceRole } from '../models/user-conference-role.model';
 import { CommitteeStatus } from '../models/conference/committee-status.model';
 import * as r from '../models/conference/roles';
+import { Project } from '../models/conference/project.model';
 
 // Some day this thing should be renamed into ConferenceService!
 @Injectable({
@@ -44,8 +45,27 @@ export class ConferenceService {
     return this.http.get<Conference[]>(this.baseUrl + 'api/conference/GetConferences');
   }
 
-  public createConference(conference: Conference): Observable<Conference> {
-    return this.http.post<Conference>(this.baseUrl + 'api/Conference/Create', conference);
+  public createProject(organisationId: string, name: string, short: string) {
+    let body = {
+      organisationId: organisationId,
+      name: name,
+      abbreviation: short
+    };
+    return this.http.post<Project>(this.baseUrl + 'api/Conference/CreateProject', body);
+  }
+
+  public createConference(projectId: string, name: string, fullName: string, short: string, startDate: Date, endDate: Date) {
+    let body: any = {
+      projectId: projectId,
+      name: name,
+      fullName: fullName,
+      abbreviation: short,
+      startDate: startDate.toDateString(),
+      endDate: endDate.toDateString()
+    }
+    console.log('Body:');
+    console.log(body);
+    return this.http.post<Conference>(this.baseUrl + 'api/Conference/CreateConference', body);
   }
 
   public getConference(id: string) {

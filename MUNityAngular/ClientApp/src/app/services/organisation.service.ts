@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Organisation } from '../models/orgnaisation.model';
 import { UserService } from './user.service';
 import { CreateOrganisationRequest } from '../models/requests/organisationRequests';
+import { Project } from '../models/conference/project.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,14 @@ export class OrganisationService {
   public createOrganisation(name: string, abbreviation: string) {
     let body = new CreateOrganisationRequest(name, abbreviation);
     return this.http.post<Organisation>(this.baseUrl + 'api/Organisation/CreateOrganisation', body);
+  }
+
+  public getProjectsOfOrganisation(id: string) {
+    return this.http.get<Project[]>(this.baseUrl + 'api/Conference/GetOrganisationProjects?organisationId=' + id);
+  }
+
+  public getProjectWithConferences(id: string) {
+    return this.http.get<Project>(this.baseUrl + 'api/Conference/GetProjectWithConferences?id=' + id);
   }
 
   public getOrganisationsOfUser(username: string) {

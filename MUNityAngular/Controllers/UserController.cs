@@ -33,7 +33,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public async Task<IUserInformation> GetUser([FromServices]UserService userService, string username)
+        public async Task<IUserInformation> GetUser([FromServices]IUserService userService, string username)
         {
             return await userService.GetUserByUsername(username);
         }
@@ -64,7 +64,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public AuthenticationResponse Login([FromServices] AuthService authService, [FromBody]AuthenticateRequest request)
+        public AuthenticationResponse Login([FromServices]IAuthService authService, [FromBody]AuthenticateRequest request)
         {
             return authService.Authenticate(request);
         }

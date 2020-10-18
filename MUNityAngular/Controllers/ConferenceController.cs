@@ -87,20 +87,15 @@ namespace MUNityAngular.Controllers
         [Authorize]
         public async Task<ActionResult<Project>> CreateProject([FromBody] CreateProjectRequest body)
         {
-            var organisation = await _organisationService.GetOrganisation(body.OrganisationId);
+            var organisation = await _organisationService.GetOrganisationWithMembers(body.OrganisationId);
             if (organisation == null)
                 return NotFound("Not organisation with the given Id was found.");
 
             // Check if the user is allowed to create projects inside
             var username = User.UsernameClaim();
 
-            var orgaUser = organisation.Member.FirstOrDefault(n => n.User.Username == username);
-            if (orgaUser == null)
+            if (!this._organisationService.CanUserCreateProject(username, organisation.OrganisationId))
                 return Forbid();
-
-            if (!orgaUser.Role.CanCreateProject)
-                return Forbid();
-
 
             var project = _conferenceService.CreateProject(body.Name, body.Abbreviation, organisation);
             if (project != null)
@@ -113,6 +108,32 @@ namespace MUNityAngular.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Project>> GetProject(string id)
+        {
+            var result = await this._conferenceService.GetProject(id);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Project>> GetProjectWithConferences(string id)
+        {
+            var result = await this._conferenceService.GetProjectWithConferences(id);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public ActionResult<IEnumerable<Project>> GetOrganisationProjects(string organisationId)
+        {
+            var result = this._organisationService.GetOrganisationProjects(organisationId);
+            return Ok(result);
+        }
 
         /// <summary>
         /// Creates a new empty conference. The Conference has to be part of a project.
@@ -138,7 +159,7 @@ namespace MUNityAngular.Controllers
         public async Task<ActionResult<Conference>> CreateConference(CreateConferenceRequest body)
         {
             // Find the parent Project
-            var project = await _conferenceService.GetProject(body.ProjectId);
+            var project = await _organisationService.GetProjectWithOrganisation(body.ProjectId);
 
             // The parent project does not exist so return 404
             if (project == null)
@@ -146,19 +167,21 @@ namespace MUNityAngular.Controllers
 
             // Find the organisation to check if the user is allowed to create conferences
             var organisation = project.ProjectOrganisation;
-            var username = User.UsernameClaim();
-            var orgaUser = organisation.Member.FirstOrDefault(n => n.User.Username == username);
-            if (orgaUser == null)
-                return Forbid();
-            if (!orgaUser.Role.CanCreateProject)
+            var user = _authService.GetUserOfClaimPrincipal(User);
+
+            if (user == null)
                 return Forbid();
 
-            var user = _authService.GetUserOfClaimPrincipal(User);
+            if (!this._organisationService.CanUserCreateProject(user.Username, organisation.OrganisationId))
+                return Forbid();
 
             var conference = _conferenceService.CreateConference(body.Name, body.FullName, body.Abbreviation, project);
             if (conference != null)
             {
                 
+                // TODO: Set the Start and End Date
+                
+
                 // Create the Leader Role
                 var role = _conferenceService.CreateLeaderRole(conference);
                 if (role == null)

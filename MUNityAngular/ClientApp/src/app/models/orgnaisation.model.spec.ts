@@ -1,7 +1,7 @@
-import { Orgnaisation } from './orgnaisation.model';
+import { Organisation } from './orgnaisation.model';
 
 describe('Orgnaisation', () => {
   it('should create an instance', () => {
-    expect(new Orgnaisation()).toBeTruthy();
+    expect(new Organisation()).toBeTruthy();
   });
 });

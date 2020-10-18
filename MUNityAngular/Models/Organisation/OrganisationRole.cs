@@ -20,6 +20,8 @@ namespace MUNityAngular.Models.Organisation
         [IgnoreDataMember]
         public Organisation Organisation { get; set; }
 
+        public List<OrganisationMember> MembersWithRole { get; set; }
+
         [NotMapped] public string OrganisationId => Organisation?.OrganisationId ?? "";
         
         public bool CanCreateProject { get; set; }

@@ -3,15 +3,18 @@ import { OperativeParagraph } from '../models/resolution/operative-paragraph.mod
 
 import { ResolutionService } from './resolution.service';
 import { UserService } from "./user.service";
+import { GlobalsService } from "./globals.service";
 
 describe('ResolutionService', () => {
   let httpClientSpy: { get: jasmine.Spy };
   let service: ResolutionService;
   let userService: UserService;
+  let globalsService: GlobalsService;
 
   beforeEach(() => {
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
-    userService = new UserService(httpClientSpy as any, '');
+    globalsService = new GlobalsService();
+    userService = new UserService(globalsService, httpClientSpy as any, '');
     service = new ResolutionService(httpClientSpy as any, userService, null, '');
   });
 
