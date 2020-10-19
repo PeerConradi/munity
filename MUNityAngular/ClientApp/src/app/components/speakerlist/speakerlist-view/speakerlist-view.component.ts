@@ -21,14 +21,14 @@ export class SpeakerlistViewComponent implements OnInit {
     console.log(list);
     if (list != null) {
       this._speakerlist = list;
-      if (list.PublicId != null) {
-        this.speakerlistService.subscribeToSpeakerlist(list.PublicId.toString());
+      if (list.publicId != null) {
+        this.speakerlistService.subscribeToSpeakerlist(list.publicId.toString());
         this.speakerlistService.addSpeakerlistListener(this._speakerlist);
       }
-      const sTime = new TimeSpan(list.RemainingSpeakerTime.TotalMilliseconds, 0, 0, 0, 0);
-      this._speakerlist.RemainingSpeakerTime = sTime;
-      const qTime = new TimeSpan(list.RemainingQuestionTime.TotalMilliseconds, 0, 0, 0, 0);
-      this._speakerlist.RemainingQuestionTime = qTime;
+      const sTime = new TimeSpan(list.remainingSpeakerTime.totalMilliseconds, 0, 0, 0, 0);
+      this._speakerlist.remainingSpeakerTime = sTime;
+      const qTime = new TimeSpan(list.remainingQuestionTime.totalMilliseconds, 0, 0, 0, 0);
+      this._speakerlist.remainingQuestionTime = qTime;
     } else {
       this._speakerlist = null;
     }
@@ -38,16 +38,16 @@ export class SpeakerlistViewComponent implements OnInit {
     return this._speakerlist;
   }
 
-  public get RemainingSpeakerTime(): string {
-    if (this.speakerlist == null || this.speakerlist.RemainingSpeakerTime == null)
+  public get remainingSpeakerTime(): string {
+    if (this.speakerlist == null || this.speakerlist.remainingSpeakerTime == null)
       return '--:--';
-    return this.speakerlist.RemainingSpeakerTime.toString();
+    return this.speakerlist.remainingSpeakerTime.toString();
   }
 
-  public get RemainingQuestionTime(): string {
-    if (this.speakerlist == null || this.speakerlist.RemainingQuestionTime == null)
+  public get remainingQuestionTime(): string {
+    if (this.speakerlist == null || this.speakerlist.remainingQuestionTime == null)
       return '--:--';
-    return this.speakerlist.RemainingQuestionTime.toString();
+    return this.speakerlist.remainingQuestionTime.toString();
   }
 
   @Input() sizing: string = "big";
@@ -80,29 +80,29 @@ export class SpeakerlistViewComponent implements OnInit {
       //Status 0: Beide Listen gestoppt
       //Status 1: Redebeitrag
       //Status 2: Frage/Kurzbemerkung
-      if (this.speakerlist != null && this.speakerlist.RemainingSpeakerTime != null && this.speakerlist.RemainingQuestionTime != null)
-        if (this.speakerlist.Status == 1) {
-          this.speakerlist.RemainingSpeakerTime.addSeconds(-1);
-        } else if (this.speakerlist.Status == 2) {
-          this.speakerlist.RemainingQuestionTime.addSeconds(-1);
+      if (this.speakerlist != null && this.speakerlist.remainingSpeakerTime != null && this.speakerlist.remainingQuestionTime != null)
+        if (this.speakerlist.status == 1) {
+          this.speakerlist.remainingSpeakerTime.addSeconds(-1);
+        } else if (this.speakerlist.status == 2) {
+          this.speakerlist.remainingQuestionTime.addSeconds(-1);
         }
     }, 1000);
   }
 
-  // getMediumImage(delegation: Delegation): string {
-  //   if (delegation.type == 'COUNTRY') {
-  //     return '/assets/img/flags/medium/' + delegation.roleShort + '.png';
-  //   }
-  //   //Default Image
-  //   return '/assets/img/flags/medium/un.png';
-  // }
+  getMediumImage(delegation: Delegation): string {
+    // if (delegation.type == 'COUNTRY') {
+    //   return '/assets/img/flags/medium/' + delegation.roleShort + '.png';
+    // }
+    //Default Image
+    return '/assets/img/flags/medium/un.png';
+  }
 
-  // getDelegationImagePath(delegation: Delegation): string {
-  //   if (delegation.type == 'COUNTRY') {
-  //     return '/assets/img/flags/small/' + delegation.roleShort + '.png';
-  //   }
-  //   //Default Image
-  //   return '/assets/img/flags/small/un.png';
-  // }
+  getDelegationImagePath(delegation: Delegation): string {
+    // if (delegation.type == 'COUNTRY') {
+    //   return '/assets/img/flags/small/' + delegation.roleShort + '.png';
+    // }
+    //Default Image
+    return '/assets/img/flags/small/un.png';
+  }
 
 }

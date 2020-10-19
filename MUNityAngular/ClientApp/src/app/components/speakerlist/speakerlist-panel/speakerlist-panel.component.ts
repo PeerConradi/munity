@@ -35,7 +35,7 @@ export class SpeakerlistPanelComponent implements OnInit {
     if (val !== null) {
       const del: Delegation = val.item;
       if (del != null) {
-        this.speakerlistService.addSpeaker(this.speakerlist.ID, del.delegationId).subscribe(n => {
+        this.speakerlistService.addSpeaker(this.speakerlist.id, del.delegationId).subscribe(n => {
           this.addSpeakerSelection = '';
         });
       }
@@ -48,31 +48,31 @@ export class SpeakerlistPanelComponent implements OnInit {
   //}
 
   nextSpeaker() {
-    this.speakerlistService.nextSpeaker(this.speakerlist.ID).subscribe();
+    this.speakerlistService.nextSpeaker(this.speakerlist.id).subscribe();
   }
 
   nextQuestion() {
-    this.speakerlistService.nextQuestion(this.speakerlist.ID).subscribe();
+    this.speakerlistService.nextQuestion(this.speakerlist.id).subscribe();
   }
 
   toggleSpeaker() {
-    if (this.speakerlist.Status == 1) {
-      this.speakerlistService.stopTimer(this.speakerlist.ID).subscribe();
+    if (this.speakerlist.status == 1) {
+      this.speakerlistService.stopTimer(this.speakerlist.id).subscribe();
     } else {
-      this.speakerlistService.startSpeaker(this.speakerlist.ID).subscribe();
+      this.speakerlistService.startSpeaker(this.speakerlist.id).subscribe();
     }
   }
 
   toggleQuestion() {
-    if (this.speakerlist.Status == 2) {
-      this.speakerlistService.stopTimer(this.speakerlist.ID).subscribe();
+    if (this.speakerlist.status == 2) {
+      this.speakerlistService.stopTimer(this.speakerlist.id).subscribe();
     } else {
-      this.speakerlistService.startQuestion(this.speakerlist.ID).subscribe();
+      this.speakerlistService.startQuestion(this.speakerlist.id).subscribe();
     }
   }
 
   clearSpeaker() {
-    this.speakerlistService.clearSpeaker(this.speakerlist.ID).subscribe();
+    this.speakerlistService.clearSpeaker(this.speakerlist.id).subscribe();
   }
 
 }

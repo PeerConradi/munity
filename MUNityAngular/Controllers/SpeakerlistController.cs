@@ -9,6 +9,7 @@ using MUNityAngular.Models;
 using MUNityAngular.Services;
 using MUNityAngular.Util.Extenstions;
 using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityAngular.Models.Conference;
 
 namespace MUNityAngular.Controllers
 {
@@ -16,11 +17,15 @@ namespace MUNityAngular.Controllers
     [ApiController]
     public class SpeakerlistController : ControllerBase
     {
-        readonly IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> _hubContext;
+        private readonly IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> _hubContext;
 
-        public SpeakerlistController(IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> hubContext)
+        private readonly SpeakerlistService _speakerlistService;
+
+        public SpeakerlistController(IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> hubContext,
+            SpeakerlistService speakerlistService)
         {
             this._hubContext = hubContext;
+            this._speakerlistService = speakerlistService;
         }
 
         /// <summary>
@@ -28,16 +33,14 @@ namespace MUNityAngular.Controllers
         /// </summary>
         /// <param name="conferenceid"></param>
         /// <param name="committeeid"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public ActionResult<SpeakerlistModel> CreateSpeakerlist(
             [FromHeader]string conferenceid,
-            [FromHeader]string committeeid,
-            [FromServices]SpeakerlistService speakerlistService)
+            [FromHeader]string committeeid)
         {
-            var speakerlist = speakerlistService.CreateSpeakerlist();
+            var speakerlist = _speakerlistService.CreateSpeakerlist();
             speakerlist.ConferenceId = conferenceid;
             speakerlist.CommitteeId = committeeid;
 
@@ -47,21 +50,16 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Gets a speakerlist
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="id"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<SpeakerlistModel> GetSpeakerlist([FromHeader]string auth, [FromHeader]string id,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public ActionResult<SpeakerlistModel> GetSpeakerlist([FromHeader]string id)
         {
             //var authstate = authService.ValidateAuthKey(auth);
 
             //Is a speakerlist public or not needs to be checked
-            var speakerlist = speakerlistService.GetSpeakerlist(id);
+            var speakerlist = _speakerlistService.GetSpeakerlist(id);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist cannot be found!");
 
@@ -71,21 +69,16 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Gets a speakerlist with the public ResolutionId
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="publicid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<SpeakerlistModel> ReadSpeakerlist([FromHeader]string auth, [FromHeader]string publicid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public ActionResult<SpeakerlistModel> ReadSpeakerlist([FromHeader]string publicid)
         {
             if (int.TryParse(publicid, out int id))
             {
-                var speakerlist = speakerlistService.GetSpeakerlistByPublicId(id);
-                speakerlist.ID = "";
+                var speakerlist = _speakerlistService.GetSpeakerlistByPublicId(id);
+                speakerlist.Id = "";
                 return StatusCode(StatusCodes.Status200OK, speakerlist);
             }
 
@@ -96,17 +89,12 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Subscribes to a speakerlist
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="publicid"></param>
         /// <param name="connectionid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult SubscribeToList([FromHeader]string auth, [FromHeader]string publicid, [FromHeader]string connectionid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult SubscribeToList([FromHeader]string publicid, [FromHeader]string connectionid)
         {
             _hubContext.Groups.AddToGroupAsync(connectionid, "s-list-" + publicid);
             return StatusCode(StatusCodes.Status200OK);
@@ -143,81 +131,81 @@ namespace MUNityAngular.Controllers
         //    return StatusCode(StatusCodes.Status200OK, speakerlist);
         //}
 
-        //[Route("[action]")]
-        //[HttpPost]
-        //public ActionResult<SpeakerlistModel> AddSpeakerModelToList([FromHeader]string auth,
-        //    [FromHeader]string listid, [FromBody]Delegation model, 
-        //    [FromServices]SpeakerlistService speakerlistService)
-        //{
-        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
-        //    if (speakerlist == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-        //    model.DelegationId = Guid.NewGuid().ToString();
-        //    speakerlist.AddSpeaker(model);
-        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-        //    return StatusCode(StatusCodes.Status200OK, speakerlist);
-        //}
+        [Route("[action]")]
+        [HttpPost]
+        public ActionResult<SpeakerlistModel> AddSpeakerModelToList([FromHeader] string auth,
+            [FromHeader] string listid, [FromBody] SpeakerlistModel.Speaker model,
+            [FromServices] SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+            model.Id = Guid.NewGuid().ToString();
+            speakerlist.AddSpeaker(model);
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
+        }
 
-        //[Route("[action]")]
-        //[HttpPatch]
-        //public ActionResult<SpeakerlistModel> SpeakersOrderChanged([FromHeader]string auth,
-        //    [FromHeader]string listid, [FromBody]List<Delegation> model,
-        //    [FromServices]SpeakerlistService speakerlistService)
-        //{
-        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
-        //    if (speakerlist == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        [Route("[action]")]
+        [HttpPatch]
+        public ActionResult<SpeakerlistModel> SpeakersOrderChanged([FromHeader] string auth,
+            [FromHeader] string listid, [FromBody] List<SpeakerlistModel.Speaker> model,
+            [FromServices] SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-        //    model.ForEach(n =>
-        //    {
-        //        if (string.IsNullOrWhiteSpace(n.DelegationId))
-        //        {
-        //            n.DelegationId = Guid.NewGuid().ToString();
-        //        }
-        //    });
-        //    speakerlist.Speakers = model;
-        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-        //    return speakerlist;
-        //}
+            model.ForEach(n =>
+            {
+                if (string.IsNullOrWhiteSpace(n.Id))
+                {
+                    n.Id = Guid.NewGuid().ToString();
+                }
+            });
+            speakerlist.Speakers = model;
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return speakerlist;
+        }
 
-        //[Route("[action]")]
-        //[HttpPatch]
-        //public ActionResult<SpeakerlistModel> QuestionsOrderChanged([FromHeader]string auth,
-        //    [FromHeader]string listid, [FromBody]List<Delegation> model,
-        //    [FromServices]SpeakerlistService speakerlistService)
-        //{
-        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
-        //    if (speakerlist == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+        [Route("[action]")]
+        [HttpPatch]
+        public ActionResult<SpeakerlistModel> QuestionsOrderChanged([FromHeader] string auth,
+            [FromHeader] string listid, [FromBody] List<SpeakerlistModel.Speaker> model,
+            [FromServices] SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-        //    model.ForEach(n =>
-        //    {
-        //        if (string.IsNullOrWhiteSpace(n.DelegationId))
-        //        {
-        //            n.DelegationId = Guid.NewGuid().ToString();
-        //        }
-        //    });
-        //    speakerlist.Questions = model;
-        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-        //    return speakerlist;
-        //}
+            model.ForEach(n =>
+            {
+                if (string.IsNullOrWhiteSpace(n.Id))
+                {
+                    n.Id = Guid.NewGuid().ToString();
+                }
+            });
+            speakerlist.Questions = model;
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return speakerlist;
+        }
 
 
 
-        //[Route("[action]")]
-        //[HttpPost]
-        //public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader]string auth,
-        //    [FromHeader]string listid, [FromBody]Delegation model,
-        //    [FromServices]SpeakerlistService speakerlistService)
-        //{
-        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
-        //    if (speakerlist == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-        //    model.DelegationId = Guid.NewGuid().ToString();
-        //    speakerlist.AddQuestion(model);
-        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-        //    return StatusCode(StatusCodes.Status200OK, speakerlist);
-        //}
+        [Route("[action]")]
+        [HttpPost]
+        public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader] string auth,
+            [FromHeader] string listid, [FromBody] SpeakerlistModel.Speaker model,
+            [FromServices] SpeakerlistService speakerlistService)
+        {
+            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            if (speakerlist == null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+            model.Id = Guid.NewGuid().ToString();
+            speakerlist.AddQuestion(model);
+            this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
+        }
 
         /// <summary>
         /// Adds a Question to the Speakerlist (Question Area)
@@ -230,16 +218,14 @@ namespace MUNityAngular.Controllers
         /// <returns></returns>
         //[Route("[action]")]
         //[HttpPost]
-        //public ActionResult<SpeakerlistModel> AddQuestionToList([FromHeader]string auth,
-        //    [FromHeader]string listid, [FromHeader]string delegationid,
-        //    [FromServices]SpeakerlistService speakerlistService,
-        //    [FromServices]ConferenceService conferenceService)
+        //public ActionResult<SpeakerlistModel> AddQuestionToList(
+        //    [FromHeader] string listid, [FromHeader] string delegationid)
         //{
         //    var delegation = conferenceService.GetDelegation(delegationid);
         //    if (delegation == null)
         //        return StatusCode(StatusCodes.Status404NotFound, "Delegation not found!");
 
-        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
+        //    var speakerlist = _speakerlistService.GetSpeakerlist(listid);
         //    if (speakerlist == null)
         //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -254,20 +240,14 @@ namespace MUNityAngular.Controllers
         /// This function will remove the first entry of the delegationid it will
         /// find.
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
         /// <param name="delegationid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpDelete]
-        public IActionResult RemoveSpeakerFromList([FromHeader]string auth,
-            [FromHeader]string listid, [FromHeader]string delegationid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult RemoveSpeakerFromList([FromHeader]string listid, [FromHeader]string delegationid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -279,18 +259,13 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Will set the next speaker to the list.
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult NextSpeaker([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult NextSpeaker([FromHeader]string listid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -302,18 +277,13 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Starts the Speaking Timer
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult StartSpeaker([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult StartSpeaker([FromHeader]string listid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -325,18 +295,13 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Sets the next question on the list
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult NextQuestion([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult NextQuestion([FromHeader]string listid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -348,18 +313,13 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Starts the Question Timer
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult StartQuestion([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult StartQuestion([FromHeader]string listid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -372,14 +332,12 @@ namespace MUNityAngular.Controllers
         /// Starts the Answer Timer for the speaker.
         /// </summary>
         /// <param name="listid"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult StartAnswer([FromHeader]string listid,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult StartAnswer([FromHeader]string listid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -391,18 +349,13 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Pauses the speaker timer.
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
-        public IActionResult PauseTimer([FromHeader]string auth, [FromHeader]string listid,
-           [FromServices]IAuthService authService,
-           [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult PauseTimer([FromHeader]string listid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -414,19 +367,14 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Changes the maximum timefor each speaker.
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
         /// <param name="time"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
-        public IActionResult SetSpeakertime([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string time,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult SetSpeakertime([FromHeader]string listid, [FromHeader]string time)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -443,19 +391,14 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// changes the maximum time for each question.
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
         /// <param name="time"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
-        public IActionResult SetQuestiontime([FromHeader]string auth, [FromHeader]string listid, [FromHeader]string time,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult SetQuestiontime([FromHeader]string listid, [FromHeader]string time)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -472,18 +415,13 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Clears the current Speaker from the list.
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public IActionResult ClearSpeaker([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult ClearSpeaker([FromHeader]string listid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
@@ -496,18 +434,13 @@ namespace MUNityAngular.Controllers
         /// <summary>
         /// Clears the current Question from the list
         /// </summary>
-        /// <param name="auth"></param>
         /// <param name="listid"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public IActionResult ClearQuestion([FromHeader]string auth, [FromHeader]string listid,
-            [FromServices]IAuthService authService,
-            [FromServices]SpeakerlistService speakerlistService)
+        public IActionResult ClearQuestion([FromHeader]string listid)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 

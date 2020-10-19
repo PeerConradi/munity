@@ -128,11 +128,11 @@ export class SimSimViewComponent implements OnInit {
     if (this._testSim == null) {
       this._testSim = new Simulation();
       this._testSim.Speakerlist = new Speakerlist();
-      this._testSim.Speakerlist.ID = 'testliste';
-      this._testSim.Speakerlist.RemainingQuestionTime = new TimeSpan(0, 30, 0, 0, 0);
-      this._testSim.Speakerlist.RemainingSpeakerTime = new TimeSpan(0, 30, 0, 0, 0);
-      this._testSim.Speakerlist.Questiontime = new TimeSpan(0, 30, 0, 0, 0);
-      this._testSim.Speakerlist.Speakertime = new TimeSpan(0, 30, 0, 0, 0);
+      this._testSim.Speakerlist.id = 'testliste';
+      this._testSim.Speakerlist.remainingQuestionTime = new TimeSpan(0, 30, 0, 0, 0);
+      this._testSim.Speakerlist.remainingSpeakerTime = new TimeSpan(0, 30, 0, 0, 0);
+      this._testSim.Speakerlist.questiontime = new TimeSpan(0, 30, 0, 0, 0);
+      this._testSim.Speakerlist.speakertime = new TimeSpan(0, 30, 0, 0, 0);
       this._testSim.Name = 'Test';
 
       let chairmanOne = new SimulationUser();

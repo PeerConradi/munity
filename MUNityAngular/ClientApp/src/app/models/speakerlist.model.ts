@@ -2,48 +2,57 @@ import { TimeSpan } from "./TimeSpan";
 import { Delegation } from "./conference/delegation.model";
 
 export class Speakerlist {
-  public ID: string;
-  public PublicId: number;
+  public id: string;
+  public publicId: number;
 
-  public Name: string 
+  public name: string
 
-  public Speakertime: TimeSpan = new TimeSpan(0,0,3,0,0);
+  public speakertime: TimeSpan = new TimeSpan(0, 0, 3, 0, 0);
 
-  public Questiontime: TimeSpan = new TimeSpan(0, 30, 0, 0, 0);
+  public questiontime: TimeSpan = new TimeSpan(0, 30, 0, 0, 0);
 
-  public RemainingSpeakerTime: TimeSpan = new TimeSpan(0, 0, 3, 0, 0);
+  public remainingSpeakerTime: TimeSpan = new TimeSpan(0, 0, 3, 0, 0);
 
-  public RemainingQuestionTime: TimeSpan = new TimeSpan(0, 30, 0, 0, 0);
+  public remainingQuestionTime: TimeSpan = new TimeSpan(0, 30, 0, 0, 0);
 
-  public Speakers: Delegation[]; 
+  public speakers: Speaker[];
 
-  public Questions: Delegation[];
+  public questions: Speaker[];
 
-  public CurrentSpeaker: Delegation;
+  public currentSpeaker: Speaker;
 
-  public CurrentQuestion: Delegation;
+  public currentQuestion: Speaker;
 
-  public Status: number;
+  public status: number;
 
-  public IsSpeaking: boolean;
+  public isSpeaking: boolean;
 
-  public IsQuestioning: boolean;
+  public isQuestioning: boolean;
 
-  public ListClosed: boolean;
+  public listClosed: boolean;
 
-  public QuestionsClosed: boolean;
+  public questionsClosed: boolean;
 
-  public LowTimeMark: TimeSpan;
+  public lowTimeMark: TimeSpan;
 
-  public SpeakerLowTime: boolean; 
+  public speakerLowTime: boolean;
 
-  public QuestionLowTime: boolean;
+  public questionLowTime: boolean;
 
-  public SpeakerTimeout: boolean;
+  public speakerTimeout: boolean;
 
-  public QuestionTimeout: boolean;
+  public questionTimeout: boolean;
 
-  public ConferenceId: string;
+  public conferenceId: string;
 
-  public CommitteeId: string;
+  public committeeId: string;
+}
+
+export class Speaker {
+  public id: string;
+
+  public name: string;
+
+  // for an icon
+  public iso: string;
 }

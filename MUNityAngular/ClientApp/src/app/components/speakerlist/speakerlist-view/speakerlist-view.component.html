@@ -9,7 +9,7 @@
     <!-- Aktueller Redner-->
     <div class="col-12">
       <div class="card bg-primary text-white"
-        [class.bg-danger]="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds <= 10">
+        [class.bg-danger]="speakerlist.remainingSpeakerTime && speakerlist.remainingSpeakerTime.totalSeconds <= 10">
         <div class="card-header">
           <h3 *ngIf="sizing=='big'" class="card-title">Aktuell</h3>
           <h5 *ngIf="sizing=='medium'" class="card-title">Aktuell</h5>
@@ -17,32 +17,32 @@
         </div>
         <div *ngIf="sizing=='big'" class="card-body clearfix">
 
-          <h3 class="float-left" *ngIf="speakerlist.CurrentSpeaker float-left">
-            <img [src]="getMediumImage(speakerlist.CurrentSpeaker)" style="height: 50Px" />
-            {{ speakerlist.CurrentSpeaker.Name }}
+          <h3 class="float-left" *ngIf="speakerlist.currentSpeaker float-left">
+            <img [src]="getMediumImage(speakerlist.currentSpeaker)" style="height: 50Px" />
+            {{ speakerlist.currentSpeaker.name }}
           </h3>
 
-          <h3 class="float-left" *ngIf="!speakerlist.CurrentSpeaker">Niemand</h3>
+          <h3 class="float-left" *ngIf="!speakerlist.currentSpeaker">Niemand</h3>
           <h3 class="float-right"
-            *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0">
-            {{ RemainingSpeakerTime }}</h3>
+            *ngIf="speakerlist.remainingSpeakerTime && speakerlist.remainingSpeakerTime.totalSeconds >= 0">
+            {{ remainingSpeakerTime }}</h3>
           <h3 class="float-right"
-            *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds < 0"> Zum Ende
+            *ngIf="speakerlist.remainingSpeakerTime && speakerlist.remainingSpeakerTime.totalSeconds < 0"> Zum Ende
             kommen</h3>
         </div>
 
         <div *ngIf="sizing=='medium'" class="card-body clearfix">
 
-          <h5 class="float-left" *ngIf="speakerlist.CurrentSpeaker float-left">
-            <img [src]="getMediumImage(speakerlist.CurrentSpeaker)" style="height: 50Px" />
-            {{ speakerlist.CurrentSpeaker.Name }}
+          <h5 class="float-left" *ngIf="speakerlist.currentSpeaker float-left">
+            <img [src]="getMediumImage(speakerlist.currentSpeaker)" style="height: 50Px" />
+            {{ speakerlist.currentSpeaker.name }}
           </h5>
-          <h5 class="float-left" *ngIf="!speakerlist.CurrentSpeaker">Niemand</h5>
+          <h5 class="float-left" *ngIf="!speakerlist.currentSpeaker">Niemand</h5>
           <h5 class="float-right"
-            *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0">
-            {{ RemainingSpeakerTime }}</h5>
+            *ngIf="speakerlist.remainingSpeakerTime && speakerlist.remainingSpeakerTime.totalSeconds >= 0">
+            {{ remainingSpeakerTime }}</h5>
           <h5 class="float-right"
-            *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds < 0"> Zum Ende
+            *ngIf="speakerlist.remainingSpeakerTime && speakerlist.remainingSpeakerTime.totalSeconds < 0"> Zum Ende
             kommen</h5>
         </div>
 
@@ -54,11 +54,11 @@
         <div class="card-header">
           <h3 class="card-title">Warteliste</h3>
         </div>
-        <div class="card-body" [class.list-closed]="ListClosed"
+        <div class="card-body" [class.list-closed]="speakerlist.listClosed"
           style="max-height: 300Px; overflow-y: auto;overflow-x: visible;">
 
-          <h4 *ngFor="let delegation of speakerlist.Speakers"><img [src]="getDelegationImagePath(delegation)" />
-            {{ delegation.Name }}</h4>
+          <h4 *ngFor="let speaker of speakerlist.speakers"><img [src]="getDelegationImagePath(delegation)" />
+            {{ speaker.name }}</h4>
         </div>
       </div>
     </div>
@@ -66,22 +66,22 @@
     <!-- Aktueller Frage-->
     <div class="col-12" style="margin-top: 20Px;">
       <div class="card bg-info text-white"
-        [class.bg-danger]="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds <= 10">
+        [class.bg-danger]="speakerlist.remainingQuestionTime && speakerlist.remainingQuestionTime.totalSeconds <= 10">
         <div class="card-header">
           <h3 class="card-title">Aktuell</h3>
         </div>
         <div class="card-body clearfix">
-          <h4 class="float-left" *ngIf="speakerlist.CurrentQuestion">
+          <h4 class="float-left" *ngIf="speakerlist.currentQuestion">
             <!-- <img [src]="getMediumImage(speakerlist.CurrentQuestion)" style="height: 50Px" /> -->
-            {{ speakerlist.CurrentQuestion.Name }}
+            {{ speakerlist.currentQuestion.name }}
           </h4>
-          <h4 class="float-left" *ngIf="!speakerlist.CurrentQuestion">Niemand</h4>
+          <h4 class="float-left" *ngIf="!speakerlist.currentQuestion">Niemand</h4>
 
           <h3 class="float-right"
-            *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds >= 0">
-            {{ RemainingQuestionTime }}</h3>
+            *ngIf="speakerlist.remainingQuestionTime && speakerlist.remainingQuestionTime.totalSeconds >= 0">
+            {{ speakerlist.remainingQuestionTime }}</h3>
           <h3 class="float-right"
-            *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds < 0">Zum Ende
+            *ngIf="speakerlist.remainingQuestionTime && speakerlist.remainingQuestionTime.totalSeconds < 0">Zum Ende
             kommen</h3>
         </div>
       </div>
@@ -92,11 +92,11 @@
         <div class="card-header">
           <h3 class="card-title">Warteliste</h3>
         </div>
-        <div class="card-body" [class.list-closed]="QuestionsClosed"
+        <div class="card-body" [class.list-closed]="speakerlist.questionsClosed"
           style="max-height: 300Px; overflow-y: auto;overflow-x: visible;">
-          <h4 *ngFor="let delegation of speakerlist.Questions">
+          <h4 *ngFor="let speaker of speakerlist.questions">
             <!-- <img [src]="getDelegationImagePath(delegation)" /> -->
-            {{ delegation.Name }}</h4>
+            {{ speaker.name }}</h4>
         </div>
       </div>
     </div>

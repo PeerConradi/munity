@@ -1,5 +1,5 @@
 <div class="row">
-    <h1>Redeliste Bearbeiten</h1>
+  <h1>Redeliste Bearbeiten</h1>
 </div>
 
 <div *ngIf="!speakerlist" class="d-flex justify-content-center">
@@ -7,14 +7,14 @@
     <span class="sr-only">Loading...</span>
   </div>
 </div>
-<div *ngIf="speakerlist">
+<div *ngIf="speakerlist" class="m-a-20">
   <div class="row">
     <div class="col-12">
       <div class="alert alert-primary" role="alert">
-        Die Anzeige-Id für diese Redeliste lautet: {{ speakerlist.PublicId }}
+        Die Anzeige-Id für diese Redeliste lautet: {{ speakerlist.publicId }}
       </div>
     </div>
-    <div class="col-12" *ngIf="speakerlist">
+    <div class="col-12">
       <app-munity-box toolbox="true" title="Einstellungen" showcontent="false">
         <table class="table">
           <thead>
@@ -27,14 +27,15 @@
           <tbody>
             <tr>
               <th scope="row">Titel</th>
-              <td><input type="text" class="form-control" placeholder="Redeliste" [value]="speakerlist.Name" /></td>
+              <td><input type="text" class="form-control" placeholder="Redeliste" [value]="speakerlist.name" /></td>
             </tr>
           </tbody>
           <tbody>
             <tr>
               <th scope="row">Redezeit</th>
               <td>
-                <input #speakertimeInput type="text" class="form-control" [value]="speakerlist.Speakertime.toString()" (keyup.enter)="setSpeakertime(speakertimeInput.value);" />
+                <input #speakertimeInput type="text" class="form-control" [value]="speakerlist.speakertime.toString()"
+                  (keyup.enter)="setSpeakertime(speakertimeInput.value);" />
                 <small class="text-muted">Mit Enter bestätigen.</small>
               </td>
             </tr>
@@ -42,7 +43,8 @@
           <tbody>
             <tr>
               <th scope="row">Fragen und Antwortzeit</th>
-              <td><input #questiontimeInput type="text" class="form-control" [value]="speakerlist.Questiontime" (keyup.enter)="setQuestiontime(questiontimeInput.value);" /></td>
+              <td><input #questiontimeInput type="text" class="form-control" [value]="speakerlist.questiontime"
+                  (keyup.enter)="setQuestiontime(questiontimeInput.value);" /></td>
             </tr>
           </tbody>
           <tbody>
@@ -67,46 +69,54 @@
     </div>
   </div>-->
 
-  <div class="row">
+  <div class="row m-t-20">
     <div class="btn-group w-100" role="group" aria-label="Basic example">
-      <button type="button" class="btn btn-warning" (click)="clearSpeaker()">Momentanen Redner zurücksetzen</button>
-      <button type="button" class="btn btn-warning" (click)="clearQuestion()">Momentane Frage zurücksetzen</button>
+      <button type="button" class="btn btn-primary" (click)="clearSpeaker()">Momentanen Redner
+        zurücksetzen</button>
+      <button type="button" class="btn btn-primary" (click)="clearQuestion()">Momentane Frage
+        zurücksetzen</button>
     </div>
   </div>
 
-  <div class="row" style="margin-top: 20px;">
+  <div class="row m-t-20">
     <div class="col-lg-6 col-xs-12">
-      <div class="card">
+      <div class="card border-primary">
         <div class="card-header">
           Redeliste
         </div>
         <div class="card-body">
           <!-- Redeliste Informationen -->
           <div class="row">
-            <b *ngIf="speakerlist.CurrentSpeaker != null" class="col-8 float-left">Aktuell: {{ speakerlist.CurrentSpeaker.Name }}</b>
-            <b *ngIf="speakerlist.CurrentSpeaker == null" class="col-8 float-left">Aktuell: Niemand</b>
-            <b class=" col-4 float-right" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds >= 0"
-               [class.text-success]="speakerlist.Status == 1 && speakerlist.RemainingSpeakerTime.TotalSeconds > 10"
-               [class.text-danger]="speakerlist.Status == 1 && speakerlist.RemainingSpeakerTime.TotalSeconds <= 10">
-              ZEIT: {{ speakerlist.RemainingSpeakerTime.timeString }}
+            <b *ngIf="speakerlist.currentSpeaker != null" class="col-8 float-left">Aktuell:
+              {{ speakerlist.currentSpeaker.name }}</b>
+            <b *ngIf="speakerlist.currentSpeaker == null" class="col-8 float-left">Aktuell: Niemand</b>
+            <b class=" col-4 float-right"
+              *ngIf="speakerlist.remainingSpeakerTime && speakerlist.remainingSpeakerTime.totalSeconds >= 0"
+              [class.text-success]="speakerlist.status == 1 && speakerlist.remainingSpeakerTime.totalSeconds > 10"
+              [class.text-danger]="speakerlist.status == 1 && speakerlist.remainingSpeakerTime.totalSeconds <= 10">
+              ZEIT: {{ speakerlist.remainingSpeakerTime.timeString }}
             </b>
-            <b class=" col-4 float-right text-danger" *ngIf="speakerlist.RemainingSpeakerTime && speakerlist.RemainingSpeakerTime.TotalSeconds < 0">
+            <b class=" col-4 float-right text-danger"
+              *ngIf="speakerlist.remainingSpeakerTime && speakerlist.remainingSpeakerTime.totalSeconds < 0">
               ZEIT: ÜBERSCHRITTEN
             </b>
           </div>
           <!-- Redeliste Hinzufügen-->
           <div class="row">
             <label>Redner hinzufügen</label>
-            <input type="text" class="form-control" [(ngModel)]="addSpeakerSelection" [typeahead]="presetDelegations" typeaheadOptionField="Name" placeholder="Namen eingeben" (typeaheadOnSelect)="onAddSpeakerSelected($event)" />
+            <input type="text" class="form-control" [(ngModel)]="addSpeakerSelection" [typeahead]="presetDelegations"
+              typeaheadOptionField="Name" placeholder="Namen eingeben"
+              (typeaheadOnSelect)="onAddSpeakerSelected($event)" />
             <button class="btn btn-success btn-block" (click)="addSpeaker();">Hinzufügen</button>
           </div>
           <!-- Redeliste Steuerung-->
           <div class="row" style="margin-top: 20px;">
             <div class="btn-group btn-block" role="group" aria-label="First group">
               <button type="button" class="btn btn-primary" (click)="nextSpeaker();">Nächster</button>
-              <button type="button" class="btn" [class.btn-warning]="speakerlist.Status == 1" [class.btn-success]="speakerlist.Status != 1" (click)="toggleSpeaker();">
-                <span *ngIf="speakerlist.Status == 1">Pausieren</span>
-                <span *ngIf="speakerlist.Status != 1">Fortsetzen</span>
+              <button type="button" class="btn" [class.btn-secondary]="speakerlist.status == 1"
+                [class.btn-success]="speakerlist.status != 1" (click)="toggleSpeaker();">
+                <span *ngIf="speakerlist.status == 1">Pausieren</span>
+                <span *ngIf="speakerlist.status != 1">Fortsetzen</span>
               </button>
               <button type="button" class="btn btn-secondary" (click)="startAnswer();">Antworten</button>
             </div>
@@ -116,11 +126,10 @@
 
           <!-- Warteliste Redebeiträge -->
           <div class="row" style="margin-top: 20px;">
-            <div class="col-12" >
-              <bs-sortable [(ngModel)]="speakerlist.Speakers" fieldName="Name" itemClass="sortable-item"
-                           itemActiveClass="sortable-item-active" placeholderItem="Drag here"
-                           placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper"
-                           (onChange)="reorderSpeakers()">
+            <div class="col-12">
+              <bs-sortable [(ngModel)]="speakerlist.speakers" fieldName="name" itemClass="sortable-item"
+                itemActiveClass="sortable-item-active" placeholderItem="Drag here" placeholderClass="placeholderStyle"
+                wrapperClass="sortable-wrapper" (onChange)="reorderSpeakers()">
               </bs-sortable>
             </div>
           </div>
@@ -132,28 +141,33 @@
     </div>
     <!-- Rechte Seite (FUK)-->
     <div class="col-lg-6 col-xs-12">
-      <div class="card">
-        <div class="card-header">
+      <div class="card border-secondary">
+        <div class=" card-header">
           Fragen und Kurzbemerkungen
         </div>
         <div class="card-body">
           <!-- Fragen und Kurzbemerkungen Infos -->
           <div class="row">
-            <b *ngIf="speakerlist.CurrentQuestion != null" class="col-8 float-left">Aktuell: {{ speakerlist.CurrentQuestion.Name }}</b>
-            <b *ngIf="speakerlist.CurrentQuestion == null" class="col-8 float-left">Aktuell: Niemand</b>
-            <b class=" col-4 float-right" *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds >= 0"
-               [class.text-success]="speakerlist.Status == 2 && speakerlist.RemainingQuestionTime.TotalSeconds > 10"
-               [class.text-danger]="speakerlist.Status == 2 && speakerlist.RemainingQuestionTime.TotalSeconds <= 10">
-              ZEIT: {{ speakerlist.RemainingQuestionTime.timeString }}
+            <b *ngIf="speakerlist.currentQuestion != null" class="col-8 float-left">Aktuell:
+              {{ speakerlist.currentQuestion.Name }}</b>
+            <b *ngIf="speakerlist.currentQuestion == null" class="col-8 float-left">Aktuell: Niemand</b>
+            <b class=" col-4 float-right"
+              *ngIf="speakerlist.remainingQuestionTime && speakerlist.remainingQuestionTime.totalSeconds >= 0"
+              [class.text-success]="speakerlist.status == 2 && speakerlist.remainingQuestionTime.totalSeconds > 10"
+              [class.text-danger]="speakerlist.status == 2 && speakerlist.remainingQuestionTime.totalSeconds <= 10">
+              ZEIT: {{ speakerlist.remainingQuestionTime.timeString }}
             </b>
-            <b class=" col-4 float-right text-danger" *ngIf="speakerlist.RemainingQuestionTime && speakerlist.RemainingQuestionTime.TotalSeconds < 0">
+            <b class=" col-4 float-right text-danger"
+              *ngIf="speakerlist.remainingQuestionTime && speakerlist.remainingQuestionTime.totalSeconds < 0">
               ZEIT: ÜBERSCHRITTEN
             </b>
           </div>
           <!-- Redeliste Hinzufügen-->
           <div class="row">
             <label>Frage hinzufügen</label>
-            <input type="text" class="form-control" [(ngModel)]="addQuestionSelection" [typeahead]="presetDelegations" typeaheadOptionField="Name" placeholder="Namen eingeben" (typeaheadOnSelect)="onAddQuestionSelected($event)" />
+            <input type="text" class="form-control" [(ngModel)]="addQuestionSelection" [typeahead]="presetDelegations"
+              typeaheadOptionField="Name" placeholder="Namen eingeben"
+              (typeaheadOnSelect)="onAddQuestionSelected($event)" />
             <button class="btn btn-success btn-block" (click)="addQuestion();">Hinzufügen</button>
           </div>
           <!-- Fragen und Kurzbemerkungen Steuerung -->
@@ -166,10 +180,9 @@
           <!-- Fragen und Kurzbemerkungen Liste -->
           <div class="row" style="margin-top: 20px;">
             <div class="col-12">
-              <bs-sortable [(ngModel)]="speakerlist.Questions" fieldName="Name" itemClass="sortable-item"
-                           itemActiveClass="sortable-item-active" placeholderItem="Drag here"
-                           placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper"
-                           (onChange)="reorderQuestions();">
+              <bs-sortable [(ngModel)]="speakerlist.questions" fieldName="Name" itemClass="sortable-item"
+                itemActiveClass="sortable-item-active" placeholderItem="Drag here" placeholderClass="placeholderStyle"
+                wrapperClass="sortable-wrapper" (onChange)="reorderQuestions();">
               </bs-sortable>
             </div>
           </div>
@@ -183,10 +196,10 @@
 
   <!-- Remove Area-->
   <div class="row">
-    <bs-sortable class="w-100" [(ngModel)]="deleteItems" placeholderItem="Hierauf ziehen zum Entfernen."
-                 itemClass="sortable-item" itemActiveClass="sortable-item-active"
-                 placeholderClass="alert alert-danger w-100" wrapperClass="sortable-wrapper"
-                 (onChange)="removeSpeaker();">
+    <bs-sortable class="w-100" [(ngModel)]="deleteItems"
+      placeholderItem="Redner oder Frage auf dieses Feld ziehen um diesen aus der Liste zu entfernen"
+      itemClass="sortable-item" itemActiveClass="sortable-item-active" placeholderClass="alert alert-dark w-100"
+      wrapperClass="sortable-wrapper" (onChange)="removeSpeaker();">
     </bs-sortable>
   </div>
 
@@ -195,7 +208,8 @@
     <div class="col-12">
       <div class="btn-group w-100">
         <button class="btn btn-secondary" (click)="dockSpeakerlist();">Als aktuellen Kontext setzen.</button>
-        <a [routerLink]="['/s/view', speakerlist.ID]" class="btn btn-success" target="_blank">Teilnehmeransicht öffnen</a>
+        <a [routerLink]="['/s/view', speakerlist.id]" class="btn btn-success" target="_blank">Teilnehmeransicht
+          öffnen</a>
       </div>
 
     </div>
@@ -208,101 +222,101 @@
 <!-- Add Guest Speaker -->
 <!-- Modal -->
 <div class="modal-backdrop fade-in" style="opacity: 0.9;"
-    [style.display]="addGuestSpeakerModalOpened ? 'block' : 'none'">
+  [style.display]="addGuestSpeakerModalOpened ? 'block' : 'none'">
 </div>
 <div class="modal" [style.display]="addGuestSpeakerModalOpened ? 'block' : 'none'" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Gastredner setzen</h5>
-                <button type="button" class="close" (click)="closeAddGuestSpeakerModal();" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Gastredner setzen</h5>
+        <button type="button" class="close" (click)="closeAddGuestSpeakerModal();" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <fieldset>
+            <!-- Select Basic -->
+            <div class="form-group">
+              <div class="row">
+                <label class="col-12 control-label" for="speakername">Name</label>
+                <div class="col-12">
+                  <input type="text" placeholder="Name" class="form-control" id="speakername">
+                </div>
+              </div>
+              <!-- Ziel Operativer Absatz -->
+              <div class="row">
+                <label class="col-12 control-label" for="selecttarget">Bild</label>
+                <div class="col-12">
+                  <!-- TODO: Icon selector-->
+                </div>
+              </div>
+              <!-- Neuer Text -->
+              <div class="row">
+                <label class="col-12 control-label" for="guestTime">Zeit</label>
+                <div class="col-12">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                    <label class="form-check-label" for="defaultCheck1">
+                      Zeit verwenden
+                    </label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <input id="guestTime" class="form-control" type="time" />
+                </div>
+              </div>
             </div>
-            <div class="modal-body">
-                <form class="form-horizontal">
-                    <fieldset>
-                        <!-- Select Basic -->
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-12 control-label" for="speakername">Name</label>
-                                <div class="col-12">
-                                    <input type="text" placeholder="Name" class="form-control" id="speakername">
-                                </div>
-                            </div>
-                            <!-- Ziel Operativer Absatz -->
-                            <div class="row">
-                                <label class="col-12 control-label" for="selecttarget">Bild</label>
-                                <div class="col-12">
-                                    <!-- TODO: Icon selector-->
-                                </div>
-                            </div>
-                            <!-- Neuer Text -->
-                            <div class="row">
-                                <label class="col-12 control-label" for="guestTime">Zeit</label>
-                                <div class="col-12">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                                        <label class="form-check-label" for="defaultCheck1">
-                                            Zeit verwenden
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <input id="guestTime" class="form-control" type="time" />
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                    (click)="closeAddGuestSpeakerModal();">Close</button>
-                <button type="button" class="btn btn-primary">Hinzufügen</button>
-            </div>
-        </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+          (click)="closeAddGuestSpeakerModal();">Close</button>
+        <button type="button" class="btn btn-primary">Hinzufügen</button>
+      </div>
     </div>
+  </div>
 </div>
 <!-- Generalsekretär Modal -->
 <div class="modal-backdrop fade-in" style="opacity: 0.9;" [style.display]="secretaryModalOpened ? 'block' : 'none'">
 </div>
 <div class="modal" [style.display]="secretaryModalOpened ? 'block' : 'none'" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Generalsekretär setzen</h5>
-                <button type="button" class="close" (click)="closeSecretaryModal();" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Generalsekretär setzen</h5>
+        <button type="button" class="close" (click)="closeSecretaryModal();" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <fieldset>
+            <!-- Select Basic -->
+            <div class="form-group">
+              <div class="row">
+                <label class="col-12 control-label" for="speakretarytitle">Titel</label>
+                <div class="col-12">
+                  <input type="text" value="Seine Exzellenz der Generalsekretär" class="form-control"
+                    id="speakretarytitle">
+                </div>
+              </div>
+              <div class="row">
+                <label class="col-12 control-label" for="speakretaryname">Name</label>
+                <div class="col-12">
+                  <input type="text" placeholder="Name" class="form-control" id="speakretaryname">
+                </div>
+              </div>
             </div>
-            <div class="modal-body">
-                <form class="form-horizontal">
-                    <fieldset>
-                        <!-- Select Basic -->
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-12 control-label" for="speakretarytitle">Titel</label>
-                                <div class="col-12">
-                                    <input type="text" value="Seine Exzellenz der Generalsekretär" class="form-control"
-                                        id="speakretarytitle">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-12 control-label" for="speakretaryname">Name</label>
-                                <div class="col-12">
-                                    <input type="text" placeholder="Name" class="form-control" id="speakretaryname">
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                    (click)="closeSecretaryModal();">Close</button>
-                <button type="button" class="btn btn-primary">Hinzufügen</button>
-            </div>
-        </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+          (click)="closeSecretaryModal();">Close</button>
+        <button type="button" class="btn btn-primary">Hinzufügen</button>
+      </div>
     </div>
+  </div>
 </div>

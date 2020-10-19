@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
-import { Speakerlist } from '../models/speakerlist.model';
+import { Speaker, Speakerlist } from '../models/speakerlist.model';
 import * as signalR from '@aspnet/signalr';
 import { TimeSpan } from '../models/TimeSpan';
 import { Delegation } from '../models/conference/delegation.model';
@@ -38,7 +38,7 @@ export class SpeakerListService {
     let headers = new HttpHeaders();
     headers = headers.set('id', id);
     let options = { headers: headers };
-    return this.http.get<Speakerlist>(this.baseUrl + 'api/Speakerlist/GetSpeakerlist');
+    return this.http.get<Speakerlist>(this.baseUrl + 'api/Speakerlist/GetSpeakerlist', options);
   }
 
   public getSpeakerlistByPublicId(id: string) {
@@ -72,7 +72,7 @@ export class SpeakerListService {
       options);
   }
 
-  public addSpeakerModel(listid: string, model: Delegation) {
+  public addSpeakerModel(listid: string, model: Speaker) {
     let headers = new HttpHeaders();
     headers = headers.set('listid', listid);
     let options = { headers: headers };
@@ -80,7 +80,7 @@ export class SpeakerListService {
       options);
   }
 
-  public addQuestionModel(listid: string, model: Delegation) {
+  public addQuestionModel(listid: string, model: Speaker) {
     let headers = new HttpHeaders();
     headers = headers.set('listid', listid);
     let options = { headers: headers };
@@ -170,7 +170,7 @@ export class SpeakerListService {
       options);
   }
 
-  public reorderSpeaker(listid: string, items: Delegation[]) {
+  public reorderSpeaker(listid: string, items: Speaker[]) {
     let headers = new HttpHeaders();
     headers = headers.set('listid', listid);
     let options = { headers: headers };
@@ -178,7 +178,7 @@ export class SpeakerListService {
       options);
   }
 
-  public reorderQuestion(listid: string, items: Delegation[]) {
+  public reorderQuestion(listid: string, items: Speaker[]) {
     let headers = new HttpHeaders();
     headers = headers.set('listid', listid);
     let options = { headers: headers };
@@ -204,7 +204,7 @@ export class SpeakerListService {
         headers = headers.set('connectionid', this.connectionid);
         let options = { headers: headers };
         this.http.post(this.baseUrl + 'api/Speakerlist/SubscribeToList', null,
-          options).subscribe(data => {  }, err => { this.hasError = true; console.log(err); });
+          options).subscribe(data => { }, err => { this.hasError = true; console.log(err); });
       })
       .catch(err => {
         this.hasError = true;
@@ -219,37 +219,37 @@ export class SpeakerListService {
 
   public addSpeakerlistListener = (model: Speakerlist) => {
     this._hubConnection.on('SpeakerListChanged', (speakerlist: Speakerlist) => {
-      model.Speakers = speakerlist.Speakers;
-      model.Questions = speakerlist.Questions;
-      model.ListClosed = speakerlist.ListClosed;
-      model.QuestionsClosed = speakerlist.QuestionsClosed;
-      model.CurrentSpeaker = speakerlist.CurrentSpeaker;
-      model.CurrentQuestion = speakerlist.CurrentQuestion;
-      model.Status = speakerlist.Status;
+      model.speakers = speakerlist.speakers;
+      model.questions = speakerlist.questions;
+      model.listClosed = speakerlist.listClosed;
+      model.questionsClosed = speakerlist.questionsClosed;
+      model.currentSpeaker = speakerlist.currentSpeaker;
+      model.currentQuestion = speakerlist.currentQuestion;
+      model.status = speakerlist.status;
 
       //Sync the times in a better way!
-      model.RemainingSpeakerTime.reset();
-      model.RemainingSpeakerTime.addSeconds(speakerlist.RemainingSpeakerTime.TotalSeconds);
+      model.remainingSpeakerTime.reset();
+      model.remainingSpeakerTime.addSeconds(speakerlist.remainingSpeakerTime.totalSeconds);
 
-      model.RemainingQuestionTime.reset();
-      model.RemainingQuestionTime.addSeconds(speakerlist.RemainingQuestionTime.TotalSeconds);
+      model.remainingQuestionTime.reset();
+      model.remainingQuestionTime.addSeconds(speakerlist.remainingQuestionTime.totalSeconds);
     });
     this._hubConnection.on('SpeakerTimerStarted', (secs: number) => {
-      model.RemainingSpeakerTime = new TimeSpan(0, 0, 0, 0, 0);
-      model.RemainingSpeakerTime.addSeconds(secs);
-      model.Status = 1;
+      model.remainingSpeakerTime = new TimeSpan(0, 0, 0, 0, 0);
+      model.remainingSpeakerTime.addSeconds(secs);
+      model.status = 1;
     });
     this._hubConnection.on('QuestionTimerStarted', (secs: number) => {
-      model.RemainingQuestionTime = new TimeSpan(0, 0, 0, 0, 0);
-      model.RemainingQuestionTime.addSeconds(secs);
-      model.Status = 2;
+      model.remainingQuestionTime = new TimeSpan(0, 0, 0, 0, 0);
+      model.remainingQuestionTime.addSeconds(secs);
+      model.status = 2;
     });
     this._hubConnection.on('TimerStopped', () => {
-      model.Status = 0;
+      model.status = 0;
     });
     this._hubConnection.on('SpeakerTimerSynced', (secs: number) => {
-      model.RemainingSpeakerTime = new TimeSpan(0, 0, 0, 0, 0);
-      model.RemainingSpeakerTime.addSeconds(secs);
+      model.remainingSpeakerTime = new TimeSpan(0, 0, 0, 0, 0);
+      model.remainingSpeakerTime.addSeconds(secs);
     });
   };
 }

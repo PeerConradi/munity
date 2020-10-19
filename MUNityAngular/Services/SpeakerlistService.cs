@@ -26,7 +26,7 @@ namespace MUNityAngular.Services
 
         public Models.SpeakerlistModel GetSpeakerlist(string id)
         {
-            return Speakerlists.FirstOrDefault(n => n.ID == id);
+            return Speakerlists.FirstOrDefault(n => n.Id == id);
         }
 
         public Models.SpeakerlistModel GetSpeakerlistByPublicId(int publicId)

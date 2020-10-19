@@ -17,9 +17,9 @@ export class SpeakerlistStartupComponent implements OnInit {
 
   createSpeakerlist() {
     this.speakerlistService.createSpeakerlist('', '').subscribe(n => {
-      this.router.navigate(['/s/edit', n.ID])
+      this.router.navigate(['/s/edit', n.id])
     }, err => {
-        this.notifier.notify('error', 'Fehler beim Erstellen einer neuen Redeliste!');
+      this.notifier.notify('error', 'Fehler beim Erstellen einer neuen Redeliste!');
     });
   }
 
