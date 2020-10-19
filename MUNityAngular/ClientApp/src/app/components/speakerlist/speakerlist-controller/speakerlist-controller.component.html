@@ -180,7 +180,7 @@
           <!-- Fragen und Kurzbemerkungen Liste -->
           <div class="row" style="margin-top: 20px;">
             <div class="col-12">
-              <bs-sortable [(ngModel)]="speakerlist.questions" fieldName="Name" itemClass="sortable-item"
+              <bs-sortable [(ngModel)]="speakerlist.questions" fieldName="name" itemClass="sortable-item"
                 itemActiveClass="sortable-item-active" placeholderItem="Drag here" placeholderClass="placeholderStyle"
                 wrapperClass="sortable-wrapper" (onChange)="reorderQuestions();">
               </bs-sortable>

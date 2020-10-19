@@ -169,6 +169,7 @@ export class SpeakerlistControllerComponent implements OnInit {
   addSpeaker() {
     const s = this.presetDelegations.find(n => n.name == this.addSpeakerSelection);
     if (s != null) {
+      // outdated because speakerlist no longer works with Delegation
       this.speakerlistService.addSpeaker(this.speakerlist.id, s.delegationId).subscribe();
     } else {
       const newDelegation: Speaker = new Speaker();
@@ -176,6 +177,19 @@ export class SpeakerlistControllerComponent implements OnInit {
       this.speakerlistService.addSpeakerModel(this.speakerlist.id, newDelegation).subscribe();
     }
 
+  }
+
+  addQuestion() {
+    let s = this.presetDelegations.find(n => n.name == this.addQuestionSelection);
+    if (s != null) {
+      // outdated because speaker list no longer works with Delegation
+      this.speakerlistService.addQuestion(this.speakerlist.id, s.delegationId).subscribe();
+    }
+    else {
+      const newQuestion: Speaker = new Speaker();
+      newQuestion.name = this.addQuestionSelection;
+      this.speakerlistService.addQuestionModel(this.speakerlist.id, newQuestion).subscribe();
+    }
   }
 
   onAddSpeakerSelected(val: TypeaheadMatch) {
@@ -196,15 +210,7 @@ export class SpeakerlistControllerComponent implements OnInit {
     }
   }
 
-  addQuestion() {
-    // let s = this.presetDelegations.find(n => n.name == this.addQuestionSelection);
-    // if (s == null) {
-    //   s = new Speaker();
-    //   s.name = this.addQuestionSelection;
-    //   s.fullName = this.addQuestionSelection;
-    // }
-    // this.speakerlistService.addQuestionModel(this.speakerlist.id, s).subscribe();
-  }
+
 
   nextSpeaker() {
     this.speakerlistService.nextSpeaker(this.speakerlist.id).subscribe();

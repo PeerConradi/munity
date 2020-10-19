@@ -195,10 +195,9 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPost]
         public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader] string auth,
-            [FromHeader] string listid, [FromBody] SpeakerlistModel.Speaker model,
-            [FromServices] SpeakerlistService speakerlistService)
+            [FromHeader] string listid, [FromBody] SpeakerlistModel.Speaker model)
         {
-            var speakerlist = speakerlistService.GetSpeakerlist(listid);
+            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
             model.Id = Guid.NewGuid().ToString();
