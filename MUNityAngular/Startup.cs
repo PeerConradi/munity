@@ -40,18 +40,31 @@ namespace MUNityAngular
         {
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
+            //services.AddSpaStaticFiles(configuration =>
+            //{
+            //    configuration.RootPath = "ClientApp/dist";
+            //});
 
-            services.AddCors(o => o.AddPolicy("CorsPolicy", builder => {
-                builder
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-                //.AllowAnyOrigin();
-            }));
+            string munityCors = Environment.GetEnvironmentVariable("MUNITY_FRONTEND_IP");
+
+            services.AddCors(o =>
+            {
+                o.AddPolicy("AngularProd", builder =>
+                {
+                    builder.WithOrigins(munityCors)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+
+                });
+                o.AddPolicy("AngularDev", builder =>
+                {
+                    builder.WithOrigins("http://172.17.14.180")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+            });
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -148,10 +161,12 @@ namespace MUNityAngular
         {
             if (env.IsDevelopment())
             {
+                app.UseCors("AngularDev");
                 app.UseDeveloperExceptionPage();
             }
             else
             {
+                app.UseCors("AngularProd");
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -161,8 +176,6 @@ namespace MUNityAngular
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-
-            app.UseCors("CorsPolicy");
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -175,11 +188,12 @@ namespace MUNityAngular
             });
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            if (!env.IsDevelopment())
-            {
-                app.UseSpaStaticFiles();
-            }
+
+            //app.UseStaticFiles();
+            //if (!env.IsDevelopment())
+            //{
+            //    app.UseSpaStaticFiles();
+            //}
 
             app.UseRouting();
 
@@ -194,20 +208,20 @@ namespace MUNityAngular
                 endpoints.MapHub<Hubs.ResolutionHub>("/resasocket");
                 endpoints.MapHub<Hubs.SpeakerListHub>("/slsocket");
                 endpoints.MapHub<Hubs.SimulationHub>("/simsocket");
+
             });
 
-            app.UseSpa(spa =>
-            {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
 
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-            });
+            //app.UseSpa(spa =>
+            //{
+            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
+            //    // see https://go.microsoft.com/fwlink/?linkid=864501
+            //    spa.Options.SourcePath = "ClientApp";
+            //    if (env.IsDevelopment())
+            //    {
+            //        spa.UseAngularCliServer(npmScript: "start");
+            //    }
+            //});
 
             // Check the Database connection
             //using (var serviceScrop = app.ApplicationServices
@@ -254,7 +268,5 @@ namespace MUNityAngular
                 }
             }
         }
-
-        
     }
 }
