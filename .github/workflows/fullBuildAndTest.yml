@@ -21,19 +21,20 @@ jobs:
       run: dotnet build --configuration Release
     - name: Run NUnit Tests
       run: dotnet test
-    - name: Use Node.js 12.8
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.8
-        working-directory: ./MUNityAngular/ClientApp
-    - name: Install Angular-CLI
-      run: npm install -g @angular/cli        
-    - name: Install dependencies
-      run: cd ./MUNityAngular/ClientApp && npm install
-    - name: Build Angular
-      run: cd ./MUNityAngular/ClientApp && ng build
+    # FrontEnd is now its own repo
+    #- name: Use Node.js 12.8
+    #  uses: actions/setup-node@v1
+    #  with:
+    #    node-version: 12.8
+    #    working-directory: ./MUNityAngular/ClientApp
+    #- name: Install Angular-CLI
+    #  run: npm install -g @angular/cli        
+    #- name: Install dependencies
+    #  run: cd ./MUNityAngular/ClientApp && npm install
+    #- name: Build Angular
+    #  run: cd ./MUNityAngular/ClientApp && ng build
     # Tests bring Actions into a loop
-    - name: Angular Test
-      run: cd ./MUNityAngular/ClientApp && npm run test-headless
+    #- name: Angular Test
+    #  run: cd ./MUNityAngular/ClientApp && npm run test-headless
     
 
