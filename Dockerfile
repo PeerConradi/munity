@@ -2,11 +2,11 @@
 # The Dockerfile is not ready as of now.
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
  
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine AS base
 WORKDIR /app
 
 # API
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 WORKDIR /src
 COPY ["MUNityAngular/MUNityAngular.csproj", "MUNityAngular/"]
 RUN dotnet restore "MUNityAngular/MUNityAngular.csproj"
