@@ -5,9 +5,10 @@
 # API
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["MUNityAngular.csproj", "MUNityAngular/"]
+COPY ["MUNityAngular/MUNityAngular.csproj", "MUNityAngular/"]
 RUN dotnet restore "MUNityAngular/MUNityAngular.csproj"
 COPY . .
+RUN ls
 WORKDIR "/src/MUNityAngular"
 RUN dotnet build "MUNityAngular.csproj" -c Release -r ubuntu.18.04-x64 -o /app/build
 
