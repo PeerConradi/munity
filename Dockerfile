@@ -13,14 +13,14 @@ RUN dotnet restore "MUNityAngular/MUNityAngular.csproj"
 COPY . .
 RUN ls
 WORKDIR "/src/MUNityAngular"
-RUN dotnet build "MUNityAngular.csproj" -c Release -r ubuntu.18.04-x64 -o /app/build
+RUN dotnet build "MUNityAngular.csproj" -c Release -o /app/build
 
 
 FROM build AS publish
-RUN dotnet publish "MUNityAngular.csproj" -c Release -r ubuntu.18.04-x64 -o /app/publish
+RUN dotnet publish "MUNityAngular.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_URLS http://*:5000
-ENTRYPOINT ["dotnet", "MUNityAngular"]
+ENTRYPOINT ["dotnet", "MUNityAngular.dll"]
