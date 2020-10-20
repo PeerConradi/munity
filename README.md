@@ -16,7 +16,7 @@ This application is under development and cannot be used at the moment. Please c
 | Speakerlist | ![50%](https://progress-bar.dev/50) | Complete Rework in progress |
 | Simulation | ![5%](https://progress-bar.dev/5) | __ON HOLD__ |
 | Administration | ![2%](https://progress-bar.dev/2) | First API Endpoints |
-| Dockerize | ![0%](https://progress-bar.dev/0) | __Not started__ |
+| Dockerize | ![60%](https://progress-bar.dev/60) | Environment Configurations needed for DbConnection Strings |
 
 ## Setup Development Environment
 Requiered: 
