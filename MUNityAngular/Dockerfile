@@ -5,7 +5,7 @@
 # API
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["MUNityAngular/MUNityAngular.csproj", "MUNityAngular/"]
+COPY ["MUNityAngular.csproj", "MUNityAngular/"]
 RUN dotnet restore "MUNityAngular/MUNityAngular.csproj"
 COPY . .
 WORKDIR "/src/MUNityAngular"
