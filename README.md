@@ -16,7 +16,7 @@ This application is under development and cannot be used at the moment. Please c
 | Speakerlist | ![50%](https://progress-bar.dev/50) | Complete Rework in progress |
 | Simulation | ![5%](https://progress-bar.dev/5) | __ON HOLD__ |
 | Administration | ![2%](https://progress-bar.dev/2) | First API Endpoints |
-| Dockerize | ![60%](https://progress-bar.dev/60) | Environment Configurations needed for DbConnection Strings |
+| Dockerize | ![80%](https://progress-bar.dev/80) | Environment Configurations needed for DbConnection Strings |
 
 ## Setup Development Environment
 Requiered: 
@@ -35,8 +35,14 @@ For more information check out the [Getting started](Documentation/GettingStarte
 A guide on how to install the application on a Linux System can 
 be found [here](Documentation/installation.md)
 
+A __NEW__ guide on how to run the MunityCore and Angular FrontEnd can be found: [here](Documentation/docker.md)
+
 ## Swagger
 
 The project uses swagger. Go to localhost:[port]/swagger to see the auto generated API Documentation.
+
+## Demo
+
+You can Take a look at a Demo [here](https://mun-tools.com)
 
 
