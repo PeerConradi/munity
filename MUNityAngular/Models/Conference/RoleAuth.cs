@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MongoDB.Bson.IO;
 
-namespace MUNityAngular.Models.Conference
+namespace MUNityCore.Models.Conference
 {
 
     [DataContract]

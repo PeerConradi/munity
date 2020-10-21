@@ -3,12 +3,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.DataHandlers.EntityFramework;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Conference.Roles;
-using MUNityAngular.Models.Organisation;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Conference.Roles;
+using MUNityCore.Models.Organisation;
 using NUnit.Framework;
-using MUNityAngular.Services;
+using MUNityCore.Services;
 
 namespace MUNityTest.WorkflowTests
 {

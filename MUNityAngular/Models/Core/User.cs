@@ -6,10 +6,10 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
-using MUNityAngular.Models.Conference;
+using MUNityCore.Models.Conference;
 
 
-namespace MUNityAngular.Models.Core
+namespace MUNityCore.Models.Core
 {
     [DataContract]
     public class User : IUserInformation

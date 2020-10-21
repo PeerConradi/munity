@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MUNityAngular.Models.Resolution.V2
+namespace MUNityCore.Models.Resolution.V2
 {
     public interface IResolution
     {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Moq;
-using MUNityAngular.Controllers;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Resolution.V2;
-using MUNityAngular.Services;
+using MUNityCore.Controllers;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Resolution.V2;
+using MUNityCore.Services;
 using Xunit;
 
 namespace MUNityTest.ControllerTest.ResolutionControllerTest

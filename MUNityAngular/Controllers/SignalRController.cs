@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
-namespace MUNityAngular.Controllers
+namespace MUNityCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

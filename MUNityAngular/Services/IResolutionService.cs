@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using MongoDB.Driver;
-using MUNityAngular.Models.Resolution.V2;
+using MUNityCore.Models.Resolution.V2;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public interface IResolutionService
     {

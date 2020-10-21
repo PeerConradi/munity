@@ -1,4 +1,4 @@
-﻿using MUNityAngular.Models.Organisation;
+﻿using MUNityCore.Models.Organisation;
 using NUnit.Framework;
 
 namespace MUNityTest.StructureTest

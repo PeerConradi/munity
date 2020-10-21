@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.DataHandlers.EntityFramework;
-using MUNityAngular.Models.Core;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models.Core;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public class UserService : IUserService
     {

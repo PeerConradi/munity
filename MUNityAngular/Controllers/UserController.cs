@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MUNityAngular.Models.User;
-using MUNityAngular.Schema.Request;
-using MUNityAngular.Services;
-using MUNityAngular.Util.Extenstions;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Models.Facades;
-using MUNityAngular.Schema.Request.Authentication;
-using MUNityAngular.Schema.Response.Authentication;
+using MUNityCore.Models.User;
+using MUNityCore.Schema.Request;
+using MUNityCore.Util.Extenstions;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Models.Facades;
+using MUNityCore.Models.Core;
+using MUNityCore.Schema.Request.Authentication;
+using MUNityCore.Schema.Response.Authentication;
+using MUNityCore.Services;
 
-namespace MUNityAngular.Controllers
+namespace MUNityCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

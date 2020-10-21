@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Util.Extenstions
+namespace MUNityCore.Util.Extenstions
 {
     public static class HttpHelperExtensions
     {

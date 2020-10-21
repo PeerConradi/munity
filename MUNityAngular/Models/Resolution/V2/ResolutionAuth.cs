@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson.IO;
 using MongoDB.Driver.Core.Operations;
 
-namespace MUNityAngular.Models.Resolution.V2
+namespace MUNityCore.Models.Resolution.V2
 {
 
     /// <summary>

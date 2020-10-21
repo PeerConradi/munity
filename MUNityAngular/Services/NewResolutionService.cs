@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
-using MUNityAngular.DataHandlers;
-using MUNityAngular.DataHandlers.EntityFramework;
-using MUNityAngular.Models.Resolution;
-using MUNityAngular.Models.Resolution.V2;
-using MUNityAngular.Util.Extenstions;
+using MUNityCore.Models.Resolution;
+using MUNityCore.Util.Extenstions;
+using MUNityCore.DataHandlers;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models.Resolution.V2;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public class NewResolutionService : IResolutionService
     {

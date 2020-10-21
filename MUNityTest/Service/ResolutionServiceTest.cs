@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Operations;
-using MUNityAngular.DataHandlers;
-using MUNityAngular.DataHandlers.EntityFramework;
-using MUNityAngular.Models.Resolution.V2;
-using MUNityAngular.Services;
+using MUNityCore.DataHandlers;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models.Resolution.V2;
+using MUNityCore.Services;
 using NUnit.Framework;
 
 namespace MUNityTest.Service

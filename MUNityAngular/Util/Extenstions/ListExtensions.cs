@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Util.Extenstions
+namespace MUNityCore.Util.Extenstions
 {
     public static class ListExtensions
     {

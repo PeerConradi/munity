@@ -1,10 +1,10 @@
-﻿using MUNityAngular.DataHandlers.EntityFramework.Models;
+﻿using MUNityCore.DataHandlers.EntityFramework.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Models.SimSim
+namespace MUNityCore.Models.SimSim
 {
     public interface ISimSimFacade
     {

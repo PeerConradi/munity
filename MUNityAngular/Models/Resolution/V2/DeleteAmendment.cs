@@ -3,7 +3,7 @@ using System.Linq;
 using MongoDB.Bson.IO;
 using MongoDB.Driver.Core.Operations;
 
-namespace MUNityAngular.Models.Resolution.V2
+namespace MUNityCore.Models.Resolution.V2
 {
     public class DeleteAmendment : IDeleteAmendment
     {

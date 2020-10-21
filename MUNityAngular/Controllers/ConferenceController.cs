@@ -7,18 +7,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.DataHandlers.Database;
-using MUNityAngular.Models;
-using MUNityAngular.Services;
+using MUNityCore.DataHandlers.Database;
+using MUNityCore.Models;
 using Newtonsoft.Json;
-using MUNityAngular.Util.Extenstions;
-using MUNityAngular.Schema.Request;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Schema.Request.Conference;
+using MUNityCore.Util.Extenstions;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Conference;
+using MUNityCore.Schema.Request;
+using MUNityCore.Schema.Request.Conference;
+using MUNityCore.Services;
 
-namespace MUNityAngular.Controllers
+namespace MUNityCore.Controllers
 {
 
     /// <summary>

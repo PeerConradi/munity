@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Util.Exceptions
+namespace MUNityCore.Util.Exceptions
 {
     [System.Serializable]
     public class ResolutionNotFoundException : Exception

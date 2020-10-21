@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
-namespace MUNityAngular.DataHandlers.Database
+namespace MUNityCore.DataHandlers.Database
 {
 
     /// <summary>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace MUNityAngular.Exceptions.ConferenceExceptions
+namespace MUNityCore.Exceptions.ConferenceExceptions
 {
     [Serializable]
     public class NameAlreadyTakenException : Exception

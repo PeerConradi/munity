@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Conference.Roles;
-using MUNityAngular.Models.Organisation;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Conference.Roles;
+using MUNityCore.Models.Organisation;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public interface IConferenceService
     {

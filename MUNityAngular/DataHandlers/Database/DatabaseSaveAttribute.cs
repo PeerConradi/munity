@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.DataHandlers.Database
+namespace MUNityCore.DataHandlers.Database
 {
 
     [Obsolete("Legacy Code: Was removed with using the Entity Framework and should be deleted!")]

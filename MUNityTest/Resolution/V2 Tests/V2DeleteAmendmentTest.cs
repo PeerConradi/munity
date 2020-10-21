@@ -1,4 +1,4 @@
-﻿using MUNityAngular.Models.Resolution.V2;
+﻿using MUNityCore.Models.Resolution.V2;
 using NUnit.Framework;
 
 namespace MUNityTest.Resolution.V2_Tests

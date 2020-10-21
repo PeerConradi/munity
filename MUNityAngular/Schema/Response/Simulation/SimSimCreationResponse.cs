@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Schema.Response.Simulation
+namespace MUNityCore.Schema.Response.Simulation
 {
     public class SimSimCreationResponse
     {

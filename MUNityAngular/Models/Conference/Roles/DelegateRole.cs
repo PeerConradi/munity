@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using System.Text.Json.Serialization;
 
-namespace MUNityAngular.Models.Conference.Roles
+namespace MUNityCore.Models.Conference.Roles
 {
 
     [DataContract]

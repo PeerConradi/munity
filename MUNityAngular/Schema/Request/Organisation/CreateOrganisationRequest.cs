@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Schema.Request.Organisation
+namespace MUNityCore.Schema.Request.Organisation
 {
     public class CreateOrganisationRequest
     {

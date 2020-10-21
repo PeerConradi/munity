@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.DataHandlers.EntityFramework;
-using MUNityAngular.Models.Conference;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models.Conference;
 using MUNityTest.TestEnvironment;
 using NUnit.Framework;
 

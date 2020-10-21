@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.DataHandlers.Database;
+using MUNityCore.DataHandlers.Database;
 using MySql.Data.MySqlClient;
-using MUNityAngular.Models.User;
-using MUNityAngular.DataHandlers.EntityFramework;
+using MUNityCore.Models.User;
 using System.Text.RegularExpressions;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityCore.DataHandlers.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.Exceptions.ConferenceExceptions;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Conference.Roles;
-using MUNityAngular.Models.Organisation;
-using MUNityAngular.Util.Extenstions;
+using MUNityCore.Util.Extenstions;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Exceptions.ConferenceExceptions;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Conference.Roles;
+using MUNityCore.Models.Organisation;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public class ConferenceService : IConferenceService
     {

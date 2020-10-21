@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.DataHandlers.EntityFramework;
-using MUNityAngular.Models.Organisation;
-using MUNityAngular.Services;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models.Organisation;
+using MUNityCore.Services;
 using NUnit.Framework;
 
 namespace MUNityTest.Service

@@ -6,9 +6,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference;
+using MUNityCore.Models.Conference;
 
-namespace MUNityAngular.Models.Conference
+namespace MUNityCore.Models.Conference
 {
 
     /// <summary>

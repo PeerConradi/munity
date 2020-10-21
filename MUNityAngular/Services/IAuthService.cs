@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Models.Resolution;
-using MUNityAngular.Models.Resolution.V2;
-using MUNityAngular.Schema.Request.Authentication;
-using MUNityAngular.Schema.Response.Authentication;
+using MUNityCore.Models.Resolution;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Resolution.V2;
+using MUNityCore.Schema.Request.Authentication;
+using MUNityCore.Schema.Response.Authentication;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public interface IAuthService
     {

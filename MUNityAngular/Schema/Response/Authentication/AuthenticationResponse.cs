@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Core;
+using MUNityCore.Models.Core;
 
-namespace MUNityAngular.Schema.Response.Authentication
+namespace MUNityCore.Schema.Response.Authentication
 {
     public class AuthenticationResponse
     {

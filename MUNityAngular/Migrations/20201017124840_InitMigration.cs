@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace MUNityAngular.Migrations
+namespace MUNityCore.Migrations
 {
     public partial class InitMigration : Migration
     {

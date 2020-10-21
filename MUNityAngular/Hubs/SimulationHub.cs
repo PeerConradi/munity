@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using MUNityAngular.Util.Extenstions;
+using MUNityCore.Util.Extenstions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Hubs
+namespace MUNityCore.Hubs
 {
     public class SimulationHub : Hub<ITypedSimulationHub>
     {

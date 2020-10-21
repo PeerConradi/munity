@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Util.Hashing
+namespace MUNityCore.Util.Hashing
 {
     public class PasswordHashing
     {

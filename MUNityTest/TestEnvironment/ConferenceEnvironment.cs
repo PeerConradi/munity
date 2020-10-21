@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Conference.Roles;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Models.Organisation;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Conference.Roles;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Organisation;
 
 namespace MUNityTest.TestEnvironment
 {
     class ConferenceEnvironment
     {
-        public ConferenceEnvironment(MUNityAngular.DataHandlers.EntityFramework.MunCoreContext context)
+        public ConferenceEnvironment(MUNityCore.DataHandlers.EntityFramework.MunCoreContext context)
         {
             context.Organisations.Add(TestOrganisation);
             context.Projects.Add(TestProject);

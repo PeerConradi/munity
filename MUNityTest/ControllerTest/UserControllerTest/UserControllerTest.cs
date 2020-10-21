@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MUNityAngular.Controllers;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Models.Resolution.V2;
-using MUNityAngular.Schema.Request.Authentication;
-using MUNityAngular.Services;
+using MUNityCore.Controllers;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Resolution.V2;
+using MUNityCore.Schema.Request.Authentication;
+using MUNityCore.Services;
 using Xunit;
 
 namespace MUNityTest.ControllerTest.UserControllerTest

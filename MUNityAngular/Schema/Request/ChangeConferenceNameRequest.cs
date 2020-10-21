@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Schema.Request
+namespace MUNityCore.Schema.Request
 {
     public class ChangeConferenceNameRequest
     {

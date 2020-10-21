@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using MUNityAngular.Models;
-using MUNityAngular.DataHandlers.Database;
-using MUNityAngular.Util.Extenstions;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Conference;
+using MUNityCore.Models;
+using MUNityCore.DataHandlers.Database;
+using MUNityCore.Util.Extenstions;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Models.Conference;
 
 namespace MUNityTest.Speakerlist
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public class SpeakerlistService
     {

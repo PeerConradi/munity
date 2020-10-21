@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.DataHandlers.EntityFramework;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Models.Organisation;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Organisation;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public class OrganisationService : IOrganisationService
     {

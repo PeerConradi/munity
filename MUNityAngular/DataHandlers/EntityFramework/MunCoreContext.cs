@@ -4,12 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Conference.Roles;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Models.Organisation;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Conference.Roles;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Organisation;
 
-namespace MUNityAngular.DataHandlers.EntityFramework
+namespace MUNityCore.DataHandlers.EntityFramework
 {
     public class MunCoreContext : DbContext
     {

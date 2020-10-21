@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MUNityAngular.Models;
-using MUNityAngular.Services;
+using MUNityCore.Models;
+using MUNityCore.Services;
 
-namespace MUNityAngular.Controllers
+namespace MUNityCore.Controllers
 {
 
     [Route("api/[controller]")]

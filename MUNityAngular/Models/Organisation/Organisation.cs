@@ -5,10 +5,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Core;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Conference;
 
-namespace MUNityAngular.Models.Organisation
+namespace MUNityCore.Models.Organisation
 {
 
     [DataContract]

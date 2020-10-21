@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using MUNityAngular.Services;
-using MUNityAngular.Util.Extenstions;
-using MUNityAngular.Models.Resolution;
-using MUNityAngular.Schema.Request;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Resolution.V2;
-using MUNityAngular.Schema.Request.Resolution;
+using MUNityCore.Util.Extenstions;
+using MUNityCore.Models.Resolution;
+using MUNityCore.Schema.Request;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Schema.Request.Resolution;
+using MUNityCore.Models.Resolution.V2;
+using MUNityCore.Services;
 
-namespace MUNityAngular.Controllers
+namespace MUNityCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

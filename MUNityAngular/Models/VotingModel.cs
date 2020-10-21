@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Conference;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Models.Conference;
 
-namespace MUNityAngular.Models
+namespace MUNityCore.Models
 {
     public class VotingModel
     {

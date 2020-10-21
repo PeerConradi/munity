@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using MUNityAngular.DataHandlers.EntityFramework;
+using MUNityCore.DataHandlers.EntityFramework;
 using NUnit.Framework;
 
 namespace MUNityTest.TestEnvironment

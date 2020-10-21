@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityCore.DataHandlers.EntityFramework.Models;
 
-namespace MUNityAngular.Util.Extenstions
+namespace MUNityCore.Util.Extenstions
 {
     public static class ConvertExtensions
     {

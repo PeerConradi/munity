@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Models.Core
+namespace MUNityCore.Models.Core
 {
     public interface IUserInformation
     {

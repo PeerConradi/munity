@@ -1,26 +1,26 @@
-﻿using MUNityAngular.Models.Resolution;
+﻿using MUNityCore.Models.Resolution;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using MUNityAngular.DataHandlers.EntityFramework;
 using Microsoft.IdentityModel.Tokens;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Core;
 using System.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.IO;
-using MUNityAngular.Models;
-using MUNityAngular.Models.Resolution.V2;
-using MUNityAngular.Schema.Request.Authentication;
-using MUNityAngular.Schema.Response.Authentication;
 using System.Threading.Tasks;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Resolution.V2;
+using MUNityCore.Schema.Request.Authentication;
+using MUNityCore.Schema.Response.Authentication;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public class AuthService : IAuthService
     {

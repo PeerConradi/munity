@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.DataHandlers.Database;
-using MUNityAngular.DataHandlers.EntityFramework;
+using MUNityCore.DataHandlers.Database;
 using MySql.Data.MySqlClient;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.DataHandlers.EntityFramework;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public class InstallationService
     {

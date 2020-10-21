@@ -6,9 +6,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference;
+using MUNityCore.Models.Conference;
+using MUNityCore.Schema.Request.Conference;
 
-namespace MUNityAngular.Models.Conference
+namespace MUNityCore.Models.Conference
 {
 
     /// <summary>
@@ -66,7 +67,7 @@ namespace MUNityAngular.Models.Conference
         [Newtonsoft.Json.JsonIgnore]
         public byte[] CommitteeTimestamp { get; set; }
 
-        public Committee(MUNityAngular.Schema.Request.Conference.ConferenceRequests.CreateCommittee request)
+        public Committee(ConferenceRequests.CreateCommittee request)
         {
             CommitteeId = Guid.NewGuid().ToString();
             Article = request.Article;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Models.Resolution.V2
+namespace MUNityCore.Models.Resolution.V2
 {
     public class OperativeParagraph : IOperativeParagraph
     {

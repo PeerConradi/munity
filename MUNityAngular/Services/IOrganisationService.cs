@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Models.Organisation;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Organisation;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public interface IOrganisationService
     {

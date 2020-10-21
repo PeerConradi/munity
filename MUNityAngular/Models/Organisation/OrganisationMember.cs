@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Models.Organisation
+namespace MUNityCore.Models.Organisation
 {
 
     [DataContract]

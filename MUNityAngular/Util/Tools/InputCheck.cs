@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Util.Tools
+namespace MUNityCore.Util.Tools
 {
     public class InputCheck
     {

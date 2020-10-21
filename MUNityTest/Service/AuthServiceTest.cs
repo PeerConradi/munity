@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using MUNityAngular.DataHandlers.EntityFramework;
-using MUNityAngular.Models;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Schema.Request.Authentication;
-using MUNityAngular.Services;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models;
+using MUNityCore.Models.Core;
+using MUNityCore.Schema.Request.Authentication;
+using MUNityCore.Services;
 using MUNityTest.TestEnvironment;
 using NUnit.Framework;
 
@@ -35,7 +35,7 @@ namespace MUNityTest.Service
             user.Username = "test";
             user.Forename = "Max";
             user.Lastname = "Mustermann";
-            var generatedPass = MUNityAngular.Util.Hashing.PasswordHashing.InitHashing("password");
+            var generatedPass = MUNityCore.Util.Hashing.PasswordHashing.InitHashing("password");
             user.Password = generatedPass.Key;
             user.Salt = generatedPass.Salt;
 

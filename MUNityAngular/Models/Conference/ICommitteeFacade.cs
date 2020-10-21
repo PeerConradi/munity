@@ -1,4 +1,4 @@
-﻿namespace MUNityAngular.Models.Conference
+﻿namespace MUNityCore.Models.Conference
 {
     public interface ICommitteeFacade
     {

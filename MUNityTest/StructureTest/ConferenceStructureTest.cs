@@ -1,8 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Conference.Roles;
-using MUNityAngular.Models.Organisation;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Conference.Roles;
+using MUNityCore.Models.Organisation;
 
 namespace MUNityTest.StructureTest
 {

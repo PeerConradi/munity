@@ -9,7 +9,7 @@ namespace MUNityTest.UtilsTest
         public void TestToPrimaryKey()
         {
             string key = "dmun e.V.";
-            var result = MUNityAngular.Util.Tools.IdGenerator.AsPrimaryKey(key);
+            var result = MUNityCore.Util.Tools.IdGenerator.AsPrimaryKey(key);
             Assert.AreEqual("dmunev", result);
         }
     }

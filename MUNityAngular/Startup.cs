@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MUNityAngular.DataHandlers.Database;
+using MUNityCore.DataHandlers.Database;
 using System.Net;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -17,14 +17,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using MongoDB.Driver;
-using MUNityAngular.DataHandlers;
 using Microsoft.Extensions.Options;
-using MUNityAngular.DataHandlers.EntityFramework;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.IdentityModel.Tokens;
-using MUNityAngular.Models;
+using MUNityCore.DataHandlers;
+using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Models;
 
-namespace MUNityAngular
+namespace MUNityCore
 {
     public class Startup
     {
@@ -49,15 +49,19 @@ namespace MUNityAngular
 
             services.AddCors(o =>
             {
-                o.AddPolicy("AngularProd", builder =>
+                if (munityCors != null)
                 {
-                    builder.WithOrigins(munityCors)
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                    o.AddPolicy("AngularProd", builder =>
+                    {
+                        builder.WithOrigins(munityCors)
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
 
-                });
-                o.AddPolicy("AngularDev", builder =>
+                    });
+                }
+                
+                o.AddPolicy("DevPolicy", builder =>
                 {
                     builder.WithOrigins("http://172.17.14.180")
                         .AllowAnyMethod()
@@ -104,6 +108,7 @@ namespace MUNityAngular
                 options.ClientTimeoutInterval = new System.TimeSpan(2,0,0);
             });
 
+            
             var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
             var coreConnectionString = Configuration.GetValue<string>("CoreDatabase:ConnectionString");
 
@@ -161,7 +166,7 @@ namespace MUNityAngular
         {
             if (env.IsDevelopment())
             {
-                app.UseCors("AngularDev");
+                app.UseCors("DevPolicy");
                 app.UseDeveloperExceptionPage();
             }
             else

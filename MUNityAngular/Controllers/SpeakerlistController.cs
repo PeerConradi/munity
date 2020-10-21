@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using MUNityAngular.Models;
-using MUNityAngular.Services;
-using MUNityAngular.Util.Extenstions;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Conference;
+using MUNityCore.Util.Extenstions;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models;
+using MUNityCore.Services;
 
-namespace MUNityAngular.Controllers
+namespace MUNityCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

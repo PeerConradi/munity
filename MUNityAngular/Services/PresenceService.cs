@@ -1,12 +1,12 @@
 ﻿using System;
 using MongoDB.Driver;
-using MUNityAngular.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.DataHandlers;
+using MUNityCore.DataHandlers;
+using MUNityCore.Models;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
     public class PresenceService
     {

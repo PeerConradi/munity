@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Models
+namespace MUNityCore.Models
 {
     public class DocumentTypeModel
     {

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Conference;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Models.Conference;
 
-namespace MUNityAngular.Models.SimSim
+namespace MUNityCore.Models.SimSim
 {
     public class SimSimModel : ISimSimFacade
     {

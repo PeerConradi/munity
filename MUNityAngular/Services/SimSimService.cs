@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.Models.SimSim;
+using MUNityCore.Models.SimSim;
 
-namespace MUNityAngular.Services
+namespace MUNityCore.Services
 {
 
     /// <summary>

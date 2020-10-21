@@ -6,9 +6,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Conference.Roles;
+using MUNityCore.Models.Conference.Roles;
 
-namespace MUNityAngular.Models.Conference
+namespace MUNityCore.Models.Conference
 {
 
     [DataContract]

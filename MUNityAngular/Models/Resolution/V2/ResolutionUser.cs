@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Models.Resolution.V2
+namespace MUNityCore.Models.Resolution.V2
 {
 
     [DataContract]

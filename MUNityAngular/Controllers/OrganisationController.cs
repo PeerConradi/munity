@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MUNityAngular.Models.Organisation;
-using MUNityAngular.Schema.Request.Organisation;
-using MUNityAngular.Services;
+using MUNityCore.Models.Organisation;
+using MUNityCore.Schema.Request.Organisation;
+using MUNityCore.Services;
 
-namespace MUNityAngular.Controllers
+namespace MUNityCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

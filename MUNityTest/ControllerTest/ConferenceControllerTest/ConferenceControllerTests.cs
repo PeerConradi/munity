@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MUNityAngular.Controllers;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Conference.Roles;
-using MUNityAngular.Models.Core;
-using MUNityAngular.Models.Organisation;
-using MUNityAngular.Schema.Request;
-using MUNityAngular.Schema.Request.Conference;
-using MUNityAngular.Services;
+using MUNityCore.Controllers;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Conference.Roles;
+using MUNityCore.Models.Core;
+using MUNityCore.Models.Organisation;
+using MUNityCore.Schema.Request;
+using MUNityCore.Schema.Request.Conference;
+using MUNityCore.Services;
 using Xunit;
 
 namespace MUNityTest.ControllerTest.ConferenceControllerTest

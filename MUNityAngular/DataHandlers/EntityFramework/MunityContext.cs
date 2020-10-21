@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.Models.Resolution.V2;
+using MUNityCore.Models.Resolution.V2;
 
-namespace MUNityAngular.DataHandlers.EntityFramework
+namespace MUNityCore.DataHandlers.EntityFramework
 {
     public class MunityContext : DbContext
     {

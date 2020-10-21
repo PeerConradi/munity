@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityAngular.Models.SimSim;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Conference;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.SimSim;
 
-namespace MUNityAngular.Hubs
+namespace MUNityCore.Hubs
 {
     public interface ITypedSimulationHub
     {

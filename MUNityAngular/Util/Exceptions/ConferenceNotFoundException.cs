@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Util.Exceptions
+namespace MUNityCore.Util.Exceptions
 {
     public class ConferenceNotFoundException : Exception
     {

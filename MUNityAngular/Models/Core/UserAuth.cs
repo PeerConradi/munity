@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.Models.Core
+namespace MUNityCore.Models.Core
 {
 
     [DataContract]

@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MUNityAngular.Models.User;
-using MUNityAngular.Services;
-using MUNityAngular.Util.Extenstions;
-using MUNityAngular.DataHandlers.EntityFramework.Models;
-using MUNityAngular.Models.Conference;
-using MUNityAngular.Models.Core;
-using User = MUNityAngular.Models.Core.User;
+using MUNityCore.Models.User;
+using MUNityCore.Util.Extenstions;
+using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Models.Conference;
+using MUNityCore.Models.Core;
+using MUNityCore.Services;
+using User = MUNityCore.Models.Core.User;
 
-namespace MUNityAngular.Controllers
+namespace MUNityCore.Controllers
 {
 
     /// <summary>
@@ -40,7 +40,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpPut]
         [Authorize]
-        public ActionResult<User> CreateUser(string username, string forename, string lastname, string password, string mail, string birthday)
+        public ActionResult<Models.Core.User> CreateUser(string username, string forename, string lastname, string password, string mail, string birthday)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
                 return Forbid("You are not allowed to do that!");
@@ -110,7 +110,7 @@ namespace MUNityAngular.Controllers
         [HttpGet]
         [Authorize]
         [Authorize]
-        public ActionResult<IEnumerable<User>> GetBannedUsers()
+        public ActionResult<IEnumerable<Models.Core.User>> GetBannedUsers()
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
                 return Forbid("You are not allowed to show that. You need to be Admin!");
@@ -127,7 +127,7 @@ namespace MUNityAngular.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public ActionResult<IEnumerable<User>> GetUserblock(int blockid)
+        public ActionResult<IEnumerable<Models.Core.User>> GetUserblock(int blockid)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
                 return Forbid("You are not allowed to show that. You need to be Admin!");

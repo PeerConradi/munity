@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityAngular.DataHandlers
+namespace MUNityCore.DataHandlers
 {
     public class MunityMongoDatabaseSettings : IMunityMongoDatabaseSettings
     {
