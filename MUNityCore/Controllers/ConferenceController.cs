@@ -105,6 +105,13 @@ namespace MUNityCore.Controllers
             }
         }
 
+        /// <summary>
+        /// Returns a specific project. Note that this will only give a limit amount of information
+        /// about the project. You can also call GetProjectWithConferences, if you want the list of
+        /// conferences that this project holds withing.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -114,6 +121,13 @@ namespace MUNityCore.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// This will return a project with all the conferences inside this project. The Conferences will contain
+        /// all information about the conference (except user information and committees). To get this information
+        /// use different api calls.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -123,6 +137,12 @@ namespace MUNityCore.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Returns a list of all Projects that an organisation is hosting. This projects do not contain
+        /// the conferences.
+        /// </summary>
+        /// <param name="organisationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -287,6 +307,11 @@ namespace MUNityCore.Controllers
             return Ok(res);
         }
 
+        /// <summary>
+        /// Creates a new Committee inside a Conference.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
         [Authorize]
@@ -317,6 +342,11 @@ namespace MUNityCore.Controllers
         }
 
 
+        /// <summary>
+        /// No API Call. A function to get if the current UserPrincipal is allowed to edit the Conference.
+        /// </summary>
+        /// <param name="conferenceid"></param>
+        /// <returns></returns>
         [NonAction]
         private bool CanUserEditConference(string conferenceid)
         {

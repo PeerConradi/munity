@@ -29,6 +29,11 @@ namespace MUNityCore.Controllers
 
         private readonly Services.UserService _userService;
 
+        /// <summary>
+        /// Checks if the user behind the baerer token is an Admin or HeadAdmin.
+        /// Returns true if this is the case and false if not. Will always return a Code 200.
+        /// </summary>
+        /// <returns>true of the user is an admin and false if not!</returns>
         [Route("[action]")]
         [HttpGet]
         [Authorize]
@@ -37,6 +42,18 @@ namespace MUNityCore.Controllers
             return this._authService.IsUserPrincipalAdmin(User);
         }
 
+        /// <summary>
+        /// Creates a new User. Note that this is not the method to register a new user. Take a look into the UserController
+        /// to learn more about how to create an account. This method is for Administrators to create a new user without
+        /// Age limitation or validation.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="forename"></param>
+        /// <param name="lastname"></param>
+        /// <param name="password"></param>
+        /// <param name="mail"></param>
+        /// <param name="birthday"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         [Authorize]
@@ -57,6 +74,13 @@ namespace MUNityCore.Controllers
             }
         }
 
+        /// <summary>
+        /// This method will delete a user Account and everything that depens on that account.
+        /// Be careful with this method. Once the data is deleted it can not be restored.
+        /// This API is not Facebook, when deleting something it will be deleted.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
         [Authorize]
@@ -72,6 +96,12 @@ namespace MUNityCore.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Creates a new UserAuth. A UserAuth can be assigned to different users and give them
+        /// access to more API calls.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
         [Authorize]
@@ -84,6 +114,12 @@ namespace MUNityCore.Controllers
             return auth;
         }
 
+        /// <summary>
+        /// Sets the Auth of a user with a given username.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="authid"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
         [Authorize]
