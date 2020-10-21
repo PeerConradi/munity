@@ -23,8 +23,8 @@ namespace MUNityTest.Speakerlist
         public void TestNextQuestionsResetsTime()
         {
             var instance = new SpeakerlistModel();
-            var delegationOne = new Delegation();
-            var delegationTwo = new Delegation();
+            var delegationOne = new SpeakerlistModel.Speaker();
+            var delegationTwo = new SpeakerlistModel.Speaker();
             instance.AddQuestion(delegationOne);
             instance.AddQuestion(delegationTwo);
             instance.NextQuestion();
@@ -39,8 +39,8 @@ namespace MUNityTest.Speakerlist
         public void TestNextSpeakerResetsTime()
         {
             var instance = new SpeakerlistModel();
-            var delegationOne = new Delegation();
-            var delegationTwo = new Delegation();
+            var delegationOne = new SpeakerlistModel.Speaker();
+            var delegationTwo = new SpeakerlistModel.Speaker();
             instance.AddSpeaker(delegationOne);
             instance.AddSpeaker(delegationTwo);
             instance.NextSpeaker();
@@ -66,7 +66,7 @@ namespace MUNityTest.Speakerlist
         {
             var speakerlist = new SpeakerlistModel();
             speakerlist.Speakertime = new TimeSpan(0, 1, 0);
-            var delegation = new Delegation();
+            var delegation = new SpeakerlistModel.Speaker();
             delegation.Name = "Test";
             speakerlist.AddSpeaker(delegation);
             speakerlist.NextSpeaker();
@@ -82,7 +82,7 @@ namespace MUNityTest.Speakerlist
         {
             var speakerlist = new SpeakerlistModel();
             speakerlist.Speakertime = new TimeSpan(0, 1, 0);
-            var delegation = new Delegation();
+            var delegation = new SpeakerlistModel.Speaker();
             delegation.Name = "Test";
             speakerlist.AddSpeaker(delegation);
             speakerlist.NextSpeaker();
@@ -100,7 +100,7 @@ namespace MUNityTest.Speakerlist
         {
             var speakerlist = new SpeakerlistModel();
             speakerlist.Questiontime = new TimeSpan(0, 1, 0);
-            var delegation = new Delegation();
+            var delegation = new SpeakerlistModel.Speaker();
             delegation.Name = "Test";
             speakerlist.AddQuestion(delegation);
             speakerlist.NextQuestion();

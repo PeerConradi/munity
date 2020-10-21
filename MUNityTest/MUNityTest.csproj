@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MUNityAngular\MUNityCore.csproj" />
+    <ProjectReference Include="..\MUNityCore\MUNityCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

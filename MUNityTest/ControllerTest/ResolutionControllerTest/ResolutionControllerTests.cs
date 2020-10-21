@@ -19,9 +19,12 @@ namespace MUNityTest.ControllerTest.ResolutionControllerTest
             var mockService = new Mock<IResolutionService>();
             mockService.Setup(service =>
                 service.CreatePublicResolution("test")).ReturnsAsync(GetTestResolution);
-            var controller = new ResolutionController(null);
 
-            var result = await controller.CreatePublic("test", mockService.Object);
+            var mockAuthService = new Mock<IAuthService>();
+
+            var controller = new ResolutionController(null, mockService.Object, mockAuthService.Object);
+
+            var result = await controller.CreatePublic("test");
 
             Assert.NotNull(result);
             Assert.Equal("test", result.Header.Topic);
