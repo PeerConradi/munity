@@ -27,10 +27,18 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=root
       - ME_CONFIG_MONGODB_ADMINPASSWORD=example
       - ME_CONFIG_MONGODB_SERVER=mongodb
-	  
+
   munity-backend:
     image: munity-backend
     ports:
       - 0.0.0.0:5000:5000
     environment:
-      - MUNITY_FRONTEND_IP=172.17.14.180
+      - MUNITY_FRONTEND_IP=DOMAIN
+      
+   munity-frontend:
+     image: munity-frontend
+     ports:
+       - 0.0.0.0:80:80
+     environment:
+       - API_ENDPOINT=http://DOMAIN:5000/
+     
