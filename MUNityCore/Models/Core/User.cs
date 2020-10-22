@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using MUNityCore.Models.Conference;
+using MUNityCore.Models.User;
 
 
 namespace MUNityCore.Models.Core
@@ -99,6 +100,16 @@ namespace MUNityCore.Models.Core
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
         public EUserState UserState { get; set; }
+
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public List<User> Friends { get; set; }
+
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public UserPrivacySettings PrivacySettings { get; set; }
 
         [Timestamp]
         public byte[] UserTimestamp { get; set; }

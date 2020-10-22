@@ -8,6 +8,7 @@ using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Core;
 using MUNityCore.Models.Organisation;
+using MUNityCore.Models.User;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {
@@ -82,6 +83,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
             modelBuilder.Entity<TeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
 
             modelBuilder.Entity<User>().HasOne(n => n.Auth).WithMany(n => n.Users);
+
+            modelBuilder.Entity<User>().HasOne(n => n.PrivacySettings).WithOne(n => n.User).HasForeignKey<UserPrivacySettings>(n => n.UserRef);
 
             modelBuilder.Entity<AbstractRole>().HasDiscriminator(n => n.RoleType)
                 .HasValue<DelegateRole>("DelegateRole")

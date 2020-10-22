@@ -1,5 +1,5 @@
 # munity
-MUN Crossplatform WebApplication
+Model United Nations REST API
 
 ## About
 MUNity is a work in progress to create and manage Model United Nations Conferences.
@@ -43,6 +43,8 @@ The project uses swagger. Go to localhost:[port]/swagger to see the auto generat
 
 ## Demo
 
-You can Take a look at a Demo [here](https://mun-tools.com)
+You can Take a look at a Demo [here](https://mun-tools.com).
+
+Api References: https://mun-tools.com/swagger/index.html
 
 

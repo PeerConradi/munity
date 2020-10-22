@@ -23,36 +23,38 @@ namespace MUNityCore.Controllers
     public class UserController : ControllerBase
     {
 
+        private readonly IAuthService _authService;
+
+        private readonly IUserService _userService;
+
         /// <summary>
         /// Get the basic information of a user.
         /// This function can only used when authorized with a baerer token.
         /// </summary>
-        /// <param name="userService"></param>
         /// <param name="username"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public async Task<IUserInformation> GetUser([FromServices]IUserService userService, string username)
+        public async Task<IUserInformation> GetUser(string username)
         {
-            return await userService.GetUserByUsername(username);
+            return await _userService.GetUserByUsername(username);
         }
 
         /// <summary>
         /// Registers a new User.
         /// </summary>
-        /// <param name="userService"></param>
         /// <param name="body">a RegisterRequest Body</param>
         /// <returns>The model of the created user himself with all importand informations.</returns>
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult<User> Register([FromServices]IUserService userService, [FromBody]RegisterRequest body)
+        public ActionResult<User> Register([FromBody]RegisterRequest body)
         {
             try
             {
                 var user =
-                     userService.CreateUser(body.Username, body.Forename, body.Lastname, body.Password, body.Mail, body.Birthday);
+                     _userService.CreateUser(body.Username, body.Forename, body.Lastname, body.Password, body.Mail, body.Birthday);
                 return Ok(user);
             }
             catch (Exception e)
@@ -64,9 +66,9 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public AuthenticationResponse Login([FromServices]IAuthService authService, [FromBody]AuthenticateRequest request)
+        public AuthenticationResponse Login([FromBody]AuthenticateRequest request)
         {
-            return authService.Authenticate(request);
+            return _authService.Authenticate(request);
         }
 
         [Route("[action]")]
@@ -86,15 +88,14 @@ namespace MUNityCore.Controllers
         /// settings of this user.
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="userService"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
         [Authorize]
-        public async Task<int> UpdateMe([FromBody]User user, [FromServices]IUserService userService)
+        public async Task<int> UpdateMe([FromBody]User user)
         {
             var username = User.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name)?.Value ?? "";
-            var dbUser = await userService.GetUserByUsername(username);
+            var dbUser = await _userService.GetUserByUsername(username);
             dbUser.Forename = user.Forename;
             dbUser.Lastname = user.Lastname;
             
@@ -104,39 +105,74 @@ namespace MUNityCore.Controllers
             dbUser.Housenumber = user.Housenumber;
             dbUser.Zipcode = user.Zipcode;
 
-            return await userService.UpdateUser(dbUser);
+            return await _userService.UpdateUser(dbUser);
         }
 
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<User>> WhoAmI([FromServices]IUserService service)
+        public ActionResult<User> WhoAmI()
         {
 
-            var username = User.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name)?.Value ?? "";
-            var result = await service.GetUserByUsername(username);
+            var result = _authService.GetUserOfClaimPrincipal(User);
             if (result != null)
                 return Ok(result);
 
             return Forbid("A user has no name.");
         }
 
+        /// <summary>
+        /// Checks if a username is taken by another user. Will return true if the username is taken.
+        /// will return false if the username is unknown.
+        /// The username will be cast to lower and checked. UserA and usera will be referenced to the same
+        /// user.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
-        public async Task<bool> CheckUsername(string username,
-            [FromServices]IUserService userService)
+        public async Task<bool> CheckUsername(string username)
         {
-            return await userService.CheckUsername(username);
+            return await _userService.CheckUsername(username.ToLower());
+        }
+
+        /// <summary>
+        /// Checks if a Mail Address is still open for registration or if its taken.
+        /// Will Return true if the E-Mail Address is used by any user.
+        /// false if the email address is not registered in the system.
+        /// Note that this function will not validate if the EMail Address is valid to use for the plattform.
+        /// </summary>
+        /// <param name="mail"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<bool> CheckMail(string mail)
+        {
+            return await _userService.CheckMail(mail);
         }
 
         [Route("[action]")]
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<bool> CheckMail(string mail,
-            [FromServices] IUserService userService)
+        [HttpPatch]
+        [Authorize]
+        public ActionResult SetMyPrivacyPublicNameDisplayMode(int mode)
         {
-            return await userService.CheckMail(mail);
+            if (mode < 0 || mode > 3) return BadRequest("Only mode 0-3 are allowed!");
+
+            var user = _authService.GetUserOfClaimPrincipal(User);
+            if (user == null) Forbid();
+            var privacySettings = _userService.GetUserPrivacySettings(user);
+            if (privacySettings == null) privacySettings = _userService.InitUserPrivacySettings(user);
+            privacySettings.PublicNameDisplayMode = (Models.User.UserPrivacySettings.ENameDisplayMode) mode;
+            this._userService.UpdatePrivacySettings(privacySettings);
+            return Ok("settings saved");
+        }
+
+        public UserController(IAuthService authService, IUserService userService)
+        {
+            this._authService = authService;
+            this._userService = userService;
         }
     }
 }

@@ -45,5 +45,44 @@ namespace MUNityTest.Service
             var user = await service.GetUserByUsername("mikelitoris");
             Assert.NotNull(user);
         }
+
+        [Test]
+        [Order(3)]
+        [Author("Peer Conradi")]
+        [Description("Getting the privacy settings of the user now should return null")]
+        public async Task TestGetPrivacySettings()
+        {
+            var service = new UserService(_context);
+            var user = await service.GetUserByUsername("mikelitoris");
+            Assert.NotNull(user);
+            var privacySettings = service.GetUserPrivacySettings(user);
+            Assert.IsNull(privacySettings);
+        }
+
+        [Test]
+        [Order(4)]
+        [Author("Peer Conradi")]
+        [Description("Init privacy settings should create a privacy settings element")]
+        public async Task TestInitPrivacySettings()
+        {
+            var service = new UserService(_context);
+            var user = await service.GetUserByUsername("mikelitoris");
+            Assert.NotNull(user);
+            var initSettings = service.InitUserPrivacySettings(user);
+            Assert.NotNull(initSettings);
+        }
+
+        [Test]
+        [Order(5)]
+        [Author("Peer Conradi")]
+        [Description("Getting the privacy settings now should return something")]
+        public async Task TestGetPrivacySettingsAgain()
+        {
+            var service = new UserService(_context);
+            var user = await service.GetUserByUsername("mikelitoris");
+            Assert.NotNull(user);
+            var privacySettings = service.GetUserPrivacySettings(user);
+            Assert.NotNull(privacySettings);
+        }
     }
 }

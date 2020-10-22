@@ -25,7 +25,6 @@ namespace MUNityCore.Services
     public class AuthService : IAuthService
     {
         private readonly MunCoreContext _context;
-        private readonly MunityContext _munityContext;
         private readonly AppSettings _settings;
 
         public bool CanUserEditConference(User user, Conference conference)

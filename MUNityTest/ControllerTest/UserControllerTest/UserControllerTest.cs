@@ -22,6 +22,8 @@ namespace MUNityTest.ControllerTest.UserControllerTest
         {
             var userServiceMock = new Mock<IUserService>();
 
+            var authServiceMock = new Mock<IAuthService>();
+
             userServiceMock.Setup(service =>
                 service.CreateUser(It.IsAny<string>(),
                     It.IsAny<string>(),
@@ -40,8 +42,8 @@ namespace MUNityTest.ControllerTest.UserControllerTest
                 Password = "Password"
             };
 
-            var controller = new UserController();
-            var call = controller.Register(userServiceMock.Object, request);
+            var controller = new UserController(authServiceMock.Object, userServiceMock.Object);
+            var call = controller.Register(request);
             var result = call.Result as OkObjectResult;
             Assert.NotNull(result);
             Assert.IsType<User>(result.Value);
@@ -51,6 +53,8 @@ namespace MUNityTest.ControllerTest.UserControllerTest
         public void RegisterWithInvalidDataTest()
         {
             var userServiceMock = new Mock<IUserService>();
+
+            var authServiceMock = new Mock<IAuthService>();
 
             userServiceMock.Setup(service =>
                 service.CreateUser(It.IsAny<string>(),
@@ -70,8 +74,8 @@ namespace MUNityTest.ControllerTest.UserControllerTest
                 Password = "Password"
             };
 
-            var controller = new UserController();
-            var call = controller.Register(userServiceMock.Object, request);
+            var controller = new UserController(authServiceMock.Object, userServiceMock.Object);
+            var call = controller.Register(request);
             var result = call.Result as BadRequestObjectResult;
             Assert.NotNull(result);
             Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);

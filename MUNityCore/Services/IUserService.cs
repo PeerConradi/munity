@@ -17,5 +17,11 @@ namespace MUNityCore.Services
         Task<bool> CheckUsername(string username);
 
         Task<bool> CheckMail(string mail);
+
+        Models.User.UserPrivacySettings GetUserPrivacySettings(User user);
+
+        public Models.User.UserPrivacySettings InitUserPrivacySettings(User user);
+
+        public void UpdatePrivacySettings(Models.User.UserPrivacySettings settings);
     }
 }

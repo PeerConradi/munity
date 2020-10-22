@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 
 namespace MUNityCore.Services
 {
@@ -64,7 +65,7 @@ namespace MUNityCore.Services
 
         public async Task<bool> CheckUsername(string username)
         {
-            return await _context.Users.AnyAsync(n => n.Username == username);
+            return await _context.Users.AnyAsync(n => n.Username.ToLower() == username);
         }
 
         public async Task<bool> CheckMail(string mail)
@@ -85,6 +86,28 @@ namespace MUNityCore.Services
         public Task<int> GetUserCount()
         {
             return this._context.Users.CountAsync();
+        }
+
+        public Models.User.UserPrivacySettings GetUserPrivacySettings(User user)
+        {
+            if (user == null) return null;
+            return this._context.Users.Include(n => n.PrivacySettings)
+                .FirstOrDefault(n => n.UserId == user.UserId)
+                ?.PrivacySettings;
+        }
+
+        public Models.User.UserPrivacySettings InitUserPrivacySettings(User user)
+        {
+            if (user == null) return null;
+            user.PrivacySettings = new UserPrivacySettings() {User = user};
+            this._context.SaveChanges();
+            return user.PrivacySettings;
+        }
+
+        public void UpdatePrivacySettings(Models.User.UserPrivacySettings settings)
+        {
+            this._context.Add(settings);
+            this._context.SaveChanges();
         }
 
         public UserService(MunCoreContext context)

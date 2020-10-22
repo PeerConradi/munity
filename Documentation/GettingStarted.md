@@ -29,16 +29,6 @@ __MongoDB__
 For documents this projects uses a MongoDB. You can get the community edition from here: 
 https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/.
 
-__Node JS__
-
-For the frontend you will need to have NodeJS installed. The Projects uses the Version
-12.16.xx you can download NodeJs at: https://nodejs.org/en/
-
-__Angular CLI__
-
-For the frontend application you need to have the angular CLI installed.
-You can get it from here: https://cli.angular.io/
-
 ## The Projects
 
 After cloning the repository and opening the Solution File ```MunityAngular.sln``` you should find
@@ -46,13 +36,7 @@ two project inside the Project-Explorer: MUNityAngular and MUNityTest.
 
 ### MUNityAngular
 
-This project contains the frontend and the backend application of this project.
-It should be selected as the default start project and the name should appear bold.
-
-The folder ```ClientApp``` contains the code for the Angular 9 frontend. Everything around it is the 
-backend code.
-
-You can find a little bit about how to work with Angular [here](../MUNityAngular/ClientApp/README.MD)
+MunityAngular is a frontend for the API. It can be found here: https://github.com/PeerConradi/MunityFrontend
 
 ### MUNityTest
 
