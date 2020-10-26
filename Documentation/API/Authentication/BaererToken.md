@@ -8,3 +8,4 @@ To make your request have the Authentication. You will get the token from the lo
 Add the attribute "Authorization" with the value "Barer " + [The Token given by the login] in your HttpHeader.
 
 The frontend in Angular uses the AuthInterceptor to do this. This way you don't need to set the HttpHeader yourself.
+

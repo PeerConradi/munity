@@ -62,6 +62,20 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
+        /// Selects all conferences that are visible to the public where the name, fullname or abbreviation contain
+        /// the name. The search is case insensitive.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public ActionResult<IEnumerable<Conference>> FindConferencesByName(string name)
+        {
+            return Ok(this._conferenceService.FindPublicConferencesByName(name));
+        }
+
+        /// <summary>
         /// Creates a new Project. Every Project needs an organisation, organisations
         /// can host different projects and projects can have different conferences.
         /// For example the Organisation dmun e.V. has three different projects:
@@ -119,6 +133,11 @@ namespace MUNityCore.Controllers
         {
             var result = await this._conferenceService.GetProject(id);
             return Ok(result);
+        }
+
+        public ActionResult<IEnumerable<Project>> FindProjectsByName(string name)
+        {
+            return Ok(this._conferenceService.FindProjectsByName(name));
         }
 
         /// <summary>
@@ -340,6 +359,8 @@ namespace MUNityCore.Controllers
             await this._conferenceService.SaveDatabaseChanges();
             return Ok(newCommittee);
         }
+
+
 
 
         /// <summary>

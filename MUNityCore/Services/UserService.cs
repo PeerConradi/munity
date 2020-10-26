@@ -110,15 +110,31 @@ namespace MUNityCore.Services
             this._context.SaveChanges();
         }
 
-        public UserService(MunCoreContext context)
-        {
-            _context = context;
-        }
+        
 
         public void RemoveUser(User user)
         {
             this._context.Users.Remove(user);
             this._context.SaveChanges();
+        }
+
+        public bool BanUser(User user)
+        {
+            if (user == null) return false;
+            user.UserState = User.EUserState.BANNED;
+            this._context.SaveChanges();
+            return true;
+        }
+
+        public IEnumerable<User> GetAdministrators()
+        {
+            return this._context.Users.Where(n =>
+                n.Auth.AuthLevel == UserAuth.EAuthLevel.Admin || n.Auth.AuthLevel == UserAuth.EAuthLevel.Headadmin);
+        }
+
+        public UserService(MunCoreContext context)
+        {
+            _context = context;
         }
     }
 }

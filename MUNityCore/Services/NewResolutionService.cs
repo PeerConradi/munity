@@ -20,10 +20,11 @@ namespace MUNityCore.Services
 
         public async Task<ResolutionV2> CreateResolution(string title)
         {
-            var resolution = new ResolutionV2();
+            var resolution = new ResolutionV2
+            {
+                ResolutionId = Util.Tools.IdGenerator.RandomString(36), Header = {Topic = title}
+            };
             // Save in MongoDb
-            resolution.ResolutionId = Util.Tools.IdGenerator.RandomString(36);
-            resolution.Header.Topic = title;
             await _resolutions.InsertOneAsync(resolution);
 
             var auth = new ResolutionAuth(resolution);
@@ -33,14 +34,13 @@ namespace MUNityCore.Services
 
         public async Task<ResolutionV2> CreatePublicResolution(string title)
         {
-            var resolution = new ResolutionV2();
+            var resolution = new ResolutionV2
+            {
+                ResolutionId = Util.Tools.IdGenerator.RandomString(36), Header = {Topic = title}
+            };
             // Save in MongoDb
-            resolution.ResolutionId = Util.Tools.IdGenerator.RandomString(36);
-            resolution.Header.Topic = title;
             await _resolutions.InsertOneAsync(resolution);
-            var auth = new ResolutionAuth(resolution);
-            auth.AllowPublicEdit = true;
-            auth.AllowPublicRead = true;
+            var auth = new ResolutionAuth(resolution) {AllowPublicEdit = true, AllowPublicRead = true};
             await _munityContext.ResolutionAuths.AddAsync(auth);
             await _munityContext.SaveChangesAsync();
 
@@ -65,8 +65,7 @@ namespace MUNityCore.Services
         public async Task<IPreambleParagraph> AddPreambleParagraph(ResolutionV2 resolution, string text = "")
         {
             resolution.Preamble.Paragraphs ??= new List<PreambleParagraph>();
-            var paragraph = new PreambleParagraph();
-            paragraph.Text = text;
+            var paragraph = new PreambleParagraph {Text = text};
             resolution.Preamble.Paragraphs.Add(paragraph);
             await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
             //await _resolutions.ReplaceOneAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
@@ -124,6 +123,11 @@ namespace MUNityCore.Services
             await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
             await _resolutions.ReplaceOneAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
             return paragraph;
+        }
+
+        public Task<int> GetResolutionCount()
+        {
+            return this._munityContext.ResolutionAuths.CountAsync();
         }
 
         public NewResolutionService(MunityContext munityContext, IMunityMongoDatabaseSettings mongoSettings)

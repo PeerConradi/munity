@@ -10,6 +10,7 @@ using MUNityCore.Util.Extenstions;
 using MUNityCore.DataHandlers.EntityFramework.Models;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Core;
+using MUNityCore.Schema.Request;
 using MUNityCore.Services;
 using User = MUNityCore.Models.Core.User;
 
@@ -25,9 +26,11 @@ namespace MUNityCore.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly Services.AuthService _authService;
+        private readonly IAuthService _authService;
 
-        private readonly Services.UserService _userService;
+        private readonly IUserService _userService;
+
+        private readonly IResolutionService _resolutionService;
 
         /// <summary>
         /// Checks if the user behind the baerer token is an Admin or HeadAdmin.
@@ -115,6 +118,23 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
+        /// Creates a new user auth and returns the new created auth.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPost]
+        [Authorize]
+        public ActionResult<UserAuth> CreateUserAuth([FromBody] AdminSchema.CreateUserAuthBody body)
+        {
+            if (!_authService.IsUserPrincipalAdmin(User)) return Forbid();
+
+            var auth = this._authService.CreateUserAuth(body);
+            return Ok(auth);
+        }
+
+
+        /// <summary>
         /// Sets the Auth of a user with a given username.
         /// </summary>
         /// <param name="username"></param>
@@ -145,13 +165,34 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        [Authorize]
-        public ActionResult<IEnumerable<Models.Core.User>> GetBannedUsers()
+        public ActionResult<IEnumerable<User>> GetBannedUsers()
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid("You are not allowed to show that. You need to be Admin!");
+                return Forbid();
 
             return Ok(this._userService.GetBannedUsers());
+        }
+
+        /// <summary>
+        /// Bans a user by the given username.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpDelete]
+        [Authorize]
+        public async Task<ActionResult<bool>> BanUser(string username)
+        {
+            if (!this._authService.IsUserPrincipalAdmin(User))
+                return Forbid();
+
+            var user = await this._userService.GetUserByUsername(username);
+            if (user == null)
+                return NotFound("User not found");
+
+            this._userService.BanUser(user);
+            return Ok(true);
+
         }
 
         /// <summary>
@@ -163,7 +204,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public ActionResult<IEnumerable<Models.Core.User>> GetUserblock(int blockid)
+        public ActionResult<IEnumerable<User>> GetUserBlock(int blockid)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
                 return Forbid("You are not allowed to show that. You need to be Admin!");
@@ -182,16 +223,51 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<int>> GetUserCount()
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid("You are not allowed to show that. You need to be Admin!");
+                return Forbid();
 
             var res = await this._userService.GetUserCount();
             return Ok(res);
         }
 
-        public AdminController(Services.AuthService authService, UserService userService)
+        /// <summary>
+        /// Gets the total count of resolution auths that are created. The number can differ from the
+        /// real amount of resolutions because the content of resolution is stored inside a mongoDb and not
+        /// inside the sql database.
+        /// </summary>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<int>> GetResolutionCount()
+        {
+            if (!this._authService.IsUserPrincipalAdmin(User))
+                return Forbid();
+
+            var result = await this._resolutionService.GetResolutionCount();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns all users that are admin or Head Admins.
+        /// </summary>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpGet]
+        [Authorize]
+        public ActionResult<IEnumerable<User>> GetAdministrators()
+        {
+            if (this._authService.IsUserPrincipalAdmin(User))
+                return Forbid();
+
+            IEnumerable<User> admins = this._userService.GetAdministrators();
+            return Ok(admins);
+        }
+
+        public AdminController(IAuthService authService, IUserService userService, IResolutionService resolutionService)
         {
             this._authService = authService;
             this._userService = userService;
+            this._resolutionService = resolutionService;
         }
     }
 }

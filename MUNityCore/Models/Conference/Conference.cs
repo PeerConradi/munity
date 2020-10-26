@@ -89,6 +89,8 @@ namespace MUNityCore.Models.Conference
 
         [Timestamp]
         [IgnoreDataMember]
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public byte[] ConferenceTimestamp { get; set; }
 
         public Conference()

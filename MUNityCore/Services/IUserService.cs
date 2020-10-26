@@ -20,8 +20,20 @@ namespace MUNityCore.Services
 
         Models.User.UserPrivacySettings GetUserPrivacySettings(User user);
 
-        public Models.User.UserPrivacySettings InitUserPrivacySettings(User user);
+        Models.User.UserPrivacySettings InitUserPrivacySettings(User user);
 
-        public void UpdatePrivacySettings(Models.User.UserPrivacySettings settings);
+        void UpdatePrivacySettings(Models.User.UserPrivacySettings settings);
+
+        bool BanUser(User user);
+
+        IEnumerable<User> GetBannedUsers();
+
+        IEnumerable<User> GetUserBlock(int blockid);
+
+        Task<int> GetUserCount();
+
+        void RemoveUser(User user);
+
+        IEnumerable<User> GetAdministrators();
     }
 }

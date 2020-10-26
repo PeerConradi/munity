@@ -46,5 +46,7 @@ namespace MUNityCore.Services
         Task<bool> SetConferenceAbbreviation(string conferenceid, string abbreviation);
 
         Task<bool> SetConferenceDate(string conferenceid, DateTime startDate, DateTime endDate);
+        IEnumerable<Conference> FindPublicConferencesByName(string name);
+        IEnumerable<Project> FindProjectsByName(string name);
     }
 }

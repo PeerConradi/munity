@@ -20,5 +20,6 @@ namespace MUNityCore.Services
 
         Task<ResolutionV2> SaveResolution(ResolutionV2 resolution);
 
+        Task<int> GetResolutionCount();
     }
 }

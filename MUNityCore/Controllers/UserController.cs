@@ -153,6 +153,17 @@ namespace MUNityCore.Controllers
             return await _userService.CheckMail(mail);
         }
 
+        /// <summary>
+        /// Sets the privacy mode of the name that is visible to the public of the current logged in user.
+        /// Note that the header needs to contain the baerer token for this function to work.
+        /// Allowed are the modes from zero to three (0,1,2,3)
+        /// 0 = Fullname (Forename + Lastname)
+        /// 1 = Full Forname + First Letter of the Lastname
+        /// 2 = First letter of the forename and full lastname
+        /// 3 = first letter of first name + first letter of lastname
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
         [Authorize]

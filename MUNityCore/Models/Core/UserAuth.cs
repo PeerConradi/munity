@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using MUNityCore.Schema.Request;
 
 namespace MUNityCore.Models.Core
 {
@@ -53,6 +54,14 @@ namespace MUNityCore.Models.Core
             CanCreateOrganisation = false;
             AuthLevel = EAuthLevel.New;
             UserAuthName = name;
+        }
+
+        public UserAuth(AdminSchema.CreateUserAuthBody request)
+        {
+            Users = new List<User>();
+            CanCreateOrganisation = request.CanCreateOrganisation;
+            AuthLevel = EAuthLevel.New;
+            UserAuthName = request.Name;
         }
     }
 }

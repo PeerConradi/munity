@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -23,10 +24,12 @@ namespace MUNityCore.Models.Conference
         [MaxLength(10)]
         public string RoleShort { get; set; }
 
+        [IgnoreDataMember]
         [Newtonsoft.Json.JsonIgnore]
         [JsonIgnore]
         public Conference Conference { get; set; }
 
+        [IgnoreDataMember]
         [Newtonsoft.Json.JsonIgnore]
         [JsonIgnore]
         public RoleAuth RoleAuth { get; set; }

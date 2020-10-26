@@ -95,6 +95,70 @@ namespace MUNityCore.Controllers
                 "Something went wrong when saving the resolution!");
         }
 
+        /// <summary>
+        /// Updates a preamble paragraph inside the given resolution.
+        /// note that this will also submit the changes to all clients that
+        /// are listening on the resasocket by subscribing to this resolution.
+        /// Will update the Text and the notices.
+        /// Will return Status 200 if the changes are submitted.
+        /// Will return Status 404 if the resolution or preamble paragraph cannot be found.
+        /// </summary>
+        /// <param name="resolutionId"></param>
+        /// <param name="paragraph"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [AllowAnonymous]
+        public async Task<ActionResult> UpdatePublicResolutionPreambleParagraph(string resolutionId,
+            [FromBody] PreambleParagraph paragraph)
+        {
+            var resolution = await this._resolutionService.GetResolution(resolutionId);
+            if (resolution == null) return NotFound("Resolution with the given id not found!");
+            if (resolution.Preamble == null) return NotFound("Resolution has no preamble section");
+            if (resolution.Preamble.Paragraphs == null || resolution.Preamble.Paragraphs.Count == 0)
+                return NotFound("Resolution has no preamble paragraphs.");
+            var para = resolution.Preamble
+                .Paragraphs.FirstOrDefault(n => 
+                    n.PreambleParagraphId == paragraph.PreambleParagraphId);
+            if (para == null) return NotFound("Paragraph not found");
+            para.Text = paragraph.Text;
+            para.Notices = paragraph.Notices;
+            await this._resolutionService.SaveResolution(resolution);
+            await this._hubContext.Clients.Group(resolutionId).PreambleParagraphChanged(resolutionId, para);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Updates an operative paragraph inside a resolution. Will change the Text and Notices to the ones inside the
+        /// given Model.
+        /// This Call will then inform all clients that have Subscribed to the resolution inside the
+        /// resasocket.
+        /// </summary>
+        /// <param name="resolutionId"></param>
+        /// <param name="paragraph"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [AllowAnonymous]
+        public async Task<ActionResult> UpdatePublicResolutionOperativeParagraph(string resolutionId,
+            [FromBody] OperativeParagraph paragraph)
+        {
+            var resolution = await this._resolutionService.GetResolution(resolutionId);
+            if (resolution == null) return NotFound("Resolution with the given id not found!");
+            if (resolution.OperativeSection == null) return NotFound("Resolution has no operative section");
+            if (resolution.OperativeSection.Paragraphs == null || resolution.OperativeSection.Paragraphs.Count == 0)
+                return NotFound("Resolution has no Operative paragraphs.");
+            var para = resolution.OperativeSection
+                .Paragraphs.FirstOrDefault(n =>
+                    n.OperativeParagraphId == paragraph.OperativeParagraphId);
+            if (para == null) return NotFound("Paragraph not found");
+            para.Text = paragraph.Text;
+            para.Notices = paragraph.Notices;
+            await this._resolutionService.SaveResolution(resolution);
+            await this._hubContext.Clients.Group(resolutionId).OperativeParagraphChanged(resolutionId, para);
+            return Ok();
+        }
+
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]

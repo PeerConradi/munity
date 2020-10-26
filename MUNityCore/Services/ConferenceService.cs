@@ -19,7 +19,7 @@ namespace MUNityCore.Services
 {
     public class ConferenceService : IConferenceService
     {
-        private MunCoreContext _context;
+        private readonly MunCoreContext _context;
 
         public Project CreateProject(string name, string abbreviation, Organisation organisation)
         {
@@ -60,22 +60,25 @@ namespace MUNityCore.Services
         /// <param name="fullname">The full name of the conference for example Model United Nations Schleswig-Holstein 2021</param>
         /// <param name="abbreviation">A short name of the conference like: MUN-SH 2021</param>
         /// <param name="project">The project that this conference belongs to. Like the Model United Nations Schleswig-Holstein projects.</param>
+        /// <exception cref="ArgumentException">every conference has to be created inside a parent project.</exception>
         /// <returns></returns>
         public Conference CreateConference(string name, string fullname, string abbreviation, Project project)
         {
             if (_context.Conferences.Any(n => n.Name == name || n.FullName == fullname))
-                throw new NameAlreadyTakenException("The conferencename or Fullname is already taken by another conference.");
+                throw new NameAlreadyTakenException("The conference name or Fullname is already taken by another conference.");
 
             if (project == null)
                 throw new ArgumentException("The project cannot be null!");
 
-            var conference = new Conference();
-            conference.Name = name;
-            conference.FullName = fullname;
-            conference.Abbreviation = abbreviation;
-            conference.CreationDate = DateTime.Now;
-            conference.StartDate = new DateTime(1980,1,1);
-            conference.EndDate = new DateTime(1980, 1, 4);
+            var conference = new Conference
+            {
+                Name = name,
+                FullName = fullname,
+                Abbreviation = abbreviation,
+                CreationDate = DateTime.Now,
+                StartDate = new DateTime(1980, 1, 1),
+                EndDate = new DateTime(1980, 1, 4)
+            };
             if (!_context.Conferences.Any(n => n.ConferenceId == abbreviation))
                 conference.ConferenceId = abbreviation;
             conference.ConferenceProject = project;
@@ -109,12 +112,14 @@ namespace MUNityCore.Services
             if (conference == null)
                 throw new ArgumentException("The conference can not be null, make sure you give a valid conference when creating a committee.");
 
-            var committee = new Committee();
-            committee.Name = name;
-            committee.FullName = fullname;
-            committee.Abbreviation = abbreviation;
+            var committee = new Committee
+            {
+                Name = name,
+                FullName = fullname,
+                Abbreviation = abbreviation
+            };
 
-            
+
 
             string customid = conference.ConferenceId + "-" + abbreviation.ToUrlValid();
             if (!_context.Committees.Any(n => n.CommitteeId == customid))
@@ -167,10 +172,7 @@ namespace MUNityCore.Services
 
         public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null, RoleAuth auth = null)
         {
-            var role = new TeamRole();
-            role.Conference = conference;
-            role.RoleName = roleName;
-            role.RoleAuth = auth;
+            var role = new TeamRole {Conference = conference, RoleName = roleName, RoleAuth = auth};
 
             if (parentRole != null)
                 role.ParentTeamRole = parentRole;
@@ -182,10 +184,7 @@ namespace MUNityCore.Services
 
         public SecretaryGeneralRole CreateSecretaryGeneralRole(Conference conference, string roleName, string title, RoleAuth auth = null)
         {
-            var role = new SecretaryGeneralRole();
-            role.Title = title;
-            role.RoleName = roleName;
-            role.Conference = conference;
+            var role = new SecretaryGeneralRole {Title = title, RoleName = roleName, Conference = conference};
 
             _context.SecretaryGenerals.Add(role);
             _context.SaveChanges();
@@ -199,9 +198,7 @@ namespace MUNityCore.Services
 
         public Delegation CreateDelegation(Conference conference, string name)
         {
-            var delegation = new Delegation();
-            delegation.Conference = conference;
-            delegation.Name = name;
+            var delegation = new Delegation {Conference = conference, Name = name};
 
             _context.Delegation.Add(delegation);
             _context.SaveChanges();
@@ -216,13 +213,15 @@ namespace MUNityCore.Services
 
         public DelegateRole CreateDelegateRole(Committee committee, Delegation delegation, string name, bool isLeader = false)
         {
-            var role = new DelegateRole();
-            role.RoleName = name;
-            role.Committee = committee;
-            role.Conference = committee.Conference;
-            role.Delegation = delegation;
-            role.IsDelegationLeader = isLeader;
-            role.Title = name;
+            var role = new DelegateRole
+            {
+                RoleName = name,
+                Committee = committee,
+                Conference = committee.Conference,
+                Delegation = delegation,
+                IsDelegationLeader = isLeader,
+                Title = name
+            };
 
             _context.Delegates.Add(role);
             _context.SaveChanges();
@@ -247,10 +246,7 @@ namespace MUNityCore.Services
 
         public NgoRole CreateNgoRole(Conference conference,string roleName, string ngoName)
         {
-            var role = new NgoRole();
-            role.RoleName = roleName;
-            role.NgoName = ngoName;
-            role.Conference = conference;
+            var role = new NgoRole {RoleName = roleName, NgoName = ngoName, Conference = conference};
 
             _context.NgoRoles.Add(role);
             _context.SaveChanges();
@@ -265,10 +261,7 @@ namespace MUNityCore.Services
 
         public PressRole CreatePressRole(Conference conference, PressRole.EPressCategories category, string roleName)
         {
-            var role = new PressRole();
-            role.RoleName = roleName;
-            role.Conference = conference;
-            role.PressCategory = category;
+            var role = new PressRole {RoleName = roleName, Conference = conference, PressCategory = category};
 
             _context.PressRoles.Add(role);
             _context.SaveChanges();
@@ -283,9 +276,7 @@ namespace MUNityCore.Services
 
         public Participation Participate(Models.Core.User user, AbstractRole role)
         {
-            var participation = new Participation();
-            participation.User = user;
-            participation.Role = role;
+            var participation = new Participation {User = user, Role = role};
 
             _context.Participations.Add(participation);
             _context.SaveChanges();
@@ -358,6 +349,20 @@ namespace MUNityCore.Services
             return this._context.Conferences.AnyAsync(n => n.FullName.ToLower() == fullname.ToLower());
         }
 
+        public IEnumerable<Conference> FindPublicConferencesByName(string name)
+        {
+            name = name.ToLower();
+            return this._context.Conferences.Where(n => n.Visibility == Conference.EConferenceVisibilityMode.Public &&
+                                                        (n.Name.ToLower().Contains(name) ||
+                                                         n.FullName.ToLower().Contains(name) ||
+                                                         n.Abbreviation.ToLower().Contains(name)));
+        }
+
+        public IEnumerable<Project> FindProjectsByName(string name)
+        {
+            name = name.ToLower();
+            return this._context.Projects.Where(n => n.ProjectName.ToLower().Contains(name));
+        }
 
         public ConferenceService(MunCoreContext context)
         {
