@@ -34,11 +34,14 @@ https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/.
 After cloning the repository and opening the Solution File ```MunityAngular.sln``` you should find
 two project inside the Project-Explorer: MUNityAngular and MUNityTest.
 
-### MUNityAngular
+## Developing and Debugging
 
-MunityAngular is a frontend for the API. It can be found here: https://github.com/PeerConradi/MunityFrontend
+You should be able to start the project.
 
-### MUNityTest
+> You need to have the MariaDB and MongoDB up and running in the background.
 
-This project contains the Tests for the MUNity Project. Note that only the Backend Tests are inside
-this Project. Tests for the Angular (ClientApp) are inside ```MUNityAngular/ClientApp/```.
+On the first start the application will create the Databases MUNityCore and MUNityBase. 
+
+The start will open a browser window with a not reachable page. This is correct since there is 
+no frontend inside this project. Note that it will also not run with  port 80. You can still reach the
+swagger API documentation by going to /swagger/index.html

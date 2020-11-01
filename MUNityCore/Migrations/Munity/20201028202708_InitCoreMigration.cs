@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MUNityCore.Migrations.Munity
 {
-    public partial class MunityContextInit : Migration
+    public partial class InitCoreMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

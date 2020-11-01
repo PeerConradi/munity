@@ -63,7 +63,8 @@ namespace MUNityCore
                 
                 o.AddPolicy("DevPolicy", builder =>
                 {
-                    builder.WithOrigins("http://172.17.14.180")
+                    builder
+                        .SetIsOriginAllowed(_ => true)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();

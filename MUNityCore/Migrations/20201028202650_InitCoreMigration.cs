@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MUNityCore.Migrations
 {
-    public partial class InitMigration : Migration
+    public partial class InitCoreMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -175,7 +175,8 @@ namespace MUNityCore.Migrations
                     UserState = table.Column<int>(nullable: false),
                     UserTimestamp = table.Column<DateTime>(rowVersion: true, nullable: true)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
-                    GroupApplicationId = table.Column<int>(nullable: true)
+                    GroupApplicationId = table.Column<int>(nullable: true),
+                    UserId1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -191,6 +192,12 @@ namespace MUNityCore.Migrations
                         column: x => x.GroupApplicationId,
                         principalTable: "GroupApplications",
                         principalColumn: "GroupApplicationId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Users_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -259,6 +266,32 @@ namespace MUNityCore.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPrivacySettings",
+                columns: table => new
+                {
+                    UserPrivacySettingsId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserRef = table.Column<int>(nullable: false),
+                    PublicNameDisplayMode = table.Column<int>(nullable: false),
+                    InternalNameDisplayMode = table.Column<int>(nullable: false),
+                    ConferenceNameDisplayMode = table.Column<int>(nullable: false),
+                    ConferenceHistory = table.Column<int>(nullable: false),
+                    Friendslist = table.Column<int>(nullable: false),
+                    Pinboard = table.Column<int>(nullable: false),
+                    Age = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPrivacySettings", x => x.UserPrivacySettingsId);
+                    table.ForeignKey(
+                        name: "FK_UserPrivacySettings_Users_UserRef",
+                        column: x => x.UserRef,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -644,6 +677,12 @@ namespace MUNityCore.Migrations
                 column: "ConferenceId1");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserPrivacySettings_UserRef",
+                table: "UserPrivacySettings",
+                column: "UserRef",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_AuthUserAuthId",
                 table: "Users",
                 column: "AuthUserAuthId");
@@ -652,6 +691,11 @@ namespace MUNityCore.Migrations
                 name: "IX_Users_GroupApplicationId",
                 table: "Users",
                 column: "GroupApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_UserId1",
+                table: "Users",
+                column: "UserId1");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_GroupApplications_Delegation_DelegationId",
@@ -699,6 +743,9 @@ namespace MUNityCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleApplications");
+
+            migrationBuilder.DropTable(
+                name: "UserPrivacySettings");
 
             migrationBuilder.DropTable(
                 name: "OrganisationRoles");
