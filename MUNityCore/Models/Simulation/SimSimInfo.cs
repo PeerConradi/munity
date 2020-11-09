@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Models.SimSim
+namespace MUNityCore.Models.Simulation
 {
     public class SimSimInfo
     {
@@ -15,19 +15,19 @@ namespace MUNityCore.Models.SimSim
 
         public bool UsesPassword { get; internal set; }
 
-        public static explicit operator SimSimInfo(SimSimModel f)
+        public static explicit operator SimSimInfo(Simulation f)
         {
             return new SimSimInfo(f);
         }
 
-        //public static implicit operator SimSimInfo(SimSimModel f)
+        //public static implicit operator SimSimInfo(Simulation f)
         //{
         //    return new SimSimInfo(f);
         //}
 
-        public SimSimInfo(SimSimModel model)
+        public SimSimInfo(Simulation model)
         {
-            this.SimSimId = model.SimSimId;
+            this.SimSimId = model.SimulationId;
             this.Name = model.Name;
             this.UsesPassword = model.UsingPassword;
             this.UserCount = model.Users.Count;

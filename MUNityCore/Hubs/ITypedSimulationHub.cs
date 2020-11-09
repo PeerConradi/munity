@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.DataHandlers.EntityFramework.Models;
 using MUNityCore.Models.Conference;
-using MUNityCore.Models.SimSim;
+using MUNityCore.Models.Simulation;
 
 namespace MUNityCore.Hubs
 {
     public interface ITypedSimulationHub
     {
-        Task UserJoined(ISimSimUserFacade user);
+        Task UserJoined(SimulationUser user);
 
-        Task UserLeft(ISimSimUserFacade user);
+        Task UserLeft(SimulationUser user);
 
         Task ChatMessageAdded(AllChatMessage message);
 

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Models.SimSim
+namespace MUNityCore.Models.Simulation
 {
     public class AllChatMessage
     {
         public string AllChatMessageId { get; set; }
 
-        public string AuthorToken { get; set; }
+        public int AuthorId { get; set; }
 
         public string AuthorName { get; set; }
 
@@ -22,10 +22,10 @@ namespace MUNityCore.Models.SimSim
             AllChatMessageId = Guid.NewGuid().ToString();
         }
 
-        public AllChatMessage(ISimSimUserFacade user, string message)
+        public AllChatMessage(SimulationUser user, string message)
         {
             AllChatMessageId = Guid.NewGuid().ToString();
-            AuthorToken = user.UserToken;
+            this.AuthorId = user.SimulationUserId;
             AuthorName = user.DisplayName;
             Text = message;
             Timestamp = DateTime.Now;

@@ -9,8 +9,8 @@ namespace MUNityCore.Hubs
 {
     public class SimulationHub : Hub<ITypedSimulationHub>
     {
-        Services.SimSimService _service;
-        public SimulationHub(Services.SimSimService service)
+        Services.SimulationService _service;
+        public SimulationHub(Services.SimulationService service)
         {
             _service = service;
         }
@@ -30,7 +30,7 @@ namespace MUNityCore.Hubs
             //{
             //    var user = game.SignalRConnections[this.Context.ConnectionId];
             //    game.RemoveUser(user);
-            //    this.Clients.Group(game.SimSimId.ToString()).UserLeft(user);
+            //    this.Clients.Group(game.SimulationId.ToString()).UserLeft(user);
             //}
             return base.OnDisconnectedAsync(exception);
         }
@@ -38,27 +38,27 @@ namespace MUNityCore.Hubs
         public void Join(string gameid, string token)
         {
             //Console.WriteLine("Test");
-            var game = _service.GetSimSim(gameid.ToIntOrDefault());
-            if (game != null)
-            {
-                if (game.HiddenTokenValid(token))
-                {
-                    var user = game.GetUserByHiddenToken(token);
-                    if (user != null && !game.SignalRConnections.ContainsKey(this.Context.ConnectionId))
-                    {
-                        game.SignalRConnections.Add(this.Context.ConnectionId, user);
-                    }
-                    try
-                    {
-                        this.Groups.AddToGroupAsync(this.Context.ConnectionId, gameid);
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+            //var game = _service.GetSimulation(gameid.ToIntOrDefault());
+            //if (game != null)
+            //{
+            //    if (game.HiddenTokenValid(token))
+            //    {
+            //        var user = game.GetUserByHiddenToken(token);
+            //        if (user != null && !game.SignalRConnections.ContainsKey(this.Context.ConnectionId))
+            //        {
+            //            game.SignalRConnections.Add(this.Context.ConnectionId, user);
+            //        }
+            //        try
+            //        {
+            //            this.Groups.AddToGroupAsync(this.Context.ConnectionId, gameid);
+            //        }
+            //        catch (Exception)
+            //        {
+            //            throw;
+            //        }
                     
-                }
-            }
+            //    }
+            //}
         }
     }
 }

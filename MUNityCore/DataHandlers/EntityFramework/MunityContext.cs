@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.Resolution.V2;
+using MUNityCore.Models.Simulation;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {
@@ -13,6 +14,12 @@ namespace MUNityCore.DataHandlers.EntityFramework
         public DbSet<ResolutionAuth> ResolutionAuths { get; set; }
 
         public DbSet<ResolutionUser> ResolutionUsers { get; set; }
+
+        public DbSet<Simulation> Simulations { get; set; }
+
+        public DbSet<SimulationRole> SimulationRoles { get; set; }
+
+        public DbSet<SimulationUser> SimulationUser { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,8 +34,11 @@ namespace MUNityCore.DataHandlers.EntityFramework
                 .HasMany(n => n.Users).WithOne(n => n.Auth);
 
 
-            //modelBuilder.Entity<Models.UserAuths>().HasKey(n => n.User);
-            //modelBuilder.Entity<Models.CommitteeDelegation>().HasKey(n => n.CommitteeDelegationId);
+            modelBuilder.Entity<SimulationRole>().HasOne(n => n.Simulation).WithMany(n =>
+                n.Roles);
+
+            modelBuilder.Entity<SimulationUser>().HasOne(n => n.Simulation).WithMany(n =>
+                n.Users);
         }
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)

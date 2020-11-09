@@ -147,7 +147,7 @@ namespace MUNityCore
             services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
             services.AddScoped<Services.IResolutionService, Services.NewResolutionService>();
             services.AddSingleton<Services.SpeakerlistService>();
-            services.AddSingleton<Services.SimSimService>();
+            services.AddSingleton<Services.SimulationService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>

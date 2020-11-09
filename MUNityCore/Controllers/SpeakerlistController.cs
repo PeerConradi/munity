@@ -87,7 +87,7 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
-        /// Subscribes to a speakerlist
+        /// Subscribes to a List of speakers
         /// </summary>
         /// <param name="publicid"></param>
         /// <param name="connectionid"></param>
@@ -100,36 +100,6 @@ namespace MUNityCore.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
-        /// <summary>
-        /// Adds a speaker to the speakerlist
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="listid"></param>
-        /// <param name="delegationid"></param>
-        /// <param name="speakerlistService"></param>
-        /// <param name="conferenceService"></param>
-        /// <returns></returns>
-        //[Route("[action]")]
-        //[HttpPost]
-        //public ActionResult<SpeakerlistModel> AddSpeakerToList([FromHeader]string auth,
-        //    [FromHeader]string listid,
-        //    [FromHeader]string delegationid,
-        //    [FromServices]SpeakerlistService speakerlistService,
-        //    [FromServices]ConferenceService conferenceService)
-        //{
-        //    var delegation = conferenceService.GetDelegation(delegationid);
-        //    if (delegation == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Delegation not found!");
-
-        //    var speakerlist = speakerlistService.GetSpeakerlist(listid);
-        //    if (speakerlist == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-
-        //    speakerlist.AddSpeaker(delegation);
-        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-        //    //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
-        //    return StatusCode(StatusCodes.Status200OK, speakerlist);
-        //}
 
         [Route("[action]")]
         [HttpPost]
@@ -206,33 +176,6 @@ namespace MUNityCore.Controllers
             return StatusCode(StatusCodes.Status200OK, speakerlist);
         }
 
-        /// <summary>
-        /// Adds a Question to the Speakerlist (Question Area)
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="listid"></param>
-        /// <param name="delegationid"></param>
-        /// <param name="speakerlistService"></param>
-        /// <param name="conferenceService"></param>
-        /// <returns></returns>
-        //[Route("[action]")]
-        //[HttpPost]
-        //public ActionResult<SpeakerlistModel> AddQuestionToList(
-        //    [FromHeader] string listid, [FromHeader] string delegationid)
-        //{
-        //    var delegation = conferenceService.GetDelegation(delegationid);
-        //    if (delegation == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Delegation not found!");
-
-        //    var speakerlist = _speakerlistService.GetSpeakerlist(listid);
-        //    if (speakerlist == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-
-        //    speakerlist.AddQuestion(delegation);
-        //    this._hubContext.Clients.Group("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-        //    //this._hubContext.Clients.All.SpeakerListChanged(speakerlist);
-        //    return StatusCode(StatusCodes.Status200OK, speakerlist);
-        //}
 
         /// <summary>
         /// Removes a speaker from the speakerlist.
@@ -450,35 +393,5 @@ namespace MUNityCore.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
-        /// <summary>
-        /// Returns a list of all delegations that are inside the conference
-        /// that this speakerlist is linked to. This will serve as a pre filter
-        /// </summary>
-        /// <param name="auth"></param>
-        /// <param name="id"></param>
-        /// <param name="authService"></param>
-        /// <param name="speakerlistService"></param>
-        /// <param name="conferenceService"></param>
-        /// <returns></returns>
-        //[Route("[action]")]
-        //[HttpGet]
-        //public ActionResult<List<Delegation>> GetPossibleDelegations([FromHeader]string auth,
-        //    [FromHeader]string id,
-        //    [FromServices]IAuthService authService,
-        //    [FromServices]SpeakerlistService speakerlistService,
-        //    [FromServices]ConferenceService conferenceService)
-        //{
-        //    //TODO: Auth stuff
-
-        //    var speakerlist = speakerlistService.GetSpeakerlist(id);
-        //    if (speakerlist == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-
-        //    if (speakerlist.ConferenceId == null || speakerlist.ConferenceId == string.Empty)
-        //        return StatusCode(StatusCodes.Status428PreconditionRequired, "No Delegations found, because the Speaerklsit is not bound to a conference");
-
-        //    var delegations = conferenceService.GetDelegationsOfConference(speakerlist.ConferenceId);
-        //    return StatusCode(StatusCodes.Status200OK, delegations);
-        //}
     }
 }
