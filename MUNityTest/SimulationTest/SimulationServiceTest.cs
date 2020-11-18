@@ -46,7 +46,7 @@ namespace MUNityTest.SimulationTest
         {
             var service = new SimulationService(_context);
 
-            var simulation = service.CreateSimulation("Test Committee");
+            var simulation = service.CreateSimulation("Test Committee", "Password");
             this.simulationId = simulation.SimulationId;
             Console.WriteLine($"Created Simulation with id: {simulationId}");
             Assert.NotNull(simulation);
@@ -114,11 +114,36 @@ namespace MUNityTest.SimulationTest
         [Author("Peer Conradi")]
         [Description("Should be able to create a new Chairman Role.")]
         [Order(5)]
-        public async Task TestCreateChairmanRole()
+        public void TestCreateChairmanRole()
         {
             var service = new SimulationService(_context);
             var chairmanRole = service.AddChairmanRole(this.simulationId, 3, "Chairman");
             Assert.NotNull(chairmanRole);
+        }
+
+        [Test]
+        [Author("Peer Conradi")]
+        [Description("Should be able to get that Chairman Role")]
+        [Order(6)]
+        public void TestGetChairmanRole()
+        {
+            var service = new SimulationService(_context);
+            var roles = service.GetSimulationsRoles(this.simulationId);
+            Assert.NotNull(roles);
+            Assert.IsTrue(roles.Any(n => n.RoleType == SimulationRole.RoleTypes.Chairman));
+        }
+
+        [Test]
+        [Author("Peer Conradi")]
+        [Description("Should be able to join the game lobby")]
+        [Order(7)]
+        public void TestJoinLobby()
+        {
+            var service = new SimulationService(_context);
+            var user = service.JoinSimulation(simulationId, "User Two");
+            var lobby = service.GetSimulationUsers(simulationId);
+            var lobbyUsers = lobby.ToList();
+            Assert.AreEqual(3, lobby.Count());
         }
     }
 }

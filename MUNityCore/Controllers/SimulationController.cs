@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using MUNityCore.Util.Extenstions;
 using MUNityCore.DataHandlers.EntityFramework.Models;
 using MUNityCore.Models.Organisation;
@@ -20,14 +21,31 @@ namespace MUNityCore.Controllers
     public class SimulationController : ControllerBase
     {
 
-        IHubContext<Hubs.SimulationHub, Hubs.ITypedSimulationHub> _hubContext;
+        private readonly IHubContext<Hubs.SimulationHub, Hubs.ITypedSimulationHub> _hubContext;
 
-        public SimulationController(IHubContext<Hubs.SimulationHub, Hubs.ITypedSimulationHub> hubContext)
+        private readonly SimulationService _simulationService;
+
+        public SimulationController(IHubContext<Hubs.SimulationHub, Hubs.ITypedSimulationHub> hubContext,
+            SimulationService simulationService)
         {
             this._hubContext = hubContext;
+            this._simulationService = simulationService;
         }
 
-        
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<IEnumerable<SimulationResponses.SimulationList>> GetListOfSimulations()
+        {
+            return Ok(this._simulationService.GetSimulationFront());
+        }
 
+        [HttpPost]
+        [Route("[action]")]
+        public ActionResult<Simulation> CreateSimulation([FromBody]SimulationRequests.CreateSimulation request)
+        {
+            var result = this._simulationService.CreateSimulation(request.Name, request.Password);
+            
+            return Ok(result);
+        }
     }
 }

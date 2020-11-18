@@ -14,11 +14,15 @@ namespace MUNityCore.Models.Simulation
 
         public string DisplayName { get; set; }
 
-        public SimulationRole Role { get; set; }
+        [JsonIgnore] public SimulationRole Role { get; set; }
 
-        [JsonIgnore] public bool CanEditResolution { get; set; } = false;
+        public bool CanCreateRole { get; set; }
 
-        [JsonIgnore] public bool CanEditListOfSpeakers { get; set; } = false;
+        public bool CanSelectRole { get; set; }
+
+        public bool CanEditResolution { get; set; } = false;
+
+        public bool CanEditListOfSpeakers { get; set; } = false;
 
         [JsonIgnore] public Simulation Simulation { get; set; }
     }

@@ -63,13 +63,11 @@ namespace MUNityCore.Models.Simulation
         [JsonIgnore]
         public string Password { get; set; }
 
-        public bool UsingPassword { get => !string.IsNullOrEmpty(Password); }
+        public bool UsingPassword => !string.IsNullOrEmpty(Password);
 
         public bool CanJoin { get; set; } = true;
 
         public SpeakerlistModel ListOfSpeakers { get; set; }
-
-
 
 
         public Simulation()

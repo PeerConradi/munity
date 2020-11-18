@@ -135,8 +135,6 @@ namespace MUNityCore
             services.AddSingleton<IMunityMongoDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<MunityMongoDatabaseSettings>>().Value);
 
-            // Init the Cache
-            services.AddSingleton<Services.CacheService>();
             
             // All services that are used inside the controllers.
             //services.AddScoped<Services.InstallationService>();
@@ -147,7 +145,7 @@ namespace MUNityCore
             services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
             services.AddScoped<Services.IResolutionService, Services.NewResolutionService>();
             services.AddSingleton<Services.SpeakerlistService>();
-            services.AddSingleton<Services.SimulationService>();
+            services.AddScoped<Services.SimulationService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>

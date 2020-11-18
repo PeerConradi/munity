@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Simulation;
+using MUNityCore.Schema.Response.Simulation;
 
 namespace MUNityCore.Services
 {
@@ -14,16 +15,17 @@ namespace MUNityCore.Services
     /// The service should be handled as a singleton, because the virtual committee is created and destroied within
     /// the Memory.
     /// </summary>
-    public class SimulationService : ISimulationService
+    public class SimulationService
     {
 
         private readonly MunityContext _context;
 
-        public Simulation CreateSimulation(string name)
+        public Simulation CreateSimulation(string name, string password)
         {
             var sim = new Simulation()
             {
                 Name = name,
+                Password = password,
                 SimulationId = new Random().Next(100000, 999999)
             };
 
@@ -38,9 +40,26 @@ namespace MUNityCore.Services
             return this._context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == id);
         }
 
-        public List<SimulationRole> GetSimulationsRoles(int simulationId)
+        public IQueryable<SimulationRole> GetSimulationsRoles(int simulationId)
         {
-            return this._context.Simulations.Include(n => n.Roles).FirstOrDefault(n => n.SimulationId == simulationId)?.Roles;
+            return this._context.SimulationRoles.Where(n => n.Simulation.SimulationId == simulationId);
+        }
+
+        public IQueryable<SimulationUser> GetSimulationUsers(int simulationId)
+        {
+            return this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId);
+        }
+
+        public IQueryable<SimulationResponses.SimulationList> GetSimulationFront()
+        {
+            return _context.Simulations
+                .Where(n => n.CanJoin)
+                .Select(n => new SimulationResponses.SimulationList()
+                {
+                    Name = n.Name,
+                    UsingPassword = n.UsingPassword,
+                    SimulationId = n.SimulationId
+                });
         }
 
         public SimulationRole AddChairmanRole(int simulationid, int slotCount, string name)
@@ -68,19 +87,28 @@ namespace MUNityCore.Services
             return currentChairmanRole;
         }
 
-        public SimulationUser JoinSimulation(Simulation simulation, string displayname)
+        public SimulationUser JoinSimulation(Simulation simulation, string displayName)
         {
+            if (simulation == null)
+                return null;
+
             if (simulation.LobbyMode == Simulation.LobbyModes.Closed)
                 return null;
 
             var user = new SimulationUser()
             {
-                DisplayName = displayname
+                DisplayName = displayName
             };
 
             simulation.Users.Add(user);
             this._context.SaveChanges();
             return user;
+        }
+
+        public SimulationUser JoinSimulation(int simulationId, string displayName)
+        {
+            var simulation = this._context.Simulations.Include(n => n.Users).FirstOrDefault();
+            return JoinSimulation(simulation, displayName);
         }
 
         public bool BecomeRole(Simulation simulation, SimulationUser user, SimulationRole role)
