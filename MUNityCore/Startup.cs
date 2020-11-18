@@ -257,19 +257,17 @@ namespace MUNityCore
 
         private static void UpdateDatabase(IApplicationBuilder app)
         {
-            using (var serviceScope = app.ApplicationServices
+            using var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope())
+                .CreateScope();
+            using (var context = serviceScope.ServiceProvider.GetService<MunityContext>())
             {
-                using (var context = serviceScope.ServiceProvider.GetService<MunityContext>())
-                {
-                    context.Database.Migrate();
-                }
+                context.Database.Migrate();
+            }
 
-                using (var context = serviceScope.ServiceProvider.GetService<MunCoreContext>())
-                {
-                    context.Database.Migrate();
-                }
+            using (var context = serviceScope.ServiceProvider.GetService<MunCoreContext>())
+            {
+                context.Database.Migrate();
             }
         }
     }

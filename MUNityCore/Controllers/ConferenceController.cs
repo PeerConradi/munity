@@ -76,16 +76,16 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
-        /// Creates a new Project. Every Project needs an organisation, organisations
+        /// Creates a new Project. Every Project needs an organization, organisations
         /// can host different projects and projects can have different conferences.
-        /// For example the Organisation dmun e.V. has three different projects:
+        /// For example the Organization dmun e.V. has three different projects:
         /// MUN Schleswig-Holstein, MUN Baden-Würrtemberg, MUN Brandenburg
         /// every of this project has a list of conferences for example the project
         /// MUN Schleswig-Holstein has the conferences MUN Schleswig-Holstein 2008 and the
         /// conference MUN Schleswig-Holstein 2009. The Project does not have to be fixed
         /// to a location. You could also call projects: UN in the classroom.
         /// Or call your projects One-Day-Mun and Three-Day-Muns. You can use the project
-        /// to create a category of Conferences your Organisation hosts. But node that every conference
+        /// to create a category of Conferences your Organization hosts. But node that every conference
         /// has to be part of a project.
         /// <seealso cref="Conference"/>
         /// <seealso cref="CreateConference"/>
@@ -100,12 +100,12 @@ namespace MUNityCore.Controllers
         {
             var organisation = await _organisationService.GetOrganisationWithMembers(body.OrganisationId);
             if (organisation == null)
-                return NotFound("Not organisation with the given Id was found.");
+                return NotFound("Not organization with the given Id was found.");
 
             // Check if the user is allowed to create projects inside
             var username = User.UsernameClaim();
 
-            if (!this._organisationService.CanUserCreateProject(username, organisation.OrganisationId))
+            if (!this._organisationService.CanUserCreateProject(username, organisation.OrganizationId))
                 return Forbid();
 
             var project = _conferenceService.CreateProject(body.Name, body.Abbreviation, organisation);
@@ -157,7 +157,7 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
-        /// Returns a list of all Projects that an organisation is hosting. This projects do not contain
+        /// Returns a list of all Projects that an organization is hosting. This projects do not contain
         /// the conferences.
         /// </summary>
         /// <param name="organisationId"></param>
@@ -177,7 +177,7 @@ namespace MUNityCore.Controllers
         /// Model United Nations London. When the Conference is Created the Role
         /// Leader will be created automatically and be assigned to the user that created
         /// this conference. You can change this later. Note that for this call you need to
-        /// assign a Name, FullName, Abbreviation and the ProjectId. The Start and EndDate are
+        /// assign a Name, FullName, CommitteeShort and the ProjectId. The Start and EndDate are
         /// Optional.
         /// <seealso cref="CreateProject"/>
         /// <seealso cref="Conference"/>
@@ -199,14 +199,14 @@ namespace MUNityCore.Controllers
             if (project == null)
                 return NotFound("project not found");
 
-            // Find the organisation to check if the user is allowed to create conferences
-            var organisation = project.ProjectOrganisation;
+            // Find the organization to check if the user is allowed to create conferences
+            var organisation = project.ProjectOrganization;
             var user = _authService.GetUserOfClaimPrincipal(User);
 
             if (user == null)
                 return Forbid();
 
-            if (!this._organisationService.CanUserCreateProject(user.Username, organisation.OrganisationId))
+            if (!this._organisationService.CanUserCreateProject(user.Username, organisation.OrganizationId))
                 return Forbid();
 
             var conference = _conferenceService.CreateConference(body.Name, body.FullName, body.Abbreviation, project);

@@ -6,23 +6,23 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Models.Organisation
+namespace MUNityCore.Models.Organization
 {
 
     [DataContract]
-    public class OrganisationRole
+    public class OrganizationRole
     {
-        public int OrganisationRoleId { get; set; }
+        public int OrganizationRoleId { get; set; }
 
         [MaxLength(150)]
         public string RoleName { get; set; }
 
         [IgnoreDataMember]
-        public Organisation Organisation { get; set; }
+        public Organization Organization { get; set; }
 
-        public List<OrganisationMember> MembersWithRole { get; set; }
+        public List<OrganizationMember> MembersWithRole { get; set; }
 
-        [NotMapped] public string OrganisationId => Organisation?.OrganisationId ?? "";
+        [NotMapped] public string OrganizationId => Organization?.OrganizationId ?? "";
         
         public bool CanCreateProject { get; set; }
     }

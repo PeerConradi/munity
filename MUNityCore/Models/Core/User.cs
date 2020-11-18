@@ -12,6 +12,10 @@ using MUNityCore.Models.User;
 
 namespace MUNityCore.Models.Core
 {
+
+    /// <summary>
+    /// a registered user on the platform.
+    /// </summary>
     [DataContract]
     public class User : IUserInformation
     {

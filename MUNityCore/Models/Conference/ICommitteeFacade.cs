@@ -8,7 +8,7 @@
 
         public string FullName { get; set; }
 
-        public string Abbreviation { get; set; }
+        public string CommitteeShort { get; set; }
 
         public string Article { get; set; }
 

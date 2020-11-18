@@ -13,7 +13,7 @@ using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Exceptions.ConferenceExceptions;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 
 namespace MUNityCore.Services
 {
@@ -21,13 +21,13 @@ namespace MUNityCore.Services
     {
         private readonly MunCoreContext _context;
 
-        public Project CreateProject(string name, string abbreviation, Organisation organisation)
+        public Project CreateProject(string name, string abbreviation, Organization organization)
         {
             var project = new Project
             {
                 ProjectName = name,
                 ProjectAbbreviation = abbreviation,
-                ProjectOrganisation = organisation
+                ProjectOrganization = organization
             };
 
             var idFromShort = Util.Tools.IdGenerator.AsPrimaryKey(abbreviation);
@@ -116,7 +116,7 @@ namespace MUNityCore.Services
             {
                 Name = name,
                 FullName = fullname,
-                Abbreviation = abbreviation
+                CommitteeShort = abbreviation
             };
 
 

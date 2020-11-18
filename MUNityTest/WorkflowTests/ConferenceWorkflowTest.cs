@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 using NUnit.Framework;
 using MUNityCore.Services;
 
@@ -18,7 +18,7 @@ namespace MUNityTest.WorkflowTests
     public class ConferenceWorkflowTest
     {
         private static MunCoreContext _context;
-        private static Organisation _organisation;
+        private static Organization _organization;
         private static Project _project;
         private static Conference _conference;
         private static Committee _committeeGv;
@@ -38,14 +38,14 @@ namespace MUNityTest.WorkflowTests
         [Test]
         [Order(1)]
         [Author("Peer Conradi")]
-        [Description("First Test Creates an Organisation that can create projects etc.")]
+        [Description("First Test Creates an Organization that can create projects etc.")]
         public async Task TestCreateAndGetOrganisation()
         {
             var service = new OrganisationService(_context);
             var result = service.CreateOrganisation("Deutsche Model United Nations e.V.", "dmun e.V.");
-            var dbResult = await service.GetOrganisation(result.OrganisationId);
-            Assert.AreEqual("Deutsche Model United Nations e.V.", dbResult.OrganisationName);
-            _organisation = dbResult;
+            var dbResult = await service.GetOrganisation(result.OrganizationId);
+            Assert.AreEqual("Deutsche Model United Nations e.V.", dbResult.OrganizationName);
+            _organization = dbResult;
         }
 
         [Test]
@@ -54,11 +54,11 @@ namespace MUNityTest.WorkflowTests
         [Description("Test CreatePublic Project. A Project is kind of a group of Conferences.")]
         public async Task TestCreateAndGetProject()
         {
-            if (_organisation == null)
-                Assert.Fail("This test needs an organisation created before it can run!");
+            if (_organization == null)
+                Assert.Fail("This test needs an organization created before it can run!");
 
             var service = new ConferenceService(_context);
-            var result = service.CreateProject("Test Konferenz", "TK", _organisation);
+            var result = service.CreateProject("Test Konferenz", "TK", _organization);
             var dbResult = await service.GetProject(result.ProjectId);
             Assert.AreEqual("Test Konferenz", dbResult.ProjectName);
             _project = dbResult;

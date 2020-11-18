@@ -104,7 +104,7 @@ namespace MUNityCore.Migrations
                         name: "FK_OrganisationRoles_Organisations_OrganisationId1",
                         column: x => x.OrganisationId1,
                         principalTable: "Organisations",
-                        principalColumn: "OrganisationId",
+                        principalColumn: "OrganizationId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -126,7 +126,7 @@ namespace MUNityCore.Migrations
                         name: "FK_Projects_Organisations_ProjectOrganisationOrganisationId",
                         column: x => x.ProjectOrganisationOrganisationId,
                         principalTable: "Organisations",
-                        principalColumn: "OrganisationId",
+                        principalColumn: "OrganizationId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -236,7 +236,7 @@ namespace MUNityCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrganisationMember",
+                name: "OrganizationMember",
                 columns: table => new
                 {
                     OrganisationMemberId = table.Column<int>(nullable: false)
@@ -252,13 +252,13 @@ namespace MUNityCore.Migrations
                         name: "FK_OrganisationMember_Organisations_OrganisationId1",
                         column: x => x.OrganisationId1,
                         principalTable: "Organisations",
-                        principalColumn: "OrganisationId",
+                        principalColumn: "OrganizationId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrganisationMember_OrganisationRoles_RoleOrganisationRoleId",
                         column: x => x.RoleOrganisationRoleId,
                         principalTable: "OrganisationRoles",
-                        principalColumn: "OrganisationRoleId",
+                        principalColumn: "OrganizationRoleId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrganisationMember_Users_UserId",
@@ -623,17 +623,17 @@ namespace MUNityCore.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganisationMember_OrganisationId1",
-                table: "OrganisationMember",
+                table: "OrganizationMember",
                 column: "OrganisationId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganisationMember_RoleOrganisationRoleId",
-                table: "OrganisationMember",
+                table: "OrganizationMember",
                 column: "RoleOrganisationRoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganisationMember_UserId",
-                table: "OrganisationMember",
+                table: "OrganizationMember",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -736,7 +736,7 @@ namespace MUNityCore.Migrations
                 name: "CommitteeTopic");
 
             migrationBuilder.DropTable(
-                name: "OrganisationMember");
+                name: "OrganizationMember");
 
             migrationBuilder.DropTable(
                 name: "Participations");

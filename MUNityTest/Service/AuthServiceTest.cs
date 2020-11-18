@@ -31,10 +31,7 @@ namespace MUNityTest.Service
         [Test]
         public void TestGenerateAuthkey()
         {
-            var user = new User();
-            user.Username = "test";
-            user.Forename = "Max";
-            user.Lastname = "Mustermann";
+            var user = new User {Username = "test", Forename = "Max", Lastname = "Mustermann"};
             var generatedPass = MUNityCore.Util.Hashing.PasswordHashing.InitHashing("password");
             user.Password = generatedPass.Key;
             user.Salt = generatedPass.Salt;
@@ -45,9 +42,7 @@ namespace MUNityTest.Service
             var options = Options.Create(settings);
             var service = new AuthService(_context, options);
 
-            var model = new AuthenticateRequest();
-            model.Username = "test";
-            model.Password = "password";
+            var model = new AuthenticateRequest {Username = "test", Password = "password"};
             var tokenResult = service.Authenticate(model);
             Assert.NotNull(tokenResult);
             Assert.AreEqual(user.Forename, tokenResult.FirstName);
@@ -62,9 +57,7 @@ namespace MUNityTest.Service
             var options = Options.Create(settings);
             var service = new AuthService(_context, options);
 
-            var model = new AuthenticateRequest();
-            model.Username = "dontexist";
-            model.Password = "password";
+            var model = new AuthenticateRequest {Username = "dontexist", Password = "password"};
             var tokenResult = service.Authenticate(model);
             Assert.Null(tokenResult);
         }
@@ -78,9 +71,7 @@ namespace MUNityTest.Service
             var userService = new UserService(_context);
             userService.CreateUser("realuser","Max", "Mustermann", "realpass", "mail@rpovider.com", new DateTime(1990, 1, 1));
 
-            var model = new AuthenticateRequest();
-            model.Username = "realuser";
-            model.Password = "password";
+            var model = new AuthenticateRequest {Username = "realuser", Password = "password"};
             var tokenResult = service.Authenticate(model);
             Assert.Null(tokenResult);
         }

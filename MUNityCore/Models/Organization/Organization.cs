@@ -8,44 +8,44 @@ using System.Threading.Tasks;
 using MUNityCore.Models.Core;
 using MUNityCore.Models.Conference;
 
-namespace MUNityCore.Models.Organisation
+namespace MUNityCore.Models.Organization
 {
 
     [DataContract]
-    public class Organisation
+    public class Organization
     {
 
         [DataMember]
-        public string OrganisationId { get; set; }
+        public string OrganizationId { get; set; }
 
         [DataMember]
         [MaxLength(150)]
-        public string OrganisationName { get; set; }
+        public string OrganizationName { get; set; }
         
         [DataMember]
         [MaxLength(18)]
-        public string OrganisationAbbreviation { get; set; }
+        public string OrganizationAbbreviation { get; set; }
 
         [IgnoreDataMember]
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
-        public List<OrganisationRole> Roles { get; set; }
+        public List<OrganizationRole> Roles { get; set; }
 
         [IgnoreDataMember]
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
-        public List<OrganisationMember> Member { get; set; }
+        public List<OrganizationMember> Member { get; set; }
 
         [IgnoreDataMember]
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
         public List<Project> Projects { get; set; }
 
-        public Organisation()
+        public Organization()
         {
-            this.OrganisationId = Guid.NewGuid().ToString();
-            Roles = new List<OrganisationRole>();
-            Member = new List<OrganisationMember>();
+            this.OrganizationId = Guid.NewGuid().ToString();
+            Roles = new List<OrganizationRole>();
+            Member = new List<OrganizationMember>();
             Projects = new List<Project>();
         }
     }

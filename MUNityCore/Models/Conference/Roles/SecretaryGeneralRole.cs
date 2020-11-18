@@ -9,10 +9,19 @@ using System.Threading.Tasks;
 namespace MUNityCore.Models.Conference.Roles
 {
 
+    /// <summary>
+    /// The Secretary General Role is one of the most important roles of the conference.
+    /// You are technically able to create more than one of this roles.
+    /// </summary>
     [DataContract]
     public class SecretaryGeneralRole : AbstractRole
     {
-        [MaxLength(200)]
+
+        /// <summary>
+        /// The Title of this role for Example:
+        /// His Excellence the Secretary General.
+        /// </summary>
+        [MaxLength(250)]
         public string Title { get; set; }
 
     }

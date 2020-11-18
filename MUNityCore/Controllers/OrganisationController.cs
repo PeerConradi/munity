@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 using MUNityCore.Schema.Request.Organisation;
 using MUNityCore.Services;
 
@@ -20,7 +20,7 @@ namespace MUNityCore.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public Task<Organisation> GetOrganisation([FromServices]IOrganisationService service, string id)
+        public Task<Organization> GetOrganisation([FromServices]IOrganisationService service, string id)
         {
             return service.GetOrganisation(id);
         }
@@ -28,11 +28,11 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        public ActionResult<Organisation> CreateOrganisation([FromServices] IOrganisationService service,
+        public ActionResult<Organization> CreateOrganisation([FromServices] IOrganisationService service,
             [FromServices]IAuthService authService,
             [FromBody] CreateOrganisationRequest body)
         {
-            // TODO: Needs to check of the user is allowed to create an organisation
+            // TODO: Needs to check of the user is allowed to create an organization
             var user = authService.GetUserOfClaimPrincipal(User);
             if (user == null)
                 return Forbid();
@@ -40,16 +40,16 @@ namespace MUNityCore.Controllers
             var organisation = service.CreateOrganisation(body.OrganisationName, body.Abbreviation);
 
             if (organisation == null)
-                return Problem("Organisation cannot be created. Unknown source of error.");
+                return Problem("Organization cannot be created. Unknown source of error.");
 
             // Create the Owner role
             var ownerRole = service.AddOrganisationRole(organisation, "Owner", true);
             if (ownerRole == null)
-                return Problem($"Unable to create an owner role. But the organisation was created with id {organisation.OrganisationId}");
+                return Problem($"Unable to create an owner role. But the organization was created with id {organisation.OrganizationId}");
 
             var membership = service.AddUserToOrganisation(user, organisation, ownerRole);
             if (membership == null)
-                return Problem("The organisation and owner role was created. But you were not assigned as the owner.");
+                return Problem("The organization and owner role was created. But you were not assigned as the owner.");
 
             return Ok(organisation);
         }
@@ -57,7 +57,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [Authorize]
-        public ActionResult<IEnumerable<Organisation>> GetMyOrganisations()
+        public ActionResult<IEnumerable<Organization>> GetMyOrganisations()
         {
             var user = _authService.GetUserOfClaimPrincipal(User);
             if (user == null)

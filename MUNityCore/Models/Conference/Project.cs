@@ -9,6 +9,18 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.Conference
 {
+
+    /// <summary>
+    /// An organization can host different projects. For example could the project group
+    /// all conferences inside a specific city over the years:
+    /// Model United Nations Berlin 2015
+    /// Model United Nations Berlin 2016
+    ///
+    /// The organization could also group different styles of conferences inside a project
+    /// for example:
+    /// Model United Nations in the classroom
+    /// Model United Nations in the university
+    /// </summary>
     [DataContract]
     public class Project
     {
@@ -26,11 +38,11 @@ namespace MUNityCore.Models.Conference
         [IgnoreDataMember]
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
-        public Organisation.Organisation ProjectOrganisation { get; set; }
+        public Organization.Organization ProjectOrganization { get; set; }
 
         [DataMember]
         [NotMapped]
-        public string ProjectOrganisationId => ProjectOrganisation?.OrganisationId ?? null;
+        public string ProjectOrganizationId => ProjectOrganization?.OrganizationId ?? null;
 
         public List<Conference> Conferences { get; set; }
 

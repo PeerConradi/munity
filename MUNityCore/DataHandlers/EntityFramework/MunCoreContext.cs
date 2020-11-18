@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Core;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 using MUNityCore.Models.User;
 
 namespace MUNityCore.DataHandlers.EntityFramework
@@ -18,11 +18,11 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<Country> Countries { get; set; }
 
-        public DbSet<Organisation> Organisations { get; set; }
+        public DbSet<Organization> Organisations { get; set; }
 
-        public DbSet<OrganisationRole> OrganisationRoles { get; set; }
+        public DbSet<OrganizationRole> OrganisationRoles { get; set; }
 
-        public DbSet<OrganisationMember> OrganisationMember { get; set; }
+        public DbSet<OrganizationMember> OrganisationMember { get; set; }
 
         public DbSet<Project> Projects { get; set; }
 
@@ -64,15 +64,15 @@ namespace MUNityCore.DataHandlers.EntityFramework
             modelBuilder.Entity<Committee>().HasOne(n => n.Conference)
                 .WithMany(a => a.Committees).OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<OrganisationRole>().HasOne(n => n.Organisation)
+            modelBuilder.Entity<OrganizationRole>().HasOne(n => n.Organization)
                 .WithMany(a => a.Roles);
 
-            modelBuilder.Entity<OrganisationMember>().HasOne(n => n.Organisation)
+            modelBuilder.Entity<OrganizationMember>().HasOne(n => n.Organization)
                 .WithMany(n => n.Member);
 
-            modelBuilder.Entity<OrganisationRole>().HasMany(n => n.MembersWithRole).WithOne(n => n.Role);
+            modelBuilder.Entity<OrganizationRole>().HasMany(n => n.MembersWithRole).WithOne(n => n.Role);
 
-            modelBuilder.Entity<Project>().HasOne(n => n.ProjectOrganisation)
+            modelBuilder.Entity<Project>().HasOne(n => n.ProjectOrganization)
                 .WithMany(n => n.Projects);
 
             modelBuilder.Entity<Conference>().HasOne(n => n.ConferenceProject)
@@ -95,13 +95,13 @@ namespace MUNityCore.DataHandlers.EntityFramework
                 .HasValue<VisitorRole>("VisitorRole");
 
             // Ignore a lot of Data Members to use them inside the Object Model of the API
-            modelBuilder.Entity<OrganisationRole>().Ignore(n => n.OrganisationId);
+            modelBuilder.Entity<OrganizationRole>().Ignore(n => n.OrganizationId);
 
-            modelBuilder.Entity<OrganisationMember>().Ignore(n => n.Username)
-                .Ignore(n => n.OrganisationId)
+            modelBuilder.Entity<OrganizationMember>().Ignore(n => n.Username)
+                .Ignore(n => n.OrganizationId)
                 .Ignore(n => n.RoleId);
 
-            modelBuilder.Entity<Project>().Ignore(n => n.ProjectOrganisationId);
+            modelBuilder.Entity<Project>().Ignore(n => n.ProjectOrganizationId);
 
             modelBuilder.Entity<Committee>().Ignore(n => n.ResolutlyCommitteeId)
                 .Ignore(n => n.ConferenceId);

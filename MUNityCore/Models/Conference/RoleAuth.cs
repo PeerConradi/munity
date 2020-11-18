@@ -11,6 +11,9 @@ using MongoDB.Bson.IO;
 namespace MUNityCore.Models.Conference
 {
 
+    /// <summary>
+    /// The authorizations of a role inside a conference.
+    /// </summary>
     [DataContract]
     public class RoleAuth
     {
@@ -33,8 +36,8 @@ namespace MUNityCore.Models.Conference
         /// <summary>
         /// Every Role auth is linked to a conference, to protect other Conferences
         /// from changing them but also be able to reuse the same role inside of
-        /// the some conference again. This will create a lot of douplicate data
-        /// because a lot of conferences will share the same structure but thats
+        /// the some conference again. This will create a lot of duplicate data
+        /// because a lot of conferences will share the same structure but that's
         /// not a problem
         /// </summary>
         [JsonIgnore]
@@ -46,7 +49,7 @@ namespace MUNityCore.Models.Conference
         public string ConferenceId => Conference?.ConferenceId ?? "";
 
         /// <summary>
-        /// Can change the Settings of the conference for exmaple the date, name etc.
+        /// Can change the Settings of the conference for example the date, name etc.
         /// It also allows to change the structure of the conference like Committees,
         /// delegations, roles etc.
         /// </summary>

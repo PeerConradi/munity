@@ -103,7 +103,7 @@ namespace MUNityCore.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public ActionResult<SpeakerlistModel> AddSpeakerModelToList([FromHeader] string auth,
+        public ActionResult<SpeakerlistModel> AddSpeakerModelToList(
             [FromHeader] string listid, [FromBody] SpeakerlistModel.Speaker model,
             [FromServices] SpeakerlistService speakerlistService)
         {
@@ -118,7 +118,7 @@ namespace MUNityCore.Controllers
 
         [Route("[action]")]
         [HttpPatch]
-        public ActionResult<SpeakerlistModel> SpeakersOrderChanged([FromHeader] string auth,
+        public ActionResult<SpeakerlistModel> SpeakersOrderChanged(
             [FromHeader] string listid, [FromBody] List<SpeakerlistModel.Speaker> model,
             [FromServices] SpeakerlistService speakerlistService)
         {
@@ -140,7 +140,7 @@ namespace MUNityCore.Controllers
 
         [Route("[action]")]
         [HttpPatch]
-        public ActionResult<SpeakerlistModel> QuestionsOrderChanged([FromHeader] string auth,
+        public ActionResult<SpeakerlistModel> QuestionsOrderChanged(
             [FromHeader] string listid, [FromBody] List<SpeakerlistModel.Speaker> model,
             [FromServices] SpeakerlistService speakerlistService)
         {
@@ -164,7 +164,7 @@ namespace MUNityCore.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public ActionResult<SpeakerlistModel> AddQuestionModelToList([FromHeader] string auth,
+        public ActionResult<SpeakerlistModel> AddQuestionModelToList(
             [FromHeader] string listid, [FromBody] SpeakerlistModel.Speaker model)
         {
             var speakerlist = _speakerlistService.GetSpeakerlist(listid);

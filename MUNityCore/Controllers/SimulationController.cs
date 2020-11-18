@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using MUNityCore.Util.Extenstions;
 using MUNityCore.DataHandlers.EntityFramework.Models;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Schema.Request.Simulation;
 using MUNityCore.Schema.Response.Simulation;

@@ -5,14 +5,17 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Models.Organisation
+namespace MUNityCore.Models.Organization
 {
 
+    /// <summary>
+    /// The membership of a registered user inside an organization that is hosting model united nations conferences.
+    /// </summary>
     [DataContract]
-    public class OrganisationMember
+    public class OrganizationMember
     {
         [DataMember]
-        public int OrganisationMemberId { get; set; }
+        public int OrganizationMemberId { get; set; }
 
         [IgnoreDataMember]
         public Core.User User { get; set; }
@@ -22,17 +25,17 @@ namespace MUNityCore.Models.Organisation
         public string Username => User?.Username ?? "";
 
         [IgnoreDataMember]
-        public Organisation Organisation { get; set; }
+        public Organization Organization { get; set; }
 
         [DataMember]
         [NotMapped]
-        public string OrganisationId => Organisation?.OrganisationId ?? "";
+        public string OrganizationId => Organization?.OrganizationId ?? "";
 
         [IgnoreDataMember]
-        public OrganisationRole Role { get; set; }
+        public OrganizationRole Role { get; set; }
 
         [DataMember]
         [NotMapped]
-        public int RoleId => Role?.OrganisationRoleId ?? -1;
+        public int RoleId => Role?.OrganizationRoleId ?? -1;
     }
 }

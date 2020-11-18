@@ -27,9 +27,9 @@ namespace MUNityTest.TestEnvironment
         {
             var environment = new ConferenceEnvironment(_context);
             Assert.NotNull(environment);
-            Assert.NotNull(environment.TestOrganisation);
+            Assert.NotNull(environment.TestOrganization);
             Assert.NotNull(environment.TestProject);
-            Assert.IsTrue(_context.Organisations.Contains(environment.TestOrganisation));
+            Assert.IsTrue(_context.Organisations.Contains(environment.TestOrganization));
             Assert.AreEqual(2, environment.TestConference.Committees.Count);
             Assert.AreEqual(2, _context.TeamRoles.Count(n => n.Conference == environment.TestConference));
             Assert.AreEqual(4, _context.Users.Count());

@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 
 namespace MUNityTest.StructureTest
 {
@@ -20,7 +20,7 @@ namespace MUNityTest.StructureTest
             project.ProjectId = "mun-sh";
             project.ProjectName = "Model United Nations Schleswig-Holstein";
             project.ProjectAbbreviation = "MUN-SH";
-            project.ProjectOrganisation = null;
+            project.ProjectOrganization = null;
             Assert.AreEqual("mun-sh", project.ProjectId);
             Assert.AreEqual("Model United Nations Schleswig-Holstein", project.ProjectName);
             Assert.AreEqual("MUN-SH", project.ProjectAbbreviation);
@@ -47,7 +47,7 @@ namespace MUNityTest.StructureTest
             committee.CommitteeId = "mun-sh2021-gv";
             committee.Name = "Generalversammlung";
             committee.FullName = "Generalversammlung";
-            committee.Abbreviation = "GV";
+            committee.CommitteeShort = "GV";
             committee.Article = "die";
             Assert.NotNull(committee);
         }
@@ -91,18 +91,18 @@ namespace MUNityTest.StructureTest
         [Test]
         public void TestCompleteConferenceStructure()
         {
-            // Above all Conferences is the organisation
-            var organisation = new Organisation();
-            organisation.OrganisationId = "dmun";
-            organisation.OrganisationName = "Deutsche Model United Nations e.V.";
-            organisation.OrganisationAbbreviation = "dmun e.V.";
+            // Above all Conferences is the organization
+            var organisation = new Organization();
+            organisation.OrganizationId = "dmun";
+            organisation.OrganizationName = "Deutsche Model United Nations e.V.";
+            organisation.OrganizationAbbreviation = "dmun e.V.";
             
             // Then there is a project
             var project = new Project();
             project.ProjectId = "mun-sh";
             project.ProjectName = "Model United Nations Schleswig-Holstein";
             project.ProjectAbbreviation = "MUN-SH";
-            project.ProjectOrganisation = organisation;
+            project.ProjectOrganization = organisation;
 
             // Next comes the conference that is part of the project
             var conference = new Conference();
@@ -131,7 +131,7 @@ namespace MUNityTest.StructureTest
             generalAssembly.CommitteeId = "mun-sh2021-gv";
             generalAssembly.Name = "Generalversammlung";
             generalAssembly.FullName = "Generalversammlung";
-            generalAssembly.Abbreviation = "GV";
+            generalAssembly.CommitteeShort = "GV";
             generalAssembly.Article = "die";
 
             conference.Committees.Add(generalAssembly);

@@ -11,7 +11,7 @@ using MUNityCore.Controllers;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Core;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 using MUNityCore.Schema.Request;
 using MUNityCore.Schema.Request.Conference;
 using MUNityCore.Services;
@@ -64,41 +64,40 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             };
         }
 
-        private Organisation _testOrganisation = null;
-        private Organisation GetTestOrganisation()
+        private Organization _testOrganization = null;
+        private Organization GetTestOrganisation()
         {
-            if (_testOrganisation != null)
-                return _testOrganisation;
+            if (_testOrganization != null)
+                return _testOrganization;
 
-            var organisation = new Organisation()
+            var organization = new Organization()
             {
-                OrganisationId = "testorga",
-                OrganisationName = "Test Organisation",
-                OrganisationAbbreviation = "TO"
+                OrganizationId = "testorga",
+                OrganizationName = "Test Organization",
+                OrganizationAbbreviation = "TO"
             };
 
-            var user = new User();
-            user.UserId = 0;
-            user.Username = "testuser";
-            user.Forename = "Max";
-            user.Lastname = "Mustermann";
-            user.Birthday = new DateTime(1990,1,1);
+            var user = new User
+            {
+                UserId = 0,
+                Username = "testuser",
+                Forename = "Max",
+                Lastname = "Mustermann",
+                Birthday = new DateTime(1990, 1, 1)
+            };
 
-            var organisationRole = new OrganisationRole();
-            organisationRole.Organisation = organisation;
-            organisationRole.CanCreateProject = true;
-            organisationRole.RoleName = "Admin";
-            organisationRole.OrganisationRoleId = 0;
+            var organisationRole = new OrganizationRole
+            {
+                Organization = organization, CanCreateProject = true, RoleName = "Admin", OrganizationRoleId = 0
+            };
 
-            organisation.Roles.Add(organisationRole);
+            organization.Roles.Add(organisationRole);
 
-            var membership = new OrganisationMember();
-            membership.User = user;
-            membership.Role = organisationRole;
-            
-            organisation.Member.Add(membership);
-            _testOrganisation = organisation;
-            return organisation;
+            var membership = new OrganizationMember {User = user, Role = organisationRole};
+
+            organization.Member.Add(membership);
+            _testOrganization = organization;
+            return organization;
         }
 
         private Project _testProject;
@@ -108,7 +107,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             {
                 ProjectId = "testproject",
                 ProjectName = "Testproject",
-                ProjectOrganisation = GetTestOrganisation(),
+                ProjectOrganization = GetTestOrganisation(),
                 ProjectAbbreviation = "Test"
 
             };
@@ -154,7 +153,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             var mockConferenceService = new Mock<IConferenceService>();
             var mockAuthService = new Mock<IAuthService>();
             var controller = new ConferenceController(mockConferenceService.Object, mockAuthService.Object, mockOrganisationService.Object);
-            // Mocking the get Organisation to return a valid organisation
+            // Mocking the get Organization to return a valid organization
             var getOrgaMock = mockOrganisationService.Setup(service =>
                 service.GetOrganisation("testorga")).ReturnsAsync(GetTestOrganisation);
 
@@ -162,14 +161,13 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
                 service.CreateProject("Testproject", "test", GetTestOrganisation())).Returns(GetTestProject);
 
             var user = new TestPrincipal(new Claim(ClaimTypes.Name, "testuser"));
-            
-            controller.ControllerContext = new ControllerContext();
-            controller.ControllerContext.HttpContext = new DefaultHttpContext(){User = user};
-            
-            var request = new CreateProjectRequest();
-            request.Name = "Testproject";
-            request.Abbreviation = "test";
-            request.OrganisationId = "testorga";
+
+            controller.ControllerContext = new ControllerContext {HttpContext = new DefaultHttpContext() {User = user}};
+
+            var request = new CreateProjectRequest
+            {
+                Name = "Testproject", Abbreviation = "test", OrganisationId = "testorga"
+            };
 
             var call = await controller.CreateProject(request);
 
@@ -212,8 +210,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             mockAuthService.Setup(service =>
                 service.GetUserOfClaimPrincipal(user)).Returns(GetTestUser);
 
-            controller.ControllerContext = new ControllerContext();
-            controller.ControllerContext.HttpContext = new DefaultHttpContext() { User = user };
+            controller.ControllerContext = new ControllerContext {HttpContext = new DefaultHttpContext() {User = user}};
 
             var request = new CreateConferenceRequest
             {

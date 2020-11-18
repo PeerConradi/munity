@@ -10,20 +10,6 @@ namespace MUNityCore.Hubs
 {
     public interface ITypedSimulationHub
     {
-        Task UserJoined(SimulationUser user);
 
-        Task UserLeft(SimulationUser user);
-
-        Task ChatMessageAdded(AllChatMessage message);
-
-        Task UserChangedDelegation(string usertoken, Delegation delegation);
-
-        Task UserChangedRole(string usertoken, string role);
-
-        Task RequestAdded(SimSimRequestModel request);
-
-        Task RequestRemoved(SimSimRequestModel request);
-
-        Task RequestsChanged(List<SimSimRequestModel> requests);
     }
 }

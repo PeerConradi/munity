@@ -64,10 +64,8 @@ namespace MUNityTest.Speakerlist
         [Test]
         public void RemainSpeakerTimeDecrisingTest()
         {
-            var speakerlist = new SpeakerlistModel();
-            speakerlist.Speakertime = new TimeSpan(0, 1, 0);
-            var delegation = new SpeakerlistModel.Speaker();
-            delegation.Name = "Test";
+            var speakerlist = new SpeakerlistModel {Speakertime = new TimeSpan(0, 1, 0)};
+            var delegation = new SpeakerlistModel.Speaker {Name = "Test"};
             speakerlist.AddSpeaker(delegation);
             speakerlist.NextSpeaker();
             speakerlist.StartSpeaker();
@@ -80,38 +78,34 @@ namespace MUNityTest.Speakerlist
         [Test]
         public void StartStopShouldContinueTest()
         {
-            var speakerlist = new SpeakerlistModel();
-            speakerlist.Speakertime = new TimeSpan(0, 1, 0);
-            var delegation = new SpeakerlistModel.Speaker();
-            delegation.Name = "Test";
-            speakerlist.AddSpeaker(delegation);
-            speakerlist.NextSpeaker();
-            speakerlist.StartSpeaker();
+            var listOfSpeakers = new SpeakerlistModel {Speakertime = new TimeSpan(0, 1, 0)};
+            var delegation = new SpeakerlistModel.Speaker {Name = "Test"};
+            listOfSpeakers.AddSpeaker(delegation);
+            listOfSpeakers.NextSpeaker();
+            listOfSpeakers.StartSpeaker();
             System.Threading.Thread.Sleep(5000);
-            speakerlist.PauseSpeaker();
+            listOfSpeakers.PauseSpeaker();
             System.Threading.Thread.Sleep(5000);
-            speakerlist.StartSpeaker();
-            Assert.IsTrue(speakerlist.RemainingSpeakerTime < new TimeSpan(0, 0, 57));
-            Assert.IsTrue(speakerlist.RemainingSpeakerTime > new TimeSpan(0, 0, 50));
+            listOfSpeakers.StartSpeaker();
+            Assert.IsTrue(listOfSpeakers.RemainingSpeakerTime < new TimeSpan(0, 0, 57));
+            Assert.IsTrue(listOfSpeakers.RemainingSpeakerTime > new TimeSpan(0, 0, 50));
         }
 
         [Test]
         public void RemainingQuestionTimeDecreasingTest()
         {
-            var speakerlist = new SpeakerlistModel();
-            speakerlist.Questiontime = new TimeSpan(0, 1, 0);
-            var delegation = new SpeakerlistModel.Speaker();
-            delegation.Name = "Test";
-            speakerlist.AddQuestion(delegation);
-            speakerlist.NextQuestion();
-            speakerlist.StartQuestion();
+            var listOfSpeakers = new SpeakerlistModel {Questiontime = new TimeSpan(0, 1, 0)};
+            var delegation = new SpeakerlistModel.Speaker {Name = "Test"};
+            listOfSpeakers.AddQuestion(delegation);
+            listOfSpeakers.NextQuestion();
+            listOfSpeakers.StartQuestion();
             System.Threading.Thread.Sleep(5000);
-            speakerlist.PauseSpeaker();
+            listOfSpeakers.PauseSpeaker();
             System.Threading.Thread.Sleep(5000);
-            speakerlist.StartQuestion();
-            Console.WriteLine(speakerlist.RemainingQuestionTime);
-            Assert.IsTrue(speakerlist.RemainingQuestionTime < new TimeSpan(0, 0, 57));
-            Assert.IsTrue(speakerlist.RemainingQuestionTime > new TimeSpan(0, 0, 50));
+            listOfSpeakers.StartQuestion();
+            Console.WriteLine(listOfSpeakers.RemainingQuestionTime);
+            Assert.IsTrue(listOfSpeakers.RemainingQuestionTime < new TimeSpan(0, 0, 57));
+            Assert.IsTrue(listOfSpeakers.RemainingQuestionTime > new TimeSpan(0, 0, 50));
         }
 
     }

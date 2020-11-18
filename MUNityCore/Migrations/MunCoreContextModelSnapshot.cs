@@ -78,7 +78,7 @@ namespace MUNityCore.Migrations
                     b.Property<string>("CommitteeId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("Abbreviation")
+                    b.Property<string>("CommitteeShort")
                         .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
                         .HasMaxLength(10);
 
@@ -121,7 +121,7 @@ namespace MUNityCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CommiteeTopicTimestamp")
+                    b.Property<DateTime?>("CommitteeTopicTimestamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
@@ -157,7 +157,7 @@ namespace MUNityCore.Migrations
                         .HasColumnType("varchar(80) CHARACTER SET utf8mb4")
                         .HasMaxLength(80);
 
-                    b.Property<string>("Abbreviation")
+                    b.Property<string>("CommitteeShort")
                         .HasColumnType("varchar(18) CHARACTER SET utf8mb4")
                         .HasMaxLength(18);
 
@@ -237,7 +237,7 @@ namespace MUNityCore.Migrations
                     b.Property<string>("DelegationId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("Abbreviation")
+                    b.Property<string>("CommitteeShort")
                         .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
                         .HasMaxLength(10);
 
@@ -468,7 +468,7 @@ namespace MUNityCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Abbreviation")
+                    b.Property<string>("CommitteeShort")
                         .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
                         .HasMaxLength(10);
 
@@ -610,27 +610,27 @@ namespace MUNityCore.Migrations
                     b.ToTable("UserAuths");
                 });
 
-            modelBuilder.Entity("MUNityCore.Models.Organisation.Organisation", b =>
+            modelBuilder.Entity("MUNityCore.Models.Organization.Organization", b =>
                 {
-                    b.Property<string>("OrganisationId")
+                    b.Property<string>("OrganizationId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("OrganisationAbbreviation")
+                    b.Property<string>("OrganizationAbbreviation")
                         .HasColumnType("varchar(18) CHARACTER SET utf8mb4")
                         .HasMaxLength(18);
 
-                    b.Property<string>("OrganisationName")
+                    b.Property<string>("OrganizationName")
                         .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
                         .HasMaxLength(150);
 
-                    b.HasKey("OrganisationId");
+                    b.HasKey("OrganizationId");
 
                     b.ToTable("Organisations");
                 });
 
-            modelBuilder.Entity("MUNityCore.Models.Organisation.OrganisationMember", b =>
+            modelBuilder.Entity("MUNityCore.Models.Organization.OrganizationMember", b =>
                 {
-                    b.Property<int>("OrganisationMemberId")
+                    b.Property<int>("OrganizationMemberId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -643,7 +643,7 @@ namespace MUNityCore.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("OrganisationMemberId");
+                    b.HasKey("OrganizationMemberId");
 
                     b.HasIndex("OrganisationId1");
 
@@ -651,12 +651,12 @@ namespace MUNityCore.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("OrganisationMember");
+                    b.ToTable("OrganizationMember");
                 });
 
-            modelBuilder.Entity("MUNityCore.Models.Organisation.OrganisationRole", b =>
+            modelBuilder.Entity("MUNityCore.Models.Organization.OrganizationRole", b =>
                 {
-                    b.Property<int>("OrganisationRoleId")
+                    b.Property<int>("OrganizationRoleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -670,7 +670,7 @@ namespace MUNityCore.Migrations
                         .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
                         .HasMaxLength(150);
 
-                    b.HasKey("OrganisationRoleId");
+                    b.HasKey("OrganizationRoleId");
 
                     b.HasIndex("OrganisationId1");
 
@@ -807,7 +807,7 @@ namespace MUNityCore.Migrations
                 {
                     b.HasBaseType("MUNityCore.Models.Conference.AbstractRole");
 
-                    b.Property<string>("Organisation")
+                    b.Property<string>("Organization")
                         .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
                         .HasMaxLength(100);
 
@@ -886,7 +886,7 @@ namespace MUNityCore.Migrations
 
             modelBuilder.Entity("MUNityCore.Models.Conference.Project", b =>
                 {
-                    b.HasOne("MUNityCore.Models.Organisation.Organisation", "ProjectOrganisation")
+                    b.HasOne("MUNityCore.Models.Organization.Organization", "ProjectOrganization")
                         .WithMany("Projects")
                         .HasForeignKey("ProjectOrganisationOrganisationId");
                 });
@@ -928,13 +928,13 @@ namespace MUNityCore.Migrations
                         .HasForeignKey("UserId1");
                 });
 
-            modelBuilder.Entity("MUNityCore.Models.Organisation.OrganisationMember", b =>
+            modelBuilder.Entity("MUNityCore.Models.Organization.OrganizationMember", b =>
                 {
-                    b.HasOne("MUNityCore.Models.Organisation.Organisation", "Organisation")
+                    b.HasOne("MUNityCore.Models.Organization.Organization", "Organization")
                         .WithMany("Member")
                         .HasForeignKey("OrganisationId1");
 
-                    b.HasOne("MUNityCore.Models.Organisation.OrganisationRole", "Role")
+                    b.HasOne("MUNityCore.Models.Organization.OrganizationRole", "Role")
                         .WithMany("MembersWithRole")
                         .HasForeignKey("RoleOrganisationRoleId");
 
@@ -943,9 +943,9 @@ namespace MUNityCore.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("MUNityCore.Models.Organisation.OrganisationRole", b =>
+            modelBuilder.Entity("MUNityCore.Models.Organization.OrganizationRole", b =>
                 {
-                    b.HasOne("MUNityCore.Models.Organisation.Organisation", "Organisation")
+                    b.HasOne("MUNityCore.Models.Organization.Organization", "Organization")
                         .WithMany("Roles")
                         .HasForeignKey("OrganisationId1");
                 });

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Core;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 
 namespace MUNityCore.Services
 {
@@ -15,79 +15,79 @@ namespace MUNityCore.Services
     {
         private MunCoreContext _context;
 
-        public Organisation CreateOrganisation([NotNull]string name, [NotNull]string abbreviation)
+        public Organization CreateOrganisation([NotNull]string name, [NotNull]string abbreviation)
         {
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(abbreviation))
                 return null;
 
-            var organisation = new Organisation();
+            var organisation = new Organization();
 
-            organisation.OrganisationId = Guid.NewGuid().ToString();
+            organisation.OrganizationId = Guid.NewGuid().ToString();
             var shortAsKey = Util.Tools.IdGenerator.AsPrimaryKey(abbreviation);
-            if (!_context.Organisations.Any(n => n.OrganisationId == shortAsKey))
-                organisation.OrganisationId = shortAsKey;
+            if (!_context.Organisations.Any(n => n.OrganizationId == shortAsKey))
+                organisation.OrganizationId = shortAsKey;
 
-            organisation.OrganisationName = name;
-            organisation.OrganisationAbbreviation = abbreviation;
+            organisation.OrganizationName = name;
+            organisation.OrganizationAbbreviation = abbreviation;
             _context.Organisations.Add(organisation);
             _context.SaveChanges();
             return organisation;
         }
 
-        public Task<Organisation> GetOrganisation(string id)
+        public Task<Organization> GetOrganisation(string id)
         {
-            return _context.Organisations.FirstOrDefaultAsync(n => n.OrganisationId == id);
+            return _context.Organisations.FirstOrDefaultAsync(n => n.OrganizationId == id);
         }
 
-        public Task<Organisation> GetOrganisationWithMembers(string id)
+        public Task<Organization> GetOrganisationWithMembers(string id)
         {
             return _context.Organisations.Include(n => n.Member)
                 .ThenInclude(n => n.User)
-                .FirstOrDefaultAsync(n => n.OrganisationId == id);
+                .FirstOrDefaultAsync(n => n.OrganizationId == id);
         }
 
         public Task<Project> GetProjectWithOrganisation(string id)
         {
             return _context.Projects
-                .Include(n => n.ProjectOrganisation)
+                .Include(n => n.ProjectOrganization)
                 .FirstOrDefaultAsync(n => n.ProjectId == id);
         }
 
         public bool CanUserCreateProject(string username, string organisationId)
         {
             var result = _context.OrganisationMember.Any(n => n.User.Username == username &&
-                                                 n.Organisation.OrganisationId == organisationId &&
+                                                 n.Organization.OrganizationId == organisationId &&
                                                  n.Role.CanCreateProject == true);
             return result;
         }
 
         public IQueryable<Project> GetOrganisationProjects(string organisationId) =>
-            this._context.Projects.Where(n => n.ProjectOrganisation.OrganisationId == organisationId);
+            this._context.Projects.Where(n => n.ProjectOrganization.OrganizationId == organisationId);
 
-        public OrganisationRole AddOrganisationRole(Organisation organisation, string rolename, bool canCreateConferences = false)
+        public OrganizationRole AddOrganisationRole(Organization organization, string rolename, bool canCreateConferences = false)
         {
-            var role = new OrganisationRole();
+            var role = new OrganizationRole();
             role.RoleName = rolename;
             role.CanCreateProject = canCreateConferences;
 
-            role.Organisation = organisation;
+            role.Organization = organization;
             _context.OrganisationRoles.Add(role);
             _context.SaveChanges();
 
             return role;
         }
 
-        public IQueryable<OrganisationRole> GetOrganisationRoles(string organisationId)
+        public IQueryable<OrganizationRole> GetOrganisationRoles(string organisationId)
         {
-            return _context.OrganisationRoles.Where(n => n.Organisation.OrganisationId == organisationId);
+            return _context.OrganisationRoles.Where(n => n.Organization.OrganizationId == organisationId);
         }
 
-        public OrganisationMember AddUserToOrganisation(User user, Organisation organisation, OrganisationRole role)
+        public OrganizationMember AddUserToOrganisation(User user, Organization organization, OrganizationRole role)
         {
-            var membership = new OrganisationMember();
+            var membership = new OrganizationMember();
             membership.User = user;
             membership.Role = role;
-            membership.Organisation = organisation;
+            membership.Organization = organization;
 
             _context.OrganisationMember.Add(membership);
             _context.SaveChanges();
@@ -95,12 +95,12 @@ namespace MUNityCore.Services
             return membership;
         }
 
-        public IEnumerable<Organisation> GetOrganisationsOfUser(User user)
+        public IEnumerable<Organization> GetOrganisationsOfUser(User user)
         {
             var organisations = from membership in _context.OrganisationMember
                 where membership.User.UserId == user.UserId
                 join role in _context.OrganisationRoles on membership.Role equals role
-                join organisation in _context.Organisations on role.Organisation equals organisation
+                join organisation in _context.Organisations on role.Organization equals organisation
                 select organisation;
             return organisations;
         }

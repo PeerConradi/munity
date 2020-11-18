@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 namespace MUNityCore.Models.Conference
 {
 
+    /// <summary>
+    /// A delegation is a model that groups different types of delegate roles
+    ///
+    /// <seealso cref="Roles.DelegateRole"/>
+    /// </summary>
     [DataContract]
     public class Delegation
     {

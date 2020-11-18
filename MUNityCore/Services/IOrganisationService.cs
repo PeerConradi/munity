@@ -3,31 +3,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Core;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 
 namespace MUNityCore.Services
 {
     public interface IOrganisationService
     {
-        Organisation CreateOrganisation(string name, string abbreviation);
+        Organization CreateOrganisation(string name, string abbreviation);
 
-        Task<Organisation> GetOrganisation(string id);
+        Task<Organization> GetOrganisation(string id);
 
         bool CanUserCreateProject(string username, string organisationId);
 
-        Task<Organisation> GetOrganisationWithMembers(string id);
+        Task<Organization> GetOrganisationWithMembers(string id);
 
         Task<Project> GetProjectWithOrganisation(string id);
 
-        OrganisationRole AddOrganisationRole(Organisation organisation, string rolename,
+        OrganizationRole AddOrganisationRole(Organization organization, string rolename,
             bool canCreateConferences = false);
 
-        IQueryable<OrganisationRole> GetOrganisationRoles(string organisationId);
+        IQueryable<OrganizationRole> GetOrganisationRoles(string organisationId);
 
         IQueryable<Project> GetOrganisationProjects(string organisationId);
 
-        OrganisationMember AddUserToOrganisation(User user, Organisation organisation, OrganisationRole role);
+        OrganizationMember AddUserToOrganisation(User user, Organization organization, OrganizationRole role);
 
-        IEnumerable<Organisation> GetOrganisationsOfUser(User user);
+        IEnumerable<Organization> GetOrganisationsOfUser(User user);
     }
 }

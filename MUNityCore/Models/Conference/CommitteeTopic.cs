@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.Conference
 {
+
+    /// <summary>
+    /// A topic that this committee is discussing on the conference.
+    /// Every committee can discuss different topics.
+    /// </summary>
     public class CommitteeTopic
     {
         public int CommitteeTopicId { get; set; }
@@ -26,7 +31,7 @@ namespace MUNityCore.Models.Conference
         [Timestamp]
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
-        public byte[] CommiteeTopicTimestamp { get; set; }
+        public byte[] CommitteeTopicTimestamp { get; set; }
 
         [JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]

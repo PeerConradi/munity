@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Conference;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 using MUNityCore.Services;
 using NUnit.Framework;
 
@@ -17,7 +17,7 @@ namespace MUNityTest.Service
     {
         private static MunCoreContext _context;
 
-        private Organisation _organisation;
+        private Organization _organization;
         private Project _project;
         private Conference _conference;
 
@@ -47,13 +47,13 @@ namespace MUNityTest.Service
         [Test]
         [Order(2)]
         [Author("Peer Conradi")]
-        [Description("First create an organisation to be able to create a project")]
+        [Description("First create an organization to be able to create a project")]
         public void TestCreateOrganisation()
         {
             var organisationService = new OrganisationService(_context);
             var organisation = organisationService.CreateOrganisation("Deutsche Model United Nation e.V.", "dmun e.V.");
             Assert.NotNull(organisation);
-            _organisation = organisation;
+            _organization = organisation;
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace MUNityTest.Service
         public void TestCreateProject()
         {
             var service = new ConferenceService(_context);
-            var project = service.CreateProject("Model United Nations Baden-Würrtemberg", "MUNBW", _organisation);
+            var project = service.CreateProject("Model United Nations Baden-Würrtemberg", "MUNBW", _organization);
             Assert.NotNull(project);
             _project = project;
         }

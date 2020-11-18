@@ -9,12 +9,16 @@ using System.Threading.Tasks;
 namespace MUNityCore.Models.Conference.Roles
 {
 
+    /// <summary>
+    /// A visitor role is for someone who just wants to come to the conference
+    /// without being part of any of the other roles.
+    /// </summary>
     [DataContract]
     public class VisitorRole : AbstractRole
     {
         [MaxLength(100)]
         [DataMember]
-        public string Organisation { get; set; }
+        public string Organization { get; set; }
 
     }
 }

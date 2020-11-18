@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.Conference.Roles
 {
-
+    /// <summary>
+    /// If the conference contains the role of press you can define different types
+    /// of press Roles.
+    /// For example Print for things like: Newspapers and magazines
+    /// TV for VLogs, Newsshows etc.
+    /// Online if you want to seperate your newspaper into an paper and online version.
+    /// </summary>
     [DataContract]
     public class PressRole : AbstractRole
     {

@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 namespace MUNityCore.Models.Conference
 {
 
+    /// <summary>
+    /// The participation of a user for a role inside of a conference.
+    /// </summary>
     [DataContract]
     public class Participation
     {
@@ -43,7 +46,7 @@ namespace MUNityCore.Models.Conference
         public double Paid { get; set; }
 
         /// <summary>
-        /// The ParticipationSecret is a Key that can identify the user as a praticipant
+        /// The ParticipationSecret is a Key that can identify the user as a participant
         /// it should be Unique and be usable and can be used as a shared password between the
         /// team and a user to check the users identity when at the conference.
         /// </summary>

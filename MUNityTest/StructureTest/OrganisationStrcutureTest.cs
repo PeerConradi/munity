@@ -1,4 +1,4 @@
-﻿using MUNityCore.Models.Organisation;
+﻿using MUNityCore.Models.Organization;
 using NUnit.Framework;
 
 namespace MUNityTest.StructureTest
@@ -9,13 +9,13 @@ namespace MUNityTest.StructureTest
         [Test]
         public void TestCanHaveOrganisation()
         {
-            var organisation = new Organisation();
-            organisation.OrganisationId = "dmun";
-            organisation.OrganisationName = "Deutsche Model United Nations e.V.";
-            organisation.OrganisationAbbreviation = "dmun e.V.";
-            Assert.AreEqual("dmun", organisation.OrganisationId);
-            Assert.AreEqual("Deutsche Model United Nations e.V.", organisation.OrganisationName);
-            Assert.AreEqual("dmun e.V.", organisation.OrganisationAbbreviation);
+            var organisation = new Organization();
+            organisation.OrganizationId = "dmun";
+            organisation.OrganizationName = "Deutsche Model United Nations e.V.";
+            organisation.OrganizationAbbreviation = "dmun e.V.";
+            Assert.AreEqual("dmun", organisation.OrganizationId);
+            Assert.AreEqual("Deutsche Model United Nations e.V.", organisation.OrganizationName);
+            Assert.AreEqual("dmun e.V.", organisation.OrganizationAbbreviation);
         }
     }
 }

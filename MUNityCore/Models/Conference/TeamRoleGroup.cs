@@ -11,6 +11,11 @@ using MUNityCore.Models.Conference.Roles;
 namespace MUNityCore.Models.Conference
 {
 
+    /// <summary>
+    /// A team role group is as the name suggests a grouping of team roles.
+    /// For example could different organizational team roles be grouped into
+    /// "main organization team".
+    /// </summary>
     [DataContract]
     public class TeamRoleGroup
     {

@@ -4,7 +4,7 @@ using System.Text;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Core;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 
 namespace MUNityTest.TestEnvironment
 {
@@ -12,7 +12,7 @@ namespace MUNityTest.TestEnvironment
     {
         public ConferenceEnvironment(MUNityCore.DataHandlers.EntityFramework.MunCoreContext context)
         {
-            context.Organisations.Add(TestOrganisation);
+            context.Organisations.Add(TestOrganization);
             context.Projects.Add(TestProject);
             context.Conferences.Add(TestConference);
             context.Committees.Add(TestCommitteeGeneralAssembly);
@@ -28,24 +28,24 @@ namespace MUNityTest.TestEnvironment
             context.SaveChanges();
         }
 
-        private Organisation _organisation;
+        private Organization _organization;
         private Project _project;
         private Conference _conference;
         private Committee _committeeGeneralAssembly;
         private Committee _committeeSecurityCouncil;
         
-        public Organisation TestOrganisation
+        public Organization TestOrganization
         {
             get
             {
-                if (_organisation == null)
+                if (_organization == null)
                 {
-                    _organisation = new Organisation
+                    _organization = new Organization
                     {
-                        OrganisationName = "United Nations", OrganisationAbbreviation = "UN"
+                        OrganizationName = "United Nations", OrganizationAbbreviation = "UN"
                     };
                 }
-                return _organisation;
+                return _organization;
             }
         }
 
@@ -59,7 +59,7 @@ namespace MUNityTest.TestEnvironment
                     {
                         ProjectName = "Model United Nations",
                         ProjectAbbreviation = "MUN",
-                        ProjectOrganisation = TestOrganisation
+                        ProjectOrganization = TestOrganization
                     };
                 }
 
@@ -99,7 +99,7 @@ namespace MUNityTest.TestEnvironment
                         Conference = _conference,
                         Name = "Generalversammlung",
                         FullName = "die Generalversammlung",
-                        Abbreviation = "GV"
+                        CommitteeShort = "GV"
                     };
                 }
 
@@ -119,7 +119,7 @@ namespace MUNityTest.TestEnvironment
                         Conference = _conference,
                         Name = "Sicherheitsrat",
                         FullName = "der Sicherheitsrat",
-                        Abbreviation = "SR"
+                        CommitteeShort = "SR"
                     };
                 }
 
@@ -197,12 +197,14 @@ namespace MUNityTest.TestEnvironment
             {
                 if (_userFinn == null)
                 {
-                    _userFinn = new User();
-                    _userFinn.Username = "f.wolfhard";
-                    _userFinn.Title = "";
-                    _userFinn.Forename = "Finn";
-                    _userFinn.Lastname = "Wolfhard";
-                    _userFinn.Mail = "finn@mail.com";
+                    _userFinn = new User
+                    {
+                        Username = "f.wolfhard",
+                        Title = "",
+                        Forename = "Finn",
+                        Lastname = "Wolfhard",
+                        Mail = "finn@mail.com"
+                    };
                 }
 
                 return _userFinn;
@@ -259,11 +261,13 @@ namespace MUNityTest.TestEnvironment
             {
                 if (_teamRoleProjectLeader == null)
                 {
-                    _teamRoleProjectLeader = new TeamRole();
-                    _teamRoleProjectLeader.RoleName = "Projektleitung";
-                    _teamRoleProjectLeader.Conference = TestConference;
-                    _teamRoleProjectLeader.RoleAuth = RoleAuthLeader;
-                    _teamRoleProjectLeader.ApplicationState = EApplicationStates.Closed;
+                    _teamRoleProjectLeader = new TeamRole
+                    {
+                        RoleName = "Projektleitung",
+                        Conference = TestConference,
+                        RoleAuth = RoleAuthLeader,
+                        ApplicationState = EApplicationStates.Closed
+                    };
                 }
 
                 return _teamRoleProjectLeader;
@@ -277,9 +281,10 @@ namespace MUNityTest.TestEnvironment
             {
                 if (_teamRoleSecretaryLeader == null)
                 {
-                    _teamRoleSecretaryLeader = new TeamRole();
-                    _teamRoleSecretaryLeader.Conference = TestConference;
-                    _teamRoleSecretaryLeader.ParentTeamRole = TestRoleProjectLeader;
+                    _teamRoleSecretaryLeader = new TeamRole
+                    {
+                        Conference = TestConference, ParentTeamRole = TestRoleProjectLeader
+                    };
                 }
 
                 return _teamRoleSecretaryLeader;
@@ -294,11 +299,13 @@ namespace MUNityTest.TestEnvironment
             {
                 if (_pressRole == null)
                 {
-                    _pressRole = new PressRole();
-                    _pressRole.RoleName = "Zeitungs-Journalist";
-                    _pressRole.PressCategory = PressRole.EPressCategories.Print;
-                    _pressRole.Conference = TestConference;
-                    _pressRole.RoleAuth = RoleAuthPesant;
+                    _pressRole = new PressRole
+                    {
+                        RoleName = "Zeitungs-Journalist",
+                        PressCategory = PressRole.EPressCategories.Print,
+                        Conference = TestConference,
+                        RoleAuth = RoleAuthPesant
+                    };
                 }
 
                 return _pressRole;

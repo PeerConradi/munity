@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.Conference
 {
+
+    /// <summary>
+    /// a country is one of the countries of the United Nations
+    ///
+    /// https://www.worldometers.info/united-nations/
+    /// </summary>
     public class Country
     {
         public enum EContinent

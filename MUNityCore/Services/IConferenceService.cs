@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Organisation;
+using MUNityCore.Models.Organization;
 
 namespace MUNityCore.Services
 {
     public interface IConferenceService
     {
-        Project CreateProject(string name, string abbreviation, Organisation organisation);
+        Project CreateProject(string name, string abbreviation, Organization organization);
 
         Task<Project> GetProject(string id);
 

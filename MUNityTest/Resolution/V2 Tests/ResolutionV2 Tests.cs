@@ -45,8 +45,7 @@ namespace MUNityTest.Resolution.V2_Tests
         [Description("Test Creating a new Preamble Paragraph")]
         public void TestCreatePreambleParagraph()
         {
-            var paragraph = new PreambleParagraph();
-            paragraph.Text = "Test";
+            var paragraph = new PreambleParagraph {Text = "Test"};
             resolution.Preamble.Paragraphs.Add(paragraph);
 
             // Test that the Id is generated!
