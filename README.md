@@ -30,7 +30,6 @@ This application is under development and cannot be used at the moment. Please c
 Requiered: 
 * Visual Studio Community Edtion 2019 or higher
 * MariaDb (MySql Version: 10.1.26)
-* NodeJS (12.16.xx) and AngularCLI (latest)
 * MongoDb (latest) 
 
 Look into the appsettings.json to change Database Connection Strings!
