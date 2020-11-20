@@ -38,7 +38,7 @@ two project inside the Project-Explorer: MUNityAngular and MUNityTest.
 
 You should be able to start the project.
 
-> You need to have the MariaDB and MongoDB up and running in the background.
+> You need to have the MariaDB and MongoDB installed and running in the background.
 
 On the first start the application will create the Databases MUNityCore and MUNityBase. 
 
