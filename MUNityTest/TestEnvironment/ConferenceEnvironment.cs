@@ -10,9 +10,9 @@ namespace MUNityTest.TestEnvironment
 {
     class ConferenceEnvironment
     {
-        public ConferenceEnvironment(MUNityCore.DataHandlers.EntityFramework.MunCoreContext context)
+        public ConferenceEnvironment(MUNityCore.DataHandlers.EntityFramework.MunityContext context)
         {
-            context.Organisations.Add(TestOrganization);
+            context.Organizations.Add(TestOrganization);
             context.Projects.Add(TestProject);
             context.Conferences.Add(TestConference);
             context.Committees.Add(TestCommitteeGeneralAssembly);

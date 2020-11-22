@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MUNityCore.DataHandlers.Database;
 using System.Net;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -120,15 +119,6 @@ namespace MUNityCore
                     mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 }));
 
-            // CreatePublic the core Context
-            services.AddDbContextPool<MunCoreContext>(options =>
-                options.UseMySql(coreConnectionString, mySqlOptions => {
-                    mySqlOptions.ServerVersion(new Version(10, 1, 26), ServerType.MariaDb);
-                    mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-                }));
-
-            
-             
 
             // Add MongoDb Database
             services.Configure<MunityMongoDatabaseSettings>(Configuration.GetSection(nameof(MunityMongoDatabaseSettings)));
@@ -260,15 +250,8 @@ namespace MUNityCore
             using var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
-            using (var context = serviceScope.ServiceProvider.GetService<MunityContext>())
-            {
-                context.Database.Migrate();
-            }
-
-            using (var context = serviceScope.ServiceProvider.GetService<MunCoreContext>())
-            {
-                context.Database.Migrate();
-            }
+            using var context = serviceScope.ServiceProvider.GetService<MunityContext>();
+            context.Database.Migrate();
         }
     }
 }

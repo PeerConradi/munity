@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using MUNityCore.Models;
-using MUNityCore.DataHandlers.Database;
-using MUNityCore.Util.Extenstions;
-using MUNityCore.DataHandlers.EntityFramework.Models;
+using MUNityCore.Util.Extensions;
 using MUNityCore.Models.Conference;
 
 namespace MUNityTest.Speakerlist

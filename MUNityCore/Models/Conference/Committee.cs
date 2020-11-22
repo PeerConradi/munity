@@ -97,6 +97,11 @@ namespace MUNityCore.Models.Conference
         /// </summary>
         public List<CommitteeTopic> Topics { get; set; }
 
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [IgnoreDataMember]
+        public List<Session.CommitteeSession> Sessions { get; set; }
+
         /// <summary>
         /// The timestamp when this committee has been created or last changed.
         /// </summary>

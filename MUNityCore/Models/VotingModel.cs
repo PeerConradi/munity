@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MUNityCore.DataHandlers.EntityFramework.Models;
 using MUNityCore.Models.Conference;
 
 namespace MUNityCore.Models

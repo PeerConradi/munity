@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MUNityCore.DataHandlers.EntityFramework.Models;
 using MUNityCore.Models.Conference;
 
 namespace MUNityCore.Models.Simulation

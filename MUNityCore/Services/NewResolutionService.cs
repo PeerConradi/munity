@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MUNityCore.Models.Resolution;
-using MUNityCore.Util.Extenstions;
+using MUNityCore.Util.Extensions;
 using MUNityCore.DataHandlers;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Resolution.V2;

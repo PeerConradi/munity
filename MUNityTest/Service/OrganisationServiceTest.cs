@@ -12,7 +12,7 @@ namespace MUNityTest.Service
     [TestFixture]
     public class OrganisationServiceTest
     {
-        private MunCoreContext _context;
+        private MunityContext _context;
         private Organization _organization;
 
         [OneTimeSetUp]
@@ -20,9 +20,9 @@ namespace MUNityTest.Service
         {
             Console.WriteLine("Setup Test Environment");
             // Datenbank für den Test erzeugen und falls vorhanden erst einmal leeren und neu erstellen!
-            var optionsBuilder = new DbContextOptionsBuilder<MunCoreContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
             optionsBuilder.UseSqlite("Data Source=test_organisation.db");
-            _context = new MunCoreContext(optionsBuilder.Options);
+            _context = new MunityContext(optionsBuilder.Options);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
         }

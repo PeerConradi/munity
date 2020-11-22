@@ -13,19 +13,5 @@ namespace MUNityCore.Controllers
     public class InstallationController : ControllerBase
     {
 
-        /// <summary>
-        /// Starts the installation of the munity Core.
-        /// This function serves no purpose at the moment.
-        /// </summary>
-        /// <param name="service"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpGet]
-        public IActionResult Install([FromServices]InstallationService service)
-        {
-
-            service.Install();
-            return StatusCode(StatusCodes.Status200OK, service.InstallationLog);
-        }
     }
 }

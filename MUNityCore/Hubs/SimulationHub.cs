@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using MUNityCore.Util.Extenstions;
+using MUNityCore.Util.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

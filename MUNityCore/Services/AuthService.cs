@@ -25,7 +25,7 @@ namespace MUNityCore.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly MunCoreContext _context;
+        private readonly MunityContext _context;
         private readonly AppSettings _settings;
 
         public bool CanUserEditConference(User user, Conference conference)
@@ -149,7 +149,7 @@ namespace MUNityCore.Services
             return auth;
         }
 
-        public AuthService(MunCoreContext context, IOptions<AppSettings> appSettings)
+        public AuthService(MunityContext context, IOptions<AppSettings> appSettings)
         {
             _settings = appSettings.Value;
             _context = context;

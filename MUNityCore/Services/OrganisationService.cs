@@ -13,7 +13,7 @@ namespace MUNityCore.Services
 {
     public class OrganisationService : IOrganisationService
     {
-        private MunCoreContext _context;
+        private MunityContext _context;
 
         public Organization CreateOrganisation([NotNull]string name, [NotNull]string abbreviation)
         {
@@ -24,24 +24,24 @@ namespace MUNityCore.Services
 
             organisation.OrganizationId = Guid.NewGuid().ToString();
             var shortAsKey = Util.Tools.IdGenerator.AsPrimaryKey(abbreviation);
-            if (!_context.Organisations.Any(n => n.OrganizationId == shortAsKey))
+            if (!_context.Organizations.Any(n => n.OrganizationId == shortAsKey))
                 organisation.OrganizationId = shortAsKey;
 
             organisation.OrganizationName = name;
             organisation.OrganizationAbbreviation = abbreviation;
-            _context.Organisations.Add(organisation);
+            _context.Organizations.Add(organisation);
             _context.SaveChanges();
             return organisation;
         }
 
         public Task<Organization> GetOrganisation(string id)
         {
-            return _context.Organisations.FirstOrDefaultAsync(n => n.OrganizationId == id);
+            return _context.Organizations.FirstOrDefaultAsync(n => n.OrganizationId == id);
         }
 
         public Task<Organization> GetOrganisationWithMembers(string id)
         {
-            return _context.Organisations.Include(n => n.Member)
+            return _context.Organizations.Include(n => n.Member)
                 .ThenInclude(n => n.User)
                 .FirstOrDefaultAsync(n => n.OrganizationId == id);
         }
@@ -55,7 +55,7 @@ namespace MUNityCore.Services
 
         public bool CanUserCreateProject(string username, string organisationId)
         {
-            var result = _context.OrganisationMember.Any(n => n.User.Username == username &&
+            var result = _context.OrganizationMember.Any(n => n.User.Username == username &&
                                                  n.Organization.OrganizationId == organisationId &&
                                                  n.Role.CanCreateProject == true);
             return result;
@@ -71,7 +71,7 @@ namespace MUNityCore.Services
             role.CanCreateProject = canCreateConferences;
 
             role.Organization = organization;
-            _context.OrganisationRoles.Add(role);
+            _context.OrganizationRoles.Add(role);
             _context.SaveChanges();
 
             return role;
@@ -79,7 +79,7 @@ namespace MUNityCore.Services
 
         public IQueryable<OrganizationRole> GetOrganisationRoles(string organisationId)
         {
-            return _context.OrganisationRoles.Where(n => n.Organization.OrganizationId == organisationId);
+            return _context.OrganizationRoles.Where(n => n.Organization.OrganizationId == organisationId);
         }
 
         public OrganizationMember AddUserToOrganisation(User user, Organization organization, OrganizationRole role)
@@ -89,7 +89,7 @@ namespace MUNityCore.Services
             membership.Role = role;
             membership.Organization = organization;
 
-            _context.OrganisationMember.Add(membership);
+            _context.OrganizationMember.Add(membership);
             _context.SaveChanges();
 
             return membership;
@@ -97,15 +97,15 @@ namespace MUNityCore.Services
 
         public IEnumerable<Organization> GetOrganisationsOfUser(User user)
         {
-            var organisations = from membership in _context.OrganisationMember
+            var organisations = from membership in _context.OrganizationMember
                 where membership.User.UserId == user.UserId
-                join role in _context.OrganisationRoles on membership.Role equals role
-                join organisation in _context.Organisations on role.Organization equals organisation
+                join role in _context.OrganizationRoles on membership.Role equals role
+                join organisation in _context.Organizations on role.Organization equals organisation
                 select organisation;
             return organisations;
         }
 
-        public OrganisationService(MunCoreContext context)
+        public OrganisationService(MunityContext context)
         {
             _context = context;
         }

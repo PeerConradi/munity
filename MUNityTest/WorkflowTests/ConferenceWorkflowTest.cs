@@ -17,7 +17,7 @@ namespace MUNityTest.WorkflowTests
     [Description("Test the Conference Service implementation with a SqLite Database")]
     public class ConferenceWorkflowTest
     {
-        private static MunCoreContext _context;
+        private static MunityContext _context;
         private static Organization _organization;
         private static Project _project;
         private static Conference _conference;
@@ -28,9 +28,9 @@ namespace MUNityTest.WorkflowTests
         {
             Console.WriteLine("Setup Test Environment");
             // Datenbank für den Test erzeugen und falls vorhanden erst einmal leeren und neu erstellen!
-            var optionsBuilder = new DbContextOptionsBuilder<MunCoreContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
             optionsBuilder.UseSqlite("Data Source=test.db");
-            _context = new MunCoreContext(optionsBuilder.Options);
+            _context = new MunityContext(optionsBuilder.Options);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
         }

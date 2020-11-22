@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Util.Extenstions
+namespace MUNityCore.Util.Extensions
 {
     public static class ListExtensions
     {

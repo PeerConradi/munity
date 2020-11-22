@@ -11,7 +11,7 @@ namespace MUNityCore.Services
 {
     public class UserService : IUserService
     {
-        private readonly MunCoreContext _context;
+        private readonly MunityContext _context;
 
         public User CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday)
         {
@@ -132,7 +132,7 @@ namespace MUNityCore.Services
                 n.Auth.AuthLevel == UserAuth.EAuthLevel.Admin || n.Auth.AuthLevel == UserAuth.EAuthLevel.Headadmin);
         }
 
-        public UserService(MunCoreContext context)
+        public UserService(MunityContext context)
         {
             _context = context;
         }

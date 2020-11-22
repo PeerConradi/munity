@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityCore.DataHandlers.Database;
 using MySql.Data.MySqlClient;
 using MUNityCore.Models.User;
 using System.Text.RegularExpressions;
-using MUNityCore.DataHandlers.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
-using MUNityCore.Util.Extenstions;
+using MUNityCore.Util.Extensions;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Exceptions.ConferenceExceptions;
 using MUNityCore.Models.Conference;
@@ -19,7 +17,7 @@ namespace MUNityCore.Services
 {
     public class ConferenceService : IConferenceService
     {
-        private readonly MunCoreContext _context;
+        private readonly MunityContext _context;
 
         public Project CreateProject(string name, string abbreviation, Organization organization)
         {
@@ -364,7 +362,7 @@ namespace MUNityCore.Services
             return this._context.Projects.Where(n => n.ProjectName.ToLower().Contains(name));
         }
 
-        public ConferenceService(MunCoreContext context)
+        public ConferenceService(MunityContext context)
         {
             this._context = context;
             Console.WriteLine("Conference-Service Started!");
