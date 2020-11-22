@@ -54,17 +54,11 @@ namespace MUNityCore.Models.Conference
         /// <summary>
         /// The conference that this role is assigned to.
         /// </summary>
-        [IgnoreDataMember]
-        [Newtonsoft.Json.JsonIgnore]
-        [JsonIgnore]
         public Conference Conference { get; set; }
 
         /// <summary>
         /// the authorization of this role.
         /// </summary>
-        [IgnoreDataMember]
-        [Newtonsoft.Json.JsonIgnore]
-        [JsonIgnore]
         public RoleAuth RoleAuth { get; set; }
 
         /// <summary>
@@ -106,8 +100,6 @@ namespace MUNityCore.Models.Conference
         /// The timestamp when this role had been created or last changed.
         /// </summary>
         [Timestamp]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public byte[] RoleTimestamp { get; set; }
     }
 }

@@ -14,14 +14,6 @@ You can also set the Primary Key with the FluentAPI inside the Database Context.
 
 ## Register Model inside the Database Context
 
-First you need to make clear, if your new object is part of the really importand _Core_ features or one of the base functionality.
-
-The Core is anything that is extremly importand for every conference, like the roles, committees etc.
-
-The Base functions are everything that is using the Core functions but not necessarily on every conference, for example lists of speakers, resolutions, position papers, websites, galeries etc.
-
-![Strcuture](../img/databasestruct.png)
-
 You can find the Context inside the folder __DataHandlers/EntityFramework__
 
 To add you model add it as new DbSet

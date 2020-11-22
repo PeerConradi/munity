@@ -16,7 +16,7 @@ namespace MUNityCore.Schema.Response.Authentication
 
         public string Token { get; set; }
 
-        public AuthenticationResponse(User user, string token)
+        public AuthenticationResponse(Models.Core.User user, string token)
         {
             this.Username = user.Username;
             this.FirstName = user.Forename;

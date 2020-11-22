@@ -17,27 +17,23 @@ namespace MUNityCore.Models.Conference.Roles
     /// for example Amnesty-International and group both roles by setting both Group Values to 1.
     /// The same way you can also group NGO-Roles with different names.
     /// </summary>
-    [DataContract]
     public class NgoRole : AbstractRole
     {
         /// <summary>
         /// A Group for this NGO Role. Every other NGO Role of the conference
         /// with the same Group-Number is also part of this group.
         /// </summary>
-        [DataMember]
         public int Group { get; set; }
 
         /// <summary>
         /// The name of the ngo. For Example Amnesty-International.
         /// </summary>
-        [DataMember]
         [MaxLength(250)]
         public string NgoName { get; set; }
 
         /// <summary>
         /// Is this role the leaderRole of its group.
         /// </summary>
-        [DataMember]
         public bool Leader { get; set; }
 
     }

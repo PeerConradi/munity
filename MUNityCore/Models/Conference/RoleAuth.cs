@@ -14,14 +14,11 @@ namespace MUNityCore.Models.Conference
     /// <summary>
     /// The authorizations of a role inside a conference.
     /// </summary>
-    [DataContract]
     public class RoleAuth
     {
-        [DataMember]
         public int RoleAuthId { get; set; }
 
         [MaxLength(150)]
-        [DataMember]
         public string RoleAuthName { get; set; }
 
         /// <summary>
@@ -30,7 +27,6 @@ namespace MUNityCore.Models.Conference
         /// with the API outside of this context. For example
         /// another application that wants to use this framework/API
         /// </summary>
-        [DataMember]
         public int PowerLevel { get; set; }
 
         /// <summary>
@@ -40,39 +36,27 @@ namespace MUNityCore.Models.Conference
         /// because a lot of conferences will share the same structure but that's
         /// not a problem
         /// </summary>
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
-        [IgnoreDataMember]
         public Conference Conference { get; set; }
-
-        [NotMapped]
-        public string ConferenceId => Conference?.ConferenceId ?? "";
 
         /// <summary>
         /// Can change the Settings of the conference for example the date, name etc.
         /// It also allows to change the structure of the conference like Committees,
         /// delegations, roles etc.
         /// </summary>
-        [DataMember]
         public bool CanEditConferenceSettings { get; set; }
 
         /// <summary>
         /// The user can see all applications for roles
         /// </summary>
-        [DataMember]
         public bool CanSeeApplications { get; set; }
 
         /// <summary>
         /// The user can change participations for example accept or deny
         /// an application for a role, or set someone into the team etc.
         /// </summary>
-        [DataMember]
         public bool CanEditParticipations { get; set; }
 
         [Timestamp]
-        [JsonIgnore]
-        [IgnoreDataMember]
-        [Newtonsoft.Json.JsonIgnore]
         public byte[] RoleAuthTimestamp { get; set; }
     }
 }

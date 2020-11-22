@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Models.User;
 using MUNityCore.Schema.Request;
 using MUNityCore.Util.Extensions;
-using MUNityCore.Models.Facades;
 using MUNityCore.Models.Core;
 using MUNityCore.Schema.Request.Authentication;
 using MUNityCore.Schema.Response.Authentication;
+using MUNityCore.Schema.Response.User;
 using MUNityCore.Services;
 
 namespace MUNityCore.Controllers
@@ -35,9 +35,9 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public async Task<IUserInformation> GetUser(string username)
+        public async Task<UserInformation> GetUser(string username)
         {
-            return await _userService.GetUserByUsername(username);
+            return await _userService.GetUserInformation(username);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace MUNityCore.Controllers
             dbUser.Gender = user.Gender;
             dbUser.City = user.City;
             dbUser.Street = user.Street;
-            dbUser.Housenumber = user.Housenumber;
+            dbUser.HouseNumber = user.HouseNumber;
             dbUser.Zipcode = user.Zipcode;
 
             return await _userService.UpdateUser(dbUser);

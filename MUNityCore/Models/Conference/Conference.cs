@@ -18,7 +18,6 @@ namespace MUNityCore.Models.Conference
     /// the conference, for example a conference every year, then this will can be
     /// found by the Project
     /// </summary>
-    [DataContract]
     public class Conference
     {
         public enum EConferenceVisibilityMode
@@ -40,34 +39,24 @@ namespace MUNityCore.Models.Conference
             Public
         }
 
-        [DataMember]
         [MaxLength(80)]
         public string ConferenceId { get; set; }
         
-        [DataMember]
         [MaxLength(150)]
         public string Name { get; set; }
 
-        [DataMember]
         [MaxLength(250)]
         public string FullName { get; set; }
 
-        [DataMember]
         [MaxLength(18)]
         public string Abbreviation { get; set; }
 
-        [DataMember]
         public DateTime StartDate { get; set; }
 
-        [DataMember]
         public DateTime EndDate { get; set; }
 
-        [DataMember]
         public DateTime CreationDate { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public Core.User CreationUser { get; set; }
 
         public List<Committee> Committees { get; set; }
@@ -75,22 +64,11 @@ namespace MUNityCore.Models.Conference
 
         public List<AbstractRole> Roles { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public Project ConferenceProject { get; set; }
 
-        [NotMapped] public string ConferenceProjectId => ConferenceProject?.ProjectId ?? "";
-
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public EConferenceVisibilityMode Visibility { get; set; }
 
         [Timestamp]
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public byte[] ConferenceTimestamp { get; set; }
 
         public Conference()

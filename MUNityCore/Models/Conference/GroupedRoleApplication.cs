@@ -18,22 +18,15 @@ namespace MUNityCore.Models.Conference
     ///
     /// <seealso cref="RoleApplication"/>
     /// </summary>
-    [DataContract]
     public class GroupedRoleApplication
     {
-        [DataMember]
         public int GroupedRoleApplicationId { get; set; }
 
-        [DataMember]
         public List<RoleApplication> Applications { get; set; }
 
-        [DataMember]
         public DateTime CreateTime { get; set; }
 
         [Timestamp]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
-        [IgnoreDataMember]
         public byte[] GroupedRoleApplicationTimestamp { get; set; }
     }
 }

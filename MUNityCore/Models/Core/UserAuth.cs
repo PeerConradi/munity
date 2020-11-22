@@ -9,8 +9,9 @@ using MUNityCore.Schema.Request;
 
 namespace MUNityCore.Models.Core
 {
-
-    [DataContract]
+    /// <summary>
+    /// The Authorization of one or more users.
+    /// </summary>
     public class UserAuth
     {
         public enum EAuthLevel
@@ -23,35 +24,28 @@ namespace MUNityCore.Models.Core
             New
         }
 
-        [DataMember]
         public int UserAuthId { get; set; }
 
-        [DataMember]
         [MaxLength(150)]
         public string UserAuthName { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public List<User> Users { get; set; }
 
-        [DataMember]
-        public bool CanCreateOrganisation { get; set; }
+        public bool CanCreateOrganization { get; set; }
 
-        [DataMember]
         public EAuthLevel AuthLevel { get; set; }
 
         public UserAuth()
         {
             Users = new List<User>();
-            CanCreateOrganisation = false;
+            CanCreateOrganization = false;
             AuthLevel = EAuthLevel.New;
         }
 
         public UserAuth(string name)
         {
             Users = new List<User>();
-            CanCreateOrganisation = false;
+            CanCreateOrganization = false;
             AuthLevel = EAuthLevel.New;
             UserAuthName = name;
         }
@@ -59,7 +53,7 @@ namespace MUNityCore.Models.Core
         public UserAuth(AdminSchema.CreateUserAuthBody request)
         {
             Users = new List<User>();
-            CanCreateOrganisation = request.CanCreateOrganisation;
+            CanCreateOrganization = request.CanCreateOrganisation;
             AuthLevel = EAuthLevel.New;
             UserAuthName = request.Name;
         }

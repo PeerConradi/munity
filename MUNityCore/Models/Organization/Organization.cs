@@ -14,32 +14,22 @@ namespace MUNityCore.Models.Organization
     [DataContract]
     public class Organization
     {
-
-        [DataMember]
         public string OrganizationId { get; set; }
 
-        [DataMember]
         [MaxLength(150)]
         public string OrganizationName { get; set; }
         
-        [DataMember]
         [MaxLength(18)]
         public string OrganizationAbbreviation { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public List<OrganizationRole> Roles { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public List<OrganizationMember> Member { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public List<Project> Projects { get; set; }
+
+        [Timestamp]
+        public byte[] OrganizationTimestamp { get; set; }
 
         public Organization()
         {

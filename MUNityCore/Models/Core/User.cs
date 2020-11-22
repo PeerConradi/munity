@@ -14,10 +14,11 @@ namespace MUNityCore.Models.Core
 {
 
     /// <summary>
-    /// a registered user on the platform.
+    /// a registered user on the platform. Do not use this Model
+    /// inside any of the controllers unless you use it to validate something.
+    /// When sending out information, always use the UserSchema
     /// </summary>
-    [DataContract]
-    public class User : IUserInformation
+    public class User
     {
         public enum EUserState
         {
@@ -25,94 +26,63 @@ namespace MUNityCore.Models.Core
             BANNED
         }
 
-
-        [DataMember]
         public int UserId { get; set; }
 
-        [DataMember]
         [MaxLength(40)]
         public string Username { get; set; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
+
         [MaxLength(250)]
         public string Password { get; set; }
 
-        [DataMember]
         [MaxLength(250)]
         public string Mail { get; set; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
         [MaxLength(250)]
         public string Salt { get; set; }
 
-        [DataMember]
         [MaxLength(100)]
         public string Title { get; set; }
 
-        [DataMember]
         [MaxLength(250)]
         public string Forename { get; set; }
 
-        [DataMember]
         [MaxLength(250)]
         public string Lastname { get; set; }
 
-        [DataMember]
         [MaxLength(250)]
         public string Gender { get; set; }
 
-        [DataMember]
         public DateTime Birthday { get; set; }
 
-        //[DataMember]
-        //public string Country { get; set; }
+        [MaxLength(300)]
+        public string Country { get; set; }
 
-        [DataMember]
         [MaxLength(300)]
         public string Street { get; set; }
 
-        [DataMember]
         [MaxLength(50)]
         public string Zipcode { get; set; }
 
-        [DataMember]
         [MaxLength(300)]
         public string City { get; set; }
 
-        [DataMember]
         [MaxLength(20)]
-        public string Housenumber { get; set; }
+        public string HouseNumber { get; set; }
 
-        [DataMember]
         [MaxLength(250)]
         public string ProfileImageName { get; set; }
 
-        [DataMember]
         public DateTime RegistrationDate { get; set; }
 
-        [DataMember]
         public DateTime LastOnline { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public UserAuth Auth { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public EUserState UserState { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public List<User> Friends { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public UserPrivacySettings PrivacySettings { get; set; }
 
         [Timestamp]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.Core;
+using MUNityCore.Schema.Response.User;
 
 namespace MUNityCore.Services
 {
@@ -35,5 +36,7 @@ namespace MUNityCore.Services
         void RemoveUser(User user);
 
         IEnumerable<User> GetAdministrators();
+
+        Task<UserInformation> GetUserInformation(string username);
     }
 }

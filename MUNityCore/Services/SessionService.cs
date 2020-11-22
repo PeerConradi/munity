@@ -13,5 +13,15 @@ namespace MUNityCore.Services
         {
             throw new NotImplementedException();
         }
+
+        public CommitteeSession CreateNewSession(Committee committee)
+        {
+            var newSession = new CommitteeSession()
+            {
+                Committee = committee,
+                CommitteeSessionId = "sess_ " + Guid.NewGuid().ToString()
+            };
+            return newSession;
+        }
     }
 }

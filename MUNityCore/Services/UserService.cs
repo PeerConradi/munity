@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Core;
 using MUNityCore.Models.User;
+using MUNityCore.Schema.Response.User;
 
 namespace MUNityCore.Services
 {
@@ -130,6 +131,15 @@ namespace MUNityCore.Services
         {
             return this._context.Users.Where(n =>
                 n.Auth.AuthLevel == UserAuth.EAuthLevel.Admin || n.Auth.AuthLevel == UserAuth.EAuthLevel.Headadmin);
+        }
+
+        public async Task<UserInformation> GetUserInformation(string username)
+        {
+            var user = await _context.Users.Include(n => n.PrivacySettings).FirstOrDefaultAsync(n =>
+                n.Username == username);
+            if (user == null) return null;
+            return new UserInformation(user);
+            
         }
 
         public UserService(MunityContext context)

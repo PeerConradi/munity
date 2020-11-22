@@ -41,8 +41,6 @@ namespace MUNityCore.Models.Conference
         public string Iso { get; set; }
 
         [Timestamp]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public byte[] CountryTimestamp { get; set; }
     }
 }

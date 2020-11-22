@@ -13,36 +13,19 @@ namespace MUNityCore.Models.Conference
     /// <summary>
     /// The participation of a user for a role inside of a conference.
     /// </summary>
-    [DataContract]
     public class Participation
     {
 
-        [DataMember]
         public int ParticipationId { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public AbstractRole Role { get; set; }
 
-        [NotMapped]
-        public int RoleId => Role?.RoleId ?? -1;
-
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public Core.User User { get; set; }
 
-        [NotMapped]
-        public string Username => User?.Username ?? "";
-
-        [DataMember]
         public bool IsMainRole { get; set; }
 
-        [DataMember]
         public double Cost { get; set; }
 
-        [DataMember]
         public double Paid { get; set; }
 
         /// <summary>
@@ -50,14 +33,10 @@ namespace MUNityCore.Models.Conference
         /// it should be Unique and be usable and can be used as a shared password between the
         /// team and a user to check the users identity when at the conference.
         /// </summary>
-        [IgnoreDataMember]
         [MaxLength(200)]
         public string ParticipationSecret { get; set; }
 
         [Timestamp]
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public byte[] ParticipationTimestamp { get; set; }
     }
 }

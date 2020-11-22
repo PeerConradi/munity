@@ -16,36 +16,26 @@ namespace MUNityCore.Models.Conference
     /// For example could different organizational team roles be grouped into
     /// "main organization team".
     /// </summary>
-    [DataContract]
     public class TeamRoleGroup
     {
 
-        [DataMember]
         public int TeamRoleGroupId { get; set; }
 
         [MaxLength(150)]
-        [DataMember]
         [Required]
         public string Name { get; set; }
 
         [MaxLength(250)]
-        [DataMember]
         public string FullName { get; set; }
 
         [MaxLength(10)]
-        [DataMember]
         public string Abbreviation { get; set; }
 
-        [DataMember]
         public int GroupLevel { get; set; }
 
-        [DataMember]
         public List<TeamRole> TeamRoles { get; set; }
 
         [Timestamp]
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public byte[] TeamRoleGroupTimestamp { get; set; }
     }
 }

@@ -29,12 +29,9 @@ namespace MUNityCore.Models.Conference
         public string TopicCode { get; set; }
 
         [Timestamp]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public byte[] CommitteeTopicTimestamp { get; set; }
 
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
+
         public Committee Committee { get; set; }
     }
 }

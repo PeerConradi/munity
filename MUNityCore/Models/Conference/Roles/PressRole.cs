@@ -13,17 +13,24 @@ namespace MUNityCore.Models.Conference.Roles
     /// TV for VLogs, Newsshows etc.
     /// Online if you want to seperate your newspaper into an paper and online version.
     /// </summary>
-    [DataContract]
     public class PressRole : AbstractRole
     {
         public enum EPressCategories
         {
+            /// <summary>
+            /// Any type of printed newspaper, magazine etc.
+            /// </summary>
             Print,
+            /// <summary>
+            /// Anything video news format.
+            /// </summary>
             TV,
+            /// <summary>
+            /// For Word-press websites etc.
+            /// </summary>
             Online
         }
 
-        [DataMember]
         public EPressCategories PressCategory { get; set; }
 
     }

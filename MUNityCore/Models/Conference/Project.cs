@@ -21,34 +21,18 @@ namespace MUNityCore.Models.Conference
     /// Model United Nations in the classroom
     /// Model United Nations in the university
     /// </summary>
-    [DataContract]
     public class Project
     {
-        [DataMember]
         public string ProjectId { get; set; }
 
-        [DataMember]
-        [MaxLength(200)]
         public string ProjectName { get; set; }
 
-        [DataMember]
-        [MaxLength(10)]
         public string ProjectAbbreviation { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public Organization.Organization ProjectOrganization { get; set; }
-
-        [DataMember]
-        [NotMapped]
-        public string ProjectOrganizationId => ProjectOrganization?.OrganizationId ?? null;
 
         public List<Conference> Conferences { get; set; }
 
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         [Timestamp]
         public byte[] ProjectTimestamp { get; set; }
 

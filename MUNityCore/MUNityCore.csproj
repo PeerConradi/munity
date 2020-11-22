@@ -47,10 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Cache\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
