@@ -10,7 +10,7 @@ using Moq;
 using MUNityCore.Controllers;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Models.Organization;
 using MUNityCore.Schema.Request;
 using MUNityCore.Schema.Request.Conference;
@@ -51,13 +51,13 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             return conference;
         }
 
-        private User _testUser;
+        private MunityUser _testUser;
 
-        public User GetTestUser()
+        public MunityUser GetTestUser()
         {
-            return _testUser ??= new User
+            return _testUser ??= new MunityUser
             {
-                UserId = 0,
+                MunityUserId = 0,
                 Username = "testuser",
                 Forename = "Test",
                 Lastname = "User"
@@ -77,9 +77,9 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
                 OrganizationAbbreviation = "TO"
             };
 
-            var user = new User
+            var user = new MunityUser
             {
-                UserId = 0,
+                MunityUserId = 0,
                 Username = "testuser",
                 Forename = "Max",
                 Lastname = "Mustermann",
@@ -108,7 +108,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
                 ProjectId = "testproject",
                 ProjectName = "Testproject",
                 ProjectOrganization = GetTestOrganisation(),
-                ProjectAbbreviation = "Test"
+                ProjectShort = "Test"
 
             };
         }

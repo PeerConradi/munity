@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNityCore.Models.User;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,7 +21,7 @@ namespace MUNityCore.Models.Conference
 
         public AbstractRole Role { get; set; }
 
-        public Core.User User { get; set; }
+        public MunityUser User { get; set; }
 
         public bool IsMainRole { get; set; }
 

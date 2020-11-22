@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNityCore.Models.User;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,7 +22,7 @@ namespace MUNityCore.Models.Conference
         public int GroupApplicationId { get; set; }
 
 
-        public List<Core.User> Users { get; set; }
+        public List<MunityUser> Users { get; set; }
 
         public AbstractRole Role { get; set; }
 
@@ -40,7 +41,7 @@ namespace MUNityCore.Models.Conference
 
         public GroupApplication()
         {
-            Users = new List<Core.User>();
+            Users = new List<MunityUser>();
         }
     }
 }

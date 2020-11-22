@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Resolution;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Schema.Request;
 using MUNityCore.Schema.Request.Authentication;
@@ -15,26 +15,26 @@ namespace MUNityCore.Services
 {
     public interface IAuthService
     {
-        public bool CanUserEditResolution(User user, ResolutionV2 resolution);
+        public bool CanUserEditResolution(MunityUser user, ResolutionV2 resolution);
 
-        public User GetUserOfClaimPrincipal(ClaimsPrincipal principal);
+        public MunityUser GetUserOfClaimPrincipal(ClaimsPrincipal principal);
 
         AuthenticationResponse Authenticate(AuthenticateRequest model);
 
-        Task<int> SetUserAuth(User user, UserAuth auth);
+        Task<int> SetUserAuth(MunityUser user, MunityUserAuth auth);
 
-        User GetUserWithAuthByClaimPrincipal(ClaimsPrincipal principal);
+        MunityUser GetUserWithAuthByClaimPrincipal(ClaimsPrincipal principal);
 
         bool IsUserPrincipalAdmin(ClaimsPrincipal principal);
 
-        Task<UserAuth> GetAuth(int authid);
+        Task<MunityUserAuth> GetAuth(int authid);
 
-        UserAuth CreateAuth(string name);
+        MunityUserAuth CreateAuth(string name);
 
 
-        string GenerateToken(User user);
+        string GenerateToken(MunityUser user);
 
-        bool CanUserEditConference(User user, Conference conference);
-        UserAuth CreateUserAuth(AdminSchema.CreateUserAuthBody body);
+        bool CanUserEditConference(MunityUser user, Conference conference);
+        MunityUserAuth CreateUserAuth(AdminSchema.CreateUserAuthBody body);
     }
 }

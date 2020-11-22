@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
-using MUNityCore.Models.Core;
 using MUNityCore.Models.User;
 using MUNityCore.Schema.Response.User;
 
@@ -14,7 +13,7 @@ namespace MUNityCore.Services
     {
         private readonly MunityContext _context;
 
-        public User CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday)
+        public MunityUser CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday)
         {
 
             if (!Util.Tools.InputCheck.IsOnlyCharsAndNumbers(username))
@@ -36,7 +35,7 @@ namespace MUNityCore.Services
                 throw new ArgumentException("you are to young to create an account!");
 
             var pass = Util.Hashing.PasswordHashing.InitHashing(password);
-            var user = new User
+            var user = new MunityUser
             {
                 Username = username,
                 Mail = mail,
@@ -53,12 +52,12 @@ namespace MUNityCore.Services
             return user;
         }
 
-        public Task<User> GetUserByUsername(string username)
+        public Task<MunityUser> GetUserByUsername(string username)
         {
             return _context.Users.FirstOrDefaultAsync(n => n.Username.ToLower() == username.ToLower());
         }
 
-        public async Task<int> UpdateUser(User user)
+        public async Task<int> UpdateUser(MunityUser user)
         {
             _context.Users.Update(user);
             return await _context.SaveChangesAsync();
@@ -74,12 +73,12 @@ namespace MUNityCore.Services
             return await _context.Users.AnyAsync(n => n.Mail == mail);
         }
 
-        public IEnumerable<User> GetBannedUsers()
+        public IEnumerable<MunityUser> GetBannedUsers()
         {
-            return this._context.Users.Where(n => n.UserState == User.EUserState.BANNED);
+            return this._context.Users.Where(n => n.UserState == MunityUser.EUserState.BANNED);
         }
 
-        public IEnumerable<User> GetUserBlock(int blockid)
+        public IEnumerable<MunityUser> GetUserBlock(int blockid)
         {
             return this._context.Users.OrderBy(n => n.Lastname).Skip(blockid).Take(100);
         }
@@ -89,15 +88,15 @@ namespace MUNityCore.Services
             return this._context.Users.CountAsync();
         }
 
-        public Models.User.UserPrivacySettings GetUserPrivacySettings(User user)
+        public Models.User.UserPrivacySettings GetUserPrivacySettings(MunityUser user)
         {
             if (user == null) return null;
             return this._context.Users.Include(n => n.PrivacySettings)
-                .FirstOrDefault(n => n.UserId == user.UserId)
+                .FirstOrDefault(n => n.MunityUserId == user.MunityUserId)
                 ?.PrivacySettings;
         }
 
-        public Models.User.UserPrivacySettings InitUserPrivacySettings(User user)
+        public Models.User.UserPrivacySettings InitUserPrivacySettings(MunityUser user)
         {
             if (user == null) return null;
             user.PrivacySettings = new UserPrivacySettings() {User = user};
@@ -113,24 +112,24 @@ namespace MUNityCore.Services
 
         
 
-        public void RemoveUser(User user)
+        public void RemoveUser(MunityUser user)
         {
             this._context.Users.Remove(user);
             this._context.SaveChanges();
         }
 
-        public bool BanUser(User user)
+        public bool BanUser(MunityUser user)
         {
             if (user == null) return false;
-            user.UserState = User.EUserState.BANNED;
+            user.UserState = MunityUser.EUserState.BANNED;
             this._context.SaveChanges();
             return true;
         }
 
-        public IEnumerable<User> GetAdministrators()
+        public IEnumerable<MunityUser> GetAdministrators()
         {
             return this._context.Users.Where(n =>
-                n.Auth.AuthLevel == UserAuth.EAuthLevel.Admin || n.Auth.AuthLevel == UserAuth.EAuthLevel.Headadmin);
+                n.Auth.AuthLevel == MunityUserAuth.EAuthLevel.Admin || n.Auth.AuthLevel == MunityUserAuth.EAuthLevel.Headadmin);
         }
 
         public async Task<UserInformation> GetUserInformation(string username)

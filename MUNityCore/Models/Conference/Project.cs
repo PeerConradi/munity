@@ -27,7 +27,7 @@ namespace MUNityCore.Models.Conference
 
         public string ProjectName { get; set; }
 
-        public string ProjectAbbreviation { get; set; }
+        public string ProjectShort { get; set; }
 
         public Organization.Organization ProjectOrganization { get; set; }
 

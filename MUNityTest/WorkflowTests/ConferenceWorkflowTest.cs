@@ -17,11 +17,11 @@ namespace MUNityTest.WorkflowTests
     [Description("Test the Conference Service implementation with a SqLite Database")]
     public class ConferenceWorkflowTest
     {
-        private static MunityContext _context;
-        private static Organization _organization;
-        private static Project _project;
-        private static Conference _conference;
-        private static Committee _committeeGv;
+        private MunityContext _context;
+        private Organization _organization;
+        private Project _project;
+        private Conference _conference;
+        private Committee _committeeGv;
 
         [OneTimeSetUp]
         public void Setup()
@@ -96,6 +96,7 @@ namespace MUNityTest.WorkflowTests
                 "Generalversammlung", "GV");
             var result = await service.GetCommittee(committee.CommitteeId);
             Assert.NotNull(committee);
+            Assert.NotNull(result);
             var conference = await service.GetConference(_conference.ConferenceId);
             Assert.AreEqual(1, conference.Committees.Count);
             _committeeGv = committee;
@@ -111,7 +112,14 @@ namespace MUNityTest.WorkflowTests
                 Assert.Fail("This test needs to have a conference first!");
 
             var service = new ConferenceService(_context);
+
+            var plGroup = service.CreateTeamRoleGroup(_conference, "Projektleitung", "Projektleitung", "PL", 1);
+            var eplGroup = service.CreateTeamRoleGroup(_conference, "Erweiterte Projektleitung", "Erweiterte Projektleitung", "EPL", 2);
+
+
             var projectLeader = service.CreateTeamRole(_conference, "Projektleitung");
+
+            var addingPlToGroupSuccess = service.AddRoleToGroup(projectLeader, plGroup);
 
             var tnbRole = service.CreateTeamRole(_conference, "Teilnehmendenbetreuung", projectLeader);
             var inhaltRole = service.CreateTeamRole(_conference, "Leitung Inhalt", projectLeader);
@@ -121,12 +129,24 @@ namespace MUNityTest.WorkflowTests
             var finances = service.CreateTeamRole(_conference, "Kassenwart", projectLeader);
             var logisticsRole = service.CreateTeamRole(_conference, "Leitung Logistik", projectLeader);
             var fundraisingRole = service.CreateTeamRole(_conference, "Leitung Fundraising", projectLeader);
+            var secreataryGeneralInTeam = service.CreateTeamRole(_conference, "Generalsekretär", projectLeader);
 
-            var secretaryGeneral = service.CreateSecretaryGeneralRole(_conference, 
-                "Generalsekretäring", "Ihre Exzellenz");
+            service.AddRoleToGroup(tnbRole, eplGroup);
+            service.AddRoleToGroup(inhaltRole, eplGroup);
+            service.AddRoleToGroup(cbRole, eplGroup);
+            service.AddRoleToGroup(publicRelationsRole, eplGroup);
+            service.AddRoleToGroup(finances, eplGroup);
+            service.AddRoleToGroup(logisticsRole, eplGroup);
+            service.AddRoleToGroup(fundraisingRole, eplGroup);
+            service.AddRoleToGroup(secreataryGeneralInTeam, eplGroup);
 
             var teamRoles = service.GetTeamRoles(_conference.ConferenceId);
-            Assert.AreEqual(8, teamRoles.Count());
+            Assert.NotNull(tnbRole);
+            Assert.NotNull(inhaltRole);
+            Assert.NotNull(cbRole);
+            Assert.NotNull(publicRelationsRole);
+            Assert.NotNull(finances);
+            Assert.AreEqual(9, teamRoles.Count());
         }
 
         [Test]
@@ -226,10 +246,27 @@ namespace MUNityTest.WorkflowTests
 
             var getPress = service.GetPressRoles(_conference.ConferenceId);
             Assert.AreEqual(8, getPress.Count());
+            Assert.NotNull(printChef);
+            Assert.NotNull(printRedakteur);
+            Assert.NotNull(printEditor);
+            Assert.NotNull(printLayout);
+            Assert.NotNull(tvRedakteur);
+            Assert.NotNull(tvModerator);
+            Assert.NotNull(tvEditor);
+            Assert.NotNull(onlineRedakteur);
         }
 
         [Test]
         [Order(10)]
+        public void TestCreateSecreataryGeneralRole()
+        {
+            var service = new ConferenceService(this._context);
+            var gs = service.CreateSecretaryGeneralRole(this._conference, "Generalsekretär", "Seine Exzellenz der Generalsekretär");
+            Assert.NotNull(gs);
+        }
+
+        [Test]
+        [Order(11)]
         [Author("Peer Conradi")]
         [Description("Test User Participate in the Role of project Leader")]
         public void TestParticipateInRole()
@@ -248,7 +285,7 @@ namespace MUNityTest.WorkflowTests
         }
 
         [Test]
-        [Order(11)]
+        [Order(12)]
         [Author("Peer Conradi")]
         [Description("Get the participations of the user test it should be the one at the conferece")]
         public async Task TestGetUserParticipations()
@@ -268,7 +305,7 @@ namespace MUNityTest.WorkflowTests
         }
 
         [Test]
-        [Order(12)]
+        [Order(13)]
         [Author("Peer Conradi")]
         [Description("Get all the participations of a user inside a conference")]
         public void TestGetConferenceParticipations()
@@ -278,6 +315,37 @@ namespace MUNityTest.WorkflowTests
             Assert.AreEqual(1, participations.Count());
         }
 
+        [Test]
+        [Order(14)]
+        [Author("Peer Conradi")]
+        [Description("Test to apply for the position inside the TV Team as TV Editor")]
+        public void TestApplyForTvEditor()
+        {
+            // 1. Get The role
+            var service = new ConferenceService(_context);
+            var roles = service.GetPressRoles(this._conference.ConferenceId);
+            var tvEditorRole = roles.FirstOrDefault(n => n.RoleName == "Cutter");
+            Assert.NotNull(tvEditorRole);
 
+            // 2. Set the Application State
+            tvEditorRole.ApplicationState = EApplicationStates.DirectApplication;
+            service.SaveDatabaseChanges();
+
+            var userService = new UserService(_context);
+            var user = userService.CreateUser("maxknax", "Max", "Knax", "password", "mail@dail.de", new DateTime(1970, 1, 1));
+
+            // 3. Create the Application
+            var application = new RoleApplication()
+            {
+                ApplyDate = DateTime.Now,
+                Content = "Ich möchte mich gerne als Cutter bewerben, denn ich glaub ich kann das.",
+                Role = tvEditorRole,
+                Title = "Bewerbung Cutter",
+                User = user,
+            };
+
+            service.AddRoleApplication(application);
+
+        }
     }
 }

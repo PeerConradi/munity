@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Models.Organization;
 
 namespace MUNityTest.TestEnvironment
@@ -58,7 +58,7 @@ namespace MUNityTest.TestEnvironment
                     _project = new Project
                     {
                         ProjectName = "Model United Nations",
-                        ProjectAbbreviation = "MUN",
+                        ProjectShort = "MUN",
                         ProjectOrganization = TestOrganization
                     };
                 }
@@ -76,7 +76,7 @@ namespace MUNityTest.TestEnvironment
                     _conference = new Conference
                     {
                         Name = "Model United Nations 2021",
-                        Abbreviation = "MUN 2021",
+                        ConferenceShort = "MUN 2021",
                         FullName = "Official Model United Nations 2021",
                         StartDate = new DateTime(2021, 01, 01),
                         EndDate = new DateTime(2021, 12, 31),
@@ -127,14 +127,14 @@ namespace MUNityTest.TestEnvironment
             }
         }
 
-        private User _userMax;
-        public User TestUserMax
+        private MunityUser _userMax;
+        public MunityUser TestUserMax
         {
             get
             {
                 if (_userMax == null)
                 {
-                    _userMax = new User
+                    _userMax = new MunityUser
                     {
                         Username = "maxmustermann",
                         Title = "",
@@ -148,14 +148,14 @@ namespace MUNityTest.TestEnvironment
             }
         }
 
-        private User _userMike;
-        public User TestUserMike
+        private MunityUser _userMike;
+        public MunityUser TestUserMike
         {
             get
             {
                 if (_userMike == null)
                 {
-                    _userMike = new User
+                    _userMike = new MunityUser
                     {
                         Username = "mikelitoris",
                         Title = "",
@@ -169,14 +169,14 @@ namespace MUNityTest.TestEnvironment
             }
         }
 
-        private User _userMillie;
-        public User TestUserMillie
+        private MunityUser _userMillie;
+        public MunityUser TestUserMillie
         {
             get
             {
                 if (_userMillie == null)
                 {
-                    _userMillie = new User
+                    _userMillie = new MunityUser
                     {
                         Username = "mbb",
                         Title = "",
@@ -190,14 +190,14 @@ namespace MUNityTest.TestEnvironment
             }
         }
 
-        private User _userFinn;
-        public User TestUserFinn
+        private MunityUser _userFinn;
+        public MunityUser TestUserFinn
         {
             get
             {
                 if (_userFinn == null)
                 {
-                    _userFinn = new User
+                    _userFinn = new MunityUser
                     {
                         Username = "f.wolfhard",
                         Title = "",

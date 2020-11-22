@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models;
 using MUNityCore.Models.Conference;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Schema.Request;
 using MUNityCore.Schema.Request.Authentication;
@@ -28,7 +28,7 @@ namespace MUNityCore.Services
         private readonly MunityContext _context;
         private readonly AppSettings _settings;
 
-        public bool CanUserEditConference(User user, Conference conference)
+        public bool CanUserEditConference(MunityUser user, Conference conference)
         {
             var participations = _context.Participations.Where(n => n.Role.Conference == conference &&
                                                                     n.User == user);
@@ -38,7 +38,7 @@ namespace MUNityCore.Services
         }
 
 
-        public bool CanUserEditResolution(User user, ResolutionV2 resolution)
+        public bool CanUserEditResolution(MunityUser user, ResolutionV2 resolution)
         {
             // Is user the owner
 
@@ -54,7 +54,7 @@ namespace MUNityCore.Services
         public AuthenticationResponse Authenticate(AuthenticateRequest model)
         {
             // that user does not exists go away!
-            User user = _context.Users.FirstOrDefault(n => n.Username == model.Username);
+            MunityUser user = _context.Users.FirstOrDefault(n => n.Username == model.Username);
             if (user == null)
                 return null;
 
@@ -70,7 +70,7 @@ namespace MUNityCore.Services
             return new AuthenticationResponse(user, token);
         }
 
-        public string GenerateToken(User user)
+        public string GenerateToken(MunityUser user)
         {
             var secureKey = Encoding.UTF8.GetBytes(_settings.Secret);
             
@@ -88,7 +88,7 @@ namespace MUNityCore.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public User GetUserOfClaimPrincipal(ClaimsPrincipal principal)
+        public MunityUser GetUserOfClaimPrincipal(ClaimsPrincipal principal)
         {
             var claimUsername = principal.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name);
             if (claimUsername == null)
@@ -99,18 +99,23 @@ namespace MUNityCore.Services
             return user;
         }
 
-        public Task<UserAuth> GetAuth(int authid)
+        public Task<MunityUserAuth> GetAuth(int authid)
         {
-            return this._context.UserAuths.FirstOrDefaultAsync(n => n.UserAuthId == authid);
+            return this._context.UserAuths.FirstOrDefaultAsync(n => n.MunityUserAuthId == authid);
         }
 
-        public Task<int> SetUserAuth(User user, UserAuth auth)
+        public IEnumerable<MunityUserAuth> GetAuths()
+        {
+            return this._context.UserAuths;
+        }
+
+        public Task<int> SetUserAuth(MunityUser user, MunityUserAuth auth)
         {
             user.Auth = auth;
             return this._context.SaveChangesAsync();
         }
 
-        public User GetUserWithAuthByClaimPrincipal(ClaimsPrincipal principal)
+        public MunityUser GetUserWithAuthByClaimPrincipal(ClaimsPrincipal principal)
         {
             var claimUsername = principal.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name);
             if (claimUsername == null)
@@ -131,20 +136,20 @@ namespace MUNityCore.Services
 
             if (user.Auth == null) return false;
 
-            return user.Auth.AuthLevel == UserAuth.EAuthLevel.Headadmin || user.Auth.AuthLevel == UserAuth.EAuthLevel.Admin;
+            return user.Auth.AuthLevel == MunityUserAuth.EAuthLevel.Headadmin || user.Auth.AuthLevel == MunityUserAuth.EAuthLevel.Admin;
         }
 
-        public UserAuth CreateAuth(string name)
+        public MunityUserAuth CreateAuth(string name)
         {
-            var auth = new UserAuth(name);
+            var auth = new MunityUserAuth(name);
             this._context.UserAuths.Add(auth);
             this._context.SaveChanges();
             return auth;
         }
 
-        public UserAuth CreateUserAuth(AdminSchema.CreateUserAuthBody request)
+        public MunityUserAuth CreateUserAuth(AdminSchema.CreateUserAuthBody request)
         {
-            var auth = new UserAuth(request);
+            var auth = new MunityUserAuth(request);
             this._context.UserAuths.Add(auth);
             return auth;
         }

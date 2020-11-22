@@ -8,11 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Models.User;
 using MUNityCore.Util.Extensions;
 using MUNityCore.Models.Conference;
-using MUNityCore.Models.Core;
 using MUNityCore.Schema.Request;
 using MUNityCore.Schema.Response.User;
 using MUNityCore.Services;
-using User = MUNityCore.Models.Core.User;
 
 namespace MUNityCore.Controllers
 {
@@ -109,13 +107,13 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [Authorize]
-        public ActionResult<UserAuth> CreateAuth(string name)
+        public ActionResult<UserAuthSchema> CreateAuth(string name)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
                 return Forbid("You are not allowed to do that!");
 
-            UserAuth auth = this._authService.CreateAuth(name);
-            return auth;
+            MunityUserAuth auth = this._authService.CreateAuth(name);
+            return (UserAuthSchema)auth;
         }
 
         /// <summary>
@@ -126,12 +124,12 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [Authorize]
-        public ActionResult<UserAuth> CreateUserAuth([FromBody] AdminSchema.CreateUserAuthBody body)
+        public ActionResult<UserAuthSchema> CreateUserAuth([FromBody] AdminSchema.CreateUserAuthBody body)
         {
             if (!_authService.IsUserPrincipalAdmin(User)) return Forbid();
 
             var auth = this._authService.CreateUserAuth(body);
-            return Ok(auth);
+            return Ok((UserAuthSchema)auth);
         }
 
 
@@ -166,12 +164,12 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public ActionResult<IEnumerable<User>> GetBannedUsers()
+        public ActionResult<IEnumerable<UserInformation>> GetBannedUsers()
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
                 return Forbid();
 
-            return Ok(this._userService.GetBannedUsers());
+            return Ok(this._userService.GetBannedUsers().Cast<UserInformation>());
         }
 
         /// <summary>
@@ -205,12 +203,12 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public ActionResult<IEnumerable<User>> GetUserBlock(int blockid)
+        public ActionResult<IEnumerable<UserInformation>> GetUserBlock(int blockid)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
                 return Forbid("You are not allowed to show that. You need to be Admin!");
 
-            return Ok(this._userService.GetUserBlock(blockid));
+            return Ok(this._userService.GetUserBlock(blockid).Cast<UserInformation>());
         }
 
         /// <summary>
@@ -255,12 +253,12 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public ActionResult<IEnumerable<User>> GetAdministrators()
+        public ActionResult<IEnumerable<UserInformation>> GetAdministrators()
         {
             if (this._authService.IsUserPrincipalAdmin(User))
                 return Forbid();
 
-            IEnumerable<User> admins = this._userService.GetAdministrators();
+            IEnumerable<UserInformation> admins = this._userService.GetAdministrators().Cast<UserInformation>();
             return Ok(admins);
         }
 

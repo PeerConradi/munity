@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 
 namespace MUNityCore.Schema.Response.Authentication
 {
@@ -16,7 +16,7 @@ namespace MUNityCore.Schema.Response.Authentication
 
         public string Token { get; set; }
 
-        public AuthenticationResponse(Models.Core.User user, string token)
+        public AuthenticationResponse(MunityUser user, string token)
         {
             this.Username = user.Username;
             this.FirstName = user.Forename;

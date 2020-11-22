@@ -19,11 +19,11 @@ namespace MUNityTest.StructureTest
             var project = new Project();
             project.ProjectId = "mun-sh";
             project.ProjectName = "Model United Nations Schleswig-Holstein";
-            project.ProjectAbbreviation = "MUN-SH";
+            project.ProjectShort = "MUN-SH";
             project.ProjectOrganization = null;
             Assert.AreEqual("mun-sh", project.ProjectId);
             Assert.AreEqual("Model United Nations Schleswig-Holstein", project.ProjectName);
-            Assert.AreEqual("MUN-SH", project.ProjectAbbreviation);
+            Assert.AreEqual("MUN-SH", project.ProjectShort);
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace MUNityTest.StructureTest
             conference.ConferenceId = "mun-sh2021";
             conference.Name = "Model United Nations Schleswig-Holstein 2021";
             conference.FullName = "Model United Nations Schleswig-Holstein 2021";
-            conference.Abbreviation = "MUN-SH 2021";
+            conference.ConferenceShort = "MUN-SH 2021";
             conference.StartDate = new DateTime(2021, 04,01);
             conference.EndDate = new DateTime(2021, 04, 04);
             conference.CreationDate = DateTime.Now;
@@ -101,7 +101,7 @@ namespace MUNityTest.StructureTest
             var project = new Project();
             project.ProjectId = "mun-sh";
             project.ProjectName = "Model United Nations Schleswig-Holstein";
-            project.ProjectAbbreviation = "MUN-SH";
+            project.ProjectShort = "MUN-SH";
             project.ProjectOrganization = organisation;
 
             // Next comes the conference that is part of the project
@@ -109,7 +109,7 @@ namespace MUNityTest.StructureTest
             conference.ConferenceId = "mun-sh2021";
             conference.Name = "Model United Nations Schleswig-Holstein 2021";
             conference.FullName = "Model United Nations Schleswig-Holstein 2021";
-            conference.Abbreviation = "MUN-SH 2021";
+            conference.ConferenceShort = "MUN-SH 2021";
             conference.StartDate = new DateTime(2021, 04, 01);
             conference.EndDate = new DateTime(2021, 04, 04);
             conference.CreationDate = DateTime.Now;

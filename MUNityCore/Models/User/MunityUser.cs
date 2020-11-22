@@ -10,7 +10,7 @@ using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
 
 
-namespace MUNityCore.Models.Core
+namespace MUNityCore.Models.User
 {
 
     /// <summary>
@@ -18,7 +18,7 @@ namespace MUNityCore.Models.Core
     /// inside any of the controllers unless you use it to validate something.
     /// When sending out information, always use the UserSchema
     /// </summary>
-    public class User
+    public class MunityUser
     {
         public enum EUserState
         {
@@ -26,7 +26,7 @@ namespace MUNityCore.Models.Core
             BANNED
         }
 
-        public int UserId { get; set; }
+        public int MunityUserId { get; set; }
 
         [MaxLength(40)]
         public string Username { get; set; }
@@ -77,11 +77,11 @@ namespace MUNityCore.Models.Core
 
         public DateTime LastOnline { get; set; }
 
-        public UserAuth Auth { get; set; }
+        public MunityUserAuth Auth { get; set; }
 
         public EUserState UserState { get; set; }
 
-        public List<User> Friends { get; set; }
+        public List<MunityUser> Friends { get; set; }
 
         public UserPrivacySettings PrivacySettings { get; set; }
 

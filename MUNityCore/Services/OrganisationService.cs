@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Conference;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Models.Organization;
 
 namespace MUNityCore.Services
@@ -62,7 +62,10 @@ namespace MUNityCore.Services
         }
 
         public IQueryable<Project> GetOrganisationProjects(string organisationId) =>
-            this._context.Projects.Where(n => n.ProjectOrganization.OrganizationId == organisationId);
+            this._context.Projects
+            .Include(n => n.ProjectOrganization)
+            .Include(n => n.Conferences)
+            .Where(n => n.ProjectOrganization.OrganizationId == organisationId);
 
         public OrganizationRole AddOrganisationRole(Organization organization, string rolename, bool canCreateConferences = false)
         {
@@ -82,7 +85,7 @@ namespace MUNityCore.Services
             return _context.OrganizationRoles.Where(n => n.Organization.OrganizationId == organisationId);
         }
 
-        public OrganizationMember AddUserToOrganisation(User user, Organization organization, OrganizationRole role)
+        public OrganizationMember AddUserToOrganisation(MunityUser user, Organization organization, OrganizationRole role)
         {
             var membership = new OrganizationMember();
             membership.User = user;
@@ -95,10 +98,10 @@ namespace MUNityCore.Services
             return membership;
         }
 
-        public IEnumerable<Organization> GetOrganisationsOfUser(User user)
+        public IEnumerable<Organization> GetOrganisationsOfUser(MunityUser user)
         {
             var organisations = from membership in _context.OrganizationMember
-                where membership.User.UserId == user.UserId
+                where membership.User.MunityUserId == user.MunityUserId
                 join role in _context.OrganizationRoles on membership.Role equals role
                 join organisation in _context.Organizations on role.Organization equals organisation
                 select organisation;

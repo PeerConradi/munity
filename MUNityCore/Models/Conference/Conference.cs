@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
+using MUNityCore.Models.User;
 
 namespace MUNityCore.Models.Conference
 {
@@ -49,7 +50,7 @@ namespace MUNityCore.Models.Conference
         public string FullName { get; set; }
 
         [MaxLength(18)]
-        public string Abbreviation { get; set; }
+        public string ConferenceShort { get; set; }
 
         public DateTime StartDate { get; set; }
 
@@ -57,7 +58,7 @@ namespace MUNityCore.Models.Conference
 
         public DateTime CreationDate { get; set; }
 
-        public Core.User CreationUser { get; set; }
+        public MunityUser CreationUser { get; set; }
 
         public List<Committee> Committees { get; set; }
 

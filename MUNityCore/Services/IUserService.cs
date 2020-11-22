@@ -2,40 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Schema.Response.User;
 
 namespace MUNityCore.Services
 {
     public interface IUserService
     {
-        User CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday);
+        MunityUser CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday);
 
-        Task<User> GetUserByUsername(string username);
+        Task<MunityUser> GetUserByUsername(string username);
 
-        Task<int> UpdateUser(User user);
+        Task<int> UpdateUser(MunityUser user);
 
         Task<bool> CheckUsername(string username);
 
         Task<bool> CheckMail(string mail);
 
-        Models.User.UserPrivacySettings GetUserPrivacySettings(User user);
+        Models.User.UserPrivacySettings GetUserPrivacySettings(MunityUser user);
 
-        Models.User.UserPrivacySettings InitUserPrivacySettings(User user);
+        Models.User.UserPrivacySettings InitUserPrivacySettings(MunityUser user);
 
         void UpdatePrivacySettings(Models.User.UserPrivacySettings settings);
 
-        bool BanUser(User user);
+        bool BanUser(MunityUser user);
 
-        IEnumerable<User> GetBannedUsers();
+        IEnumerable<MunityUser> GetBannedUsers();
 
-        IEnumerable<User> GetUserBlock(int blockid);
+        IEnumerable<MunityUser> GetUserBlock(int blockid);
 
         Task<int> GetUserCount();
 
-        void RemoveUser(User user);
+        void RemoveUser(MunityUser user);
 
-        IEnumerable<User> GetAdministrators();
+        IEnumerable<MunityUser> GetAdministrators();
 
         Task<UserInformation> GetUserInformation(string username);
     }

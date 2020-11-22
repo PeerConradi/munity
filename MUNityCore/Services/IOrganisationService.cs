@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Models.Organization;
 
 namespace MUNityCore.Services
@@ -26,8 +26,8 @@ namespace MUNityCore.Services
 
         IQueryable<Project> GetOrganisationProjects(string organisationId);
 
-        OrganizationMember AddUserToOrganisation(User user, Organization organization, OrganizationRole role);
+        OrganizationMember AddUserToOrganisation(MunityUser user, Organization organization, OrganizationRole role);
 
-        IEnumerable<Organization> GetOrganisationsOfUser(User user);
+        IEnumerable<Organization> GetOrganisationsOfUser(MunityUser user);
     }
 }

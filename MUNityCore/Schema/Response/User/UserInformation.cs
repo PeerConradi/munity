@@ -16,7 +16,7 @@ namespace MUNityCore.Schema.Response.User
 
         public DateTime LastOnline { get; set; }
 
-        public UserInformation(Models.Core.User user)
+        public UserInformation(MunityUser user)
         {
             this.Username = user.Username;
             switch (user.PrivacySettings.PublicNameDisplayMode)
@@ -42,7 +42,16 @@ namespace MUNityCore.Schema.Response.User
             }
 
             this.LastOnline = user.LastOnline;
-            
+        }
+
+        public UserInformation()
+        {
+
+        }
+
+        public static implicit operator UserInformation (MunityUser user)
+        {
+            return new UserInformation(user);
         }
     }
 }

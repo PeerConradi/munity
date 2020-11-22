@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MUNityCore.Controllers;
 using MUNityCore.Models.Conference;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Schema.Request.Authentication;
 using MUNityCore.Services;
@@ -30,7 +30,7 @@ namespace MUNityTest.ControllerTest.UserControllerTest
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    It.IsAny<DateTime>())).Returns(new User());
+                    It.IsAny<DateTime>())).Returns(new MunityUser());
 
             var request = new RegisterRequest
             {

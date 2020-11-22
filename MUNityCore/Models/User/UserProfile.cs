@@ -7,7 +7,7 @@ namespace MUNityCore.Models.User
 {
     public class UserProfile
     {
-        public Core.User User { get; set; }
+        public MunityUser User { get; set; }
 
         public List<string> Interests { get; set; }
 

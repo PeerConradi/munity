@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Schema.Request.Authentication;
 using MUNityCore.Services;
 using MUNityTest.TestEnvironment;
@@ -31,7 +31,7 @@ namespace MUNityTest.Service
         [Test]
         public void TestGenerateAuthkey()
         {
-            var user = new User {Username = "test", Forename = "Max", Lastname = "Mustermann"};
+            var user = new MunityUser {Username = "test", Forename = "Max", Lastname = "Mustermann"};
             var generatedPass = MUNityCore.Util.Hashing.PasswordHashing.InitHashing("password");
             user.Password = generatedPass.Key;
             user.Salt = generatedPass.Salt;

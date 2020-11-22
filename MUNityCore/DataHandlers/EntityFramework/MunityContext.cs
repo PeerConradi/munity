@@ -5,18 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Core;
 using MUNityCore.Models.ListOfSpeakers;
 using MUNityCore.Models.Organization;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.User;
+using MUNityCore.Models;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {
     public class MunityContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<MunityUser> Users { get; set; }
 
         public DbSet<Country> Countries { get; set; }
 
@@ -50,7 +50,7 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<RoleAuth> RoleAuths { get; set; }
 
-        public DbSet<UserAuth> UserAuths { get; set; }
+        public DbSet<MunityUserAuth> UserAuths { get; set; }
 
         public DbSet<RoleApplication> RoleApplications { get; set; }
 
@@ -73,6 +73,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
         public DbSet<ListOfSpeakers> ListOfSpeakers { get; set; }
 
         public DbSet<Speaker> Speakers { get; set; }
+
+        public DbSet<MunitySetting> Settings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -97,9 +99,9 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
             modelBuilder.Entity<TeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
 
-            modelBuilder.Entity<User>().HasOne(n => n.Auth).WithMany(n => n.Users);
+            modelBuilder.Entity<MunityUser>().HasOne(n => n.Auth).WithMany(n => n.Users);
 
-            modelBuilder.Entity<User>().HasOne(n => n.PrivacySettings).WithOne(n => n.User).HasForeignKey<UserPrivacySettings>(n => n.UserRef);
+            modelBuilder.Entity<MunityUser>().HasOne(n => n.PrivacySettings).WithOne(n => n.User).HasForeignKey<UserPrivacySettings>(n => n.UserRef);
 
             modelBuilder.Entity<AbstractRole>().HasDiscriminator(n => n.RoleType)
                 .HasValue<DelegateRole>("DelegateRole")

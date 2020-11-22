@@ -29,7 +29,7 @@ namespace MUNityCore.Models.Conference
         public string FullName { get; set; }
 
         [MaxLength(10)]
-        public string Abbreviation { get; set; }
+        public string TeamRoleGroupShort { get; set; }
 
         public int GroupLevel { get; set; }
 

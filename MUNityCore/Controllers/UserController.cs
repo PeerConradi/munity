@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Models.User;
 using MUNityCore.Schema.Request;
 using MUNityCore.Util.Extensions;
-using MUNityCore.Models.Core;
 using MUNityCore.Schema.Request.Authentication;
 using MUNityCore.Schema.Response.Authentication;
 using MUNityCore.Schema.Response.User;
@@ -84,7 +83,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPatch]
         [Authorize]
-        public async Task<int> UpdateMe([FromBody]User user)
+        public async Task<int> UpdateMe([FromBody]MunityUser user)
         {
             var username = User.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name)?.Value ?? "";
             var dbUser = await _userService.GetUserByUsername(username);

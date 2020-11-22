@@ -10,11 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using MUNityCore.Models;
 using Newtonsoft.Json;
 using MUNityCore.Util.Extensions;
-using MUNityCore.Models.Core;
+using MUNityCore.Models.User;
 using MUNityCore.Models.Conference;
 using MUNityCore.Schema.Request;
 using MUNityCore.Schema.Request.Conference;
 using MUNityCore.Services;
+using MUNityCore.Schema.Response.Conference;
+using MUNityCore.Schema.Response.Project;
 
 namespace MUNityCore.Controllers
 {
@@ -41,22 +43,13 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<Conference>> GetConference(string id)
+        public async Task<ActionResult<ConferenceInformation>> GetConference(string id)
         {
-            var conference = await this._conferenceService.GetConference(id);
+            var conference = await this._conferenceService.GetConferenceInformation(id);
             if (conference == null)
                 return NotFound("Conference not found");
 
-            // Check if the conference is visible, then give out the data
-            if (conference.Visibility == Conference.EConferenceVisibilityMode.Public)
-                return Ok(conference);
-            else if (conference.Visibility == Conference.EConferenceVisibilityMode.Users)
-            {
-                if (User != null)
-                    return Ok(conference);
-            }
-
-            return BadRequest("Unable to get the conference, maybe its not opened to the public.");
+            return Ok(conference);
         }
 
         /// <summary>
@@ -68,9 +61,9 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<Conference>> FindConferencesByName(string name)
+        public ActionResult<IEnumerable<ConferenceInformation>> FindConferencesByName(string name)
         {
-            return Ok(this._conferenceService.FindPublicConferencesByName(name));
+            return Ok(this._conferenceService.FindPublicConferencesByName(name).Cast<ConferenceInformation>());
         }
 
         /// <summary>
@@ -94,7 +87,7 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        public async Task<ActionResult<Project>> CreateProject([FromBody] CreateProjectRequest body)
+        public async Task<ActionResult<ProjectInformation>> CreateProject([FromBody] CreateProjectRequest body)
         {
             var organisation = await _organisationService.GetOrganisationWithMembers(body.OrganisationId);
             if (organisation == null)
@@ -127,31 +120,24 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<Project>> GetProject(string id)
+        public async Task<ActionResult<ProjectInformation>> GetProject(string id)
         {
-            var result = await this._conferenceService.GetProject(id);
+            var result = await this._conferenceService.GetFullProject(id);
             return Ok(result);
         }
 
-        public ActionResult<IEnumerable<Project>> FindProjectsByName(string name)
-        {
-            return Ok(this._conferenceService.FindProjectsByName(name));
-        }
-
         /// <summary>
-        /// This will return a project with all the conferences inside this project. The Conferences will contain
-        /// all information about the conference (except user information and committees). To get this information
-        /// use different api calls.
+        /// Returns a list of projects with the given name. This search is case insensitive.
+        /// You will also get information about the conferences of this project (Id, Name and FullName)
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<Project>> GetProjectWithConferences(string id)
+        public ActionResult<IEnumerable<ProjectInformation>> FindProjectsByName(string name)
         {
-            var result = await this._conferenceService.GetProjectWithConferences(id);
-            return Ok(result);
+            return Ok(this._conferenceService.FindProjectsByName(name));
         }
 
         /// <summary>
@@ -163,7 +149,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<Project>> GetOrganisationProjects(string organisationId)
+        public ActionResult<IEnumerable<ProjectInformation>> GetOrganisationProjects(string organisationId)
         {
             var result = this._organisationService.GetOrganisationProjects(organisationId);
             return Ok(result);

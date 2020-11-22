@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MUNityCore.Models.Core;
+using MUNityCore.Models;
 using MUNityCore.Models.Conference;
 
 namespace MUNityCore.Models.Organization

@@ -7,12 +7,12 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MUNityCore.Schema.Request;
 
-namespace MUNityCore.Models.Core
+namespace MUNityCore.Models.User
 {
     /// <summary>
     /// The Authorization of one or more users.
     /// </summary>
-    public class UserAuth
+    public class MunityUserAuth
     {
         public enum EAuthLevel
         {
@@ -24,35 +24,35 @@ namespace MUNityCore.Models.Core
             New
         }
 
-        public int UserAuthId { get; set; }
+        public int MunityUserAuthId { get; set; }
 
         [MaxLength(150)]
         public string UserAuthName { get; set; }
 
-        public List<User> Users { get; set; }
+        public List<MunityUser> Users { get; set; }
 
         public bool CanCreateOrganization { get; set; }
 
         public EAuthLevel AuthLevel { get; set; }
 
-        public UserAuth()
+        public MunityUserAuth()
         {
-            Users = new List<User>();
+            Users = new List<MunityUser>();
             CanCreateOrganization = false;
             AuthLevel = EAuthLevel.New;
         }
 
-        public UserAuth(string name)
+        public MunityUserAuth(string name)
         {
-            Users = new List<User>();
+            Users = new List<MunityUser>();
             CanCreateOrganization = false;
             AuthLevel = EAuthLevel.New;
             UserAuthName = name;
         }
 
-        public UserAuth(AdminSchema.CreateUserAuthBody request)
+        public MunityUserAuth(AdminSchema.CreateUserAuthBody request)
         {
-            Users = new List<User>();
+            Users = new List<MunityUser>();
             CanCreateOrganization = request.CanCreateOrganisation;
             AuthLevel = EAuthLevel.New;
             UserAuthName = request.Name;

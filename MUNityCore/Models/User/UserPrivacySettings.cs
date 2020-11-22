@@ -67,7 +67,7 @@ namespace MUNityCore.Models.User
 
         public int UserRef { get; set; }
 
-        public Core.User User { get; set; }
+        public MunityUser User { get; set; }
 
         /// <summary>
         /// The way the User Forename and Lastname will be given out, to an not logged in user.

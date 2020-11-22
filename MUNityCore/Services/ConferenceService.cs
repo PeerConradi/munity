@@ -11,6 +11,7 @@ using MUNityCore.Exceptions.ConferenceExceptions;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Organization;
+using MUNityCore.Schema.Response.Conference;
 
 namespace MUNityCore.Services
 {
@@ -23,7 +24,7 @@ namespace MUNityCore.Services
             var project = new Project
             {
                 ProjectName = name,
-                ProjectAbbreviation = abbreviation,
+                ProjectShort = abbreviation,
                 ProjectOrganization = organization
             };
 
@@ -42,10 +43,11 @@ namespace MUNityCore.Services
             return _context.Projects.FirstOrDefaultAsync(n => n.ProjectId == id);
         }
 
-        public Task<Project> GetProjectWithConferences(string id)
+        public Task<Project> GetFullProject(string id)
         {
             return _context.Projects
                 .Include(n => n.Conferences)
+                .Include(n => n.ProjectOrganization)
                 .FirstOrDefaultAsync(n => n.ProjectId == id);
         }
 
@@ -71,7 +73,7 @@ namespace MUNityCore.Services
             {
                 Name = name,
                 FullName = fullname,
-                Abbreviation = abbreviation,
+                ConferenceShort = abbreviation,
                 CreationDate = DateTime.Now,
                 StartDate = new DateTime(1980, 1, 1),
                 EndDate = new DateTime(1980, 1, 4)
@@ -167,6 +169,20 @@ namespace MUNityCore.Services
             return this._context.SaveChangesAsync();
         }
 
+        public TeamRoleGroup CreateTeamRoleGroup(Conference conference, string groupName, string groupFullName, string groupShort, int level)
+        {
+            var group = new TeamRoleGroup()
+            {
+                Name = groupName,
+                FullName = groupFullName,
+                TeamRoleGroupShort = groupShort,
+                GroupLevel = level
+            };
+
+            this._context.TeamRoleGroups.Add(group);
+            return group;
+        }
+
         public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null, RoleAuth auth = null)
         {
             var role = new TeamRole {Conference = conference, RoleName = roleName, RoleAuth = auth};
@@ -177,6 +193,17 @@ namespace MUNityCore.Services
             _context.TeamRoles.Add(role);
             _context.SaveChanges();
             return role;
+        }
+
+        public bool AddRoleToGroup(TeamRole role, TeamRoleGroup group)
+        {
+            if (group != null && role != null)
+            {
+                group.TeamRoles.Add(role);
+                return true;
+            }
+
+            return false;
         }
 
         public SecretaryGeneralRole CreateSecretaryGeneralRole(Conference conference, string roleName, string title, RoleAuth auth = null)
@@ -271,7 +298,7 @@ namespace MUNityCore.Services
             return _context.PressRoles.Where(n => n.Conference.ConferenceId == conferenceId);
         }
 
-        public Participation Participate(Models.Core.User user, AbstractRole role)
+        public Participation Participate(MunityUser user, AbstractRole role)
         {
             var participation = new Participation {User = user, Role = role};
 
@@ -281,7 +308,7 @@ namespace MUNityCore.Services
             return participation;
         }
 
-        public IQueryable<Participation> GetUserParticipations(Models.Core.User user)
+        public IQueryable<Participation> GetUserParticipations(MunityUser user)
         {
             return _context.Participations.Where(n => n.User == user);
         }
@@ -320,7 +347,7 @@ namespace MUNityCore.Services
         {
             var conference = await this._context.Conferences.FirstOrDefaultAsync();
             if (conference == null) return false;
-            conference.Abbreviation = newabbreviation;
+            conference.ConferenceShort = newabbreviation;
             await this._context.SaveChangesAsync();
             return true;
         }
@@ -349,16 +376,36 @@ namespace MUNityCore.Services
         public IEnumerable<Conference> FindPublicConferencesByName(string name)
         {
             name = name.ToLower();
-            return this._context.Conferences.Where(n => n.Visibility == Conference.EConferenceVisibilityMode.Public &&
+            return this._context.Conferences.Include(n => n.ConferenceProject)
+                .Include(n => n.Committees)
+                .Where(n => n.Visibility == Conference.EConferenceVisibilityMode.Public &&
                                                         (n.Name.ToLower().Contains(name) ||
                                                          n.FullName.ToLower().Contains(name) ||
-                                                         n.Abbreviation.ToLower().Contains(name)));
+                                                         n.ConferenceShort.ToLower().Contains(name)));
         }
 
         public IEnumerable<Project> FindProjectsByName(string name)
         {
             name = name.ToLower();
-            return this._context.Projects.Where(n => n.ProjectName.ToLower().Contains(name));
+            return this._context.Projects.
+                Include(n => n.ProjectOrganization)
+                .Include(n => n.Conferences)
+                .Where(n => n.ProjectName.ToLower().Contains(name));
+        }
+
+        public async Task<ConferenceInformation> GetConferenceInformation(string conferenceId)
+        {
+            var conference = await this._context.Conferences.Include(n => n.Committees).Include(n => n.ConferenceProject)
+                .FirstOrDefaultAsync(a => a.ConferenceId == conferenceId);
+            if (conference == null) return null;
+            return conference;
+        }
+
+        public bool AddRoleApplication(RoleApplication application)
+        {
+            this._context.RoleApplications.Add(application);
+            this._context.SaveChanges();
+            return true;
         }
 
         public ConferenceService(MunityContext context)

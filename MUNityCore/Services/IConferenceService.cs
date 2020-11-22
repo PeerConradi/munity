@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Organization;
+using MUNityCore.Models.User;
+using MUNityCore.Schema.Response.Conference;
 
 namespace MUNityCore.Services
 {
@@ -14,7 +16,7 @@ namespace MUNityCore.Services
 
         Task<Project> GetProject(string id);
 
-        Task<Project> GetProjectWithConferences(string id);
+        Task<Project> GetFullProject(string id);
 
         Conference CreateConference(string name, string fullname, string abbreviation, Project project);
 
@@ -29,7 +31,7 @@ namespace MUNityCore.Services
         public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null,
             RoleAuth auth = null);
 
-        public Participation Participate(Models.Core.User user, AbstractRole role);
+        public Participation Participate(MunityUser user, AbstractRole role);
 
         public IQueryable<AbstractRole> GetUserRolesOnConference(string username, string conferenceid);
 
@@ -46,7 +48,10 @@ namespace MUNityCore.Services
         Task<bool> SetConferenceAbbreviation(string conferenceid, string abbreviation);
 
         Task<bool> SetConferenceDate(string conferenceid, DateTime startDate, DateTime endDate);
+
         IEnumerable<Conference> FindPublicConferencesByName(string name);
         IEnumerable<Project> FindProjectsByName(string name);
+
+        Task<ConferenceInformation> GetConferenceInformation(string conferenceId);
     }
 }
