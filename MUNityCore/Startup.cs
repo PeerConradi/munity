@@ -110,15 +110,17 @@ namespace MUNityCore
 
             
             var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
-            var coreConnectionString = Configuration.GetValue<string>("CoreDatabase:ConnectionString");
 
-            // Add Entity Framework MariaDB Database
-            services.AddDbContextPool<MunityContext>(options =>
-                options.UseMySql(mySqlConnectionString, mySqlOptions => {
-                    mySqlOptions.ServerVersion(new Version(10, 1, 26), ServerType.MariaDb);
-                    mySqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-                }));
+            var version = new Version(10, 1, 26);
+            var serverVersion = new MariaDbServerVersion(version);
 
+            services.AddDbContext<MunityContext>(options =>
+            {
+                options.UseMySql(mySqlConnectionString, serverVersion, builder =>
+                {
+                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                });
+            });
 
             // Add MongoDb Database
             services.Configure<MunityMongoDatabaseSettings>(Configuration.GetSection(nameof(MunityMongoDatabaseSettings)));
@@ -131,7 +133,6 @@ namespace MUNityCore
             services.AddScoped<Services.IAuthService, Services.AuthService>();
             services.AddScoped<Services.IUserService, Services.UserService>();
             services.AddScoped<Services.IOrganisationService, Services.OrganisationService>();
-            services.AddScoped<Services.PresenceService>();
             services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
             services.AddScoped<Services.IResolutionService, Services.NewResolutionService>();
             services.AddSingleton<Services.SpeakerlistService>();
@@ -140,13 +141,19 @@ namespace MUNityCore
             // Swagger for Documentation
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MUNity-API", Version = "v0.5" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "MUNity-API",
+                    Description = "The API Endpoints for MUNity.",
+                    Version = "v0.5"
+                });
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
 
         }
 

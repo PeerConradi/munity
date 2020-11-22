@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Hubs
 {
-    public class SpeakerListHub : Hub<ITypedSpeakerlistHub>
+    public class SpeakerListHub : Hub<ITypedListOfSpeakerHub>
     {
 
     }

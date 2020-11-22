@@ -66,7 +66,7 @@ namespace MUNityCore.Models.Simulation
 
         public bool CanJoin { get; set; } = true;
 
-        public SpeakerlistModel ListOfSpeakers { get; set; }
+        public ListOfSpeakers.ListOfSpeakers ListOfSpeakers { get; set; }
 
 
         public Simulation()

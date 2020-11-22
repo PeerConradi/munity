@@ -6,26 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
 
-namespace MUNityCore.Models
+namespace MUNityCore.Models.ListOfSpeakers
 {
-    public class SpeakerlistModel
+    public class ListOfSpeakers
     {
 
         public const string newListName = "Neue Redeliste";
-
-        public class Speaker
-        {
-            public string Id { get; set; }
-
-            public string Name { get; set; }
-
-            public string Iso { get; set; }
-
-            public Speaker()
-            {
-                this.Id = Guid.NewGuid().ToString();
-            }
-        }
 
         public enum EStatus
         {
@@ -41,33 +27,22 @@ namespace MUNityCore.Models
 
         public string Name { get; set; }
 
-        public TimeSpan Speakertime { get; set; }
+        public TimeSpan SpeakerTime { get; set; }
 
-        public TimeSpan Questiontime { get; set; }
+        public TimeSpan QuestionTime { get; set; }
 
 
         private TimeSpan _remainingSpeakerTime;
         public TimeSpan RemainingSpeakerTime
         {
-            get
-            {
-                return _remainingSpeakerTime - new TimeSpan(0,0, (int)(DateTime.Now - StartSpeakerTime).TotalSeconds);
-            }
-            set
-            {
-                _remainingSpeakerTime = value;
-            }
+            get => _remainingSpeakerTime - new TimeSpan(0,0, (int)(DateTime.Now - StartSpeakerTime).TotalSeconds);
+            set  => _remainingSpeakerTime = value;
         }
 
         private TimeSpan _remainingQuestionTime;
-        public TimeSpan RemainingQuestionTime { get
-            {
-                return _remainingQuestionTime - new TimeSpan(0,0,(int)(DateTime.Now - StartQuestionTime).TotalSeconds);
-            }
-            set
-            {
-                _remainingQuestionTime = value;
-            }
+        public TimeSpan RemainingQuestionTime { 
+            get => _remainingQuestionTime - new TimeSpan(0,0,(int)(DateTime.Now - StartQuestionTime).TotalSeconds);
+            set => _remainingQuestionTime = value;
         }
 
         public List<Speaker> Speakers { get; set; }
@@ -92,16 +67,16 @@ namespace MUNityCore.Models
                         Status = EStatus.STOPPED;
                     }
                     StartSpeakerTime = DateTime.Now;
-                    RemainingSpeakerTime = Speakertime;
+                    RemainingSpeakerTime = SpeakerTime;
                 }
             }
         }
 
-        private Speaker _currenQuestion;
-        public Speaker CurrentQuestion { get => _currenQuestion; 
+        private Speaker _currentQuestion;
+        public Speaker CurrentQuestion { get => _currentQuestion; 
             set
             {
-                _currenQuestion = value;
+                _currentQuestion = value;
                 if (value == null)
                 {
                     if (Status != EStatus.SPEAKING && Status != EStatus.QUESTION)
@@ -114,16 +89,16 @@ namespace MUNityCore.Models
                         Status = EStatus.STOPPED;
                     }
                     StartQuestionTime = DateTime.Now;
-                    RemainingQuestionTime = Questiontime;
+                    RemainingQuestionTime = QuestionTime;
                 }
             }
         }
 
         public EStatus Status { get; set; }
 
-        public bool IsSpeaking { get => Status == EStatus.SPEAKING; }
+        public bool IsSpeaking => Status == EStatus.SPEAKING;
 
-        public bool IsQuestioning { get => Status == EStatus.QUESTION; }
+        public bool IsQuestioning  => Status == EStatus.QUESTION;
 
         public bool ListClosed { get; set; }
 
@@ -174,30 +149,30 @@ namespace MUNityCore.Models
             }
         }
 
-        public SpeakerlistModel(string id = null, string name = newListName)
+        public ListOfSpeakers(string id = null, string name = newListName)
         {
 
             Id = id ?? Guid.NewGuid().ToString();
             Name = name;
             Speakers = new List<Speaker>();
             Questions = new List<Speaker>();
-            Speakertime = new TimeSpan(0, 3, 0);
-            Questiontime = new TimeSpan(0, 0, 30);
+            SpeakerTime = new TimeSpan(0, 3, 0);
+            QuestionTime = new TimeSpan(0, 0, 30);
             LowTimeMark = new TimeSpan(0, 0, 10);
-            _remainingSpeakerTime = new TimeSpan(Speakertime.Ticks);
-            _remainingQuestionTime = new TimeSpan(Questiontime.Ticks);
+            _remainingSpeakerTime = new TimeSpan(SpeakerTime.Ticks);
+            _remainingQuestionTime = new TimeSpan(QuestionTime.Ticks);
             StartSpeakerTime = DateTime.Now;
             StartQuestionTime = DateTime.Now;
             //RemainingSpeakerTime = new TimeSpan(0, 3, 0);
             //RemainingQuestionTime = new TimeSpan(0, 1, 0);
         }
 
-        public SpeakerlistModel(TimeSpan n_speakertime, TimeSpan n_questiontime)
+        public ListOfSpeakers(TimeSpan nSpeakerTime, TimeSpan nQuestionTime)
         {
             Speakers = new List<Speaker>();
             Questions = new List<Speaker>();
-            Speakertime = n_speakertime;
-            Questiontime = n_questiontime;
+            SpeakerTime = nSpeakerTime;
+            QuestionTime = nQuestionTime;
         }
 
         public void StartSpeaker()
@@ -232,7 +207,7 @@ namespace MUNityCore.Models
 
         public void StartAnswer()
         {
-            RemainingSpeakerTime = Questiontime;
+            RemainingSpeakerTime = QuestionTime;
             StartSpeakerTime = DateTime.Now;
             Status = EStatus.ANSWER;
         }
@@ -261,10 +236,10 @@ namespace MUNityCore.Models
                 
             }
             Status = EStatus.STOPPED;
-            RemainingSpeakerTime = Speakertime;
+            RemainingSpeakerTime = SpeakerTime;
             StartSpeakerTime = DateTime.Now;
             // Also reset the question timers!
-            RemainingQuestionTime = Questiontime;
+            RemainingQuestionTime = QuestionTime;
             StartQuestionTime = DateTime.Now;
             CurrentQuestion = null;
             Questions.Clear();
@@ -283,10 +258,10 @@ namespace MUNityCore.Models
             }
 
             Status = EStatus.STOPPED;
-            RemainingQuestionTime = Questiontime;
+            RemainingQuestionTime = QuestionTime;
             StartQuestionTime = DateTime.Now;
 
-            RemainingSpeakerTime = Speakertime;
+            RemainingSpeakerTime = SpeakerTime;
             StartSpeakerTime = DateTime.Now;
         }
 

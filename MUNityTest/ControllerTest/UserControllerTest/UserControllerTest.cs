@@ -44,9 +44,7 @@ namespace MUNityTest.ControllerTest.UserControllerTest
 
             var controller = new UserController(authServiceMock.Object, userServiceMock.Object);
             var call = controller.Register(request);
-            var result = call.Result as OkObjectResult;
-            Assert.NotNull(result);
-            Assert.IsType<User>(result.Value);
+            Assert.NotNull(call);
         }
 
         [Fact]
@@ -76,7 +74,7 @@ namespace MUNityTest.ControllerTest.UserControllerTest
 
             var controller = new UserController(authServiceMock.Object, userServiceMock.Object);
             var call = controller.Register(request);
-            var result = call.Result as BadRequestObjectResult;
+            var result = call as BadRequestObjectResult;
             Assert.NotNull(result);
             Assert.Equal(StatusCodes.Status400BadRequest, result.StatusCode);
         }

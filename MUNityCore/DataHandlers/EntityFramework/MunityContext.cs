@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Core;
+using MUNityCore.Models.ListOfSpeakers;
 using MUNityCore.Models.Organization;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Models.Simulation;
@@ -69,6 +70,10 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<SimulationUser> SimulationUser { get; set; }
 
+        public DbSet<ListOfSpeakers> ListOfSpeakers { get; set; }
+
+        public DbSet<Speaker> Speakers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Committee>().HasOne(n => n.Conference)
@@ -124,6 +129,14 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
             modelBuilder.Entity<SimulationUser>().HasOne(n => n.Simulation).WithMany(n =>
                 n.Users);
+
+            modelBuilder.Entity<ListOfSpeakers>().HasOne(n => n.CurrentSpeaker);
+
+            modelBuilder.Entity<ListOfSpeakers>().HasOne(n => n.CurrentQuestion);
+
+            modelBuilder.Entity<ListOfSpeakers>().HasMany(n => n.Speakers);
+
+            modelBuilder.Entity<ListOfSpeakers>().HasMany(n => n.Questions);
         }
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)

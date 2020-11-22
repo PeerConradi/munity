@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models;
+using MUNityCore.Models.ListOfSpeakers;
 
 namespace MUNityCore.Hubs
 {
@@ -11,9 +12,9 @@ namespace MUNityCore.Hubs
     /// The SpeakerlistHub defines every method that is needed to directly communicate from the
     /// Serverto the Client via a WebSocket.
     /// </summary>
-    public interface ITypedSpeakerlistHub
+    public interface ITypedListOfSpeakerHub
     {
-        Task SpeakerListChanged(SpeakerlistModel speakerlist);
+        Task SpeakerListChanged(ListOfSpeakers listOfSpeaker);
 
         Task SpeakerTimerStarted(int seconds);
 

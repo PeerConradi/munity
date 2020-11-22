@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
 using MUNityCore.Models.User;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;

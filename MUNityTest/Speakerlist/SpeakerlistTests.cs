@@ -5,6 +5,7 @@ using NUnit.Framework;
 using MUNityCore.Models;
 using MUNityCore.Util.Extensions;
 using MUNityCore.Models.Conference;
+using MUNityCore.Models.ListOfSpeakers;
 
 namespace MUNityTest.Speakerlist
 {
@@ -13,40 +14,40 @@ namespace MUNityTest.Speakerlist
         [Test]
         public void TestCreateSpeakerlist()
         {
-            var instance = new SpeakerlistModel();
+            var instance = new ListOfSpeakers();
             Assert.IsNotNull(instance);
         }
 
         [Test]
         public void TestNextQuestionsResetsTime()
         {
-            var instance = new SpeakerlistModel();
-            var delegationOne = new SpeakerlistModel.Speaker();
-            var delegationTwo = new SpeakerlistModel.Speaker();
+            var instance = new ListOfSpeakers();
+            var delegationOne = new Speaker();
+            var delegationTwo = new Speaker();
             instance.AddQuestion(delegationOne);
             instance.AddQuestion(delegationTwo);
             instance.NextQuestion();
-            Assert.AreEqual(instance.Questiontime.TotalSeconds, instance.RemainingQuestionTime.TotalSeconds);
+            Assert.AreEqual(instance.QuestionTime.TotalSeconds, instance.RemainingQuestionTime.TotalSeconds);
             instance.RemainingQuestionTime = new TimeSpan(0, 0, 2);
             Assert.AreEqual(2, instance.RemainingQuestionTime.TotalSeconds);
             instance.NextQuestion();
-            Assert.AreEqual(instance.Questiontime.TotalSeconds, instance.RemainingQuestionTime.TotalSeconds);
+            Assert.AreEqual(instance.QuestionTime.TotalSeconds, instance.RemainingQuestionTime.TotalSeconds);
         }
 
         [Test]
         public void TestNextSpeakerResetsTime()
         {
-            var instance = new SpeakerlistModel();
-            var delegationOne = new SpeakerlistModel.Speaker();
-            var delegationTwo = new SpeakerlistModel.Speaker();
+            var instance = new ListOfSpeakers();
+            var delegationOne = new Speaker();
+            var delegationTwo = new Speaker();
             instance.AddSpeaker(delegationOne);
             instance.AddSpeaker(delegationTwo);
             instance.NextSpeaker();
-            Assert.AreEqual(instance.Speakertime.TotalSeconds, instance.RemainingSpeakerTime.TotalSeconds);
+            Assert.AreEqual(instance.SpeakerTime.TotalSeconds, instance.RemainingSpeakerTime.TotalSeconds);
             instance.RemainingSpeakerTime = new TimeSpan(0, 0, 2);
             Assert.AreEqual(2, instance.RemainingSpeakerTime.TotalSeconds);
             instance.NextSpeaker();
-            Assert.AreEqual(instance.Speakertime.TotalSeconds, instance.RemainingSpeakerTime.TotalSeconds);
+            Assert.AreEqual(instance.SpeakerTime.TotalSeconds, instance.RemainingSpeakerTime.TotalSeconds);
 
         }
 
@@ -62,8 +63,8 @@ namespace MUNityTest.Speakerlist
         [Test]
         public void RemainSpeakerTimeDecrisingTest()
         {
-            var speakerlist = new SpeakerlistModel {Speakertime = new TimeSpan(0, 1, 0)};
-            var delegation = new SpeakerlistModel.Speaker {Name = "Test"};
+            var speakerlist = new ListOfSpeakers { SpeakerTime = new TimeSpan(0, 1, 0)};
+            var delegation = new Speaker {Name = "Test"};
             speakerlist.AddSpeaker(delegation);
             speakerlist.NextSpeaker();
             speakerlist.StartSpeaker();
@@ -76,8 +77,8 @@ namespace MUNityTest.Speakerlist
         [Test]
         public void StartStopShouldContinueTest()
         {
-            var listOfSpeakers = new SpeakerlistModel {Speakertime = new TimeSpan(0, 1, 0)};
-            var delegation = new SpeakerlistModel.Speaker {Name = "Test"};
+            var listOfSpeakers = new ListOfSpeakers { SpeakerTime = new TimeSpan(0, 1, 0)};
+            var delegation = new Speaker {Name = "Test"};
             listOfSpeakers.AddSpeaker(delegation);
             listOfSpeakers.NextSpeaker();
             listOfSpeakers.StartSpeaker();
@@ -92,8 +93,8 @@ namespace MUNityTest.Speakerlist
         [Test]
         public void RemainingQuestionTimeDecreasingTest()
         {
-            var listOfSpeakers = new SpeakerlistModel {Questiontime = new TimeSpan(0, 1, 0)};
-            var delegation = new SpeakerlistModel.Speaker {Name = "Test"};
+            var listOfSpeakers = new ListOfSpeakers { QuestionTime = new TimeSpan(0, 1, 0)};
+            var delegation = new Speaker {Name = "Test"};
             listOfSpeakers.AddQuestion(delegation);
             listOfSpeakers.NextQuestion();
             listOfSpeakers.StartQuestion();

@@ -6,6 +6,8 @@ MUNity is a work in progress to create and manage Model United Nations Conferenc
 
 > Note that this Software is still under development.
 
+[![Coverage Status](https://coveralls.io/repos/github/PeerConradi/munity/badge.svg?branch=master)](https://coveralls.io/github/PeerConradi/munity?branch=master)
+
 ## General structure
 
 MUNity works with a REST Backend that is contained inside this project. There is also a MUNity Angular project for a frontend.

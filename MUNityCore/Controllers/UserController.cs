@@ -44,17 +44,17 @@ namespace MUNityCore.Controllers
         /// Registers a new User.
         /// </summary>
         /// <param name="body">a RegisterRequest Body</param>
-        /// <returns>The model of the created user himself with all importand informations.</returns>
+        /// <returns>200 OK when registration was successful else it will return a BadRequest exception.</returns>
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult<User> Register([FromBody]RegisterRequest body)
+        public ActionResult Register([FromBody]RegisterRequest body)
         {
             try
             {
                 var user =
                      _userService.CreateUser(body.Username, body.Forename, body.Lastname, body.Password, body.Mail, body.Birthday);
-                return Ok(user);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -70,13 +70,6 @@ namespace MUNityCore.Controllers
             return _authService.Authenticate(request);
         }
 
-        [Route("[action]")]
-        [HttpGet]
-        [Authorize]
-        public ActionResult JustForVIP()
-        {
-            return Ok("Hallo du bist wohl wichtig!");
-        }
 
         /// <summary>
         /// Whit this call you are able to update your user options.
@@ -107,15 +100,20 @@ namespace MUNityCore.Controllers
             return await _userService.UpdateUser(dbUser);
         }
 
+
+
         [Route("[action]")]
         [HttpGet]
         [Authorize]
-        public ActionResult<User> WhoAmI()
+        public ActionResult<UserInformation> WhoAmI()
         {
 
             var result = _authService.GetUserOfClaimPrincipal(User);
             if (result != null)
-                return Ok(result);
+            {
+                var userInfo = this._userService.GetUserInformation(result.Username);
+                return Ok(userInfo);
+            }
 
             return Forbid("A user has no name.");
         }

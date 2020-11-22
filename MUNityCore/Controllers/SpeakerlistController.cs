@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 using MUNityCore.Util.Extensions;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models;
+using MUNityCore.Models.ListOfSpeakers;
 using MUNityCore.Services;
 
 namespace MUNityCore.Controllers
@@ -16,11 +17,11 @@ namespace MUNityCore.Controllers
     [ApiController]
     public class SpeakerlistController : ControllerBase
     {
-        private readonly IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> _hubContext;
+        private readonly IHubContext<Hubs.SpeakerListHub, Hubs.ITypedListOfSpeakerHub> _hubContext;
 
         private readonly SpeakerlistService _speakerlistService;
 
-        public SpeakerlistController(IHubContext<Hubs.SpeakerListHub, Hubs.ITypedSpeakerlistHub> hubContext,
+        public SpeakerlistController(IHubContext<Hubs.SpeakerListHub, Hubs.ITypedListOfSpeakerHub> hubContext,
             SpeakerlistService speakerlistService)
         {
             this._hubContext = hubContext;
@@ -35,7 +36,7 @@ namespace MUNityCore.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<SpeakerlistModel> CreateSpeakerlist(
+        public ActionResult<ListOfSpeakers> CreateSpeakerlist(
             [FromHeader]string conferenceid,
             [FromHeader]string committeeid)
         {
@@ -53,7 +54,7 @@ namespace MUNityCore.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<SpeakerlistModel> GetSpeakerlist([FromHeader]string id)
+        public ActionResult<ListOfSpeakers> GetSpeakerlist([FromHeader]string id)
         {
             //var authstate = authService.ValidateAuthKey(auth);
 
@@ -72,7 +73,7 @@ namespace MUNityCore.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<SpeakerlistModel> ReadSpeakerlist([FromHeader]string publicid)
+        public ActionResult<ListOfSpeakers> ReadSpeakerlist([FromHeader]string publicid)
         {
             if (int.TryParse(publicid, out int id))
             {
@@ -102,8 +103,8 @@ namespace MUNityCore.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public ActionResult<SpeakerlistModel> AddSpeakerModelToList(
-            [FromHeader] string listid, [FromBody] SpeakerlistModel.Speaker model,
+        public ActionResult<ListOfSpeakers> AddSpeakerModelToList(
+            [FromHeader] string listid, [FromBody] Speaker model,
             [FromServices] SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -117,8 +118,8 @@ namespace MUNityCore.Controllers
 
         [Route("[action]")]
         [HttpPatch]
-        public ActionResult<SpeakerlistModel> SpeakersOrderChanged(
-            [FromHeader] string listid, [FromBody] List<SpeakerlistModel.Speaker> model,
+        public ActionResult<ListOfSpeakers> SpeakersOrderChanged(
+            [FromHeader] string listid, [FromBody] List<Speaker> model,
             [FromServices] SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -139,8 +140,8 @@ namespace MUNityCore.Controllers
 
         [Route("[action]")]
         [HttpPatch]
-        public ActionResult<SpeakerlistModel> QuestionsOrderChanged(
-            [FromHeader] string listid, [FromBody] List<SpeakerlistModel.Speaker> model,
+        public ActionResult<ListOfSpeakers> QuestionsOrderChanged(
+            [FromHeader] string listid, [FromBody] List<Speaker> model,
             [FromServices] SpeakerlistService speakerlistService)
         {
             var speakerlist = speakerlistService.GetSpeakerlist(listid);
@@ -163,8 +164,8 @@ namespace MUNityCore.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public ActionResult<SpeakerlistModel> AddQuestionModelToList(
-            [FromHeader] string listid, [FromBody] SpeakerlistModel.Speaker model)
+        public ActionResult<ListOfSpeakers> AddQuestionModelToList(
+            [FromHeader] string listid, [FromBody] Speaker model)
         {
             var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
@@ -323,7 +324,7 @@ namespace MUNityCore.Controllers
             if (newTime.HasValue == false)
                 return StatusCode(StatusCodes.Status400BadRequest, "Invalid Time Format it should be hh:mm:ss");
 
-            speakerlist.Speakertime = newTime.Value;
+            speakerlist.SpeakerTime = newTime.Value;
 
             this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             return StatusCode(StatusCodes.Status200OK);
@@ -347,7 +348,7 @@ namespace MUNityCore.Controllers
             if (newTime.HasValue == false)
                 return StatusCode(StatusCodes.Status400BadRequest, "Invalid Time Format it should be hh:mm:ss");
 
-            speakerlist.Questiontime = newTime.Value;
+            speakerlist.QuestionTime = newTime.Value;
 
             this._hubContext.Clients.Groups("s-list-" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
             return StatusCode(StatusCodes.Status200OK);

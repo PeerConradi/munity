@@ -10,6 +10,7 @@ using MUNityCore.Util.Extensions;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Core;
 using MUNityCore.Schema.Request;
+using MUNityCore.Schema.Response.User;
 using MUNityCore.Services;
 using User = MUNityCore.Models.Core.User;
 
@@ -59,7 +60,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPut]
         [Authorize]
-        public ActionResult<Models.Core.User> CreateUser(string username, string forename, string lastname, string password, string mail, string birthday)
+        public ActionResult<UserInformation> CreateUser(string username, string forename, string lastname, string password, string mail, string birthday)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
                 return Forbid("You are not allowed to do that!");
@@ -68,7 +69,8 @@ namespace MUNityCore.Controllers
             try
             {
                 var user = this._userService.CreateUser(username, forename, lastname, password, mail, bd);
-                return user;
+                var userInfo = this._userService.GetUserInformation(user.Username);
+                return Ok(userInfo);
             }
             catch (Exception e)
             {
