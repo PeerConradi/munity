@@ -33,7 +33,7 @@ namespace MUNityCore.Models.Conference
 
         public int GroupLevel { get; set; }
 
-        public List<TeamRole> TeamRoles { get; set; }
+        public List<TeamRole> TeamRoles { get; set; } = new List<TeamRole>();
 
         [Timestamp]
         public byte[] TeamRoleGroupTimestamp { get; set; }

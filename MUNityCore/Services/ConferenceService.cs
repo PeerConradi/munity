@@ -180,6 +180,7 @@ namespace MUNityCore.Services
             };
 
             this._context.TeamRoleGroups.Add(group);
+            this._context.SaveChanges();
             return group;
         }
 
@@ -200,6 +201,7 @@ namespace MUNityCore.Services
             if (group != null && role != null)
             {
                 group.TeamRoles.Add(role);
+                this._context.SaveChanges();
                 return true;
             }
 
