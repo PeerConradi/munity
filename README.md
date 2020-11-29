@@ -30,9 +30,9 @@ This application is under development and cannot be used at the moment. Please c
 
 ## Setup Development Environment
 Requiered: 
-* Visual Studio Community Edtion 2019 or higher
-* MariaDb (MySql Version: 10.1.26)
-* MongoDb (latest) 
+* Visual Studio Community Edtion 2019 or higher or Visual Studio Code https://visualstudio.microsoft.com/de/downloads/
+* MariaDb (MySql Version: 10.1.26) https://mariadb.org/download/
+* MongoDb (latest) https://www.mongodb.com/try/download/community
 
 Look into the appsettings.json to change Database Connection Strings!
 After Starting the Databases for MySQL (MariaDb) and MongoDb will create itself.

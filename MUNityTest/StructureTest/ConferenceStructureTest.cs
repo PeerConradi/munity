@@ -95,7 +95,7 @@ namespace MUNityTest.StructureTest
             var organisation = new Organization();
             organisation.OrganizationId = "dmun";
             organisation.OrganizationName = "Deutsche Model United Nations e.V.";
-            organisation.OrganizationAbbreviation = "dmun e.V.";
+            organisation.OrganizationShort = "dmun e.V.";
             
             // Then there is a project
             var project = new Project();

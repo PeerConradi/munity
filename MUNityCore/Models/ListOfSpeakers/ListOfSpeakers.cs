@@ -196,28 +196,11 @@ namespace MUNityCore.Models.ListOfSpeakers
         }
 
 
-
-        public void ToggleSpeaker()
-        {
-            if (Status == EStatus.SPEAKING)
-                PauseSpeaker();
-            else
-                StartSpeaker();
-        }
-
         public void StartAnswer()
         {
             RemainingSpeakerTime = QuestionTime;
             StartSpeakerTime = DateTime.Now;
             Status = EStatus.ANSWER;
-        }
-
-        public void ToggleQuestion()
-        {
-            if (Status == EStatus.QUESTION)
-                PauseSpeaker();
-            else
-                StartQuestion();
         }
 
         /// <summary>
@@ -281,49 +264,5 @@ namespace MUNityCore.Models.ListOfSpeakers
             return false;
         }
 
-        public void RemoveQuestion(Speaker delegation)
-        {
-            Questions.Remove(delegation);
-        }
-
-        public void MoveSpeakerUp(Speaker delegation)
-        {
-            int index = Speakers.IndexOf(delegation);
-            if (index == -1 || index == 0)
-                return;
-
-            Speakers.Remove(delegation);
-            Speakers.Insert(index - 1, delegation);
-        }
-
-        public void MoveQuestionUp(Speaker delegation)
-        {
-            int index = Questions.IndexOf(delegation);
-            if (index == -1 || index == 0)
-                return;
-
-            Questions.Remove(delegation);
-            Questions.Insert(index - 1, delegation);
-        }
-
-        public void MoveSpeakerDown(Speaker delegation)
-        {
-            int index = Speakers.IndexOf(delegation);
-            if (index == -1 || index + 1 == Speakers.Count)
-                return;
-
-            Speakers.Remove(delegation);
-            Speakers.Insert(index + 1, delegation);
-        }
-
-        public void MoveQuestionDown(Speaker delegation)
-        {
-            int index = Questions.IndexOf(delegation);
-            if (index == -1 || index + 1 == Speakers.Count)
-                return;
-
-            Questions.Remove(delegation);
-            Questions.Insert(index + 1, delegation);
-        }
     }
 }

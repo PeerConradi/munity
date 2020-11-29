@@ -174,7 +174,7 @@ namespace MUNityCore.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Conference>> CreateConference(CreateConferenceRequest body)
+        public async Task<ActionResult<ConferenceInformation>> CreateConference(CreateConferenceRequest body)
         {
             // Find the parent Project
             var project = await _organisationService.GetProjectWithOrganisation(body.ProjectId);
@@ -318,7 +318,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Committee>> CreateCommittee([FromBody] ConferenceRequests.CreateCommittee body)
+        public async Task<ActionResult<CommitteeSmallInfo>> CreateCommittee([FromBody] ConferenceRequests.CreateCommittee body)
         {
             if (!CanUserEditConference(body.ConferenceId))
                 return Forbid("You are not allowed to change the conference settings");

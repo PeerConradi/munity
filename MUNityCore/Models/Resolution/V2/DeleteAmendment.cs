@@ -5,6 +5,10 @@ using MongoDB.Driver.Core.Operations;
 
 namespace MUNityCore.Models.Resolution.V2
 {
+
+    /// <summary>
+    /// The Delete Amendment is for removing an operative paragraph from the resolution.
+    /// </summary>
     public class DeleteAmendment : IDeleteAmendment
     {
         public string Id { get; set; }

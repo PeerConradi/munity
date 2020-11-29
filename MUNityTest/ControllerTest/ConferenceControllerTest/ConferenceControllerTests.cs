@@ -74,7 +74,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             {
                 OrganizationId = "testorga",
                 OrganizationName = "Test Organization",
-                OrganizationAbbreviation = "TO"
+                OrganizationShort = "TO"
             };
 
             var user = new MunityUser

@@ -42,7 +42,7 @@ namespace MUNityTest.TestEnvironment
                 {
                     _organization = new Organization
                     {
-                        OrganizationName = "United Nations", OrganizationAbbreviation = "UN"
+                        OrganizationName = "United Nations", OrganizationShort = "UN"
                     };
                 }
                 return _organization;

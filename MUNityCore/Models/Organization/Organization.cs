@@ -20,7 +20,7 @@ namespace MUNityCore.Models.Organization
         public string OrganizationName { get; set; }
         
         [MaxLength(18)]
-        public string OrganizationAbbreviation { get; set; }
+        public string OrganizationShort { get; set; }
 
         public List<OrganizationRole> Roles { get; set; }
 

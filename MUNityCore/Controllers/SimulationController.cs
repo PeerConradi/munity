@@ -15,6 +15,10 @@ using MUNityCore.Services;
 
 namespace MUNityCore.Controllers
 {
+
+    /// <summary>
+    /// The Controller for Simulations (online committees) etc.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SimulationController : ControllerBase

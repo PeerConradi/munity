@@ -16,6 +16,10 @@ using MUNityCore.Services;
 
 namespace MUNityCore.Controllers
 {
+
+    /// <summary>
+    /// The ResolutionController offers endpoints to work with resolution documents.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ResolutionController : ControllerBase
@@ -35,6 +39,11 @@ namespace MUNityCore.Controllers
             _authService = authService;
         }
 
+        /// <summary>
+        /// Create a public accessable resolution.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
@@ -48,6 +57,13 @@ namespace MUNityCore.Controllers
             return await _resolutionService.CreatePublicResolution(title);
         }
 
+        /// <summary>
+        /// Update a resolution that is not opened to the public, you need to give a valid
+        /// token for this operation. The Controller will then check if the user is allowed
+        /// to change the resolution and update it.
+        /// </summary>
+        /// <param name="resolution"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
         [Authorize]
@@ -65,7 +81,8 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
-        /// Updates a Resolution that has Public Access. 
+        /// Updates a Resolution that has Public Access. It will also inform every connection that is listening
+        /// (subscribed) to the WebSocket for this resolution.
         /// </summary>
         /// <param name="resolution"></param>
         /// <returns></returns>
@@ -158,17 +175,22 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Returns a public resolution if its found.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="resolutionService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ResolutionV2> GetPublic(string id,
-            [FromServices] IResolutionService resolutionService)
+        public async Task<ResolutionV2> GetPublic(string id)
         {
-            return await resolutionService.GetResolution(id);
+            return await _resolutionService.GetResolution(id);
         }
 
         ///// <summary>
-        ///// Puts the user into the signalR Group for this document.
+        ///// Puts the user into the signalR Group for this document/resolution.
         ///// </summary>
         ///// <param name="auth"></param>
         ///// <param name="id"></param>

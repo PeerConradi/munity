@@ -36,12 +36,21 @@ namespace MUNityTest.Service
         {
             // Datenbank für den Test erzeugen und falls vorhanden erst einmal leeren und neu erstellen!
             var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
-            optionsBuilder.UseSqlite("Data Source=test_organisation.db");
+            optionsBuilder.UseSqlite("Data Source=test_resolution.db");
             _munityContext = new MunityContext(optionsBuilder.Options);
             _munityContext.Database.EnsureDeleted();
             _munityContext.Database.EnsureCreated();
 
             // Clean the Test Database before doing anything
+            var settings = new MongoTestString();
+            var client = new MongoClient(settings.ConnectionString);
+            client.DropDatabase(settings.DatabaseName);
+        }
+
+        [OneTimeTearDown]
+        public void TearDownAfter()
+        {
+            _munityContext.Database.EnsureDeleted();
             var settings = new MongoTestString();
             var client = new MongoClient(settings.ConnectionString);
             client.DropDatabase(settings.DatabaseName);

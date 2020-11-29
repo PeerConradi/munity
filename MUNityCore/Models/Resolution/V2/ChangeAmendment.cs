@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.Resolution.V2
 {
+
+    /// <summary>
+    /// The Change amendment is for changing the text of an operative paragraph.
+    /// The amendment contains a value of NewText that contains the whole new Text.
+    /// </summary>
     public class ChangeAmendment : IChangeAmendment
     {
         public string Id { get; set; }

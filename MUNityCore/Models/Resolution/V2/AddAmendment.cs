@@ -5,6 +5,12 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.Resolution.V2
 {
+
+    /// <summary>
+    /// The Add Amendment is for any operative paragraph that should be added while working on the document.
+    /// You can show and hide it. For normal this will reference an Operative Paragraph that is set to
+    /// Virutal to be differed from normal operative paragraphs.
+    /// </summary>
     public class AddAmendment : IAddAmendment
     {
         public string Id { get; set; }

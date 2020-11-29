@@ -13,6 +13,11 @@ using MUNityCore.Services;
 
 namespace MUNityCore.Controllers
 {
+
+    /// <summary>
+    /// The controller to be able to edit and Change a List of Speakers.
+    /// This Route will may be changed to "api/los" in the future.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SpeakerlistController : ControllerBase

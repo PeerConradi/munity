@@ -28,7 +28,7 @@ namespace MUNityCore.Services
                 organisation.OrganizationId = shortAsKey;
 
             organisation.OrganizationName = name;
-            organisation.OrganizationAbbreviation = abbreviation;
+            organisation.OrganizationShort = abbreviation;
             _context.Organizations.Add(organisation);
             _context.SaveChanges();
             return organisation;
