@@ -200,18 +200,17 @@ namespace MUNityCore.Controllers
         ///// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public async Task<IActionResult> SubscribeToResolution([FromHeader] string id,
-            [FromHeader] string connectionid)
+        public async Task<IActionResult> SubscribeToResolution(string resolutionid,string connectionid)
         {
-            var resolution = _resolutionService.GetResolution(id);
+            var resolution = _resolutionService.GetResolution(resolutionid);
 
-            var infoModel = await _resolutionService.GetResolutionAuth(id);
+            var infoModel = await _resolutionService.GetResolutionAuth(resolutionid);
 
             if (resolution != null)
             {
                 if (infoModel.AllowPublicRead)
                 {
-                    await _hubContext.Groups.AddToGroupAsync(connectionid, id);
+                    await _hubContext.Groups.AddToGroupAsync(connectionid, resolutionid);
                     return StatusCode(StatusCodes.Status200OK);
                 }
                 else
@@ -222,8 +221,5 @@ namespace MUNityCore.Controllers
 
             return StatusCode(StatusCodes.Status200OK);
         }
-
-
-
     }
 }

@@ -18,8 +18,10 @@ namespace MUNityCore.Services
 
         private readonly IMongoCollection<ResolutionV2> _resolutions;
 
+        
         public async Task<ResolutionV2> CreateResolution(string title)
         {
+            
             var resolution = new ResolutionV2
             {
                 ResolutionId = Util.Tools.IdGenerator.RandomString(36), Header = {Topic = title}
