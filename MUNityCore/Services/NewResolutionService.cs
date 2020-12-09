@@ -56,7 +56,7 @@ namespace MUNityCore.Services
 
         public async Task<ResolutionAuth> GetResolutionAuth(string id)
         {
-            return await _munityContext.ResolutionAuths.FirstOrDefaultAsync(n => n.ResolutionId == id);
+            return await _munityContext.ResolutionAuths.Include(n => n.Users).FirstOrDefaultAsync(n => n.ResolutionId == id);
         }
 
         public async Task<ResolutionV2> DeleteResolution(ResolutionV2 resolution)

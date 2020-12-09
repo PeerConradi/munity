@@ -64,9 +64,11 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public AuthenticationResponse Login([FromBody]AuthenticateRequest request)
+        public ActionResult<AuthenticationResponse> Login([FromBody]AuthenticateRequest request)
         {
-            return _authService.Authenticate(request);
+            var result = _authService.Authenticate(request);
+            if (result != null) return Ok(result);
+            return BadRequest();
         }
 
 

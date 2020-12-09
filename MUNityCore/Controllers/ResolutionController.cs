@@ -39,6 +39,14 @@ namespace MUNityCore.Controllers
             _authService = authService;
         }
 
+        [Route("[action]")]
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult IsUp()
+        {
+            return Ok();
+        }
+
         /// <summary>
         /// Create a public accessable resolution.
         /// </summary>
@@ -109,6 +117,45 @@ namespace MUNityCore.Controllers
 
             return StatusCode(StatusCodes.Status500InternalServerError,
                 "Something went wrong when saving the resolution!");
+        }
+
+        /// <summary>
+        /// Updates a resolution if the user is logged in.
+        /// </summary>
+        /// <param name="resolution"></param>
+        /// <returns></returns>
+        [Route("[action]")]
+        [HttpPatch]
+        [AllowAnonymous]
+        public async Task<ActionResult<ResolutionV2>> UpdateResolution([FromBody]ResolutionV2 resolution)
+        {
+            // Check if a resolution with this Id exists
+            var res = await _resolutionService.GetResolution(resolution.ResolutionId);
+            if (res == null) return NotFound("Resolution not found");
+
+            // Check if the resolution is public
+            var auth = await _resolutionService.GetResolutionAuth(resolution.ResolutionId);
+            if (auth.AllowPublicEdit)
+            {
+                // Update this document
+                var updatedDocument = await _resolutionService.SaveResolution(resolution);
+                await _hubContext.Clients.Groups(updatedDocument.ResolutionId).ResolutionChanged(updatedDocument);
+                return Ok(updatedDocument);
+            }
+            else
+            {
+                // Check of the user is allwed to change this resolution
+                if (User == null) return Forbid();
+                var loggedInUser = this._authService.GetUserOfClaimPrincipal(User);
+                if (loggedInUser == null) return Forbid();
+                if (auth.Users.Any(n => n.User.Username == loggedInUser.Username && n.CanWrite))
+                {
+                    var updatedDocument = await _resolutionService.SaveResolution(resolution);
+                    await _hubContext.Clients.Groups(updatedDocument.ResolutionId).ResolutionChanged(updatedDocument);
+                    return Ok(updatedDocument);
+                }
+                return Forbid();
+            }
         }
 
         /// <summary>
@@ -199,7 +246,7 @@ namespace MUNityCore.Controllers
         ///// <param name="authService"></param>
         ///// <returns></returns>
         [Route("[action]")]
-        [HttpPut]
+        [HttpGet]
         public async Task<IActionResult> SubscribeToResolution(string resolutionid,string connectionid)
         {
             var resolution = _resolutionService.GetResolution(resolutionid);
