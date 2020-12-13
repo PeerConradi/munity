@@ -57,66 +57,39 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ResolutionV2> CreatePublic(string title)
         {
-            if (User == null)
-            {
-                // This should be called when the User is not logged in
-            }
-
             return await _resolutionService.CreatePublicResolution(title);
         }
 
         /// <summary>
-        /// Update a resolution that is not opened to the public, you need to give a valid
-        /// token for this operation. The Controller will then check if the user is allowed
-        /// to change the resolution and update it.
+        /// Returns a resolution with the given Id if the user is allowed to read the resolution or it is public.
         /// </summary>
-        /// <param name="resolution"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         [Route("[action]")]
-        [HttpPatch]
-        [Authorize]
-        public async Task<ResolutionV2> UpdateProtectedResolution([FromBody] ResolutionV2 resolution)
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<ResolutionV2>> GetResolution(string id)
         {
-            var user = _authService.GetUserOfClaimPrincipal(User);
-            // Check if user is allowed to update this document
-            var canEdit = _authService.CanUserEditResolution(user, resolution);
+            if (!await CanUserReadResolution(id))
+                return Forbid();
 
-            if (!canEdit)
-                return null;
-
-            // Update this document
-            return await _resolutionService.SaveResolution(resolution);
+            return await this._resolutionService.GetResolution(id);
         }
 
-        /// <summary>
-        /// Updates a Resolution that has Public Access. It will also inform every connection that is listening
-        /// (subscribed) to the WebSocket for this resolution.
-        /// </summary>
-        /// <param name="resolution"></param>
-        /// <returns></returns>
         [Route("[action]")]
-        [HttpPatch]
+        [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<ResolutionV2>> UpdatePublicResolution([FromBody]ResolutionV2 resolution)
+        public async Task<ActionResult<bool>> ResolutionExists(string id)
         {
-            // Check if a resolution with this Id exists
-            var res = await _resolutionService.GetResolution(resolution.ResolutionId);
+            return await this._resolutionService.ResolutionExists(id);
+        }
 
-            if (res == null)
-                return NotFound("Resolution not found");
-
-            // Check if the resolution is public
-            var auth = await _resolutionService.GetResolutionAuth(resolution.ResolutionId);
-            if (auth.AllowPublicEdit)
-            {
-                // Update this document
-                var updatedDocument = await _resolutionService.SaveResolution(resolution);
-                await _hubContext.Clients.Groups(updatedDocument.ResolutionId).ResolutionChanged(updatedDocument);
-                return Ok(updatedDocument);
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                "Something went wrong when saving the resolution!");
+        [Route("[action]")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<bool>> CanEditResolution(string id)
+        {
+            return await CanUserEditResolution(id);
         }
 
         /// <summary>
@@ -129,112 +102,57 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<ResolutionV2>> UpdateResolution([FromBody]ResolutionV2 resolution)
         {
-            // Check if a resolution with this Id exists
-            var res = await _resolutionService.GetResolution(resolution.ResolutionId);
-            if (res == null) return NotFound("Resolution not found");
-
-            // Check if the resolution is public
-            var auth = await _resolutionService.GetResolutionAuth(resolution.ResolutionId);
-            if (auth.AllowPublicEdit)
-            {
-                // Update this document
-                var updatedDocument = await _resolutionService.SaveResolution(resolution);
-                await _hubContext.Clients.Groups(updatedDocument.ResolutionId).ResolutionChanged(updatedDocument);
-                return Ok(updatedDocument);
-            }
-            else
-            {
-                // Check of the user is allwed to change this resolution
-                if (User == null) return Forbid();
-                var loggedInUser = this._authService.GetUserOfClaimPrincipal(User);
-                if (loggedInUser == null) return Forbid();
-                if (auth.Users.Any(n => n.User.Username == loggedInUser.Username && n.CanWrite))
-                {
-                    var updatedDocument = await _resolutionService.SaveResolution(resolution);
-                    await _hubContext.Clients.Groups(updatedDocument.ResolutionId).ResolutionChanged(updatedDocument);
-                    return Ok(updatedDocument);
-                }
+            if (!await CanUserEditResolution(resolution.ResolutionId))
                 return Forbid();
+
+            var updatedDocument = await _resolutionService.SaveResolution(resolution);
+            await _hubContext.Clients.Groups(updatedDocument.ResolutionId).ResolutionChanged(updatedDocument);
+            return Ok(updatedDocument);
+        }
+
+        [Route("[action]")]
+        [HttpPatch]
+        [AllowAnonymous]
+        public async Task<ActionResult> UpdatePreambleParagraph(string resolutionId, [FromBody] PreambleParagraph paragraph)
+        {
+            if (!await CanUserEditResolution(resolutionId))
+                return Forbid();
+
+            var resolution = await this._resolutionService.GetResolution(resolutionId);
+            if (resolution == null) return NotFound("Resolution with the given id not found!");
+            var result = await this._resolutionService.UpdatePreambleParagraph(resolution, paragraph);
+            
+            if (result)
+            {
+                await this._hubContext.Clients.Group(resolutionId).PreambleParagraphChanged(resolutionId, paragraph);
+                return Ok();
             }
+            return Problem();
         }
 
-        /// <summary>
-        /// Updates a preamble paragraph inside the given resolution.
-        /// note that this will also submit the changes to all clients that
-        /// are listening on the resasocket by subscribing to this resolution.
-        /// Will update the Text and the notices.
-        /// Will return Status 200 if the changes are submitted.
-        /// Will return Status 404 if the resolution or preamble paragraph cannot be found.
-        /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="paragraph"></param>
-        /// <returns></returns>
         [Route("[action]")]
         [HttpPatch]
         [AllowAnonymous]
-        public async Task<ActionResult> UpdatePublicResolutionPreambleParagraph(string resolutionId,
-            [FromBody] PreambleParagraph paragraph)
+        public async Task<ActionResult> UpdateOperativeParagraph(string resolutionId, [FromBody]OperativeParagraph paragraph)
         {
+            if (!await CanUserEditResolution(resolutionId))
+                return Forbid();
+
             var resolution = await this._resolutionService.GetResolution(resolutionId);
             if (resolution == null) return NotFound("Resolution with the given id not found!");
-            if (resolution.Preamble == null) return NotFound("Resolution has no preamble section");
-            if (resolution.Preamble.Paragraphs == null || resolution.Preamble.Paragraphs.Count == 0)
-                return NotFound("Resolution has no preamble paragraphs.");
-            var para = resolution.Preamble
-                .Paragraphs.FirstOrDefault(n => 
-                    n.PreambleParagraphId == paragraph.PreambleParagraphId);
-            if (para == null) return NotFound("Paragraph not found");
-            para.Text = paragraph.Text;
-            para.Notices = paragraph.Notices;
-            await this._resolutionService.SaveResolution(resolution);
-            await this._hubContext.Clients.Group(resolutionId).PreambleParagraphChanged(resolutionId, para);
-            return Ok();
+            var result = await this._resolutionService.UpdateOperativeParagraph(resolution, paragraph);
+
+            if (result)
+            {
+                await this._hubContext.Clients.Group(resolutionId).OperativeParagraphChanged(resolutionId, paragraph);
+                return Ok();
+            }
+            return Problem();
         }
 
-        /// <summary>
-        /// Updates an operative paragraph inside a resolution. Will change the Text and Notices to the ones inside the
-        /// given Model.
-        /// This Call will then inform all clients that have Subscribed to the resolution inside the
-        /// resasocket.
-        /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="paragraph"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpPatch]
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdatePublicResolutionOperativeParagraph(string resolutionId,
-            [FromBody] OperativeParagraph paragraph)
-        {
-            var resolution = await this._resolutionService.GetResolution(resolutionId);
-            if (resolution == null) return NotFound("Resolution with the given id not found!");
-            if (resolution.OperativeSection == null) return NotFound("Resolution has no operative section");
-            if (resolution.OperativeSection.Paragraphs == null || resolution.OperativeSection.Paragraphs.Count == 0)
-                return NotFound("Resolution has no Operative paragraphs.");
-            var para = resolution.OperativeSection
-                .Paragraphs.FirstOrDefault(n =>
-                    n.OperativeParagraphId == paragraph.OperativeParagraphId);
-            if (para == null) return NotFound("Paragraph not found");
-            para.Text = paragraph.Text;
-            para.Notices = paragraph.Notices;
-            await this._resolutionService.SaveResolution(resolution);
-            await this._hubContext.Clients.Group(resolutionId).OperativeParagraphChanged(resolutionId, para);
-            return Ok();
-        }
+        
 
-        /// <summary>
-        /// Returns a public resolution if its found.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="resolutionService"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ResolutionV2> GetPublic(string id)
-        {
-            return await _resolutionService.GetResolution(id);
-        }
+
 
         ///// <summary>
         ///// Puts the user into the signalR Group for this document/resolution.
@@ -267,6 +185,30 @@ namespace MUNityCore.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK);
+        }
+
+        private async Task<bool> CanUserEditResolution(string id)
+        {
+            var resolutionAuth = await this._resolutionService.GetResolutionAuth(id);
+            if (resolutionAuth == null) return false;
+            if (resolutionAuth.AllowPublicEdit) return true;
+            // The resolution is not public and no User was found. So the user is not allowed to edit this document!
+            if (User == null) return false;
+            var user = this._authService.GetUserOfClaimPrincipal(User);
+            if (user == null) return false;
+            return resolutionAuth.Users.Any(n => n.User.MunityUserId == user.MunityUserId && n.CanWrite);
+        }
+
+        private async Task<bool> CanUserReadResolution(string id)
+        {
+            var resolutionAuth = await this._resolutionService.GetResolutionAuth(id);
+            if (resolutionAuth == null) return false;
+            if (resolutionAuth.AllowPublicRead) return true;
+            // The resolution is not public and no User was found. So the user is not allowed to edit this document!
+            if (User == null) return false;
+            var user = this._authService.GetUserOfClaimPrincipal(User);
+            if (user == null) return false;
+            return resolutionAuth.Users.Any(n => n.User.MunityUserId == user.MunityUserId && n.CanRead);
         }
     }
 }

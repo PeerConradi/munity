@@ -9,6 +9,7 @@ using MUNityCore.Util.Extensions;
 using MUNityCore.DataHandlers;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Resolution.V2;
+using MUNityCore.Extensions.ResolutionExtensions;
 
 namespace MUNityCore.Services
 {
@@ -52,6 +53,39 @@ namespace MUNityCore.Services
         public async Task<ResolutionV2> GetResolution(string id)
         {
             return await _resolutions.Find(n => n.ResolutionId == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> UpdatePreambleParagraph(ResolutionV2 resolution,PreambleParagraph newValues)
+        {
+            var targetParagraph = resolution.Preamble?.Paragraphs?.FirstOrDefault(n => n.PreambleParagraphId == newValues.PreambleParagraphId);
+            if (targetParagraph == null) return false;
+            // Maybe writing just replacing the List entry would be better idk.
+            targetParagraph.Corrected = newValues.Corrected;
+            targetParagraph.IsLocked = newValues.IsLocked;
+            targetParagraph.Notices = newValues.Notices;
+            targetParagraph.Text = newValues.Text;
+            await this.SaveResolution(resolution);
+            return true;
+        }
+
+        public async Task<bool> UpdateOperativeParagraph(ResolutionV2 resolution, OperativeParagraph newValues)
+        {
+            var targetParagraph = resolution.OperativeSection?.FirstOrDefault(n => n.OperativeParagraphId == newValues.OperativeParagraphId);
+            if (targetParagraph == null) return false;
+            targetParagraph.Children = newValues.Children;
+            targetParagraph.IsLocked = newValues.IsLocked;
+            targetParagraph.IsVirtual = newValues.IsVirtual;
+            targetParagraph.Name = newValues.Name;
+            targetParagraph.Notices = newValues.Notices;
+            targetParagraph.Text = newValues.Text;
+            targetParagraph.Visible = newValues.Visible;
+            await this.SaveResolution(resolution);
+            return true;
+        }
+
+        public async Task<bool> ResolutionExists(string id)
+        {
+            return await this._munityContext.ResolutionAuths.AnyAsync(n => n.ResolutionId == id);
         }
 
         public async Task<ResolutionAuth> GetResolutionAuth(string id)

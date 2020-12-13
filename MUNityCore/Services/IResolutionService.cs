@@ -21,5 +21,11 @@ namespace MUNityCore.Services
         Task<ResolutionV2> SaveResolution(ResolutionV2 resolution);
 
         Task<int> GetResolutionCount();
+
+        Task<bool> UpdatePreambleParagraph(ResolutionV2 resolution, PreambleParagraph newValues);
+
+        Task<bool> UpdateOperativeParagraph(ResolutionV2 resolution, OperativeParagraph newValues);
+
+        Task<bool> ResolutionExists(string id);
     }
 }

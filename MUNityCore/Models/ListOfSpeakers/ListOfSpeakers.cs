@@ -21,9 +21,9 @@ namespace MUNityCore.Models.ListOfSpeakers
             ANSWER
         }
 
-        public string Id { get; set; }
+        public string ListOfSpeakersId { get; set; }
 
-        public int PublicId { get; set; }
+        public string PublicId { get; set; }
 
         public string Name { get; set; }
 
@@ -149,11 +149,10 @@ namespace MUNityCore.Models.ListOfSpeakers
             }
         }
 
-        public ListOfSpeakers(string id = null, string name = newListName)
+        public ListOfSpeakers()
         {
-
-            Id = id ?? Guid.NewGuid().ToString();
-            Name = name;
+            ListOfSpeakersId = Guid.NewGuid().ToString();
+            Name = "";
             Speakers = new List<Speaker>();
             Questions = new List<Speaker>();
             SpeakerTime = new TimeSpan(0, 3, 0);
@@ -163,8 +162,6 @@ namespace MUNityCore.Models.ListOfSpeakers
             _remainingQuestionTime = new TimeSpan(QuestionTime.Ticks);
             StartSpeakerTime = DateTime.Now;
             StartQuestionTime = DateTime.Now;
-            //RemainingSpeakerTime = new TimeSpan(0, 3, 0);
-            //RemainingQuestionTime = new TimeSpan(0, 1, 0);
         }
 
         public ListOfSpeakers(TimeSpan nSpeakerTime, TimeSpan nQuestionTime)

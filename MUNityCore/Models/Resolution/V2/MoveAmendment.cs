@@ -25,6 +25,5 @@ namespace MUNityCore.Models.Resolution.V2
         }
 
         public string NewTargetSectionId { get; set; }
-        public int Position { get; set; }
     }
 }

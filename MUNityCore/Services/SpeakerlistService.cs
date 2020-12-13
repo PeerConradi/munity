@@ -14,10 +14,10 @@ namespace MUNityCore.Services
 
         public ListOfSpeakers CreateSpeakerlist()
         {
-            int id = _rnd.Next(100000, 999999);
+            var id = _rnd.Next(100000, 999999).ToString();
             while (Speakerlists.Any(n => n.PublicId == id))
             {
-                id = _rnd.Next(100000, 999999);
+                id = _rnd.Next(100000, 999999).ToString();
             }
             var speakerList = new ListOfSpeakers();
             speakerList.PublicId = id;
@@ -27,10 +27,10 @@ namespace MUNityCore.Services
 
         public ListOfSpeakers GetSpeakerlist(string id)
         {
-            return Speakerlists.FirstOrDefault(n => n.Id == id);
+            return Speakerlists.FirstOrDefault(n => n.ListOfSpeakersId == id);
         }
 
-        public ListOfSpeakers GetSpeakerlistByPublicId(int publicId)
+        public ListOfSpeakers GetSpeakerlistByPublicId(string publicId)
         {
             return Speakerlists.FirstOrDefault(n => n.PublicId == publicId);
         }

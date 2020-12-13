@@ -80,15 +80,12 @@ namespace MUNityCore.Controllers
         [HttpGet]
         public ActionResult<ListOfSpeakers> ReadSpeakerlist([FromHeader]string publicid)
         {
-            if (int.TryParse(publicid, out int id))
-            {
-                var speakerlist = _speakerlistService.GetSpeakerlistByPublicId(id);
-                speakerlist.Id = "";
-                return StatusCode(StatusCodes.Status200OK, speakerlist);
-            }
 
-            return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-
+            var speakerlist = _speakerlistService.GetSpeakerlistByPublicId(publicid);
+            if (speakerlist != null)
+                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+            speakerlist.ListOfSpeakersId = "";
+            return StatusCode(StatusCodes.Status200OK, speakerlist);
         }
 
         /// <summary>

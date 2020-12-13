@@ -88,6 +88,8 @@ namespace MUNityCore.Services
             return tokenHandler.WriteToken(token);
         }
 
+        
+
         public MunityUser GetUserOfClaimPrincipal(ClaimsPrincipal principal)
         {
             var claimUsername = principal.Claims.FirstOrDefault(n => n.Type == ClaimTypes.Name);
