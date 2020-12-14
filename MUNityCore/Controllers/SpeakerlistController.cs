@@ -34,25 +34,6 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
-        /// Creates a new Speakerlist and returns it.
-        /// </summary>
-        /// <param name="conferenceid"></param>
-        /// <param name="committeeid"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpGet]
-        public ActionResult<ListOfSpeakers> CreateSpeakerlist(
-            [FromHeader]string conferenceid,
-            [FromHeader]string committeeid)
-        {
-            var speakerlist = _speakerlistService.CreateSpeakerlist();
-            speakerlist.ConferenceId = conferenceid;
-            speakerlist.CommitteeId = committeeid;
-
-            return StatusCode(StatusCodes.Status200OK, speakerlist);
-        }
-
-        /// <summary>
         /// Gets a speakerlist
         /// </summary>
         /// <param name="id"></param>

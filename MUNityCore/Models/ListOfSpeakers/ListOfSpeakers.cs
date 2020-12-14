@@ -15,10 +15,13 @@ namespace MUNityCore.Models.ListOfSpeakers
 
         public enum EStatus
         {
-            STOPPED,
-            SPEAKING,
-            QUESTION,
-            ANSWER
+            Stopped,
+            Speaking,
+            Question,
+            Answer,
+            SpeakerPaused,
+            QuestionPaused,
+            AnswerPaused
         }
 
         public string ListOfSpeakersId { get; set; }
@@ -27,238 +30,254 @@ namespace MUNityCore.Models.ListOfSpeakers
 
         public string Name { get; set; }
 
+        public EStatus Status { get; set; }
+
         public TimeSpan SpeakerTime { get; set; }
 
         public TimeSpan QuestionTime { get; set; }
 
+        public TimeSpan PausedSpeakerTime { get; set; }
 
-        private TimeSpan _remainingSpeakerTime;
+        public TimeSpan PausedQuestionTime { get; set; }
+
         public TimeSpan RemainingSpeakerTime
         {
-            get => _remainingSpeakerTime - new TimeSpan(0,0, (int)(DateTime.Now - StartSpeakerTime).TotalSeconds);
-            set  => _remainingSpeakerTime = value;
+            get
+            {
+                if (Status == EStatus.Stopped || Status == EStatus.Question || Status == EStatus.SpeakerPaused || Status == EStatus.QuestionPaused)
+                {
+                    return PausedSpeakerTime;
+                }
+                else if (Status == EStatus.Speaking)
+                {
+                    var finishTime = StartSpeakerTime.AddSeconds(SpeakerTime.TotalSeconds);
+                    return finishTime - DateTime.Now;
+                }
+                var finishTimeQuestion = StartSpeakerTime.AddSeconds(QuestionTime.TotalSeconds);
+                return finishTimeQuestion - DateTime.Now;
+            }
         }
 
-        private TimeSpan _remainingQuestionTime;
-        public TimeSpan RemainingQuestionTime { 
-            get => _remainingQuestionTime - new TimeSpan(0,0,(int)(DateTime.Now - StartQuestionTime).TotalSeconds);
-            set => _remainingQuestionTime = value;
+        public TimeSpan RemainingQuestionTime
+        {
+            get
+            {
+                if (Status == EStatus.Stopped || Status == EStatus.Speaking || Status == EStatus.Answer) return PausedQuestionTime;
+
+                var finishTime = StartQuestionTime.AddSeconds(QuestionTime.TotalSeconds);
+                return finishTime - DateTime.Now;
+            }
         }
 
         public List<Speaker> Speakers { get; set; }
 
         public List<Speaker> Questions { get; set; }
 
+        public Speaker CurrentSpeaker { get; set; }
 
-        private Speaker _currentSpeaker;
-        public Speaker CurrentSpeaker { get => _currentSpeaker; 
-            set
-            {
-                _currentSpeaker = value;
-                if (value == null)
-                {
-                    if (Status != EStatus.QUESTION)
-                    {
-                        StartQuestionTime = DateTime.Now;
-                    }
+        public Speaker CurrentQuestion { get; set; }
 
-                    if (Status == EStatus.SPEAKING || Status == EStatus.QUESTION)
-                    {
-                        Status = EStatus.STOPPED;
-                    }
-                    StartSpeakerTime = DateTime.Now;
-                    RemainingSpeakerTime = SpeakerTime;
-                }
-            }
-        }
 
-        private Speaker _currentQuestion;
-        public Speaker CurrentQuestion { get => _currentQuestion; 
-            set
-            {
-                _currentQuestion = value;
-                if (value == null)
-                {
-                    if (Status != EStatus.SPEAKING && Status != EStatus.QUESTION)
-                    {
-                        StartSpeakerTime = DateTime.Now;
-                    }
+        public bool ListClosed { get; set; } = false;
 
-                    if (Status == EStatus.QUESTION)
-                    {
-                        Status = EStatus.STOPPED;
-                    }
-                    StartQuestionTime = DateTime.Now;
-                    RemainingQuestionTime = QuestionTime;
-                }
-            }
-        }
-
-        public EStatus Status { get; set; }
-
-        public bool IsSpeaking => Status == EStatus.SPEAKING;
-
-        public bool IsQuestioning  => Status == EStatus.QUESTION;
-
-        public bool ListClosed { get; set; }
-
-        public bool QuestionsClosed { get; set; }
+        public bool QuestionsClosed { get; set; } = false;
 
         public TimeSpan LowTimeMark { get; set; }
-
-        public bool SpeakerLowTime { get; set; }
-
-        public bool QuestionLowTime { get; set; }
-
-        public bool SpeakerTimeout { get; set; }
-
-        public bool QuestionTimeout { get; set; }
-
-        public string ConferenceId { get; set; }
-
-        public string CommitteeId { get; set; }
 
         public DateTime StartSpeakerTime { get; set; }
 
         public DateTime StartQuestionTime { get; set; }
 
-
-        public void AddSpeaker(Speaker speaker)
-        {
-            Speakers.Add(speaker);
-            if (Status != EStatus.SPEAKING && Status != EStatus.ANSWER)
-            {
-                this.StartSpeakerTime = DateTime.Now;
-            }
-            if (Status != EStatus.QUESTION)
-            {
-                this.StartQuestionTime = DateTime.Now;
-            }
-        }
-
-        public void AddQuestion(Speaker question)
-        {
-            Questions.Add(question);
-            if (Status != EStatus.SPEAKING && Status != EStatus.ANSWER)
-            {
-                this.StartSpeakerTime = DateTime.Now;
-            }
-            if (Status != EStatus.QUESTION)
-            {
-                this.StartQuestionTime = DateTime.Now;
-            }
-        }
-
-        public ListOfSpeakers()
-        {
-            ListOfSpeakersId = Guid.NewGuid().ToString();
-            Name = "";
-            Speakers = new List<Speaker>();
-            Questions = new List<Speaker>();
-            SpeakerTime = new TimeSpan(0, 3, 0);
-            QuestionTime = new TimeSpan(0, 0, 30);
-            LowTimeMark = new TimeSpan(0, 0, 10);
-            _remainingSpeakerTime = new TimeSpan(SpeakerTime.Ticks);
-            _remainingQuestionTime = new TimeSpan(QuestionTime.Ticks);
-            StartSpeakerTime = DateTime.Now;
-            StartQuestionTime = DateTime.Now;
-        }
-
-        public ListOfSpeakers(TimeSpan nSpeakerTime, TimeSpan nQuestionTime)
-        {
-            Speakers = new List<Speaker>();
-            Questions = new List<Speaker>();
-            SpeakerTime = nSpeakerTime;
-            QuestionTime = nQuestionTime;
-        }
-
-        public void StartSpeaker()
-        {
-            //TODO: Calculate finished time
-            this.StartSpeakerTime = DateTime.Now;
-            Status = EStatus.SPEAKING;
-        }
-
-        public void PauseSpeaker()
-        {
-            Status = EStatus.STOPPED;
-            _remainingSpeakerTime = RemainingSpeakerTime;
-            _remainingQuestionTime = RemainingQuestionTime;
-        }
-
-        public void StartQuestion()
-        {
-            Status = EStatus.QUESTION;
-            this.StartQuestionTime = DateTime.Now;
-        }
-
-
-        public void StartAnswer()
-        {
-            RemainingSpeakerTime = QuestionTime;
-            StartSpeakerTime = DateTime.Now;
-            Status = EStatus.ANSWER;
-        }
-
-        /// <summary>
-        /// Stopps the Speakerlist and sets the Next Speaker.
-        /// </summary>
         public void NextSpeaker()
         {
-            if (Speakers.Count > 0)
+            if (Speakers.Any())
             {
-                CurrentSpeaker = Speakers[0];
-                Speakers.Remove(Speakers[0]);
+                CurrentSpeaker = Speakers.First();
+                Speakers.Remove(Speakers.First());
             }
-            else
-            {
-                CurrentSpeaker = null;
-                
-            }
-            Status = EStatus.STOPPED;
-            RemainingSpeakerTime = SpeakerTime;
-            StartSpeakerTime = DateTime.Now;
-            // Also reset the question timers!
-            RemainingQuestionTime = QuestionTime;
-            StartQuestionTime = DateTime.Now;
-            CurrentQuestion = null;
-            Questions.Clear();
+            this.Status = EStatus.Stopped;
         }
 
         public void NextQuestion()
         {
-            if (Questions.Count > 0)
+            if (Questions.Any())
             {
-                CurrentQuestion = Questions[0];
-                Questions.Remove(Questions[0]);
+                CurrentQuestion = Questions.First();
+                Questions.Remove(Questions.First());
+            }
+            this.Status = EStatus.Stopped;
+        }
+
+        public void StartSpeaker()
+        {
+            if (CurrentSpeaker != null)
+            {
+                this.PausedQuestionTime = QuestionTime;
+                this.StartSpeakerTime = DateTime.Now;
+                this.Status = EStatus.Speaking;
             }
             else
             {
-                CurrentQuestion = null;
+                this.Status = EStatus.Stopped;
             }
-
-            Status = EStatus.STOPPED;
-            RemainingQuestionTime = QuestionTime;
-            StartQuestionTime = DateTime.Now;
-
-            RemainingSpeakerTime = SpeakerTime;
-            StartSpeakerTime = DateTime.Now;
         }
 
-        public void RemoveSpeaker(Speaker delegation)
+        public void StartQuestion()
         {
-            Speakers.Remove(delegation);
-        }
-
-        public bool RemoveSpeaker(string id)
-        {
-            var speaker = Speakers.FirstOrDefault(n => n.Id == id);
-            if (speaker != null)
+            if (this.CurrentQuestion != null)
             {
-                Speakers.Remove(speaker);
-                return true;
+                this.PausedSpeakerTime = SpeakerTime;
+                this.StartQuestionTime = DateTime.Now;
+                this.Status = EStatus.Question;
             }
-            return false;
+            else
+            {
+                this.Status = EStatus.Stopped;
+            }
+        }
+
+        public void StartAnswer()
+        {
+            if (CurrentSpeaker != null)
+            {
+                this.PausedQuestionTime = QuestionTime;
+                this.StartSpeakerTime = DateTime.Now;
+                this.Status = EStatus.Answer;
+            }
+        }
+
+        public void PauseSpeaker()
+        {
+            this.PausedSpeakerTime = RemainingSpeakerTime;
+            if (Status == EStatus.Speaking)
+                this.Status = EStatus.SpeakerPaused;
+            else if (Status == EStatus.Answer)
+                this.Status = EStatus.AnswerPaused;
+            else
+                this.Status = EStatus.Stopped;
+        }
+
+        public void PauseQuestion()
+        {
+            this.PausedQuestionTime = RemainingQuestionTime;
+            this.Status = EStatus.QuestionPaused;
+        }
+
+        public void ResumeSpeaker()
+        {
+            if (CurrentSpeaker != null)
+            {
+                if (Status == EStatus.SpeakerPaused)
+                    this.StartSpeakerTime = DateTime.Now.AddSeconds(RemainingSpeakerTime.TotalSeconds - SpeakerTime.TotalSeconds);
+                else if (Status == EStatus.AnswerPaused)
+                    this.StartSpeakerTime = DateTime.Now.AddSeconds(RemainingSpeakerTime.TotalSeconds - QuestionTime.TotalSeconds);
+                else
+                    this.StartQuestionTime = DateTime.Now;
+
+                this.Status = EStatus.Speaking;
+            }
+            else
+            {
+                this.Status = EStatus.Stopped;
+            }
+        }
+
+        public void ResumeQuestion()
+        {
+            if (CurrentQuestion != null)
+            {
+                this.StartQuestionTime = DateTime.Now.AddSeconds(RemainingQuestionTime.TotalSeconds - QuestionTime.TotalSeconds);
+                this.Status = EStatus.Question;
+            }
+            else
+            {
+                this.Status = EStatus.Stopped;
+            }
+        }
+
+        public Speaker AddSpeaker(string name, string iso = "")
+        {
+            var newSpeaker = new Speaker()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Iso = iso,
+                Name = name
+            };
+            Speakers.Add(newSpeaker);
+            Questions.Clear();
+            return newSpeaker;
+        }
+
+        public void AddSpeaker(Speaker speaker)
+        {
+            if (string.IsNullOrEmpty(speaker.Id) || Speakers.Any(n => n.Id == speaker.Id))
+                speaker.Id = Guid.NewGuid().ToString();
+            Speakers.Add(speaker);
+            Questions.Clear();
+        }
+
+        public Speaker AddQuestion(string name, string iso = "")
+        {
+            var newSpeaker = new Speaker()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Iso = iso,
+                Name = name
+            };
+            Questions.Add(newSpeaker);
+            return newSpeaker;
+        }
+
+        public void AddQuestion(Speaker question)
+        {
+            if (string.IsNullOrEmpty(question.Id) || Speakers.Any(n => n.Id == question.Id))
+                question.Id = Guid.NewGuid().ToString();
+            Questions.Add(question);
+        }
+
+        public void RemoveSpeaker(string id)
+        {
+            Speakers.RemoveAll(n => n.Id == id);
+        }
+
+        public void RemoveQuestion(string id)
+        {
+            Speakers.RemoveAll(n => n.Id == id);
+        }
+
+        public void ClearCurrentSpeaker()
+        {
+            if (this.Status == EStatus.Speaking || this.Status == EStatus.SpeakerPaused || this.Status == EStatus.Answer || this.Status == EStatus.AnswerPaused)
+                this.Status = EStatus.Stopped;
+            this.CurrentQuestion = null;
+        }
+
+        public void ClearCurrentQuestion()
+        {
+            if (this.Status == EStatus.Question || this.Status == EStatus.QuestionPaused)
+                this.Status = EStatus.Stopped;
+            this.CurrentQuestion = null;
+        }
+
+        public void AddSpeakerSeconds(int seconds)
+        {
+            this.StartSpeakerTime = this.StartSpeakerTime.AddSeconds(seconds);
+        }
+
+        public void AddQuestionSeconds(int seconds)
+        {
+            this.StartSpeakerTime = this.StartQuestionTime.AddSeconds(seconds);
+        }
+
+        public ListOfSpeakers()
+        {
+            this.Speakers = new List<Speaker>();
+            this.Questions = new List<Speaker>();
+            this.ListOfSpeakersId = Guid.NewGuid().ToString();
+            this.SpeakerTime = new TimeSpan(0, 3, 0);
+            this.QuestionTime = new TimeSpan(0, 0, 30);
+            this.PausedSpeakerTime = this.SpeakerTime;
+            this.PausedQuestionTime = this.QuestionTime;
         }
 
     }
