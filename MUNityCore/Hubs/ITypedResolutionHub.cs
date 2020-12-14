@@ -17,7 +17,7 @@ namespace MUNityCore.Hubs
     public interface ITypedResolutionHub
     {
         Task ResolutionChanged(ResolutionV2 resolution);
-        Task PreambleParagraphChanged(string resolutionId, PreambleParagraph para);
-        Task OperativeParagraphChanged(string resolutionId, OperativeParagraph para);
+        Task PreambleParagraphChanged(string resolutionId, PreambleParagraph para, string tan);
+        Task OperativeParagraphChanged(string resolutionId, OperativeParagraph para, string tan);
     }
 }

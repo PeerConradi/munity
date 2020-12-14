@@ -113,7 +113,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPatch]
         [AllowAnonymous]
-        public async Task<ActionResult> UpdatePreambleParagraph(string resolutionId, [FromBody] PreambleParagraph paragraph)
+        public async Task<ActionResult> UpdatePreambleParagraph(string resolutionId, string tan, [FromBody] PreambleParagraph paragraph)
         {
             if (!await CanUserEditResolution(resolutionId))
                 return Forbid();
@@ -124,7 +124,7 @@ namespace MUNityCore.Controllers
             
             if (result)
             {
-                await this._hubContext.Clients.Group(resolutionId).PreambleParagraphChanged(resolutionId, paragraph);
+                await this._hubContext.Clients.Group(resolutionId).PreambleParagraphChanged(resolutionId, paragraph, tan);
                 return Ok();
             }
             return Problem();
@@ -133,7 +133,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPatch]
         [AllowAnonymous]
-        public async Task<ActionResult> UpdateOperativeParagraph(string resolutionId, [FromBody]OperativeParagraph paragraph)
+        public async Task<ActionResult> UpdateOperativeParagraph(string resolutionId, string tan, [FromBody]OperativeParagraph paragraph)
         {
             if (!await CanUserEditResolution(resolutionId))
                 return Forbid();
@@ -144,7 +144,7 @@ namespace MUNityCore.Controllers
 
             if (result)
             {
-                await this._hubContext.Clients.Group(resolutionId).OperativeParagraphChanged(resolutionId, paragraph);
+                await this._hubContext.Clients.Group(resolutionId).OperativeParagraphChanged(resolutionId, paragraph, tan);
                 return Ok();
             }
             return Problem();
