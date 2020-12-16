@@ -81,6 +81,9 @@ namespace MUNityCore.DataHandlers.EntityFramework
             modelBuilder.Entity<Committee>().HasOne(n => n.Conference)
                 .WithMany(a => a.Committees).OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Committee>().HasMany(n => n.Resolutions)
+                .WithOne(a => a.Committee).IsRequired(false);
+
             modelBuilder.Entity<OrganizationRole>().HasOne(n => n.Organization)
                 .WithMany(a => a.Roles);
 
@@ -102,6 +105,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
             modelBuilder.Entity<MunityUser>().HasOne(n => n.Auth).WithMany(n => n.Users);
 
             modelBuilder.Entity<MunityUser>().HasOne(n => n.PrivacySettings).WithOne(n => n.User).HasForeignKey<UserPrivacySettings>(n => n.UserRef);
+
+            modelBuilder.Entity<MunityUser>().HasMany(n => n.CreatedResolutions).WithOne(a => a.CreationUser).IsRequired(false);
 
             modelBuilder.Entity<AbstractRole>().HasDiscriminator(n => n.RoleType)
                 .HasValue<DelegateRole>("DelegateRole")

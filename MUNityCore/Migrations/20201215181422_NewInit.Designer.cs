@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MUNityCore.Migrations
 {
     [DbContext(typeof(MunityContext))]
-    [Migration("20201122133806_Init")]
-    partial class Init
+    [Migration("20201215181422_NewInit")]
+    partial class NewInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -471,10 +471,6 @@ namespace MUNityCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Abbreviation")
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4");
-
                     b.Property<string>("FullName")
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
@@ -486,6 +482,10 @@ namespace MUNityCore.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("varchar(150) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("TeamRoleGroupShort")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime?>("TeamRoleGroupTimestamp")
                         .IsConcurrencyToken()
@@ -499,14 +499,8 @@ namespace MUNityCore.Migrations
 
             modelBuilder.Entity("MUNityCore.Models.ListOfSpeakers.ListOfSpeakers", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("ListOfSpeakersId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("CommitteeId")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("ConferenceId")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("CurrentQuestionId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
@@ -523,35 +517,23 @@ namespace MUNityCore.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("PublicId")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("PausedQuestionTime")
+                        .HasColumnType("time(6)");
 
-                    b.Property<bool>("QuestionLowTime")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<TimeSpan>("PausedSpeakerTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("PublicId")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<TimeSpan>("QuestionTime")
                         .HasColumnType("time(6)");
 
-                    b.Property<bool>("QuestionTimeout")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<bool>("QuestionsClosed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<TimeSpan>("RemainingQuestionTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan>("RemainingSpeakerTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<bool>("SpeakerLowTime")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<TimeSpan>("SpeakerTime")
                         .HasColumnType("time(6)");
-
-                    b.Property<bool>("SpeakerTimeout")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("StartQuestionTime")
                         .HasColumnType("datetime(6)");
@@ -562,7 +544,7 @@ namespace MUNityCore.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ListOfSpeakersId");
 
                     b.HasIndex("CurrentQuestionId");
 
@@ -597,18 +579,39 @@ namespace MUNityCore.Migrations
                     b.ToTable("Speakers");
                 });
 
+            modelBuilder.Entity("MUNityCore.Models.MunitySetting", b =>
+                {
+                    b.Property<string>("SetttingName")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("ChangeDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("SetByMunityUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SettingValue")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("SetttingName");
+
+                    b.HasIndex("SetByMunityUserId");
+
+                    b.ToTable("Settings");
+                });
+
             modelBuilder.Entity("MUNityCore.Models.Organization.Organization", b =>
                 {
                     b.Property<string>("OrganizationId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("OrganizationAbbreviation")
-                        .HasMaxLength(18)
-                        .HasColumnType("varchar(18) CHARACTER SET utf8mb4");
-
                     b.Property<string>("OrganizationName")
                         .HasMaxLength(150)
                         .HasColumnType("varchar(150) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("OrganizationShort")
+                        .HasMaxLength(18)
+                        .HasColumnType("varchar(18) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime?>("OrganizationTimestamp")
                         .IsConcurrencyToken()
@@ -694,16 +697,16 @@ namespace MUNityCore.Migrations
                     b.Property<bool>("AllowPublicRead")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("CommitteeId")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<int>("AmendmentMode")
+                        .HasColumnType("int");
 
-                    b.Property<string>("ConferenceId")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<string>("CommitteeId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("CreationUserId")
+                    b.Property<int?>("CreationUserMunityUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastChangeTime")
@@ -713,6 +716,10 @@ namespace MUNityCore.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("ResolutionId");
+
+                    b.HasIndex("CommitteeId");
+
+                    b.HasIndex("CreationUserMunityUserId");
 
                     b.ToTable("ResolutionAuths");
                 });
@@ -1335,6 +1342,15 @@ namespace MUNityCore.Migrations
                         .HasForeignKey("ListOfSpeakersId1");
                 });
 
+            modelBuilder.Entity("MUNityCore.Models.MunitySetting", b =>
+                {
+                    b.HasOne("MUNityCore.Models.User.MunityUser", "SetBy")
+                        .WithMany()
+                        .HasForeignKey("SetByMunityUserId");
+
+                    b.Navigation("SetBy");
+                });
+
             modelBuilder.Entity("MUNityCore.Models.Organization.OrganizationMember", b =>
                 {
                     b.HasOne("MUNityCore.Models.Organization.Organization", "Organization")
@@ -1363,6 +1379,21 @@ namespace MUNityCore.Migrations
                         .HasForeignKey("OrganizationId");
 
                     b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.V2.ResolutionAuth", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Conference.Committee", "Committee")
+                        .WithMany("Resolutions")
+                        .HasForeignKey("CommitteeId");
+
+                    b.HasOne("MUNityCore.Models.User.MunityUser", "CreationUser")
+                        .WithMany("CreatedResolutions")
+                        .HasForeignKey("CreationUserMunityUserId");
+
+                    b.Navigation("Committee");
+
+                    b.Navigation("CreationUser");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Resolution.V2.ResolutionUser", b =>
@@ -1502,6 +1533,8 @@ namespace MUNityCore.Migrations
 
             modelBuilder.Entity("MUNityCore.Models.Conference.Committee", b =>
                 {
+                    b.Navigation("Resolutions");
+
                     b.Navigation("Sessions");
 
                     b.Navigation("Topics");
@@ -1573,6 +1606,8 @@ namespace MUNityCore.Migrations
 
             modelBuilder.Entity("MUNityCore.Models.User.MunityUser", b =>
                 {
+                    b.Navigation("CreatedResolutions");
+
                     b.Navigation("Friends");
 
                     b.Navigation("PrivacySettings");

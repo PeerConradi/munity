@@ -13,6 +13,7 @@ using MUNityCore.Schema.Request;
 using MUNityCore.Schema.Request.Resolution;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Services;
+using MUNityCore.Extensions.ResolutionExtensions;
 
 namespace MUNityCore.Controllers
 {
@@ -29,6 +30,13 @@ namespace MUNityCore.Controllers
         private readonly IResolutionService _resolutionService;
 
         private readonly IAuthService _authService;
+
+        private enum EPostAmendmentMode
+        {
+            NotAllowed,
+            AllowedPost,
+            AllowedRequest
+        }
 
         public ResolutionController(IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> hubContext, 
             IResolutionService resolutionService,
@@ -150,8 +158,43 @@ namespace MUNityCore.Controllers
             return Problem();
         }
 
-        
+        [Route("[action]")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<bool>> CanUserPostAmendments(string resolutionId)
+        {
+            var result = await CanUserSubmitAmendments(resolutionId);
+            if (result == EPostAmendmentMode.NotAllowed)
+                return Ok(false);
 
+            return Ok(true);
+        }
+
+        [Route("[action]")]
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> PostDeleteAmendment(string resolutionId, [FromBody]DeleteAmendment amendment)
+        {
+            var mode = await CanUserSubmitAmendments(resolutionId);
+            if (mode == EPostAmendmentMode.NotAllowed) return Forbid();
+
+            if (mode == EPostAmendmentMode.AllowedPost)
+            {
+                var resolution = await this._resolutionService.GetResolution(resolutionId);
+                if (resolution == null) return NotFound("Resolution not found.");
+                
+                if (!CanAmendmentBeAdded(amendment, resolution.OperativeSection))
+                    return BadRequest();
+
+                resolution.OperativeSection.DeleteAmendments.Add(amendment);
+
+                var updated = await this._resolutionService.SaveResolution(resolution);
+                await _hubContext.Clients.Groups(updated.ResolutionId).ResolutionChanged(updated);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
 
 
         ///// <summary>
@@ -201,14 +244,58 @@ namespace MUNityCore.Controllers
 
         private async Task<bool> CanUserReadResolution(string id)
         {
+            // Reading must be allowed to the user, when he should be allowed to post amendments.
+            if (await CanUserSubmitAmendments(id) != EPostAmendmentMode.NotAllowed) return true;
             var resolutionAuth = await this._resolutionService.GetResolutionAuth(id);
             if (resolutionAuth == null) return false;
             if (resolutionAuth.AllowPublicRead) return true;
+            
             // The resolution is not public and no User was found. So the user is not allowed to edit this document!
             if (User == null) return false;
             var user = this._authService.GetUserOfClaimPrincipal(User);
             if (user == null) return false;
             return resolutionAuth.Users.Any(n => n.User.MunityUserId == user.MunityUserId && n.CanRead);
         }
+
+        private async Task<EPostAmendmentMode> CanUserSubmitAmendments(string resolutionId)
+        {
+            var resolutionAuth = await this._resolutionService.GetResolutionAuth(resolutionId);
+            if (resolutionAuth == null) return EPostAmendmentMode.NotAllowed;
+            if (resolutionAuth.AmendmentMode == ResolutionAuth.EAmendmentModes.NotAllowed) return EPostAmendmentMode.NotAllowed;
+            if (resolutionAuth.AmendmentMode == ResolutionAuth.EAmendmentModes.AllowPublicPost) return EPostAmendmentMode.AllowedPost;
+
+            throw new NotImplementedException("This case is not implemented yet!");
+        }
+
+        private bool CanAmendmentBeAdded(IAmendment amendment, OperativeSection operativeSection)
+        {
+            if (operativeSection == null) return false;
+            if (amendment == null) return false;
+            if (string.IsNullOrWhiteSpace(amendment.Id))
+                amendment.Id = Guid.NewGuid().ToString();
+
+            if (amendment is DeleteAmendment deleteAmendment)
+            {
+                if (operativeSection.DeleteAmendments.Any(n => n.Id == amendment.Id)) return false;
+                var targetParagraph = operativeSection.FirstOrDefault(n => n.OperativeParagraphId == deleteAmendment.TargetSectionId);
+                if (targetParagraph == null) return false;
+                if (operativeSection.Paragraphs.All(n => n.OperativeParagraphId != amendment.TargetSectionId)) return false;
+            }
+            if (amendment is ChangeAmendment changeAmendment)
+            {
+                if (operativeSection.DeleteAmendments.Any(n => n.Id == amendment.Id)) return false;
+                var targetParagraph = operativeSection.FirstOrDefault(n => n.OperativeParagraphId == changeAmendment.TargetSectionId);
+                if (targetParagraph == null) return false;
+                if (string.IsNullOrWhiteSpace(changeAmendment.NewText)) return false;
+            }
+            if (amendment is AddAmendment addAmendment)
+            {
+                if (operativeSection.AddAmendments.Any(n => n.Id == amendment.Id)) return false;
+                var targetParagraph = operativeSection.FirstOrDefault(n => n.OperativeParagraphId == addAmendment.TargetSectionId);
+                if (targetParagraph == null) return false;
+            }
+
+            return true;
+        } 
     }
 }

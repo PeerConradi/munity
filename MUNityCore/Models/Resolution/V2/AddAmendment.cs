@@ -31,7 +31,5 @@ namespace MUNityCore.Models.Resolution.V2
         }
 
         public string ParentSectionId { get; set; }
-        public int Position { get; set; }
-        public string Text { get; set; }
     }
 }

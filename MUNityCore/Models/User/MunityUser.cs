@@ -85,6 +85,8 @@ namespace MUNityCore.Models.User
 
         public UserPrivacySettings PrivacySettings { get; set; }
 
+        public List<Resolution.V2.ResolutionAuth> CreatedResolutions { get; set; }
+
         [Timestamp]
         public byte[] UserTimestamp { get; set; }
     }

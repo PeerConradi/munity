@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MUNityCore.Migrations
 {
-    public partial class Init : Migration
+    public partial class NewInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -47,34 +47,13 @@ namespace MUNityCore.Migrations
                 {
                     OrganizationId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
                     OrganizationName = table.Column<string>(type: "varchar(150) CHARACTER SET utf8mb4", maxLength: 150, nullable: true),
-                    OrganizationAbbreviation = table.Column<string>(type: "varchar(18) CHARACTER SET utf8mb4", maxLength: 18, nullable: true),
+                    OrganizationShort = table.Column<string>(type: "varchar(18) CHARACTER SET utf8mb4", maxLength: 18, nullable: true),
                     OrganizationTimestamp = table.Column<DateTime>(type: "timestamp(6)", rowVersion: true, nullable: true)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Organizations", x => x.OrganizationId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ResolutionAuths",
-                columns: table => new
-                {
-                    ResolutionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
-                    CreationUserId = table.Column<int>(type: "int", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastChangeTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    AllowPublicRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AllowPublicEdit = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AllowConferenceRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AllowCommitteeRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    PublicShortKey = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    ConferenceId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    CommitteeId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ResolutionAuths", x => x.ResolutionId);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,7 +64,7 @@ namespace MUNityCore.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "varchar(150) CHARACTER SET utf8mb4", maxLength: 150, nullable: false),
                     FullName = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
-                    Abbreviation = table.Column<string>(type: "varchar(10) CHARACTER SET utf8mb4", maxLength: 10, nullable: true),
+                    TeamRoleGroupShort = table.Column<string>(type: "varchar(10) CHARACTER SET utf8mb4", maxLength: 10, nullable: true),
                     GroupLevel = table.Column<int>(type: "int", nullable: false),
                     TeamRoleGroupTimestamp = table.Column<DateTime>(type: "timestamp(6)", rowVersion: true, nullable: true)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
@@ -296,29 +275,20 @@ namespace MUNityCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ResolutionUsers",
+                name: "Settings",
                 columns: table => new
                 {
-                    ResolutionUserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserMunityUserId = table.Column<int>(type: "int", nullable: true),
-                    CanRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CanWrite = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CanAddUsers = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AuthResolutionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                    SetttingName = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    SettingValue = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    SetByMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    ChangeDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ResolutionUsers", x => x.ResolutionUserId);
+                    table.PrimaryKey("PK_Settings", x => x.SetttingName);
                     table.ForeignKey(
-                        name: "FK_ResolutionUsers_ResolutionAuths_AuthResolutionId",
-                        column: x => x.AuthResolutionId,
-                        principalTable: "ResolutionAuths",
-                        principalColumn: "ResolutionId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ResolutionUsers_Users_UserMunityUserId",
-                        column: x => x.UserMunityUserId,
+                        name: "FK_Settings_Users_SetByMunityUserId",
+                        column: x => x.SetByMunityUserId,
                         principalTable: "Users",
                         principalColumn: "MunityUserId",
                         onDelete: ReferentialAction.Restrict);
@@ -474,6 +444,39 @@ namespace MUNityCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ResolutionAuths",
+                columns: table => new
+                {
+                    ResolutionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    CreationUserMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastChangeTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    AllowPublicRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AllowPublicEdit = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AllowConferenceRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AllowCommitteeRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AmendmentMode = table.Column<int>(type: "int", nullable: false),
+                    PublicShortKey = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    CommitteeId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResolutionAuths", x => x.ResolutionId);
+                    table.ForeignKey(
+                        name: "FK_ResolutionAuths_Committees_CommitteeId",
+                        column: x => x.CommitteeId,
+                        principalTable: "Committees",
+                        principalColumn: "CommitteeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ResolutionAuths_Users_CreationUserMunityUserId",
+                        column: x => x.CreationUserMunityUserId,
+                        principalTable: "Users",
+                        principalColumn: "MunityUserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AbstractRole",
                 columns: table => new
                 {
@@ -550,6 +553,35 @@ namespace MUNityCore.Migrations
                         column: x => x.TeamRoleGroupId,
                         principalTable: "TeamRoleGroups",
                         principalColumn: "TeamRoleGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ResolutionUsers",
+                columns: table => new
+                {
+                    ResolutionUserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    CanRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CanWrite = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CanAddUsers = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AuthResolutionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResolutionUsers", x => x.ResolutionUserId);
+                    table.ForeignKey(
+                        name: "FK_ResolutionUsers_ResolutionAuths_AuthResolutionId",
+                        column: x => x.AuthResolutionId,
+                        principalTable: "ResolutionAuths",
+                        principalColumn: "ResolutionId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ResolutionUsers_Users_UserMunityUserId",
+                        column: x => x.UserMunityUserId,
+                        principalTable: "Users",
+                        principalColumn: "MunityUserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -759,31 +791,25 @@ namespace MUNityCore.Migrations
                 name: "ListOfSpeakers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
-                    PublicId = table.Column<int>(type: "int", nullable: false),
+                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    PublicId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     SpeakerTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     QuestionTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
-                    RemainingSpeakerTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
-                    RemainingQuestionTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    PausedSpeakerTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    PausedQuestionTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     CurrentSpeakerId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     CurrentQuestionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
                     ListClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     QuestionsClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     LowTimeMark = table.Column<TimeSpan>(type: "time(6)", nullable: false),
-                    SpeakerLowTime = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    QuestionLowTime = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    SpeakerTimeout = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    QuestionTimeout = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    ConferenceId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    CommitteeId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     StartSpeakerTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     StartQuestionTime = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ListOfSpeakers", x => x.Id);
+                    table.PrimaryKey("PK_ListOfSpeakers", x => x.ListOfSpeakersId);
                     table.ForeignKey(
                         name: "FK_ListOfSpeakers_Speakers_CurrentQuestionId",
                         column: x => x.CurrentQuestionId,
@@ -929,6 +955,16 @@ namespace MUNityCore.Migrations
                 column: "ProjectOrganizationOrganizationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ResolutionAuths_CommitteeId",
+                table: "ResolutionAuths",
+                column: "CommitteeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResolutionAuths_CreationUserMunityUserId",
+                table: "ResolutionAuths",
+                column: "CreationUserMunityUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ResolutionUsers_AuthResolutionId",
                 table: "ResolutionUsers",
                 column: "AuthResolutionId");
@@ -957,6 +993,11 @@ namespace MUNityCore.Migrations
                 name: "IX_RoleAuths_ConferenceId",
                 table: "RoleAuths",
                 column: "ConferenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Settings_SetByMunityUserId",
+                table: "Settings",
+                column: "SetByMunityUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SimSimRequestModel_SimulationId",
@@ -1035,7 +1076,7 @@ namespace MUNityCore.Migrations
                 table: "Simulations",
                 column: "ListOfSpeakersId",
                 principalTable: "ListOfSpeakers",
-                principalColumn: "Id",
+                principalColumn: "ListOfSpeakersId",
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
@@ -1043,7 +1084,7 @@ namespace MUNityCore.Migrations
                 table: "Speakers",
                 column: "ListOfSpeakersId",
                 principalTable: "ListOfSpeakers",
-                principalColumn: "Id",
+                principalColumn: "ListOfSpeakersId",
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
@@ -1051,7 +1092,7 @@ namespace MUNityCore.Migrations
                 table: "Speakers",
                 column: "ListOfSpeakersId1",
                 principalTable: "ListOfSpeakers",
-                principalColumn: "Id",
+                principalColumn: "ListOfSpeakersId",
                 onDelete: ReferentialAction.Restrict);
         }
 
@@ -1101,6 +1142,9 @@ namespace MUNityCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleApplications");
+
+            migrationBuilder.DropTable(
+                name: "Settings");
 
             migrationBuilder.DropTable(
                 name: "SimSimRequestModel");
