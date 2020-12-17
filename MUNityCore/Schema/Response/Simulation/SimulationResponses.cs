@@ -7,6 +7,7 @@ namespace MUNityCore.Schema.Response.Simulation
 {
     public class SimulationResponses
     {
+        [Obsolete("New Simulation implementation to be done!")]
         public struct SimulationList
         {
             public int SimulationId { get; set; }
@@ -14,13 +15,6 @@ namespace MUNityCore.Schema.Response.Simulation
             public string Name { get; set; }
 
             public bool UsingPassword { get; set; }
-        }
-
-        public struct SimulationCreatedResponse
-        {
-            public int SimulationId { get; set; }
-
-            public string OwnerKey { get; set; }
         }
     }
 }

@@ -12,6 +12,7 @@ using MUNityCore.Models.Simulation;
 using MUNityCore.Schema.Request.Simulation;
 using MUNityCore.Schema.Response.Simulation;
 using MUNityCore.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MUNityCore.Controllers
 {
@@ -42,13 +43,32 @@ namespace MUNityCore.Controllers
             return Ok(this._simulationService.GetSimulationFront());
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public async Task<ActionResult<SimSimResponse>> GetSimulation([FromHeader]string simsimtoken, int id)
+        {
+            var simulation = await this._simulationService.GetSimulation(id);
+            if (simulation == null) return NotFound();
+            if (!simulation.Users.Any(n => n.Token == simsimtoken)) return Forbid();
+            return (SimSimResponse)simulation;
+        }
+
         [HttpPost]
         [Route("[action]")]
-        public ActionResult<Simulation> CreateSimulation([FromBody]SimulationRequests.CreateSimulation request)
+        [AllowAnonymous]
+        public ActionResult<SimSimTokenResponse> CreateSimulation([FromBody]SimulationRequests.CreateSimulation request)
         {
-            var result = this._simulationService.CreateSimulation(request.Name, request.Password);
-            
-            return Ok(result);
+            var result = this._simulationService.CreateSimulation(request.Name, request.Password, request.UserDisplayName);
+            var adminToken = result.Roles.First().RoleKey;
+            var response = new SimSimTokenResponse()
+            {
+                Name = result.Name,
+                Token = adminToken,
+                SimulationId = result.SimulationId
+            };
+
+            return Ok(response);
         }
     }
 }

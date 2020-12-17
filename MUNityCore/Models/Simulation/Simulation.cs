@@ -31,6 +31,13 @@ namespace MUNityCore.Models.Simulation
             Closed
         }
 
+        public enum Phase
+        {
+            Offline,
+            SettingUp,
+            Online
+        }
+
         public int SimulationId { get; set; }
 
         public string Name { get; set; }
@@ -45,19 +52,6 @@ namespace MUNityCore.Models.Simulation
 
         public List<SimSimRequestModel> Requests { get; set; }
 
-        //internal void RemoveUser(ISimSimUserFacade user)
-        //{
-        //    _leaderIds.Remove(user.UserToken);
-        //    Users.Remove(user);
-        //    var signalRkey = SignalRConnections.FirstOrDefault(n => n.Value == user).Key ?? null;
-        //    if (signalRkey != null)
-        //        SignalRConnections.Remove(signalRkey);
-
-        //    var tokenKey = _userTokens.FirstOrDefault(n => n.Value == user).Key;
-        //    if (tokenKey != null)
-        //        _userTokens.Remove(tokenKey);
-        //}
-
 
         [JsonIgnore]
         public string Password { get; set; }
@@ -71,16 +65,7 @@ namespace MUNityCore.Models.Simulation
 
         public Simulation()
         {
-            SimulationRole ownerRole = new SimulationRole()
-            {
-                Name = "Owner",
-                Iso = "UN",
-                RoleKey = Util.Tools.IdGenerator.RandomString(32),
-                RoleType = SimulationRole.RoleTypes.Moderator,
-                RoleMaxSlots = 1,
-            };
-
-            this.Roles.Add(ownerRole);
+            
 
             // Legacy Code:
             Requests = new List<SimSimRequestModel>();

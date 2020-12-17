@@ -20,7 +20,7 @@ namespace MUNityCore.Services
 
         private readonly MunityContext _context;
 
-        public Simulation CreateSimulation(string name, string password)
+        public Simulation CreateSimulation(string name, string password, string adminName)
         {
             var sim = new Simulation()
             {
@@ -29,9 +29,35 @@ namespace MUNityCore.Services
                 SimulationId = new Random().Next(100000, 999999)
             };
 
+            CreateAndAssignOwner(sim, adminName);
+
             this._context.Simulations.Add(sim);
             this._context.SaveChanges();
             return sim;
+        }
+
+        private void CreateAndAssignOwner(Simulation simulation, string displayName)
+        {
+            SimulationRole ownerRole = new SimulationRole()
+            {
+                Name = "Owner",
+                Iso = "UN",
+                RoleKey = Util.Tools.IdGenerator.RandomString(32),
+                RoleType = SimulationRole.RoleTypes.Moderator,
+                RoleMaxSlots = 1,
+            };
+
+            simulation.Roles.Add(ownerRole);
+            var ownerUser = new SimulationUser()
+            {
+                CanCreateRole = true,
+                CanEditListOfSpeakers = true,
+                CanEditResolution = true,
+                CanSelectRole = true,
+                DisplayName = displayName,
+                Role = ownerRole,
+                Simulation = simulation,
+            };
         }
 
 

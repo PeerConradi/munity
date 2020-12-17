@@ -46,7 +46,7 @@ namespace MUNityTest.SimulationTest
         {
             var service = new SimulationService(_context);
 
-            var simulation = service.CreateSimulation("Test Committee", "Password");
+            var simulation = service.CreateSimulation("Test Committee", "Password", "Admin");
             this.simulationId = simulation.SimulationId;
             Console.WriteLine($"Created Simulation with id: {simulationId}");
             Assert.NotNull(simulation);

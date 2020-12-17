@@ -43,17 +43,14 @@ namespace MUNityCore.Models.Simulation
         /// The RoleKey is used to give to the person so they can
         /// register into this specific role.
         /// </summary>
-        [JsonIgnore]
         [MaxLength(32)]
         public string RoleKey { get; set; }
 
         /// <summary>
         /// How many users can max. go into this role.
         /// </summary>
-        [JsonIgnore]
         public int RoleMaxSlots { get; set; }
 
-        [JsonIgnore]
         public Simulation Simulation { get; set; }
     }
 }

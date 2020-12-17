@@ -14,6 +14,8 @@ namespace MUNityCore.Schema.Request.Simulation
             public string Name { get; set; }
 
             public string Password { get; set; }
+
+            public string UserDisplayName { get; set; }
         }
     }
 }

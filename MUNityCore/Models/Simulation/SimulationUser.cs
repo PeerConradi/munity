@@ -12,9 +12,11 @@ namespace MUNityCore.Models.Simulation
     {
         public int SimulationUserId { get; set; }
 
+        public string Token { get; set; }
+
         public string DisplayName { get; set; }
 
-        [JsonIgnore] public SimulationRole Role { get; set; }
+        public SimulationRole Role { get; set; }
 
         public bool CanCreateRole { get; set; }
 
@@ -24,6 +26,11 @@ namespace MUNityCore.Models.Simulation
 
         public bool CanEditListOfSpeakers { get; set; } = false;
 
-        [JsonIgnore] public Simulation Simulation { get; set; }
+        public Simulation Simulation { get; set; }
+
+        public SimulationUser()
+        {
+            this.Token = Util.Tools.IdGenerator.RandomString(20);
+        }
     }
 }
