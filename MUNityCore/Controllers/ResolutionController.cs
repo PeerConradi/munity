@@ -211,21 +211,14 @@ namespace MUNityCore.Controllers
         public async Task<IActionResult> SubscribeToResolution(string resolutionid,string connectionid)
         {
             var resolution = _resolutionService.GetResolution(resolutionid);
+            if (resolution == null) return NotFound();
 
             var infoModel = await _resolutionService.GetResolutionAuth(resolutionid);
 
-            if (resolution != null)
-            {
-                if (infoModel.AllowPublicRead)
-                {
-                    await _hubContext.Groups.AddToGroupAsync(connectionid, resolutionid);
-                    return StatusCode(StatusCodes.Status200OK);
-                }
-                else
-                {
-                    // TODO: Check when the Resoltion is private, if the user can subscribe (read)
-                }
-            }
+            var canRead = await CanUserReadResolution(resolutionid);
+            if (!canRead) return Forbid();
+
+            await _hubContext.Groups.AddToGroupAsync(connectionid, resolutionid);
 
             return StatusCode(StatusCodes.Status200OK);
         }

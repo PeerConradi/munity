@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MUNityCore.Migrations
 {
-    public partial class NewInit : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -662,14 +662,24 @@ namespace MUNityCore.Migrations
                     SimulationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Phase = table.Column<int>(type: "int", nullable: false),
                     LobbyMode = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     Password = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    AdminPassword = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     CanJoin = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    CurrentResolutionResolutionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Simulations", x => x.SimulationId);
+                    table.ForeignKey(
+                        name: "FK_Simulations_ResolutionAuths_CurrentResolutionResolutionId",
+                        column: x => x.CurrentResolutionResolutionId,
+                        principalTable: "ResolutionAuths",
+                        principalColumn: "ResolutionId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -726,8 +736,6 @@ namespace MUNityCore.Migrations
                     Name = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
                     RoleType = table.Column<int>(type: "int", nullable: false),
                     Iso = table.Column<string>(type: "varchar(2) CHARACTER SET utf8mb4", maxLength: 2, nullable: true),
-                    RoleKey = table.Column<string>(type: "varchar(32) CHARACTER SET utf8mb4", maxLength: 32, nullable: true),
-                    RoleMaxSlots = table.Column<int>(type: "int", nullable: false),
                     SimulationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -747,7 +755,9 @@ namespace MUNityCore.Migrations
                 {
                     SimulationUserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Token = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     DisplayName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Pin = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     RoleSimulationRoleId = table.Column<int>(type: "int", nullable: true),
                     CanCreateRole = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CanSelectRole = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -803,7 +813,6 @@ namespace MUNityCore.Migrations
                     CurrentQuestionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     ListClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     QuestionsClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    LowTimeMark = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     StartSpeakerTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     StartQuestionTime = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -1010,6 +1019,11 @@ namespace MUNityCore.Migrations
                 column: "SimulationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Simulations_CurrentResolutionResolutionId",
+                table: "Simulations",
+                column: "CurrentResolutionResolutionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Simulations_ListOfSpeakersId",
                 table: "Simulations",
                 column: "ListOfSpeakersId");
@@ -1159,9 +1173,6 @@ namespace MUNityCore.Migrations
                 name: "OrganizationRoles");
 
             migrationBuilder.DropTable(
-                name: "ResolutionAuths");
-
-            migrationBuilder.DropTable(
                 name: "GroupedRoleApplications");
 
             migrationBuilder.DropTable(
@@ -1169,6 +1180,9 @@ namespace MUNityCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "Simulations");
+
+            migrationBuilder.DropTable(
+                name: "ResolutionAuths");
 
             migrationBuilder.DropTable(
                 name: "Committees");

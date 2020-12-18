@@ -509,9 +509,6 @@ namespace MUNityCore.Migrations
                     b.Property<bool>("ListClosed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<TimeSpan>("LowTimeMark")
-                        .HasColumnType("time(6)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -835,8 +832,14 @@ namespace MUNityCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("AdminPassword")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<bool>("CanJoin")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("CurrentResolutionResolutionId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<string>("ListOfSpeakersId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
@@ -850,7 +853,15 @@ namespace MUNityCore.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<int>("Phase")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.HasKey("SimulationId");
+
+                    b.HasIndex("CurrentResolutionResolutionId");
 
                     b.HasIndex("ListOfSpeakersId");
 
@@ -870,13 +881,6 @@ namespace MUNityCore.Migrations
                     b.Property<string>("Name")
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("RoleKey")
-                        .HasMaxLength(32)
-                        .HasColumnType("varchar(32) CHARACTER SET utf8mb4");
-
-                    b.Property<int>("RoleMaxSlots")
-                        .HasColumnType("int");
 
                     b.Property<int>("RoleType")
                         .HasColumnType("int");
@@ -912,11 +916,17 @@ namespace MUNityCore.Migrations
                     b.Property<string>("DisplayName")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<string>("Pin")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<int?>("RoleSimulationRoleId")
                         .HasColumnType("int");
 
                     b.Property<int?>("SimulationId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("SimulationUserId");
 
@@ -1434,9 +1444,15 @@ namespace MUNityCore.Migrations
 
             modelBuilder.Entity("MUNityCore.Models.Simulation.Simulation", b =>
                 {
+                    b.HasOne("MUNityCore.Models.Resolution.V2.ResolutionAuth", "CurrentResolution")
+                        .WithMany()
+                        .HasForeignKey("CurrentResolutionResolutionId");
+
                     b.HasOne("MUNityCore.Models.ListOfSpeakers.ListOfSpeakers", "ListOfSpeakers")
                         .WithMany()
                         .HasForeignKey("ListOfSpeakersId");
+
+                    b.Navigation("CurrentResolution");
 
                     b.Navigation("ListOfSpeakers");
                 });

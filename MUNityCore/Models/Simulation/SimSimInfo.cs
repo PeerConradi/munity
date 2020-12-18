@@ -29,7 +29,7 @@ namespace MUNityCore.Models.Simulation
         {
             this.SimSimId = model.SimulationId;
             this.Name = model.Name;
-            this.UsesPassword = model.UsingPassword;
+            this.UsesPassword = !string.IsNullOrEmpty(model.Password);
             this.UserCount = model.Users.Count;
         }
     }

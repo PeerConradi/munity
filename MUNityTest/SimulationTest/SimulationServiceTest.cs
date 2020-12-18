@@ -46,7 +46,7 @@ namespace MUNityTest.SimulationTest
         {
             var service = new SimulationService(_context);
 
-            var simulation = service.CreateSimulation("Test Committee", "Password", "Admin");
+            var simulation = service.CreateSimulation("Test Committee", "Password", "Admin", "AdminPass");
             this.simulationId = simulation.SimulationId;
             Console.WriteLine($"Created Simulation with id: {simulationId}");
             Assert.NotNull(simulation);
@@ -117,7 +117,7 @@ namespace MUNityTest.SimulationTest
         public void TestCreateChairmanRole()
         {
             var service = new SimulationService(_context);
-            var chairmanRole = service.AddChairmanRole(this.simulationId, 3, "Chairman");
+            var chairmanRole = service.AddChairmanRole(this.simulationId, "Vorsitzende(r)");
             Assert.NotNull(chairmanRole);
         }
 

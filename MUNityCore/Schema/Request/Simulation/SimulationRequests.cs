@@ -15,6 +15,10 @@ namespace MUNityCore.Schema.Request.Simulation
 
             public string Password { get; set; }
 
+            [Required]
+            public string AdminPassword { get; set; }
+
+            [Required]
             public string UserDisplayName { get; set; }
         }
     }

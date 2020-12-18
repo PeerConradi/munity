@@ -20,45 +20,18 @@ namespace MUNityCore.Hubs
             Console.WriteLine("This works just fine!");
         }
 
-        //public override Task OnDisconnectedAsync(Exception exception)
-        //{
-        //    // This is working great in theory
-        //    // But has a bug: When the user reloads the page the connection will be lost for a short time
-        //    // There needs to be a timeout function to handle this!
-        //    //var game = this._service.GetGameWithConnectionInside(this.Context.ConnectionId);
-        //    //if (game != null)
-        //    //{
-        //    //    var user = game.SignalRConnections[this.Context.ConnectionId];
-        //    //    game.RemoveUser(user);
-        //    //    this.Clients.Group(game.SimulationId.ToString()).UserLeft(user);
-        //    //}
-        //    return base.OnDisconnectedAsync(exception);
-        //}
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
 
-        //public void Join(string gameid, string token)
-        //{
-        //    //Console.WriteLine("Test");
-        //    //var game = _service.GetSimulation(gameid.ToIntOrDefault());
-        //    //if (game != null)
-        //    //{
-        //    //    if (game.HiddenTokenValid(token))
-        //    //    {
-        //    //        var user = game.GetUserByHiddenToken(token);
-        //    //        if (user != null && !game.SignalRConnections.ContainsKey(this.Context.ConnectionId))
-        //    //        {
-        //    //            game.SignalRConnections.Add(this.Context.ConnectionId, user);
-        //    //        }
-        //    //        try
-        //    //        {
-        //    //            this.Groups.AddToGroupAsync(this.Context.ConnectionId, gameid);
-        //    //        }
-        //    //        catch (Exception)
-        //    //        {
-        //    //            throw;
-        //    //        }
-                    
-        //    //    }
-        //    //}
-        //}
+            var simulation = this._service.GetSimulationAndUserByConnectionId(this.Context.ConnectionId);
+            var disconnectedUser = simulation.Users.FirstOrDefault(n => n.HubConnections.Any(a => a.ConnectionId == this.Context.ConnectionId));
+            disconnectedUser.HubConnections.RemoveAll(n => n.ConnectionId == this.Context.ConnectionId);
+            if (!disconnectedUser.HubConnections.Any())
+            {
+                this.Clients.Group($"sim_{simulation.SimulationId}").UserDisconnected(simulation.SimulationId, disconnectedUser);
+            }
+            return base.OnDisconnectedAsync(exception);
+        }
+
     }
 }

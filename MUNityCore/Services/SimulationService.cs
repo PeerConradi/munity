@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Simulation;
+using MUNityCore.Models.Simulation.Presets;
 using MUNityCore.Schema.Response.Simulation;
 
 namespace MUNityCore.Services
@@ -20,34 +21,42 @@ namespace MUNityCore.Services
 
         private readonly MunityContext _context;
 
-        public Simulation CreateSimulation(string name, string password, string adminName)
+        public IEnumerable<Models.Simulation.Presets.ISimulationPreset> Presets
+        {
+            get
+            {
+                yield return new Models.Simulation.Presets.PresetSicherheitsrat();
+            }
+        }
+
+        public Simulation CreateSimulation(string name, string password, string adminName, string adminPassword)
         {
             var sim = new Simulation()
             {
                 Name = name,
                 Password = password,
-                SimulationId = new Random().Next(100000, 999999)
+                SimulationId = new Random().Next(100000, 999999),
+                AdminPassword = adminPassword
             };
 
-            CreateAndAssignOwner(sim, adminName);
+            CreateUser(sim, adminName);
 
             this._context.Simulations.Add(sim);
             this._context.SaveChanges();
             return sim;
         }
 
-        private void CreateAndAssignOwner(Simulation simulation, string displayName)
+        internal Simulation GetSimulationAndUserByConnectionId(string connectionId)
         {
-            SimulationRole ownerRole = new SimulationRole()
-            {
-                Name = "Owner",
-                Iso = "UN",
-                RoleKey = Util.Tools.IdGenerator.RandomString(32),
-                RoleType = SimulationRole.RoleTypes.Moderator,
-                RoleMaxSlots = 1,
-            };
+            return _context.Simulations
+                .Include(n => n.Users)
+                .ThenInclude(n => n.HubConnections)
+                .FirstOrDefault(n => 
+                    n.Users.Any(k => k.HubConnections.Any(a => a.ConnectionId == connectionId)));
+        }
 
-            simulation.Roles.Add(ownerRole);
+        private void CreateUser(Simulation simulation, string displayName)
+        {
             var ownerUser = new SimulationUser()
             {
                 CanCreateRole = true,
@@ -55,15 +64,26 @@ namespace MUNityCore.Services
                 CanEditResolution = true,
                 CanSelectRole = true,
                 DisplayName = displayName,
-                Role = ownerRole,
+                Role = null,
                 Simulation = simulation,
             };
+            simulation.Users.Add(ownerUser);
         }
 
 
         public Task<Simulation> GetSimulation(int id)
         {
             return this._context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == id);
+        }
+
+        public Task<Simulation> GetSimulationWithUsersAndRoles(int id)
+        {
+            return this._context.Simulations.Include(n => n.Roles).Include(n => n.Users).FirstOrDefaultAsync(n => n.SimulationId == id);
+        }
+
+        public IEnumerable<Simulation> GetSimulations()
+        {
+            return this._context.Simulations.AsEnumerable();
         }
 
         public IQueryable<SimulationRole> GetSimulationsRoles(int simulationId)
@@ -76,19 +96,17 @@ namespace MUNityCore.Services
             return this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId);
         }
 
-        public IQueryable<SimulationResponses.SimulationList> GetSimulationFront()
+        public SimulationUser GetSimulationUser(int simulationId, string token)
         {
-            return _context.Simulations
-                .Where(n => n.CanJoin)
-                .Select(n => new SimulationResponses.SimulationList()
-                {
-                    Name = n.Name,
-                    UsingPassword = n.UsingPassword,
-                    SimulationId = n.SimulationId
-                });
+            return this._context.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.Token == token);
         }
 
-        public SimulationRole AddChairmanRole(int simulationid, int slotCount, string name)
+        public void SaveDbChanges()
+        {
+            this._context.SaveChanges();
+        }
+
+        public SimulationRole AddChairmanRole(int simulationid, string name)
         {
             var simulation = this._context.Simulations
                 .Include(n => n.Roles)
@@ -101,16 +119,21 @@ namespace MUNityCore.Services
                 currentChairmanRole = new SimulationRole()
                 {
                     RoleType = SimulationRole.RoleTypes.Chairman,
-                    Iso = "UN",
-                    RoleKey = Util.Tools.IdGenerator.RandomString(32),
+                    Iso = "UN"
                 };
                 simulation.Roles.Add(currentChairmanRole);
             }
 
-            currentChairmanRole.RoleMaxSlots = slotCount;
             currentChairmanRole.Name = name;
             this._context.SaveChanges();
             return currentChairmanRole;
+        }
+
+        internal void ApplyPreset(Simulation simulation, ISimulationPreset preset, bool removeExistingRoles = true)
+        {
+            if (removeExistingRoles) simulation.Roles.Clear();
+            simulation.Roles.AddRange(preset.Roles);
+            this._context.SaveChanges();
         }
 
         public SimulationUser JoinSimulation(Simulation simulation, string displayName)
@@ -143,15 +166,8 @@ namespace MUNityCore.Services
                 .Include(n => n.Role)
                 .Where(n => n.Simulation.SimulationId == simulation.SimulationId);
 
-            // You cannot become this role because there are too many users currently in this position.
-            if (users.Any())
-            {
-                if (users.Count(n => n.Role.SimulationRoleId == role.SimulationRoleId) >= role.RoleMaxSlots)
-                    return false;
-            }
-
-            if (role.RoleMaxSlots == 0)
-                return false;
+            // Cannot take this role because it is already taken!
+            if (users.Any(n => n.Role.SimulationRoleId == role.SimulationRoleId)) return false;
 
             user.Role = role;
             this._context.SaveChanges();

@@ -39,18 +39,18 @@ namespace MUNityCore.Models.Simulation
         [MaxLength(2)]
         public string Iso { get; set; }
 
-        /// <summary>
-        /// The RoleKey is used to give to the person so they can
-        /// register into this specific role.
-        /// </summary>
-        [MaxLength(32)]
-        public string RoleKey { get; set; }
-
-        /// <summary>
-        /// How many users can max. go into this role.
-        /// </summary>
-        public int RoleMaxSlots { get; set; }
-
         public Simulation Simulation { get; set; }
+
+        public SimulationRole()
+        {
+
+        }
+
+        public SimulationRole(string iso, string name, RoleTypes roleType)
+        {
+            this.Iso = iso;
+            this.Name = name;
+            this.RoleType = roleType;
+        }
     }
 }

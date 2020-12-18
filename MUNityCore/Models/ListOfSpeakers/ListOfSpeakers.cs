@@ -69,6 +69,11 @@ namespace MUNityCore.Models.ListOfSpeakers
             }
         }
 
+        // Es wäre theoretisch möglich eine Liste zu erstellen bei welcher
+        // im Speaker selbst die Art: Speaker/Question eingetragen wird als Enum
+        // Diese Felder filtern den unterschied dann dadurch raus, dass sie im Where auf
+        // den entsprechende Parameter prüfen. Das würde theoretisch eine weitere Liste/Listenart ermöglichen.
+
         public List<Speaker> Speakers { get; set; }
 
         public List<Speaker> Questions { get; set; }
@@ -82,8 +87,6 @@ namespace MUNityCore.Models.ListOfSpeakers
 
         public bool QuestionsClosed { get; set; } = false;
 
-        public TimeSpan LowTimeMark { get; set; }
-
         public DateTime StartSpeakerTime { get; set; }
 
         public DateTime StartQuestionTime { get; set; }
@@ -94,6 +97,7 @@ namespace MUNityCore.Models.ListOfSpeakers
             {
                 CurrentSpeaker = Speakers.First();
                 Speakers.Remove(Speakers.First());
+                CurrentQuestion = null;
             }
             this.Status = EStatus.Stopped;
         }
