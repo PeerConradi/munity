@@ -11,6 +11,8 @@ namespace MUNityCore.Schema.Response.Simulation
 
         public string Name { get; set; }
 
+        public Models.Simulation.Simulation.GamePhases Phase { get; set; }
+
         public IEnumerable<SimulationRoleItem> Roles { get; set; }
 
         public IEnumerable<SimulationUserItem> Users { get; set; }
@@ -21,6 +23,7 @@ namespace MUNityCore.Schema.Response.Simulation
             this.Name = simulation.Name;
             this.Roles = simulation.Roles.Select(n => new SimulationRoleItem(n, simulation.Users.Where(a => a.Role == n)));
             this.Users = simulation.Users.Select(n => (SimulationUserItem)n);
+            this.Phase = simulation.Phase;
         }
 
         public static implicit operator SimSimResponse(Models.Simulation.Simulation simulation)

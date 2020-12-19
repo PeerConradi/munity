@@ -30,6 +30,7 @@ namespace MUNityCore.Hubs
             {
                 this.Clients.Group($"sim_{simulation.SimulationId}").UserDisconnected(simulation.SimulationId, disconnectedUser);
             }
+            this._service.SaveDbChanges();
             return base.OnDisconnectedAsync(exception);
         }
 

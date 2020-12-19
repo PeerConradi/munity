@@ -55,7 +55,8 @@ namespace MUNityCore.Models.Simulation
 
         public List<SimulationUser> Users { get; set; } = new List<SimulationUser>();
 
-        public List<AllChatMessage> AllChat { get; set; }
+        // Chat vorerst nicht speichern.
+        //public List<AllChatMessage> AllChat { get; set; }
 
         public List<SimSimRequestModel> Requests { get; set; }
 
@@ -82,11 +83,8 @@ namespace MUNityCore.Models.Simulation
 
         public Simulation()
         {
-            
-
             // Legacy Code:
             Requests = new List<SimSimRequestModel>();
-            AllChat = new List<AllChatMessage>();
         }
     }
 }

@@ -23,5 +23,13 @@ namespace MUNityCore.Hubs
         Task StatusChanged(int simulationId, string newStatus);
 
         Task LobbyModeChanged(int simulationId, Simulation.LobbyModes mode);
+
+        Task ChatMessageRecieved(int simulationId, int userId, string msg);
+
+        Task UserRequest(int simulationId, int userId, string request);
+
+        Task UserRequestAccepted(int simulationId, int userId, string request);
+
+        Task UserRequestDeleted(int simulationId, int userId, string request);
     }
 }

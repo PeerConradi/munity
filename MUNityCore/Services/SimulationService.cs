@@ -76,9 +76,25 @@ namespace MUNityCore.Services
             return this._context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == id);
         }
 
+        
+
         public Task<Simulation> GetSimulationWithUsersAndRoles(int id)
         {
-            return this._context.Simulations.Include(n => n.Roles).Include(n => n.Users).FirstOrDefaultAsync(n => n.SimulationId == id);
+            return this._context.Simulations
+                .Include(n => n.Roles)
+                .Include(n => n.Users)
+                .FirstOrDefaultAsync(n => n.SimulationId == id);
+        }
+
+        public Simulation GetSImulationWithHubsUsersAndRoles(int id)
+        {
+            var simulation = this._context.Simulations
+                .Include(n => n.Roles).FirstOrDefault(n => n.SimulationId == id);
+            if (simulation == null) return null;
+            var users = this._context.SimulationUser
+                .Include(n => n.HubConnections).Where(a => a.Simulation.SimulationId == id).AsEnumerable().Where(n => n.HubConnections.Any());
+            simulation.Users = users.ToList();
+            return simulation;
         }
 
         public IEnumerable<Simulation> GetSimulations()
@@ -146,7 +162,8 @@ namespace MUNityCore.Services
 
             var user = new SimulationUser()
             {
-                DisplayName = displayName
+                DisplayName = displayName,
+                CanSelectRole = true
             };
 
             simulation.Users.Add(user);

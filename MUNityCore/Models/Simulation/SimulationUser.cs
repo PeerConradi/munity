@@ -18,6 +18,8 @@ namespace MUNityCore.Models.Simulation
 
         public string Pin { get; set; }
 
+        public int PinRetries { get; set; }
+
         public SimulationRole Role { get; set; }
 
         public bool CanCreateRole { get; set; }
@@ -28,6 +30,8 @@ namespace MUNityCore.Models.Simulation
 
         public bool CanEditListOfSpeakers { get; set; } = false;
 
+        
+
         public List<SimulationHubConnection> HubConnections { get; set; }
 
         public Simulation Simulation { get; set; }
@@ -37,6 +41,7 @@ namespace MUNityCore.Models.Simulation
             this.Token = Util.Tools.IdGenerator.RandomString(20);
             this.Pin = new Random().Next(1000, 9999).ToString();
             this.HubConnections = new List<SimulationHubConnection>();
+            PinRetries = 0;
         }
     }
 }
