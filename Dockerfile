@@ -11,8 +11,6 @@ WORKDIR /src
 COPY ["MUNityCore/MUNityCore.csproj", "MUNityCore/"]
 RUN dotnet restore "MUNityCore/MUNityCore.csproj"
 COPY . .
-RUN ls
-WORKDIR "/src/MUNityAngular"
 RUN dotnet build "MUNityCore.csproj" -c Release -o /app/build
 
 
