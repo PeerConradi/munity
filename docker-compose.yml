@@ -35,7 +35,7 @@ services:
     environment:
       - MUNITY_FRONTEND_IP=DOMAIN
       
-   munity-frontend:
+  munity-frontend:
      image: munity-frontend
      ports:
        - 0.0.0.0:80:80
