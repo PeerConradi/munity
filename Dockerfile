@@ -11,11 +11,11 @@ WORKDIR /src
 COPY ["MUNityCore/MUNityCore.csproj", "MUNityCore/"]
 RUN dotnet restore "MUNityCore/MUNityCore.csproj"
 COPY . .
-RUN dotnet build "MUNityCore.csproj" -c Release -o /app/build
+RUN dotnet build "MUNityCore/MUNityCore.csproj" -c Release -o /app/build
 
 
 FROM build AS publish
-RUN dotnet publish "MUNityCore.csproj" -c Release -o /app/publish
+RUN dotnet publish "MUNityCore/MUNityCore.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
