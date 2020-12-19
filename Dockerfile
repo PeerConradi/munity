@@ -8,19 +8,19 @@ WORKDIR /app
 # API
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["MUNityAngular/MUNityAngular.csproj", "MUNityAngular/"]
-RUN dotnet restore "MUNityAngular/MUNityAngular.csproj"
+COPY ["MUNityCore/MUNityCore.csproj", "MUNityCore/"]
+RUN dotnet restore "MUNityCore/MUNityCore.csproj"
 COPY . .
 RUN ls
 WORKDIR "/src/MUNityAngular"
-RUN dotnet build "MUNityAngular.csproj" -c Release -o /app/build
+RUN dotnet build "MUNityCore.csproj" -c Release -o /app/build
 
 
 FROM build AS publish
-RUN dotnet publish "MUNityAngular.csproj" -c Release -o /app/publish
+RUN dotnet publish "MUNityCore.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_URLS http://*:5000
-ENTRYPOINT ["dotnet", "MUNityAngular.dll"]
+ENTRYPOINT ["dotnet", "MUNityCore.dll"]
