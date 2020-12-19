@@ -52,11 +52,11 @@ Clone the backend
 git clone https://github.com/PeerConradi/munity.git
 ```
 
-## Stop Two
+## Stop Two // TODO
 Clone the Frontend
 
 ```
-git clone https://github.com/PeerConradi/MunityFrontend.git
+
 ```
 
 ## Step Three
@@ -64,10 +64,7 @@ Setup appsettings.json
 ```
 {
   "MySqlSettings": {
-    "ConnectionString": "server=mariadb;userid=root;password='example';database='munitybase'"
-  },
-  "CoreDatabase": {
-    "ConnectionString": "server=mariadb;userid=root;password='example';database='munitycore'"
+    "ConnectionString": "server=localhost;userid=root;password='';database='munitybase'"
   },
   "AppSettings": {
     "Secret": "REMEMBER TO CHANGE THIS KEY IN PRODUCTION EVERY TIME"
@@ -75,7 +72,7 @@ Setup appsettings.json
   "MunityMongoDatabaseSettings": {
     "ResolutionCollectionName": "Resolutions",
     "PresenceCollectionName": "Presence",
-    "ConnectionString": "mongodb://root:example@mongodb:27017",
+    "ConnectionString": "mongodb://localhost:27017",
     "DatabaseName": "MunityDb"
   },
   "Logging": {
