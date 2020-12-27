@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MUNityCore.Models.Organization;
-using MUNityCore.Schema.Request.Organisation;
-using MUNityCore.Schema.Response;
 using MUNityCore.Services;
+using MUNitySchema.Schema.Organization;
 
 namespace MUNityCore.Controllers
 {
@@ -40,7 +35,7 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        public ActionResult<OrganizationInformation> CreateOrganisation([FromBody] CreateOrganisationRequest body)
+        public ActionResult<OrganizationInformation> CreateOrganisation([FromBody]MUNitySchema.Schema.Organization.CreateOrganizationRequest body)
         {
             // TODO: Needs to check of the user is allowed to create an organization
             var user = _authService.GetUserOfClaimPrincipal(User);

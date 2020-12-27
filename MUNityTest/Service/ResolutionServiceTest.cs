@@ -26,7 +26,7 @@ namespace MUNityTest.Service
             {
                 ResolutionCollectionName = "TestResolutions";
                 ConnectionString = "mongodb://localhost:27017";
-                DatabaseName = "Munity_Tests";
+                DatabaseName = "Munity_Tests_new";
                 PresenceCollectionName = "NotNeeded";
             }
         }
@@ -194,7 +194,7 @@ namespace MUNityTest.Service
         public async Task TestSaveResolutionThatsNotCreated()
         {
             var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = new ResolutionV2();
+            var resolution = new MUNitySchema.Models.Resolution.Resolution();
             var result = await service.SaveResolution(resolution);
             Assert.IsNull(result);
         }

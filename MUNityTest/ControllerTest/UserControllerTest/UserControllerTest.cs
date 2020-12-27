@@ -8,9 +8,8 @@ using Moq;
 using MUNityCore.Controllers;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
-using MUNityCore.Models.Resolution.V2;
-using MUNityCore.Schema.Request.Authentication;
 using MUNityCore.Services;
+using MUNitySchema.Schema.Authentication;
 using Xunit;
 
 namespace MUNityTest.ControllerTest.UserControllerTest

@@ -4,8 +4,8 @@ using Microsoft.Extensions.Options;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models;
 using MUNityCore.Models.User;
-using MUNityCore.Schema.Request.Authentication;
 using MUNityCore.Services;
+using MUNitySchema.Schema.Authentication;
 using MUNityTest.TestEnvironment;
 using NUnit.Framework;
 

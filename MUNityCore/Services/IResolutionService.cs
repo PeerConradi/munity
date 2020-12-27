@@ -1,30 +1,31 @@
 ﻿using System.Threading.Tasks;
 using MongoDB.Driver;
 using MUNityCore.Models.Resolution.V2;
+using MUNitySchema.Models.Resolution;
 
 namespace MUNityCore.Services
 {
     public interface IResolutionService
     {
-        Task<ResolutionV2> CreateResolution(string title);
+        Task<SaveableResolution> CreateResolution(string title);
 
-        Task<ResolutionV2> CreatePublicResolution(string title);
+        Task<SaveableResolution> CreatePublicResolution(string title);
 
-        Task<ResolutionV2> GetResolution(string id);
+        Task<SaveableResolution> GetResolution(string id);
 
         Task<ResolutionAuth> GetResolutionAuth(string id);
 
-        Task<IPreambleParagraph> AddPreambleParagraph(ResolutionV2 preamble, string text = "");
+        Task<PreambleParagraph> AddPreambleParagraph(Resolution preamble, string text = "");
 
-        Task<IOperativeParagraph> AddOperativeParagraph(ResolutionV2 section);
+        Task<OperativeParagraph> AddOperativeParagraph(Resolution section);
 
-        Task<ResolutionV2> SaveResolution(ResolutionV2 resolution);
+        Task<SaveableResolution> SaveResolution(Resolution resolution);
 
         Task<int> GetResolutionCount();
 
-        Task<bool> UpdatePreambleParagraph(ResolutionV2 resolution, PreambleParagraph newValues);
+        Task<bool> UpdatePreambleParagraph(Resolution resolution, PreambleParagraph newValues);
 
-        Task<bool> UpdateOperativeParagraph(ResolutionV2 resolution, OperativeParagraph newValues);
+        Task<bool> UpdateOperativeParagraph(Resolution resolution, OperativeParagraph newValues);
 
         Task<bool> ResolutionExists(string id);
     }

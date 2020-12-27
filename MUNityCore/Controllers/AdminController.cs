@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Models.User;
-using MUNityCore.Util.Extensions;
-using MUNityCore.Models.Conference;
-using MUNityCore.Schema.Request;
-using MUNityCore.Schema.Response.User;
 using MUNityCore.Services;
+using MUNitySchema.Schema.User;
+using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Controllers
 {
@@ -113,7 +110,7 @@ namespace MUNityCore.Controllers
                 return Forbid("You are not allowed to do that!");
 
             MunityUserAuth auth = this._authService.CreateAuth(name);
-            return (UserAuthSchema)auth;
+            return auth.AsAuthSchema();
         }
 
         /// <summary>
@@ -121,16 +118,16 @@ namespace MUNityCore.Controllers
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
-        [Route("[action]")]
-        [HttpPost]
-        [Authorize]
-        public ActionResult<UserAuthSchema> CreateUserAuth([FromBody] AdminSchema.CreateUserAuthBody body)
-        {
-            if (!_authService.IsUserPrincipalAdmin(User)) return Forbid();
+        //[Route("[action]")]
+        //[HttpPost]
+        //[Authorize]
+        //public ActionResult<UserAuthSchema> CreateUserAuth([FromBody] AdminSchema.CreateUserAuthBody body)
+        //{
+        //    if (!_authService.IsUserPrincipalAdmin(User)) return Forbid();
 
-            var auth = this._authService.CreateUserAuth(body);
-            return Ok((UserAuthSchema)auth);
-        }
+        //    var auth = this._authService.CreateUserAuth(body);
+        //    return Ok((UserAuthSchema)auth);
+        //}
 
 
         /// <summary>

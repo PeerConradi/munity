@@ -1,4 +1,5 @@
 ﻿using MUNityCore.Models.Resolution.V2;
+using MUNitySchema.Models.Resolution;
 using NUnit.Framework;
 
 namespace MUNityTest.Resolution.V2_Tests
@@ -22,7 +23,7 @@ namespace MUNityTest.Resolution.V2_Tests
         public void TestAddDeleteAmendmentToAResolution()
         {
             // Setup
-            var resolution = new ResolutionV2();
+            var resolution = new MUNitySchema.Models.Resolution.Resolution();
             var paragraph = new OperativeParagraph();
             resolution.OperativeSection.Paragraphs.Add(paragraph);
 
@@ -41,7 +42,7 @@ namespace MUNityTest.Resolution.V2_Tests
         public void TestApplyDeleteAmendment()
         {
             // Setup
-            var resolution = new ResolutionV2();
+            var resolution = new MUNitySchema.Models.Resolution.Resolution();
             var paragraph = new OperativeParagraph();
             resolution.OperativeSection.Paragraphs.Add(paragraph);
 
@@ -51,7 +52,7 @@ namespace MUNityTest.Resolution.V2_Tests
             };
             resolution.OperativeSection.DeleteAmendments.Add(amendment);
 
-            amendment.Apply(resolution);
+            amendment.Apply(resolution.OperativeSection);
             Assert.Zero(resolution.OperativeSection.Paragraphs.Count);
             Assert.Zero(resolution.OperativeSection.DeleteAmendments.Count);
         }
@@ -62,7 +63,7 @@ namespace MUNityTest.Resolution.V2_Tests
         public void TestDenyDeleteAmendment()
         {
             // Setup
-            var resolution = new ResolutionV2();
+            var resolution = new MUNitySchema.Models.Resolution.Resolution();
             var paragraph = new OperativeParagraph();
             resolution.OperativeSection.Paragraphs.Add(paragraph);
 
@@ -78,7 +79,7 @@ namespace MUNityTest.Resolution.V2_Tests
             resolution.OperativeSection.DeleteAmendments.Add(amendmentOne);
             resolution.OperativeSection.DeleteAmendments.Add(amendmentTwo);
 
-            amendmentOne.Deny(resolution);
+            amendmentOne.Deny(resolution.OperativeSection);
             Assert.Contains(paragraph, resolution.OperativeSection.Paragraphs);
             Assert.Zero(resolution.OperativeSection.DeleteAmendments.Count);
         }

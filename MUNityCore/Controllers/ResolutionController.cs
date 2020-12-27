@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using MUNityCore.Util.Extensions;
-using MUNityCore.Models.Resolution;
-using MUNityCore.Schema.Request;
-using MUNityCore.Schema.Request.Resolution;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Services;
-using MUNityCore.Extensions.ResolutionExtensions;
+using MUNitySchema.Models.Resolution;
+using MUNity.Extensions.ResolutionExtensions;
 
 namespace MUNityCore.Controllers
 {
@@ -25,7 +20,7 @@ namespace MUNityCore.Controllers
     [ApiController]
     public class ResolutionController : ControllerBase
     {
-        readonly IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> _hubContext;
+        readonly IHubContext<Hubs.ResolutionHub, MUNitySchema.Hubs.ITypedResolutionHub> _hubContext;
 
         private readonly IResolutionService _resolutionService;
 
@@ -38,7 +33,7 @@ namespace MUNityCore.Controllers
             AllowedRequest
         }
 
-        public ResolutionController(IHubContext<Hubs.ResolutionHub, Hubs.ITypedResolutionHub> hubContext, 
+        public ResolutionController(IHubContext<Hubs.ResolutionHub, MUNitySchema.Hubs.ITypedResolutionHub> hubContext, 
             IResolutionService resolutionService,
                 IAuthService authService)
         {
@@ -63,7 +58,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ResolutionV2> CreatePublic(string title)
+        public async Task<Resolution> CreatePublic(string title)
         {
             return await _resolutionService.CreatePublicResolution(title);
         }
@@ -77,7 +72,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<ResolutionV2>> GetResolution([FromHeader]string password, string id)
+        public async Task<ActionResult<Resolution>> GetResolution([FromHeader]string password, string id)
         {
             if (!await CanUserReadResolution(id, password))
                 return Forbid();
@@ -114,7 +109,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPatch]
         [AllowAnonymous]
-        public async Task<ActionResult<ResolutionV2>> UpdateResolution([FromBody]ResolutionV2 resolution)
+        public async Task<ActionResult<Resolution>> UpdateResolution([FromBody]Resolution resolution)
         {
             if (!await CanUserEditResolution(resolution.ResolutionId))
                 return Forbid();
@@ -275,7 +270,7 @@ namespace MUNityCore.Controllers
             throw new NotImplementedException("This case is not implemented yet!");
         }
 
-        private bool CanAmendmentBeAdded(IAmendment amendment, OperativeSection operativeSection)
+        private bool CanAmendmentBeAdded(AbstractAmendment amendment, OperativeSection operativeSection)
         {
             if (operativeSection == null) return false;
             if (amendment == null) return false;

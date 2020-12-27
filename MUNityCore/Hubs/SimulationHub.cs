@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Hubs
 {
-    public class SimulationHub : Hub<ITypedSimulationHub>
+    public class SimulationHub : Hub<MUNitySchema.Hubs.ITypedSimulationHub>
     {
         private readonly Services.SimulationService _service;
         public SimulationHub(Services.SimulationService service)
@@ -28,7 +29,7 @@ namespace MUNityCore.Hubs
             disconnectedUser.HubConnections.RemoveAll(n => n.ConnectionId == this.Context.ConnectionId);
             if (!disconnectedUser.HubConnections.Any())
             {
-                this.Clients.Group($"sim_{simulation.SimulationId}").UserDisconnected(simulation.SimulationId, disconnectedUser);
+                this.Clients.Group($"sim_{simulation.SimulationId}").UserDisconnected(simulation.SimulationId, disconnectedUser.AsUserItem());
             }
             this._service.SaveDbChanges();
             return base.OnDisconnectedAsync(exception);

@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
-using MUNityCore.Schema.Request.Conference;
+using MUNitySchema.Schema.Conference;
 
 namespace MUNityCore.Models.Conference
 {
@@ -85,7 +85,7 @@ namespace MUNityCore.Models.Conference
         public List <Resolution.V2.ResolutionAuth> Resolutions { get; set; }
 
 
-        public Committee(ConferenceRequests.CreateCommittee request)
+        public Committee(CreateCommittee request)
         {
             CommitteeId = Guid.NewGuid().ToString();
             Article = request.Article;

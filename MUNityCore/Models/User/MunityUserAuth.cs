@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using MUNityCore.Schema.Request;
 
 namespace MUNityCore.Models.User
 {
@@ -48,14 +42,6 @@ namespace MUNityCore.Models.User
             CanCreateOrganization = false;
             AuthLevel = EAuthLevel.New;
             UserAuthName = name;
-        }
-
-        public MunityUserAuth(AdminSchema.CreateUserAuthBody request)
-        {
-            Users = new List<MunityUser>();
-            CanCreateOrganization = request.CanCreateOrganisation;
-            AuthLevel = EAuthLevel.New;
-            UserAuthName = request.Name;
         }
     }
 }

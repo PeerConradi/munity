@@ -85,7 +85,7 @@ namespace MUNityCore.Models.Resolution.V2
         public Conference.Committee Committee { get; set; }
 
 
-        public ResolutionAuth(ResolutionV2 resolution)
+        public ResolutionAuth(MUNitySchema.Models.Resolution.Resolution resolution)
         {
             ResolutionId = resolution.ResolutionId;
             CreationDate = DateTime.Now;

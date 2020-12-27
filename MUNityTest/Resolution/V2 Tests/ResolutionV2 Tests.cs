@@ -2,13 +2,14 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
 using MUNityCore.Models.Resolution.V2;
 using NUnit.Framework;
+using MUNitySchema.Models.Resolution;
 
 namespace MUNityTest.Resolution.V2_Tests
 {
     [TestFixture]
     public class ResolutionV2_Tests
     {
-        private ResolutionV2 resolution;
+        private MUNitySchema.Models.Resolution.Resolution resolution;
 
         [Test]
         [Order(1)]
@@ -16,7 +17,7 @@ namespace MUNityTest.Resolution.V2_Tests
         [Description("Test to create the new Resolution object")]
         public void TestCreateResolution()
         {
-            resolution = new ResolutionV2();
+            resolution = new MUNitySchema.Models.Resolution.Resolution();
             Assert.NotNull(resolution);
             Assert.NotNull(resolution.Header);
             Assert.NotNull(resolution.Preamble);
@@ -50,7 +51,7 @@ namespace MUNityTest.Resolution.V2_Tests
 
             // Test that the Id is generated!
             Assert.False(string.IsNullOrEmpty(paragraph.PreambleParagraphId));
-            Assert.NotNull(paragraph.Notices);
+            Assert.NotNull(paragraph.Comments);
             Assert.AreEqual(1, resolution.Preamble.Paragraphs.Count);
             Assert.Contains(paragraph, resolution.Preamble.Paragraphs);
         }
@@ -73,14 +74,14 @@ namespace MUNityTest.Resolution.V2_Tests
         public void TestAddANotice()
         {
             var paragraph = resolution.Preamble.Paragraphs.First();
-            var notice = new Notice()
+            var notice = new Comment()
             {
                 Text = "New Notice"
             };
-            paragraph.Notices.Add(notice);
+            paragraph.Comments.Add(notice);
             Assert.False(string.IsNullOrEmpty(notice.Id));
             Assert.NotNull(notice.ReadBy);
-            Assert.Contains(notice, paragraph.Notices);
+            Assert.Contains(notice, paragraph.Comments);
         }
 
         [Test]
@@ -90,9 +91,9 @@ namespace MUNityTest.Resolution.V2_Tests
         public void TestRemoveNotice()
         {
             var paragraph = resolution.Preamble.Paragraphs.First();
-            var notice = paragraph.Notices.First();
-            paragraph.Notices.Remove(notice);
-            Assert.AreEqual(0, paragraph.Notices.Count);
+            var notice = paragraph.Comments.First();
+            paragraph.Comments.Remove(notice);
+            Assert.AreEqual(0, paragraph.Comments.Count);
         }
 
         [Test]

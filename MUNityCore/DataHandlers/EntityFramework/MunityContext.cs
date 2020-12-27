@@ -5,12 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.ListOfSpeakers;
 using MUNityCore.Models.Organization;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.User;
 using MUNityCore.Models;
+using MUNitySchema.Models.ListOfSpeakers;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {

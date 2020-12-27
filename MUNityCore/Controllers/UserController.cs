@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -7,12 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Models.User;
-using MUNityCore.Schema.Request;
-using MUNityCore.Util.Extensions;
-using MUNityCore.Schema.Request.Authentication;
-using MUNityCore.Schema.Response.Authentication;
-using MUNityCore.Schema.Response.User;
 using MUNityCore.Services;
+using MUNitySchema.Schema.User;
+using MUNitySchema.Schema.Authentication;
 
 namespace MUNityCore.Controllers
 {
@@ -47,7 +43,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult Register([FromBody]RegisterRequest body)
+        public ActionResult Register([FromBody]MUNitySchema.Schema.Authentication.RegisterRequest body)
         {
             try
             {
@@ -64,7 +60,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult<AuthenticationResponse> Login([FromBody]AuthenticateRequest request)
+        public ActionResult<AuthenticationResponse> Login([FromBody]MUNitySchema.Schema.Authentication.AuthenticateRequest request)
         {
             var result = _authService.Authenticate(request);
             if (result != null) return Ok(result);

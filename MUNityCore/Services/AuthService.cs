@@ -17,9 +17,8 @@ using MUNityCore.Models;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
 using MUNityCore.Models.Resolution.V2;
-using MUNityCore.Schema.Request;
-using MUNityCore.Schema.Request.Authentication;
-using MUNityCore.Schema.Response.Authentication;
+using MUNitySchema.Schema.Authentication;
+using MUNitySchema.Schema.User;
 
 namespace MUNityCore.Services
 {
@@ -38,7 +37,7 @@ namespace MUNityCore.Services
         }
 
 
-        public bool CanUserEditResolution(MunityUser user, ResolutionV2 resolution)
+        public bool CanUserEditResolution(MunityUser user, MUNitySchema.Models.Resolution.Resolution resolution)
         {
             // Is user the owner
 
@@ -51,7 +50,7 @@ namespace MUNityCore.Services
             return true;
         }
 
-        public AuthenticationResponse Authenticate(AuthenticateRequest model)
+        public AuthenticationResponse Authenticate(MUNitySchema.Schema.Authentication.AuthenticateRequest model)
         {
             // that user does not exists go away!
             MunityUser user = _context.Users.FirstOrDefault(n => n.Username == model.Username);
@@ -67,7 +66,7 @@ namespace MUNityCore.Services
             // authentication successful so generate jwt token
             var token = GenerateToken(user);
             
-            return new AuthenticationResponse(user, token);
+            return new AuthenticationResponse() { FirstName = user.Forename, LastName = user.Lastname, Username = user.Username, Token = token};
         }
 
         public string GenerateToken(MunityUser user)
@@ -146,13 +145,6 @@ namespace MUNityCore.Services
             var auth = new MunityUserAuth(name);
             this._context.UserAuths.Add(auth);
             this._context.SaveChanges();
-            return auth;
-        }
-
-        public MunityUserAuth CreateUserAuth(AdminSchema.CreateUserAuthBody request)
-        {
-            var auth = new MunityUserAuth(request);
-            this._context.UserAuths.Add(auth);
             return auth;
         }
 

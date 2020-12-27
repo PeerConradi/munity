@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.Simulation.Presets;
-using MUNityCore.Schema.Response.Simulation;
 
 namespace MUNityCore.Services
 {
@@ -157,7 +156,7 @@ namespace MUNityCore.Services
             if (simulation == null)
                 return null;
 
-            if (simulation.LobbyMode == Simulation.LobbyModes.Closed)
+            if (simulation.LobbyMode == MUNitySchema.Schema.Simulation.SimulationEnums.LobbyModes.Closed)
                 return null;
 
             var user = new SimulationUser()

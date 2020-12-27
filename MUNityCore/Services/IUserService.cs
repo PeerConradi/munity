@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.User;
-using MUNityCore.Schema.Response.User;
+using MUNitySchema.Schema.User;
 
 namespace MUNityCore.Services
 {

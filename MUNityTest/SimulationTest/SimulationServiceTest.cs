@@ -142,7 +142,7 @@ namespace MUNityTest.SimulationTest
             var service = new SimulationService(_context);
             service.JoinSimulation(simulationId, "User Two");
             var lobby = service.GetSimulationUsers(simulationId);
-            Assert.AreEqual(3, lobby.Count());
+            Assert.AreEqual(2, lobby.Count());
         }
     }
 }

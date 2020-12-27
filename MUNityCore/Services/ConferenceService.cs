@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.User;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.Util.Extensions;
 using MUNityCore.DataHandlers.EntityFramework;
@@ -11,8 +10,8 @@ using MUNityCore.Exceptions.ConferenceExceptions;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Organization;
-using MUNityCore.Schema.Response.Conference;
-
+using MUNitySchema.Schema.Conference;
+using MUNityCore.Extensions.CastExtensions;
 namespace MUNityCore.Services
 {
     public class ConferenceService : IConferenceService
@@ -400,7 +399,7 @@ namespace MUNityCore.Services
             var conference = await this._context.Conferences.Include(n => n.Committees).Include(n => n.ConferenceProject)
                 .FirstOrDefaultAsync(a => a.ConferenceId == conferenceId);
             if (conference == null) return null;
-            return conference;
+            return conference.AsConferenceInformation();
         }
 
         public bool AddRoleApplication(RoleApplication application)

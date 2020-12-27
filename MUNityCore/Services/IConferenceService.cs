@@ -6,7 +6,7 @@ using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Organization;
 using MUNityCore.Models.User;
-using MUNityCore.Schema.Response.Conference;
+using MUNitySchema.Schema.Conference;
 
 namespace MUNityCore.Services
 {

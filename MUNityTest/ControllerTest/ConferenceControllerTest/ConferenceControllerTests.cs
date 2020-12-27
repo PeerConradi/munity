@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +9,10 @@ using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.User;
 using MUNityCore.Models.Organization;
-using MUNityCore.Schema.Request;
-using MUNityCore.Schema.Request.Conference;
 using MUNityCore.Services;
 using Xunit;
+using MUNitySchema.Schema.Project;
+using MUNitySchema.Schema.Conference;
 
 namespace MUNityTest.ControllerTest.ConferenceControllerTest
 {

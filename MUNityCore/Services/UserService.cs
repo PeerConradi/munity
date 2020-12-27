@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.User;
-using MUNityCore.Schema.Response.User;
+using MUNitySchema.Schema.User;
+using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Services
 {
@@ -137,7 +138,7 @@ namespace MUNityCore.Services
             var user = await _context.Users.Include(n => n.PrivacySettings).FirstOrDefaultAsync(n =>
                 n.Username == username);
             if (user == null) return null;
-            return new UserInformation(user);
+            return user.AsInformation();
             
         }
 

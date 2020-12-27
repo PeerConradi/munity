@@ -5,7 +5,6 @@ using Moq;
 using MUNityCore.Controllers;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Hubs;
-using MUNityCore.Schema.Request.Simulation;
 using MUNityCore.Services;
 using NUnit.Framework;
 
@@ -31,10 +30,10 @@ namespace MUNityTest.SimulationTest
         [Order(0)]
         public void TestCreatingASimulation()
         {
-            var mockHub = new Mock<IHubContext<SimulationHub, ITypedSimulationHub>>();
+            var mockHub = new Mock<IHubContext<SimulationHub, MUNitySchema.Hubs.ITypedSimulationHub>>();
             var service = new SimulationService(_context);
             var controller = new SimulationController(mockHub.Object, service);
-            var request = new SimulationRequests.CreateSimulation() {Name=  "Test", Password = "Password" };
+            var request = new MUNitySchema.Schema.Simulation.CreateSimulationRequest() {Name=  "Test", Password = "Password" };
             var result = controller.CreateSimulation(request);
             Assert.NotNull(result);
             

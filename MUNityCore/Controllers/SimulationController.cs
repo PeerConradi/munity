@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using MUNityCore.Util.Extensions;
-using MUNityCore.Models.Organization;
 using MUNityCore.Models.Simulation;
-using MUNityCore.Schema.Request.Simulation;
-using MUNityCore.Schema.Response.Simulation;
 using MUNityCore.Services;
 using Microsoft.AspNetCore.Authorization;
+using MUNitySchema.Schema.Simulation;
+using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Controllers
 {
@@ -25,11 +21,11 @@ namespace MUNityCore.Controllers
     public class SimulationController : ControllerBase
     {
 
-        private readonly IHubContext<Hubs.SimulationHub, Hubs.ITypedSimulationHub> _hubContext;
+        private readonly IHubContext<Hubs.SimulationHub, MUNitySchema.Hubs.ITypedSimulationHub> _hubContext;
 
         private readonly SimulationService _simulationService;
 
-        public SimulationController(IHubContext<Hubs.SimulationHub, Hubs.ITypedSimulationHub> hubContext,
+        public SimulationController(IHubContext<Hubs.SimulationHub, MUNitySchema.Hubs.ITypedSimulationHub> hubContext,
             SimulationService simulationService)
         {
             this._hubContext = hubContext;
@@ -49,20 +45,20 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public ActionResult<IEnumerable<SimulationListItem>> GetListOfSimulations()
         {
-            var result = this._simulationService.GetSimulations().Select(n => (SimulationListItem)n);
+            var result = this._simulationService.GetSimulations().Select(n => n);
             return Ok(result);
         }
 
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<SimSimResponse> GetSimulation([FromHeader]string simsimtoken, int id)
+        public ActionResult<SimulationResponse> GetSimulation([FromHeader]string simsimtoken, int id)
         {
             var simulation = this._simulationService.GetSImulationWithHubsUsersAndRoles(id);
             if (simulation == null) return NotFound();
             var users = this._simulationService.GetSimulationUsers(id);
             if (!users.Any(n => n.Token == simsimtoken)) return Forbid();
-            return Ok((SimSimResponse)simulation);
+            return Ok(simulation.AsResponse());
         }
 
         [HttpGet]
@@ -73,7 +69,7 @@ namespace MUNityCore.Controllers
             var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(id);
             if (simulation == null) return NotFound();
             if (simulation.Users.All(n => n.Token != simsimtoken)) return Forbid();
-            var roles = simulation.Roles.Select(n => new SimulationRoleItem(n, simulation.Users.Where(a => a.Role == n)));
+            var roles = simulation.Roles.Select(n => n.AsRoleItem());
             return Ok(roles);
         }
 
@@ -84,7 +80,7 @@ namespace MUNityCore.Controllers
         {
             var user = this._simulationService.GetSimulationUser(id, simsimtoken);
             if (user == null) return NotFound();
-            return Ok((SimulationAuthSchema)user);
+            return Ok(user.AsAuthSchema());
         }
 
         [HttpGet]
@@ -137,7 +133,7 @@ namespace MUNityCore.Controllers
                 return Forbid();
             try
             {
-                simulation.Phase = (Simulation.GamePhases)phase;
+                simulation.Phase = (SimulationEnums.GamePhases)phase;
                 this._simulationService.SaveDbChanges();
                 await this._hubContext.Clients.Group($"sim_{simulationId}").PhaseChanged(simulationId, simulation.Phase);
                 return Ok();
@@ -184,7 +180,7 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<SimSimTokenResponse>> JoinSimulation(int id, [FromBody]JoinAuthenticate request)
+        public async Task<ActionResult<SimulationTokenResponse>> JoinSimulation(int id, [FromBody]MUNitySchema.Schema.Simulation.JoinAuthenticate request)
         {
             if (string.IsNullOrWhiteSpace(request.DisplayName)) return BadRequest();
             var simulation = await this._simulationService.GetSimulation(id);
@@ -193,24 +189,23 @@ namespace MUNityCore.Controllers
             if (!string.IsNullOrEmpty(simulation.Password) && simulation.Password != request.Password)
                 return Forbid();
             var user = this._simulationService.JoinSimulation(simulation, request.DisplayName);
-            return Ok((SimSimTokenResponse)user);
+            return Ok(user.AsTokenResponse());
         }
 
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<SimSimTokenResponse> CreateSimulation([FromBody]SimulationRequests.CreateSimulation request)
+        public ActionResult<SimulationTokenResponse> CreateSimulation([FromBody]MUNitySchema.Schema.Simulation.CreateSimulationRequest request)
         {
             var result = this._simulationService.CreateSimulation(request.Name, request.Password, request.UserDisplayName, request.AdminPassword);
             var admin = result.Users.First();
-            var response = new SimSimTokenResponse()
+            var response = new SimulationTokenResponse()
             {
                 Name = result.Name,
                 Token = admin.Token,
                 SimulationId = result.SimulationId,
                 Pin = admin.Pin
             };
-
             return Ok(response);
         }
 
@@ -232,7 +227,7 @@ namespace MUNityCore.Controllers
             };
             user.HubConnections.Add(mdl);
             this._simulationService.SaveDbChanges();
-            await this._hubContext.Clients.Group($"sim_{id}").UserConnected(id, user);
+            await this._hubContext.Clients.Group($"sim_{id}").UserConnected(id, user.AsUserItem());
             return Ok(true);
         }
 

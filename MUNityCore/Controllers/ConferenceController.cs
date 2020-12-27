@@ -12,11 +12,9 @@ using Newtonsoft.Json;
 using MUNityCore.Util.Extensions;
 using MUNityCore.Models.User;
 using MUNityCore.Models.Conference;
-using MUNityCore.Schema.Request;
-using MUNityCore.Schema.Request.Conference;
 using MUNityCore.Services;
-using MUNityCore.Schema.Response.Conference;
-using MUNityCore.Schema.Response.Project;
+using MUNitySchema.Schema.Conference;
+using MUNitySchema.Schema.Project;
 
 namespace MUNityCore.Controllers
 {
@@ -228,7 +226,7 @@ namespace MUNityCore.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<bool>> SetConferenceName([FromBody] ConferenceRequests.ChangeConferenceName body)
+        public async Task<ActionResult<bool>> SetConferenceName([FromBody]ChangeConferenceName body)
         {
             if (!CanUserEditConference(body.ConferenceId))
                 return Forbid("You are not allowed to change the conference settings");
@@ -252,7 +250,7 @@ namespace MUNityCore.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<bool>> SetConferenceFullName([FromBody] ConferenceRequests.ChangeConferenceFullName body)
+        public async Task<ActionResult<bool>> SetConferenceFullName([FromBody]ChangeConferenceFullName body)
         {
             if (!CanUserEditConference(body.ConferenceId))
                 return Forbid("You are not allowed to change the conference settings");
@@ -276,7 +274,7 @@ namespace MUNityCore.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<bool>> SetConferenceAbbreviation([FromBody] ConferenceRequests.ChangeConferenceAbbreviation body)
+        public async Task<ActionResult<bool>> SetConferenceAbbreviation([FromBody]ChangeConferenceAbbreviation body)
         {
             if (!CanUserEditConference(body.ConferenceId))
                 return Forbid("You are not allowed to change the conference settings");
@@ -299,7 +297,7 @@ namespace MUNityCore.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<bool>> SetConferenceDate([FromBody] ConferenceRequests.ChangeConferenceDate body)
+        public async Task<ActionResult<bool>> SetConferenceDate([FromBody] ChangeConferenceDate body)
         {
             if (body.StartDate > body.EndDate)
                 return BadRequest("The Start Date has to be before the End Date!");
@@ -315,34 +313,34 @@ namespace MUNityCore.Controllers
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
-        [Route("[action]")]
-        [HttpPost]
-        [Authorize]
-        public async Task<ActionResult<CommitteeSmallInfo>> CreateCommittee([FromBody] ConferenceRequests.CreateCommittee body)
-        {
-            if (!CanUserEditConference(body.ConferenceId))
-                return Forbid("You are not allowed to change the conference settings");
+        //[Route("[action]")]
+        //[HttpPost]
+        //[Authorize]
+        //public async Task<ActionResult<CommitteeSmallInfo>> CreateCommittee([FromBody]CreateCommittee body)
+        //{
+        //    if (!CanUserEditConference(body.ConferenceId))
+        //        return Forbid("You are not allowed to change the conference settings");
 
-            var conference = await this._conferenceService.GetConference(body.ConferenceId);
-            if (conference == null) return NotFound("Conference with the given id not found!");
+        //    var conference = await this._conferenceService.GetConference(body.ConferenceId);
+        //    if (conference == null) return NotFound("Conference with the given id not found!");
 
-            if (conference.Committees.Any(n => n.Name.ToLower() == body.Name.ToLower()
-                                               || n.FullName.ToLower() == body.FullName.ToLower()))
-                return Conflict("There is already a committee with the given name in this conference.");
+        //    if (conference.Committees.Any(n => n.Name.ToLower() == body.Name.ToLower()
+        //                                       || n.FullName.ToLower() == body.FullName.ToLower()))
+        //        return Conflict("There is already a committee with the given name in this conference.");
 
-            var newCommittee = new Committee(body);
-            if (!string.IsNullOrEmpty(body.ResolutlyCommitteeId))
-            {
-                var parentCommittee = await this._conferenceService.GetCommittee(body.ResolutlyCommitteeId);
-                if (parentCommittee == null) return NotFound("The parent committee was not found!");
+        //    var newCommittee = new Committee(body);
+        //    if (!string.IsNullOrEmpty(body.ResolutlyCommitteeId))
+        //    {
+        //        var parentCommittee = await this._conferenceService.GetCommittee(body.ResolutlyCommitteeId);
+        //        if (parentCommittee == null) return NotFound("The parent committee was not found!");
 
-                newCommittee.ResolutlyCommittee = parentCommittee;
-            }
+        //        newCommittee.ResolutlyCommittee = parentCommittee;
+        //    }
 
-            conference.Committees.Add(newCommittee);
-            await this._conferenceService.SaveDatabaseChanges();
-            return Ok(newCommittee);
-        }
+        //    conference.Committees.Add(newCommittee);
+        //    await this._conferenceService.SaveDatabaseChanges();
+        //    return Ok(newCommittee);
+        //}
 
 
 
