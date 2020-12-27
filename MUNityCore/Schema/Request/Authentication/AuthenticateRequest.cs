@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Schema.Request.Authentication
 {
+    // Ported to MUNityData NPM
     public class AuthenticateRequest
     {
         [Required]

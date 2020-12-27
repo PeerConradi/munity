@@ -71,19 +71,25 @@ namespace MUNityCore.Controllers
         /// <summary>
         /// Returns a resolution with the given Id if the user is allowed to read the resolution or it is public.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="password">An optional password that is checked againts the EditPassword.</param>
+        /// <param name="id">The Id of the resolution (not the public id)</param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<ResolutionV2>> GetResolution(string id)
+        public async Task<ActionResult<ResolutionV2>> GetResolution([FromHeader]string password, string id)
         {
-            if (!await CanUserReadResolution(id))
+            if (!await CanUserReadResolution(id, password))
                 return Forbid();
 
             return await this._resolutionService.GetResolution(id);
         }
 
+        /// <summary>
+        /// Looks up a resolution and checks if it exists.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
@@ -223,11 +229,17 @@ namespace MUNityCore.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
-        private async Task<bool> CanUserEditResolution(string id)
+        private async Task<bool> CanUserEditResolution(string id, string password = null)
         {
             var resolutionAuth = await this._resolutionService.GetResolutionAuth(id);
             if (resolutionAuth == null) return false;
             if (resolutionAuth.AllowPublicEdit) return true;
+            // Check if the resolution has an edit password
+            // do not set it to return password == resolutionUath.EditPassword
+            // because the password can be wrong or not given but the user is
+            // in the whitelist of the document and can authenticate in the next step!
+            if (!string.IsNullOrEmpty(resolutionAuth.EditPassword))
+                if (password == resolutionAuth.EditPassword) return true;
             // The resolution is not public and no User was found. So the user is not allowed to edit this document!
             if (User == null) return false;
             var user = this._authService.GetUserOfClaimPrincipal(User);
@@ -235,14 +247,17 @@ namespace MUNityCore.Controllers
             return resolutionAuth.Users.Any(n => n.User.MunityUserId == user.MunityUserId && n.CanWrite);
         }
 
-        private async Task<bool> CanUserReadResolution(string id)
+        private async Task<bool> CanUserReadResolution(string id, string password = null)
         {
             // Reading must be allowed to the user, when he should be allowed to post amendments.
             if (await CanUserSubmitAmendments(id) != EPostAmendmentMode.NotAllowed) return true;
             var resolutionAuth = await this._resolutionService.GetResolutionAuth(id);
+            
             if (resolutionAuth == null) return false;
             if (resolutionAuth.AllowPublicRead) return true;
-            
+            // The resolution is protected by a reading password!
+            if (!string.IsNullOrEmpty(resolutionAuth.ReadPassword))
+                if (password == resolutionAuth.EditPassword) return true;
             // The resolution is not public and no User was found. So the user is not allowed to edit this document!
             if (User == null) return false;
             var user = this._authService.GetUserOfClaimPrincipal(User);

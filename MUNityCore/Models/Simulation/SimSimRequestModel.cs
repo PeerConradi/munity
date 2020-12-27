@@ -7,11 +7,20 @@ namespace MUNityCore.Models.Simulation
 {
     public class SimSimRequestModel
     {
+        public enum RequestTypes
+        {
+            Custom,
+            AddToListOfSpeakers,
+            AddToQuestions,
+            Personal,
+            StandingOrders
+        }
+
         public int SimSimRequestModelId { get; set; }
 
         public string UserToken { get; set; }
 
-        public string RequestType { get; set; }
+        public RequestTypes RequestType { get; set; }
 
         public string Message { get; set; }
 

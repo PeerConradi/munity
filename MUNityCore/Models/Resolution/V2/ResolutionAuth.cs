@@ -75,6 +75,10 @@ namespace MUNityCore.Models.Resolution.V2
 
         public string PublicShortKey { get; set; }
 
+        public string EditPassword { get; set; }
+
+        public string ReadPassword { get; set; }
+
         /// <summary>
         /// Links to a MUN Core Committee
         /// </summary>

@@ -59,7 +59,7 @@ namespace MUNityCore
 
                     });
                 }
-                
+
                 o.AddPolicy("DevPolicy", builder =>
                 {
                     builder
@@ -87,6 +87,7 @@ namespace MUNityCore
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
             }).AddJwtBearer(x =>
             {
                 x.RequireHttpsMetadata = false;
@@ -99,6 +100,7 @@ namespace MUNityCore
                     ValidateAudience = false
                 };
             });
+            // TODO: Add OAuth some day!
 
             // SignalR is for the WebSockets, they are mainly used in the live Editors for example
             // the Resa Editors etc.

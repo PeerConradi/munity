@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Schema.Request.Authentication
 {
+
+    // ported to munity Data.
     public class RegisterRequest
     {
         [Required]

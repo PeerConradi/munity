@@ -15,7 +15,8 @@ namespace MUNityCore.Models.Simulation
             Spectator,
             Chairman,
             Delegate,
-            Moderator
+            Moderator,
+            Ngo
         }
 
         /// <summary>
