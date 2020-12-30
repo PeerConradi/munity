@@ -52,6 +52,7 @@ namespace MUNityCore
                 {
                     builder
                         .SetIsOriginAllowed(_ => true)
+                        .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
