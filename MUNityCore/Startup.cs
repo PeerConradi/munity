@@ -48,17 +48,15 @@ namespace MUNityCore
 
             services.AddCors(o =>
             {
-                if (munityCors != null)
+                o.AddPolicy("ProdAllOrigins", builder =>
                 {
-                    o.AddPolicy("ProdAllOrigins", builder =>
-                    {
-                        builder.WithOrigins(munityCors)
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials();
+                    builder
+                        .SetIsOriginAllowed(_ => true)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
 
-                    });
-                }
+                });
 
                 o.AddPolicy("DevPolicy", builder =>
                 {
