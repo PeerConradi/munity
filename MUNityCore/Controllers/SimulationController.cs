@@ -37,7 +37,7 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public ActionResult<string> IsOnline()
         {
-            return Ok("alpha-0.0.1");
+            return Ok("alpha-0.0.2");
         }
 
         [HttpGet]
