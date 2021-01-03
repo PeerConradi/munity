@@ -5,7 +5,7 @@ using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models;
 using MUNityCore.Models.User;
 using MUNityCore.Services;
-using MUNitySchema.Schema.Authentication;
+using MUNity.Schema.Authentication;
 using MUNityTest.TestEnvironment;
 using NUnit.Framework;
 

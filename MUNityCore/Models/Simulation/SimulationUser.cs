@@ -16,7 +16,9 @@ namespace MUNityCore.Models.Simulation
 
         public string DisplayName { get; set; }
 
-        public string Pin { get; set; }
+        public string PublicUserId { get; set; }
+
+        public string Password { get; set; }
 
         public int PinRetries { get; set; }
 
@@ -39,7 +41,8 @@ namespace MUNityCore.Models.Simulation
         public SimulationUser()
         {
             this.Token = Util.Tools.IdGenerator.RandomString(20);
-            this.Pin = new Random().Next(1000, 9999).ToString();
+            this.Password = Util.Tools.IdGenerator.RandomString(8);
+            this.PublicUserId = new Random().Next(100000000, 999999999).ToString();
             this.HubConnections = new List<SimulationHubConnection>();
             PinRetries = 0;
         }

@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
-using MUNitySchema.Schema.Conference;
 
 namespace MUNityCore.Models.Conference
 {

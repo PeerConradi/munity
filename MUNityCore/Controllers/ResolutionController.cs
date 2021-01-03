@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Services;
-using MUNitySchema.Models.Resolution;
+using MUNity.Models.Resolution;
 using MUNity.Extensions.ResolutionExtensions;
 
 namespace MUNityCore.Controllers
@@ -20,7 +20,7 @@ namespace MUNityCore.Controllers
     [ApiController]
     public class ResolutionController : ControllerBase
     {
-        readonly IHubContext<Hubs.ResolutionHub, MUNitySchema.Hubs.ITypedResolutionHub> _hubContext;
+        readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;
 
         private readonly IResolutionService _resolutionService;
 
@@ -33,7 +33,7 @@ namespace MUNityCore.Controllers
             AllowedRequest
         }
 
-        public ResolutionController(IHubContext<Hubs.ResolutionHub, MUNitySchema.Hubs.ITypedResolutionHub> hubContext, 
+        public ResolutionController(IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> hubContext, 
             IResolutionService resolutionService,
                 IAuthService authService)
         {

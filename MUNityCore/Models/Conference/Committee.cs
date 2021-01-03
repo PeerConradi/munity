@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
-using MUNitySchema.Schema.Conference;
+using MUNity.Schema.Conference;
 
 namespace MUNityCore.Models.Conference
 {

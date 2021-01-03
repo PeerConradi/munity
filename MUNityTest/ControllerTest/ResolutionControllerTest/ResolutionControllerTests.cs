@@ -37,16 +37,16 @@ namespace MUNityTest.ControllerTest.ResolutionControllerTest
         public async Task UpdateNotExistingResolutionTexst()
         {
             var mockResolutionService = new Mock<IResolutionService>();
-            mockResolutionService.Setup(n => n.GetResolution(It.IsAny<string>())).Returns<MUNitySchema.Models.Resolution.Resolution>(n => null);
+            mockResolutionService.Setup(n => n.GetResolution(It.IsAny<string>())).Returns<MUNity.Models.Resolution.Resolution>(n => null);
 
 
             var mockAuthService = new Mock<IAuthService>();
 
-            var mockHub = new Mock<IHubContext<ResolutionHub, MUNitySchema.Hubs.ITypedResolutionHub>>();
+            var mockHub = new Mock<IHubContext<ResolutionHub, MUNity.Hubs.ITypedResolutionHub>>();
 
             var controller = new ResolutionController(mockHub.Object, mockResolutionService.Object, mockAuthService.Object);
 
-            var newResolution = new MUNitySchema.Models.Resolution.Resolution();
+            var newResolution = new MUNity.Models.Resolution.Resolution();
             var actionResult = await controller.UpdateResolution(newResolution);
             var result = actionResult.Result as ForbidResult;
             Assert.NotNull(result);
@@ -54,7 +54,7 @@ namespace MUNityTest.ControllerTest.ResolutionControllerTest
 
         private SaveableResolution GetTestResolution()
         {
-            var resa = new MUNitySchema.Models.Resolution.Resolution();
+            var resa = new MUNity.Models.Resolution.Resolution();
             var resolution = new SaveableResolution(resa);
             resolution.Header.Topic = "test";
             return resolution;

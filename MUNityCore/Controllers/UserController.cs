@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Models.User;
 using MUNityCore.Services;
-using MUNitySchema.Schema.User;
-using MUNitySchema.Schema.Authentication;
+using MUNity.Schema.User;
+using MUNity.Schema.Authentication;
 
 namespace MUNityCore.Controllers
 {
@@ -43,7 +43,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult Register([FromBody]MUNitySchema.Schema.Authentication.RegisterRequest body)
+        public ActionResult Register([FromBody]RegisterRequest body)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult<AuthenticationResponse> Login([FromBody]MUNitySchema.Schema.Authentication.AuthenticateRequest request)
+        public ActionResult<AuthenticationResponse> Login([FromBody]AuthenticateRequest request)
         {
             var result = _authService.Authenticate(request);
             if (result != null) return Ok(result);

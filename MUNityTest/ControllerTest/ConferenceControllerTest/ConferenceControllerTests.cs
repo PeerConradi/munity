@@ -11,8 +11,8 @@ using MUNityCore.Models.User;
 using MUNityCore.Models.Organization;
 using MUNityCore.Services;
 using Xunit;
-using MUNitySchema.Schema.Project;
-using MUNitySchema.Schema.Conference;
+using MUNity.Schema.Project;
+using MUNity.Schema.Conference;
 
 namespace MUNityTest.ControllerTest.ConferenceControllerTest
 {
@@ -213,7 +213,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             {
                 Name = "Test Conference",
                 FullName = "Conference to Test",
-                Abbreviation = "TK",
+                ConferenceShort = "TK",
                 ProjectId = "testproject"
             };
 

@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MUNityCore.Models.Conference;
-using MUNitySchema.Models.ListOfSpeakers;
+using MUNity.Models.ListOfSpeakers;
 
 namespace MUNityCore.Models.Simulation
 {
@@ -16,14 +16,21 @@ namespace MUNityCore.Models.Simulation
 
         public string Name { get; set; }
 
-        public MUNitySchema.Schema.Simulation.SimulationEnums.GamePhases Phase { get; set; }
+        public MUNity.Schema.Simulation.SimulationEnums.GamePhases Phase { get; set; }
 
-        public MUNitySchema.Schema.Simulation.SimulationEnums.LobbyModes LobbyMode { get; set; }
+        public MUNity.Schema.Simulation.SimulationEnums.LobbyModes LobbyMode { get; set; }
 
         /// <summary>
         /// Momentaner Status wie Sitzung, Abstimmung oder informelle Sitzung Pause etc. als Text.
         /// </summary>
         public string Status { get; set; }
+
+        public DateTime? LastStatusChange { get; set; }
+
+        /// <summary>
+        /// The password is used for administration of the Simulation.
+        /// </summary>
+        public string Password { get; set; }
 
         public List<SimulationRole> Roles { get; set; } = new List<SimulationRole>();
 
@@ -34,15 +41,6 @@ namespace MUNityCore.Models.Simulation
 
         public List<SimSimRequestModel> Requests { get; set; }
 
-        public string Password { get; set; }
-
-        /// <summary>
-        /// Because everything works with tokens and you may delete your cache or
-        /// cant remember this you need to be able to use the admin password to go back into the setup.
-        /// </summary>
-        public string AdminPassword { get; set; }
-
-        public bool CanJoin { get; set; } = true;
 
         /// <summary>
         /// Die Redner in diesem Gremium.

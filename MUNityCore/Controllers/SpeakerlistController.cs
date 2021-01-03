@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 using MUNityCore.Util.Extensions;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models;
-using MUNitySchema.Models.ListOfSpeakers;
+using MUNity.Models.ListOfSpeakers;
 using MUNityCore.Services;
 using System.Collections.ObjectModel;
 using MUNity.Extensions.LoSExtensions;
@@ -24,11 +24,11 @@ namespace MUNityCore.Controllers
     [ApiController]
     public class SpeakerlistController : ControllerBase
     {
-        private readonly IHubContext<Hubs.SpeakerListHub, MUNitySchema.Hubs.ITypedListOfSpeakerHub> _hubContext;
+        private readonly IHubContext<Hubs.SpeakerListHub, MUNity.Hubs.ITypedListOfSpeakerHub> _hubContext;
 
         private readonly SpeakerlistService _speakerlistService;
 
-        public SpeakerlistController(IHubContext<Hubs.SpeakerListHub, MUNitySchema.Hubs.ITypedListOfSpeakerHub> hubContext,
+        public SpeakerlistController(IHubContext<Hubs.SpeakerListHub, MUNity.Hubs.ITypedListOfSpeakerHub> hubContext,
             SpeakerlistService speakerlistService)
         {
             this._hubContext = hubContext;

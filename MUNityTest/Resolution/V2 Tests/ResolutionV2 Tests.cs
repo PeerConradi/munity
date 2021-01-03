@@ -2,14 +2,14 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
 using MUNityCore.Models.Resolution.V2;
 using NUnit.Framework;
-using MUNitySchema.Models.Resolution;
+using MUNity.Models.Resolution;
 
 namespace MUNityTest.Resolution.V2_Tests
 {
     [TestFixture]
     public class ResolutionV2_Tests
     {
-        private MUNitySchema.Models.Resolution.Resolution resolution;
+        private MUNity.Models.Resolution.Resolution resolution;
 
         [Test]
         [Order(1)]
@@ -17,7 +17,7 @@ namespace MUNityTest.Resolution.V2_Tests
         [Description("Test to create the new Resolution object")]
         public void TestCreateResolution()
         {
-            resolution = new MUNitySchema.Models.Resolution.Resolution();
+            resolution = new MUNity.Models.Resolution.Resolution();
             Assert.NotNull(resolution);
             Assert.NotNull(resolution.Header);
             Assert.NotNull(resolution.Preamble);

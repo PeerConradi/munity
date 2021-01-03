@@ -7,9 +7,9 @@ using MUNityCore.Models.Conference;
 using MUNityCore.Models.Resolution;
 using MUNityCore.Models.User;
 using MUNityCore.Models.Resolution.V2;
-using MUNitySchema.Schema.Authentication;
-using MUNitySchema.Schema.User;
-using MUNitySchema.Models.Resolution;
+using MUNity.Schema.Authentication;
+using MUNity.Schema.User;
+using MUNity.Models.Resolution;
 
 namespace MUNityCore.Services
 {
@@ -19,7 +19,7 @@ namespace MUNityCore.Services
 
         public MunityUser GetUserOfClaimPrincipal(ClaimsPrincipal principal);
 
-        AuthenticationResponse Authenticate(MUNitySchema.Schema.Authentication.AuthenticateRequest model);
+        AuthenticationResponse Authenticate(AuthenticateRequest model);
 
         Task<int> SetUserAuth(MunityUser user, MunityUserAuth auth);
 

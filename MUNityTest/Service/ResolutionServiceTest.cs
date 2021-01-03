@@ -194,7 +194,7 @@ namespace MUNityTest.Service
         public async Task TestSaveResolutionThatsNotCreated()
         {
             var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = new MUNitySchema.Models.Resolution.Resolution();
+            var resolution = new MUNity.Models.Resolution.Resolution();
             var result = await service.SaveResolution(resolution);
             Assert.IsNull(result);
         }

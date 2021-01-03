@@ -1,5 +1,5 @@
 ﻿using MUNityCore.Models.Resolution.V2;
-using MUNitySchema.Models.Resolution;
+using MUNity.Models.Resolution;
 using NUnit.Framework;
 
 namespace MUNityTest.Resolution.V2_Tests
@@ -23,7 +23,7 @@ namespace MUNityTest.Resolution.V2_Tests
         public void TestAddDeleteAmendmentToAResolution()
         {
             // Setup
-            var resolution = new MUNitySchema.Models.Resolution.Resolution();
+            var resolution = new MUNity.Models.Resolution.Resolution();
             var paragraph = new OperativeParagraph();
             resolution.OperativeSection.Paragraphs.Add(paragraph);
 
@@ -42,7 +42,7 @@ namespace MUNityTest.Resolution.V2_Tests
         public void TestApplyDeleteAmendment()
         {
             // Setup
-            var resolution = new MUNitySchema.Models.Resolution.Resolution();
+            var resolution = new MUNity.Models.Resolution.Resolution();
             var paragraph = new OperativeParagraph();
             resolution.OperativeSection.Paragraphs.Add(paragraph);
 
@@ -63,7 +63,7 @@ namespace MUNityTest.Resolution.V2_Tests
         public void TestDenyDeleteAmendment()
         {
             // Setup
-            var resolution = new MUNitySchema.Models.Resolution.Resolution();
+            var resolution = new MUNity.Models.Resolution.Resolution();
             var paragraph = new OperativeParagraph();
             resolution.OperativeSection.Paragraphs.Add(paragraph);
 

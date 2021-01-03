@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.User;
-using MUNitySchema.Schema.User;
+using MUNity.Schema.User;
 
 namespace MUNityCore.Extensions.CastExtensions
 {
@@ -43,7 +43,7 @@ namespace MUNityCore.Extensions.CastExtensions
             var mdl = new UserAuthSchema()
             {
                 AuthLevel = (UserAuthSchema.EAuthLevel)auth.AuthLevel,
-                CanCreateOrganisation = auth.CanCreateOrganization,
+                CanCreateOrganization = auth.CanCreateOrganization,
                 UserAuthId = auth.MunityUserAuthId,
                 UserAuthName = auth.UserAuthName
             };

@@ -45,104 +45,88 @@ namespace MUNityTest.SimulationTest
         public void TestCreateSimulation()
         {
             var service = new SimulationService(_context);
-
-            var simulation = service.CreateSimulation("Test Committee", "Password", "Admin", "AdminPass");
+            var simulation = service.CreateSimulation("Test Committee", "Password");
             this.simulationId = simulation.SimulationId;
-            Console.WriteLine($"Created Simulation with id: {simulationId}");
             Assert.NotNull(simulation);
         }
 
         [Test]
-        [Author("Peer Conradi")]
-        [Description("It should have created an owner role that can be used by the user for administration")]
         [Order(2)]
-        public void TestOwnerRoleExists()
+        public async Task TestGetSimulation()
         {
             var service = new SimulationService(_context);
-            var roles = service.GetSimulationsRoles(this.simulationId);
-            Assert.NotNull(roles);
-            var ownerRoleExists = roles.Any(n => n.RoleType == SimulationRole.RoleTypes.Moderator);
-            Assert.NotNull(ownerRoleExists);
-            Assert.IsTrue(ownerRoleExists);
+            var simulation = await service.GetSimulation(this.simulationId);
+            Assert.NotNull(simulation);
         }
 
         [Test]
-        [Author("Peer Conradi")]
-        [Description("You should be able to join the lobby with a custom display name and then become the owner")]
         [Order(3)]
-        public async Task TestBecomeOwner()
+        public async Task TestGenerateInitalUser()
         {
             var service = new SimulationService(_context);
-
             var simulation = await service.GetSimulation(this.simulationId);
-
-            var ownerRole = service.GetSimulationsRoles(this.simulationId)
-                .FirstOrDefault(n => n.RoleType == SimulationRole.RoleTypes.Moderator);
-            Assert.NotNull(ownerRole);
-
-            var joinedUser = service.JoinSimulation(simulation, "Joe Mama");
-            Assert.NotNull(joinedUser);
-
-            var result = service.BecomeRole(simulation, joinedUser, ownerRole);
-            Assert.IsTrue(result);
-
+            var user = service.CreateModerator(simulation, "TestUser");
+            Assert.NotNull(user);
         }
 
         [Test]
-        [Author("Peer Conradi")]
-        [Description("The next user should be unable to become the owner and get stuck inside the lobby")]
         [Order(4)]
-        public async Task TestNextUserBecomesOwner()
+        public void TestCanFindInitUser()
         {
             var service = new SimulationService(_context);
-
-            var simulation = await service.GetSimulation(this.simulationId);
-
-            var ownerRole = service.GetSimulationsRoles(this.simulationId)
-                .FirstOrDefault(n => n.RoleType == SimulationRole.RoleTypes.Moderator);
-            Assert.NotNull(ownerRole);
-
-            var joinedUser = service.JoinSimulation(simulation, "Joe Papa");
-            Assert.NotNull(joinedUser);
-
-            var result = service.BecomeRole(simulation, joinedUser, ownerRole);
-            Assert.IsFalse(result);
-
+            var users = service.GetSimulationUsers(this.simulationId);
+            var user = users.FirstOrDefault(n => n.DisplayName == "TestUser");
+            Assert.NotNull(user);
         }
 
         [Test]
-        [Author("Peer Conradi")]
-        [Description("Should be able to create a new Chairman Role.")]
         [Order(5)]
-        public void TestCreateChairmanRole()
+        public async Task TestCreateNewUser()
         {
             var service = new SimulationService(_context);
-            var chairmanRole = service.AddChairmanRole(this.simulationId, "Vorsitzende(r)");
-            Assert.NotNull(chairmanRole);
+            var simulation = await service.GetSimulation(simulationId);
+            var user = service.CreateUser(simulation, "User1");
+            Assert.NotNull(user);
         }
 
         [Test]
-        [Author("Peer Conradi")]
-        [Description("Should be able to get that Chairman Role")]
         [Order(6)]
-        public void TestGetChairmanRole()
+        public void TestCreateARole()
         {
             var service = new SimulationService(_context);
-            var roles = service.GetSimulationsRoles(this.simulationId);
-            Assert.NotNull(roles);
-            Assert.IsTrue(roles.Any(n => n.RoleType == SimulationRole.RoleTypes.Chairman));
+            var role = service.AddDelegateRole(simulationId, "Germany", "de");
+            Assert.NotNull(role);
         }
 
         [Test]
-        [Author("Peer Conradi")]
-        [Description("Should be able to join the game lobby")]
         [Order(7)]
-        public void TestJoinLobby()
+        public void TestRoleExists()
         {
             var service = new SimulationService(_context);
-            service.JoinSimulation(simulationId, "User Two");
-            var lobby = service.GetSimulationUsers(simulationId);
-            Assert.AreEqual(2, lobby.Count());
+            var roles = service.GetSimulationsRoles(simulationId);
+            Assert.IsTrue(roles.Any(n => n.Name == "Germany"));
+        }
+
+        [Test]
+        [Order(8)]
+        public async Task TestAssignRoleToUser()
+        {
+            var service = new SimulationService(_context);
+            var completeSimulation = await service.GetSimulationWithUsersAndRoles(simulationId);
+            var user = completeSimulation.Users.FirstOrDefault(n => n.DisplayName == "User1");
+            var role = completeSimulation.Roles.FirstOrDefault(n => n.Name == "Germany");
+            var result = service.BecomeRole(completeSimulation, user, role);
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        [Order(9)]
+        public async Task TestUserHasRole()
+        {
+            var service = new SimulationService(_context);
+            var completeSimulation = await service.GetSimulationWithUsersAndRoles(simulationId);
+            var user = completeSimulation.Users.FirstOrDefault(n => n.DisplayName == "User1");
+            Assert.NotNull(user.Role);
         }
     }
 }

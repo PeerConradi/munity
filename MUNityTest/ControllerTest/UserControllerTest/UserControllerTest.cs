@@ -9,7 +9,7 @@ using MUNityCore.Controllers;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
 using MUNityCore.Services;
-using MUNitySchema.Schema.Authentication;
+using MUNity.Schema.Authentication;
 using Xunit;
 
 namespace MUNityTest.ControllerTest.UserControllerTest

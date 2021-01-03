@@ -8,7 +8,7 @@ using MUNityCore.Models.Resolution;
 using MUNityCore.Util.Extensions;
 using MUNityCore.DataHandlers;
 using MUNityCore.DataHandlers.EntityFramework;
-using MUNitySchema.Models.Resolution;
+using MUNity.Models.Resolution;
 using MUNityCore.Models.Resolution.V2;
 using MUNity.Extensions.ResolutionExtensions;
 
@@ -103,7 +103,7 @@ namespace MUNityCore.Services
 
         public async Task<PreambleParagraph> AddPreambleParagraph(Resolution resolution, string text = "")
         {
-            resolution.Preamble.Paragraphs ??= new List<PreambleParagraph>();
+            resolution.Preamble.Paragraphs ??= new System.Collections.ObjectModel.ObservableCollection<PreambleParagraph>();
             var paragraph = new PreambleParagraph {Text = text};
             resolution.Preamble.Paragraphs.Add(paragraph);
             var mdl = new SaveableResolution(resolution);

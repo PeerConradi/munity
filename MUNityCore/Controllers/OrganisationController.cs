@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Services;
-using MUNitySchema.Schema.Organization;
+using MUNity.Schema.Organization;
 
 namespace MUNityCore.Controllers
 {
@@ -35,14 +35,14 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize]
-        public ActionResult<OrganizationInformation> CreateOrganisation([FromBody]MUNitySchema.Schema.Organization.CreateOrganizationRequest body)
+        public ActionResult<OrganizationInformation> CreateOrganisation([FromBody]CreateOrganizationRequest body)
         {
             // TODO: Needs to check of the user is allowed to create an organization
             var user = _authService.GetUserOfClaimPrincipal(User);
             if (user == null)
                 return Forbid();
 
-            var organisation = _organisationService.CreateOrganisation(body.OrganisationName, body.Abbreviation);
+            var organisation = _organisationService.CreateOrganisation(body.OrganizationName, body.Abbreviation);
 
             if (organisation == null)
                 return Problem("Organization cannot be created. Unknown source of error.");

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNitySchema.Schema.Simulation;
+using MUNity.Schema.Simulation;
 using MUNityCore.Models.Simulation;
 
 namespace MUNityCore.Extensions.CastExtensions
@@ -53,7 +53,7 @@ namespace MUNityCore.Extensions.CastExtensions
             {
                 SimulationId = user.Simulation.SimulationId,
                 Name = user.Simulation.Name,
-                Pin = user.Pin,
+                Pin = user.Password,
                 Token = user.Token
             };
             return mdl;

@@ -8,7 +8,7 @@ using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Hubs
 {
-    public class SimulationHub : Hub<MUNitySchema.Hubs.ITypedSimulationHub>
+    public class SimulationHub : Hub<MUNity.Hubs.ITypedSimulationHub>
     {
         private readonly Services.SimulationService _service;
         public SimulationHub(Services.SimulationService service)

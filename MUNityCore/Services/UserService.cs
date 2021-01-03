@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.User;
-using MUNitySchema.Schema.User;
+using MUNity.Schema.User;
 using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Services

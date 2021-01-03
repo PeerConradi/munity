@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Services;
 using Microsoft.AspNetCore.Authorization;
-using MUNitySchema.Schema.Simulation;
+using MUNity.Schema.Simulation;
 using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Controllers
@@ -21,11 +21,11 @@ namespace MUNityCore.Controllers
     public class SimulationController : ControllerBase
     {
 
-        private readonly IHubContext<Hubs.SimulationHub, MUNitySchema.Hubs.ITypedSimulationHub> _hubContext;
+        private readonly IHubContext<Hubs.SimulationHub, MUNity.Hubs.ITypedSimulationHub> _hubContext;
 
         private readonly SimulationService _simulationService;
 
-        public SimulationController(IHubContext<Hubs.SimulationHub, MUNitySchema.Hubs.ITypedSimulationHub> hubContext,
+        public SimulationController(IHubContext<Hubs.SimulationHub, MUNity.Hubs.ITypedSimulationHub> hubContext,
             SimulationService simulationService)
         {
             this._hubContext = hubContext;
@@ -180,7 +180,7 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<SimulationTokenResponse>> JoinSimulation(int id, [FromBody]MUNitySchema.Schema.Simulation.JoinAuthenticate request)
+        public async Task<ActionResult<SimulationTokenResponse>> JoinSimulation(int id, [FromBody]JoinAuthenticate request)
         {
             if (string.IsNullOrWhiteSpace(request.DisplayName)) return BadRequest();
             var simulation = await this._simulationService.GetSimulation(id);
@@ -195,16 +195,16 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<SimulationTokenResponse> CreateSimulation([FromBody]MUNitySchema.Schema.Simulation.CreateSimulationRequest request)
+        public ActionResult<SimulationTokenResponse> CreateSimulation([FromBody]CreateSimulationRequest request)
         {
-            var result = this._simulationService.CreateSimulation(request.Name, request.Password, request.UserDisplayName, request.AdminPassword);
+            var result = this._simulationService.CreateSimulation(request.Name, request.Password);
             var admin = result.Users.First();
             var response = new SimulationTokenResponse()
             {
                 Name = result.Name,
                 Token = admin.Token,
                 SimulationId = result.SimulationId,
-                Pin = admin.Pin
+                Pin = admin.Password
             };
             return Ok(response);
         }

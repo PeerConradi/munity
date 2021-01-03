@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Models.User;
 using MUNityCore.Services;
-using MUNitySchema.Schema.User;
+using MUNity.Schema.User;
 using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Controllers

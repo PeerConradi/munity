@@ -10,7 +10,7 @@ using MUNityCore.Exceptions.ConferenceExceptions;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.Conference.Roles;
 using MUNityCore.Models.Organization;
-using MUNitySchema.Schema.Conference;
+using MUNity.Schema.Conference;
 using MUNityCore.Extensions.CastExtensions;
 namespace MUNityCore.Services
 {

@@ -12,7 +12,7 @@ namespace MUNityCore.Hubs
     /// Note that for most functions of creating, editing or deleting a resolution the 
     /// ResolutionController is used, to make sure the user is authenticated to use this socket.
     /// </summary>
-    public class ResolutionHub : Hub<MUNitySchema.Hubs.ITypedResolutionHub>
+    public class ResolutionHub : Hub<MUNity.Hubs.ITypedResolutionHub>
     {
 
     }

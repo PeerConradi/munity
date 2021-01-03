@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using MongoDB.Driver;
 using MUNityCore.Models.Resolution.V2;
-using MUNitySchema.Models.Resolution;
+using MUNity.Models.Resolution;
 
 namespace MUNityCore.Services
 {

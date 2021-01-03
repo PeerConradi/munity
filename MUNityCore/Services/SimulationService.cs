@@ -28,17 +28,13 @@ namespace MUNityCore.Services
             }
         }
 
-        public Simulation CreateSimulation(string name, string password, string adminName, string adminPassword)
+        public Simulation CreateSimulation(string name, string password)
         {
             var sim = new Simulation()
             {
                 Name = name,
-                Password = password,
-                SimulationId = new Random().Next(100000, 999999),
-                AdminPassword = adminPassword
+                Password = password
             };
-
-            CreateUser(sim, adminName);
 
             this._context.Simulations.Add(sim);
             this._context.SaveChanges();
@@ -54,7 +50,7 @@ namespace MUNityCore.Services
                     n.Users.Any(k => k.HubConnections.Any(a => a.ConnectionId == connectionId)));
         }
 
-        private void CreateUser(Simulation simulation, string displayName)
+        public SimulationUser CreateModerator(Simulation simulation, string displayName)
         {
             var ownerUser = new SimulationUser()
             {
@@ -67,8 +63,26 @@ namespace MUNityCore.Services
                 Simulation = simulation,
             };
             simulation.Users.Add(ownerUser);
+            _context.SaveChanges();
+            return ownerUser;
         }
 
+        public SimulationUser CreateUser(Simulation simulation, string displayName)
+        {
+            var baseUser = new SimulationUser()
+            {
+                CanCreateRole = false,
+                CanEditListOfSpeakers = false,
+                CanEditResolution = false,
+                CanSelectRole = false,
+                DisplayName = displayName,
+                Role = null,
+                Simulation = simulation
+            };
+            simulation.Users.Add(baseUser);
+            _context.SaveChanges();
+            return baseUser;
+        }
 
         public Task<Simulation> GetSimulation(int id)
         {
@@ -144,6 +158,22 @@ namespace MUNityCore.Services
             return currentChairmanRole;
         }
 
+        public SimulationRole AddDelegateRole(int simulationId, string name, string iso)
+        {
+            var simulation = this._context.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
+            if (simulation == null) return null;
+            var role = new SimulationRole()
+            {
+                Iso = iso,
+                Name = name,
+                RoleType = SimulationRole.RoleTypes.Delegate,
+                Simulation = simulation,
+            };
+            simulation.Roles.Add(role);
+            this._context.SaveChanges();
+            return role;
+        }
+
         internal void ApplyPreset(Simulation simulation, ISimulationPreset preset, bool removeExistingRoles = true)
         {
             if (removeExistingRoles) simulation.Roles.Clear();
@@ -156,7 +186,7 @@ namespace MUNityCore.Services
             if (simulation == null)
                 return null;
 
-            if (simulation.LobbyMode == MUNitySchema.Schema.Simulation.SimulationEnums.LobbyModes.Closed)
+            if (simulation.LobbyMode == MUNity.Schema.Simulation.SimulationEnums.LobbyModes.Closed)
                 return null;
 
             var user = new SimulationUser()

@@ -10,7 +10,7 @@ using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.User;
 using MUNityCore.Models;
-using MUNitySchema.Models.ListOfSpeakers;
+using MUNity.Models.ListOfSpeakers;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {

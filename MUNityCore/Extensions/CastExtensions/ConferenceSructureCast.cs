@@ -1,6 +1,6 @@
 ﻿using MUNityCore.Models.Conference;
-using MUNitySchema.Schema.Conference;
-using MUNitySchema.Schema.Organization;
+using MUNity.Schema.Conference;
+using MUNity.Schema.Organization;
 using MUNityCore.Models.Organization;
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace MUNityCore.Extensions.CastExtensions
                 info.ProjectId = conference.ConferenceProject.ProjectId;
 
             if (conference.Committees != null)
-                info.CommitteeIds = conference.Committees.Select(n => n.AsSmallInfo());
+                info.Committees = conference.Committees.Select(n => n.AsSmallInfo());
 
             return info;
         }

@@ -13,8 +13,8 @@ using MUNityCore.Util.Extensions;
 using MUNityCore.Models.User;
 using MUNityCore.Models.Conference;
 using MUNityCore.Services;
-using MUNitySchema.Schema.Conference;
-using MUNitySchema.Schema.Project;
+using MUNity.Schema.Conference;
+using MUNity.Schema.Project;
 
 namespace MUNityCore.Controllers
 {
@@ -191,7 +191,7 @@ namespace MUNityCore.Controllers
             if (!this._organisationService.CanUserCreateProject(user.Username, organisation.OrganizationId))
                 return Forbid();
 
-            var conference = _conferenceService.CreateConference(body.Name, body.FullName, body.Abbreviation, project);
+            var conference = _conferenceService.CreateConference(body.Name, body.FullName, body.ConferenceShort, project);
             if (conference != null)
             {
                 

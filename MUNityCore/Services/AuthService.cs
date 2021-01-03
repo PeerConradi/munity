@@ -17,8 +17,8 @@ using MUNityCore.Models;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
 using MUNityCore.Models.Resolution.V2;
-using MUNitySchema.Schema.Authentication;
-using MUNitySchema.Schema.User;
+using MUNity.Schema.Authentication;
+using MUNity.Schema.User;
 
 namespace MUNityCore.Services
 {
@@ -37,7 +37,7 @@ namespace MUNityCore.Services
         }
 
 
-        public bool CanUserEditResolution(MunityUser user, MUNitySchema.Models.Resolution.Resolution resolution)
+        public bool CanUserEditResolution(MunityUser user, MUNity.Models.Resolution.Resolution resolution)
         {
             // Is user the owner
 
@@ -50,7 +50,7 @@ namespace MUNityCore.Services
             return true;
         }
 
-        public AuthenticationResponse Authenticate(MUNitySchema.Schema.Authentication.AuthenticateRequest model)
+        public AuthenticationResponse Authenticate(MUNity.Schema.Authentication.AuthenticateRequest model)
         {
             // that user does not exists go away!
             MunityUser user = _context.Users.FirstOrDefault(n => n.Username == model.Username);
