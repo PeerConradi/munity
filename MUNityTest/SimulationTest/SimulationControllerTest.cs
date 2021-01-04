@@ -33,7 +33,7 @@ namespace MUNityTest.SimulationTest
             var mockHub = new Mock<IHubContext<SimulationHub, MUNity.Hubs.ITypedSimulationHub>>();
             var service = new SimulationService(_context);
             var controller = new SimulationController(mockHub.Object, service);
-            var request = new MUNity.Schema.Simulation.CreateSimulationRequest() {Name=  "Test", Password = "Password" };
+            var request = new MUNity.Schema.Simulation.CreateSimulationRequest() {Name=  "Test", AdminPassword = "Password" };
             var result = controller.CreateSimulation(request);
             Assert.NotNull(result);
             

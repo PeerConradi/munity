@@ -33,24 +33,24 @@ namespace MUNityTest.ControllerTest.ResolutionControllerTest
             Assert.Equal("test", result.Header.Topic);
         }
 
-        [Fact]
-        public async Task UpdateNotExistingResolutionTexst()
-        {
-            var mockResolutionService = new Mock<IResolutionService>();
-            mockResolutionService.Setup(n => n.GetResolution(It.IsAny<string>())).Returns<MUNity.Models.Resolution.Resolution>(n => null);
+        //[Fact]
+        //public async Task UpdateNotExistingResolutionTexst()
+        //{
+        //    var mockResolutionService = new Mock<IResolutionService>();
+        //    mockResolutionService.Setup(n => n.GetResolution(It.IsAny<string>())).Returns<MUNity.Models.Resolution.Resolution>(n => null);
 
 
-            var mockAuthService = new Mock<IAuthService>();
+        //    var mockAuthService = new Mock<IAuthService>();
 
-            var mockHub = new Mock<IHubContext<ResolutionHub, MUNity.Hubs.ITypedResolutionHub>>();
+        //    var mockHub = new Mock<IHubContext<ResolutionHub, MUNity.Hubs.ITypedResolutionHub>>();
 
-            var controller = new ResolutionController(mockHub.Object, mockResolutionService.Object, mockAuthService.Object);
+        //    var controller = new ResolutionController(mockHub.Object, mockResolutionService.Object, mockAuthService.Object);
 
-            var newResolution = new MUNity.Models.Resolution.Resolution();
-            var actionResult = await controller.UpdateResolution(newResolution);
-            var result = actionResult.Result as ForbidResult;
-            Assert.NotNull(result);
-        }
+        //    var newResolution = new MUNity.Models.Resolution.Resolution();
+        //    var actionResult = await controller.UpdateResolution(newResolution);
+        //    var result = actionResult.Result as ForbidResult;
+        //    Assert.NotNull(result);
+        //}
 
         private SaveableResolution GetTestResolution()
         {

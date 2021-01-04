@@ -26,12 +26,11 @@ namespace MUNityCore.Hubs
 
             var simulation = this._service.GetSimulationAndUserByConnectionId(this.Context.ConnectionId);
             var disconnectedUser = simulation.Users.FirstOrDefault(n => n.HubConnections.Any(a => a.ConnectionId == this.Context.ConnectionId));
-            disconnectedUser.HubConnections.RemoveAll(n => n.ConnectionId == this.Context.ConnectionId);
             if (!disconnectedUser.HubConnections.Any())
             {
                 this.Clients.Group($"sim_{simulation.SimulationId}").UserDisconnected(simulation.SimulationId, disconnectedUser.AsUserItem());
             }
-            this._service.SaveDbChanges();
+            this._service.RemoveHubs(disconnectedUser.HubConnections);
             return base.OnDisconnectedAsync(exception);
         }
 

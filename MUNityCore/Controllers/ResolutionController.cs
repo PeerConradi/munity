@@ -109,13 +109,13 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPatch]
         [AllowAnonymous]
-        public async Task<ActionResult<Resolution>> UpdateResolution([FromBody]Resolution resolution)
+        public async Task<ActionResult<Resolution>> UpdateResolution(string tan, [FromBody]Resolution resolution)
         {
             if (!await CanUserEditResolution(resolution.ResolutionId))
                 return Forbid();
 
             var updatedDocument = await _resolutionService.SaveResolution(resolution);
-            await _hubContext.Clients.Groups(updatedDocument.ResolutionId).ResolutionChanged(updatedDocument);
+            await _hubContext.Clients.Groups(updatedDocument.ResolutionId).ResolutionChanged(updatedDocument, tan);
             return Ok(updatedDocument);
         }
 
@@ -174,7 +174,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> PostDeleteAmendment(string resolutionId, [FromBody]DeleteAmendment amendment)
+        public async Task<ActionResult> PostDeleteAmendment(string resolutionId, string tan, [FromBody]DeleteAmendment amendment)
         {
             var mode = await CanUserSubmitAmendments(resolutionId);
             if (mode == EPostAmendmentMode.NotAllowed) return Forbid();
@@ -190,7 +190,7 @@ namespace MUNityCore.Controllers
                 resolution.OperativeSection.DeleteAmendments.Add(amendment);
 
                 var updated = await this._resolutionService.SaveResolution(resolution);
-                await _hubContext.Clients.Groups(updated.ResolutionId).ResolutionChanged(updated);
+                await _hubContext.Clients.Groups(updated.ResolutionId).ResolutionChanged(updated, tan);
                 return Ok();
             }
 

@@ -29,7 +29,8 @@ namespace MUNityCore.Extensions.CastExtensions
             {
                 DisplayName = user.DisplayName,
                 RoleId = user.Role?.SimulationRoleId ?? -2,
-                SimulationUserId = user.SimulationUserId
+                SimulationUserId = user.SimulationUserId,
+                IsOnline = user.HubConnections?.Any() ?? false
             };
             return mdl;
         }
@@ -82,6 +83,20 @@ namespace MUNityCore.Extensions.CastExtensions
                 SimulationUserId = user.SimulationUserId
             };
             return mdl;
+        }
+
+        public static SimulationUserSetup AsUserSetup(this SimulationUser user) 
+        {
+            var setup = new SimulationUserSetup()
+            {
+                SimulationUserId = user.Simulation.SimulationId,
+                DisplayName = user.DisplayName,
+                RoleId = user.Role?.SimulationRoleId ?? -2,
+                IsOnline = user.HubConnections.Any(),
+                PublicId = user.PublicUserId,
+                Password = user.Password
+            };
+            return setup;
         }
     }
 }

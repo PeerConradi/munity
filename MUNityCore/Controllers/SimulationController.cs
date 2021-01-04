@@ -9,6 +9,7 @@ using MUNityCore.Services;
 using Microsoft.AspNetCore.Authorization;
 using MUNity.Schema.Simulation;
 using MUNityCore.Extensions.CastExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace MUNityCore.Controllers
 {
@@ -59,6 +60,36 @@ namespace MUNityCore.Controllers
             var users = this._simulationService.GetSimulationUsers(id);
             if (!users.Any(n => n.Token == simsimtoken)) return Forbid();
             return Ok(simulation.AsResponse());
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public ActionResult<SimulationUserSetup> GetUsersAsAdmin([FromHeader]string simsimtoken, int id)
+        {
+            var user = this._simulationService.GetSimulationUser(id, simsimtoken);
+            if (user == null || user.CanCreateRole == false) return Forbid();
+            var users = this._simulationService.GetSimulationUsers(id);
+            users.Include(n => n.Role)
+                .Include(n => n.HubConnections)
+                .Include(n => n.Simulation);
+            var result = users.Select(n => n.AsUserSetup());
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public ActionResult<SimulationUserItem> GetUsersDefault([FromHeader]string simsimtoken, int id)
+        {
+            var user = this._simulationService.GetSimulationUser(id, simsimtoken);
+            if (user == null) return Forbid();
+            var users = this._simulationService.GetSimulationUsers(id);
+            users.Include(n => n.Role)
+                .Include(n => n.HubConnections)
+                .Include(n => n.Simulation);
+            var result = users.Select(n => n.AsUserItem());
+            return Ok(result);
         }
 
         [HttpGet]
@@ -195,39 +226,41 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<SimulationTokenResponse> CreateSimulation([FromBody]CreateSimulationRequest request)
+        public ActionResult<CreateSimulationResponse> CreateSimulation([FromBody]CreateSimulationRequest request)
         {
-            var result = this._simulationService.CreateSimulation(request.Name, request.Password);
+            var result = this._simulationService.CreateSimulation(request.Name, request.AdminPassword);
+            var moderator = this._simulationService.CreateModerator(result, request.UserDisplayName ?? "");
             var admin = result.Users.First();
-            var response = new SimulationTokenResponse()
+            var response = new CreateSimulationResponse()
             {
-                Name = result.Name,
-                Token = admin.Token,
+                FirstUserId = moderator.PublicUserId,
+                FirstUserPassword = moderator.Password,
+                FirstUserToken = moderator.Token,
                 SimulationId = result.SimulationId,
-                Pin = admin.Password
+                SimulationName = result.Name,
             };
             return Ok(response);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<bool>> Subscribe([FromHeader]string simsimtoken, int id, string connectionId)
+        public async Task<ActionResult<bool>> Subscribe([FromBody]SubscribeSimulation body)
         {
-            if (string.IsNullOrEmpty(connectionId))
+            if (string.IsNullOrEmpty(body.ConnectionId))
                 return BadRequest();
-            var user = this._simulationService.GetSimulationUser(id, simsimtoken);
+            var user = this._simulationService.GetSimulationUser(body.SimulationId, body.Token);
             if (user == null) return Forbid();
-            await this._hubContext.Groups.AddToGroupAsync(connectionId, $"sim_{id}");
+            await this._hubContext.Groups.AddToGroupAsync(body.ConnectionId, $"sim_{body.SimulationId}");
             var mdl = new SimulationHubConnection()
             {
                 User = user,
-                ConnectionId = connectionId,
+                ConnectionId = body.ConnectionId,
                 CreationDate = DateTime.Now
             };
             user.HubConnections.Add(mdl);
             this._simulationService.SaveDbChanges();
-            await this._hubContext.Clients.Group($"sim_{id}").UserConnected(id, user.AsUserItem());
+            await this._hubContext.Clients.Group($"sim_{body.SimulationId}").UserConnected(body.SimulationId, user.AsUserItem());
             return Ok(true);
         }
 

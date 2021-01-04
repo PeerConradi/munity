@@ -161,21 +161,19 @@ namespace MUNityCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseCors("DevPolicy");
-            //    app.UseDeveloperExceptionPage();
-            //}
-            //else
-            //{
-            //    app.UseCors("AngularProd");
-            //    app.UseExceptionHandler("/Error");
-            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            //    app.UseHsts();
-            //}
-            app.UseCors("ProdAllOrigins");
-            app.UseExceptionHandler("/Error");
-            app.UseHsts();
+            if (env.IsDevelopment())
+            {
+                app.UseCors("DevPolicy");
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseCors("ProdAllOrigins");
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+            
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

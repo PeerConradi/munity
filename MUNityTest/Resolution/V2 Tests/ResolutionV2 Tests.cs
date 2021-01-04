@@ -79,7 +79,7 @@ namespace MUNityTest.Resolution.V2_Tests
                 Text = "New Notice"
             };
             paragraph.Comments.Add(notice);
-            Assert.False(string.IsNullOrEmpty(notice.Id));
+            Assert.False(string.IsNullOrEmpty(notice.CommentId));
             Assert.NotNull(notice.ReadBy);
             Assert.Contains(notice, paragraph.Comments);
         }

@@ -28,6 +28,12 @@ namespace MUNityCore.Services
             }
         }
 
+        public void RemoveHubs(IEnumerable<SimulationHubConnection> hubs)
+        {
+            this._context.SimulationHubConnections.RemoveRange(hubs);
+            this._context.SaveChanges();
+        }
+
         public Simulation CreateSimulation(string name, string password)
         {
             var sim = new Simulation()
