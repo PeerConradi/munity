@@ -65,6 +65,19 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
+        public async Task<ActionResult<SimulationUserSetup>> CreateUser([FromHeader]string simsimtoken, int id)
+        {
+            var currentUser = this._simulationService.GetSimulationUser(id, simsimtoken);
+            if (currentUser.CanCreateRole == false) return Forbid();
+            var simulation = await this._simulationService.GetSimulation(id);
+            if (simulation == null) return NotFound();
+            var newUser = this._simulationService.CreateUser(simulation, "");
+            return Ok(newUser.AsUserSetup());
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
         public ActionResult<SimulationUserSetup> GetUsersAsAdmin([FromHeader]string simsimtoken, int id)
         {
             var user = this._simulationService.GetSimulationUser(id, simsimtoken);
@@ -75,6 +88,15 @@ namespace MUNityCore.Controllers
                 .Include(n => n.Simulation);
             var result = users.Select(n => n.AsUserSetup());
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<bool> IsUserOnline([FromHeader]string simsimtoken, int simulationId, int userId)
+        {
+            var user = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
+            if (user == null || user.CanCreateRole == false) return Forbid();
+            return Ok(this._simulationService.UserOnline(simulationId, userId));
         }
 
         [HttpGet]
@@ -211,15 +233,23 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<SimulationTokenResponse>> JoinSimulation(int id, [FromBody]JoinAuthenticate request)
+        public async Task<ActionResult<SimulationTokenResponse>> JoinSimulation([FromBody]JoinAuthenticate request)
         {
             if (string.IsNullOrWhiteSpace(request.DisplayName)) return BadRequest();
-            var simulation = await this._simulationService.GetSimulation(id);
+            var simulation = await this._simulationService.GetSimulation(request.SimulationId);
             if (simulation == null) return NotFound();
-            if (simulation.Users.Any(n => n.DisplayName == request.DisplayName)) return BadRequest();
-            if (!string.IsNullOrEmpty(simulation.Password) && simulation.Password != request.Password)
+            var user = this._simulationService.GetSimulationUserByPublicId(request.SimulationId, request.UserId);
+            if (user == null) return NotFound();
+            //if (simulation.Users.Any(n => n.DisplayName == request.DisplayName)) return BadRequest();
+            if (user.Password != request.Password)
                 return Forbid();
-            var user = this._simulationService.JoinSimulation(simulation, request.DisplayName);
+            if (string.IsNullOrEmpty(user.Token))
+            {
+                user.Token = Util.Tools.IdGenerator.RandomString(20);
+                this._simulationService.SaveDbChanges();
+            }
+                
+
             return Ok(user.AsTokenResponse());
         }
 

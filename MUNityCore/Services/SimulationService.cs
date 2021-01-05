@@ -131,6 +131,16 @@ namespace MUNityCore.Services
             return this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId);
         }
 
+        public SimulationUser GetSimulationUserByPublicId(int simulationId, string publicId)
+        {
+            return this._context.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.PublicUserId == publicId);
+        }
+
+        public bool UserOnline(int simulationId, int userId)
+        {
+            return this._context.SimulationUser.Any(n => n.Simulation.SimulationId == simulationId && n.SimulationUserId == userId);
+        }
+
         public SimulationUser GetSimulationUser(int simulationId, string token)
         {
             return this._context.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.Token == token);

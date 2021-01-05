@@ -89,7 +89,7 @@ namespace MUNityCore.Extensions.CastExtensions
         {
             var setup = new SimulationUserSetup()
             {
-                SimulationUserId = user.Simulation.SimulationId,
+                SimulationUserId = user.Simulation?.SimulationId ?? -1,
                 DisplayName = user.DisplayName,
                 RoleId = user.Role?.SimulationRoleId ?? -2,
                 IsOnline = user.HubConnections.Any(),
