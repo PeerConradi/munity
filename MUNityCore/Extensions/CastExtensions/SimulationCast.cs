@@ -19,7 +19,7 @@ namespace MUNityCore.Extensions.CastExtensions
                 SimulationRoleId = role.SimulationRoleId,
             };
             if (role.Simulation != null && role.Simulation.Users != null)
-                mdl.Users = role.Simulation.Users.Where(n => n.Role == role).Select(n => n.DisplayName);
+                mdl.Users = role.Simulation.Users.Where(n => n.Role == role).Select(n => n.DisplayName).ToList();
             return mdl;
         }
 
@@ -41,8 +41,8 @@ namespace MUNityCore.Extensions.CastExtensions
             {
                 Name = simulation.Name,
                 Phase = (SimulationEnums.GamePhases)simulation.Phase,
-                Roles = simulation.Roles?.Select(n => n.AsRoleItem()) ?? new List<SimulationRoleItem>(),
-                Users = simulation.Users?.Select(n => n.AsUserItem()) ?? new List<SimulationUserItem>(),
+                Roles = simulation.Roles?.Select(n => n.AsRoleItem()).ToList() ?? new List<SimulationRoleItem>(),
+                Users = simulation.Users?.Select(n => n.AsUserItem()).ToList() ?? new List<SimulationUserItem>(),
                 SimulationId = simulation.SimulationId
             };
             return mdl;
@@ -89,12 +89,12 @@ namespace MUNityCore.Extensions.CastExtensions
         {
             var setup = new SimulationUserSetup()
             {
-                SimulationUserId = user.Simulation?.SimulationId ?? -1,
+                SimulationUserId = user.SimulationUserId,
                 DisplayName = user.DisplayName,
                 RoleId = user.Role?.SimulationRoleId ?? -2,
                 IsOnline = user.HubConnections.Any(),
                 PublicId = user.PublicUserId,
-                Password = user.Password
+                Password = user.Password,
             };
             return setup;
         }

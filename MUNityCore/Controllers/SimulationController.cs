@@ -85,8 +85,8 @@ namespace MUNityCore.Controllers
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
                 .Include(n => n.HubConnections)
-                .Include(n => n.Simulation);
-            var result = users.Select(n => n.AsUserSetup());
+                .Include(n => n.Simulation).ToList();
+            var result = users.Select(n => n.AsUserSetup()).ToList();
             return Ok(result);
         }
 
@@ -109,7 +109,7 @@ namespace MUNityCore.Controllers
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
                 .Include(n => n.HubConnections)
-                .Include(n => n.Simulation);
+                .Include(n => n.Simulation).ToList();
             var result = users.Select(n => n.AsUserItem());
             return Ok(result);
         }
@@ -243,12 +243,17 @@ namespace MUNityCore.Controllers
             //if (simulation.Users.Any(n => n.DisplayName == request.DisplayName)) return BadRequest();
             if (user.Password != request.Password)
                 return Forbid();
+
+            if (!string.IsNullOrEmpty(request.DisplayName))
+            {
+                user.DisplayName = request.DisplayName;
+                this._simulationService.SaveDbChanges();
+            }
             if (string.IsNullOrEmpty(user.Token))
             {
                 user.Token = Util.Tools.IdGenerator.RandomString(20);
                 this._simulationService.SaveDbChanges();
-            }
-                
+            } 
 
             return Ok(user.AsTokenResponse());
         }

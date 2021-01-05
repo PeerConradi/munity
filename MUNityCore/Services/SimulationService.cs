@@ -105,6 +105,11 @@ namespace MUNityCore.Services
                 .FirstOrDefaultAsync(n => n.SimulationId == id);
         }
 
+        public List<SimulationHubConnection> UserConnections(int userId)
+        {
+            return this._context.SimulationHubConnections.Where(n => n.User.SimulationUserId == userId).ToList();
+        }
+
         public Simulation GetSImulationWithHubsUsersAndRoles(int id)
         {
             var simulation = this._context.Simulations
