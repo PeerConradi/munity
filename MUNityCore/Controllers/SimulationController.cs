@@ -164,6 +164,7 @@ namespace MUNityCore.Controllers
             var preset = this._simulationService.Presets.FirstOrDefault(n => n.Id == presetId);
             if (preset == null) return NotFound();
             this._simulationService.ApplyPreset(simulation, preset);
+            await this._hubContext.Clients.Group($"sim_{simulationId}").RolesChanged(simulationId, simulation.Roles.Select(n => n.AsRoleItem()));
             return Ok();
         }
 

@@ -30,8 +30,15 @@ namespace MUNityCore.Services
 
         public void RemoveHubs(IEnumerable<SimulationHubConnection> hubs)
         {
-            this._context.SimulationHubConnections.RemoveRange(hubs);
-            this._context.SaveChanges();
+            try
+            {
+                this._context.SimulationHubConnections.RemoveRange(hubs);
+                this._context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                // TODO: Logger
+            }
         }
 
         public Simulation CreateSimulation(string name, string password)
