@@ -4,47 +4,50 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using MUNity.Models.ListOfSpeakers;
+using Microsoft.EntityFrameworkCore;
 
 namespace MUNityCore.Services
 {
     public class SpeakerlistService
     {
         Random _rnd = new Random();
-        private List<ListOfSpeakers> Speakerlists;
+        private readonly DataHandlers.EntityFramework.MunityContext _context;
 
         public ListOfSpeakers CreateSpeakerlist()
         {
             var id = _rnd.Next(100000, 999999).ToString();
-            while (Speakerlists.Any(n => n.PublicId == id))
+            while (_context.ListOfSpeakers.Any(n => n.PublicId == id))
             {
                 id = _rnd.Next(100000, 999999).ToString();
             }
             var speakerList = new ListOfSpeakers();
             speakerList.PublicId = id;
-            Speakerlists.Add(speakerList);
+            _context.ListOfSpeakers.Add(speakerList);
+            this._context.SaveChanges();
             return speakerList;
         }
 
         public ListOfSpeakers GetSpeakerlist(string id)
         {
-            return Speakerlists.FirstOrDefault(n => n.ListOfSpeakersId == id);
+            return this._context.ListOfSpeakers.Include(n => n.Speakers).Include(n => n.Questions).FirstOrDefault(n => n.ListOfSpeakersId == id);
+        }
+
+        public void OverwriteList(ListOfSpeakers list)
+        {
+            var original = this._context.ListOfSpeakers.Include(n => n.Speakers).Include(n => n.Questions).FirstOrDefault(n => n.ListOfSpeakersId == list.ListOfSpeakersId);
+            this._context.Entry(original).CurrentValues.SetValues(list);
+            this._context.SaveChanges();
         }
 
         public ListOfSpeakers GetSpeakerlistByPublicId(string publicId)
         {
-            return Speakerlists.FirstOrDefault(n => n.PublicId == publicId);
-        }
-
-        public void FlushSpeakerlist()
-        {
-            Speakerlists.Clear();
+            return this._context.ListOfSpeakers.Include(n => n.Speakers).Include(n => n.Questions).FirstOrDefault(n => n.PublicId == publicId);
         }
 
 
-        public SpeakerlistService()
+        public SpeakerlistService(DataHandlers.EntityFramework.MunityContext context)
         {
-            Speakerlists = new List<ListOfSpeakers>();
-            Console.WriteLine("Speakerlist Service Started!");
+            _context = context;
         }
     }
 }

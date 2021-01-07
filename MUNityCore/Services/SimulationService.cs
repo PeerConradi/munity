@@ -54,6 +54,16 @@ namespace MUNityCore.Services
             return sim;
         }
 
+        public string GetSpeakerlistIdOfSimulation(int simulationId)
+        {
+            return this._context.Simulations.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.SimulationId == simulationId)?.ListOfSpeakers?.ListOfSpeakersId;
+        }
+
+        public string GetResolutionIdOfSimulation(int simulationId)
+        {
+            return this._context.Simulations.Include(n => n.CurrentResolution).FirstOrDefault(n => n.SimulationId == simulationId)?.CurrentResolution?.ResolutionId;
+        }
+
         internal Simulation GetSimulationAndUserByConnectionId(string connectionId)
         {
             return _context.Simulations
@@ -156,6 +166,21 @@ namespace MUNityCore.Services
         public SimulationUser GetSimulationUser(int simulationId, string token)
         {
             return this._context.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.Token == token);
+        }
+
+        public SimulationUser GetSimulationUserWithRole(int simulationId, string token)
+        {
+            return this._context.SimulationUser.Include(n => n.Role).FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.Token == token);
+        }
+
+        public MUNity.Models.ListOfSpeakers.ListOfSpeakers InitListOfSpeakers(int simulationId)
+        {
+            var simulation = this._context.Simulations.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.SimulationId == simulationId);
+            if (simulation == null) return null;
+            simulation.ListOfSpeakers = new MUNity.Models.ListOfSpeakers.ListOfSpeakers();
+            this._context.ListOfSpeakers.Add(simulation.ListOfSpeakers);
+            this._context.SaveChanges();
+            return simulation.ListOfSpeakers;
         }
 
         public void SaveDbChanges()

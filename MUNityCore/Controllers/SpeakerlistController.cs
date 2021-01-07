@@ -35,6 +35,13 @@ namespace MUNityCore.Controllers
             this._speakerlistService = speakerlistService;
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<bool> IsSpeakerlistOnline(string id)
+        {
+            return _speakerlistService.GetSpeakerlist(id) != null;
+        }
+
         /// <summary>
         /// Gets a speakerlist
         /// </summary>
@@ -42,7 +49,7 @@ namespace MUNityCore.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
-        public ActionResult<ListOfSpeakers> GetSpeakerlist([FromHeader]string id)
+        public ActionResult<ListOfSpeakers> GetSpeakerlist(string id)
         {
             //var authstate = authService.ValidateAuthKey(auth);
 
@@ -52,6 +59,17 @@ namespace MUNityCore.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist cannot be found!");
 
             return StatusCode(StatusCodes.Status200OK, speakerlist);
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public ActionResult SyncSpeakerlist([FromBody]ListOfSpeakers list)
+        {
+            var speakerlist = _speakerlistService.GetSpeakerlist(list.ListOfSpeakersId);
+            if (speakerlist == null) return NotFound();
+            this._speakerlistService.OverwriteList(list);
+            this._hubContext.Clients.Group($"los_{list.ListOfSpeakersId}").SpeakerListChanged(list);
+            return Ok();
         }
 
         /// <summary>
@@ -74,14 +92,14 @@ namespace MUNityCore.Controllers
         /// <summary>
         /// Subscribes to a List of speakers
         /// </summary>
-        /// <param name="publicid"></param>
+        /// <param name="listId"></param>
         /// <param name="connectionid"></param>
         /// <returns></returns>
         [Route("[action]")]
-        [HttpPost]
-        public IActionResult SubscribeToList([FromHeader]string publicid, [FromHeader]string connectionid)
+        [HttpGet]
+        public IActionResult SubscribeToList(string listId, string connectionid)
         {
-            _hubContext.Groups.AddToGroupAsync(connectionid, "s-list-" + publicid);
+            _hubContext.Groups.AddToGroupAsync(connectionid, "s-list-" + listId);
             return StatusCode(StatusCodes.Status200OK);
         }
 

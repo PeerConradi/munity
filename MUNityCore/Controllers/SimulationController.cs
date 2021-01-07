@@ -65,6 +65,38 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
+        public ActionResult<string> GetListOfSpeakersId([FromHeader]string simsimtoken, int simulationId)
+        {
+            var currentUser = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
+            if (currentUser == null) return null;
+            return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public ActionResult<string> GetResolutionId([FromHeader] string simsimtoken, int simulationId)
+        {
+            var currentUser = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
+            if (currentUser == null) return null;
+            return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public ActionResult<MUNity.Models.ListOfSpeakers.ListOfSpeakers> InitListOfSpeakers([FromHeader] string simsimtoken, int simulationId)
+        {
+            var currentUser = this._simulationService.GetSimulationUserWithRole(simulationId, simsimtoken);
+            if (currentUser == null || (!currentUser.CanCreateRole && currentUser.Role.RoleType != SimulationRole.RoleTypes.Chairman)) return Forbid();
+            // TODO: Send Socket information.
+            return Ok(this._simulationService.InitListOfSpeakers(simulationId));
+        }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
         public async Task<ActionResult<SimulationUserSetup>> CreateUser([FromHeader]string simsimtoken, int id)
         {
             var currentUser = this._simulationService.GetSimulationUser(id, simsimtoken);
