@@ -156,6 +156,31 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
+        public async Task<ActionResult> SetUserRole([FromHeader]string simsimtoken, int simulationId, int userId, int roleId)
+        {
+            var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
+            if (simulation == null) return NotFound();
+            var user = simulation.Users.FirstOrDefault(n => n.Token == simsimtoken);
+            if (user == null || user.CanCreateRole == false) return Forbid();
+            var targetUser = simulation.Users.FirstOrDefault(n => n.SimulationUserId == userId);
+            if (targetUser == null) return NotFound();
+            if (roleId == -2)
+            {
+                this._simulationService.BecomeRole(simulation, targetUser, null);
+                await this._hubContext.Clients.Group($"sim_{simulationId}").UserRoleChanged(simulationId, targetUser.SimulationUserId, roleId);
+                return Ok();
+            }
+            var targetRole = simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == roleId);
+            if (targetRole == null) return NotFound();
+
+            this._simulationService.BecomeRole(simulation, targetUser, targetRole);
+            await this._hubContext.Clients.Group($"sim_{simulationId}").UserRoleChanged(simulationId, targetUser.SimulationUserId, roleId);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
         public async Task<ActionResult> ApplyPreset([FromHeader]string simsimtoken, int simulationId, string presetId)
         {
             var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
@@ -198,36 +223,37 @@ namespace MUNityCore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> MakeRequest([FromHeader]string simsimtoken, int simulationId, string request)
+        public async Task<ActionResult> MakePetition([FromBody]Petition petition)
         {
-            var user = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
+            var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
             if (user == null) return Forbid();
-            await this._hubContext.Clients.Group($"sim_{simulationId}").UserRequest(simulationId, user.SimulationUserId, request);
+            petition.PetitionUserId = user.SimulationUserId;
+            await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetition(petition);
             return Ok();
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> AcceptRequest([FromHeader]string simsimtoken, int simulationId, int userId, string request)
+        public async Task<ActionResult> AcceptPetition([FromBody]Petition petition)
         {
-            var user = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
+            var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
             if (!user.CanCreateRole) return Forbid();
-            await this._hubContext.Clients.Group($"sim_{simulationId}").UserRequestAccepted(simulationId, userId, request);
+            await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetitionAccepted(petition);
             return Ok();
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> DeleteRequest([FromHeader]string simsimtoken, int simulationId, int userId, string request)
+        public async Task<ActionResult> DeletePetition([FromBody] Petition petition)
         {
-            var user = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
-            if (userId != user.SimulationUserId && !user.CanCreateRole) return Forbid();
-            await this._hubContext.Clients.Group($"sim_{simulationId}").UserRequestDeleted(simulationId, userId, request);
+            var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
+            if (petition.PetitionUserId != user.SimulationUserId && !user.CanCreateRole) return Forbid();
+            await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetitionDeleted(petition);
             return Ok();
         }
 

@@ -25,6 +25,7 @@ namespace MUNityCore.Hubs
         {
 
             var simulation = this._service.GetSimulationAndUserByConnectionId(this.Context.ConnectionId);
+            if (simulation == null) return null;
             var disconnectedUser = simulation.Users.FirstOrDefault(n => n.HubConnections.Any(a => a.ConnectionId == this.Context.ConnectionId));
             if (disconnectedUser.HubConnections.Any())
             {

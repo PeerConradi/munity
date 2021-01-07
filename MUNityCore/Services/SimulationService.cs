@@ -241,7 +241,7 @@ namespace MUNityCore.Services
                 .Where(n => n.Simulation.SimulationId == simulation.SimulationId);
 
             // Cannot take this role because it is already taken!
-            if (users.Any(n => n.Role.SimulationRoleId == role.SimulationRoleId)) return false;
+            // if (users.Any(n => n.Role.SimulationRoleId == role.SimulationRoleId)) return false;
 
             user.Role = role;
             this._context.SaveChanges();
