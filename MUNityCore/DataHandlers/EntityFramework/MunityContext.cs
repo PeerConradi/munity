@@ -143,13 +143,13 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
             modelBuilder.Entity<SimulationHubConnection>().HasOne(n => n.User).WithMany(n => n.HubConnections);
 
-            modelBuilder.Entity<ListOfSpeakers>().HasOne(n => n.CurrentSpeaker);
+            modelBuilder.Entity<ListOfSpeakers>().HasMany(n => n.AllSpeakers).WithOne(n => n.ListOfSpeakers);
+            modelBuilder.Entity<ListOfSpeakers>().Ignore(n => n.CurrentSpeaker);
+            modelBuilder.Entity<ListOfSpeakers>().Ignore(n => n.CurrentQuestion);
+            modelBuilder.Entity<ListOfSpeakers>().Ignore(n => n.Speakers);
+            modelBuilder.Entity<ListOfSpeakers>().Ignore(n => n.Questions);
 
-            modelBuilder.Entity<ListOfSpeakers>().HasOne(n => n.CurrentQuestion);
-
-            modelBuilder.Entity<ListOfSpeakers>().HasMany(n => n.Speakers);
-
-            modelBuilder.Entity<ListOfSpeakers>().HasMany(n => n.Questions);
+            modelBuilder.Entity<Speaker>().HasKey(n => n.Id);
         }
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)

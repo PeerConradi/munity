@@ -3,14 +3,16 @@ using System;
 using MUNityCore.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityCore.Migrations
 {
     [DbContext(typeof(MunityContext))]
-    partial class MunityContextModelSnapshot : ModelSnapshot
+    [Migration("20210108213030_New Speakerlist Design")]
+    partial class NewSpeakerlistDesign
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,6 +73,12 @@ namespace MUNityCore.Migrations
                     b.Property<string>("ListOfSpeakersId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
+                    b.Property<string>("ListOfSpeakersId1")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ListOfSpeakersId2")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
                     b.Property<int>("Mode")
                         .HasColumnType("int");
 
@@ -83,6 +91,10 @@ namespace MUNityCore.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ListOfSpeakersId");
+
+                    b.HasIndex("ListOfSpeakersId1");
+
+                    b.HasIndex("ListOfSpeakersId2");
 
                     b.ToTable("Speakers");
                 });
@@ -1194,6 +1206,14 @@ namespace MUNityCore.Migrations
                         .WithMany("AllSpeakers")
                         .HasForeignKey("ListOfSpeakersId");
 
+                    b.HasOne("MUNity.Models.ListOfSpeakers.ListOfSpeakers", null)
+                        .WithMany("Questions")
+                        .HasForeignKey("ListOfSpeakersId1");
+
+                    b.HasOne("MUNity.Models.ListOfSpeakers.ListOfSpeakers", null)
+                        .WithMany("Speakers")
+                        .HasForeignKey("ListOfSpeakersId2");
+
                     b.Navigation("ListOfSpeakers");
                 });
 
@@ -1528,6 +1548,10 @@ namespace MUNityCore.Migrations
             modelBuilder.Entity("MUNity.Models.ListOfSpeakers.ListOfSpeakers", b =>
                 {
                     b.Navigation("AllSpeakers");
+
+                    b.Navigation("Questions");
+
+                    b.Navigation("Speakers");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Conference.Committee", b =>
