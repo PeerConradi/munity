@@ -26,7 +26,7 @@ namespace MUNityCore.Services
             {
                 yield return new Models.Simulation.Presets.PresetSicherheitsrat();
                 yield return new Models.Simulation.Presets.PresetGV_TVT();
-                yield return new Models.Simulation.Presets.PresetGV_TVT();
+                yield return new Models.Simulation.Presets.PresetMR_TVT();
             }
         }
 
