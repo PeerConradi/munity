@@ -59,6 +59,12 @@ namespace MUNityCore.Services
                 }
                 var removedSpeakers = original.AllSpeakers.Where(n => newList.AllSpeakers.All(a => a.Id != n.Id)).ToList();
                 removedSpeakers.ForEach(n => original.AllSpeakers.Remove(n));
+
+                // For some reason we get empty speaker elements
+                // lets clear them:
+                var lostSpeakers = _context.Speakers.Where(n => n.ListOfSpeakers == null);
+                _context.Speakers.RemoveRange(lostSpeakers);
+
                 if (original.ListClosed != newList.ListClosed) original.ListClosed = newList.ListClosed;
                 if (original.Name != newList.Name) original.Name = newList.Name;
                 if (original.PausedQuestionTime != newList.PausedQuestionTime) original.PausedQuestionTime = newList.PausedQuestionTime;

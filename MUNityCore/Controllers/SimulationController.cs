@@ -53,7 +53,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<SimulationResponse> GetSimulation([FromHeader]string simsimtoken, int id)
+        public ActionResult<SimulationResponse> GetSimulation([FromHeader] string simsimtoken, int id)
         {
             var simulation = this._simulationService.GetSImulationWithHubsUsersAndRoles(id);
             if (simulation == null) return NotFound();
@@ -65,11 +65,39 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<string> GetListOfSpeakersId([FromHeader]string simsimtoken, int simulationId)
+        public ActionResult<string> GetListOfSpeakersId([FromHeader] string simsimtoken, int simulationId)
         {
             var currentUser = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
             if (currentUser == null) return null;
             return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public ActionResult InitVoting([FromBody]object model)
+        {
+            // Create Model
+            // Token
+            // SimulationId
+            // Name
+            // AllowAbstention
+
+            // Send Model to all sockets
+            throw new NotImplementedException();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public ActionResult Vote([FromBody]object vote)
+        {
+            // SImulationId
+            // Token
+            // VoteValue (option)
+
+            // Send vote to all sockets
+            throw new NotImplementedException();
         }
 
         [HttpGet]
