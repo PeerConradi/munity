@@ -256,6 +256,19 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
+        public async Task<ActionResult> RemoveSimulationUser([FromHeader]string simsimtoken, int simulationId, int userId)
+        {
+            var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
+            if (simulation == null) return NotFound();
+            if (!simulation.Users.Any(n => n.Token == simsimtoken && n.CanCreateRole)) return Forbid();
+            await this._simulationService.RemoveUser(simulationId, userId);
+            //await this._hubContext.Clients.Group($"sim_{simulationId}").
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<Models.Simulation.Presets.ISimulationPreset>> GetPresets()
         {
             return Ok(this._simulationService.Presets);

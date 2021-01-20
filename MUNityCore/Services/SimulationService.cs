@@ -280,5 +280,20 @@ namespace MUNityCore.Services
             this._context = context;
         }
 
+        internal async Task RemoveUser(int simulationId, int userId)
+        {
+            
+            var user = await this._context.SimulationUser.SingleOrDefaultAsync(n => n.SimulationUserId == userId);
+            if (user != null)
+            {
+                var hubs = await this._context.SimulationHubConnections.Where(n => n.User.SimulationUserId == userId).ToListAsync();
+                if (hubs.Any())
+                {
+                    this._context.SimulationHubConnections.RemoveRange(hubs);
+                }
+                this._context.SimulationUser.Remove(user);
+                await this._context.SaveChangesAsync();
+            }
+        }
     }
 }
