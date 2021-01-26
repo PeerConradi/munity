@@ -399,5 +399,56 @@ namespace MUNityCore.Controllers
             return Ok(true);
         }
 
+        [HttpPost]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public async Task<ActionResult<CreatedVoteModel>> CreateVoting([FromBody]MUNity.Schema.Simulation.CreateSimulationVoting body)
+        {
+            var simulation = this._simulationService.GetSImulationWithHubsUsersAndRoles(body.SimulationId);
+            if (simulation == null) return NotFound("Simulation not found!");
+            var user = simulation.Users.FirstOrDefault(n => n.Token == body.Token);
+            if (user == null || user.Role == null || user.Role.RoleType != SimulationRole.RoleTypes.Chairman) return Forbid();
+            var voting = new CreatedVoteModel()
+            {
+                CreatedVoteModelId = Guid.NewGuid().ToString(),
+                Text = body.Text,
+                AllowAbstention = body.AllowAbstention,
+            };
+            if (body.Mode == EVotingMode.Everyone)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any()).Select(n => n.SimulationUserId).ToList();
+            else if (body.Mode == EVotingMode.AllParticipants)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType != SimulationRole.RoleTypes.Chairman)
+                    .Select(n => n.SimulationUserId).ToList();
+            else if (body.Mode == EVotingMode.JustDelegates)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == SimulationRole.RoleTypes.Delegate)
+                    .Select(n => n.SimulationUserId).ToList();
+            else if (body.Mode == EVotingMode.JustGuests)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == SimulationRole.RoleTypes.Spectator)
+                    .Select(n => n.SimulationUserId).ToList();
+            else if (body.Mode == EVotingMode.JustNgos)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == SimulationRole.RoleTypes.Ngo)
+                    .Select(n => n.SimulationUserId).ToList();
+
+            await this._hubContext.Clients.Group($"sim_{body.SimulationId}").VoteCreated(voting);
+            return Ok(voting);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAnonymous]
+        public async Task<ActionResult> Vote([FromHeader]string simsimtoken, int simulationId, string voteId, int choice)
+        {
+            var user = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
+            if (user == null) return Forbid();
+            var args = new MUNity.Schema.Simulation.VotedEventArgs()
+            {
+                Choice = choice,
+                UserId = user.SimulationUserId,
+                VoteId = voteId
+            };
+            await this._hubContext.Clients.Group($"sim_{simulationId}").Voted(args);
+            return Ok();
+        }
+
     }
 }
