@@ -3,10 +3,8 @@ name: Test Shared Code (MUNitySchema)
 on: [push]
 
 jobs:
-  build:
-
+  testshared:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@master
     - name: Setup .NET 5
