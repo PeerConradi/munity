@@ -19,7 +19,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
     public partial class SimulationLobbyMain
     {
         [Parameter]
-        public Services.SocketHandlers.SimulationContext SimulationContext { get; set; } = null;
+        public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; } = null;
         private int SelectedRole
         {
             get => SimulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == SimulationContext.MyAuth.SimulationUserId).RoleId;
@@ -39,7 +39,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             base.OnInitialized();
         }
 
-        private void AppendEvents(MUNityClient.Services.SocketHandlers.SimulationContext context)
+        private void AppendEvents(MUNityClient.ViewModel.SimulationViewModel context)
         {
             context.PhaseChanged += PhaseChanged;
         }

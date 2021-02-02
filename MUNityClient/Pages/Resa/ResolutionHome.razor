@@ -81,35 +81,4 @@
 @* <NavLink href="resa/edit/test">Open Resolution Editor with Test</NavLink> *@
 
 
-@code {
-    private bool loadingLocalsDone = false;
 
-    private bool backendReady = false;
-
-    private List<MUNityClient.Models.Resolution.ResolutionInfo> localResolutions;
-
-    private async Task CreateLocalResolution()
-    {
-        var resolution = await this.resolutionService.CreateResolution("Neue lokale Resolution");
-        if (resolution != null)
-        {
-            navigationManager.NavigateTo($"resa/edit/{resolution.ResolutionId}");
-        }
-    }
-
-    private async Task CreatePublicResolution()
-    {
-        var resolution = await this.resolutionService.CreatePublicResolution("Neue Cloud Resolution");
-        if (resolution != null)
-        {
-            navigationManager.NavigateTo($"resa/edit/{resolution.ResolutionId}");
-        }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        this.localResolutions = await resolutionService.GetStoredResolutions();
-        this.loadingLocalsDone = true;
-        this.backendReady = await resolutionService.IsOnline(true);
-    }
-}

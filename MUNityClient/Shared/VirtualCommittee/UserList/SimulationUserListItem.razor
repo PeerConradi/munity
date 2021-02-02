@@ -1,5 +1,4 @@
-﻿@using MUNity.Extensions.SimulationExtensions;
-@inject Services.SimulationService simulationService;
+﻿@inject Services.SimulationService simulationService;
 
 
 <div class="widget-list-item bg-light w-100 border @((User.IsOnline) ? "border-success" : "border-danger")" style="border-width: 2px !important;" >
@@ -23,10 +22,6 @@
         <p class="widget-list-desc">@User?.DisplayName</p>
     </div>
     <div class="widget-list-action">
-        @if (_currentPetition != null)
-        {
-            <span class="badge badge-pill @(_currentPetitionIsActive ? "badge-success" : "badge-warning")" @onclick="() => DeleteCurrentPetition()">@_currentPetition.PetitionType.DisplayText()</span>
-        }
         @if (_lastVoteArgs != null)
         {
             if (_lastVoteArgs.Choice == 0)
@@ -132,11 +127,10 @@
     public MUNity.Schema.Simulation.SimulationRoleItem Role { get; set; }
 
     [Parameter]
-    public MUNityClient.Services.SocketHandlers.SimulationContext SimulationContext { get; set; }
+    public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; }
 
     private MUNity.Schema.Simulation.VotedEventArgs _lastVoteArgs { get; set; } = null;
 
-    private MUNity.Schema.Simulation.Petition _currentPetition;
 
     private bool _currentPetitionIsActive = false;
 
@@ -144,9 +138,6 @@
     {
         if (SimulationContext != null)
         {
-            SimulationContext.UserPetition += OnUserPetition;
-            SimulationContext.UserPetitionAccpted += OnUserPetitionAccepted;
-            SimulationContext.UserPetitionDeleted += OnUserPetitionDeleted;
             SimulationContext.UserVoted += UserVoted;
             SimulationContext.VoteCreated += VoteCreated;
         }
@@ -165,54 +156,5 @@
     private void VoteCreated(object sender, MUNity.Schema.Simulation.CreatedVoteModel args)
     {
         this._lastVoteArgs = null;
-    }
-
-    private void OnUserPetition(MUNity.Schema.Simulation.Petition petition)
-    {
-        if (petition.PetitionUserId == this.User.SimulationUserId)
-        {
-            this._currentPetition = petition;
-            this._currentPetitionIsActive = false;
-            this.StateHasChanged();
-        }
-    }
-
-    private void OnUserPetitionAccepted(MUNity.Schema.Simulation.Petition petition)
-    {
-        if (_currentPetition == null) return;
-        if (_currentPetition.PetitionId == petition.PetitionId)
-        {
-            _currentPetitionIsActive = true;
-            this.StateHasChanged();
-        }
-
-    }
-
-    private void OnUserPetitionDeleted(MUNity.Schema.Simulation.Petition petition)
-    {
-        if (_currentPetition == null) return;
-        if (_currentPetition.PetitionId == petition.PetitionId)
-        {
-            _currentPetition = null;
-            this.StateHasChanged();
-        }
-    }
-
-    private async Task DeleteCurrentPetition()
-    {
-        if (this._currentPetition == null) return;
-        await simulationService.DeletePetition(this._currentPetition);
-    }
-
-    private async Task DenyCurrentPetition()
-    {
-        if (this._currentPetition == null) return;
-        await simulationService.DeletePetition(this._currentPetition);
-    }
-
-    private async Task AcceptCurrentPetition()
-    {
-        if (this._currentPetition == null) return;
-        await simulationService.AcceptPetition(this._currentPetition);
     }
 }

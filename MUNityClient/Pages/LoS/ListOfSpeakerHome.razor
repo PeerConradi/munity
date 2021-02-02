@@ -16,13 +16,4 @@
 </div>
 
 
-@code {
-    private async Task CreateListOfSpeakers()
-    {
-        var list = await this.listOfSpeakerService.CreateListOfSpeakers();
-        if (list != null)
-        {
-            navigationManager.NavigateTo($"/los/edit/{list.ListOfSpeakersId}");
-        }
-    }
-}
+

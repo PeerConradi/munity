@@ -112,19 +112,19 @@ namespace MUNityClient.Services
             return await client.GetAsync($"/api/Simulation/SetPhase?simulationId={simulationId}&phase={phase}");
         }
 
-        public async Task<HttpResponseMessage> MakePetition(MUNity.Schema.Simulation.Petition petition)
+        public async Task<HttpResponseMessage> MakePetition(MUNity.Schema.Simulation.PetitionDto petition)
         {
             petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/MakePetition", JsonContent.Create(petition));
         }
 
-        public async Task<HttpResponseMessage> AcceptPetition(MUNity.Schema.Simulation.Petition petition)
+        public async Task<HttpResponseMessage> AcceptPetition(MUNity.Schema.Simulation.PetitionDto petition)
         {
             petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/AcceptPetition", JsonContent.Create(petition));
         }
 
-        public async Task<HttpResponseMessage> DeletePetition(MUNity.Schema.Simulation.Petition petition)
+        public async Task<HttpResponseMessage> DeletePetition(MUNity.Schema.Simulation.PetitionDto petition)
         {
             petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/DeletePetition", JsonContent.Create(petition));
@@ -286,7 +286,7 @@ namespace MUNityClient.Services
         /// </summary>
         /// <param name="simulationId"></param>
         /// <returns></returns>
-        public async Task<SocketHandlers.SimulationContext> Subscribe(int simulationId)
+        public async Task<MUNityClient.ViewModel.SimulationViewModel> Subscribe(int simulationId)
         {
             var token = await GetSimulationToken(simulationId);
             if (token == null) return null;
@@ -321,7 +321,7 @@ namespace MUNityClient.Services
                 if (meInThisList != null) meInThisList.IsOnline = true;
             }
 
-            var socket = await SocketHandlers.SimulationContext.CreateHander(simulation, auth);
+            var socket = await MUNityClient.ViewModel.SimulationViewModel.CreateHander(simulation, auth);
             var connId = socket.HubConnection.ConnectionId;
             var subscribeBody = new MUNity.Schema.Simulation.SubscribeSimulation()
             {

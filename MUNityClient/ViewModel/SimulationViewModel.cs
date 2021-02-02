@@ -7,16 +7,16 @@ using MUNityClient.Models.Simulation;
 using MUNity.Hubs;
 using MUNity.Schema.Simulation;
 using System.Collections.ObjectModel;
+using MUNity.Models.Simulation;
 
-namespace MUNityClient.Services.SocketHandlers
+namespace MUNityClient.ViewModel
 {
 
     /// <summary>
     /// The SocketHandler is turning more and more into some kind of ViewModel.
     /// It handles the Socket operations and holds the Simulation Object.
     /// </summary>
-    // TODO: Der Context müsste jetzt wo er eigentlich kein Service sondern eher ein ViewModel ist auch an eine andere Stelle verschoben werden...
-    public class SimulationContext
+    public class SimulationViewModel
     {
         public delegate void OnRolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem> roles);
         public event OnRolesChanged RolesChanged;
@@ -42,13 +42,13 @@ namespace MUNityClient.Services.SocketHandlers
         public delegate void OnChatMessageRecieved(int simId, int userId, string msg);
         public event OnChatMessageRecieved ChatMessageRevieved;
 
-        public delegate void OnUserPetition(Petition petition);
+        public delegate void OnUserPetition(IPetition petition);
         public event OnUserPetition UserPetition;
 
-        public delegate void OnUserPetitionAccepted(Petition petition);
+        public delegate void OnUserPetitionAccepted(IPetition petition);
         public event OnUserPetitionAccepted UserPetitionAccpted;
 
-        public delegate void OnUserPetitionDeleted(Petition petition);
+        public delegate void OnUserPetitionDeleted(IPetition petition);
         public event OnUserPetitionDeleted UserPetitionDeleted;
 
         public event EventHandler<MUNity.Schema.Simulation.VotedEventArgs> UserVoted;
@@ -63,7 +63,7 @@ namespace MUNityClient.Services.SocketHandlers
 
         public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
 
-        public ObservableCollection<Petition> Petitions { get; set; }
+        public ObservableCollection<IPetition> Petitions { get; set; }
 
         public SimulationRoleItem MyRole
         {
@@ -76,30 +76,30 @@ namespace MUNityClient.Services.SocketHandlers
 
         public SimulationAuthSchema MyAuth { get; private set; }
 
-        private SimulationContext(SimulationResponse simulation, SimulationAuthSchema auth)
+        private SimulationViewModel(SimulationResponse simulation, SimulationAuthSchema auth)
         {
             this.Simulation = simulation;
             this.MyAuth = auth;
 
             HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/simsocket").Build();
-            HubConnection.On<int, IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem>>("RolesChanged", (id, roles) => RolesChanged?.Invoke(id, roles));
+            HubConnection.On<int, IEnumerable<SimulationRoleItem>>("RolesChanged", (id, roles) => RolesChanged?.Invoke(id, roles));
             HubConnection.On<int, int, int>("UserRoleChanged", (simId, userId, roleId) => UserRoleChanged?.Invoke(simId, userId, roleId));
-            HubConnection.On<int, MUNity.Schema.Simulation.SimulationUserItem>("UserConnected", (id, user) => UserConnected?.Invoke(id, user));
-            HubConnection.On<int, MUNity.Schema.Simulation.SimulationUserItem>("UserDisconnected", (id, user) => UserDisconnected?.Invoke(id, user));
-            HubConnection.On<int, MUNity.Schema.Simulation.SimulationEnums.GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
+            HubConnection.On<int, SimulationUserItem>("UserConnected", (id, user) => UserConnected?.Invoke(id, user));
+            HubConnection.On<int, SimulationUserItem>("UserDisconnected", (id, user) => UserDisconnected?.Invoke(id, user));
+            HubConnection.On<int, SimulationEnums.GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
             HubConnection.On<int, string>("StatusChanged", (id, status) => StatusChanged?.Invoke(id, status));
-            HubConnection.On<int, MUNity.Schema.Simulation.SimulationEnums.LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
+            HubConnection.On<int, SimulationEnums.LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
             HubConnection.On<int, int, string>("ChatMessageRecieved", (simId, usrId, msg) => ChatMessageRevieved?.Invoke(simId, usrId, msg));
-            HubConnection.On<Petition>("UserPetition", (Petition petition) => UserPetition?.Invoke(petition));
-            HubConnection.On<Petition>("UserPetitionAccepted", (Petition petition) => UserPetitionAccpted?.Invoke(petition));
-            HubConnection.On<Petition>("UserPetitionDeleted", (Petition petition) => UserPetitionDeleted?.Invoke(petition));
-            HubConnection.On<MUNity.Schema.Simulation.VotedEventArgs>("Voted", (args) => UserVoted?.Invoke(this, args));
-            HubConnection.On<MUNity.Schema.Simulation.CreatedVoteModel>("VoteCreated", (args) => VoteCreated?.Invoke(this, args));
+            HubConnection.On<IPetition>("UserPetition", (petition) => UserPetition?.Invoke(petition));
+            HubConnection.On<IPetition>("UserPetitionAccepted", (petition) => UserPetitionAccpted?.Invoke(petition));
+            HubConnection.On<IPetition>("UserPetitionDeleted", (petition) => UserPetitionDeleted?.Invoke(petition));
+            HubConnection.On<VotedEventArgs>("Voted", (args) => UserVoted?.Invoke(this, args));
+            HubConnection.On<CreatedVoteModel>("VoteCreated", (args) => VoteCreated?.Invoke(this, args));
         }
 
-        public static async Task<SimulationContext> CreateHander(SimulationResponse simulation, SimulationAuthSchema auth)
+        public static async Task<SimulationViewModel> CreateHander(SimulationResponse simulation, SimulationAuthSchema auth)
         {
-            var socket = new SimulationContext(simulation, auth);
+            var socket = new SimulationViewModel(simulation, auth);
             await socket.HubConnection.StartAsync();
             return socket;
         }

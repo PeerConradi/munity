@@ -77,43 +77,7 @@ else if (this.RegisterState == ERegisterState.PasswordsDontMatch)
             </div>
         </button>
 
-    </EditForm>
-
-@code {
-    public MUNity.Schema.Authentication.RegisterRequest Request { get; set; } = new MUNity.Schema.Authentication.RegisterRequest();
-
-    public string RepeatPassword { get; set; }
-
-    private enum ERegisterState
-    {
-        NotTried,
-        InProgress,
-        PasswordsDontMatch,
-        Failed,
-        Success
-    }
-
-    private ERegisterState RegisterState = ERegisterState.NotTried;
-
-    private async Task Register()
-    {
-        this.RegisterState = ERegisterState.InProgress;
-        if (this.Request.Password != RepeatPassword)
-        {
-            this.RegisterState = ERegisterState.PasswordsDontMatch;
-            return;
-        }
-
-        var result = await this.userService.Register(Request);
-        if (result.IsSuccessStatusCode)
-        {
-            this.RegisterState = ERegisterState.Success;
-            return;
-        }
-
-        this.RegisterState = ERegisterState.Failed;
-    }
-}
+</EditForm>
 
 
 <style>

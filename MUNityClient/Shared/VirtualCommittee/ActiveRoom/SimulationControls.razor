@@ -17,8 +17,6 @@
     Ist abhängig vom Context der Redeliste.
 *@
 
-@using MUNity.Extensions.SimulationExtensions;
-
 @inject Services.SimulationService simulationService;
 @inject Services.ListOfSpeakerService listOfSpeakerService;
 <!-- Grey with black text -->
@@ -50,9 +48,7 @@
 
 @if (_selectedTab == TabPages.GeneralControls)
 {
-    <div class="card floating-card shadow-2">
-        <SimulationControlsGeneral SimulationContext="@SimulationContext"></SimulationControlsGeneral>
-    </div>
+    <p>Kann gelöscht werden</p>
 }
 
 @if (_selectedTab == TabPages.ListOfSpeakers)
@@ -115,180 +111,7 @@
 }
 
 
-@code {
-    private enum TabPages
-    {
-        None,
-        GeneralControls,
-        ListOfSpeakers,
-        Voting,
-        Presents,
-        Petitions
-    }
 
-    [Parameter]
-    public MUNityClient.Services.SocketHandlers.ListOfSpeakerSocketHandler SpeakerlistSocket { get; set; }
-
-    [Parameter]
-    public Services.SocketHandlers.SimulationContext SimulationContext { get; set; }
-
-    private TabPages _selectedTab = TabPages.None;
-
-    private bool _hasNewPetition { get; set; } = false;
-
-    private bool _hasNewVotes { get; set; } = false;
-
-    private MUNity.Schema.Simulation.CreatedVoteModel _lastCreatedVote { get; set; } = null;
-
-    private MUNity.Models.ListOfSpeakers.ListOfSpeakers _listOfSpeakers;
-
-    private string GetPetitionDisplayName(MUNity.Schema.Simulation.Petition petition)
-    {
-        if (SimulationContext.Simulation.Users == null) return "Unbekannt";
-        var user = SimulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == petition.PetitionUserId);
-        if (user == null) return "Unbekannt";
-        if (user.RoleId == -2 || SimulationContext.Simulation.Roles == null) return user.DisplayName ?? "Unbekannt";
-        var role = SimulationContext.Simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId);
-        if (role != null) return role.Name;
-        return "Unbekannt";
-    }
-
-
-    // Fürs erste halten wir die Liste der Anträge in diesem Menü, es ist vielleicht sinnvoll
-    // diese im Runner selbst zu halten und an die anderen zu erben ~Peer
-    private List<MUNity.Schema.Simulation.Petition> _petitions { get; set; }
-
-    private List<MUNity.Schema.Simulation.Petition> _currentPetitions { get; set; }
-
-    protected override void OnInitialized()
-    {
-        _petitions = new List<MUNity.Schema.Simulation.Petition>();
-        _currentPetitions = new List<MUNity.Schema.Simulation.Petition>();
-        if (SimulationContext != null)
-        {
-            SimulationContext.UserPetition += OnUserPetition;
-            SimulationContext.UserPetitionAccpted += OnUserPetitionAccepted;
-            SimulationContext.UserPetitionDeleted += OnUserPetitionDeleted;
-            SimulationContext.VoteCreated += VoteCreated;
-        }
-        base.OnInitialized();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
-
-    private async void AcceptPetition(MUNity.Schema.Simulation.Petition petition)
-    {
-        await simulationService.AcceptPetition(petition);
-    }
-
-    private async void DeletePetition(MUNity.Schema.Simulation.Petition petition)
-    {
-        await simulationService.DeletePetition(petition);
-    }
-
-    private void OnUserPetition(MUNity.Schema.Simulation.Petition petition)
-    {
-        _petitions.RemoveAll(n => n.PetitionUserId == petition.PetitionUserId);
-        _petitions.Add(petition);
-        this.StateHasChanged();
-    }
-
-    private void OnUserPetitionAccepted(MUNity.Schema.Simulation.Petition petition)
-    {
-        _petitions.RemoveAll(n => n.PetitionId == petition.PetitionId);
-        _currentPetitions.Add(petition);
-        this.StateHasChanged();
-    }
-
-    private void OnUserPetitionDeleted(MUNity.Schema.Simulation.Petition petition)
-    {
-        _petitions.RemoveAll(n => n.PetitionId == petition.PetitionId);
-        _currentPetitions.RemoveAll(n => n.PetitionId == petition.PetitionId);
-        this.StateHasChanged();
-    }
-
-    private void VoteCreated(object sender, MUNity.Schema.Simulation.CreatedVoteModel args)
-    {
-        _hasNewVotes = true;
-        _lastCreatedVote = args;
-        StateHasChanged();
-    }
-
-    private async Task VotePro()
-    {
-        if (_lastCreatedVote != null)
-        {
-            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 0);
-            _lastCreatedVote = null;
-            _hasNewVotes = false;
-            _selectedTab = TabPages.None;
-        }
-
-    }
-
-    private async Task VoteCon()
-    {
-        if (_lastCreatedVote != null)
-        {
-            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 1);
-            _lastCreatedVote = null;
-            _hasNewVotes = false;
-            _selectedTab = TabPages.None;
-        }
-
-    }
-
-    private async Task VoteAbstention()
-    {
-        if (_lastCreatedVote != null)
-        {
-            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 2);
-            _lastCreatedVote = null;
-            _hasNewVotes = false;
-            _selectedTab = TabPages.None;
-        }
-
-    }
-
-    private void AddMeToListOfSpeakers()
-    {
-        if (SpeakerlistSocket == null) return;
-
-        if (SimulationContext?.MyRole != null)
-        {
-            listOfSpeakerService.AddSpeakerToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.MyRole.Name, SimulationContext.MyRole.Iso);
-            return;
-        }
-        else
-        {
-            if (SimulationContext?.Me != null)
-            {
-                listOfSpeakerService.AddSpeakerToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.Me.DisplayName, "");
-            }
-        }
-    }
-
-    private void AddMeToListOfQuestions()
-    {
-        if (SpeakerlistSocket == null) return;
-
-        if (SimulationContext?.MyRole != null)
-        {
-            listOfSpeakerService.AddQuestionToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.MyRole.Name, SimulationContext.MyRole.Iso);
-            return;
-        }
-        else
-        {
-            if (SimulationContext?.Me != null)
-            {
-                listOfSpeakerService.AddQuestionToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.Me.DisplayName, "");
-            }
-        }
-    }
-}
 
 <style>
     .header-item {

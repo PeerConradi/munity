@@ -23,39 +23,3 @@
 {
     <div class="modal-backdrop fade show"></div>
 }
-
-
-@code {
-    [Parameter]
-    public string Title { get; set; }
-
-    [Parameter]
-    public RenderFragment ChildContent { get; set; }
-
-    [Parameter]
-    public EventCallback<MouseEventArgs> OnSubmitCallback { get; set; }
-
-    [Parameter]
-    public string SubmitText { get; set; } = "Bestätigen";
-
-    public Guid Guid = Guid.NewGuid();
-    public string ModalDisplay = "none;";
-    public string ModalClass = "";
-    public bool ShowBackdrop = false;
-
-    public void Open()
-    {
-        ModalDisplay = "block;";
-        ModalClass = "Show";
-        ShowBackdrop = true;
-        StateHasChanged();
-    }
-
-    public void Close()
-    {
-        ModalDisplay = "none";
-        ModalClass = "";
-        ShowBackdrop = false;
-        StateHasChanged();
-    }
-}

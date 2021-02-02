@@ -18,7 +18,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
     public partial class SimulationOptions
     {
         [Parameter]
-        public MUNityClient.Services.SocketHandlers.SimulationContext SimulationContext { get; set; } = null;
+        public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; } = null;
         private IEnumerable<Models.Simulation.SimulationPreset> _presets { get; set; }
 
         private Models.Simulation.SimulationPreset SelectedPreset { get; set; }

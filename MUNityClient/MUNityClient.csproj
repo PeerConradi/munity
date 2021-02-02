@@ -16,7 +16,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="5.0.0" />
-    <PackageReference Include="MUNityBase" Version="1.0.31" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
   </ItemGroup>
 
@@ -26,6 +25,10 @@
 
   <ItemGroup>
     <Folder Include="Pages\Conference\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MUNitySchema\MUNitySchema.csproj" />
   </ItemGroup>
 
 </Project>

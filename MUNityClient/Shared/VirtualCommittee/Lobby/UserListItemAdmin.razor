@@ -46,53 +46,7 @@
         <i class="fas fa-trash" @onclick="() => UserRemoveClicked.InvokeAsync(User.SimulationUserId)"></i>
     </td>
 </tr>
-@code {
-    [Parameter]
-    public MUNity.Schema.Simulation.SimulationUserSetup User { get; set; }
 
-    [Parameter]
-    public int SimulationId { get; set; }
-
-    [Parameter]
-    public List<MUNity.Schema.Simulation.SimulationRoleItem> Roles { get; set; }
-
-    [Parameter]
-    public Boolean PasswordShown { get; set; }
-
-    [Parameter]
-    public EventCallback<int> UserRemoveClicked { get; set; }
-
-    private int _roleId;
-    public int RoleId
-    {
-        get => _roleId;
-        set
-        {
-            if (_roleId != value)
-            {
-                this.simulationService.SetUserRole(this.SimulationId, this.User.SimulationUserId, value);
-                _roleId = value;
-            }
-        }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        this._roleId = User.RoleId;
-        if (Roles == null)
-        {
-            this.Roles = await this.simulationService.GetRoles(SimulationId);
-        }
-
-    }
-
-    private void CopyPasswordToClippboard(){
-        JS.InvokeAsync<string>("navigator.clipboard.writeText", @User.Password);
-    }
-    private void CopyUserIDToClippboard(){
-        JS.InvokeAsync<string>("navigator.clipboard.writeText", @User.PublicId);
-    }
-}
 
 <style>
     .pointer {

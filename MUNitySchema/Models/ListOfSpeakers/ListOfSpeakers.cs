@@ -254,6 +254,7 @@ namespace MUNity.Models.ListOfSpeakers
         {
             get
             {
+                if (Status == EStatus.Stopped) return QuestionTime;
                 if (Status != EStatus.Question) return PausedQuestionTime;
 
                 var finishTime = StartQuestionTime.AddSeconds(QuestionTime.TotalSeconds);

@@ -31,6 +31,9 @@ namespace MUNity.Extensions.LoSExtensions
                 var questions = list.AllSpeakers.Where(n => n.Mode != Speaker.SpeakerModes.WaitToSpeak).ToList();
                 questions.ForEach(n => list.AllSpeakers.Remove(n));
 
+                // Remove the current Question
+                list.ClearCurrentQuestion();
+
                 // Pick the first speaker in line
                 var nextSpeaker = list.AllSpeakers.OrderBy(n => n.OrdnerIndex).First();
                 nextSpeaker.Mode = Speaker.SpeakerModes.CurrentlySpeaking;
