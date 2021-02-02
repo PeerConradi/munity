@@ -1,0 +1,21 @@
+name: Test Shared Code (MUNitySchema)
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    #- name: Start MariaDB
+    #  uses: getong/mariadb-action@v1.1
+    - name: Start MongoDB
+      run: sudo docker run --name mongo -d -p 27017:27017 mongo
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Run NUnit Tests
+      run: dotnet test MUNityNUnitTest
