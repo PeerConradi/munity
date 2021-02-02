@@ -99,7 +99,7 @@ namespace MUNityTest.Service
             Assert.NotNull(result);
         }
 
-        [Test]
+        //[Test]
         public async Task TestDeleteResolution()
         {
             var service = new NewResolutionService(_munityContext, new MongoTestString());
@@ -112,7 +112,7 @@ namespace MUNityTest.Service
             Assert.Null(reloadResolution);
         }
 
-        [Test]
+        //[Test]
         public async Task TestRemovePreambleParagraph()
         {
             var service = new NewResolutionService(_munityContext, new MongoTestString());
@@ -158,7 +158,7 @@ namespace MUNityTest.Service
         //    //Assert.IsTrue(paragraphOne.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[1].PreambleParagraphId);
         //}
 
-        [Test]
+        //[Test]
         public async Task TestMovePreambleParagraphDown()
         {
             var service = new NewResolutionService(_munityContext, new MongoTestString());
@@ -189,7 +189,7 @@ namespace MUNityTest.Service
             Assert.IsTrue(paragraphOne.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[1].PreambleParagraphId);
         }
 
-        [Test]
+        //[Test]
         [Author(("Peer Conradi"))]
         public async Task TestSaveResolutionThatsNotCreated()
         {

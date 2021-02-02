@@ -1,0 +1,31 @@
+﻿@using MUNity.Models.Resolution;
+
+@if (Paragraph != null)
+{
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <MUNityClient.Shared.General.MarkdownView Content="@Paragraph.Text"></MUNityClient.Shared.General.MarkdownView>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="col-12">
+        <div class="card">
+            <div class="row m-0 card-body text-danger d-flex align-items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                Präambel Paragraph nicht gefunden!
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    private PreambleParagraph _paragraph;
+    [Parameter]
+    public PreambleParagraph Paragraph { get; set; }
+}

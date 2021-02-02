@@ -1,0 +1,333 @@
+﻿@*
+    Ich denke es wäre ganz cool, wenn hier ein Menüband Unten für die Steuerung ist.
+    Dieses muss dann recht klein gehalten werden und soll beim auswählen Overlays/Popups generieren in
+    welchen die Details sind.
+
+    Das Menüband könnte auch ein wenig Transparent sein und sobald der Benutzer mit der Maus drüber fährt wird die Transparenz komplett
+    ausgeblendet.
+
+    Punkte sind:
+    - Allgemeine Einstellungen (immer sichtbar)
+    - Redeliste (sichtbar für den Vorsitz)
+    - Anwesenheit (sichtbar für den Vorsitz)
+    - Abstimmung (sichtbar für den Vorsitz)
+
+    zudem QuickControls für die Redeliste:
+    - Redner pausieren/fortsetzen bzw. Frage pausieren/fortsetzen
+    Ist abhängig vom Context der Redeliste.
+*@
+
+@using MUNity.Extensions.SimulationExtensions;
+
+@inject Services.SimulationService simulationService;
+@inject Services.ListOfSpeakerService listOfSpeakerService;
+<!-- Grey with black text -->
+<nav class="navbar navbar-expand-sm bg-primary navbar-dark nav-bottom w-100" style="opacity: 0.75;">
+    <ul class="navbar-nav">
+        <li class="nav-item @((_selectedTab == TabPages.GeneralControls) ? "active" : "")">
+            <a class="nav-link" @onclick="() => _selectedTab = (_selectedTab == TabPages.GeneralControls) ? TabPages.None : TabPages.GeneralControls">Allgemeine Funktionen</a>
+        </li>
+        <li class="nav-item @((_selectedTab == TabPages.ListOfSpeakers) ? "active" : "")">
+            <a class="nav-link" @onclick="() => _selectedTab = (_selectedTab == TabPages.ListOfSpeakers) ? TabPages.None : TabPages.ListOfSpeakers">Redeliste</a>
+        </li>
+        <li class="nav-item @((_selectedTab == TabPages.Voting) ? "active" : "")">
+            <a class="nav-link" @onclick="() => { _selectedTab = (_selectedTab == TabPages.Voting) ? TabPages.None : TabPages.Voting; _hasNewVotes = false; }">
+                Abstimmung @if (_hasNewVotes && _lastCreatedVote.AllowedUsers.Contains(SimulationContext.Me.SimulationUserId))
+                {
+                    <span class="badge badge-danger">Neu</span>
+                }
+            </a>
+
+        </li>
+        <!--
+        <li class="nav-item">
+            <a class="nav-link">Anwesenheit</a>
+        </li>
+        -->
+
+    </ul>
+</nav>
+
+@if (_selectedTab == TabPages.GeneralControls)
+{
+    <div class="card floating-card shadow-2">
+        <SimulationControlsGeneral SimulationContext="@SimulationContext"></SimulationControlsGeneral>
+    </div>
+}
+
+@if (_selectedTab == TabPages.ListOfSpeakers)
+{
+    <div class="card floating-card shadow-2 w-100 p-3">
+        @* Von der Sache her könnte an dieser Stelle auch die Beiden Buttons für auf die Redelisten und auf die FuK erscheinen. *@
+        @if (SpeakerlistSocket != null)
+        {
+            @if (SimulationContext?.MyRole != null && SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.SimulationEnums.RoleTypes.Chairman)
+            {
+                <MUNityClient.Pages.LoS.ListOfSpeakerEditor Id="@SpeakerlistSocket.SourceList.ListOfSpeakersId" Socket="@SpeakerlistSocket" IsOnline="@true"></MUNityClient.Pages.LoS.ListOfSpeakerEditor>
+            }
+            else
+            {
+                @* TODO: Buttons um auf die Redeliste oder FuK zu kommen an diese Stelle verschieben *@
+                <button class="btn btn-info" @onclick="AddMeToListOfSpeakers" disabled="@(SpeakerlistSocket.SourceList.ListClosed)">Auf die Redeliste</button>
+                <button class="btn btn-info" @onclick="AddMeToListOfQuestions" disabled="@(SpeakerlistSocket.SourceList.QuestionsClosed)">Auf Fragen und Kurzbemerkungen</button>
+            }
+        }
+        else
+        {
+            <p>Es wurde keine Redelistenverbindung übergeben. Möglicherweise ist keine Redeliste hinterlegt.</p>
+        }
+        <span class="close-floating-card badge badge-warning hoverable" @onclick="() => _selectedTab = TabPages.None">Fenster schließen</span>
+    </div>
+}
+
+@if (_selectedTab == TabPages.Voting)
+{
+
+    @if (SimulationContext != null && (_lastCreatedVote == null || _lastCreatedVote != null && !_lastCreatedVote.AllowedUsers.Contains(SimulationContext.Me.SimulationUserId)) && SimulationContext?.MyRole != null && SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.SimulationEnums.RoleTypes.Chairman)
+    {
+        <div class="card floating-card shadow-2 p-3">
+            <CreateVoteComponent SimulationId="@SimulationContext.Simulation.SimulationId"></CreateVoteComponent>
+            <span class="close-floating-card badge badge-warning hoverable" @onclick="() => _selectedTab = TabPages.None">Fenster schließen</span>
+        </div>
+    }
+    else if (_lastCreatedVote != null && _lastCreatedVote.AllowedUsers.Contains(SimulationContext.Me.SimulationUserId))
+    {
+        <div class="card floating-card shadow-2">
+            <div class="row">
+                <div class="col-12">
+                    <p>@_lastCreatedVote.Text</p>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-success btn-block" @onclick="VotePro">Dafür</button>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-danger btn-block" @onclick="VoteCon">Dagegen</button>
+                </div>
+                @if (_lastCreatedVote.AllowAbstention)
+                {
+                    <div class="col-12">
+                        <button class="btn btn-primary btn-block" @onclick="VoteAbstention">Enthaltung</button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+
+@code {
+    private enum TabPages
+    {
+        None,
+        GeneralControls,
+        ListOfSpeakers,
+        Voting,
+        Presents,
+        Petitions
+    }
+
+    [Parameter]
+    public MUNityClient.Services.SocketHandlers.ListOfSpeakerSocketHandler SpeakerlistSocket { get; set; }
+
+    [Parameter]
+    public Services.SocketHandlers.SimulationContext SimulationContext { get; set; }
+
+    private TabPages _selectedTab = TabPages.None;
+
+    private bool _hasNewPetition { get; set; } = false;
+
+    private bool _hasNewVotes { get; set; } = false;
+
+    private MUNity.Schema.Simulation.CreatedVoteModel _lastCreatedVote { get; set; } = null;
+
+    private MUNity.Models.ListOfSpeakers.ListOfSpeakers _listOfSpeakers;
+
+    private string GetPetitionDisplayName(MUNity.Schema.Simulation.Petition petition)
+    {
+        if (SimulationContext.Simulation.Users == null) return "Unbekannt";
+        var user = SimulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == petition.PetitionUserId);
+        if (user == null) return "Unbekannt";
+        if (user.RoleId == -2 || SimulationContext.Simulation.Roles == null) return user.DisplayName ?? "Unbekannt";
+        var role = SimulationContext.Simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId);
+        if (role != null) return role.Name;
+        return "Unbekannt";
+    }
+
+
+    // Fürs erste halten wir die Liste der Anträge in diesem Menü, es ist vielleicht sinnvoll
+    // diese im Runner selbst zu halten und an die anderen zu erben ~Peer
+    private List<MUNity.Schema.Simulation.Petition> _petitions { get; set; }
+
+    private List<MUNity.Schema.Simulation.Petition> _currentPetitions { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _petitions = new List<MUNity.Schema.Simulation.Petition>();
+        _currentPetitions = new List<MUNity.Schema.Simulation.Petition>();
+        if (SimulationContext != null)
+        {
+            SimulationContext.UserPetition += OnUserPetition;
+            SimulationContext.UserPetitionAccpted += OnUserPetitionAccepted;
+            SimulationContext.UserPetitionDeleted += OnUserPetitionDeleted;
+            SimulationContext.VoteCreated += VoteCreated;
+        }
+        base.OnInitialized();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async void AcceptPetition(MUNity.Schema.Simulation.Petition petition)
+    {
+        await simulationService.AcceptPetition(petition);
+    }
+
+    private async void DeletePetition(MUNity.Schema.Simulation.Petition petition)
+    {
+        await simulationService.DeletePetition(petition);
+    }
+
+    private void OnUserPetition(MUNity.Schema.Simulation.Petition petition)
+    {
+        _petitions.RemoveAll(n => n.PetitionUserId == petition.PetitionUserId);
+        _petitions.Add(petition);
+        this.StateHasChanged();
+    }
+
+    private void OnUserPetitionAccepted(MUNity.Schema.Simulation.Petition petition)
+    {
+        _petitions.RemoveAll(n => n.PetitionId == petition.PetitionId);
+        _currentPetitions.Add(petition);
+        this.StateHasChanged();
+    }
+
+    private void OnUserPetitionDeleted(MUNity.Schema.Simulation.Petition petition)
+    {
+        _petitions.RemoveAll(n => n.PetitionId == petition.PetitionId);
+        _currentPetitions.RemoveAll(n => n.PetitionId == petition.PetitionId);
+        this.StateHasChanged();
+    }
+
+    private void VoteCreated(object sender, MUNity.Schema.Simulation.CreatedVoteModel args)
+    {
+        _hasNewVotes = true;
+        _lastCreatedVote = args;
+        StateHasChanged();
+    }
+
+    private async Task VotePro()
+    {
+        if (_lastCreatedVote != null)
+        {
+            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 0);
+            _lastCreatedVote = null;
+            _hasNewVotes = false;
+            _selectedTab = TabPages.None;
+        }
+
+    }
+
+    private async Task VoteCon()
+    {
+        if (_lastCreatedVote != null)
+        {
+            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 1);
+            _lastCreatedVote = null;
+            _hasNewVotes = false;
+            _selectedTab = TabPages.None;
+        }
+
+    }
+
+    private async Task VoteAbstention()
+    {
+        if (_lastCreatedVote != null)
+        {
+            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 2);
+            _lastCreatedVote = null;
+            _hasNewVotes = false;
+            _selectedTab = TabPages.None;
+        }
+
+    }
+
+    private void AddMeToListOfSpeakers()
+    {
+        if (SpeakerlistSocket == null) return;
+
+        if (SimulationContext?.MyRole != null)
+        {
+            listOfSpeakerService.AddSpeakerToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.MyRole.Name, SimulationContext.MyRole.Iso);
+            return;
+        }
+        else
+        {
+            if (SimulationContext?.Me != null)
+            {
+                listOfSpeakerService.AddSpeakerToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.Me.DisplayName, "");
+            }
+        }
+    }
+
+    private void AddMeToListOfQuestions()
+    {
+        if (SpeakerlistSocket == null) return;
+
+        if (SimulationContext?.MyRole != null)
+        {
+            listOfSpeakerService.AddQuestionToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.MyRole.Name, SimulationContext.MyRole.Iso);
+            return;
+        }
+        else
+        {
+            if (SimulationContext?.Me != null)
+            {
+                listOfSpeakerService.AddQuestionToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.Me.DisplayName, "");
+            }
+        }
+    }
+}
+
+<style>
+    .header-item {
+        transition: .3s;
+    }
+
+        .header-item:not(.selected-tab):hover {
+            background-color: #dedede;
+        }
+
+    .selected-tab {
+        background-color: #1266F1;
+        color: white;
+    }
+
+    .floating-card {
+        position: fixed;
+        top: auto;
+        bottom: 70px;
+        left: 10px;
+        right: auto;
+        z-index: 100;
+    }
+
+    .nav-bottom {
+        position: fixed;
+        top: auto;
+        bottom: 0px;
+        left: 0px;
+        right: auto;
+        z-index: 100;
+    }
+
+    .close-floating-card {
+        position: absolute;
+        top: -5px;
+        left: auto;
+        right: 10px;
+        bottom: auto;
+        cursor: pointer;
+    }
+</style>

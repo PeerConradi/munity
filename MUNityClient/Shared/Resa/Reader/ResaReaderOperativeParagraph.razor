@@ -1,0 +1,126 @@
+﻿@using MUNity.Models.Resolution;
+@using System.Collections.ObjectModel;
+
+@if (Paragraph != null)
+{
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h4> Absatz @Pathname</h4> 
+                @if (DeleteAmendments.Where(n => n.Activated).Count() < 1 &&
+                ChangeAmendments.Where(n => n.Activated).Count() < 1 &&
+                MoveAmendments.Where(n => n.Activated).Count() < 1)
+                {
+                    <div class="row mx-0 mt-0 ">
+                        <MUNityClient.Shared.General.MarkdownView Content="@Paragraph.Text">
+                        </MUNityClient.Shared.General.MarkdownView>
+                    </div>
+                } else {
+                    @if (DeleteAmendments.Any(n => n.Activated))
+                    {
+                        <div class="card border-danger my-2">
+                            <div class="card-body text-danger">
+                            <h5><i class="fas fa-trash mr-2"></i>Absatz streichen</h5>
+                            <br>
+                            <del>@Paragraph.Text</del>
+                            <br>
+                            <br>
+                            <i class="fas fa-user-edit mr-2"></i>
+                            @{Boolean setComma = false;}
+                            @foreach (var activeDeleteAmendments in DeleteAmendments.Where(n => n.Activated))
+                            {
+                                @if (setComma)
+                                {
+                                <span>, </span>
+                                }
+                                @activeDeleteAmendments.SubmitterName
+                                setComma = true;
+                            }
+                            </div>
+                        </div>
+                    }
+                    @foreach (var activChangeAmendments in ChangeAmendments.Where(n => n.Activated))
+                    {
+                    <div class="card border-primary my-2">
+                        <div class="card-body text-primary">
+                            <h5><i class="fas fa-pen mr-2"></i>Absatz ändern</h5>
+                            <br>
+                            <del class="text-danger">@Paragraph.Text</del>
+                            <br>
+                            @activChangeAmendments.NewText
+                            <br>
+                            <br>
+                            <i class="fas fa-user-edit mr-2"></i>@activChangeAmendments.SubmitterName
+                        </div>
+                    </div>
+                    }
+                    @foreach (var activeMoveAmendments in MoveAmendments.Where(n => n.Activated))
+                    {
+                        <div class="card border-dark my-2">
+                            <div class="card-body">
+                                <h5><i class="fas fa-arrow-left mr-2"></i>Absatz verschieben</h5>
+                                <br>
+                                @Paragraph.Text
+                                <br>
+                                <br>
+                                <i class="fas fa-user-edit mr-2"></i>
+                                @activeMoveAmendments.SubmitterName
+                            </div>
+                        </div>
+                    }
+                }
+
+
+                <div class="row mx-0 mb-0 mt-4">
+                    @if (@DeleteAmendments.Count() > 0)
+                    {
+                        <div class="badge badge-danger">@DeleteAmendments.Count() @(DeleteAmendments.Count() > 1 ? "Anträge" :
+                                    "Antrag") auf Streichung</div>
+                    }
+                    @if (@ChangeAmendments.Count() > 0)
+                    {
+                        <div class="badge badge-info">@ChangeAmendments.Count() @(ChangeAmendments.Count() > 1 ? "Anträge" :
+                                    "Antrag") auf Änderung</div>
+                    }
+                    @if (@MoveAmendments.Count() > 0)
+                    {
+                        <div class="badge badge-dark">@MoveAmendments.Count() @(MoveAmendments.Count() > 1 ? "Anträge" :
+                                    "Antrag") auf Verschiebung</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="col-12">
+        <div class="card">
+            <div class="row m-0 card-body text-danger d-flex align-items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                Paragraph nicht gefunden!
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private OperativeParagraph _paragraph;
+    [Parameter]
+    public OperativeParagraph Paragraph { get; set; }
+
+    [Parameter]
+    public string Pathname { get; set; }
+
+    [Parameter]
+    public System.Collections.Generic.IEnumerable<DeleteAmendment> DeleteAmendments { get; set; }
+
+    [Parameter]
+    public System.Collections.Generic.IEnumerable<ChangeAmendment> ChangeAmendments { get; set; }
+
+    [Parameter]
+    public System.Collections.Generic.IEnumerable<MoveAmendment> MoveAmendments { get; set; }
+
+}

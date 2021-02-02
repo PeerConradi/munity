@@ -1,0 +1,93 @@
+﻿@using MUNityClient.Shared.VirtualCommittee.ActiveRoom
+
+<!-- As a link -->
+@if (SimulationContext == null)
+{
+    <nav class="navbar navbar-light bg-light">
+        <div class="spinner-border" role="status">
+            
+        </div>
+    </nav>
+}
+else
+{
+
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+    <!-- Navbar brand -->
+    <a class="navbar-brand" href="#">@SimulationContext.Simulation.Name</a>
+
+    @if (SimulationContext.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
+    {
+        <span class="badge badge-success">Verbunden</span>
+    }
+    else if (SimulationContext.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connecting)
+    {
+        <span class="badge badge-warning">Verbindung wird hergestellt</span>
+    }
+    else if (SimulationContext.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Disconnected)
+    {
+        <span class="badge badge-danger" @onclick="() => SimulationContext.HubConnection.StartAsync()">Keine Verbindung</span>
+    }
+    else if (SimulationContext.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Reconnecting)
+    {
+        <span class="badge badge-warning">Verbindungsaufbau</span>
+    }
+
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        @if (LayoutWrapper != null)
+        {
+            <li class="nav-item badge rounded-pill nav-spacing">
+                <a class="nav-link" @onclick="() => LayoutWrapper.ShowMemberlist = !LayoutWrapper.ShowMemberlist"><i class="fas @(LayoutWrapper.ShowMemberlist ? "fa-eye" : "fa-eye-slash")"></i> Mitglieder</a>
+            </li>
+
+            <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "bg-primary" : "")">
+                <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">Start</a>
+            </li>
+
+            <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "bg-primary" : "")">
+                <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda">Tagesordnung</a>
+            </li>
+
+            <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "bg-primary" : "")">
+                <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting">Abstimmungen</a>
+            </li>
+
+            <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "bg-primary" : "")">
+                <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution">Resolution</a>
+            </li>
+
+            <li class="nav-item badge rounded-pill nav-spacing">
+                <a class="nav-link" @onclick="() => LayoutWrapper.ShowListOfSpeakers = !LayoutWrapper.ShowListOfSpeakers"><i class="fas @(LayoutWrapper.ShowListOfSpeakers ? "fa-eye" : "fa-eye-slash")"></i> Redeliste</a>
+            </li>
+        }
+        
+      </ul>
+      <!-- Left links -->
+    </div>
+    <!-- Collapsible wrapper -->
+    <span class="badge badge-primary">Aktueller Status</span>
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+}
+
+<style>
+    .nav-spacing {
+        margin-left: 5px;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public MUNityClient.Services.SocketHandlers.SimulationContext SimulationContext { get; set; } = null;
+
+    [Parameter]
+    public MUNityClient.Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper LayoutWrapper { get; set; } = null;
+}

@@ -1,0 +1,464 @@
+﻿@* Die Steuerungskomponente für eine Redeliste. Die Redeliste wird über den Verweis Id geladen.
+    Es wird eine Prüfung auf IsOnline vorgenommen, bevor die Redeliste aus dem Speicher des Browsers geladen wird.
+    Ist die Redeliste Online verfügbar, wird keine Speicherung innerhalb des Browser Speichers veranlasst, sondern die Liste wird
+    über den WebSocket (ListOfSpeakersSocketHandler) abgearbeitet.
+    
+    IsOnline ist ein Parameter und kann auch an die Komponente übergeben werden. 
+    
+    Derzeit wird ein EventListener an das PropertyChanged Event der Redeliste angehangen. Sollte die Redeliste online sein,
+    wird dann ein sync an den Server durchgeführt, wobei die gesamte Redeliste als Json an den Server übertragen wird und dieser
+    sendet dann die neue Version der Redeliste an alle Clients.
+    Ebenso hört die Komponente auf diesen Socket, falls durch andere Stelle eine Änderung vorgenommen wurde. *@
+
+@using MUNity.Models.ListOfSpeakers;
+@using MUNity.Extensions.LoSExtensions;
+@using System.Timers;
+
+@page "/los/edit/{id}"
+
+@inject MUNityClient.Services.ListOfSpeakerService listOfSpeakerService;
+@inject IJSRuntime jsRuntime
+
+@if (Speakerlist != null)
+{
+        <div class="row m-0 px-2 col-12 d-flex justify-content-center">
+            @* Settings/Alert Row *@
+            <div class="row col-12 m-0 p-0 d-flex align-items-center">
+                <div class="col row">
+                    @if (invalidFormatSpeakerTime)
+                {
+                            <div class="col alert alert-danger my-0 ml-0 mr-3" role="alert">
+                                Formatfehler in der Sprecher Zeitangabe!
+                            </div>
+                }
+                    @if (invalidFormatQuestionTime)
+                {
+                            <div class="col alert alert-danger my-0 mr-0 ml-3" role="alert">
+                                Formatfehler in der Frage Zeitangabe!
+                            </div>
+                }
+                </div>
+                <div class="col-5 col-md-2 d-flex justify-content-end">
+                    <i type="button" title="Lese Ansicht öffnen" class="fas fa-external-link-alt fa-lg p-2"
+                        @onclick="() => OpenReaderSpectatorView()"></i>
+                    <i type="button" title="Redezeiten einstellen" class="fas fa-cog fa-lg p-2"
+                        @onclick="() => SpeakingTimeConfigModal.Open()"></i>
+                </div>
+            </div>
+            @* Speaker List Card *@
+            <div class="card col-12 mx-0 mt-3 p-0">
+                <div class="card-body row col-12 m-0 p-0">
+                    @* Speakers *@
+                    <div class="col-12 col-md-6 m-0 p-3">
+                        <div class="row m-0 p-0 d-flex justify-content-between list-head border-bottom">
+                            <div class="col p-0 m-0 mr-2">
+                                <h5 class="col-12 p-0">
+                                    <i class="fas fa-user-alt mr-2"></i>
+                                    @if (Speakerlist.CurrentSpeaker != null)
+                                    {
+                                        @Speakerlist.CurrentSpeaker.Name
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                    @if (Speakerlist.CurrentSpeaker != null)
+                                    {
+                                        <span type="button" class="text-danger hover-enabled" title="Kopf leeren"
+                                              @onclick="() => this.Speakerlist.ClearCurrentSpeaker()">
+                                            <i class="fas fa-trash ml-3"></i>
+                                        </span>
+                                    }
+
+                                </h5>
+                            </div>
+                            <div class="col-7 row m-0 p-0 d-flex justify-content-end">
+                                <span type="button" class="py-1 px-3 text-danger hover-enabled"
+                                      @onclick="() => this.Speakerlist.AddSpeakerSeconds(-10)">-10</span>
+                                @if (this.Speakerlist.CurrentSpeaker != null)
+                                {
+                                    <h3 class="m-0 text-center @(Speakerlist.RemainingSpeakerTime.TotalSeconds < 11 ? "text-danger" : "")">
+                                        @(Speakerlist.RemainingSpeakerTime.TotalSeconds < 0 ? "-" : "")
+                                        @Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")
+                                    </h3>
+                                }
+                                else
+                                {
+                                    <h3>@Speakerlist.SpeakerTime.ToString(@"mm\:ss")</h3>
+                                }
+
+                                <span type="button" class="py-1 px-3 text-success hover-enabled"
+                                      @onclick="() => this.Speakerlist.AddSpeakerSeconds(10)">+10</span>
+                            </div>
+                        </div>
+                        @* Controls *@
+                        <div class="col-12 p-0 my-3">
+                            @if (Speakerlist.Status == ListOfSpeakers.EStatus.Speaking)
+                        {
+                                    <i title="Rede pausieren" type="button" class="fas mx-2 fa-lg fa-pause"
+                                        @onclick="() => Speakerlist.PauseSpeaker()"></i>
+                        }
+                        else
+                        {
+                                    <i title="Rede fortsetzen" type="button" class="fas mx-2 fa-lg fa-play"
+                                        @onclick="() => Speakerlist.ResumeSpeaker()"></i>
+                        }
+                            <i title="Nächste Rede" type="button" class="fas mx-2 fa-lg fa-step-forward"
+                                @onclick="() => Speakerlist.NextSpeaker()"></i>
+                            <i title="Redezeit zurücksetzen" type="button" class="fas fa-lg fa-undo ml-3"
+                                @onclick="() => Speakerlist.StartSpeaker()"></i>
+                        </div>
+
+                        <div>
+                        <h5>Warteliste</h5>
+                        @foreach (var speaker in Speakerlist.Speakers)
+                        {
+                                <div class="card border p-2">@speaker.Name <i class="fas fa-times mr-2 text-danger" @onclick="() => RemoveSpeaker(speaker)"></i></div>
+                        }
+
+
+                        @if (Speakerlist.ListClosed)
+                        {
+                                <button @onclick="() => Speakerlist.ListClosed = !Speakerlist.ListClosed" class="btn btn-outline-success">Redeliste
+                                    öffnen</button>
+                        }
+                        else
+                        {
+                                <div type="button" @onclick="() => Speakerlist.ListClosed = !Speakerlist.ListClosed" class="border mx-0 mt-2 p-2"><i
+                                        class="fas fa-ban mr-2 text-danger"></i>Redeliste
+                                    schließen</div>
+                        }
+                        </div>
+                        <div class="col-12 row mx-0 px-0 my-3">
+                            <div class="col-11 py-0 pl-0">
+                               <EditForm Model="NewSpeaker">
+                                   <div class="form-group">
+                                        <InputText @bind-Value="NewSpeaker.Name" class="form-control" placeholder="Land hinzufügen..."/>
+                                    </div>
+                                </EditForm>
+                            </div>
+                            <div class="col-1 p-0">
+                                <button type="button" @onclick="() => AddToSpeakers()" class="btn btn-success m-0 py-2 px-0 w-100"><i class="fas fa-plus fa-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    @* Comments *@
+                    <div class="col-12 col-md-6 m-0 p-3">
+                        <div class="row m-0 p-0 d-flex justify-content-between list-head border-bottom">
+                            <div class="col p-0 m-0 mr-2">
+                                <h5 class="col-12 p-0">
+                                    <i class="fas fa-user-alt mr-2"></i>
+                                    @if (Speakerlist.CurrentQuestion != null)
+                                {
+                                            @Speakerlist.CurrentQuestion.Name
+                                }
+                                else
+                                {
+                                            <span>-</span>
+                                }
+                                    <span type="button" class="text-danger hover-enabled" title="Kopf leeren"
+                                        @onclick="() => this.Speakerlist.ClearCurrentQuestion()"><i
+                                            class="fas fa-trash ml-3"></i></span>
+                                </h5>
+                            </div>
+                            <div class="col-7 row m-0 p-0 d-flex justify-content-end">
+                                <span type="button" class="py-1 px-3 text-danger hover-enabled"
+                                    @onclick="() => this.Speakerlist.AddQuestionSeconds(-10)">-10</span>
+                                <h3
+                                    class="m-0 text-center @(Speakerlist.RemainingQuestionTime.TotalSeconds < 11 ? "text-danger" : "")">
+                                    @(Speakerlist.RemainingQuestionTime.TotalSeconds < 0 ? "-" : "")
+                                    @Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h3>
+                                <span type="button" class="py-1 px-3 text-success hover-enabled"
+                                    @onclick="() => this.Speakerlist.AddQuestionSeconds(10)">+10</span>
+                            </div>
+                        </div>
+                        @* Controls *@
+                        <div class="col-12 p-0 my-3">
+                        @if (Speakerlist.Status == ListOfSpeakers.EStatus.Question)
+                        {
+                            <i title="Rede pausieren" type="button" class="fas mx-2 fa-lg fa-pause"
+                            @onclick="() => Speakerlist.PauseQuestion()"></i>
+                        }
+                        else
+                        {
+                            <i title="Rede fortsetzen" type="button" class="fas mx-2 fa-lg fa-play"
+                            @onclick="() => Speakerlist.ResumeQuestion()"></i>
+                        }
+                            <i title="Nächste Rede" type="button" class="fas mx-2 fa-lg fa-step-forward"
+                                @onclick="() => Speakerlist.NextQuestion()"></i>
+                            <i title="Redezeit zurücksetzen" type="button" class="fas fa-lg fa-undo ml-3"
+                                @onclick="() => Speakerlist.StartQuestion()"></i>
+                        </div>
+                        <div class="col-12 mx-0 px-0">
+                            <h5>Fragen und Kurzbemerkungen</h5>
+                            @foreach (var question in Speakerlist.Questions)
+                        {
+                                    <div class="card border p-2">@question.Name</div>
+                        }
+                            @if (Speakerlist.QuestionsClosed)
+                        {
+                                    <button @onclick="() => Speakerlist.QuestionsClosed = true"
+                                        class="btn btn-outline-success">Redeliste
+                                        öffnen</button>
+                        }
+                        else
+                        {
+                                    <div type="button" @onclick="() => Speakerlist.QuestionsClosed = false"
+                                        class="border mx-0 mt-2 p-2"><i class="fas fa-ban mr-2 text-danger"></i>Redeliste
+                                        schließen</div>
+                        }
+                        </div>
+                        <div class="col-12 row mx-0 px-0 my-3">
+                            <div class="col-11 py-0 pl-0">
+                               <EditForm Model="NewCommentator">
+                                   <div class="form-group">
+                                        <InputText @bind-Value="NewCommentator.Name" class="form-control" placeholder="Land hinzufügen..."/>
+                                    </div>
+                                </EditForm>
+                            </div>
+                            <div class="col-1 p-0">
+                                <button type="button" @onclick="() => AddToQuestions()" class="btn btn-success m-0 py-2 px-0 w-100"><i class="fas fa-plus fa-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mx-0 mt-3 p-0">
+
+            </div>
+        </div>
+
+
+        <MUNityClient.Shared.Bootstrap.Modal Title="Sprechzeiten konfigurieren" @ref="SpeakingTimeConfigModal"
+            OnSubmitCallback="SaveSettings">
+            <EditForm Model="@Settings">
+                <div class="form-group">
+                    <label>Redezeit</label>
+                    <InputText @bind-Value="Settings.Speakertime" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Zeit für Fragen, Kurzbemerkungen und Antworten</label>
+                    <InputText @bind-Value="Settings.Questiontime" class="form-control" />
+                </div>
+            </EditForm>
+        </MUNityClient.Shared.Bootstrap.Modal>
+
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    public ListOfSpeakers Speakerlist { get; set; }
+
+    [Parameter]
+    public bool IsOnline { get; set; }
+
+    private MUNityClient.Shared.Bootstrap.Modal SpeakingTimeConfigModal { get; set; }
+
+    [Parameter]
+    public Services.SocketHandlers.ListOfSpeakerSocketHandler Socket { get; set; }
+
+    private class SpeakerToAdd
+    {
+        public string Iso { get; set; }
+
+        public string Name { get; set; }
+    }
+
+    private class SpeakerlistSettings
+    {
+        public string Speakertime { get; set; }
+
+        public string Questiontime { get; set; }
+
+        public SpeakerlistSettings()
+        {
+
+        }
+
+        public SpeakerlistSettings(ListOfSpeakers source)
+        {
+            Speakertime = source.SpeakerTime.ToString(@"mm\:ss");
+            Questiontime = source.QuestionTime.ToString(@"mm\:ss");
+        }
+    }
+
+    private SpeakerlistSettings Settings { get; set; }
+
+    private SpeakerToAdd NewSpeaker = new SpeakerToAdd();
+    private SpeakerToAdd NewCommentator = new SpeakerToAdd();
+
+    private Boolean invalidFormatSpeakerTime = false;
+    private Boolean invalidFormatQuestionTime = false;
+
+    private void SaveSettings()
+    {
+        var speakerTime = Speakerlist.SpeakerTime;
+        var questionTime = Speakerlist.QuestionTime;
+        if (TimeSpan.TryParseExact(Settings.Speakertime, @"mm\:ss", null, out speakerTime))
+        {
+            invalidFormatSpeakerTime = false;
+            invalidFormatQuestionTime = false;
+            this.Speakerlist.SpeakerTime = speakerTime;
+        }
+        else
+        {
+            // Die Eingabe der Redezeit ist ungültig!
+            invalidFormatSpeakerTime = true;
+        }
+
+        if (TimeSpan.TryParseExact(Settings.Questiontime, @"mm\:ss", null, out questionTime))
+        {
+            this.Speakerlist.QuestionTime = questionTime;
+        }
+        else
+        {
+            // Die Eingegebene Zeit für Fragen und Kurzbemerkungen ist ungültig.
+            invalidFormatQuestionTime = true;
+        }
+    }
+
+
+
+    private void TimerElapsed(object sender, ElapsedEventArgs args)
+    {
+        this.StateHasChanged();
+    }
+
+    private EventCallback AddToSpeakers()
+    {
+        if(NewSpeaker.Name != null && NewSpeaker.Name.Length > 2){
+            this.Speakerlist.AddSpeaker(NewSpeaker.Name);
+            NewSpeaker.Name = "";
+        }
+        return EventCallback.Empty;
+    }
+
+    private void RemoveSpeaker(Speaker speaker)
+    {
+        this.Speakerlist.AllSpeakers.Remove(speaker);
+    }
+
+    private EventCallback AddToQuestions()
+    {
+        if(NewCommentator.Name != null && NewCommentator.Name.Length > 2){
+            this.Speakerlist.AddQuestion(NewCommentator.Name);
+            NewCommentator.Name = "";
+        }
+        return EventCallback.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.IsOnline = await this.listOfSpeakerService.IsListOfSpeakersOnline(this.Id);
+        if (IsOnline)
+        {
+            this.Speakerlist = await this.listOfSpeakerService.GetFromApi(this.Id);
+        
+            // Check if the socket is already passed as a Parameter
+            if (Socket != null)
+                Socket = await listOfSpeakerService.Subscribe(Speakerlist);
+
+            if (Socket != null)
+            {
+                Socket.SpeakerListChanged += OnSpeakerlistChanged;
+            }
+        }
+        else
+        {
+            this.Speakerlist = await this.listOfSpeakerService.GetListOfSpeakers(this.Id);
+        }
+
+        if (this.Speakerlist != null)
+        {
+            this.Settings = new SpeakerlistSettings(this.Speakerlist);
+
+            // Wir bauen jetzt für den ersten Entwurf einen Timer, welcher
+            // jede Sekunde neu Zeichnet. Der Grund dafür ist, dass die
+            // Redeliste nicht selber mit einem Timer arbeitet sondern
+            // Startzeiten mit der aktuellen Uhrzeit Synct und hierdurch
+            // die Redezeiten berechnet.
+            // Es ist theoretisch möglich sich von der Redeliste ein StateChanged Event geben zu lassen
+            // dann kann der Timer pausiert werden, wenn ohnehin gerade niemand spricht, aber ich halte
+            // eine aktualisierung der Ansicht (kein Serverping) nicht für zu viel. ~Peer
+            var timer = new Timer(1000);
+            timer.Elapsed += TimerElapsed;
+            timer.Start();
+
+            Speakerlist.PropertyChanged += StoreOnListChanged;
+            Speakerlist.AllSpeakers.CollectionChanged += StoreOnCollectionChanged;
+            base.OnInitialized();
+        }
+    }
+
+private void OnSpeakerlistChanged(object sender, ListOfSpeakers newList)
+{
+
+    if (this.Speakerlist.CompareTo(newList) != 0)
+    {
+        this.Speakerlist = newList;
+        Speakerlist.PropertyChanged += StoreOnListChanged;
+        Speakerlist.AllSpeakers.CollectionChanged += StoreOnCollectionChanged;
+        StateHasChanged();
+    }
+}
+
+private async void StoreOnListChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+{
+
+    if (IsOnline)
+    {
+        // The syncing when a speaker has been added will happen in StoreOnCollectionChanged
+        if (e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.SpeakerTime) ||
+            e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.QuestionTime) ||
+            e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.CurrentSpeaker) ||
+            e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.CurrentQuestion) ||
+            e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.Status) ||
+            e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.StartQuestionTime) ||
+            e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.StartSpeakerTime) ||
+            e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.ListClosed) ||
+            e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.QuestionsClosed))
+        {
+            this.listOfSpeakerService.SyncSpeakerlist(this.Speakerlist);
+        }
+
+    }
+    else
+    {
+        await this.listOfSpeakerService.StoreListOfSpeakers(this.Speakerlist);
+    }
+}
+
+private async void StoreOnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs args)
+{
+
+    if (IsOnline)
+    {
+        this.listOfSpeakerService.SyncSpeakerlist(this.Speakerlist);
+    }
+    else
+    {
+        await this.listOfSpeakerService.StoreListOfSpeakers(this.Speakerlist);
+    }
+}
+
+private async Task OpenReaderSpectatorView()
+{
+    // Das her ist auch mal ein beispiel, wie man eine JavaScript Methode schnell aufrufen kann :)
+    string url = "/los/read/" + this.Speakerlist.ListOfSpeakersId;
+    await jsRuntime.InvokeAsync<object>("open", url, "_blank");
+}
+}
+
+
+<style>
+    .list-head .hover-enabled {
+        transition: .3s ease;
+        opacity: 0%;
+    }
+
+    .list-head:hover .hover-enabled {
+        opacity: 100%;
+    }
+</style>

@@ -1,0 +1,28 @@
+﻿
+@if (SimulationContext?.Simulation?.Users != null && SimulationContext?.Simulation?.Roles != null && SimulationContext.Simulation.Users.Any())
+{
+    <div class="widget-list widget-list-rounded m-b-30" data-id="widget">
+        @foreach (var user in SimulationContext?.Simulation?.Users)
+        {
+            <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user" Role="@SimulationContext.Simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId)"
+                                                                                  SimulationContext="@SimulationContext" />
+        }
+    </div>
+}
+
+<style>
+    .widget-list.widget-list-rounded .widget-list-item:first-child, .widget-list.widget-list-rounded.widget-list-item:first-child {
+        -webkit-border-top-right-radius: 4px;
+        border-top-right-radius: 4px;
+        -webkit-border-top-left-radius: 4px;
+        border-top-left-radius: 4px;
+    }
+</style>
+
+
+@code {
+
+    [Parameter]
+    public MUNityClient.Services.SocketHandlers.SimulationContext SimulationContext { get; set; }
+
+}

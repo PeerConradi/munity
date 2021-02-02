@@ -1,0 +1,228 @@
+﻿@using MUNity.Models.Resolution;
+@using MUNity.Extensions.ResolutionExtensions;
+
+@if (Resolution != null && this.NewAmendmentModel != null)
+{
+    <EditForm Model="@NewAmendmentModel">
+        <div class="form-group">
+            <label>Art des Änderungsantrags</label>
+            <InputSelect @bind-Value="NewAmendmentModel.AmendmentType" class="form-control border-dark">
+                <option value="change">Text ändern</option>
+                <option value="delete">Absatz streichen</option>
+                <option value="move">Absatz verschieben</option>
+                <option value="add">Neuen Absatz hinzufügen</option>
+            </InputSelect>
+        </div>
+
+
+        @if (this.NewAmendmentModel.AmendmentType == "change" || this.NewAmendmentModel.AmendmentType == "delete" || this.NewAmendmentModel.AmendmentType == "move")
+        {
+            <div class="form-group">
+                <label>Operativer Absatz</label>
+                <!-- Input the Target Section when type is change, delete or move -->
+                <InputSelect @bind-Value="NewAmendmentModel.TargetSectionId" class="form-control">
+                    @foreach (var paragraph in this.Resolution.GetRealOperativeParagraphsInfo())
+                            {
+                            <option value="@paragraph.id">@paragraph.path: @(paragraph.text.Length > 40 ? paragraph.text.Substring(0, 40) : paragraph.text)</option>
+                            }
+                </InputSelect>
+            </div>
+
+        }
+
+        <!-- Display Submitter Selection in any case! -->
+        @if (this.NewAmendmentModel.AmendmentType == "change" || this.NewAmendmentModel.AmendmentType == "delete" || this.NewAmendmentModel.AmendmentType == "move" || this.NewAmendmentModel.AmendmentType == "add")
+        {
+            <div class="form-group">
+                <label>EinbringerIn</label>
+                <InputText @bind-Value="NewAmendmentModel.Submitter" class="form-control"></InputText>
+            </div>
+        }
+
+        <!-- TODO: New Position field for add Amendments and move amendments -->
+        @if (this.NewAmendmentModel.AmendmentType == "move" || this.NewAmendmentModel.AmendmentType == "add" && !string.IsNullOrEmpty(this.NewAmendmentModel.TargetSectionId))
+        {
+            <div class="form-group">
+                <label>Zielposition</label>
+                <InputSelect @bind-Value="NewAmendmentModel.NewTargetPath" class="form-control">
+                    <option value="start">An den Anfang</option>
+                    @foreach (var item in Resolution.GetRealOperativeParagraphsInfo())
+                            {
+                        <option value="@item.id">Unter @item.path</option>
+                        <option value="sub_@item.id">Als Unterpunkt von @item.path</option>
+                            }
+                    <option value="end">An das Ende</option>
+                </InputSelect>
+            </div>
+        }
+
+        @if (this.NewAmendmentModel.AmendmentType == "change" && !string.IsNullOrEmpty(this.NewAmendmentModel.TargetSectionId) || this.NewAmendmentModel.AmendmentType == "add")
+        {
+            <div class="form-group">
+                <label>Neuer Text</label>
+                <InputTextArea @bind-Value="this.NewAmendmentModel.NewText" class="form-control">Beispiel</InputTextArea>
+            </div>
+        }
+    </EditForm>
+}
+
+
+@code {
+    private Resolution _resolution;
+
+    [Parameter]
+    public Resolution Resolution
+    {
+        get => _resolution;
+        set
+        {
+            this._resolution = value;
+            this.NewAmendmentModel = new NewAmendment(value);
+        }
+    }
+
+    private NewAmendment NewAmendmentModel { get; set; }
+
+    private class NewAmendment
+    {
+        private readonly Resolution _resolution;
+
+        private string amendmentType = "";
+        public string AmendmentType
+        {
+            get => this.amendmentType;
+            set
+            {
+                // Set the default first selection
+                this.TargetSectionId = this._resolution.OperativeSection.Paragraphs.FirstOrDefault()?.OperativeParagraphId ?? "";
+                this.amendmentType = value;
+            }
+        }
+
+        public string Submitter { get; set; }
+
+        private string targetSectionId;
+        public string TargetSectionId
+        {
+            get => this.targetSectionId;
+            set
+            {
+                this.NewText = _resolution.OperativeSection.Paragraphs.FirstOrDefault(a => a.OperativeParagraphId == value)?.Text ?? "";
+                this.targetSectionId = value;
+            }
+        }
+
+        public string NewTargetPath { get; set; } = "start";
+
+        public string NewText { get; set; }
+        public NewAmendment(Resolution resolution)
+        {
+            this._resolution = resolution;
+        }
+    }
+
+    public AbstractAmendment GetAmendment()
+    {
+        if (this.NewAmendmentModel == null || string.IsNullOrEmpty(this.NewAmendmentModel.AmendmentType))
+            return null;
+
+        AbstractAmendment newAmendment = null;
+
+        if (this.NewAmendmentModel.AmendmentType == "change")
+        {
+            var newChangeAmendment = this.Resolution.OperativeSection.CreateChangeAmendment(this.NewAmendmentModel.TargetSectionId);
+            newChangeAmendment.NewText = this.NewAmendmentModel.NewText;
+            newAmendment = newChangeAmendment;
+
+        }
+        else if (this.NewAmendmentModel.AmendmentType == "delete")
+        {
+            newAmendment = this.Resolution.OperativeSection.CreateDeleteAmendment(this.NewAmendmentModel.TargetSectionId);
+        }
+        else if (this.NewAmendmentModel.AmendmentType == "move")
+        {
+            newAmendment = CreateMoveAmendment(this.NewAmendmentModel);
+        }
+        else if (this.NewAmendmentModel.AmendmentType == "add")
+        {
+            newAmendment = CreateAddAmendment(this.NewAmendmentModel);
+        }
+
+        if (newAmendment != null)
+        {
+
+            newAmendment.SubmitterName = this.NewAmendmentModel.Submitter;
+            newAmendment.SubmitTime = DateTime.Now;
+        }
+
+        return newAmendment;
+    }
+
+    private AddAmendment CreateAddAmendment(NewAmendment data)
+    {
+        if (data.NewTargetPath == "start") return this.Resolution.OperativeSection.CreateAddAmendment(0, this.NewAmendmentModel.NewText ?? "");
+        if (data.NewTargetPath == "end") return this.Resolution.OperativeSection.CreateAddAmendment(this.Resolution.OperativeSection.Paragraphs.Count, this.NewAmendmentModel.NewText ?? "");
+        if (data.NewTargetPath.StartsWith("sub_"))
+        {
+            var parent = FindParentOfSub(data.NewTargetPath);
+            if (parent != null) return this.Resolution.OperativeSection.CreateAddAmendment(parent.Children.Count, data.NewText ?? "", parent);
+        }
+        if (!string.IsNullOrEmpty(data.NewTargetPath))
+        {
+            // Create under a selected Paragraph
+            var parent = this.Resolution.OperativeSection.FindOperativeParagraph(data.NewTargetPath);
+            if (parent == null)
+                throw new Exceptions.Resolution.OperativeParagraphNotFoundException();
+
+            bool isFirstLevel = this.Resolution.OperativeSection.Paragraphs.Contains(parent);
+
+            var indexOfHead = this.Resolution.OperativeSection.IndexOfParagraph(parent);
+            return this.Resolution.OperativeSection.CreateAddAmendment(indexOfHead + 1, data.NewText ?? "", isFirstLevel ? null : parent);
+        }
+
+        return null;
+    }
+
+    private MoveAmendment CreateMoveAmendment(NewAmendment data)
+    {
+        if (data.NewTargetPath == "start")
+        {
+            return this.Resolution.OperativeSection.CreateMoveAmendment(data.TargetSectionId, 0);
+        }
+        else if (data.NewTargetPath == "end")
+        {
+            return  this.Resolution.OperativeSection.CreateMoveAmendment(data.TargetSectionId, this.Resolution.OperativeSection.Paragraphs.Count);
+        }
+        else if (data.NewTargetPath.StartsWith("sub_"))
+        {
+
+            var parent = FindParentOfSub(data.NewTargetPath);
+            if (parent != null)
+                return this.Resolution.OperativeSection.CreateMoveAmendment(data.TargetSectionId, parent.Children.Count, parent);
+        }
+        else if (!string.IsNullOrEmpty(data.NewTargetPath))
+        {
+            // Move underneath an operative paragraph
+            var parent = this.Resolution.OperativeSection.FindOperativeParagraph(data.NewTargetPath);
+            if (parent == null)
+                throw new Exceptions.Resolution.OperativeParagraphNotFoundException();
+
+            bool isFirstLevel = this.Resolution.OperativeSection.Paragraphs.Contains(parent);
+
+            var indexOfHead = this.Resolution.OperativeSection.IndexOfParagraph(parent);
+            return this.Resolution.OperativeSection.CreateMoveAmendment(data.TargetSectionId, indexOfHead + 1, isFirstLevel ? null : parent);
+        }
+
+        return null;
+    }
+
+    private OperativeParagraph FindParentOfSub(string id)
+    {
+        // Create a Move Amendment that is moving the selected Paragraph to a sub Position
+        if (id.StartsWith("sub_"))
+            id = id.Substring(4);
+        var parent = this.Resolution.OperativeSection.FindOperativeParagraph(id);
+
+        return parent;
+    }
+}

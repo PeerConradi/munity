@@ -1,0 +1,646 @@
+﻿<!-- Navigate to id test /resa/edit/test to show a test resolution without anything -->
+@page "/resa/edit/{id}"
+@using MUNity.Models.Resolution; 
+@using MUNity.Extensions.ResolutionExtensions; 
+@using MUNityClient.Extensions;
+@using MUNityClient.Shared.Resa;
+@inject MUNityClient.Services.ResolutionService resolutionService;
+
+@if (this.Resolution != null)
+{
+
+    var corruptionResult = MUNity.Troubleshooting.Resa.ResolutionTroubleshooting.IsResolutionCorrupted(this.Resolution);
+    if (corruptionResult.isCorrupted)
+    {
+        <div class="row col-12 d-flex justify-content-center my-5 align-items-center">
+            <i class="fas fa-exclamation-circle fa-2x text-danger mr-2"></i>
+            <h3 class="m-0">Achtung die Resolution ist beschädigt.</h3>
+            <p>@corruptionResult.log</p>
+            <button @onclick="() => RepairResolution()" class="btn aqua-gradient">Jetzt reparieren</button>
+        </div>
+    }
+
+    if (this.SyncMode == SyncModes.Offline || this.SyncMode == SyncModes.ErrorWhenSyncing)
+    {
+        <div class="row col-12 d-flex justify-content-center my-1 align-items-center">
+            <div class="col-8 alert alert-warning alert-dismissible my-0">
+                <b>Die Resolution wird nicht an den Server übertragen und ist lediglich offline im Speicher des Browsers gespeichert.</b>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @if (this.SyncMode == SyncModes.ErrorWhenSyncing)
+            {
+                <button type="button col-2" class="btn btn-success" alt="Retry connection" title="Erneuter Verbindungsversuch"><i class="fas fa-redo"></i></button>
+            }
+
+            <button type="button col-2" class="btn btn-primary" alt="Download resolution" title="Resolution herunterladen"><i class="fas fa-arrow-down"></i></button>
+        </div>
+    }
+    else if (this.SyncMode == SyncModes.PingingServer)
+    {
+        <div class="row col-12 d-flex justify-content-center my-2 align-items-center">
+            <div class="alert alert-info d-flex align-items-center">
+                <b>Es wird versucht eine Verbindung zum Server herzustellen.</b>
+                <div class="spinner-border text-primary ml-2" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+    }
+    else if (this.SyncMode == SyncModes.Syncing)
+    {
+        <div class="row d-flex justify-content-center my-2 align-items-center">
+            <div class="col-12 alert alert-info d-flex align-items-center">
+                <b>Es wird versucht eine Verbindung zum Server herzustellen.</b>
+                <div class="spinner-border text-primary ml-2" role="status">
+                    <span class="sr-only">Wird an den Server übertragen.</span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row p-0 m-0 d-flex justify-content-center">
+        <div class="row col-lg-8 col-xl-6 p-2 paragraphs">
+            <div class="accordion col-12" id="accordion">
+                <div class="card">
+                    @* Head header *@
+                    <div role="button" class="card-header row m-0" type="button" data-toggle="collapse"
+                         data-target="#collapseHead" aria-expanded="true" aria-controls="collapseHead">
+                        <h3 class="m-0">
+                            Kopf
+                            <i class="fas fa-angle-down ml-2 expansionIcon"></i>
+                        </h3>
+                    </div>
+                    @* Head content *@
+                    <div id="collapseHead" class="collapse show" aria-labelledby="headingHead" data-parent="#accordion">
+                            <div class="row py-0 mx-0 my-2 col-12 d-flex justify-content-between">
+                                    <div class="col p-0 mr-2">
+                                        <input type="text" @bind="Resolution.Header.Topic" class="form-control" placeholder="Thema">
+                                    </div>
+                                    <div class="col p-0 mx-2">
+                                        <input type="text" @bind="Resolution.Header.CommitteeName" class="form-control" placeholder="Gremium">
+                                    </div>
+                                    <div class="col p-0 ml-2">
+                                        <input type="text" @bind="Resolution.Header.SubmitterName" class="form-control" placeholder="Einbringerstaat">
+                                    </div>
+                            </div>
+                            <div class="row py-0 m-0 col-12 justify-content-center">
+                                <div class="w-100">
+                                    @* //string list *@
+                                    <textarea class="md-textarea form-control" rows="3" placeholder="Unterstützerstaaten"></textarea>
+                                </div>
+                            </div>
+                            @* TODO: Logik anbinden *@
+                            <div class="row py-0 px-4 my-2 mx-0 col-12 justify-content-center">
+                                <div class="custom-control custom-checkbox row m-0 py-0 col d-flex align-items-center">
+                                    <input role="button" type="checkbox" class="custom-control-input" id="publicRead">
+                                    <label role="button" class="custom-control-label" for="publicRead">öffentliches Lesen aktiv - ID: 782663</label>
+                                </div>
+                                @* Geschlossen, privat, öffentlich *@
+                                <select role="button" class="browser-default custom-select col-7">
+                                     <option selected> Privat - Niemand sonst kann Änderungsanträge einreichen</option>
+                                     <option>Beschränkt - Team und Komitee kann Änderungsanträge einreichen, müssen bestätigt werden</option>
+                                     <option>Komitee -  Komitee kann Änderungsanträge einreichen</option>
+                                     <option>Beschränkt - Team und Komitee kann Änderungsanträge einreichen</option>
+                                     <option>Nach Bestätigung - Öffentlich, aber muss bestätigt werden</option>
+                                     <option>Öffentlich - Jeder kann Änderungsanträge einreichen</option>
+                                </select>
+                            </div>
+                    </div>
+                    @* Preamble header *@
+                    <div class="row col-12 m-0 p-0">
+                        <div role="button" class="col card-header collapsed row m-0 justify-content-between align-items-center" type="button" data-toggle="collapse"
+                          data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <h3 class="col m-0 p-0">
+                            Präambel
+                            <i class="fas fa-angle-down ml-2 expansionIcon"></i>
+                            </h3>
+                        </div>
+                        <button class="col-1 m-0 btn btn-dark-green d-flex justify-content-center align-items-center custom-plus-button" @onclick="AddPreambleParagraph" title="Paragraph hinzufügen">
+                                <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    @* Preamble content *@
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                        @* Preamble *@
+                        <div class="card-body paragraph-body row p-0 m-0">
+                            @foreach (var preambleParagraph in this.Resolution.Preamble.Paragraphs)
+                            {
+                                <PreambleParagraphEditor Paragraph="preambleParagraph" Resolution="this.Resolution"
+                                                         OnMoveEvent="@((up)=> MovePreambleParagraph(up, preambleParagraph))"
+                                                         OnDeleteEvent="@(() => {PreambleMarkedForDeletion = preambleParagraph; DeletePreambleParagraphModal.Open();})" />
+                            }
+                        </div>
+                    </div>
+                    @* Operative head *@
+                    <div class="row col-12 m-0 p-0">
+                    <div role="button" class="col card-header collapsed row m-0 justify-content-between align-items-center custom-plus-button" type="button" data-toggle="collapse"
+                         data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <h3 class="col m-0 p-0">
+                            Operativer Abschnitt
+                            <i class="fas fa-angle-down ml-2 expansionIcon"></i>
+                        </h3>
+                    </div>
+                        <button class="col-1 m-0 btn btn-dark-green d-flex justify-content-center align-items-center"  @onclick="AddOperativeParagraph" title="Paragraph hinzufügen">
+                                <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    @* Operative content *@
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        @* Operative section *@
+                        <div class="card-body paragraph-body row p-0 m-0">
+                            @foreach (var operative in this.Resolution.OperativeSection.Paragraphs)
+                            {
+                                @if (!operative.IsVirtual)
+                                {
+                                    <OperativeParagraphEditor Resolution="this.Resolution" Paragraph="operative"
+                                                              OnMoveEvent="@((up)=> MoveOperativeParagraph(up, operative))"
+                                                              OnDeleteEvent="@(() => {OperativeMarkedForDeletion = operative; DeleteOperativeParagraphModal.Open();})" />
+                                }
+                                else
+                                {
+                                    <div class="col-12 my-3">
+                                        @{
+                                            var moveParent = this.Resolution.OperativeSection.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId == operative.OperativeParagraphId);
+                                        }
+
+                                        @if (operative.Visible)
+                                        {
+                                            <div class="alert alert-primary m-0">
+                                                An dieser Stelle ist ein eingeblendeter Virtueller Absatz.
+                                                @if (moveParent != null)
+                                                {
+                                                    var sourceParagraph = Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(moveParent.TargetSectionId);
+                                                    <span>Der Absatz <span class="">@sourceParagraph</span> soll an diese Stelle geschoben werden.</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Dieser Absatz kommt scheinbar über einen Änderungsantrag auf Hinzufügen. Der Neue Text ist: </span>
+                                                    <p>@operative.Text</p>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-secondary mt-2"> An dieser Stelle ist ein ausgeblendeter, virtueller Absatz</div>
+                                        }
+
+                                    </div>
+
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Amendments -->
+        <div class="col-lg-4 p-3 p-lg-1">
+            <div class="card m-1">
+                <div class="card-header row m-0 p-0">
+                    <h3 class="col my-3 pr-0">Änderungsanträge</h3>
+                    <button class="btn btn-block btn-dark-green col-2 d-flex justify-content-center align-items-center" @onclick="ShowNewAmendmentModal" title="Neuer Änderungsantrag">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="card-body ammendment-body row p-0 m-0">
+                    @foreach (var amendment in OrderedAmendments)
+                    {
+                        <MUNityClient.Shared.Resa.AmendmentCard Amendment="amendment" Resolution="this.Resolution"
+                                                                Interaction="AmendmentInteracted"></MUNityClient.Shared.Resa.AmendmentCard>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Preamble Paragraph Delete Modal *@
+    <MUNityClient.Shared.Bootstrap.Modal Title="Löschen bestätigen" @ref="DeletePreambleParagraphModal"
+                                         OnSubmitCallback="removePreambleParagraph">
+        Bist du sicher, dass du den Paragraphen löschen möchtest?
+    </MUNityClient.Shared.Bootstrap.Modal>
+
+    @* Operative Paragraph Delete Modal *@
+    <MUNityClient.Shared.Bootstrap.Modal Title="Löschen bestätigen" @ref="DeleteOperativeParagraphModal"
+                                         OnSubmitCallback="removeOperativeParagraph">
+        Bist du sicher, dass du den Paragraphen löschen möchtest?
+    </MUNityClient.Shared.Bootstrap.Modal>
+
+    <MUNityClient.Shared.Bootstrap.Modal Title="Neuer Änderungsantrag" @ref="AddAmendmentModal"
+                                         OnSubmitCallback="NewAmendment">
+        <MUNityClient.Shared.Resa.NewAmendmentForm Resolution="this.Resolution" @ref="NewAmendmentForm">
+        </MUNityClient.Shared.Resa.NewAmendmentForm>
+    </MUNityClient.Shared.Bootstrap.Modal>
+}
+else
+{
+    if (!fetchingResolutionErrored)
+    {
+
+        <MUNityClient.Shared.Bootstrap.Spinner DisplayText="Resolution wird geladen, einen Moment..." />
+    }
+    else
+    {
+        <div class="row d-flex w-100 justify-content-center mt-5">
+            <div class="d-flex w-100 justify-content-center">
+                <i class="fas fa-6x fa-exclamation-circle text-danger"></i>
+            </div>
+            <div class="d-flex justify-content-center mt-5 text-center">
+                Beim Laden der Resolution ist ein Fehler aufgetreten! <br> Bitte vergewissere dich, dass die angeforderte
+                Resolution existiert!
+            </div>
+        </div>
+    }
+}
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private enum SyncModes
+    {
+        PingingServer,
+        Offline,
+        OnlineButNotSyncing,
+        Syncing,
+        Updated,
+        ErrorWhenSyncing
+    }
+
+    private MUNityClient.Shared.Bootstrap.Modal AddAmendmentModal { get; set; }
+    private MUNityClient.Shared.Bootstrap.Modal DeletePreambleParagraphModal { get; set; }
+    private MUNityClient.Shared.Bootstrap.Modal DeleteOperativeParagraphModal { get; set; }
+    private MUNityClient.Shared.Resa.NewAmendmentForm NewAmendmentForm { get; set; }
+    public Resolution Resolution { get; set; }
+    private PreambleParagraph PreambleMarkedForDeletion { get; set; }
+    private OperativeParagraph OperativeMarkedForDeletion { get; set; }
+    private Boolean fetchingResolutionErrored = false;
+
+    private System.Timers.Timer _updateTimer = new System.Timers.Timer(3000);
+
+    private List<PreambleParagraph> _preambleParagraphsToUpdate = new List<PreambleParagraph>();
+    private List<OperativeParagraph> _operativeParagraphsToUpdate = new List<OperativeParagraph>();
+    private bool fullUpdate = false;
+
+    private Services.SocketHandlers.ResaSocketHandler _socketHandler;
+
+    private SyncModes SyncMode = SyncModes.PingingServer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the resolution from any source (local or online)
+        this.Resolution = await this.resolutionService.GetResolution(Id);
+        _updateTimer.Elapsed += UpdateTimerElapsed;
+        if (Resolution != null)
+        {
+            AppendTracker(this.Resolution);
+            CheckResolutionOnline();
+        }
+    }
+
+    private void CheckResolutionOnline()
+    {
+        // Das ganze kann im Hintergrund stattfinden und solange kann
+        // Der Benutzer schon einmal arbeiten, denn die Resolution ist ja auf die eine
+        // oder anderer Weise rein gekommen (offline oder online)
+        _ = this.resolutionService.IsOnline().ContinueWith(async (result) =>
+        {
+            if (result.Result == true)
+            {
+                var canEdit = await this.resolutionService.CanEditResolution(this.Resolution.ResolutionId);
+                if (!canEdit)
+                {
+                    this.SyncMode = SyncModes.OnlineButNotSyncing;
+                }
+                else
+                {
+                    // Reload Resolution because the one in the local storage may be outdated!
+                    this.Resolution = await resolutionService.GetResolutionFromServer(Id);
+                    this.SyncMode = SyncModes.Updated;
+                    this._socketHandler = await this.resolutionService.Subscribe(this.Resolution);
+                }
+            }
+            else
+            {
+                this.SyncMode = SyncModes.Offline;
+            }
+            this.StateHasChanged();
+        });
+    }
+
+    private void AppendTracker(Resolution resolution)
+    {
+        var tracker = new MUNity.ServiceWorkers.ResolutionWorker(resolution);
+        tracker.ResolutionChanged += ResolutionHasChanged;
+    }
+
+    private void ResolutionHasChanged(Resolution sender)
+    {
+        SaveResolution();
+    }
+
+    private async void UpdateTimerElapsed(object timer, System.Timers.ElapsedEventArgs args)
+    {
+        SyncMode = SyncModes.Syncing;
+        this.StateHasChanged();
+
+        bool somethingErrored = false;
+
+        if (!fullUpdate)
+        {
+            // Update Preamble
+            if (_preambleParagraphsToUpdate.Any())
+            {
+                _preambleParagraphsToUpdate.ForEach(async n =>
+                {
+                    var tan = this.resolutionService.GenerateTan();
+                    _socketHandler.IgnoreTransactions.Add(tan);
+                    var result = await this.resolutionService.UpdateResolutionPreambleParagraph(this.Resolution.ResolutionId, n, tan);
+                    if (!result.IsSuccessStatusCode) somethingErrored = true;
+                });
+            }
+
+            // Update Operative Section
+            if (_operativeParagraphsToUpdate.Any())
+            {
+                _operativeParagraphsToUpdate.ForEach(async n =>
+                {
+                    var tan = this.resolutionService.GenerateTan();
+                    _socketHandler.IgnoreTransactions.Add(tan);
+                    var result = await this.resolutionService.UpdateResolutionOperativeParagraph(this.Resolution.ResolutionId, n, tan);
+                    if (!result.IsSuccessStatusCode) somethingErrored = true;
+                });
+            }
+        }
+        else
+        {
+            var result = await this.resolutionService.SyncResolutionWithServer(this.Resolution);
+            if (!result) somethingErrored = true;
+        }
+        this._operativeParagraphsToUpdate.Clear();
+        this._preambleParagraphsToUpdate.Clear();
+        fullUpdate = false;
+
+        if (somethingErrored)
+            this.SyncMode = SyncModes.ErrorWhenSyncing;
+        else
+            this.SyncMode = SyncModes.Updated;
+
+        this.StateHasChanged();
+        this._updateTimer.Stop();
+    }
+
+    private void QueueSyncing(PreambleParagraph paragraph)
+    {
+        if (!this._preambleParagraphsToUpdate.Contains(paragraph))
+            this._preambleParagraphsToUpdate.Add(paragraph);
+
+        if (!this._updateTimer.Enabled)
+            this._updateTimer.Start();
+    }
+
+    private void QueueSyncing(OperativeParagraph paragraph)
+    {
+        if (!this._operativeParagraphsToUpdate.Contains(paragraph))
+            this._operativeParagraphsToUpdate.Add(paragraph);
+
+        if (!this._updateTimer.Enabled)
+            this._updateTimer.Start();
+    }
+
+    private void QueueSyncAll()
+    {
+        this.fullUpdate = true;
+
+        if (!this._updateTimer.Enabled)
+            this._updateTimer.Start();
+    }
+
+
+    private void PreambleTextChanged(PreambleParagraph sender, string oldText, string newText)
+    {
+        this.Resolution.Date = DateTime.Now;
+        if (SyncMode == SyncModes.Syncing || SyncMode == SyncModes.Updated)
+        {
+            QueueSyncing(sender);
+        }
+        else if (SyncMode == SyncModes.Offline)
+        {
+            SaveResolution();
+        }
+        this.StateHasChanged();
+    }
+
+    private void OperativeTextChanged(OperativeParagraph sender, string oldText, string newText)
+    {
+        this.Resolution.Date = DateTime.Now;
+        if (SyncMode == SyncModes.Syncing || SyncMode == SyncModes.Updated)
+        {
+            QueueSyncing(sender);
+        }
+        else if (SyncMode == SyncModes.Offline)
+        {
+            SaveResolution();
+        }
+        this.StateHasChanged();
+    }
+
+    private void OperativeNoticesChanged(OperativeParagraph sender)
+    {
+        this.Resolution.Date = DateTime.Now;
+        if (SyncMode == SyncModes.Syncing || SyncMode == SyncModes.Updated)
+        {
+            QueueSyncing(sender);
+        }
+        else if (SyncMode == SyncModes.Offline)
+        {
+            SaveResolution();
+        }
+        this.StateHasChanged();
+    }
+
+    private void PreambleNoticesChanged(PreambleParagraph sender)
+    {
+        this.Resolution.Date = DateTime.Now;
+        if (SyncMode == SyncModes.Syncing || SyncMode == SyncModes.Updated)
+        {
+            QueueSyncing(sender);
+        }
+        else if (SyncMode == SyncModes.Offline)
+        {
+            SaveResolution();
+        }
+        this.StateHasChanged();
+    }
+
+    private void SaveResolution()
+    {
+        if (SyncMode == SyncModes.Syncing || SyncMode == SyncModes.Updated)
+        {
+            QueueSyncAll();
+        }
+        else if (SyncMode == SyncModes.Offline)
+        {
+            this.resolutionService.SaveOfflineResolution(this.Resolution);
+        }
+        this.StateHasChanged();
+    }
+
+    public void removePreambleParagraph()
+    {
+        this.Resolution.Date = DateTime.Now;
+        this.Resolution?.Preamble?.Paragraphs?.Remove(PreambleMarkedForDeletion);
+        SaveResolution();
+    }
+
+    public void removeOperativeParagraph()
+    {
+        this.Resolution.Date = DateTime.Now;
+        //OperativeMarkedForDeletion.NoticesChanged -= OperativeNoticesChanged;
+        this.Resolution?.OperativeSection.RemoveOperativeParagraph(OperativeMarkedForDeletion);
+        SaveResolution();
+    }
+
+    //Move a preamble section in the given direction. It's called by the move event from the preambleParagraph child
+    //component
+    public void MovePreambleParagraph(Boolean up, PreambleParagraph preambleParagraph)
+    {
+        this.Resolution.Date = DateTime.Now;
+        int originalIndex = this.Resolution?.Preamble?.Paragraphs?.IndexOf(preambleParagraph) ?? -1;
+        this.Resolution.Preamble.Paragraphs.Move(originalIndex, up ? MoveDirection.Up : MoveDirection.Down);
+        SaveResolution();
+    }
+
+    //Move an operative section in the given direction. It's called by the move event from the operativeParagraph child
+    //component
+    public void MoveOperativeParagraph(Boolean up, OperativeParagraph preambleParagraph)
+    {
+        this.Resolution.Date = DateTime.Now;
+        int originalIndex = this.Resolution?.OperativeSection?.Paragraphs?.IndexOf(preambleParagraph) ?? -1;
+        this.Resolution.OperativeSection.Paragraphs.Move(originalIndex, up ? MoveDirection.Up : MoveDirection.Down);
+        SaveResolution();
+    }
+
+    public void AmendmentInteracted()
+    {
+        this.StateHasChanged();
+        SaveResolution();
+    }
+
+    private void AddPreambleParagraph()
+    {
+        this.Resolution.Date = DateTime.Now;
+        var paragraph = this.Resolution.CreatePreambleParagraph();
+        SaveResolution();
+    }
+
+    private void AddOperativeParagraph()
+    {
+        this.Resolution.Date = DateTime.Now;
+        var paragraph = this.Resolution.OperativeSection.CreateOperativeParagraph();
+        //paragraph.NoticesChanged += OperativeNoticesChanged;
+        SaveResolution();
+    }
+
+    private void ShowNewAmendmentModal()
+    {
+        this.AddAmendmentModal.Open();
+    }
+
+    private void NewAmendment()
+    {
+        var amendment = this.NewAmendmentForm.GetAmendment();
+        if (amendment == null)
+        {
+            // TODO: Meldung zeigen Resolution konnte nicht erstellt werden!
+        }
+        this.AddAmendmentModal.Close();
+        SaveResolution();
+    }
+
+    /// <summary>
+    /// List of amendments in visible order. This is the order of all the amendments
+    /// first of by the paragraph they address from top to bottom.
+    /// Then Amendments to delete are shown first, after that amendments to change the paragraph, after that
+    /// amendments to move the paragraph.
+    ///
+    /// Amendments to add a new paragraph are shown last!
+    /// </summary>
+    private IEnumerable<AbstractAmendment> OrderedAmendments
+    {
+        get
+        {
+            var list = new List<AbstractAmendment>();
+            foreach (var paragraph in this.Resolution.OperativeSection.Paragraphs)
+            {
+                var deleteAmendments = this.Resolution.OperativeSection.DeleteAmendments.Where(n => n.TargetSectionId ==
+                paragraph.OperativeParagraphId);
+                if (deleteAmendments.Any())
+                    list.AddRange(deleteAmendments);
+
+                var changeAmendments = this.Resolution.OperativeSection.ChangeAmendments.Where(n => n.TargetSectionId ==
+                paragraph.OperativeParagraphId);
+                if (changeAmendments.Any())
+                    list.AddRange(changeAmendments);
+
+                var moveAmendments = this.Resolution.OperativeSection.MoveAmendments.Where(n => n.TargetSectionId ==
+                paragraph.OperativeParagraphId);
+                if (moveAmendments.Any())
+                    list.AddRange(moveAmendments);
+            }
+
+            list.AddRange(this.Resolution.OperativeSection.AddAmendments);
+            return list;
+        }
+    }
+
+    private EventCallback RepairResolution()
+    {
+        MUNity.Troubleshooting.Resa.ResolutionTroubleshooting.FixResolution(this.Resolution);
+        SaveResolution();
+        return EventCallback.Empty;
+    }
+
+}
+
+
+<style>
+    .expansionIcon {
+        transition: all .3s;
+
+        transform: rotate(0);
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    .collapsed > h3 > i{
+        transform: rotate(-90);
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+    }
+
+    .ammendment-body {
+        overflow-y: auto;
+        max-height: 70vh;
+    }
+
+    .paragraph-body {
+        overflow-y: auto;
+        @(this.SyncMode == SyncModes.Offline || this.SyncMode == SyncModes.ErrorWhenSyncing ? "max-height: 55vh;" : "max-height: 62vh;")
+        
+    }
+
+    .custom-plus-button {
+        border-radius: 0px;
+    }
+</style>

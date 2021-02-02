@@ -1,0 +1,48 @@
+﻿@using MUNityClient.Models.Simulation;
+@using System.Linq; 
+
+@inject MUNityClient.Services.SimulationService simulationService;
+@inject NavigationManager navigationManager;
+@* Dies ist eine Teilnehmendenansicht an dieser Stelle werden den Nutzern Rollen zugewiesen bzw. können sich diese ihre Rollen auswählen. *@
+@if (SimulationContext?.Simulation != null)
+{
+    <div class="row col-12 m-0 p-0">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <a href="/sim/home" class="btn btn-danger btn-sm">Raum verlassen</a> @SimulationContext.Simulation.Name
+                </div>
+                <div class="card-body p-0">
+                    @if (SimulationContext.MyAuth.CanCreateRole)
+                    {
+                        <AdminUserList SimulationContext="@SimulationContext"></AdminUserList>
+                    }
+                    else
+                    {
+                        <DefaultUserList SimulationContext="@SimulationContext"></DefaultUserList>
+                    }
+                </div>
+                @*
+                    Rollenerstellung vorerst deaktiviert. Arbeite halt mit den Presets...
+                <div class="card-footer">
+                    @if (Auth != null && Auth.CanCreateRole)
+                    {
+                        <button class="btn btn-block btn-success">Rolle hinzufügen</button>
+                    }
+                </div>
+                *@
+            </div>
+        </div>
+
+        @if (SimulationContext.MyAuth.CanCreateRole)
+        {
+            <div class="col-4">
+                <SimulationOptions SimulationContext="@SimulationContext"></SimulationOptions>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <MUNityClient.Shared.Bootstrap.Spinner DisplayText="Lobby wird geladen" />
+}

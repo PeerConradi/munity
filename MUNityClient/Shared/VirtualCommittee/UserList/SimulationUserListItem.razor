@@ -1,0 +1,218 @@
+﻿@using MUNity.Extensions.SimulationExtensions;
+@inject Services.SimulationService simulationService;
+
+
+<div class="widget-list-item bg-light w-100 border @((User.IsOnline) ? "border-success" : "border-danger")" style="border-width: 2px !important;" >
+    <div class="widget-list-media ">
+        @if (Role != null && !string.IsNullOrEmpty(Role.Iso))
+        {
+            <img src="/img/flags/small/@(Role.Iso).png" alt="" class="rounded ">
+        }
+        else
+        {
+            <img src="~/img/flags/small/un.png" />
+        }
+
+    </div>
+    <div class="widget-list-content">
+        @if (Role != null)
+        {
+            <h4 class="widget-list-title">@Role.Name</h4>
+        }
+
+        <p class="widget-list-desc">@User?.DisplayName</p>
+    </div>
+    <div class="widget-list-action">
+        @if (_currentPetition != null)
+        {
+            <span class="badge badge-pill @(_currentPetitionIsActive ? "badge-success" : "badge-warning")" @onclick="() => DeleteCurrentPetition()">@_currentPetition.PetitionType.DisplayText()</span>
+        }
+        @if (_lastVoteArgs != null)
+        {
+            if (_lastVoteArgs.Choice == 0)
+            {
+                <span class="badge badge-success">Dafür</span>
+            }
+            else if (_lastVoteArgs.Choice == 1)
+            {
+                <span class="badge badge-danger">Dagegen</span>
+            }
+            else if (_lastVoteArgs.Choice == 2)
+            {
+                <span class="badge badge-primary">Enthaltung</span>
+            }
+        }
+    </div>
+</div>
+
+<style>
+
+    .widget-list.widget-list-rounded .widget-list-item:first-child, .widget-list.widget-list-rounded.widget-list-item:first-child {
+        -webkit-border-top-right-radius: 6px;
+        border-top-right-radius: 6px;
+        -webkit-border-top-left-radius: 6px;
+        border-top-left-radius: 6px;
+    }
+
+    .widget-list .widget-list-item {
+        display: table;
+        width: 100%;
+        background: #fff;
+        text-decoration: none;
+        color: #212121;
+    }
+
+    .widget-list .widget-list-item .widget-list-media {
+        width: 70px;
+        height: 60px;
+        padding: 10px;
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .widget-list .widget-list-item .widget-list-media img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .rounded {
+        border-radius: 3px !important;
+    }
+
+    img {
+        vertical-align: middle;
+        border-style: none;
+    }
+
+    .widget-list .widget-list-item .widget-list-media + div {
+        padding-left: 0;
+    }
+
+    .widget-list .widget-list-item .widget-list-content {
+        padding: 10px;
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .widget-list .widget-list-item .widget-list-title {
+        font-size: 12px;
+        line-height: 16px;
+        margin: 0;
+    }
+
+    .widget-list .widget-list-item .widget-list-desc {
+        font-size: 11px;
+        margin: 0;
+        color: #6e6e6e;
+    }
+
+    .widget-list .widget-list-item .widget-list-content + div {
+        padding-left: 0;
+    }
+
+    .widget-list .widget-list-item > div:last-child {
+        padding-right: 15px;
+    }
+
+    .widget-list .widget-list-item .widget-list-action {
+        padding: 10px;
+        display: table-cell;
+        vertical-align: middle;
+        width: 10%;
+        padding-left: 15px;
+        text-align: center;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public MUNity.Schema.Simulation.IUserItem User { get; set; }
+
+    [Parameter]
+    public MUNity.Schema.Simulation.SimulationRoleItem Role { get; set; }
+
+    [Parameter]
+    public MUNityClient.Services.SocketHandlers.SimulationContext SimulationContext { get; set; }
+
+    private MUNity.Schema.Simulation.VotedEventArgs _lastVoteArgs { get; set; } = null;
+
+    private MUNity.Schema.Simulation.Petition _currentPetition;
+
+    private bool _currentPetitionIsActive = false;
+
+    protected override void OnInitialized()
+    {
+        if (SimulationContext != null)
+        {
+            SimulationContext.UserPetition += OnUserPetition;
+            SimulationContext.UserPetitionAccpted += OnUserPetitionAccepted;
+            SimulationContext.UserPetitionDeleted += OnUserPetitionDeleted;
+            SimulationContext.UserVoted += UserVoted;
+            SimulationContext.VoteCreated += VoteCreated;
+        }
+        base.OnInitialized();
+    }
+
+    private void UserVoted(object sender, MUNity.Schema.Simulation.VotedEventArgs args)
+    {
+        if (args.UserId == this.User.SimulationUserId)
+        {
+            this._lastVoteArgs = args;
+            this.StateHasChanged();
+        }
+    }
+
+    private void VoteCreated(object sender, MUNity.Schema.Simulation.CreatedVoteModel args)
+    {
+        this._lastVoteArgs = null;
+    }
+
+    private void OnUserPetition(MUNity.Schema.Simulation.Petition petition)
+    {
+        if (petition.PetitionUserId == this.User.SimulationUserId)
+        {
+            this._currentPetition = petition;
+            this._currentPetitionIsActive = false;
+            this.StateHasChanged();
+        }
+    }
+
+    private void OnUserPetitionAccepted(MUNity.Schema.Simulation.Petition petition)
+    {
+        if (_currentPetition == null) return;
+        if (_currentPetition.PetitionId == petition.PetitionId)
+        {
+            _currentPetitionIsActive = true;
+            this.StateHasChanged();
+        }
+
+    }
+
+    private void OnUserPetitionDeleted(MUNity.Schema.Simulation.Petition petition)
+    {
+        if (_currentPetition == null) return;
+        if (_currentPetition.PetitionId == petition.PetitionId)
+        {
+            _currentPetition = null;
+            this.StateHasChanged();
+        }
+    }
+
+    private async Task DeleteCurrentPetition()
+    {
+        if (this._currentPetition == null) return;
+        await simulationService.DeletePetition(this._currentPetition);
+    }
+
+    private async Task DenyCurrentPetition()
+    {
+        if (this._currentPetition == null) return;
+        await simulationService.DeletePetition(this._currentPetition);
+    }
+
+    private async Task AcceptCurrentPetition()
+    {
+        if (this._currentPetition == null) return;
+        await simulationService.AcceptPetition(this._currentPetition);
+    }
+}

@@ -1,0 +1,28 @@
+﻿@inject MUNityClient.Services.ListOfSpeakerService listOfSpeakerService;
+@inject NavigationManager navigationManager;
+@page "/redelisten"
+
+<div class="row m-0 p-0 d-flex justify-content-center">
+    <div class="card col-11 col-md-5 p-0 my-3">
+        <div class="card-body pb-0 px-0 row m-0 d-flex justify-content-center">
+            <i class="fas fa-5x fa-list-alt text-primary mb-4"></i>
+            <p class="col-12 text-justify">
+                Erstelle eine Redeliste um die verschiedenen Teilnehmenden und ihre Redebeiträge anzeigen und verwalten zu können.
+                Die Redelisten sind dabei offline und nicht über verschiedene Geräte oder Browser hinweg abrufbar.
+            </p>
+            <button @onclick="() => CreateListOfSpeakers()" class="btn btn-success m-0 col-12">Redeliste erstellen</button>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private async Task CreateListOfSpeakers()
+    {
+        var list = await this.listOfSpeakerService.CreateListOfSpeakers();
+        if (list != null)
+        {
+            navigationManager.NavigateTo($"/los/edit/{list.ListOfSpeakersId}");
+        }
+    }
+}

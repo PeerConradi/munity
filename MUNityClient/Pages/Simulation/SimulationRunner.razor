@@ -1,0 +1,258 @@
+﻿@page "/sim/run/{id}"
+@using System.ComponentModel
+
+@inject Services.SimulationService simulationService;
+@inject Services.ListOfSpeakerService listOfSpeakerService;
+@inject NavigationManager navigationManager;
+
+@layout MUNityClient.Shared.EmptyLayout;
+
+@*
+    Der SimulationsRunner ist die "Schirmkomponente" über den Einzelnen Simulations Komponenten.
+    An dieser Stelle wird eine Verbindung zum Server initialisiert und alle zum Start erforderlichen Daten
+    werden einmal geladen.
+
+    Zudem wird der Socket initialisiert und an die Sub-Komponenten welche diesen ggf. brauchen weiter gereicht.
+
+    Diese Komponente soll auch das Basis Layout für das Simulationsfenster stellen.
+*@
+
+<MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationTopNavbar SimulationContext="@_simulationContext" LayoutWrapper="@_layoutWrapper" />
+
+@if (_simulationContext?.Simulation != null && _simulationContext.MyAuth != null && _layoutWrapper != null)
+{
+    <div class="row">
+        <div class="col-12">
+            <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationVotingBanner SimulationContext="@_simulationContext" />
+        </div>
+    </div>
+
+    <div class="row col-12 m-0 p-0">
+
+        @* Benutzerliste *@
+        @if (_layoutWrapper.ShowMemberlist)
+        {
+            <div class="col-lg-3 col-md-12 col-sm-12">
+                <MUNityClient.Shared.VirtualCommittee.UserList.SimulationLiveUserList SimulationContext="@_simulationContext" />
+                <div style="height: 50px;"></div>
+         </div>
+    }
+        else
+        {
+            <div class="col-lg-3"></div>
+        }
+
+        @* Hauptinhalt *@
+        <div class="col-lg-5 col-md-12 col-sm-12">
+            @if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Agenda)
+            {
+                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda>
+            }
+            else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Home)
+            {
+                <h1>TODO: Dashboard</h1>
+            }
+        </div>
+
+        @* Ansicht für die Redeliste *@
+        @if (_layoutWrapper.ShowListOfSpeakers)
+        {
+            <div class="col-md-12 col-lg-4 col-sm-12">
+            <div class="row">
+                @if (_listOfSpeakerId == "_loading_")
+                {
+                    <p>Redeliste wird abgerufen...</p>
+                }
+                else if (string.IsNullOrEmpty(_listOfSpeakerId))
+                {
+                    if (_simulationContext.MyAuth.CanCreateRole || _simulationContext.MyRole.RoleType == MUNity.Schema.Simulation.SimulationEnums.RoleTypes.Chairman)
+                    {
+                        <button class="btn btn-success" @onclick="() => InitListOfSpeakers()">Redeliste anlegen</button>
+                    }
+                    else
+                    {
+                        <p>Keine Redeliste vorhanden.</p>
+                    }
+                }
+                else
+                {
+                    <MUNityClient.Shared.Los.LoSReaderComponent ListOfSpeakersId="@_listOfSpeakerId" IsOnline="true"></MUNityClient.Shared.Los.LoSReaderComponent>
+                }
+            </div>
+        </div>
+        }
+        
+    </div>
+
+    @* Ansicht für die Steuerung *@
+    <div class="row m-0 p-0">
+        <div class="col-12">
+            <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationControls 
+                                                                     SpeakerlistSocket="_listOfSpeakerSocket"
+                                                                     SimulationContext="@_simulationContext"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationControls>
+        </div>
+    </div>
+
+    <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationNotifications></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationNotifications>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private Services.SocketHandlers.SimulationContext _simulationContext;
+
+    private Services.SocketHandlers.ListOfSpeakerSocketHandler _listOfSpeakerSocket;
+
+    private MUNity.Models.ListOfSpeakers.ListOfSpeakers _listOfSpeakers;
+
+    //private MUNity.Schema.Simulation.SimulationRoleItem _myRole;
+
+    private string _listOfSpeakerId = "_loading_";
+
+    private MUNityClient.Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper _layoutWrapper;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _layoutWrapper = new Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper();
+        _layoutWrapper.PropertyChanged += LayoutChanged;
+        int id = 0;
+        if (int.TryParse(Id, out id))
+        {
+
+            _simulationContext = await simulationService.Subscribe(id);
+            if (_simulationContext != null)
+            {
+                
+            }
+            AddHandlers(_simulationContext);
+
+            this._listOfSpeakerId = await this.simulationService.GetListOfSpeakerId(id);
+            if (!string.IsNullOrEmpty(_listOfSpeakerId))
+            {
+                this._listOfSpeakers = await listOfSpeakerService.GetFromApi(_listOfSpeakerId);
+
+                if (_listOfSpeakers != null)
+                {
+                    _listOfSpeakerSocket = await listOfSpeakerService.Subscribe(_listOfSpeakers);
+
+                    if (_listOfSpeakerSocket != null)
+                    {
+                        //_listOfSpeakerSocket.SpeakerListChanged += OnSpeakerlistChanged;
+                    }
+                }
+            }
+
+            this.StateHasChanged();
+        }
+    }
+
+    private void LayoutChanged(object sender, PropertyChangedEventArgs args)
+    {
+        this.StateHasChanged();
+    }
+
+    private void AddHandlers(Services.SocketHandlers.SimulationContext context)
+    {
+        context.UserConnected += OnUserConnected;
+        context.UserDisconnected += OnUserDisconnected;
+        context.PhaseChanged += OnPhaseChanged;
+
+        context.HubConnection.Closed += (ex) =>
+        {
+            Console.WriteLine($"{DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} Verbindung beendet");
+            if (ex != null)
+                Console.WriteLine(ex.Message);
+
+            this.StateHasChanged();
+
+            return null;
+        };
+
+        context.HubConnection.Reconnected += (ex) =>
+        {
+            Console.WriteLine($"{DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} Reconnected");
+            if (ex != null)
+                Console.WriteLine(ex);
+
+            this.StateHasChanged();
+            return null;
+        };
+
+        context.HubConnection.Reconnecting += (ex) =>
+        {
+            Console.WriteLine($"{DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} Reconnecting");
+            if (ex != null)
+                Console.WriteLine(ex.Message);
+
+            this.StateHasChanged();
+            return null;
+        };
+    }
+
+
+
+    private void OnPhaseChanged(int sender, MUNity.Schema.Simulation.SimulationEnums.GamePhases phase)
+    {
+        if (phase == MUNity.Schema.Simulation.SimulationEnums.GamePhases.Lobby)
+        {
+            navigationManager.NavigateTo($"/sim/lobby/{Id}");
+        }
+    }
+
+    private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserItem user)
+    {
+        if (_simulationContext?.Simulation?.Users != null)
+        {
+            var tmpUser = _simulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
+            if (tmpUser != null)
+            {
+                tmpUser.IsOnline = true;
+                tmpUser.DisplayName = user.DisplayName;
+                this.StateHasChanged();
+            }
+        }
+    }
+
+    private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserItem user)
+    {
+        if (_simulationContext?.Simulation?.Users != null)
+        {
+            var tmpUser = _simulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
+            if (tmpUser != null)
+            {
+                tmpUser.IsOnline = false;
+                this.StateHasChanged();
+            }
+        }
+    }
+
+    private async void InitListOfSpeakers()
+    {
+        if (this._simulationContext?.Simulation != null)
+        {
+            var list = await this.simulationService.InitListOfSpeakers(this._simulationContext.Simulation.SimulationId);
+            if (list != null)
+            {
+                this._listOfSpeakerId = list.ListOfSpeakersId;
+                this.StateHasChanged();
+            }
+        }
+    }
+
+}
+
+<style>
+    .header-item {
+        transition: .3s;
+    }
+
+        .header-item:not(.selected-tab):hover {
+            background-color: #dedede;
+        }
+
+    .selected-tab {
+        background-color: #1266F1;
+        color: white;
+    }
+</style>

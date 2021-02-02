@@ -1,0 +1,106 @@
+﻿@using MUNity.Models.Resolution;
+
+@inject MUNityClient.Services.ResolutionService resolutionService;
+
+@page "/resa/onlineamendment/{id}"
+
+<h3>Einreichen eines Änderungsantrags</h3>
+
+@if (Status == EStatus.Loading)
+{
+    <p>Wird geladen</p>
+}
+else if (Status == EStatus.CantReachServer)
+{
+    <p>Fehler, der Server ist nicht erreichbar. Bitte probiere es später erneut.</p>
+}
+else if (Status == EStatus.NotAllowed)
+{
+    <p>Das einreichen eines Änderungsantrages ist Ihnen nicht gestattet. Möglicherweise wurde es von dem Vorsitz deaktiviert oder Sie sind nicht angemeldet.</p>
+}
+else if (Status == EStatus.Allowed)
+{
+    if (_resolution != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        @* Der ganze Kram kann am Ende in den Presentation Mode wandern, wenn dort der Schalter  für "Beameransicht/Leseansicht" existiert. *@
+                        <button class="btn btn-primary" @onclick="() => ShowNewAmendmentModal()">Änderungsantrag einreichen!</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <MUNityClient.Shared.Bootstrap.Modal Title="Neuer Änderungsantrag" @ref="AddAmendmentModal"
+                                             OnSubmitCallback="NewAmendment">
+            <MUNityClient.Shared.Resa.NewAmendmentForm Resolution="this._resolution" @ref="NewAmendmentForm">
+            </MUNityClient.Shared.Resa.NewAmendmentForm>
+        </MUNityClient.Shared.Bootstrap.Modal>
+
+    }
+    else
+    {
+        <p>Resolution nicht gefunden.</p>
+    }
+
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private MUNityClient.Shared.Bootstrap.Modal AddAmendmentModal { get; set; }
+
+    private MUNityClient.Shared.Resa.NewAmendmentForm NewAmendmentForm { get; set; }
+
+    private enum EStatus
+    {
+        Loading,
+        CantReachServer,
+        NotAllowed,
+        Allowed
+    }
+
+    private Resolution _resolution { get; set; }
+
+    private EStatus Status { get; set; } = EStatus.Loading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var canEdit = await this.resolutionService.CanUserPostAmendments(Id);
+        if (!canEdit)
+        {
+            this.Status = EStatus.NotAllowed;
+        }
+        else
+        {
+            _resolution = await this.resolutionService.GetResolutionFromServer(Id);
+            this.Status = EStatus.Allowed;
+        }
+
+        StateHasChanged();
+
+    }
+
+    private void ShowNewAmendmentModal()
+    {
+        this.AddAmendmentModal.Open();
+    }
+
+    private async void NewAmendment()
+    {
+        var amendment = this.NewAmendmentForm.GetAmendment();
+        if (amendment == null)
+        {
+            // TODO: Meldung zeigen Resolution konnte nicht erstellt werden!
+        }
+        else if (amendment is DeleteAmendment deleteAmendment)
+        {
+            await this.resolutionService.PostDeleteAmendment(this._resolution.ResolutionId, deleteAmendment);
+        }
+        this.AddAmendmentModal.Close();
+    }
+}

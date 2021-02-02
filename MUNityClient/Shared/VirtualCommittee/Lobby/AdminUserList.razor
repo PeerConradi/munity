@@ -1,0 +1,152 @@
+﻿@* Diese Komponente ist eine Tabelle für die Lobbyphase der Simulation. Hierbei werden die Benutzer in der Simulation
+    für einen Administrator/ Jemanden der den Raum verwalten kann aufgelistet. *@
+
+@inject Services.SimulationService _simulationService;
+@inject IJSRuntime JS;
+
+@if (Users != null)
+{
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nutzername</th>
+                    <th>Online</th>
+                    <th>PublicId</th>
+                    <th>Rolle</th>
+                    <th>
+                        <div type="button" @onclick="() => showPasswords = !showPasswords">
+                            @if (showPasswords)
+                            {
+                                <i class="fas fa-eye mr-2"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-eye-slash mr-2"></i>
+                            }
+                            Passwort
+                        </div>
+                    </th>
+                    <th>Löschen</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Users)
+                {
+                    if (user != null)
+                    {
+                        <UserListItemAdmin User="user" SimulationId="SimulationContext.Simulation.SimulationId" UserRemoveClicked="@OnUserRemoved" Roles="Roles" PasswordShown="@showPasswords"></UserListItemAdmin>
+                    }
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-dark-green btn-block" @onclick="() => NewUser()">
+            <i class="fas fa-plus mr-2"></i>Neuer
+            Benutzer
+        </button>
+        <div class="btn-group w-100" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-secondary" @onclick="CopyListToClipboard">Liste in Zwischenablage kopieren</button>
+            <button type="button" class="btn btn-secondary" disabled>Zufällige Rollen</button>
+        </div>
+    </div>
+}
+else
+{
+    <MUNityClient.Shared.Bootstrap.Spinner DisplayText="Benutzer werden geladen" />
+}
+
+@code {
+
+    [Parameter]
+    public Services.SocketHandlers.SimulationContext SimulationContext { get; set; }
+
+    private Boolean showPasswords = false;
+
+    public List<MUNity.Schema.Simulation.SimulationUserSetup> Users { get; set; }
+
+    [Parameter]
+    public List<MUNity.Schema.Simulation.SimulationRoleItem> Roles { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        this.Users = await _simulationService.GetUserSetups(SimulationContext.Simulation.SimulationId);
+        if (Roles == null)
+        {
+            this.Roles = await _simulationService.GetRoles(SimulationContext.Simulation.SimulationId);
+        }
+        if (SimulationContext != null)
+        {
+            SimulationContext.RolesChanged += OnRolesChanged;
+            SimulationContext.UserConnected += OnUserConnected;
+            SimulationContext.UserDisconnected += OnUserDisconnected;
+            SimulationContext.UserRoleChanged += OnUserRoleChanged;
+        }
+    }
+
+    private void OnUserRoleChanged(int sender, int userId, int roleId)
+    {
+        if (this.Users == null) return;
+        var user = Users.FirstOrDefault(n => n.SimulationUserId == userId);
+        if (user != null)
+        {
+            user.RoleId = roleId;
+            this.StateHasChanged();
+        }
+    }
+
+    private async Task<EventCallback> OnUserRemoved(int userId)
+    {
+        await this._simulationService.RemoveUser(this.SimulationContext.Simulation.SimulationId, userId);
+        this.Users.RemoveAll(n => n.SimulationUserId == userId);
+        return EventCallback.Empty;
+    }
+
+    private void OnRolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem> roles)
+    {
+        this.Roles = roles.ToList();
+        this.StateHasChanged();
+    }
+
+    private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserItem usr)
+    {
+        var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
+        if (user != null)
+        {
+            user.IsOnline = true;
+
+            if (!string.IsNullOrEmpty(usr.DisplayName) && usr.DisplayName != user.DisplayName)
+                user.DisplayName = usr.DisplayName;
+
+            StateHasChanged();
+        }
+    }
+
+    private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserItem usr)
+    {
+        var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
+        if (user != null)
+        {
+
+            user.IsOnline = false;
+            this.StateHasChanged();
+        }
+    }
+
+    private async Task NewUser()
+    {
+        var user = await _simulationService.CreateUser(this.SimulationContext.Simulation.SimulationId);
+        if (user != null)
+        {
+            Users.Add(user);
+        }
+    }
+
+    private void CopyListToClipboard()
+    {
+        var zeilen = Users.Select(n => $"{n.DisplayName ?? "Freier Slot"}\t{n.PublicId}\t{n.Password}\t{Roles.FirstOrDefault(a => a.SimulationRoleId == n.RoleId)?.Name ?? "Keine Rolle"}");
+        string ausgabe = "Benutzer\tUserId\tPasswort\tRolle\n";
+        ausgabe += string.Join('\n', zeilen);
+        JS.InvokeAsync<string>("navigator.clipboard.writeText", ausgabe);
+    }
+}

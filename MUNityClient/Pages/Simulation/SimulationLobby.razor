@@ -1,0 +1,38 @@
+﻿@page "/sim/lobby/{id}"
+
+@inject Services.SimulationService simulationService;
+@inject NavigationManager navigationManager;
+
+@layout MUNityClient.Shared.EmptyLayout;
+
+@if (_context?.Simulation == null)
+{
+    <MUNityClient.Shared.Bootstrap.Spinner DisplayText="Lobby wird geladen" />
+}
+else
+{
+    <MUNityClient.Shared.VirtualCommittee.Lobby.SimulationLobbyMain SimulationContext="@_context"></MUNityClient.Shared.VirtualCommittee.Lobby.SimulationLobbyMain>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+
+    private MUNityClient.Services.SocketHandlers.SimulationContext _context = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        int id = 0;
+        if (int.TryParse(Id, out id))
+        {
+            this._context = await simulationService.Subscribe(id);
+            if (_context != null && _context.Simulation.Phase == MUNity.Schema.Simulation.SimulationEnums.GamePhases.Online)
+            {
+                navigationManager.NavigateTo($"/sim/run/{id}");
+            }
+        }
+
+        //return base.OnInitializedAsync();
+    }
+}

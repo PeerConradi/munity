@@ -1,0 +1,64 @@
+﻿@inject MUNityClient.Services.SimulationService simulationService;
+@inject NavigationManager navigationManager;
+
+<h3>Neues virtuelles Gremium erstellen</h3>
+
+<div class="row">
+
+    <div class="col-12">
+        <EditForm Model="InputModel" OnSubmit="SubmitForm">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <div class="form-group">
+                <label>Name</label>
+                <InputText @bind-Value="InputModel.Name" class="form-control" />
+                <small>Der Anzeigename dieser Simulation</small>
+            </div>
+            <div class="form-group">
+                <label>Admin Passwort</label>
+                <InputText @bind-Value="InputModel.AdminPassword" class="form-control" type="password" />
+                <small>Passwort um die Steuerung übernehmen zu können.</small>
+            </div>
+            <div class="form-group">
+                <label>Mein Anzeigename</label>
+                <InputText @bind-Value="InputModel.UserDisplayName" class="form-control" />
+                <small>Der Anzeigename des sich einloggenden Accounts.</small>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-block btn-primary">Simulation erstellen</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+<MUNityClient.Shared.Bootstrap.Modal Title="Simulation erstellt" @ref="NewSimulationPinModal"
+                                     OnSubmitCallback="RootToCreatedSimulation">
+    <h3>Raum angelegt</h3>
+    <small>Die nötigen Informationen, damit du diesen Raum wieder betreten kannst sind nun in deinem Zwischenspeicher des Browsers gelagert. Gehe in den Raum und schreibe dir am Besten gleich deine Kennung und Passwort auf.</small>
+</MUNityClient.Shared.Bootstrap.Modal>
+
+@code {
+
+    private MUNity.Schema.Simulation.CreateSimulationRequest InputModel = new MUNity.Schema.Simulation.CreateSimulationRequest();
+
+    private MUNityClient.Shared.Bootstrap.Modal NewSimulationPinModal { get; set; }
+
+    private string Pin { get; set; } = string.Empty;
+
+    private int CreatedSimulationId;
+
+    private async void SubmitForm()
+    {
+        var simulation = await simulationService.CreateSimulation(InputModel);
+        if (simulation != null)
+        {
+            this.NewSimulationPinModal.Open();
+            this.CreatedSimulationId = simulation.SimulationId;
+        }
+    }
+
+    private void RootToCreatedSimulation()
+    {
+        this.NewSimulationPinModal.Close();
+        navigationManager.NavigateTo($"/sim/lobby/{CreatedSimulationId}");
+    }
+}

@@ -1,0 +1,80 @@
+﻿@inject MUNityClient.Services.SimulationService _simulationService;
+
+<div class="row">
+    <div class="col-12">
+        <EditForm Model="@Request" OnSubmit="SubmitVote">
+            <div class="form-group">
+                <label>Anzeige Text</label>
+                <InputText @bind-Value="@Request.Text" class="form-control"></InputText>
+            </div>
+            <div class="form-group">
+                <label>Modus</label>
+                <InputSelect @bind-Value="@Request.Mode">
+                    <option value="@MUNity.Schema.Simulation.EVotingMode.Everyone">Jeder (inklusive Vorsitz)</option>
+                    <option value="@MUNity.Schema.Simulation.EVotingMode.AllParticipants">Alle Teilnehmenden</option>
+                    <option value="@MUNity.Schema.Simulation.EVotingMode.JustDelegates">Nur Delegierte</option>
+                    <option value="@MUNity.Schema.Simulation.EVotingMode.JustNgos">Nur Nichtstaatliche Akteure</option>
+                    <option value="@MUNity.Schema.Simulation.EVotingMode.JustGuests">Nur Gäste</option>
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label>Enthaltung erlauben</label>
+                <InputCheckbox @bind-Value="@Request.AllowAbstention" />
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Erstellen" />
+            </div>
+        </EditForm>
+    </div>
+
+    @if (LastState != VoteSubmitStates.NonCreated)
+    {
+        <div class="col-12">
+            @if (LastState == VoteSubmitStates.Success)
+            {
+                <div class="alert alert-success">Abstimmung erstellt</div>
+            }
+            else
+            {
+                <div class="alert alert-danger">Fehler beim Erstellen der Abstimmung</div>
+            }
+        </div>
+    }
+
+</div>
+
+
+@code {
+    [Parameter]
+    public int SimulationId { get; set; }
+
+    private enum VoteSubmitStates
+    {
+        NonCreated,
+        Success,
+        Error
+    }
+
+    private VoteSubmitStates LastState { get; set; } = VoteSubmitStates.NonCreated;
+
+    private MUNity.Schema.Simulation.CreateSimulationVoting Request { get; set; } = new MUNity.Schema.Simulation.CreateSimulationVoting();
+
+    protected override void OnInitialized()
+    {
+        Request.SimulationId = SimulationId;
+        base.OnInitialized();
+    }
+
+    private async Task SubmitVote()
+    {
+        var result = await _simulationService.CreateVote(Request);
+        if (result.IsSuccessStatusCode)
+        {
+            LastState = VoteSubmitStates.Success;
+        }
+        else
+        {
+            LastState = VoteSubmitStates.Error;
+        }
+    }
+}

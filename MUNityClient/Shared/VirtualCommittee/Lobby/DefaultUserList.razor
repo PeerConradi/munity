@@ -1,0 +1,119 @@
+﻿@inject Services.SimulationService _simulationService;
+
+@if (Users != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Online</th>
+                <th>Name</th>
+                <th>Rolle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Users)
+            {
+            <tr>
+                <td>@user.IsOnline</td>
+                @if (user.DisplayName != null)
+                {
+                    <td>@user.DisplayName</td>
+                }
+                else
+                {
+                    <td>KEIN NAME</td>
+                }
+
+                @{
+                    if (Roles == null)
+                    {
+                        <td>Rollen nicht geladen.</td>
+                    }
+                    else
+                    {
+                        var role = Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId);
+                        if (role != null)
+                        {
+                            <td>@role.Name</td>
+                        }
+                        else
+                        {
+                            <td>Keine Rolle</td>
+                        }
+                    }
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Benutzerliste wird geladen...</p>
+}
+
+@code {
+
+    [Parameter]
+    public Services.SocketHandlers.SimulationContext SimulationContext { get; set; }
+
+    public IEnumerable<MUNity.Schema.Simulation.SimulationUserItem> Users { get; set; }
+
+    [Parameter]
+    public IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem> Roles { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SimulationContext != null)
+        {
+            SimulationContext.UserConnected += OnUserConnected;
+            SimulationContext.UserDisconnected += OnUserDisconnected;
+            SimulationContext.UserRoleChanged += OnUserRoleChanged;
+        }
+
+        if (Roles == null)
+        {
+            this.Roles = await _simulationService.GetRoles(SimulationContext.Simulation.SimulationId);
+        }
+
+        this.Users = await _simulationService.GetUsers(SimulationContext.Simulation.SimulationId);
+    }
+
+    private void OnUserRoleChanged(int sender, int userId, int roleId)
+    {
+        if (this.Users == null) return;
+        var user = Users.FirstOrDefault(n => n.SimulationUserId == userId);
+        if (user != null)
+        {
+            user.RoleId = roleId;
+            this.StateHasChanged();
+        }
+    }
+
+    private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserItem usr)
+    {
+        var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
+        if (user != null)
+        {
+
+            user.IsOnline = true;
+
+            if (!string.IsNullOrEmpty(usr.DisplayName) && usr.DisplayName != user.DisplayName)
+                user.DisplayName = usr.DisplayName;
+
+            StateHasChanged();
+        }
+    }
+
+    private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserItem usr)
+    {
+        var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
+        if (user != null)
+        {
+
+            user.IsOnline = false;
+            this.StateHasChanged();
+
+        }
+    }
+}

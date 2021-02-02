@@ -1,0 +1,120 @@
+﻿@using MUNity.Models.Resolution;
+@using MUNityClient.Shared.Resa.Reader;
+@using MUNity.Extensions.ResolutionExtensions;
+
+@inject MUNityClient.Services.ResolutionService resolutionService;
+@if (Resolution != null)
+{
+
+    <!-- Header -->
+    <div class="row m-0 p-0">
+        <div class="col-12">
+            <h3>@Resolution.Header.Topic</h3>
+            @if (!string.IsNullOrEmpty(this.Resolution.Header.SubmitterName))
+            {
+                <h4>EINBRINGER: @Resolution.Header.SubmitterName.ToUpper()</h4>
+            }
+            else
+            {
+                <h4>KEIN EINBRINGER</h4>
+            }
+
+            @if (!string.IsNullOrEmpty(this.Resolution.Header.CommitteeName))
+            {
+                <h4>@Resolution.Header.CommitteeName.ToUpper(),</h4>
+            }
+            else
+            {
+                <h4>,</h4>
+            }
+
+        </div>
+    </div>
+
+
+    <!-- Preamble -->
+    <div class="row p-0 m-0 mb-4">
+        @foreach (var pp in this.Resolution.Preamble.Paragraphs)
+        {
+            <ResaReaderPreambleParagraph Paragraph="pp"></ResaReaderPreambleParagraph>
+        }
+        </div>
+
+    <!-- Operative Section -->
+    <div class="row p-0 m-0">
+        @foreach (var op in Resolution.OperativeSection.Paragraphs)
+        {
+            if (!op.IsVirtual)
+            {
+                <ResaReaderOperativeParagraph Paragraph="op"
+                    Pathname="@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(op)"
+                    DeleteAmendments="this.Resolution.OperativeSection.DeleteAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)"
+                    ChangeAmendments="this.Resolution.OperativeSection.ChangeAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)"
+                    MoveAmendments="this.Resolution.OperativeSection.MoveAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)">
+                </ResaReaderOperativeParagraph>
+            }
+            else
+            {
+                @* Dieser Paragraph kann in Zukunft dazu kommen durch einen Änderungsantrag auf verschieben oder einen
+                    Änderungsantrag auf Hinzufügen.
+                    Um zu ermitteln wie dieser Absatz zustande kommt können diese Funktionen verwendet werden:
+                    bool durchVerschieben = Resolution.OperativeSection.MoveAmendments.Any(n => n.NewTargetSectionId ==
+                    op.OperativeParagraphId);
+                    bool durchHinzufuegen = Resolution.OPerativeSection.AddAmendments.Any(n => n.TargetSectionId ==
+                    op.OperativeParagraphId);
+
+                    Um bei einem Verschieben den Ausgangsabsatz zu bekommen:
+                    var aenderungsantrag = Resolution.OperativeSection.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId ==
+                    op.OperativeParagraphId);
+                    if (aenderungsantrag != null)
+                    {
+                    var quellParagraph = Resolution.FindOperativeParagraph(aenderungsantrag.TargetSectionId);
+                    }
+                *@
+
+                if (op.Visible)
+                {
+                    <div class="col-12">
+                        @if (Resolution.OperativeSection.MoveAmendments.Any(n => n.NewTargetSectionId == op.OperativeParagraphId))
+                        {
+                            <div class="card border-dark">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-arrow-right mr-2"></i>Hierher verschieben</h5>
+                                    @op.Text
+                                </div>
+                            </div>
+                        }
+                        @if (Resolution.OperativeSection.AddAmendments.Any(n => n.TargetSectionId == op.OperativeParagraphId))
+                        {
+                            <div class="card border-success">
+                                <div class="card-body text-success">
+                                    <h5><i class="fas fa-plus-square mr-2"></i>Absatz hinzufügen</h5>
+                                    <p>@op.Text</p>
+                                    <i class="fas fa-user-edit"></i> @(Resolution.OperativeSection.AddAmendments.Single(n => n.TargetSectionId ==
+                                               op.OperativeParagraphId).SubmitterName)
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+
+
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">Resolution konnte nicht gefunden werden :(</div>
+}
+
+@code {
+    [Parameter]
+    public Resolution Resolution { get; set; }
+
+
+    public ResolutionReader()
+    {
+
+    }
+}
