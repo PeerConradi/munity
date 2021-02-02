@@ -1,4 +1,4 @@
-name: .NET Core Full Build and Test
+name: Test MUNityCore
 
 on: [push]
 
