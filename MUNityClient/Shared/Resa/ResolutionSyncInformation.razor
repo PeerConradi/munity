@@ -1,0 +1,44 @@
+﻿@if (this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.Offline || this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.ErrorWhenSyncing)
+    {
+<div class="row col-12 d-flex justify-content-center my-1 align-items-center">
+    <div class="col-8 alert alert-warning alert-dismissible my-0">
+        <b>Die Resolution wird nicht an den Server übertragen und ist lediglich offline im Speicher des Browsers gespeichert.</b>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @if (this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.ErrorWhenSyncing)
+    {
+        <button type="button" class="btn btn-success col-2" alt="Retry connection" title="Erneuter Verbindungsversuch"><i class="fas fa-redo"></i></button>
+    }
+
+    <button type="button" class="btn btn-primary col-2" alt="Download resolution" title="Resolution herunterladen"><i class="fas fa-arrow-down"></i></button>
+</div>
+    }
+    else if (this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.PingingServer)
+    {
+<div class="row col-12 d-flex justify-content-center my-2 align-items-center">
+    <div class="alert alert-info d-flex align-items-center">
+        <b>Es wird versucht eine Verbindung zum Server herzustellen.</b>
+        <div class="spinner-border text-primary ml-2" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+    }
+    else if (this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.Syncing)
+    {
+<div class="row d-flex justify-content-center my-2 align-items-center">
+    <div class="col-12 alert alert-info d-flex align-items-center">
+        <b>Es wird versucht eine Verbindung zum Server herzustellen.</b>
+        <div class="spinner-border text-primary ml-2" role="status">
+            <span class="sr-only">Wird an den Server übertragen.</span>
+        </div>
+    </div>
+</div>
+    }
+
+@code {
+    [Parameter]
+    public ViewModel.ResolutionViewModel ResolutionViewModel { get; set; }
+}

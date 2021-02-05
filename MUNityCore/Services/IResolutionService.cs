@@ -7,11 +7,11 @@ namespace MUNityCore.Services
 {
     public interface IResolutionService
     {
-        Task<SaveableResolution> CreateResolution(string title);
+        Task<Resolution> CreateResolution(string title);
 
-        Task<SaveableResolution> CreatePublicResolution(string title);
+        Task<Resolution> CreatePublicResolution(string title);
 
-        Task<SaveableResolution> GetResolution(string id);
+        Task<Resolution> GetResolution(string id);
 
         Task<ResolutionAuth> GetResolutionAuth(string id);
 
@@ -19,7 +19,7 @@ namespace MUNityCore.Services
 
         Task<OperativeParagraph> AddOperativeParagraph(Resolution section);
 
-        Task<SaveableResolution> SaveResolution(Resolution resolution);
+        Task<Resolution> SaveResolution(Resolution resolution);
 
         Task<int> GetResolutionCount();
 

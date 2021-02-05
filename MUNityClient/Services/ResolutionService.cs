@@ -10,10 +10,11 @@ using Blazored.LocalStorage;
 using Microsoft.JSInterop;
 using MUNityClient.Models.Resolution;
 using MUNity.Extensions.ResolutionExtensions;
+using MUNity.Models.Resolution.EventArguments;
 
 namespace MUNityClient.Services
 {
-    public class ResolutionService
+    public class ResolutionService : IResolutionService
     {
         private readonly ILocalStorageService _localStorage;
 
@@ -26,6 +27,27 @@ namespace MUNityClient.Services
         public delegate void OnStorageChanged();
 
         public event OnStorageChanged StorageChanged;
+
+        public Task<HttpResponseMessage> UpdateResolutionHeaderName(HeaderStringPropChangedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderName", JsonContent.Create(args));
+        }
+            
+
+        public Task<HttpResponseMessage> UpdateResolutionHeaderFullName(HeaderStringPropChangedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderFullName", JsonContent.Create(args));
+        }
+            
+
+        public Task<HttpResponseMessage> UpdateResolutionHeaderTopic(HeaderStringPropChangedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderTopic", JsonContent.Create(args));
+        }
+            
 
         /// <summary>
         /// Checks if the Resolution Controller of the API is available.
@@ -98,8 +120,9 @@ namespace MUNityClient.Services
                 var authedClient = await this._httpService.GetAuthClient();
                 return await authedClient.GetFromJsonAsync<Resolution>($"/api/Resolution/GetResolution?id={resolutionId}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -174,7 +197,7 @@ namespace MUNityClient.Services
             var resolution = await this._httpService.HttpClient.GetFromJsonAsync<Resolution>($"/api/Resolution/CreatePublic?title={title}");
             if (resolution == null)
                 return null;
-            await this.StoreResolution(resolution);
+            //await this.StoreResolution(resolution);
             return resolution;
         }
 
@@ -230,9 +253,9 @@ namespace MUNityClient.Services
 
         #region SignalR WebSocket
 
-        public async Task<SocketHandlers.ResaSocketHandler> Subscribe(Resolution resolution)
+        public async Task<ViewModel.ResolutionViewModel> Subscribe(Resolution resolution)
         {
-            var handler = await SocketHandlers.ResaSocketHandler.CreateHandler(resolution);
+            var handler = await ViewModel.ResolutionViewModel.CreateViewModelOnline(resolution, this);
             var connId = handler.HubConnection.ConnectionId;
             await this._httpService.HttpClient.GetAsync($"/api/Resolution/SubscribeToResolution?resolutionid={resolution.ResolutionId}&connectionid={connId}");
             return handler;

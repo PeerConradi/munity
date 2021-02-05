@@ -190,7 +190,7 @@ namespace MUNityCore.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            speakerlist.StartSpeaker();
+            speakerlist.ResumeSpeaker();
             this._hubContext.Clients.Groups("los_" + speakerlist.PublicId).SpeakerTimerStarted((int)speakerlist.RemainingSpeakerTime.TotalSeconds);
             _speakerlistService.SaveChanges();
             return StatusCode(StatusCodes.Status200OK);
@@ -228,7 +228,7 @@ namespace MUNityCore.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            speakerlist.StartQuestion();
+            speakerlist.ResumeQuestion();
             this._hubContext.Clients.Groups("los_" + speakerlist.PublicId).QuestionTimerStarted((int)speakerlist.RemainingQuestionTime.TotalSeconds);
             _speakerlistService.SaveChanges();
             return StatusCode(StatusCodes.Status200OK);
@@ -247,7 +247,7 @@ namespace MUNityCore.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
-            speakerlist.PauseSpeaker();
+            speakerlist.Pause();
             this._hubContext.Clients.Groups("los_" + speakerlist.PublicId).TimerStopped();
             _speakerlistService.SaveChanges();
             return StatusCode(StatusCodes.Status200OK);

@@ -1,4 +1,5 @@
 ﻿using MUNity.Models.Resolution;
+using MUNity.Models.Resolution.EventArguments;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,19 +16,30 @@ namespace MUNity.Hubs
         /// <summary>
         /// Something within the Resolution has changed and the client should refresh the views.
         /// </summary>
-        /// <param name="resolution">The latest state of the resolution.</param>
-        /// <param name="tan">Transaction code to identify the last sent transaction.</param>
+        /// <param name="args"></param>
         /// <returns></returns>
-        Task ResolutionChanged(Resolution resolution, string tan);
+        Task ResolutionChanged(ResolutionChangedArgs args);
+
+        Task HeaderNameChanged(HeaderStringPropChangedEventArgs args);
+
+        Task HeaderFullNameChanged(HeaderStringPropChangedEventArgs args);
+
+        Task HeaderTopicChanged(HeaderStringPropChangedEventArgs args);
+
+        Task HeaderAgendaItemChanged(HeaderStringPropChangedEventArgs args);
+
+        Task HeaderSessionChanged(HeaderStringPropChangedEventArgs args);
+
+        Task HeaderSubmitterNameChanged(HeaderStringPropChangedEventArgs args);
+
+        Task HeaderCommitteeNameChanged(HeaderStringPropChangedEventArgs args);
 
         /// <summary>
         /// Something within the given PreambleParagraph has changed. This could be the Text or the Comments.
         /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="para"></param>
-        /// <param name="tan"></param>
+        /// <param name="args"></param>
         /// <returns></returns>
-        Task PreambleParagraphChanged(string resolutionId, PreambleParagraph para, string tan);
+        Task PreambleParagraphChanged(PreambleParagraphChangedArgs args);
 
         /// <summary>
         /// Something within the Operative Paragraph has changed this could be the text or the comments.
@@ -36,7 +48,7 @@ namespace MUNity.Hubs
         /// <param name="para"></param>
         /// <param name="tan"></param>
         /// <returns></returns>
-        Task OperativeParagraphChanged(string resolutionId, OperativeParagraph para, string tan);
+        Task OperativeParagraphChanged(OperativeParagraphChangedEventArgs args);
 
         /// <summary>
         /// The state if an amendment is activated or not activated has changed.
@@ -46,7 +58,9 @@ namespace MUNity.Hubs
         /// <param name="value"></param>
         /// <param name="tan"></param>
         /// <returns></returns>
-        Task AmendmentActivatedChanged(string resolutionId, string amendmentId, bool value, string tan);
+        Task AmendmentActivatedChanged(AmendmentActivatedChangedEventArgs args);
+
+
 
         /// <summary>
         /// The text of a preamble paragraph has changed.
@@ -56,7 +70,7 @@ namespace MUNity.Hubs
         /// <param name="text"></param>
         /// <param name="tan"></param>
         /// <returns></returns>
-        Task PreambleParagraphTextChanged(string resolutionId, string paragraphId, string text, string tan);
+        Task PreambleParagraphTextChanged(PreambleParagraphTextChangedEventArgs args);
 
         /// <summary>
         /// The Text of an operative paragraph has changed.
@@ -66,7 +80,7 @@ namespace MUNity.Hubs
         /// <param name="text"></param>
         /// <param name="tan"></param>
         /// <returns></returns>
-        Task OperativeParagraphTextChanged(string resolutionId, string paragraphId, string text, string tan);
+        Task OperativeParagraphTextChanged(OperativeParagraphTextChangedEventArgs args);
 
 
     }

@@ -1,10 +1,11 @@
 ﻿@using MUNity.Models.Resolution;
 @using MUNity.Extensions.ResolutionExtensions;
 @using MUNity.Extensions.ObservableCollectionExtensions; 
+@using MUNity.Models.Resolution.EventArguments;
 @inject MUNityClient.Services.ResolutionService resolutionService;
 
 
-@if (Resolution.OperativeSection.Paragraphs.Contains(this.Paragraph))
+@if (ResolutionViewModel.Resolution.OperativeSection.Paragraphs.Contains(this.Paragraph))
 {
 
     @* TODO: IsVirtual Check:
@@ -21,7 +22,7 @@
                     <button disabled="@(Index == 0)" class="col-12 p-0 text-center p-3 custom-button h-50"
                         @onclick="() => OnMoveEvent.InvokeAsync(true)" title="Nach oben verschieben" alt="put higher"><i
                             class="fas fa-lg fa-caret-up"></i></button>
-                    <button disabled="@(Resolution != null && Index == Resolution.OperativeSection.Paragraphs.Count - 1)"
+                    <button disabled="@(ResolutionViewModel != null && Index == ResolutionViewModel.Resolution.OperativeSection.Paragraphs.Count - 1)"
                         class="col-12 p-0 text-center p-3 custom-button h-50"
                         @onclick="() => OnMoveEvent.InvokeAsync(false)" title="Nach unten verschieben" alt="put lower"><i
                             class="fas fa-lg fa-caret-down"></i></button>
@@ -29,7 +30,7 @@
                 @* Input Field *@
                 <div class="col p-0 my-2">
                     <EditForm Model="Paragraph" class="h-100">
-                        <textarea value="@Paragraph.Text" @oninput="@OnInputChange" disabled="@this.Paragraph.IsLocked"
+                        <textarea @bind="@Paragraph.Text" @bind:event="oninput" disabled="@this.Paragraph.IsLocked"
                             placeholder="Text..." class="form-control h-100 custom-input-field px-0 p-2"></textarea>
                     </EditForm>
 
@@ -120,16 +121,13 @@ else if (!Dismissed)
     public OperativeParagraph Paragraph { get; set; }
 
     [Parameter]
-    public Resolution Resolution { get; set; }
+    public ViewModel.ResolutionViewModel ResolutionViewModel { get; set; }
 
-    public int Index => this.Resolution?.OperativeSection?.Paragraphs?.IndexOf(this.Paragraph) ?? -1;
+    public int Index => this.ResolutionViewModel?.Resolution.OperativeSection?.Paragraphs?.IndexOf(this.Paragraph) ?? -1;
 
     public bool Dismissed { get; set; } = false;
 
     public Boolean commentsExpanded = false;
-
-
-    
 
     public string Comment
     {
@@ -152,14 +150,13 @@ else if (!Dismissed)
     //Event called when the arrow up/down buttons are called. Returns true if direction is updwards, false if downwards
     public EventCallback OnDeleteEvent { get; set; }
 
-    public OperativeParagraphEditor()
+    protected override void OnInitialized()
     {
-        Paragraph = new OperativeParagraph();
-    }
-
-    private void OnInputChange(ChangeEventArgs args)
-    {
-        this.Paragraph.Text = (string)args.Value;
+        if (Paragraph != null && ResolutionViewModel != null)
+        {
+            //ResolutionViewModel.OperativeParagraphChanged += OperativeParagraphChanged;
+        }
+        base.OnInitialized();
     }
 
     private void OnCommentChange(ChangeEventArgs args)
@@ -174,17 +171,17 @@ else if (!Dismissed)
 
     public void RemoveOperativeParagraph()
     {
-        this.Resolution.OperativeSection.AddAmendments.RemoveAll(n => n.TargetSectionId == this.Paragraph.OperativeParagraphId);
-        this.Resolution.OperativeSection.ChangeAmendments.RemoveAll(n => n.TargetSectionId ==
+        this.ResolutionViewModel.Resolution.OperativeSection.AddAmendments.RemoveAll(n => n.TargetSectionId == this.Paragraph.OperativeParagraphId);
+        this.ResolutionViewModel.Resolution.OperativeSection.ChangeAmendments.RemoveAll(n => n.TargetSectionId ==
         this.Paragraph.OperativeParagraphId);
-        this.Resolution.OperativeSection.DeleteAmendments.RemoveAll(n => n.TargetSectionId ==
+        this.ResolutionViewModel.Resolution.OperativeSection.DeleteAmendments.RemoveAll(n => n.TargetSectionId ==
         this.Paragraph.OperativeParagraphId);
-        this.Resolution.OperativeSection.Paragraphs.Remove(this.Paragraph);
+        this.ResolutionViewModel.Resolution.OperativeSection.Paragraphs.Remove(this.Paragraph);
     }
 
     public void BringBack()
     {
-        this.Resolution.OperativeSection.Paragraphs.Add(this.Paragraph);
+        this.ResolutionViewModel.Resolution.OperativeSection.Paragraphs.Add(this.Paragraph);
     }
 
 }

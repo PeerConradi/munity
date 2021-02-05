@@ -2,11 +2,11 @@
 @using MUNity.Models.Resolution;
 @inject MUNityClient.Services.ResolutionService resolutionService;
 
-@if (this.Resolution != null)
+@if (this.ResolutionViewModel != null)
 {
     <div class="row">
         <div class="col-12">
-            <MUNityClient.Shared.Resa.ResolutionReader Resolution="this.Resolution">
+            <MUNityClient.Shared.Resa.ResolutionReader ViewModel="this.ResolutionViewModel">
             </MUNityClient.Shared.Resa.ResolutionReader>
         </div>
     </div>

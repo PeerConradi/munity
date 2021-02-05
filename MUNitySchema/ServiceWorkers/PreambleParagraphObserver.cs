@@ -4,15 +4,18 @@ using System.Text;
 using MUNity.Models.Resolution;
 using System.Linq;
 
-namespace MUNity.ServiceWorkers
+namespace MUNity.Observers
 {
-    public class PreambleParagraphWorker
+    /// <summary>
+    /// An observer for a preamble paragraph
+    /// </summary>
+    public class PreambleParagraphObserver
     {
         private PreambleParagraph _preambleParagraph;
 
-        private PreambleSectionWorker _sectionWorker;
+        private PreambleSectionObserver _sectionWorker;
 
-        private PreambleParagraphWorker(PreambleSectionWorker sectionWorker, PreambleParagraph paragraph)
+        private PreambleParagraphObserver(PreambleSectionObserver sectionWorker, PreambleParagraph paragraph)
         {
             _preambleParagraph = paragraph;
             _sectionWorker = sectionWorker;
@@ -34,9 +37,15 @@ namespace MUNity.ServiceWorkers
             this._sectionWorker.InvokePreambleChanged();
         }
 
-        public static PreambleParagraphWorker CreateWorker(PreambleSectionWorker sectionWorker, PreambleParagraph paragraph)
+        /// <summary>
+        /// Creates a new instance of an observer for a preamble paragraph
+        /// </summary>
+        /// <param name="sectionWorker"></param>
+        /// <param name="paragraph"></param>
+        /// <returns></returns>
+        public static PreambleParagraphObserver CreateObserver(PreambleSectionObserver sectionWorker, PreambleParagraph paragraph)
         {
-            return new PreambleParagraphWorker(sectionWorker, paragraph);
+            return new PreambleParagraphObserver(sectionWorker, paragraph);
         }
 
         private void Comments_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -45,7 +54,7 @@ namespace MUNity.ServiceWorkers
             {
                 foreach(var paragraph in e.NewItems.OfType<PreambleParagraph>())
                 {
-                    var worker = new PreambleParagraphWorker(_sectionWorker, paragraph);
+                    var worker = new PreambleParagraphObserver(_sectionWorker, paragraph);
                     
                 }
             }

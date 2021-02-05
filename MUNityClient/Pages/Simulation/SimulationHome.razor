@@ -101,35 +101,26 @@ else if (_connectionState == ConnectionStates.CantReachServer)
 }
 
 
-    <MUNityClient.Shared.Bootstrap.Modal Title="Simulation Betreten" @ref="this._passwordModal"
-                                         OnSubmitCallback="JoinSimulation">
-        <EditForm Model="_joinForm" OnSubmit="JoinSimulation">
-            <div class="form-group">
-                <label>Anzeigename</label>
-                <InputText @bind-Value="_joinForm.DisplayName" class="form-control"></InputText>
-            </div>
-            <div class="form-group">
-                <label>Kennung</label>
-                <InputText @bind-Value="_joinForm.UserId" class="form-control"></InputText>
-            </div>
-            <div class="form-group">
-                <label>Passwort</label>
-                <InputText @bind-Value="_joinForm.Password" class="form-control" type="password"></InputText>
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-success" value="Beitreten" />
-            </div>
-        </EditForm>
-    </MUNityClient.Shared.Bootstrap.Modal>
-
-
-
-<MUNityClient.Shared.Bootstrap.Modal Title="Simulation erstellt" @ref="_pinModal"
-                                     OnSubmitCallback="RootToSimulation">
-
-    <p>Erstellt</p>
-
-
+<MUNityClient.Shared.Bootstrap.Modal Title="Simulation Betreten" @ref="this._passwordModal"
+                                        OnSubmitCallback="JoinSimulation">
+    <EditForm Model="_joinForm" OnSubmit="JoinSimulation">
+        <div class="form-group">
+            <label>Anzeigename</label>
+            <InputText @bind-Value="_joinForm.DisplayName" class="form-control"></InputText>
+        </div>
+        <div class="form-group">
+            <label>Kennung</label>
+            <InputText @bind-Value="_joinForm.UserId" class="form-control"></InputText>
+        </div>
+        <div class="form-group">
+            <label>Passwort</label>
+            <InputText @bind-Value="_joinForm.Password" class="form-control" type="password"></InputText>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-success" value="Beitreten" />
+        </div>
+    </EditForm>
 </MUNityClient.Shared.Bootstrap.Modal>
+
 
 

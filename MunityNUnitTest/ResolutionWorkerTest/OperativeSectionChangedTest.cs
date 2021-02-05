@@ -25,7 +25,7 @@ namespace MunityNUnitTest.ResolutionWorkerTest
         {
             var resolution = new Resolution();
             bool wasRaised = false;
-            var worker = new MUNity.ServiceWorkers.ResolutionWorker(resolution);
+            var worker = new MUNity.Observers.ResolutionObserver(resolution);
             worker.OperativeSectionChanged += delegate { wasRaised = true; };
             resolution.OperativeSection.CreateOperativeParagraph();
             Assert.IsTrue(wasRaised);
@@ -36,7 +36,7 @@ namespace MunityNUnitTest.ResolutionWorkerTest
         {
             var resolution = new Resolution();
             bool wasRaised = false;
-            var worker = new MUNity.ServiceWorkers.ResolutionWorker(resolution);
+            var worker = new MUNity.Observers.ResolutionObserver(resolution);
             worker.OperativeSectionChanged += delegate { wasRaised = true; };
             resolution.OperativeSection.CreateAddAmendment(0, "new paragraph!");
             Assert.IsTrue(wasRaised);

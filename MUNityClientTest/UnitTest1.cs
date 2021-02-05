@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace MUNityClientTest
+namespace MunityClientTest
 {
     public class Tests
     {

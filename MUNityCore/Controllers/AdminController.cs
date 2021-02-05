@@ -113,22 +113,6 @@ namespace MUNityCore.Controllers
             return auth.AsAuthSchema();
         }
 
-        /// <summary>
-        /// Creates a new user auth and returns the new created auth.
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns></returns>
-        //[Route("[action]")]
-        //[HttpPost]
-        //[Authorize]
-        //public ActionResult<UserAuthSchema> CreateUserAuth([FromBody] AdminSchema.CreateUserAuthBody body)
-        //{
-        //    if (!_authService.IsUserPrincipalAdmin(User)) return Forbid();
-
-        //    var auth = this._authService.CreateUserAuth(body);
-        //    return Ok((UserAuthSchema)auth);
-        //}
-
 
         /// <summary>
         /// Sets the Auth of a user with a given username.

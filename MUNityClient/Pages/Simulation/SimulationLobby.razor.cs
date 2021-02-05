@@ -25,6 +25,7 @@ namespace MUNityClient.Pages.Simulation
         }
 
         private MUNityClient.ViewModel.SimulationViewModel _context = null;
+
         protected override async Task OnInitializedAsync()
         {
             int id = 0;

@@ -9,8 +9,15 @@ namespace MUNity.Schema.Simulation
     /// </summary>
     public class SetUserSimulationRole : SimulationRequest
     {
+        /// <summary>
+        /// The SimulationUserId that the Roles should be changed of.
+        /// </summary>
         public string UserId { get; set; }
 
+        /// <summary>
+        /// The RoleId that the user should select
+        /// <seealso cref="SimulationRoleItem"/>
+        /// </summary>
         public int RoleId { get; set; }
     }
 }

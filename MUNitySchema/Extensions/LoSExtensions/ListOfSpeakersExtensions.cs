@@ -75,7 +75,7 @@ namespace MUNity.Extensions.LoSExtensions
 
             if (list.Status == EStatus.Speaking)
             {
-                list.Status = EStatus.SpeakerPaused;
+                PauseSpeaker(list);
             }
             else
             {
@@ -88,7 +88,7 @@ namespace MUNity.Extensions.LoSExtensions
         /// THis will give the Speaker the default SpeakerTime and set the Mode to speaking.
         /// </summary>
         /// <param name="list"></param>
-        public static void StartSpeaker(this ListOfSpeakers list)
+        private static void StartSpeaker(this ListOfSpeakers list)
         {
             if (list.CurrentSpeaker != null)
             {
@@ -96,10 +96,16 @@ namespace MUNity.Extensions.LoSExtensions
                 list.StartSpeakerTime = DateTime.Now.ToUniversalTime();
                 list.Status = EStatus.Speaking;
             }
-            else
-            {
-                list.Status = EStatus.Stopped;
-            }
+        }
+
+        public static void ResetSpeakerTime(this ListOfSpeakers list)
+        {
+            list.StartSpeakerTime = DateTime.Now.ToUniversalTime();
+        }
+
+        public static void ResetQuestionTime(this ListOfSpeakers list)
+        {
+            list.StartQuestionTime = DateTime.Now.ToUniversalTime();
         }
 
         /// <summary>
@@ -125,7 +131,7 @@ namespace MUNity.Extensions.LoSExtensions
         /// This will give the Question the full QuestionTime and set the Mode to question.
         /// </summary>
         /// <param name="list"></param>
-        public static void StartQuestion(this ListOfSpeakers list)
+        private static void StartQuestion(this ListOfSpeakers list)
         {
             if (list.CurrentQuestion != null)
             {
@@ -134,10 +140,6 @@ namespace MUNity.Extensions.LoSExtensions
                 list.StartQuestionTime = DateTime.Now.ToUniversalTime();
                 list.Status = EStatus.Question;
             }
-            else
-            {
-                list.Status = EStatus.Stopped;
-            }
         }
 
         /// <summary>
@@ -145,15 +147,13 @@ namespace MUNity.Extensions.LoSExtensions
         /// state of the speaker. if the speaker is not talking when this method is called it will set the Status to Stopped.
         /// </summary>
         /// <param name="list"></param>
-        public static void PauseSpeaker(this ListOfSpeakers list)
+        private static void PauseSpeaker(this ListOfSpeakers list)
         {
             list.PausedSpeakerTime = list.RemainingSpeakerTime;
             if (list.Status == EStatus.Speaking)
                 list.Status = EStatus.SpeakerPaused;
             else if (list.Status == EStatus.Answer)
                 list.Status = EStatus.AnswerPaused;
-            else
-                list.Status = EStatus.Stopped;
         }
 
         /// <summary>
@@ -162,14 +162,20 @@ namespace MUNity.Extensions.LoSExtensions
         /// The PauseQuestion Time will be saved in Either case.
         /// </summary>
         /// <param name="list"></param>
-        public static void PauseQuestion(this ListOfSpeakers list)
+        private static void PauseQuestion(this ListOfSpeakers list)
         {
 
             list.PausedQuestionTime = list.RemainingQuestionTime;
             if (list.Status == EStatus.Question)
                 list.Status = EStatus.QuestionPaused;
-            else
-                list.Status = EStatus.Stopped;
+        }
+
+        public static void Pause(this ListOfSpeakers list)
+        {
+            if (list.Status == EStatus.Question)
+                list.PauseQuestion();
+            else if (list.Status == EStatus.Speaking || list.Status == EStatus.Answer)
+                list.PauseSpeaker();
         }
 
         /// <summary>
@@ -178,7 +184,6 @@ namespace MUNity.Extensions.LoSExtensions
         /// <param name="list"></param>
         public static void ResumeSpeaker(this ListOfSpeakers list)
         {
-
             if (list.CurrentSpeaker != null)
             {
                 if (list.Status == EStatus.SpeakerPaused)
@@ -193,8 +198,7 @@ namespace MUNity.Extensions.LoSExtensions
                 }
                 else
                 {
-                    list.StartSpeakerTime = DateTime.Now.ToUniversalTime();
-                    list.Status = EStatus.Speaking;
+                    list.StartSpeaker();
                 }
 
                 // Fixes a small glitch in the Question time!
@@ -215,7 +219,15 @@ namespace MUNity.Extensions.LoSExtensions
         {
             if (list.CurrentQuestion != null)
             {
-                list.StartQuestionTime = DateTime.Now.ToUniversalTime().AddSeconds(list.RemainingQuestionTime.TotalSeconds - list.QuestionTime.TotalSeconds);
+                if (list.Status == EStatus.QuestionPaused)
+                {
+                    list.StartQuestionTime = DateTime.Now.ToUniversalTime().AddSeconds(list.RemainingQuestionTime.TotalSeconds - list.QuestionTime.TotalSeconds);
+                }
+                else
+                {
+                    list.StartQuestion();
+                }
+                
                 list.Status = EStatus.Question;
             }
             else
@@ -322,7 +334,7 @@ namespace MUNity.Extensions.LoSExtensions
         /// <param name="seconds"></param>
         public static void AddQuestionSeconds(this ListOfSpeakers list, int seconds)
         {
-            list.StartSpeakerTime = list.StartQuestionTime.AddSeconds(seconds);
+            list.StartQuestionTime = list.StartQuestionTime.AddSeconds(seconds);
         }
     }
 }

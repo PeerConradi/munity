@@ -57,10 +57,5 @@ namespace MUNity.Schema.Simulation
         /// A list of petitions that are pointin at this agenda Item.
         /// </summary>
         public List<IPetition> Petitions { get; set; }
-
-        /// <summary>
-        /// The Id of the target Simulation
-        /// </summary>
-        public int SimulationId { get; set; }
     }
 }

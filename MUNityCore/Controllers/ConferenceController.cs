@@ -308,42 +308,6 @@ namespace MUNityCore.Controllers
             return Ok(res);
         }
 
-        /// <summary>
-        /// Creates a new Committee inside a Conference.
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns></returns>
-        //[Route("[action]")]
-        //[HttpPost]
-        //[Authorize]
-        //public async Task<ActionResult<CommitteeSmallInfo>> CreateCommittee([FromBody]CreateCommittee body)
-        //{
-        //    if (!CanUserEditConference(body.ConferenceId))
-        //        return Forbid("You are not allowed to change the conference settings");
-
-        //    var conference = await this._conferenceService.GetConference(body.ConferenceId);
-        //    if (conference == null) return NotFound("Conference with the given id not found!");
-
-        //    if (conference.Committees.Any(n => n.Name.ToLower() == body.Name.ToLower()
-        //                                       || n.FullName.ToLower() == body.FullName.ToLower()))
-        //        return Conflict("There is already a committee with the given name in this conference.");
-
-        //    var newCommittee = new Committee(body);
-        //    if (!string.IsNullOrEmpty(body.ResolutlyCommitteeId))
-        //    {
-        //        var parentCommittee = await this._conferenceService.GetCommittee(body.ResolutlyCommitteeId);
-        //        if (parentCommittee == null) return NotFound("The parent committee was not found!");
-
-        //        newCommittee.ResolutlyCommittee = parentCommittee;
-        //    }
-
-        //    conference.Committees.Add(newCommittee);
-        //    await this._conferenceService.SaveDatabaseChanges();
-        //    return Ok(newCommittee);
-        //}
-
-
-
 
         /// <summary>
         /// No API Call. A function to get if the current UserPrincipal is allowed to edit the Conference.

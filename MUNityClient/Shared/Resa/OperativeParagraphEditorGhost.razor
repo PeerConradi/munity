@@ -1,0 +1,36 @@
+﻿@using MUNity.Extensions.ResolutionExtensions;
+
+<div class="col-12 my-3">
+    @{
+        var moveParent = this.ResolutionViewModel.Resolution.OperativeSection.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId == Paragraph.OperativeParagraphId);
+    }
+
+    @if (Paragraph.Visible)
+    {
+        <div class="alert alert-primary m-0">
+            An dieser Stelle ist ein eingeblendeter Virtueller Absatz.
+            @if (moveParent != null)
+            {
+                var sourceParagraph = this.ResolutionViewModel.Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(moveParent.TargetSectionId);
+                <span>Der Absatz <span class="">@sourceParagraph</span> soll an diese Stelle geschoben werden.</span>
+            }
+            else
+            {
+                <span>Dieser Absatz kommt scheinbar über einen Änderungsantrag auf Hinzufügen. Der Neue Text ist: </span>
+                <p>@Paragraph.Text</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-secondary mt-2"> An dieser Stelle ist ein ausgeblendeter, virtueller Absatz</div>
+    }
+
+</div>
+@code {
+    [Parameter]
+    public ViewModel.ResolutionViewModel ResolutionViewModel { get; set; }
+
+    [Parameter]
+    public MUNity.Models.Resolution.OperativeParagraph Paragraph { get; set; }
+}

@@ -4,15 +4,19 @@ using System.Text;
 using MUNity.Models.Resolution;
 using System.Linq;
 
-namespace MUNity.ServiceWorkers
+namespace MUNity.Observers
 {
-    public class OperativeParagraphWorker
+    /// <summary>
+    /// This is a kind of Observer for an operative paragraph that will notify the user if something inside
+    /// the Operative Paragraph has changed.
+    /// </summary>
+    public class OperativeParagraphObserver
     {
-        private OperativeSectionWorker _sectionWorker;
+        private OperativeSectionObserver _sectionWorker;
 
         private OperativeParagraph _paragraph;
 
-        private OperativeParagraphWorker (OperativeSectionWorker sectionWorker, OperativeParagraph paragraph)
+        private OperativeParagraphObserver (OperativeSectionObserver sectionWorker, OperativeParagraph paragraph)
         {
             _sectionWorker = sectionWorker;
             _paragraph = paragraph;
@@ -27,7 +31,7 @@ namespace MUNity.ServiceWorkers
             {
                 foreach(var paragraph in e.NewItems.OfType<OperativeParagraph>())
                 {
-                    OperativeParagraphWorker.CreateWorker(_sectionWorker, paragraph);
+                    OperativeParagraphObserver.CreateObserver(_sectionWorker, paragraph);
                 }
             }
         }
@@ -37,9 +41,15 @@ namespace MUNity.ServiceWorkers
             _sectionWorker.InvokeParagraphChanged(this._paragraph);
         }
 
-        public static OperativeParagraphWorker CreateWorker (OperativeSectionWorker sectionWorker, OperativeParagraph paragraph)
+        /// <summary>
+        /// Create an instance of this Worker/Observer for a given operative Section
+        /// </summary>
+        /// <param name="sectionWorker"></param>
+        /// <param name="paragraph"></param>
+        /// <returns></returns>
+        public static OperativeParagraphObserver CreateObserver (OperativeSectionObserver sectionWorker, OperativeParagraph paragraph)
         {
-            return new OperativeParagraphWorker(sectionWorker, paragraph);
+            return new OperativeParagraphObserver(sectionWorker, paragraph);
         }
     }
 }

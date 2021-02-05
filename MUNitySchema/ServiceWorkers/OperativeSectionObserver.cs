@@ -4,15 +4,19 @@ using System.Text;
 using MUNity.Models.Resolution;
 using System.Linq;
 
-namespace MUNity.ServiceWorkers
+namespace MUNity.Observers
 {
-    public class OperativeSectionWorker : IDisposable
+    /// <summary>
+    /// An Observer for the OperativeSection.
+    /// This will create more observers for every paragraph.
+    /// </summary>
+    public class OperativeSectionObserver : IDisposable
     {
-        private ResolutionWorker _resolutionWorker;
+        private ResolutionObserver _resolutionWorker;
 
         private OperativeSection _operativeSection;
 
-        private OperativeSectionWorker(ResolutionWorker resoluionWorker, OperativeSection operativeSection)
+        private OperativeSectionObserver(ResolutionObserver resoluionWorker, OperativeSection operativeSection)
         {
             this._resolutionWorker = resoluionWorker;
             this._operativeSection = operativeSection;
@@ -29,7 +33,7 @@ namespace MUNity.ServiceWorkers
             _operativeSection.MoveAmendments.CollectionChanged += MoveAmendments_CollectionChanged;
             foreach (var op in _operativeSection.Paragraphs)
             {
-                OperativeParagraphWorker.CreateWorker(this, op);
+                OperativeParagraphObserver.CreateObserver(this, op);
             }
         }
 
@@ -69,23 +73,33 @@ namespace MUNity.ServiceWorkers
             {
                 foreach(var newParagraph in e.NewItems.OfType<OperativeParagraph>())
                 {
-                    OperativeParagraphWorker.CreateWorker(this, newParagraph);
+                    OperativeParagraphObserver.CreateObserver(this, newParagraph);
                 }
             }
 
             this._resolutionWorker.InvokeOperativeSectionChanged();
         }
 
-        public void InvokeParagraphChanged(OperativeParagraph paragraph)
+
+        internal void InvokeParagraphChanged(OperativeParagraph paragraph)
         {
             this._resolutionWorker.InvokeOperativeParagraphChanged(paragraph);
         }
 
-        public static OperativeSectionWorker CreateWorker(ResolutionWorker resolutionWorker, OperativeSection operativeSection)
+        /// <summary>
+        /// Creates an operative section observer
+        /// </summary>
+        /// <param name="resolutionWorker"></param>
+        /// <param name="operativeSection"></param>
+        /// <returns></returns>
+        public static OperativeSectionObserver CreateWorker(ResolutionObserver resolutionWorker, OperativeSection operativeSection)
         {
-            return new OperativeSectionWorker(resolutionWorker, operativeSection);
+            return new OperativeSectionObserver(resolutionWorker, operativeSection);
         }
 
+        /// <summary>
+        /// TODO: Disposes the object
+        /// </summary>
         public void Dispose()
         {
             throw new NotImplementedException();

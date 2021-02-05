@@ -76,23 +76,8 @@ namespace MunityNUnitTest.ListOfSpeakerTest
             instance.SpeakerTime = new TimeSpan(0, 0, 0, 30);
             var speaker = instance.AddSpeaker("Speaker 1");
             instance.NextSpeaker();
-            instance.StartSpeaker();
+            instance.ResumeSpeaker();
             Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds < 31);
-        }
-
-        /// <summary>
-        /// Test with a delay that the RemainingSpeakerTime is actually counting down.
-        /// </summary>
-        [Test]
-        public async Task TestSpeakerListSpeakerCountDown()
-        {
-            var instance = new ListOfSpeakers();
-            instance.SpeakerTime = new TimeSpan(0, 0, 0, 30);
-            var speaker = instance.AddSpeaker("Speaker 1");
-            instance.NextSpeaker();
-            instance.StartSpeaker();
-            await Task.Delay(5000);
-            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 24 && instance.RemainingSpeakerTime.TotalSeconds < 25);
         }
 
         [Test]
@@ -129,27 +114,11 @@ namespace MunityNUnitTest.ListOfSpeakerTest
             instance.QuestionTime = new TimeSpan(0, 0, 30);
             var question = instance.AddQuestion("Question");
             instance.NextQuestion();
-            instance.StartQuestion();
+            instance.ResumeQuestion();
             // 29 to have a little puffer but this should compute instant
             Assert.IsTrue(instance.RemainingQuestionTime.TotalSeconds >= 29);
         }
 
-        [Test]
-        public async Task TestPausedQuestionRemainingTime()
-        {
-            var instance = new ListOfSpeakers();
-            instance.QuestionTime = new TimeSpan(0, 0, 30);
-            var question = instance.AddQuestion("Question");
-            instance.NextQuestion();
-            instance.StartQuestion();
-            await Task.Delay(2000);
-            instance.PauseQuestion();
-            await Task.Delay(2000);
-            // Remaining time should be 28 seconds still
-            // we accept the values 27, 28 and 29
-            Console.WriteLine(instance.RemainingQuestionTime.TotalSeconds);
-            Assert.IsTrue(instance.RemainingQuestionTime.TotalSeconds >= 27 && instance.RemainingQuestionTime.TotalSeconds <= 29);
-        }
 
         [Test]
         public void TestAnswerSetsTimeToQuestionTime()
@@ -162,51 +131,235 @@ namespace MunityNUnitTest.ListOfSpeakerTest
             Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds <= 30);
         }
 
+
+
         [Test]
-        public async Task TestPauseAnswer()
+        public void TestNextSpeakerEmptyListCearsCurrent()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddSpeaker("Speaker");
+            instance.NextSpeaker();
+            instance.NextSpeaker();
+            Assert.IsNull(instance.CurrentSpeaker);
+            Assert.IsFalse(instance.Speakers.Any());
+        }
+
+        [Test]
+        public void TestNextQuestionEmptyListClearsCurrent()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddQuestion("Question");
+            instance.NextQuestion();
+            instance.NextQuestion();
+            Assert.IsNull(instance.CurrentQuestion);
+            Assert.IsFalse(instance.Questions.Any());
+        }
+
+        [Test]
+        public void TestNextSpeakerWhileActiveSpeakerPauses()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddSpeaker("Speaker");
+            instance.NextSpeaker();
+            instance.ResumeSpeaker();
+            instance.AddQuestion("New Question");
+            instance.NextQuestion();
+            Assert.AreEqual(ListOfSpeakers.EStatus.SpeakerPaused, instance.Status);
+        }
+
+        [Test]
+        public void TestStartSpeakerWithoutCurrentStopsList()
+        {
+            var instance = new ListOfSpeakers();
+            instance.ResumeSpeaker();
+            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+        }
+
+        [Test]
+        public void TestStartAnswerWithoutCurrentSpeakerStopsList()
+        {
+            var instance = new ListOfSpeakers();
+            instance.StartAnswer();
+            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+        }
+
+        [Test]
+        public void TestStartQuestionWithoutCurrentStopsList()
+        {
+            var instance = new ListOfSpeakers();
+            instance.ResumeQuestion();
+            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+        }
+
+        [Test]
+        public void TestPauseWhileSpeakingPausesSpeaker()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddSpeaker("Speaker");
+            instance.NextSpeaker();
+            instance.ResumeSpeaker();
+            Assert.AreEqual(ListOfSpeakers.EStatus.Speaking, instance.Status);
+            instance.Pause();
+            Assert.AreEqual(ListOfSpeakers.EStatus.SpeakerPaused, instance.Status);
+        }
+
+        [Test]
+        public void TestPauseWHileQUestionPausesQuestion()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddQuestion("Question");
+            instance.NextQuestion();
+            instance.ResumeQuestion();
+            Assert.AreEqual(ListOfSpeakers.EStatus.Question, instance.Status);
+            instance.Pause();
+            Assert.AreEqual(ListOfSpeakers.EStatus.QuestionPaused, instance.Status);
+        }
+
+        [Test]
+        public void TestPauseWhileAnswerPausesAnswer()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddSpeaker("Speaker");
+            instance.NextSpeaker();
+            instance.StartAnswer();
+            Assert.AreEqual(ListOfSpeakers.EStatus.Answer, instance.Status);
+            instance.Pause();
+            Assert.AreEqual(ListOfSpeakers.EStatus.AnswerPaused, instance.Status);
+        }
+
+        [Test]
+        public void TestResumeSpeakerAsStartResetsTime()
+        {
+            var instance = new ListOfSpeakers();
+            instance.SpeakerTime = new TimeSpan(0, 0, 30);
+            instance.AddSpeaker("Speaker One");
+            instance.NextSpeaker();
+            instance.ResumeSpeaker();
+            instance.StartSpeakerTime = DateTime.Now.ToUniversalTime().AddSeconds(-10);   // Faking that the last speaker already removed 10 secs
+            Assert.AreEqual(20, Math.Round(instance.RemainingSpeakerTime.TotalSeconds));
+            instance.AddSpeaker("Next Speaker");
+            instance.NextSpeaker();
+            instance.ResumeSpeaker();
+            Assert.AreEqual(30, Math.Round(instance.RemainingSpeakerTime.TotalSeconds));
+        }
+
+        [Test]
+        public void TestAddedQuestionKeepsOrder()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddQuestion("Question 1");
+            instance.AddQuestion("Question 2");
+            Assert.AreEqual(0, instance.Questions.ElementAt(0).OrdnerIndex);
+            Assert.AreEqual(1, instance.Questions.ElementAt(1).OrdnerIndex);
+            Assert.AreEqual("Question 1", instance.Questions.ElementAt(0).Name);
+            Assert.AreEqual("Question 2", instance.Questions.ElementAt(1).Name);
+        }
+
+        [Test]
+        public void TestAddedSpeakerKeepsOrder()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddSpeaker("Speaker 1");
+            instance.AddSpeaker("Speaker 2");
+            Assert.AreEqual(0, instance.Speakers.ElementAt(0).OrdnerIndex);
+            Assert.AreEqual(1, instance.Speakers.ElementAt(1).OrdnerIndex);
+            Assert.AreEqual("Speaker 1", instance.Speakers.ElementAt(0).Name);
+            Assert.AreEqual("Speaker 2", instance.Speakers.ElementAt(1).Name);
+        }
+
+        [Test]
+        public void TestResetSpeakerTime()
+        {
+            var instance = new ListOfSpeakers();
+            instance.SpeakerTime = new TimeSpan(0, 0, 30);
+            instance.AddSpeaker("Speaker 1");
+            instance.NextSpeaker();
+            instance.ResumeSpeaker();
+            instance.AddSpeakerSeconds(-10);
+            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds <= 20);
+            instance.ResetSpeakerTime();
+            Assert.AreEqual(30, instance.RemainingSpeakerTime.TotalSeconds, 0.5);
+        }
+
+        [Test]
+        public void TestResetQuestionTIme()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddQuestion("Question 1");
+            instance.NextQuestion();
+            instance.ResumeQuestion();
+            instance.AddQuestionSeconds(-10);
+            Assert.AreEqual(20, instance.RemainingQuestionTime.TotalSeconds, 0.5);
+            instance.ResetQuestionTime();
+            Assert.AreEqual(30, instance.RemainingQuestionTime.TotalSeconds, 0.5);
+        }
+
+        [Test]
+        public void TestResumePausedSpeaker()
+        {
+            var instance = new ListOfSpeakers();
+            instance.SpeakerTime = new TimeSpan(0, 0, 30);
+            instance.AddSpeaker("Speaker");
+            instance.NextSpeaker();
+            instance.ResumeSpeaker();
+            instance.AddSpeakerSeconds(-10);
+            instance.Pause();
+            Assert.AreEqual(20, instance.RemainingSpeakerTime.TotalSeconds, 0.5);
+            instance.ResumeSpeaker();
+            Assert.AreEqual(20, instance.RemainingSpeakerTime.TotalSeconds, 0.5);
+        }
+
+        [Test]
+        public void TestResumePausedAnswer()
         {
             var instance = new ListOfSpeakers();
             instance.QuestionTime = new TimeSpan(0, 0, 30);
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
             instance.StartAnswer();
-            await Task.Delay(5000);
-            instance.PauseSpeaker();
-            await Task.Delay(2000);
-            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 24 && instance.RemainingSpeakerTime.TotalSeconds <= 26);
+            instance.AddSpeakerSeconds(-10);
+            instance.Pause();
+            Assert.AreEqual(20, instance.RemainingSpeakerTime.TotalSeconds, 0.5);
+            instance.ResumeSpeaker();
+            Assert.AreEqual(20, instance.RemainingSpeakerTime.TotalSeconds, 0.5);
         }
 
         [Test]
-        public async Task TestResumePausedSpeaker()
+        public void TestResumePausedQuestion()
         {
             var instance = new ListOfSpeakers();
             instance.QuestionTime = new TimeSpan(0, 0, 30);
-            instance.AddSpeaker("Speaker");
-            instance.NextSpeaker();
-            instance.StartAnswer();
-            await Task.Delay(5000);
-            instance.PauseSpeaker();
-            await Task.Delay(2000);
-            instance.ResumeSpeaker();
-            await Task.Delay(3000);
-            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 21 && instance.RemainingSpeakerTime.TotalSeconds <= 23, "Remaining Speaker time should have been between 21 and 23 seconds but was {0}", instance.RemainingSpeakerTime.TotalSeconds);
-            
+            instance.AddQuestion("Speaker");
+            instance.NextQuestion();
+            instance.ResumeQuestion();
+            instance.AddQuestionSeconds(-10);
+            instance.Pause();
+            Assert.AreEqual(20, instance.RemainingQuestionTime.TotalSeconds, 0.5);
+            instance.ResumeQuestion();
+            Assert.AreEqual(20, instance.RemainingQuestionTime.TotalSeconds, 0.5);
         }
 
         [Test]
-        public async Task TestResumeSpeaker()
+        public void TestClearCurrentSpeakerWhileSpeaking()
         {
             var instance = new ListOfSpeakers();
-            instance.SpeakerTime = new TimeSpan(0, 1, 0);
+            instance.SpeakerTime = new TimeSpan(0, 0, 30);
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
-            instance.StartSpeaker();
-            await Task.Delay(3000);
-            instance.PauseSpeaker();
-            await Task.Delay(3000);
             instance.ResumeSpeaker();
-            await Task.Delay(3000);
-            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 53 && instance.RemainingSpeakerTime.TotalSeconds <= 55, "Remaining Speaker time should have been between 53 and 55 seconds but was {0}", instance.RemainingSpeakerTime.TotalSeconds);
+            instance.ClearCurrentSpeaker();
+            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+        }
+
+        [Test]
+        public void TestClearCurrentQuestionWhileQuestionActive()
+        {
+            var instance = new ListOfSpeakers();
+            instance.AddQuestion("Question");
+            instance.NextQuestion();
+            instance.ResumeQuestion();
+            instance.ClearCurrentQuestion();
+            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
         }
     }
 }

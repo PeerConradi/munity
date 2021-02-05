@@ -46,23 +46,11 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
         {
             get;
             set;
-        }
+        } = false;
+        private bool _hasNewVotes { get; set; } = false;
 
-        = false;
-        private bool _hasNewVotes
-        {
-            get;
-            set;
-        }
+        private MUNity.Schema.Simulation.CreatedVoteModel _lastCreatedVote { get; set; } = null;
 
-        = false;
-        private MUNity.Schema.Simulation.CreatedVoteModel _lastCreatedVote
-        {
-            get;
-            set;
-        }
-
-        = null;
         private MUNity.Models.ListOfSpeakers.ListOfSpeakers _listOfSpeakers;
         protected override void OnInitialized()
         {

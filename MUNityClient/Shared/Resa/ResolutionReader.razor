@@ -3,25 +3,25 @@
 @using MUNity.Extensions.ResolutionExtensions;
 
 @inject MUNityClient.Services.ResolutionService resolutionService;
-@if (Resolution != null)
+@if (ViewModel?.Resolution != null)
 {
 
     <!-- Header -->
     <div class="row m-0 p-0">
         <div class="col-12">
-            <h3>@Resolution.Header.Topic</h3>
-            @if (!string.IsNullOrEmpty(this.Resolution.Header.SubmitterName))
+            <h3>@ViewModel.Resolution.Header.Topic</h3>
+            @if (!string.IsNullOrEmpty(this.ViewModel.Resolution.Header.SubmitterName))
             {
-                <h4>EINBRINGER: @Resolution.Header.SubmitterName.ToUpper()</h4>
+                <h4>EINBRINGER: @ViewModel.Resolution.Header.SubmitterName.ToUpper()</h4>
             }
             else
             {
                 <h4>KEIN EINBRINGER</h4>
             }
 
-            @if (!string.IsNullOrEmpty(this.Resolution.Header.CommitteeName))
+            @if (!string.IsNullOrEmpty(this.ViewModel.Resolution.Header.CommitteeName))
             {
-                <h4>@Resolution.Header.CommitteeName.ToUpper(),</h4>
+                <h4>@ViewModel.Resolution.Header.CommitteeName.ToUpper(),</h4>
             }
             else
             {
@@ -34,7 +34,7 @@
 
     <!-- Preamble -->
     <div class="row p-0 m-0 mb-4">
-        @foreach (var pp in this.Resolution.Preamble.Paragraphs)
+        @foreach (var pp in this.ViewModel.Resolution.Preamble.Paragraphs)
         {
             <ResaReaderPreambleParagraph Paragraph="pp"></ResaReaderPreambleParagraph>
         }
@@ -42,15 +42,15 @@
 
     <!-- Operative Section -->
     <div class="row p-0 m-0">
-        @foreach (var op in Resolution.OperativeSection.Paragraphs)
+        @foreach (var op in this.ViewModel.Resolution.OperativeSection.Paragraphs)
         {
             if (!op.IsVirtual)
             {
                 <ResaReaderOperativeParagraph Paragraph="op"
-                    Pathname="@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(op)"
-                    DeleteAmendments="this.Resolution.OperativeSection.DeleteAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)"
-                    ChangeAmendments="this.Resolution.OperativeSection.ChangeAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)"
-                    MoveAmendments="this.Resolution.OperativeSection.MoveAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)">
+                    Pathname="@this.ViewModel.Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(op)"
+                    DeleteAmendments="this.ViewModel.Resolution.OperativeSection.DeleteAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)"
+                    ChangeAmendments="this.ViewModel.Resolution.OperativeSection.ChangeAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)"
+                    MoveAmendments="this.ViewModel.Resolution.OperativeSection.MoveAmendments.Where(n => n.TargetSectionId == op.OperativeParagraphId)">
                 </ResaReaderOperativeParagraph>
             }
             else
@@ -75,7 +75,7 @@
                 if (op.Visible)
                 {
                     <div class="col-12">
-                        @if (Resolution.OperativeSection.MoveAmendments.Any(n => n.NewTargetSectionId == op.OperativeParagraphId))
+                        @if (this.ViewModel.Resolution.OperativeSection.MoveAmendments.Any(n => n.NewTargetSectionId == op.OperativeParagraphId))
                         {
                             <div class="card border-dark">
                                 <div class="card-body">
@@ -84,13 +84,13 @@
                                 </div>
                             </div>
                         }
-                        @if (Resolution.OperativeSection.AddAmendments.Any(n => n.TargetSectionId == op.OperativeParagraphId))
+                        @if (this.ViewModel.Resolution.OperativeSection.AddAmendments.Any(n => n.TargetSectionId == op.OperativeParagraphId))
                         {
                             <div class="card border-success">
                                 <div class="card-body text-success">
                                     <h5><i class="fas fa-plus-square mr-2"></i>Absatz hinzufügen</h5>
                                     <p>@op.Text</p>
-                                    <i class="fas fa-user-edit"></i> @(Resolution.OperativeSection.AddAmendments.Single(n => n.TargetSectionId ==
+                                    <i class="fas fa-user-edit"></i> @(this.ViewModel.Resolution.OperativeSection.AddAmendments.Single(n => n.TargetSectionId ==
                                                op.OperativeParagraphId).SubmitterName)
                                 </div>
                             </div>
@@ -109,12 +109,16 @@ else
 }
 
 @code {
+
     [Parameter]
-    public Resolution Resolution { get; set; }
+    public ViewModel.ResolutionViewModel ViewModel { get; set; }
 
-
-    public ResolutionReader()
+    protected override void OnInitialized()
     {
-
+        base.OnInitialized();
+        if (ViewModel != null)
+        {
+            ViewModel.HeaderChangedFromExtern += delegate { this.StateHasChanged(); };
+        }
     }
 }

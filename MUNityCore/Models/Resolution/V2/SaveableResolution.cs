@@ -7,18 +7,20 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.Resolution.V2
 {
-    public class SaveableResolution : MUNity.Models.Resolution.Resolution
-    {
-        [BsonId]
-        public string _id { get; set; }
+    //public class SaveableResolution : MUNity.Models.Resolution.Resolution
+    //{
 
-        public SaveableResolution(MUNity.Models.Resolution.Resolution resolution)
-        {
-            Date = resolution.Date;
-            Header = resolution.Header;
-            OperativeSection = resolution.OperativeSection;
-            Preamble = resolution.Preamble;
-            _id = resolution.ResolutionId;
-        }
-    }
+    //    [BsonId]
+    //    public new string ResolutionId { get; set; }
+
+    //    public SaveableResolution(MUNity.Models.Resolution.Resolution resolution)
+    //    {
+            
+    //        Date = resolution.Date;
+    //        Header = resolution.Header;
+    //        OperativeSection = resolution.OperativeSection;
+    //        Preamble = resolution.Preamble;
+    //        this.ResolutionId = resolution.ResolutionId;
+    //    }
+    //}
 }

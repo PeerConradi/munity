@@ -18,41 +18,38 @@ namespace MUNityCore.Services
     {
         private readonly MunityContext _munityContext;
 
-        private readonly IMongoCollection<SaveableResolution> _resolutions;
+        private readonly IMongoCollection<Resolution> _resolutions;
 
         
-        public async Task<SaveableResolution> CreateResolution(string title)
+        public async Task<Resolution> CreateResolution(string title)
         {
 
             var resolution = new Resolution();
             resolution.Header.Topic = title;
             resolution.ResolutionId = Util.Tools.IdGenerator.RandomString(36);
             // Save in MongoDb
-            var mdl = new SaveableResolution(resolution);
-            await _resolutions.InsertOneAsync(mdl);
+            await _resolutions.InsertOneAsync(resolution);
 
             var auth = new ResolutionAuth(resolution);
             await _munityContext.ResolutionAuths.AddAsync(auth);
-            return mdl;
+            return resolution;
         }
 
-        public async Task<SaveableResolution> CreatePublicResolution(string title)
+        public async Task<Resolution> CreatePublicResolution(string title)
         {
             var resolution = new Resolution();
             resolution.ResolutionId = Util.Tools.IdGenerator.RandomString(36);
             resolution.Header.Topic = title;
             // Save in MongoDb
-            var saveable = new SaveableResolution(resolution);
-            
-            await _resolutions.InsertOneAsync(saveable);
+            await _resolutions.InsertOneAsync(resolution);
             var auth = new ResolutionAuth(resolution) {AllowPublicEdit = true, AllowPublicRead = true};
             await _munityContext.ResolutionAuths.AddAsync(auth);
             await _munityContext.SaveChangesAsync();
 
-            return saveable;
+            return resolution;
         }
 
-        public async Task<SaveableResolution> GetResolution(string id)
+        public async Task<Resolution> GetResolution(string id)
         {
             return await _resolutions.Find(n => n.ResolutionId == id).FirstOrDefaultAsync();
         }
@@ -97,8 +94,7 @@ namespace MUNityCore.Services
 
         public async Task<Resolution> DeleteResolution(Resolution resolution)
         {
-            var saved = new SaveableResolution(resolution);
-            return await _resolutions.FindOneAndDeleteAsync(n => n.ResolutionId == saved.ResolutionId);
+            return await _resolutions.FindOneAndDeleteAsync(n => n.ResolutionId == resolution.ResolutionId);
         }
 
         public async Task<PreambleParagraph> AddPreambleParagraph(Resolution resolution, string text = "")
@@ -106,8 +102,7 @@ namespace MUNityCore.Services
             resolution.Preamble.Paragraphs ??= new System.Collections.ObjectModel.ObservableCollection<PreambleParagraph>();
             var paragraph = new PreambleParagraph {Text = text};
             resolution.Preamble.Paragraphs.Add(paragraph);
-            var mdl = new SaveableResolution(resolution);
-            await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == mdl.ResolutionId, mdl);
+            await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
             //await _resolutions.ReplaceOneAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
             return paragraph;
         }
@@ -147,19 +142,16 @@ namespace MUNityCore.Services
             return await SaveResolution(resolution);
         }
 
-        public async Task<SaveableResolution> SaveResolution(Resolution resolution)
+        public async Task<Resolution> SaveResolution(Resolution resolution)
         {
-            var mdl = new SaveableResolution(resolution);
-            await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == mdl.ResolutionId, mdl);
-            return mdl;
+            return await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
         }
 
         public async Task<OperativeParagraph> AddOperativeParagraph(Resolution resolution)
         {
             var paragraph = new OperativeParagraph();
             resolution.OperativeSection.Paragraphs.Add(paragraph);
-            var mdl = new SaveableResolution(resolution);
-            await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == mdl.ResolutionId, mdl);
+            await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
             return paragraph;
         }
 
@@ -173,7 +165,7 @@ namespace MUNityCore.Services
             _munityContext = munityContext;
             var client = new MongoClient(mongoSettings.ConnectionString);
             var database = client.GetDatabase(mongoSettings.DatabaseName);
-            _resolutions = database.GetCollection<SaveableResolution>(mongoSettings.ResolutionCollectionName);
+            _resolutions = database.GetCollection<Resolution>(mongoSettings.ResolutionCollectionName);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             {
                 if (_roleId != value)
                 {
-                    this.simulationService.SetUserRole(this.SimulationId, this.User.SimulationUserId, value);
+                    this.simulationService.SetUserRole(this.SimulationId, this.User.SimulationUserId, value).ConfigureAwait(false);
                     _roleId = value;
                 }
             }

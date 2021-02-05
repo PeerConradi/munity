@@ -301,7 +301,7 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> CreateAgendaItem([FromBody]AgendaItemDto agendaItem)
         {
-            return NotFound();
+            throw new NotImplementedException();
         }
 
         [HttpPut]
@@ -448,12 +448,7 @@ namespace MUNityCore.Controllers
         {
             var user = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
             if (user == null) return Forbid();
-            var args = new MUNity.Schema.Simulation.VotedEventArgs()
-            {
-                Choice = choice,
-                UserId = user.SimulationUserId,
-                VoteId = voteId
-            };
+            var args = new MUNity.Schema.Simulation.VotedEventArgs(voteId, user.SimulationUserId, choice);
             await this._hubContext.Clients.Group($"sim_{simulationId}").Voted(args);
             return Ok();
         }

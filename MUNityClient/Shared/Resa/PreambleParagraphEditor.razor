@@ -10,7 +10,7 @@
                     <button disabled="@(Index == 0)" class="col-12 p-0 text-center p-3 custom-button h-50"
                         @onclick="() => OnMoveEvent.InvokeAsync(true)" title="Nach oben verschieben" alt="put higher"><i
                             class="fas fa-lg fa-caret-up"></i></button>
-                    <button disabled="@(Resolution != null && Index == Resolution.Preamble.Paragraphs.Count - 1)"
+                    <button disabled="@(this.ResolutionViewModel?.Resolution != null && Index == this.ResolutionViewModel.Resolution.Preamble.Paragraphs.Count - 1)"
                         class="col-12 p-0 text-center p-3 custom-button h-50"
                         @onclick="() => OnMoveEvent.InvokeAsync(false)" title="Nach unten verschieben" alt="put lower"><i
                             class="fas fa-lg fa-caret-down"></i></button>
@@ -18,7 +18,7 @@
                 @* Input Field *@
                 <div class="col p-0 my-2">
                     <EditForm Model="Paragraph" class="h-100">
-                        <textarea value="@Paragraph.Text" @oninput="@OnInputChange" disabled="@this.Paragraph.IsLocked"
+                        <textarea @bind="@Paragraph.Text" @bind:event="oninput" disabled="@this.Paragraph.IsLocked"
                             placeholder="Text..." class="form-control h-100 custom-input-field px-0 p-2"></textarea>
                     </EditForm>
 
@@ -92,7 +92,7 @@
     public PreambleParagraph Paragraph { get; set; }
 
     [Parameter]
-    public Resolution Resolution { get; set; }
+    public ViewModel.ResolutionViewModel ResolutionViewModel { get; set; }
 
     [Parameter]
     //Event called when the arrow up/down buttons are called. Returns true if direction is updwards, false if downwards
@@ -105,7 +105,7 @@
     [Parameter]
     public EventCallback OnTextChanged { get; set; }
 
-    public int Index => this.Resolution?.Preamble?.Paragraphs?.IndexOf(this.Paragraph) ?? -1;
+    public int Index => this.ResolutionViewModel?.Resolution?.Preamble?.Paragraphs?.IndexOf(this.Paragraph) ?? -1;
 
     public string Comment
     {
@@ -130,13 +130,6 @@
     }
 
     public Boolean commentsExpanded = false;
-
-
-    private void OnInputChange(ChangeEventArgs args)
-    {
-        // This should only happen when we are online!
-        this.Paragraph.Text = (string)args.Value;
-    }
 }
 
 

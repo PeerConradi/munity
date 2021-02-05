@@ -46,12 +46,6 @@ namespace MUNityClient.Pages.Simulation
 
         private MUNity.Schema.Simulation.SimulationListItem _selectedSimulation;
         private MUNity.Schema.Simulation.JoinAuthenticate _joinForm = new MUNity.Schema.Simulation.JoinAuthenticate();
-        private MUNityClient.Shared.Bootstrap.Modal _pinModal;
-        private string _pin;
-        private async Task CopyTextToClipboard()
-        {
-            await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _pin);
-        }
 
         private void EnterSimulation(int id)
         {
@@ -104,7 +98,6 @@ namespace MUNityClient.Pages.Simulation
 
         private void RootToSimulation()
         {
-            this._pinModal.Close();
             this.navigation.NavigateTo($"/sim/lobby/{_selectedSimulation.SimulationId}");
         }
 

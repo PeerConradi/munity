@@ -55,6 +55,17 @@ namespace MunityNUnitTest.Conversions
             Assert.AreEqual("ab", res);
         }
 
+        [Test]
+        public void TestToRomainNegativNumber()
+        {
+            Assert.AreEqual("?", (-1).ToRoman());
+        }
+
+        [Test]
+        public void TestToRomainForZero()
+        {
+            Assert.AreEqual("", 0.ToRoman());
+        }
        
     }
 }

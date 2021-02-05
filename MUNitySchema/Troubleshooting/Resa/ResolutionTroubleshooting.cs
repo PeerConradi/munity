@@ -32,6 +32,9 @@ namespace MUNity.Troubleshooting.Resa
         {
             private string detectedError = "";
 
+            /// <summary>
+            /// Gives back a string containing information about the error.
+            /// </summary>
             public string Description => detectedError;
 
             /// <summary>
@@ -88,8 +91,16 @@ namespace MUNity.Troubleshooting.Resa
         {
             private string output = "";
 
+            /// <summary>
+            /// Description of bugs that are found inside the Preamble
+            /// </summary>
             public string Description => output;
 
+            /// <summary>
+            /// Detect bugs inside the preamble
+            /// </summary>
+            /// <param name="resolution"></param>
+            /// <returns></returns>
             public bool Detect(Resolution resolution)
             {
                 if (resolution.Preamble == null)
@@ -110,6 +121,11 @@ namespace MUNity.Troubleshooting.Resa
                 return false;
             }
 
+            /// <summary>
+            /// Fixes known bugs inside the preamble.
+            /// </summary>
+            /// <param name="resolution"></param>
+            /// <returns></returns>
             public bool Fix(Resolution resolution)
             {
                 if (resolution.Preamble == null) resolution.Preamble = new ResolutionPreamble();
@@ -119,12 +135,23 @@ namespace MUNity.Troubleshooting.Resa
             }
         }
 
+        /// <summary>
+        /// Resolution Bug Handler for Invalid Operative Sections
+        /// </summary>
         public class InvalidOperativeSection : IResolutionBug
         {
 
             private string output = "";
+            /// <summary>
+            /// A Description of bugs that may be found inside the reoslution
+            /// </summary>
             public string Description => output;
 
+            /// <summary>
+            /// Try to find know bugs inside the resolution.
+            /// </summary>
+            /// <param name="resolution"></param>
+            /// <returns>Returns true if bugs are found or false if no known bugs are found.</returns>
             public bool Detect(Resolution resolution)
             {
                 if (resolution.OperativeSection == null) return true;
@@ -137,6 +164,12 @@ namespace MUNity.Troubleshooting.Resa
                 return false;
             }
 
+            /// <summary>
+            /// Attemps to fix the known bugs. Will rerun the Detection at the end and return true if the
+            /// detection cant find any more bugs. Will return false if there are still bugs. This may cant be fixed.
+            /// </summary>
+            /// <param name="resolution"></param>
+            /// <returns>Returns true when the bugs are fixed.</returns>
             public bool Fix(Resolution resolution)
             {
                 if (resolution.OperativeSection == null) resolution.OperativeSection = new OperativeSection();
@@ -146,16 +179,27 @@ namespace MUNity.Troubleshooting.Resa
                 if (resolution.OperativeSection.MoveAmendments == null) resolution.OperativeSection.MoveAmendments = new ObservableCollection<MoveAmendment>();
                 if (string.IsNullOrEmpty(resolution.OperativeSection.OperativeSectionId)) resolution.OperativeSection.OperativeSectionId = Guid.NewGuid().ToString();
                 if (resolution.OperativeSection.Paragraphs == null) resolution.OperativeSection.Paragraphs = new ObservableCollection<OperativeParagraph>();
-                return true;
+                return Detect(resolution) == false;
             }
         }
 
+        /// <summary>
+        /// Worker to find invalid amendments in the resolution
+        /// </summary>
         public class InvalidAmendments : IResolutionBug
         {
             private string bugs = "";
 
+            /// <summary>
+            /// Description of bugs that may be found inside the resolution.
+            /// </summary>
             public string Description => bugs;
 
+            /// <summary>
+            /// Detect errors inside the resolutions amendments
+            /// </summary>
+            /// <param name="resolution"></param>
+            /// <returns></returns>
             public bool Detect(Resolution resolution)
             {
                 var ghosts = resolution.OperativeSection.WhereParagraph(n => n.IsVirtual && (
@@ -174,6 +218,11 @@ namespace MUNity.Troubleshooting.Resa
                 return bugs != "";
             }
 
+            /// <summary>
+            /// Fixes the known amendment bugs
+            /// </summary>
+            /// <param name="resolution"></param>
+            /// <returns>Will always return true.</returns>
             public bool Fix(Resolution resolution)
             {
                 var ghosts = resolution.OperativeSection.WhereParagraph(n => n.IsVirtual && (resolution.OperativeSection.MoveAmendments.All(a => a.NewTargetSectionId != n.OperativeParagraphId) &&
@@ -191,6 +240,11 @@ namespace MUNity.Troubleshooting.Resa
             }
         }
 
+        /// <summary>
+        /// Check if a given Resolution is corrupted, has any kind of errors.
+        /// </summary>
+        /// <param name="resolution"></param>
+        /// <returns></returns>
         public static (bool isCorrupted, string log) IsResolutionCorrupted(Resolution resolution)
         {
             var result = false;
@@ -206,6 +260,11 @@ namespace MUNity.Troubleshooting.Resa
             return (result, output);
         }
 
+        /// <summary>
+        /// Fix the Resolution with the registered Bugfinders.
+        /// </summary>
+        /// <param name="resolution"></param>
+        /// <returns></returns>
         public static bool FixResolution(Resolution resolution)
         {
             var result = true;

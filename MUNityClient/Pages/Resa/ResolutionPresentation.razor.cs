@@ -31,6 +31,8 @@ namespace MUNityClient.Pages.Resa
             set;
         }
 
+        public ViewModel.ResolutionViewModel ResolutionViewModel { get; set; }
+
         private enum SyncModes
         {
             Loading,
@@ -41,33 +43,19 @@ namespace MUNityClient.Pages.Resa
         private SyncModes SyncMode = SyncModes.Loading;
         protected override async Task OnInitializedAsync()
         {
-            var resolution = await this.resolutionService.GetResolution(this.Id);
-            if (resolution != null)
+            var localResolution = await this.resolutionService.GetStoredResolution(this.Id);
+            if (localResolution != null)
             {
-                this.Resolution = resolution;
-                // Die Resolution wurde schon gefunden, wahrscheinlich im local Storage
-                // Jetzt wird noch einmal geschaut ob die Resolution online existiert und
-                // gelesen werden kann
-                _ = this.resolutionService.IsOnline().ContinueWith(async (result) =>
-                {
-                    if (result.Result)
-                    {
-                        // Server ist online schaue nach ob dort eine Version existiert und gelesen werden kann
-                        if (await this.resolutionService.CanReadResolution(Id))
-                        {
-                            this.Resolution = await this.resolutionService.GetResolutionFromServer(Id);
-                            var socket = await this.resolutionService.Subscribe(resolution);
-                            this.SyncMode = SyncModes.FromServer;
-                        }
-                    }
-                    else
-                    {
-                        this.resolutionService.StorageChanged += RefreshFromStorage;
-                        this.SyncMode = SyncModes.FromStorage;
-                    }
 
-                    this.StateHasChanged();
-                });
+            }
+            else
+            {
+                var onlineResolution = await this.resolutionService.GetResolutionFromServer(this.Id);
+                if (onlineResolution != null)
+                {
+
+                    this.ResolutionViewModel = await this.resolutionService.Subscribe(onlineResolution);
+                }
             }
         }
 

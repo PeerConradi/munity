@@ -27,6 +27,8 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetNameNoPropertyChanged(string name) => this._name = name;
+
         private string _fullName = "";
         /// <summary>
         /// A longer version of the name for example: United Nations Security Council Resolution 1244
@@ -39,6 +41,8 @@ namespace MUNity.Models.Resolution
                 NotifyPropertyChanged(nameof(FullName));
             }
         }
+
+        public void SetFullNameNoPropertyChanged(string fullName) => this._fullName = fullName;
 
         private string _topic;
         /// <summary>
@@ -53,6 +57,8 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetTopicNoPropertyChanged(string topic) => this._topic = topic;
+
         private string _agendaItem = "";
         /// <summary>
         /// The agenda item of the resolution.
@@ -65,6 +71,8 @@ namespace MUNity.Models.Resolution
                 NotifyPropertyChanged(nameof(AgendaItem));
             }
         }
+
+        public void SetAgendaItemNoPropertyChanged(string agendaItem) => this._agendaItem = agendaItem;
 
         private string _session = "";
         /// <summary>
@@ -80,6 +88,8 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetSessionNoPropertyChanged(string session) => this._session = session;
+
         private string _submitterName = "";
         /// <summary>
         /// The name of the Submitter of the resolution.
@@ -93,6 +103,8 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetSubmitterNameNoPropertyChanged(string submitterName) => this._submitterName = submitterName;
+
         private string _committeeName = "";
         /// <summary>
         /// The Name of the committee, for example: The Security Council
@@ -105,6 +117,8 @@ namespace MUNity.Models.Resolution
                 NotifyPropertyChanged(nameof(CommitteeName));
             }
         }
+
+        public void SetCommitteeNameNoPropertyChanged(string committeeName) => this._committeeName = committeeName;
 
         /// <summary>
         /// List of the names of supporters for this document.

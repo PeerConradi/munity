@@ -17,24 +17,21 @@ namespace MUNity.Hubs
         /// <summary>
         /// The available roles of the Simulation have changed.
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">Argument that contains the new Roles</param>
         /// <returns></returns>
         Task RolesChanged(RolesChangedEventArgs args);
 
         /// <summary>
         /// Some user with the given id has picked a new role.
         /// </summary>
-        /// <param name="simulationId"></param>
-        /// <param name="userId"></param>
-        /// <param name="roleId"></param>
+        /// <param name="args">Argument that gives information about the user and selected role</param>
         /// <returns></returns>
         Task UserRoleChanged(UserRoleChangedEventArgs args);
 
         /// <summary>
         /// Should be called or gets called when the List of Users has changed. (User has been added or removed)
         /// </summary>
-        /// <param name="simulationId"></param>
-        /// <param name="Users"></param>
+        /// <param name="args">Argument that contains a list of new users</param>
         /// <returns></returns>
         Task UsersChanged(UsersChangedEventArgs args);
 

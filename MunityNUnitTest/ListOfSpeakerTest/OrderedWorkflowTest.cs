@@ -58,7 +58,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Order(4)]
         public async Task TestStartFirstSpeaker()
         {
-            _instance.StartSpeaker();
+            _instance.ResumeSpeaker();
             Assert.IsTrue(_instance.Status == ListOfSpeakers.EStatus.Speaking);
             await Task.Delay(3000);
             Assert.AreEqual(177, (int)Math.Round(_instance.RemainingSpeakerTime.TotalSeconds));
@@ -100,7 +100,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Order(8)]
         public async Task TestStartQuestion()
         {
-            _instance.StartQuestion();
+            _instance.ResumeQuestion();
             Assert.IsTrue(_instance.Status == ListOfSpeakers.EStatus.Question);
             await Task.Delay(3000);
             Assert.AreEqual(27, (int)Math.Round(_instance.RemainingQuestionTime.TotalSeconds));
@@ -110,7 +110,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Order(9)]
         public async Task TestPauseQuestion()
         {
-            _instance.PauseQuestion();
+            _instance.Pause();
             var remainingSeconds = (int)Math.Round(_instance.RemainingQuestionTime.TotalSeconds);
             await Task.Delay(3000);
             Assert.AreEqual(remainingSeconds, (int)Math.Round(_instance.RemainingQuestionTime.TotalSeconds));
