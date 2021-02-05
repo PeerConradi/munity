@@ -30,7 +30,7 @@ namespace MUNityTest.ControllerTest.ResolutionControllerTest
             var result = await controller.CreatePublic("test");
 
             Assert.NotNull(result);
-            Assert.Equal("test", result.Header.Topic);
+            Assert.Equal("test", result.Value.Header.Topic);
         }
 
         //[Fact]
@@ -52,12 +52,11 @@ namespace MUNityTest.ControllerTest.ResolutionControllerTest
         //    Assert.NotNull(result);
         //}
 
-        private SaveableResolution GetTestResolution()
+        private MUNity.Models.Resolution.Resolution GetTestResolution()
         {
             var resa = new MUNity.Models.Resolution.Resolution();
-            var resolution = new SaveableResolution(resa);
-            resolution.Header.Topic = "test";
-            return resolution;
+            resa.Header.Topic = "test";
+            return resa;
         }
     }
 }
