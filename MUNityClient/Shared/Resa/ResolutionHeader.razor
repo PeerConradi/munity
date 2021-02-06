@@ -3,10 +3,10 @@
         <input type="text" @bind="ResolutionViewModel.Resolution.Header.Topic" @bind:event="oninput" class="form-control" placeholder="Thema">
     </div>
     <div class="col p-0 mx-2">
-        <input type="text" @bind="ResolutionViewModel.Resolution.Header.CommitteeName" class="form-control" placeholder="Gremium">
+        <input type="text" @bind="ResolutionViewModel.Resolution.Header.CommitteeName" @bind:event="oninput" class="form-control" placeholder="Gremium">
     </div>
     <div class="col p-0 ml-2">
-        <input type="text" @bind="ResolutionViewModel.Resolution.Header.SubmitterName" class="form-control" placeholder="Einbringerstaat">
+        <input type="text" @bind="ResolutionViewModel.Resolution.Header.SubmitterName" @bind:event="oninput" class="form-control" placeholder="Einbringerstaat">
     </div>
 </div>
 <div class="row py-0 m-0 col-12 justify-content-center">
@@ -41,6 +41,7 @@
         base.OnInitialized();
         if (this.ResolutionViewModel != null)
         {
+            // Refresh view when the resolution has been changed by an extern source
             this.ResolutionViewModel.HeaderChangedFromExtern += delegate { this.StateHasChanged(); };
         }
     }

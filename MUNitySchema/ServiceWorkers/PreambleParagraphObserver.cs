@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MUNity.Models.Resolution;
 using System.Linq;
+using MUNity.Models.Resolution.EventArguments;
 
 namespace MUNity.Observers
 {
@@ -11,9 +12,13 @@ namespace MUNity.Observers
     /// </summary>
     public class PreambleParagraphObserver
     {
+        public event EventHandler<PreambleParagraphTextChangedEventArgs> PreambleTextChanged;
+
         private PreambleParagraph _preambleParagraph;
 
         private PreambleSectionObserver _sectionWorker;
+
+        public string ResolutionId => _sectionWorker?.ResolutionId;
 
         private PreambleParagraphObserver(PreambleSectionObserver sectionWorker, PreambleParagraph paragraph)
         {
@@ -26,15 +31,10 @@ namespace MUNity.Observers
             {
                 foreach (var comment in paragraph.Comments)
                 {
-                    comment.PropertyChanged += Comment_PropertyChanged;
+                    
                 }
             }
             
-        }
-
-        private void Comment_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            this._sectionWorker.InvokePreambleChanged();
         }
 
         /// <summary>
@@ -58,14 +58,15 @@ namespace MUNity.Observers
                     
                 }
             }
-            _sectionWorker.InvokePreambleChanged();
+            
         }
 
         private void Paragraph_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(PreambleParagraph.Text))
             {
-                _sectionWorker.InvokePreambleParagraphTextChanged(this._preambleParagraph);
+                var resolutionId = this._sectionWorker.ResolutionId;
+                this.PreambleTextChanged?.Invoke(this, new PreambleParagraphTextChangedEventArgs(resolutionId, this._preambleParagraph.PreambleParagraphId, this._preambleParagraph.Text));
             }
             
         }

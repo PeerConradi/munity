@@ -53,6 +53,8 @@ namespace MUNityClient.ViewModel
 
         public event EventHandler HeaderChangedFromExtern;
 
+        public event EventHandler PreambleChangedFromExtern;
+
         public event EventHandler<PreambleParagraphChangedArgs> PreambleParagraphChanged;
 
         public event EventHandler<OperativeParagraphChangedEventArgs> OperativeParagraphChanged;
@@ -67,6 +69,16 @@ namespace MUNityClient.ViewModel
 
         public event EventHandler SyncModeChanged;
 
+        public void InvokeHeaderChangedFromExtern(object sender, EventArgs args)
+        {
+            this.HeaderChangedFromExtern?.Invoke(sender, args);
+        }
+
+        public void InvokePreambleChangedFromExtern(object sender, EventArgs args)
+        {
+            this.PreambleChangedFromExtern?.Invoke(sender, args);
+        }
+
         public Resolution Resolution { get; set; }
 
         private ResolutionViewModel(Resolution resolution, bool isOnline, MUNityClient.Services.IResolutionService resolutionService)
@@ -80,38 +92,17 @@ namespace MUNityClient.ViewModel
             {
                 IgnoreTransactions = new List<string>();
                 HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/resasocket").Build();
-                HubConnection.On<ResolutionChangedArgs>(nameof(ITypedResolutionHub.ResolutionChanged), (args) =>
-                {
-                    ResolutionChanged?.Invoke(this, args);
-                });
 
-                HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderTopicChanged), (args) =>
-                {
-                    if (HasMyTanOnIt(args)) return;
-                    if (this.Resolution.Header.Topic != args.Text)
-                    {
-                        this.Resolution.Header.SetTopicNoPropertyChanged(args.Text);
-                        HeaderChangedFromExtern?.Invoke(this, args);
-                    }
-                });
-                    
-                HubConnection.On<PreambleParagraphChangedArgs>(nameof(ITypedResolutionHub.PreambleParagraphChanged), (args) => 
-                    PreambleParagraphChanged?.Invoke(this, args));
-                HubConnection.On<OperativeParagraphChangedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphChanged), (args) => 
-                    OperativeParagraphChanged?.Invoke(this, args));
-                HubConnection.On<AmendmentActivatedChangedEventArgs>(nameof(ITypedResolutionHub.AmendmentActivatedChanged), (args) =>
-                    AmendmentActivatedChanged?.Invoke(this, args));
-                HubConnection.On<PreambleParagraphTextChangedEventArgs>(nameof(ITypedResolutionHub.PreambleParagraphTextChanged), (args) =>
-                    PreambleParagraphTextChanged?.Invoke(this, args));
-                HubConnection.On<OperativeParagraphTextChangedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphTextChanged), (args) =>
-                    OperativeParagraphTextChanged?.Invoke(this, args));
+                var manipulator = new ViewModelLogic.ResolutionSocketViewModelManipulator(this);
 
                 // Observer dazu bringen Updates an den Server zu senden
                 var observerToServer = new ViewModelLogic.ResolutionObserverToServiceCalls(this._resolutionObserver, resolutionService);
             }
         }
 
-        private bool HasMyTanOnIt(HeaderStringPropChangedEventArgs args)
+        
+
+        public bool VerifyTanAndRemoveItIfExisting(ResolutionEventArgs args)
         {
             if (this.IgnoreTransactions.Contains(args.Tan))
             {
@@ -120,6 +111,8 @@ namespace MUNityClient.ViewModel
             }
             return false;
         }
+
+        
 
         private void _resolutionObserver_PreambleParagraphTextChanged(object sender, PreambleParagraphTextChangedEventArgs args)
         {
@@ -149,6 +142,7 @@ namespace MUNityClient.ViewModel
             else
             {
                 // TODO: Request creating Preamble Paragraph at the server
+                this.Resolution.CreatePreambleParagraph();
             }
             
         }

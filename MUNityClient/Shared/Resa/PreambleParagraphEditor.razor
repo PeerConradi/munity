@@ -1,5 +1,6 @@
 ﻿@using MUNity.Models.Resolution;
 @using MUNity.Extensions.ResolutionExtensions;
+@using MUNity.Models.Resolution.EventArguments; 
 @inject MUNityClient.Services.ResolutionService resolutionService;
 
     <div class="row col-12 p-0 m-0">
@@ -99,11 +100,28 @@
     public EventCallback<Boolean> OnMoveEvent { get; set; }
 
     [Parameter]
-    //Event called when the arrow up/down buttons are called. Returns true if direction is updwards, false if downwards
     public EventCallback OnDeleteEvent { get; set; }
 
-    [Parameter]
-    public EventCallback OnTextChanged { get; set; }
+    protected override void OnInitialized()
+    {
+        if (this.ResolutionViewModel != null && this.Paragraph != null)
+        {
+            this.ResolutionViewModel.PreambleChangedFromExtern += PreambleChangedFromExtern;
+        }
+        base.OnInitialized();
+    }
+
+    private void PreambleChangedFromExtern(object sender, EventArgs args)
+    {
+        this.StateHasChanged();
+        //if (args is PreambleParagraphTextChangedEventArgs textChangedArgs)
+        //{
+        //    if (textChangedArgs.ParagraphId == this.Paragraph.PreambleParagraphId)
+        //    {
+        //        this.Paragraph.Text = 
+        //    }
+        //}
+    }
 
     public int Index => this.ResolutionViewModel?.Resolution?.Preamble?.Paragraphs?.IndexOf(this.Paragraph) ?? -1;
 

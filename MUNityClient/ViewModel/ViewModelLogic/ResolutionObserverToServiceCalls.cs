@@ -20,7 +20,36 @@ namespace MUNityClient.ViewModel.ViewModelLogic
             observer.HeaderNameChanged += Observer_HeaderNameChanged;
             observer.HeaderFullNameChanged += Observer_HeaderFullNameChanged;
             observer.HeaderTopicChanged += Observer_HeaderTopicChanged;
+            observer.HeaderAgendaItemChanged += Observer_HeaderAgendaItemChanged;
+            observer.HeaderSessionChanged += Observer_HeaderSessionChanged;
+            observer.HeaderSubmitterChanged += Observer_HeaderSubmitterChanged;
+            observer.HeaderCommitteeChanged += Observer_HeaderCommitteeChanged;
+            // TODO: Handler for changes of supporters
+            observer.PreambleParagraphAdded += Observer_PreambleParagraphAdded;
+            observer.PreambleParagraphTextChanged += Observer_PreambleParagraphTextChanged;
         }
+
+        private void Observer_PreambleParagraphTextChanged(object sender, PreambleParagraphTextChangedEventArgs e)
+        {
+            _service.ResolutionPreambleParagraphTextChanged(e).ConfigureAwait(false);
+        }
+
+        private void Observer_PreambleParagraphAdded(object sender, PreambleParagraphAddedEventArgs e)
+        {
+            _service.ResolutionAddPreambleParagraph(e).ConfigureAwait(false);
+        }
+
+        private void Observer_HeaderCommitteeChanged(object sender, HeaderStringPropChangedEventArgs e) =>
+            _service.UpdateResolutionHeaderCommitteeName(e).ConfigureAwait(false);
+
+        private void Observer_HeaderSubmitterChanged(object sender, HeaderStringPropChangedEventArgs e) =>
+            _service.UpdateResolutionHeaderSubmitterName(e).ConfigureAwait(false);
+
+        private void Observer_HeaderSessionChanged(object sender, HeaderStringPropChangedEventArgs e) =>
+            _service.UpdateResolutionHeaderSession(e).ConfigureAwait(false);
+        
+        private void Observer_HeaderAgendaItemChanged(object sender, HeaderStringPropChangedEventArgs e) =>
+            _service.UpdateResolutionHeaderAgendaItem(e).ConfigureAwait(false);
 
         private void Observer_HeaderTopicChanged(object sender, HeaderStringPropChangedEventArgs e) =>
             _service.UpdateResolutionHeaderTopic(e).ConfigureAwait(false);
@@ -30,5 +59,6 @@ namespace MUNityClient.ViewModel.ViewModelLogic
 
         private void Observer_HeaderNameChanged(object sender, HeaderStringPropChangedEventArgs e) =>
             _service.UpdateResolutionHeaderName(e).ConfigureAwait(false);
+
     }
 }

@@ -119,6 +119,7 @@ else
         if (ViewModel != null)
         {
             ViewModel.HeaderChangedFromExtern += delegate { this.StateHasChanged(); };
+            ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
         }
     }
 }

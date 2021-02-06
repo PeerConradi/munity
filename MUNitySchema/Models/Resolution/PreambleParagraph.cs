@@ -34,6 +34,11 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetTextNoNotifyPropertyChanged(string text)
+        {
+            this._text = text;
+        }
+
         private bool _isLocked = false;
         /// <summary>
         /// is the paragraph marked as locked. This will not effect the Text Property you can still change the Text or comments

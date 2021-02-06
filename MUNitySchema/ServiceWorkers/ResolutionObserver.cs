@@ -38,75 +38,9 @@ namespace MUNity.Observers
 
         public event EventHandler<HeaderStringPropChangedEventArgs> HeaderCommitteeChanged;
 
-        /// <summary>
-        /// Delegate for changes inside the resolution header
-        /// </summary>
-        /// <param name="sender"></param>
-        public delegate void OnResolutionHeaderChanged(Resolution sender);
-
-
-        /// <summary>
-        /// Delegate when the preamble or something inside the preamble has changed.
-        /// </summary>
-        /// <param name="sender"></param>
-        public delegate void OnPreambleChanged(Resolution sender);
-
-        /// <summary>
-        /// Somehting inside the Preamble has changed. This could be a new Paragraph, a paragraph has been removed or the text of a paragraph was changed.
-        /// </summary>
-        public event OnPreambleChanged PreambleChanged;
-
-        /// <summary>
-        /// delegate when a preamble paragraph has changed
-        /// </summary>
-        /// <param name="resolution"></param>
-        /// <param name="paragraph"></param>
-        public delegate void OnPreambleParagraphChanged(Resolution resolution, PreambleParagraph paragraph);
-
-        /// <summary>
-        /// Event gets called when something inside the PreambleParagraph has changed. This could be the text or comment
-        /// </summary>
-        public event OnPreambleParagraphChanged PreambleParagraphChanged;
-
-        /// <summary>
-        /// Delegate for the Preamble Changed event
-        /// </summary>
-        /// <param name="resolution"></param>
-        /// <param name="paragraph"></param>
-        public delegate void OnPreambleParagraphCommentsChanged(Resolution resolution, PreambleParagraph paragraph);
-
-        /// <summary>
-        /// Gets called when the comments of the paragraph have changed.
-        /// </summary>
-        public event OnPreambleParagraphCommentsChanged PreambleParagraphCommentsChanged;
+        public event EventHandler<PreambleParagraphAddedEventArgs> PreambleParagraphAdded;
 
         public event EventHandler<PreambleParagraphTextChangedEventArgs> PreambleParagraphTextChanged;
-
-        /// <summary>
-        /// Delegate for changes inside the Operative Section. This could mean that a new paragraph was added, moved or removed,
-        /// aswell as the text of a paragraph has changed, comments changed or an amendment has been added.
-        /// </summary>
-        /// <param name="sender"></param>
-        public delegate void OnOperativeSectionChanged(Resolution sender);
-
-        /// <summary>
-        /// Gets called when the operative section has changed. This could also be when a paragraph was added, moved, removed and something
-        /// with the amendments has been done.
-        /// </summary>
-        public event OnOperativeSectionChanged OperativeSectionChanged;
-
-
-        /// <summary>
-        /// Event delagate when something insde the OperativeParagraph has changed.
-        /// </summary>
-        /// <param name="resolution"></param>
-        /// <param name="paragraph"></param>
-        public delegate void OnOperativeParagraphChanged(Resolution resolution, OperativeParagraph paragraph);
-
-        /// <summary>
-        /// Gets called when the operative paragraph has changed.
-        /// </summary>
-        public event OnOperativeParagraphChanged OperativeParagraphChanged;
 
         /// <summary>
         /// Creates a new Resolution Worker instance.
@@ -115,54 +49,20 @@ namespace MUNity.Observers
         public ResolutionObserver(Resolution resolution)
         {
             Resolution = resolution;
-            Resolution.PropertyChanged += _resolution_PropertyChanged;
             if (Resolution.Header != null)
             {
                 Resolution.Header.PropertyChanged += Header_PropertyChanged;
             }
             if (Resolution.Preamble != null)
             {
-                PreambleSectionObserver.CreateWorker(this, Resolution.Preamble);
+                this.PreambleSectionObserver = PreambleSectionObserver.CreateWorker(this, Resolution.Preamble);
+                this.PreambleSectionObserver.ParagraphAdded += (sender, args) => this.PreambleParagraphAdded?.Invoke(sender, args);
+                this.PreambleSectionObserver.ParagraphTextChanged += (sender, args) => this.PreambleParagraphTextChanged?.Invoke(sender, args);
             }
             if (Resolution.OperativeSection != null)
             {
                 OperativeSectionObserver.CreateWorker(this, Resolution.OperativeSection);
             }
-        }
-
-        internal void InvokePreambleParagraphTextChanged(PreambleParagraph paragraph)
-        {
-            PreambleParagraphTextChanged?.Invoke(this, new PreambleParagraphTextChangedEventArgs(Resolution.ResolutionId, paragraph.PreambleParagraphId, paragraph.Text));
-            this.InvokePreambleChanged();
-        }
-
-        internal void InvokePreambleCommentsChanged(PreambleParagraph paragraph)
-        {
-            PreambleParagraphCommentsChanged?.Invoke(this.Resolution, paragraph);
-            PreambleParagraphChanged?.Invoke(this.Resolution, paragraph);
-        }
-
-        internal void InvokeResolutionChanged()
-        {
-            //ResolutionChanged?.Invoke(this.Resolution);
-        }
-
-        internal void InvokeOperativeParagraphChanged(OperativeParagraph paragraph)
-        {
-            OperativeParagraphChanged?.Invoke(this.Resolution, paragraph);
-            InvokeResolutionChanged();
-        }
-
-        internal void InvokeOperativeSectionChanged()
-        {
-            OperativeSectionChanged?.Invoke(this.Resolution);
-            //ResolutionChanged?.Invoke(this.Resolution);
-        }
-
-        internal void InvokePreambleChanged()
-        {
-            PreambleChanged?.Invoke(this.Resolution);
-            //ResolutionChanged?.Invoke(this.Resolution);
         }
 
         private void Header_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -190,23 +90,6 @@ namespace MUNity.Observers
             //ResolutionChanged?.Invoke(this.Resolution);
         }
 
-        /// <summary>
-        /// Call when a property inside the resolution has changed.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void _resolution_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            //ResolutionChanged?.Invoke(this.Resolution);
-            if (e.PropertyName == nameof(Models.Resolution.Resolution.Header))
-            {
-                
-            }
-            else if (e.PropertyName == nameof(Models.Resolution.Resolution.Preamble))
-            {
-                PreambleChanged?.Invoke(this.Resolution);
-            }
-        }
 
         /// <summary>
         /// Registers a new Pramble Observer

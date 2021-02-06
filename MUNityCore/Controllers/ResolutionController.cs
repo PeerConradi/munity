@@ -51,6 +51,8 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        #region "Resolution Creation"
+
         /// <summary>
         /// Create a public accessable resolution.
         /// </summary>
@@ -63,6 +65,8 @@ namespace MUNityCore.Controllers
         {
             return await _resolutionService.CreatePublicResolution(title);
         }
+
+        #endregion
 
         /// <summary>
         /// Returns a resolution with the given Id if the user is allowed to read the resolution or it is public.
@@ -235,7 +239,53 @@ namespace MUNityCore.Controllers
 
             resolution.Header.CommitteeName = body.Text;
             _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
-            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderSessionChanged(body).ConfigureAwait(false);
+            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderCommitteeNameChanged(body).ConfigureAwait(false);
+            return Ok();
+        }
+
+        #endregion
+
+        #region "Preamble"
+
+        [Route("[action]")]
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> AddPreambleParagraph([FromBody]PreambleParagraphAddedEventArgs body)
+        {
+            if (!await CanUserEditResolution(body.ResolutionId))
+                return Forbid();
+
+            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
+            if (resolution.ResolutionId == null) return NotFound();
+            if (body.Paragraph == null) return BadRequest();
+
+            if (resolution.Preamble.Paragraphs.Any(n => n.PreambleParagraphId == body.Paragraph.PreambleParagraphId)) return Ok();
+
+            if (string.IsNullOrEmpty(body.Paragraph.PreambleParagraphId))
+                body.Paragraph.PreambleParagraphId = Guid.NewGuid().ToString();
+
+            resolution.Preamble.Paragraphs.Add(body.Paragraph);
+            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
+            _ = this._hubContext.Clients.Group(body.ResolutionId).PreambleParagraphAdded(body);
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        [AllowAnonymous]
+        public async Task<ActionResult> ChangePreambleParagraphText([FromBody]PreambleParagraphTextChangedEventArgs body)
+        {
+            if (!await CanUserEditResolution(body.ResolutionId))
+                return Forbid();
+
+            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
+            if (resolution.ResolutionId == null) return NotFound();
+            var targetParagraph = resolution.Preamble?.Paragraphs.FirstOrDefault(n => n.PreambleParagraphId == body.ParagraphId);
+            if (targetParagraph == null) return NotFound();
+            targetParagraph.Text = body.Text;
+
+            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
+            _ = this._hubContext.Clients.Group(body.ResolutionId).PreambleParagraphTextChanged(body);
             return Ok();
         }
 

@@ -93,7 +93,13 @@ namespace MUNity.Models.Resolution.EventArguments
     public class PreambleParagraphAddedEventArgs : ResolutionEventArgs
     {
 
-        PreambleParagraph Paragraph { get; set; }
+        public PreambleParagraph Paragraph { get; set; }
+
+        /// <summary>
+        /// The order of all preamble paragraphs including this new one to check
+        /// if they are all sill in sync.
+        /// </summary>
+        public List<string> ParagraphOrder { get; set; }
 
         public PreambleParagraphAddedEventArgs(string resolutionId, PreambleParagraph paragraph)
         {

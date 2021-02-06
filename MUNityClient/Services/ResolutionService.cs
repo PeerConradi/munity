@@ -28,6 +28,8 @@ namespace MUNityClient.Services
 
         public event OnStorageChanged StorageChanged;
 
+        #region "Header"
+
         public Task<HttpResponseMessage> UpdateResolutionHeaderName(HeaderStringPropChangedEventArgs args)
         {
             args.Tan = GenerateTan();
@@ -47,7 +49,43 @@ namespace MUNityClient.Services
             args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderTopic", JsonContent.Create(args));
         }
-            
+
+        public Task<HttpResponseMessage> UpdateResolutionHeaderAgendaItem(HeaderStringPropChangedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderAgendaItem", JsonContent.Create(args));
+        }
+
+        public Task<HttpResponseMessage> UpdateResolutionHeaderSession(HeaderStringPropChangedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderSession", JsonContent.Create(args));
+        }
+
+        public Task<HttpResponseMessage> UpdateResolutionHeaderSubmitterName(HeaderStringPropChangedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderSubmitterName", JsonContent.Create(args));
+        }
+        public Task<HttpResponseMessage> UpdateResolutionHeaderCommitteeName(HeaderStringPropChangedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderCommitteeName", JsonContent.Create(args));
+        }
+
+        #endregion
+
+        public Task<HttpResponseMessage> ResolutionAddPreambleParagraph(PreambleParagraphAddedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PostAsync($"/api/Resolution/AddPreambleParagraph", JsonContent.Create(args));
+        }
+
+        public Task<HttpResponseMessage> ResolutionPreambleParagraphTextChanged(PreambleParagraphTextChangedEventArgs args)
+        {
+            args.Tan = GenerateTan();
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/ChangePreambleParagraphText", JsonContent.Create(args));
+        }
 
         /// <summary>
         /// Checks if the Resolution Controller of the API is available.

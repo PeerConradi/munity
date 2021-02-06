@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MUNity.Models.Resolution;
 using System.Linq;
+using MUNity.Models.Resolution.EventArguments;
 
 namespace MUNity.Observers
 {
@@ -12,11 +13,17 @@ namespace MUNity.Observers
     /// </summary>
     public class PreambleSectionObserver : IDisposable
     {
+        public event EventHandler<PreambleParagraphAddedEventArgs> ParagraphAdded;
+
+        public event EventHandler<PreambleParagraphTextChangedEventArgs> ParagraphTextChanged;
+
         private List<PreambleParagraphObserver> _subWorkers = new List<PreambleParagraphObserver>();
 
         private ResolutionObserver _resolutionWorker;
 
         private ResolutionPreamble _preamble;
+
+        public string ResolutionId => this._resolutionWorker.Resolution.ResolutionId;
 
         private PreambleSectionObserver(ResolutionObserver resolutionWorker, ResolutionPreamble preamble)
         {
@@ -25,7 +32,8 @@ namespace MUNity.Observers
             preamble.Paragraphs.CollectionChanged += Paragraphs_CollectionChanged;
             foreach(var paragraph in preamble.Paragraphs)
             {
-                PreambleParagraphObserver.CreateObserver(this, paragraph);
+                var paragraphObserver = PreambleParagraphObserver.CreateObserver(this, paragraph);
+                paragraphObserver.PreambleTextChanged += (sender, args) => this.ParagraphTextChanged?.Invoke(sender, args);
             }
         }
 
@@ -42,24 +50,23 @@ namespace MUNity.Observers
 
         private void Paragraphs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            this._resolutionWorker.InvokeResolutionChanged();
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
-                foreach(var newItem in e.NewItems.OfType<PreambleParagraph>())
+                var newItems = e.NewItems.OfType<PreambleParagraph>().ToList();
+                if (newItems.Count == 1)
                 {
-                    PreambleParagraphObserver.CreateObserver(this, newItem);
+                    this.ParagraphAdded?.Invoke(this, new PreambleParagraphAddedEventArgs(this._resolutionWorker.Resolution.ResolutionId, newItems[0]));
+                }
+                else
+                {
+                    throw new NotImplementedException("There is no way you added a range, how did you do that?");
+                }
+                foreach(var newItem in newItems)
+                {
+                    var paragraphObserver = PreambleParagraphObserver.CreateObserver(this, newItem);
+                    paragraphObserver.PreambleTextChanged += (s, args) => this.ParagraphTextChanged?.Invoke(s, args);
                 }
             }
-        }
-
-        internal void InvokePreambleChanged()
-        {
-            _resolutionWorker.InvokePreambleChanged();
-        }
-
-        internal void InvokePreambleParagraphTextChanged(PreambleParagraph paragraph)
-        {
-            _resolutionWorker.InvokePreambleParagraphTextChanged(paragraph);
         }
 
         /// <summary>

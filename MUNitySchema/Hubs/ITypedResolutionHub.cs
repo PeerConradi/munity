@@ -18,6 +18,7 @@ namespace MUNity.Hubs
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
+        [Obsolete("Use singled out events instead")]
         Task ResolutionChanged(ResolutionChangedArgs args);
 
         Task HeaderNameChanged(HeaderStringPropChangedEventArgs args);
@@ -34,33 +35,7 @@ namespace MUNity.Hubs
 
         Task HeaderCommitteeNameChanged(HeaderStringPropChangedEventArgs args);
 
-        /// <summary>
-        /// Something within the given PreambleParagraph has changed. This could be the Text or the Comments.
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        Task PreambleParagraphChanged(PreambleParagraphChangedArgs args);
-
-        /// <summary>
-        /// Something within the Operative Paragraph has changed this could be the text or the comments.
-        /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="para"></param>
-        /// <param name="tan"></param>
-        /// <returns></returns>
-        Task OperativeParagraphChanged(OperativeParagraphChangedEventArgs args);
-
-        /// <summary>
-        /// The state if an amendment is activated or not activated has changed.
-        /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="amendmentId"></param>
-        /// <param name="value"></param>
-        /// <param name="tan"></param>
-        /// <returns></returns>
-        Task AmendmentActivatedChanged(AmendmentActivatedChangedEventArgs args);
-
-
+        Task PreambleParagraphAdded(PreambleParagraphAddedEventArgs args);
 
         /// <summary>
         /// The text of a preamble paragraph has changed.
@@ -81,6 +56,38 @@ namespace MUNity.Hubs
         /// <param name="tan"></param>
         /// <returns></returns>
         Task OperativeParagraphTextChanged(OperativeParagraphTextChangedEventArgs args);
+
+        /// <summary>
+        /// Something within the given PreambleParagraph has changed. This could be the Text or the Comments.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        [Obsolete("Use the differenz change Methods instead")]
+        Task PreambleParagraphChanged(PreambleParagraphChangedArgs args);
+
+        /// <summary>
+        /// Something within the Operative Paragraph has changed this could be the text or the comments.
+        /// </summary>
+        /// <param name="resolutionId"></param>
+        /// <param name="para"></param>
+        /// <param name="tan"></param>
+        /// <returns></returns>
+        [Obsolete("Use the different change operations instead")]
+        Task OperativeParagraphChanged(OperativeParagraphChangedEventArgs args);
+
+        /// <summary>
+        /// The state if an amendment is activated or not activated has changed.
+        /// </summary>
+        /// <param name="resolutionId"></param>
+        /// <param name="amendmentId"></param>
+        /// <param name="value"></param>
+        /// <param name="tan"></param>
+        /// <returns></returns>
+        Task AmendmentActivatedChanged(AmendmentActivatedChangedEventArgs args);
+
+
+
+        
 
 
     }

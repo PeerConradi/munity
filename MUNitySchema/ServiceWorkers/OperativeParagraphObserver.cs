@@ -20,13 +20,11 @@ namespace MUNity.Observers
         {
             _sectionWorker = sectionWorker;
             _paragraph = paragraph;
-            paragraph.PropertyChanged += Paragraph_PropertyChanged;
             paragraph.Children.CollectionChanged += Children_CollectionChanged;
         }
 
         private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            _sectionWorker.InvokeParagraphChanged(this._paragraph);
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
                 foreach(var paragraph in e.NewItems.OfType<OperativeParagraph>())
@@ -34,11 +32,6 @@ namespace MUNity.Observers
                     OperativeParagraphObserver.CreateObserver(_sectionWorker, paragraph);
                 }
             }
-        }
-
-        private void Paragraph_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            _sectionWorker.InvokeParagraphChanged(this._paragraph);
         }
 
         /// <summary>
