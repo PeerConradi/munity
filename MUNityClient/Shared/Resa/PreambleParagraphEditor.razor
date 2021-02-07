@@ -51,7 +51,7 @@
                         }
                     </div>
                     <div role="button" type="button" class="col-12 p-0 text-center px-2 py-3 custom-button text-danger"
-                        alt="delete" title="Löschen" @onclick="() => OnDeleteEvent.InvokeAsync(null)">
+                        alt="delete" title="Löschen" @onclick="() => this.ResolutionViewModel.Resolution.Preamble.Paragraphs.Remove(this.Paragraph)">
                         <i class="fas fa-lg fa-trash"></i></div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
         </div>
         @* Comment Panel *@
         <div class="m-0 col comments @(commentsExpanded ? "comments-expanded" : "comments-collapsed") p-0">
-            <textarea placeholder="Kommentare..." value="@this.Comment" @oninput="@OnCommentChange"
+            <textarea placeholder="Kommentare..." @bind="this.Paragraph.Comment" @bind:event="oninput"
                 class="form-control h-100 custom-input-field px-0 p-2 no-scrollbar"></textarea>
         </div>
     </div>
@@ -106,46 +106,13 @@
     {
         if (this.ResolutionViewModel != null && this.Paragraph != null)
         {
-            this.ResolutionViewModel.PreambleChangedFromExtern += PreambleChangedFromExtern;
+            this.ResolutionViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
         }
         base.OnInitialized();
     }
 
-    private void PreambleChangedFromExtern(object sender, EventArgs args)
-    {
-        this.StateHasChanged();
-        //if (args is PreambleParagraphTextChangedEventArgs textChangedArgs)
-        //{
-        //    if (textChangedArgs.ParagraphId == this.Paragraph.PreambleParagraphId)
-        //    {
-        //        this.Paragraph.Text = 
-        //    }
-        //}
-    }
-
     public int Index => this.ResolutionViewModel?.Resolution?.Preamble?.Paragraphs?.IndexOf(this.Paragraph) ?? -1;
 
-    public string Comment
-    {
-        get
-        {
-            if (!this.Paragraph.Comments.Any())
-            {
-                this.Paragraph.Comments.Add(new MUNity.Models.Resolution.Comment());
-            }
-
-            return this.Paragraph.Comments.First().Text;
-        }
-    }
-
-    private void OnCommentChange(ChangeEventArgs args)
-    {
-        if (!this.Paragraph.Comments.Any())
-        {
-            this.Paragraph.Comments.Add(new MUNity.Models.Resolution.Comment());
-        }
-        this.Paragraph.Comments.First().Text = (string)args.Value;
-    }
 
     public Boolean commentsExpanded = false;
 }

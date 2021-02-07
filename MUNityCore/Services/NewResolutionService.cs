@@ -78,6 +78,8 @@ namespace MUNityCore.Services
             targetParagraph.Comments = newValues.Comments;
             targetParagraph.Text = newValues.Text;
             targetParagraph.Visible = newValues.Visible;
+            targetParagraph.Comment = newValues.Comment;
+            targetParagraph.Corrected = newValues.Corrected;
             await this.SaveResolution(resolution);
             return true;
         }

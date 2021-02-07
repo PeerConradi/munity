@@ -47,6 +47,10 @@ namespace MUNity.Hubs
         /// <returns></returns>
         Task PreambleParagraphTextChanged(PreambleParagraphTextChangedEventArgs args);
 
+        Task PreambleParagraphCommentTextChanged(PreambleParagraphCommentTextChangedEventArgs args);
+
+        Task PreambleParagraphRemoved(PreambleParagraphRemovedEventArgs args);
+
         /// <summary>
         /// The Text of an operative paragraph has changed.
         /// </summary>
@@ -72,8 +76,9 @@ namespace MUNity.Hubs
         /// <param name="para"></param>
         /// <param name="tan"></param>
         /// <returns></returns>
-        [Obsolete("Use the different change operations instead")]
         Task OperativeParagraphChanged(OperativeParagraphChangedEventArgs args);
+
+        Task OperativeSectionChanged(OperativeSectionChangedEventArgs args);
 
         /// <summary>
         /// The state if an amendment is activated or not activated has changed.

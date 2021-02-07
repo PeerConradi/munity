@@ -58,6 +58,17 @@ namespace MUNity.Models.Resolution.EventArguments
             ResolutionId = resolutionId;
             Paragraph = paragraph;
         }
+
+        public OperativeParagraphChangedEventArgs(string resolutionId, OperativeParagraph paragraph)
+        {
+            this.ResolutionId = resolutionId;
+            this.Paragraph = paragraph;
+        }
+
+        public OperativeParagraphChangedEventArgs()
+        {
+
+        }
     }
 
     public class AmendmentActivatedChangedEventArgs : ResolutionEventArgs
@@ -116,6 +127,45 @@ namespace MUNity.Models.Resolution.EventArguments
         {
             this.ResolutionId = resolutionId;
             this.Text = text;
+        }
+    }
+
+    public class PreambleParagraphCommentTextChangedEventArgs : ResolutionEventArgs
+    {
+        public string PreambleParagraphId { get; set; }
+
+        public string CommentId { get; set; }
+
+        public string Text { get; set; }
+
+        public PreambleParagraphCommentTextChangedEventArgs(string resolutionId, string preambleParagraphId, string commentId, string text)
+        {
+            this.ResolutionId = resolutionId;
+            this.PreambleParagraphId = preambleParagraphId;
+            this.CommentId = commentId;
+            this.Text = text;
+        }
+    }
+
+    public class PreambleParagraphRemovedEventArgs : ResolutionEventArgs
+    {
+        public string PreambleParagraphId { get; set; }
+
+        public PreambleParagraphRemovedEventArgs(string resolutionId, string preambleParagraphId)
+        {
+            this.ResolutionId = resolutionId;
+            this.PreambleParagraphId = preambleParagraphId;
+        }
+    }
+
+    public class OperativeSectionChangedEventArgs : ResolutionEventArgs
+    {
+        public OperativeSection Section { get; set; }
+
+        public OperativeSectionChangedEventArgs(string resolutionId, OperativeSection section)
+        {
+            this.ResolutionId = resolutionId;
+            this.Section = section;
         }
     }
 }

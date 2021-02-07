@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using MUNity.Extensions.ResolutionExtensions;
 
 namespace MUNityClient.ViewModel.ViewModelLogic
 {
@@ -19,6 +20,7 @@ namespace MUNityClient.ViewModel.ViewModelLogic
             {
                 AppendHeaderSocketEventHandlers();
                 AppendPreambleSocketEventHandlers();
+                AppendOperativeSectionEventHandlers();
             }
         }
 
@@ -37,6 +39,47 @@ namespace MUNityClient.ViewModel.ViewModelLogic
         {
             AppendSocketPreambleParagraphAddedEventHandler();
             AppendSocketPreambleParagraphTextChangedEventHandler();
+            AppendSocketPreambleParagraphCommentTextChangedEventHandler();
+            AppendSocketPreambleParagraphRemovedEventHandler();
+        }
+
+        private void AppendOperativeSectionEventHandlers()
+        {
+            AppendSockerOperativeParagraphChangedEventHandler();
+            AppendSockerOperativeSectionChangedEventHandler();
+        }
+
+        private void AppendSockerOperativeParagraphChangedEventHandler()
+        {
+            this.viewModel.HubConnection.On<OperativeParagraphChangedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphChanged), (args) =>
+            {
+                if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
+                var paragraph = viewModel?.Resolution?.OperativeSection?.FirstOrDefault(n => n.OperativeParagraphId == args.Paragraph.OperativeParagraphId);
+                if (paragraph != null)
+                {
+                    //paragraph = args.Paragraph;
+                    paragraph.SetTextNoPropertyChanged(args.Paragraph.Text);
+                    paragraph.SetCommentNoPropertyChanged(args.Paragraph.Comment);
+                    paragraph.SetCorrectedNoPropertyChanged(args.Paragraph.Corrected);
+                    paragraph.SetIsLockedNoPropertyChanged(args.Paragraph.IsLocked);
+                    paragraph.SetIsVirtualNoPropertyChanged(args.Paragraph.IsVirtual);
+                    paragraph.SetNameNoPropertyChanged(args.Paragraph.Name);
+                    paragraph.SetVisibleNoPropertyChanged(args.Paragraph.Visible);
+                    if (args.Paragraph.Children != null && args.Paragraph.Children.Count != paragraph.Children.Count)
+                        paragraph.Children = args.Paragraph.Children;
+                    viewModel.InvokeOperativeParagraphChangedFromExtern(this, args);
+                }
+            });
+        }
+
+        private void AppendSockerOperativeSectionChangedEventHandler()
+        {
+            this.viewModel.HubConnection.On<OperativeSectionChangedEventArgs>(nameof(ITypedResolutionHub.OperativeSectionChanged), (args) =>
+            {
+                if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
+                this.viewModel.Resolution.OperativeSection = args.Section;
+                viewModel.InvokeOperativeSectionChangedFromExtern(this, args);
+            });
         }
 
         private void AppendSocketPreambleParagraphAddedEventHandler()
@@ -61,6 +104,41 @@ namespace MUNityClient.ViewModel.ViewModelLogic
                 if (targetParagraph != null)
                 {
                     targetParagraph.SetTextNoNotifyPropertyChanged(args.Text);
+                    viewModel.InvokePreambleChangedFromExtern(this, args);
+                }
+            });
+        }
+
+        private void AppendSocketPreambleParagraphCommentTextChangedEventHandler()
+        {
+            this.viewModel.HubConnection.On<PreambleParagraphCommentTextChangedEventArgs>(nameof(ITypedResolutionHub.PreambleParagraphCommentTextChanged), (args) =>
+            {
+                if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
+                var targetParagraph = viewModel.Resolution.Preamble.Paragraphs.FirstOrDefault(n => n.PreambleParagraphId == args.PreambleParagraphId);
+                if (targetParagraph != null)
+                {
+                    targetParagraph.SetCommentTextNoNotifyPropertyChanged(args.Text);
+                    viewModel.InvokePreambleChangedFromExtern(this, args);
+                    // This is for future implementaiton were multiple comments for one paragraph should be possible...
+                    //var targetComment = targetParagraph.Comments.FirstOrDefault(n => n.CommentId == args.CommentId);
+                    //if (targetComment != null)
+                    //{
+                    //    targetComment.SetTextNoNotifyPropertyChanged(args.Text);
+                    //    viewModel.InvokePreambleChangedFromExtern(this, args);
+                    //}
+                }
+            });
+        }
+
+        private void AppendSocketPreambleParagraphRemovedEventHandler()
+        {
+            this.viewModel.HubConnection.On<PreambleParagraphRemovedEventArgs>(nameof(ITypedResolutionHub.PreambleParagraphRemoved), (args) =>
+            {
+                if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
+                var targetParagraph = viewModel.Resolution.Preamble.Paragraphs.FirstOrDefault(n => n.PreambleParagraphId == args.PreambleParagraphId);
+                if (targetParagraph != null)
+                {
+                    viewModel.Resolution.Preamble.Paragraphs.Remove(targetParagraph);
                     viewModel.InvokePreambleChangedFromExtern(this, args);
                 }
             });

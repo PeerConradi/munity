@@ -55,17 +55,21 @@ namespace MUNityClient.ViewModel
 
         public event EventHandler PreambleChangedFromExtern;
 
-        public event EventHandler<PreambleParagraphChangedArgs> PreambleParagraphChanged;
+        public event EventHandler OperativeSeciontChangedFromExtern;
 
-        public event EventHandler<OperativeParagraphChangedEventArgs> OperativeParagraphChanged;
+        public event EventHandler<OperativeParagraphChangedEventArgs> OperativeParagraphChangedFromExtern;
 
-        public event EventHandler<AmendmentActivatedChangedEventArgs> AmendmentActivatedChanged;
+        //public event EventHandler<PreambleParagraphChangedArgs> PreambleParagraphChanged;
 
-        public event EventHandler<PreambleParagraphTextChangedEventArgs> PreambleParagraphTextChanged;
+        //public event EventHandler<OperativeParagraphChangedEventArgs> OperativeParagraphChanged;
 
-        public event EventHandler<OperativeParagraphTextChangedEventArgs> OperativeParagraphTextChanged;
+        //public event EventHandler<AmendmentActivatedChangedEventArgs> AmendmentActivatedChanged;
 
-        public event EventHandler<PreambleParagraphAddedEventArgs> PreambleParagraphAdded;
+        //public event EventHandler<PreambleParagraphTextChangedEventArgs> PreambleParagraphTextChanged;
+
+        //public event EventHandler<OperativeParagraphTextChangedEventArgs> OperativeParagraphTextChanged;
+
+        //public event EventHandler<PreambleParagraphAddedEventArgs> PreambleParagraphAdded;
 
         public event EventHandler SyncModeChanged;
 
@@ -77,6 +81,16 @@ namespace MUNityClient.ViewModel
         public void InvokePreambleChangedFromExtern(object sender, EventArgs args)
         {
             this.PreambleChangedFromExtern?.Invoke(sender, args);
+        }
+
+        public void InvokeOperativeSectionChangedFromExtern(object sender, EventArgs args)
+        {
+            this.OperativeSeciontChangedFromExtern?.Invoke(sender, args);
+        }
+
+        public void InvokeOperativeParagraphChangedFromExtern(object sender, OperativeParagraphChangedEventArgs args)
+        {
+            this.OperativeParagraphChangedFromExtern?.Invoke(sender, args);
         }
 
         public Resolution Resolution { get; set; }
@@ -96,11 +110,45 @@ namespace MUNityClient.ViewModel
                 var manipulator = new ViewModelLogic.ResolutionSocketViewModelManipulator(this);
 
                 // Observer dazu bringen Updates an den Server zu senden
-                var observerToServer = new ViewModelLogic.ResolutionObserverToServiceCalls(this._resolutionObserver, resolutionService);
+                var observerToServer = new ViewModelLogic.ResolutionObserverToServiceCalls(this, this._resolutionObserver, resolutionService);
             }
         }
 
-        
+        /// <summary>
+        /// List of amendments in visible order. This is the order of all the amendments
+        /// first of by the paragraph they address from top to bottom.
+        /// Then Amendments to delete are shown first, after that amendments to change the paragraph, after that
+        /// amendments to move the paragraph.
+        ///
+        /// Amendments to add a new paragraph are shown last!
+        /// </summary>
+        public IEnumerable<AbstractAmendment> OrderedAmendments
+        {
+            get
+            {
+                var list = new List<AbstractAmendment>();
+                foreach (var paragraph in this.Resolution.OperativeSection.Paragraphs)
+                {
+                    var deleteAmendments = this.Resolution.OperativeSection.DeleteAmendments.Where(n => n.TargetSectionId ==
+                    paragraph.OperativeParagraphId);
+                    if (deleteAmendments.Any())
+                        list.AddRange(deleteAmendments);
+
+                    var changeAmendments = this.Resolution.OperativeSection.ChangeAmendments.Where(n => n.TargetSectionId ==
+                    paragraph.OperativeParagraphId);
+                    if (changeAmendments.Any())
+                        list.AddRange(changeAmendments);
+
+                    var moveAmendments = this.Resolution.OperativeSection.MoveAmendments.Where(n => n.TargetSectionId ==
+                    paragraph.OperativeParagraphId);
+                    if (moveAmendments.Any())
+                        list.AddRange(moveAmendments);
+                }
+
+                list.AddRange(this.Resolution.OperativeSection.AddAmendments);
+                return list;
+            }
+        }
 
         public bool VerifyTanAndRemoveItIfExisting(ResolutionEventArgs args)
         {
@@ -136,7 +184,6 @@ namespace MUNityClient.ViewModel
             if (!_isOnlineResolution)
             {
                 var paragraph = this.Resolution.CreatePreambleParagraph();
-                this.PreambleParagraphAdded?.Invoke(this, new PreambleParagraphAddedEventArgs(this.Resolution.ResolutionId, paragraph));
                 this._resolutionService.SaveOfflineResolution(this.Resolution);
             }
             else

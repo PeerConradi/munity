@@ -27,19 +27,19 @@ namespace MunityClientTest.ResolutionTests
             Assert.NotNull(viewModel);
         }
 
-        [Test]
-        public void TestAddPreambleParagraphOffline()
-        {
-            var resolution = new Resolution();
-            bool saveWasRaised = false;
-            _resolutionService.Setup(n => n.SaveOfflineResolution(It.IsAny<Resolution>())).Callback(delegate { saveWasRaised = true; });
-            var viewModel = ResolutionViewModel.CreateViewModelOffline(resolution, _resolutionService.Object);
-            bool wasRaised = false;
-            viewModel.PreambleParagraphAdded += delegate { wasRaised = true; };
-            viewModel.AddPreambleParagraph();
-            Assert.IsTrue(wasRaised);
-            Assert.IsTrue(saveWasRaised);
-            Assert.IsTrue(viewModel.Resolution.Preamble.Paragraphs.Any());
-        }
+        //[Test]
+        //public void TestAddPreambleParagraphOffline()
+        //{
+        //    var resolution = new Resolution();
+        //    bool saveWasRaised = false;
+        //    _resolutionService.Setup(n => n.SaveOfflineResolution(It.IsAny<Resolution>())).Callback(delegate { saveWasRaised = true; });
+        //    var viewModel = ResolutionViewModel.CreateViewModelOffline(resolution, _resolutionService.Object);
+        //    bool wasRaised = false;
+        //    viewModel.PreambleParagraphAdded += delegate { wasRaised = true; };
+        //    viewModel.AddPreambleParagraph();
+        //    Assert.IsTrue(wasRaised);
+        //    Assert.IsTrue(saveWasRaised);
+        //    Assert.IsTrue(viewModel.Resolution.Preamble.Paragraphs.Any());
+        //}
     }
 }

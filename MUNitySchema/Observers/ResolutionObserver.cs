@@ -42,6 +42,14 @@ namespace MUNity.Observers
 
         public event EventHandler<PreambleParagraphTextChangedEventArgs> PreambleParagraphTextChanged;
 
+        public event EventHandler<PreambleParagraphCommentTextChangedEventArgs> PreambleParagraphCommentTextChanged;
+
+        public event EventHandler<PreambleParagraphRemovedEventArgs> PreambleParagraphRemoved;
+
+        public event EventHandler<OperativeSectionChangedEventArgs> OperativeSectionChanged;
+
+        public event EventHandler<OperativeParagraphChangedEventArgs> OperativeParagraphChanged;
+
         /// <summary>
         /// Creates a new Resolution Worker instance.
         /// </summary>
@@ -55,13 +63,19 @@ namespace MUNity.Observers
             }
             if (Resolution.Preamble != null)
             {
-                this.PreambleSectionObserver = PreambleSectionObserver.CreateWorker(this, Resolution.Preamble);
+                this.PreambleSectionObserver = new PreambleSectionObserver(this, Resolution.Preamble);
                 this.PreambleSectionObserver.ParagraphAdded += (sender, args) => this.PreambleParagraphAdded?.Invoke(sender, args);
                 this.PreambleSectionObserver.ParagraphTextChanged += (sender, args) => this.PreambleParagraphTextChanged?.Invoke(sender, args);
+                this.PreambleSectionObserver.ParagraphCommentTextChanged += (sender, args) => this.PreambleParagraphCommentTextChanged?.Invoke(sender, args);
+                this.PreambleSectionObserver.ParagraphRemoved += (sender, args) => this.PreambleParagraphRemoved?.Invoke(sender, args);
+
+
             }
             if (Resolution.OperativeSection != null)
             {
-                OperativeSectionObserver.CreateWorker(this, Resolution.OperativeSection);
+                this.OperativeSectionObserver = new OperativeSectionObserver(this, Resolution.OperativeSection);
+                this.OperativeSectionObserver.SectionChanged += (sender, args) => this.OperativeSectionChanged?.Invoke(sender, args);
+                this.OperativeSectionObserver.OperativeParagraphChanged += (sender, args) => this.OperativeParagraphChanged?.Invoke(sender, args);
             }
         }
 

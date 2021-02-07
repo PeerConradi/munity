@@ -33,6 +33,8 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetNameNoPropertyChanged(string name) => _name = name;
+
         private bool _isLocked = false;
         /// <summary>
         /// Is the paragraph marked as locked. This will not effect the logic you can still submit amendments
@@ -47,6 +49,8 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetIsLockedNoPropertyChanged(bool isLocked) => _isLocked = isLocked;
+
         private bool _isVirtual = false;
         /// <summary>
         /// Virtual is true when the Operative Paragraph comes from an AddAmendment and doesn't really count as an
@@ -60,6 +64,8 @@ namespace MUNity.Models.Resolution
                 NotifyPropertyChanged(nameof(IsVirtual));
             } 
         }
+
+        public void SetIsVirtualNoPropertyChanged(bool isVirtual) => _isVirtual = isVirtual;
 
         private string _text = "";
 
@@ -79,6 +85,8 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetTextNoPropertyChanged(string text) => _text = text;
+
         private bool _visible = true;
         /// <summary>
         /// Is the operative Paragraph visible inside the views.
@@ -91,6 +99,8 @@ namespace MUNity.Models.Resolution
                 NotifyPropertyChanged(nameof(Visible));
             }
         }
+
+        public void SetVisibleNoPropertyChanged(bool visible) => _visible = visible;
 
         private bool _corrected = false;
         /// <summary>
@@ -107,10 +117,26 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        public void SetCorrectedNoPropertyChanged(bool corrected) => _corrected = corrected;
+
         /// <summary>
         /// Child paragraphs of this operative paragraph.
         /// </summary>
         public ObservableCollection<OperativeParagraph> Children { get; set; }
+
+        private string _comment = "";
+        public string Comment
+        {
+            get => _comment;
+            set
+            {
+                if (_comment == value) return;
+                _comment = value;
+                NotifyPropertyChanged(nameof(Comment));
+            }
+        }
+
+        public void SetCommentNoPropertyChanged(string comment) => _comment = comment;
 
         /// <summary>
         /// The comments of this operative paragraph.

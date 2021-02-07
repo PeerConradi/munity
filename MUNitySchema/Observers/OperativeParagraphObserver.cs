@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MUNity.Models.Resolution;
 using System.Linq;
+using MUNity.Models.Resolution.EventArguments;
 
 namespace MUNity.Observers
 {
@@ -12,15 +13,25 @@ namespace MUNity.Observers
     /// </summary>
     public class OperativeParagraphObserver
     {
+        public event EventHandler<OperativeParagraphChangedEventArgs> ParagraphChanged;
+
         private OperativeSectionObserver _sectionWorker;
 
         private OperativeParagraph _paragraph;
 
-        private OperativeParagraphObserver (OperativeSectionObserver sectionWorker, OperativeParagraph paragraph)
+        public string ResolutionId => _sectionWorker?.ResolutionId;
+
+        public OperativeParagraphObserver (OperativeSectionObserver sectionWorker, OperativeParagraph paragraph)
         {
             _sectionWorker = sectionWorker;
             _paragraph = paragraph;
             paragraph.Children.CollectionChanged += Children_CollectionChanged;
+            paragraph.PropertyChanged += Paragraph_PropertyChanged;
+        }
+
+        private void Paragraph_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            this.ParagraphChanged?.Invoke(this, new OperativeParagraphChangedEventArgs(ResolutionId, _paragraph));
         }
 
         private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -29,20 +40,10 @@ namespace MUNity.Observers
             {
                 foreach(var paragraph in e.NewItems.OfType<OperativeParagraph>())
                 {
-                    OperativeParagraphObserver.CreateObserver(_sectionWorker, paragraph);
+                    var subParagraphObserver = new OperativeParagraphObserver(_sectionWorker, paragraph);
+                    subParagraphObserver.ParagraphChanged += (sdr, args) => this.ParagraphChanged?.Invoke(sdr, args);
                 }
             }
-        }
-
-        /// <summary>
-        /// Create an instance of this Worker/Observer for a given operative Section
-        /// </summary>
-        /// <param name="sectionWorker"></param>
-        /// <param name="paragraph"></param>
-        /// <returns></returns>
-        public static OperativeParagraphObserver CreateObserver (OperativeSectionObserver sectionWorker, OperativeParagraph paragraph)
-        {
-            return new OperativeParagraphObserver(sectionWorker, paragraph);
         }
     }
 }

@@ -115,5 +115,10 @@ namespace MUNity.Models.Resolution
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public void SetTextNoNotifyPropertyChanged(string text)
+        {
+            this._text = text;
+        }
     }
 }

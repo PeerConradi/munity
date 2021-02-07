@@ -17,6 +17,10 @@ namespace MUNity.Observers
 
         public event EventHandler<PreambleParagraphTextChangedEventArgs> ParagraphTextChanged;
 
+        public event EventHandler<PreambleParagraphCommentTextChangedEventArgs> ParagraphCommentTextChanged;
+
+        public event EventHandler<PreambleParagraphRemovedEventArgs> ParagraphRemoved;
+
         private List<PreambleParagraphObserver> _subWorkers = new List<PreambleParagraphObserver>();
 
         private ResolutionObserver _resolutionWorker;
@@ -25,27 +29,17 @@ namespace MUNity.Observers
 
         public string ResolutionId => this._resolutionWorker.Resolution.ResolutionId;
 
-        private PreambleSectionObserver(ResolutionObserver resolutionWorker, ResolutionPreamble preamble)
+        public PreambleSectionObserver(ResolutionObserver resolutionWorker, ResolutionPreamble preamble)
         {
             _resolutionWorker = resolutionWorker;
             _preamble = preamble;
             preamble.Paragraphs.CollectionChanged += Paragraphs_CollectionChanged;
             foreach(var paragraph in preamble.Paragraphs)
             {
-                var paragraphObserver = PreambleParagraphObserver.CreateObserver(this, paragraph);
+                var paragraphObserver = new PreambleParagraphObserver(this, paragraph);
                 paragraphObserver.PreambleTextChanged += (sender, args) => this.ParagraphTextChanged?.Invoke(sender, args);
+                paragraphObserver.CommentTextChanged += (sender, args) => this.ParagraphCommentTextChanged?.Invoke(sender, args);
             }
-        }
-
-        /// <summary>
-        /// Creates a preamble section observer
-        /// </summary>
-        /// <param name="resolutionWorker"></param>
-        /// <param name="preamble"></param>
-        /// <returns></returns>
-        public static PreambleSectionObserver CreateWorker(ResolutionObserver resolutionWorker, ResolutionPreamble preamble)
-        {
-            return new PreambleSectionObserver(resolutionWorker, preamble);
         }
 
         private void Paragraphs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -63,8 +57,17 @@ namespace MUNity.Observers
                 }
                 foreach(var newItem in newItems)
                 {
-                    var paragraphObserver = PreambleParagraphObserver.CreateObserver(this, newItem);
+                    var paragraphObserver = new PreambleParagraphObserver(this, newItem);
                     paragraphObserver.PreambleTextChanged += (s, args) => this.ParagraphTextChanged?.Invoke(s, args);
+                }
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                var removedItem = e.OldItems.OfType<PreambleParagraph>().SingleOrDefault();
+                if (removedItem != null)
+                {
+                    this._subWorkers.RemoveAll(n => n.ParagraphId == removedItem.PreambleParagraphId);
+                    this.ParagraphRemoved?.Invoke(this, new PreambleParagraphRemovedEventArgs(ResolutionId, removedItem.PreambleParagraphId));
                 }
             }
         }

@@ -66,6 +66,22 @@ namespace MUNity.Models.Resolution
             }
         }
 
+        private string _comment = "";
+        public string Comment
+        {
+            get => _comment;
+            set
+            {
+                _comment = value;
+                NotifyPropertyChanged(nameof(Comment));
+            }
+        }
+
+        public void SetCommentTextNoNotifyPropertyChanged(string text)
+        {
+            this._comment = text;
+        }
+
         /// <summary>
         /// A List of comments for this paragraph. This will become an Observable collection in higher versions.
         /// </summary>

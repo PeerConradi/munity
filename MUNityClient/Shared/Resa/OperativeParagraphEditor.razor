@@ -20,11 +20,11 @@
                 @* Up/Down Buttons *@
                 <div class="col-3 col-sm-2 p-0">
                     <button disabled="@(Index == 0)" class="col-12 p-0 text-center p-3 custom-button h-50"
-                        @onclick="() => OnMoveEvent.InvokeAsync(true)" title="Nach oben verschieben" alt="put higher"><i
+                         title="Nach oben verschieben" alt="put higher"><i
                             class="fas fa-lg fa-caret-up"></i></button>
                     <button disabled="@(ResolutionViewModel != null && Index == ResolutionViewModel.Resolution.OperativeSection.Paragraphs.Count - 1)"
                         class="col-12 p-0 text-center p-3 custom-button h-50"
-                        @onclick="() => OnMoveEvent.InvokeAsync(false)" title="Nach unten verschieben" alt="put lower"><i
+                         title="Nach unten verschieben" alt="put lower"><i
                             class="fas fa-lg fa-caret-down"></i></button>
                 </div>
                 @* Input Field *@
@@ -62,7 +62,7 @@
                         }
                     </div>
                     <div role="button" type="button" class="col-12 p-0 text-center px-2 py-3 custom-button text-danger"
-                        alt="delete" title="Löschen" @onclick="() => OnDeleteEvent.InvokeAsync(null)">
+                        alt="delete" title="Löschen">
                         <i class="fas fa-lg fa-trash"></i></div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="col-1 d-flex align-items-center justify-content-end">
                     <div type="button" role="button" @onclick="@(() => commentsExpanded = !commentsExpanded)">
-                        <i class="fas fa-comment fa-lg text-primary"></i>
+                        <i class="fas fa-comment fa-lg @(string.IsNullOrEmpty(this.Paragraph.Comment) ? "text-primary" : "text-warning") text-primary"></i>
                     </div>
                 </div>
             </div>
@@ -100,19 +100,9 @@
         </div>
         @* Comment Panel *@
         <div class="m-0 col comments @(commentsExpanded ? "comments-expanded" : "comments-collapsed") p-0">
-                <textarea placeholder="Kommentare..." value="@this.Comment" @oninput="@OnCommentChange"
+                <textarea placeholder="Kommentare..." @bind="this.Paragraph.Comment" @bind:event="oninput"
                           class="form-control h-100 custom-input-field px-0 p-2 no-scrollbar"></textarea>
         </div>
-    </div>
-}
-else if (!Dismissed)
-{
-    <div class="alert alert-warning alert-dismissible">
-        Ich bin ein Geist, aber du kannst mich
-        <button class="btn btn-sm btn-secondary" @onclick="BringBack">wiederbeleben</button>.
-        <button type="button" class="close" aria-label="Close" @onclick="@(() => Dismissed = true)">
-            <span aria-hidden="true">&times;</span>
-        </button>
     </div>
 }
 
@@ -125,63 +115,25 @@ else if (!Dismissed)
 
     public int Index => this.ResolutionViewModel?.Resolution.OperativeSection?.Paragraphs?.IndexOf(this.Paragraph) ?? -1;
 
-    public bool Dismissed { get; set; } = false;
-
     public Boolean commentsExpanded = false;
 
-    public string Comment
-    {
-        get
-        {
-            if (!this.Paragraph.Comments.Any())
-            {
-                this.Paragraph.Comments.Add(new MUNity.Models.Resolution.Comment());
-            }
-
-            return this.Paragraph.Comments.First().Text;
-        }
-    }
-
-    [Parameter]
-    //Event called when the arrow up/down buttons are called. Returns true if direction is updwards, false if downwards
-    public EventCallback<Boolean> OnMoveEvent { get; set; }
-
-    [Parameter]
-    //Event called when the arrow up/down buttons are called. Returns true if direction is updwards, false if downwards
-    public EventCallback OnDeleteEvent { get; set; }
 
     protected override void OnInitialized()
     {
         if (Paragraph != null && ResolutionViewModel != null)
         {
+            ResolutionViewModel.OperativeParagraphChangedFromExtern += OperativeParagraphChangedFromExtern;
             //ResolutionViewModel.OperativeParagraphChanged += OperativeParagraphChanged;
         }
         base.OnInitialized();
     }
 
-    private void OnCommentChange(ChangeEventArgs args)
+    private void OperativeParagraphChangedFromExtern(object sender, OperativeParagraphChangedEventArgs args)
     {
-        if (!this.Paragraph.Comments.Any())
+        if (args.Paragraph.OperativeParagraphId == this.Paragraph.OperativeParagraphId)
         {
-            this.Paragraph.Comments.Add(new MUNity.Models.Resolution.Comment());
+            this.StateHasChanged();
         }
-        this.Paragraph.Comments.First().Text = (string)args.Value;
-        //this.Paragraph.InvokeNoticesChanged();
-    }
-
-    public void RemoveOperativeParagraph()
-    {
-        this.ResolutionViewModel.Resolution.OperativeSection.AddAmendments.RemoveAll(n => n.TargetSectionId == this.Paragraph.OperativeParagraphId);
-        this.ResolutionViewModel.Resolution.OperativeSection.ChangeAmendments.RemoveAll(n => n.TargetSectionId ==
-        this.Paragraph.OperativeParagraphId);
-        this.ResolutionViewModel.Resolution.OperativeSection.DeleteAmendments.RemoveAll(n => n.TargetSectionId ==
-        this.Paragraph.OperativeParagraphId);
-        this.ResolutionViewModel.Resolution.OperativeSection.Paragraphs.Remove(this.Paragraph);
-    }
-
-    public void BringBack()
-    {
-        this.ResolutionViewModel.Resolution.OperativeSection.Paragraphs.Add(this.Paragraph);
     }
 
 }

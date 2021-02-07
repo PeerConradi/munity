@@ -28,6 +28,26 @@ namespace MUNityClient.Pages.Resa
         private bool fullUpdate = false;
         private ViewModel.ResolutionViewModel _viewModel;
 
+        private MUNityClient.Shared.Bootstrap.Modal AddAmendmentModal { get; set; }
+
+        private MUNityClient.Shared.Resa.NewAmendmentForm NewAmendmentForm { get; set; }
+
+
+        private void NewAmendment()
+        {
+            var amendment = this.NewAmendmentForm.GetAmendment();
+            if (amendment == null)
+            {
+                // TODO: Meldung zeigen Resolution konnte nicht erstellt werden!
+            }
+            this.AddAmendmentModal.Close();
+        }
+
+        public void AmendmentInteracted()
+        {
+            this.StateHasChanged();
+        }
+
         protected override async Task OnInitializedAsync()
         {
             var localResolution = await this.resolutionService.GetStoredResolution(Id);
@@ -45,6 +65,10 @@ namespace MUNityClient.Pages.Resa
                 {
                     this._viewModel = await this.resolutionService.Subscribe(onlineResolution);
                     this._viewModel.SyncMode = ViewModel.ResolutionViewModel.SyncModes.OnlineButNotSyncing;
+                    this._viewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
+                    this._viewModel.OperativeSeciontChangedFromExtern += delegate { this.StateHasChanged(); };
+                    onlineResolution.Preamble.Paragraphs.CollectionChanged += delegate { this.StateHasChanged(); };
+
                 }
                 else
                 {

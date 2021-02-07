@@ -289,6 +289,50 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        [Route("[action]")]
+        [HttpPut]
+        [AllowAnonymous]
+        public async Task<ActionResult> ChangePreambleParagraphCommentText([FromBody]PreambleParagraphCommentTextChangedEventArgs body)
+        {
+            if (!await CanUserEditResolution(body.ResolutionId))
+                return Forbid();
+
+            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
+            if (resolution.ResolutionId == null) return NotFound();
+            var targetParagraph = resolution.Preamble?.Paragraphs.FirstOrDefault(n => n.PreambleParagraphId == body.PreambleParagraphId);
+            if (targetParagraph == null) return NotFound();
+            // Ingore the differenz comments for now and change the Comment Property in the preamble paragraph
+            //var targetComment = targetParagraph.Comments.FirstOrDefault(n => n.CommentId == body.CommentId);
+            //if (targetComment == null) return NotFound();
+            //targetComment.Text = body.Text;
+
+            targetParagraph.Comment = body.Text;
+
+            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
+            _ = this._hubContext.Clients.Group(body.ResolutionId).PreambleParagraphCommentTextChanged(body);
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        [AllowAnonymous]
+        public async Task<ActionResult> DeleteResolutionPreambleParagraph([FromBody]PreambleParagraphRemovedEventArgs args)
+        {
+            if (!await CanUserEditResolution(args.ResolutionId))
+                return Forbid();
+
+            var resolution = await this._resolutionService.GetResolution(args.ResolutionId);
+            if (resolution.ResolutionId == null) return NotFound();
+            var targetParagraph = resolution.Preamble?.Paragraphs.FirstOrDefault(n => n.PreambleParagraphId == args.PreambleParagraphId);
+            if (targetParagraph == null) return NotFound();
+
+            resolution.Preamble.Paragraphs.Remove(targetParagraph);
+
+            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
+            _ = this._hubContext.Clients.Group(args.ResolutionId).PreambleParagraphRemoved(args);
+            return Ok();
+        }
+
         #endregion
 
         /// <summary>
@@ -312,45 +356,45 @@ namespace MUNityCore.Controllers
         }
 
         [Route("[action]")]
-        [HttpPatch]
+        [HttpPut]
         [AllowAnonymous]
-        public async Task<ActionResult> UpdatePreambleParagraph(string resolutionId, string tan, [FromBody] PreambleParagraph paragraph)
+        public async Task<ActionResult> UpdateOperativeParagraph([FromBody]OperativeParagraphChangedEventArgs body)
         {
-            if (!await CanUserEditResolution(resolutionId))
+            if (!await CanUserEditResolution(body.ResolutionId))
                 return Forbid();
 
-            var resolution = await this._resolutionService.GetResolution(resolutionId);
+            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution == null) return NotFound("Resolution with the given id not found!");
-            var result = await this._resolutionService.UpdatePreambleParagraph(resolution, paragraph);
-            
+            var targetParagraph = resolution.OperativeSection?.FirstOrDefault(n => n.OperativeParagraphId == body.Paragraph.OperativeParagraphId);
+            if (targetParagraph == null) return NotFound("Operative Paragraph not found");
+            if (targetParagraph.GetHashCode() == body.Paragraph.GetHashCode()) 
+                return Ok();
+
+            var result = await this._resolutionService.UpdateOperativeParagraph(resolution, body.Paragraph);
             if (result)
             {
-                await this._hubContext.Clients.Group(resolutionId)
-                    .PreambleParagraphChanged(new PreambleParagraphChangedArgs(tan, resolutionId, paragraph));
+                _ = this._hubContext.Clients.Group(body.ResolutionId).OperativeParagraphChanged(body).ConfigureAwait(false);
                 return Ok();
             }
-            return Problem();
+            return Problem(detail: "Unable to update the operative paragraph because it may wasnt found");
         }
 
         [Route("[action]")]
-        [HttpPatch]
+        [HttpPut]
         [AllowAnonymous]
-        public async Task<ActionResult> UpdateOperativeParagraph(string resolutionId, string tan, [FromBody]OperativeParagraph paragraph)
+        public async Task<ActionResult> UpdateOperativeSection([FromBody] OperativeSectionChangedEventArgs body)
         {
-            if (!await CanUserEditResolution(resolutionId))
+            if (!await CanUserEditResolution(body.ResolutionId))
                 return Forbid();
 
-            var resolution = await this._resolutionService.GetResolution(resolutionId);
+            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution == null) return NotFound("Resolution with the given id not found!");
-            var result = await this._resolutionService.UpdateOperativeParagraph(resolution, paragraph);
+            if (body.Section.GetHashCode() == resolution.OperativeSection.GetHashCode()) return Ok();
 
-            if (result)
-            {
-                await this._hubContext.Clients.Group(resolutionId)
-                    .OperativeParagraphChanged(new OperativeParagraphChangedEventArgs(tan, resolutionId, paragraph));
-                return Ok();
-            }
-            return Problem();
+            resolution.OperativeSection = body.Section;
+            _ = this._resolutionService.SaveResolution(resolution);
+            _ = this._hubContext.Clients.Group(body.ResolutionId).OperativeSectionChanged(body).ConfigureAwait(false);
+            return Ok();
         }
 
         [Route("[action]")]

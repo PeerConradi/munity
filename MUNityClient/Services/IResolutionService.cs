@@ -29,5 +29,15 @@ namespace MUNityClient.Services
         Task<HttpResponseMessage> ResolutionAddPreambleParagraph(PreambleParagraphAddedEventArgs args);
 
         Task<HttpResponseMessage> ResolutionPreambleParagraphTextChanged(PreambleParagraphTextChangedEventArgs args);
+
+        Task<HttpResponseMessage> ResolutionPreambleParagraphCommentTextChanged(PreambleParagraphCommentTextChangedEventArgs args);
+
+        Task<HttpResponseMessage> DeleteResolutionPreambleParagraph(PreambleParagraphRemovedEventArgs args);
+
+        Task<HttpResponseMessage> UpdateOperativeParagraph(OperativeParagraphChangedEventArgs args);
+
+        Task<HttpResponseMessage> UpdateOperativeSection(OperativeSectionChangedEventArgs args);
+
+        string GenerateTan();
     }
 }

@@ -32,44 +32,36 @@ namespace MUNityClient.Services
 
         public Task<HttpResponseMessage> UpdateResolutionHeaderName(HeaderStringPropChangedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderName", JsonContent.Create(args));
         }
-            
 
         public Task<HttpResponseMessage> UpdateResolutionHeaderFullName(HeaderStringPropChangedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderFullName", JsonContent.Create(args));
         }
             
 
         public Task<HttpResponseMessage> UpdateResolutionHeaderTopic(HeaderStringPropChangedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderTopic", JsonContent.Create(args));
         }
 
         public Task<HttpResponseMessage> UpdateResolutionHeaderAgendaItem(HeaderStringPropChangedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderAgendaItem", JsonContent.Create(args));
         }
 
         public Task<HttpResponseMessage> UpdateResolutionHeaderSession(HeaderStringPropChangedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderSession", JsonContent.Create(args));
         }
 
         public Task<HttpResponseMessage> UpdateResolutionHeaderSubmitterName(HeaderStringPropChangedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderSubmitterName", JsonContent.Create(args));
         }
         public Task<HttpResponseMessage> UpdateResolutionHeaderCommitteeName(HeaderStringPropChangedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateHeaderCommitteeName", JsonContent.Create(args));
         }
 
@@ -77,14 +69,32 @@ namespace MUNityClient.Services
 
         public Task<HttpResponseMessage> ResolutionAddPreambleParagraph(PreambleParagraphAddedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PostAsync($"/api/Resolution/AddPreambleParagraph", JsonContent.Create(args));
         }
 
         public Task<HttpResponseMessage> ResolutionPreambleParagraphTextChanged(PreambleParagraphTextChangedEventArgs args)
         {
-            args.Tan = GenerateTan();
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/ChangePreambleParagraphText", JsonContent.Create(args));
+        }
+
+        public Task<HttpResponseMessage> ResolutionPreambleParagraphCommentTextChanged(PreambleParagraphCommentTextChangedEventArgs args)
+        {
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/ChangePreambleParagraphCommentText", JsonContent.Create(args));
+        }
+
+        public Task<HttpResponseMessage> DeleteResolutionPreambleParagraph(PreambleParagraphRemovedEventArgs args)
+        {
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/DeleteResolutionPreambleParagraph", JsonContent.Create(args));
+        }
+
+        public Task<HttpResponseMessage> UpdateOperativeParagraph(OperativeParagraphChangedEventArgs args)
+        {
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateOperativeParagraph", JsonContent.Create(args));
+        }
+
+        public Task<HttpResponseMessage> UpdateOperativeSection(OperativeSectionChangedEventArgs args)
+        {
+            return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateOperativeSection", JsonContent.Create(args));
         }
 
         /// <summary>
