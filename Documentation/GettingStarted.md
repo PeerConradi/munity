@@ -9,19 +9,18 @@ You need to have the following software installed:
 
 __Visual Studio 2019__
 
-It up to you if you want to use the Community, Professional or Ultimate Version.
+It up to you if you want to use the Community, Professional or Enterprise Version.
 Make sure that when installing you have checked the ASP.NET Webdevelopment package and 
 the Crossplatform .NET Development.
 
 __.NET Core Runtime and SDK__
 Should the Runtime and SDK not be installed automatically with Visual Studio
 you can go here to Install the latest Version: https://dotnet.microsoft.com/download
-The project is created with Version 3.1.
+The project uses .NET 5
 
 __MariaDB__
 
-The Project uses a MariaDB. Until we are able to host this inside a Docker you
-have to start a MariaDB Service. You can get it from here: https://mariadb.org/download/
+The Project uses a MariaDB. You can get it from here: https://mariadb.org/download/
 or use a tool like [Xampp](https://www.apachefriends.org/de/index.html).
 
 __MongoDB__
@@ -31,8 +30,24 @@ https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/.
 
 ## The Projects
 
-After cloning the repository and opening the Solution File ```MunityAngular.sln``` you should find
-two project inside the Project-Explorer: MUNityAngular and MUNityTest.
+After cloning the repository and opening the Solution File ```MunityCore.sln```.
+
+### MUNityClient
+
+This is a Blazor Web-Assembly Client. MUNity switched late 2020 from Angular to Blazor. The Blazor project is organized into a the main Folders:
+* Pages - contains all Components that have a route to them
+* Services - Injectable Services that communicate with the API and Storage
+* Shared - contains the different sub components
+* ViewModel - contains ViewModels that store data, and listens to websockets or the storage.
+
+### MUNityCore
+Is the WebAPI 2.0 project that access the MariaDB and MongoDB and will serve the Data over REST.
+
+### MUNitySchema
+The Shared code between the MUNityCore and MUNityClient. The Schema can also be found as a nuget package: https://www.nuget.org/packages/MUNityBase/
+This package is maintained by Peer Conradi.
+
+__Every project also has an Unit Test Project.__
 
 ## Developing and Debugging
 
