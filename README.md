@@ -10,9 +10,10 @@ MUNity is a work in progress to create and manage Model United Nations Conferenc
 
 ## General structure
 
-MUNity works with a REST Backend that is contained inside this project. There is also a MUNity Angular project for a frontend.
-
-![](/Documentation/img/GeneralStructure.png)
+There are 6 different projects in this project solution. 
+* The Backend, a WebAPI 2.0
+* The Frontend, a Blazor Web-Assembly Project
+* The MunitySchema, a shared code containing structures and logic that is shared between the FrontEnd and Backend. You can also find this one on nuget.
 
 ## Status
 This application is under development and cannot be used at the moment. Please check later to see some progress.
@@ -22,9 +23,9 @@ This application is under development and cannot be used at the moment. Please c
 | ------------------- | ----------------------------------- | ---------------------------------------------------------------- |
 | User Managment      | ![10%](https://progress-bar.dev/10) | Started                                                          |
 | ConferenceManagment | ![21%](https://progress-bar.dev/21) | API Routes needed                                                |
-| ResaEditor          | ![40%](https://progress-bar.dev/40) | Move And Add Amendment missing. Performance improvments neeeded. |
-| Speakerlist         | ![50%](https://progress-bar.dev/50) | Complete Rework in progress                                      |
-| Simulation          | ![5%](https://progress-bar.dev/5)   | __ON HOLD__                                                      |
+| ResaEditor          | ![40%](https://progress-bar.dev/50) | Rework at offline Mode needed. |
+| Speakerlist         | ![50%](https://progress-bar.dev/90) | __NEEDS Tests__                                     |
+| Simulation          | ![5%](https://progress-bar.dev/20)   | Reworking the different functions.                              |
 | Administration      | ![5%](https://progress-bar.dev/5)   | First API Endpoints                                              |
 | Dockerize           | ![80%](https://progress-bar.dev/80) | Environment Configurations needed for DbConnection Strings       |
 
@@ -60,6 +61,6 @@ _The Live Version may not match the current GitHub Version_
 
 ## License Information
 
-You are not allowed to sell this project as a SaaS or PaaS without permission. You can use it for development or any of your conferences.
+You are not allowed to sell this project as a SaaS or PaaS without permission. You are allowed use it for development under GPL-3 or install it on your own servers for your Model United Nations Conference.
 
 
