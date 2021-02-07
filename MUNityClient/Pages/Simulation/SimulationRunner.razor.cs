@@ -72,6 +72,7 @@ namespace MUNityClient.Pages.Simulation
             context.UserConnected += OnUserConnected;
             context.UserDisconnected += OnUserDisconnected;
             context.PhaseChanged += OnPhaseChanged;
+            context.CurrentResolutionChanged += delegate { this.StateHasChanged(); };
             context.HubConnection.Closed += (ex) =>
             {
                 Console.WriteLine($"{DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} Verbindung beendet");

@@ -55,6 +55,8 @@ namespace MUNityCore.Models.Resolution.V2
 
         public string ResolutionId { get; set; }
 
+        public string Name { get; set; }
+
         public MUNityCore.Models.User.MunityUser CreationUser { get; set; }
 
         public DateTime CreationDate { get; set; }
@@ -83,6 +85,8 @@ namespace MUNityCore.Models.Resolution.V2
         /// Links to a MUN Core Committee
         /// </summary>
         public Conference.Committee Committee { get; set; }
+
+        public Simulation.Simulation Simulation { get; set; }
 
 
         public ResolutionAuth(MUNity.Models.Resolution.Resolution resolution)

@@ -1,0 +1,65 @@
+﻿@inject MUNityClient.Services.SimulationService simulationService;
+
+@if (Resolutions == null)
+{
+    <MUNityClient.Shared.Bootstrap.Spinner DisplayText="Resolutionen werden geladen" />
+}
+else
+{
+<div class="row">
+    <div class="col-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Ansehen</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Resolutions.Any())
+                {
+                    <tr>
+                        <td rowspan="3">Keine Resolutionen gefunden</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var resolution in Resolutions)
+                    {
+                        <tr>
+                            <td>@resolution.Name</td>
+                            <td><a @onclick="() => this.SimulationViewModel.CurrentResolutionId = resolution.ResolutionId">Ansehen</a></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (this.SimulationViewModel.IsChair)
+    {
+        <div class="col-12">
+            @* TODO! *@
+            <button class="btn btn-block btn-success" disabled>Neue Resolution</button>
+        </div>
+    }
+
+</div>
+}
+
+@code {
+    [Parameter]
+    public MUNityClient.ViewModel.SimulationViewModel SimulationViewModel { get; set; }
+
+    private List<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo> Resolutions { get; set; } = null;
+
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SimulationViewModel != null)
+        {
+            Resolutions = await simulationService.GetSimulationResolutionInfos(SimulationViewModel.Simulation.SimulationId);
+        }
+        await base.OnInitializedAsync();
+    }
+}

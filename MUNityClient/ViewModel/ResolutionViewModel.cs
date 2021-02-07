@@ -39,6 +39,8 @@ namespace MUNityClient.ViewModel
             }
         }
 
+        
+
         private bool _isOnlineResolution = false;
 
         private MUNity.Observers.ResolutionObserver _resolutionObserver = null;

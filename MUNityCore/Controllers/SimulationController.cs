@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using MUNity.Schema.Simulation;
 using MUNityCore.Extensions.CastExtensions;
 using Microsoft.EntityFrameworkCore;
+using MUNitySchema.Schema.Simulation.Resolution;
 
 namespace MUNityCore.Controllers
 {
@@ -70,34 +71,6 @@ namespace MUNityCore.Controllers
             var currentUser = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
             if (currentUser == null) return null;
             return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
-        }
-
-        [HttpPut]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public ActionResult InitVoting([FromBody]object model)
-        {
-            // Create Model
-            // Token
-            // SimulationId
-            // Name
-            // AllowAbstention
-
-            // Send Model to all sockets
-            throw new NotImplementedException();
-        }
-
-        [HttpPut]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public ActionResult Vote([FromBody]object vote)
-        {
-            // SImulationId
-            // Token
-            // VoteValue (option)
-
-            // Send vote to all sockets
-            throw new NotImplementedException();
         }
 
         [HttpGet]
@@ -302,6 +275,20 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> CreateAgendaItem([FromBody]AgendaItemDto agendaItem)
         {
             throw new NotImplementedException();
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<List<ResolutionSmallInfo>>> SimulationResolutions([FromHeader] string simsimtoken, int simulationId)
+        {
+            var context = _simulationService.GetDatabaseInstance();
+            var validateToken = context.Simulations.Any(n => n.SimulationId == simulationId && n.Users.Any(a => a.Token == simsimtoken));
+            if (!validateToken) return Forbid();
+            var resolutions = await context.ResolutionAuths
+                .Where(n => n.Simulation.SimulationId == simulationId)
+                .Select(n => new ResolutionSmallInfo() { ResolutionId = n.ResolutionId, LastChangedTime = n.LastChangeTime, Name = n.Name}).ToListAsync();
+            return Ok(resolutions);
         }
 
         [HttpPut]

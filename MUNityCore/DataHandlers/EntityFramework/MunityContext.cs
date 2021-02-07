@@ -135,6 +135,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
                 .HasMany(n => n.Users).WithOne(n => n.Auth);
 
 
+            modelBuilder.Entity<ResolutionAuth>().HasOne(n => n.Simulation).WithMany(n => n.Resolutions);
+
             modelBuilder.Entity<SimulationRole>().HasOne(n => n.Simulation).WithMany(n =>
                 n.Roles);
 

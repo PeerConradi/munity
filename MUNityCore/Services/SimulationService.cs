@@ -61,11 +61,6 @@ namespace MUNityCore.Services
             return this._context.Simulations.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.SimulationId == simulationId)?.ListOfSpeakers?.ListOfSpeakersId;
         }
 
-        public string GetResolutionIdOfSimulation(int simulationId)
-        {
-            return this._context.Simulations.Include(n => n.CurrentResolution).FirstOrDefault(n => n.SimulationId == simulationId)?.CurrentResolution?.ResolutionId;
-        }
-
         internal Simulation GetSimulationAndUserByConnectionId(string connectionId)
         {
             return _context.Simulations
@@ -294,6 +289,17 @@ namespace MUNityCore.Services
                 this._context.SimulationUser.Remove(user);
                 await this._context.SaveChangesAsync();
             }
+        }
+
+        /// <summary>
+        /// Refactor methods that use this implementation
+        /// only to get things running
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete("Every call to the database should be behind a service shield. Use this method only to get things running fast and then refactor the code!")]
+        internal MunityContext GetDatabaseInstance()
+        {
+            return this._context;
         }
     }
 }

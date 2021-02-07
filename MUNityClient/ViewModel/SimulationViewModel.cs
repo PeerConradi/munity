@@ -55,6 +55,8 @@ namespace MUNityClient.ViewModel
 
         public event EventHandler<MUNity.Schema.Simulation.CreatedVoteModel> VoteCreated;
 
+        public event EventHandler<string> CurrentResolutionChanged;
+
         public HubConnection HubConnection { get; set; }
 
         private readonly int _simulationId;
@@ -62,6 +64,31 @@ namespace MUNityClient.ViewModel
         public MUNity.Schema.Simulation.SimulationResponse Simulation { get; private set; }
 
         public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
+
+        /// <summary>
+        /// The Id of the resolution that the user is currently reading. Not the one that the committee is currently working on!
+        /// </summary>
+        private string _currentResolutionId = null;
+        public string CurrentResolutionId 
+        {
+            get => _currentResolutionId;
+            set
+            {
+                if (_currentResolutionId == value) return;
+                _currentResolutionId = value;
+                this.CurrentResolutionChanged?.Invoke(this, value);
+            }
+        }
+
+        public bool IsChair
+        {
+            get
+            {
+                var role = this.MyRole?.RoleType;
+                if (role == null) return false;
+                return role == SimulationEnums.RoleTypes.Chairman;
+            }
+        }
 
         public ObservableCollection<IPetition> Petitions { get; set; }
 

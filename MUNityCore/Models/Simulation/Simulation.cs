@@ -47,10 +47,9 @@ namespace MUNityCore.Models.Simulation
         /// </summary>
         public ListOfSpeakers ListOfSpeakers { get; set; }
 
-        /// <summary>
-        /// Die Resolution welche Momentan in dem Gremium behandelt wird.
-        /// </summary>
-        public Resolution.V2.ResolutionAuth CurrentResolution { get; set; }
+        public string CurrentResolutionId { get; set; }
+
+        public List<Resolution.V2.ResolutionAuth> Resolutions { get; set; }
 
 
         public Simulation()

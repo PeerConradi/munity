@@ -17,6 +17,24 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
             Resolution
         }
 
+        public enum ResolutionModes
+        {
+            Read,
+            Write
+        }
+
+        private ResolutionModes _resolutionMode;
+        public ResolutionModes ResolutionMode
+        {
+            get => _resolutionMode;
+            set
+            {
+                if (this._resolutionMode == value) return;
+                this._resolutionMode = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private bool _showMemberlist = true;
         public bool ShowMemberlist
         {

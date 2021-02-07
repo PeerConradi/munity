@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using Blazored.LocalStorage;
 using System.Net.Http;
 using MUNity.Schema.Simulation;
+using MUNitySchema.Schema.Simulation.Resolution;
 
 namespace MUNityClient.Services
 {
@@ -191,6 +192,13 @@ namespace MUNityClient.Services
         {
             var client = this._httpService.HttpClient;
             return await client.GetFromJsonAsync<List<SimulationPreset>>("/api/Simulation/GetPresets");
+        }
+
+        public async Task<List<ResolutionSmallInfo>> GetSimulationResolutionInfos(int simulationId)
+        {
+            var client = await GetSimulationClient(simulationId);
+            if (client == null) return null;
+            return await client.GetFromJsonAsync<List<ResolutionSmallInfo>>($"/api/Simulation/SimulationResolutions?simulationId={simulationId}");
         }
 
         public async Task<List<MUNity.Schema.Simulation.SimulationRoleItem>> GetRoles(int id)
