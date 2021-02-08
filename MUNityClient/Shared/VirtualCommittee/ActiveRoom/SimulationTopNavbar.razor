@@ -1,4 +1,5 @@
 ﻿@using MUNityClient.Shared.VirtualCommittee.ActiveRoom
+@inject Services.SimulationService simulationService;
 
 <!-- As a link -->
 @if (SimulationContext == null)
@@ -39,35 +40,42 @@ else
     <!-- Collapsible wrapper -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <!-- Left links -->
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        @if (LayoutWrapper != null)
-        {
-            <li class="nav-item badge rounded-pill nav-spacing">
-                <a class="nav-link" @onclick="() => LayoutWrapper.ShowMemberlist = !LayoutWrapper.ShowMemberlist"><i class="fas @(LayoutWrapper.ShowMemberlist ? "fa-eye" : "fa-eye-slash")"></i> Mitglieder</a>
-            </li>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            @if (LayoutWrapper != null)
+            {
+                @if (this.SimulationContext.IsChair)
+                {
+                    <li class="nav-item badge rounded-pill nav-spacing">
+                        <a class="nav-link" @onclick="() => simulationService.SetPhase(this.SimulationContext.Simulation.SimulationId, MUNity.Schema.Simulation.SimulationEnums.GamePhases.Lobby)"> Zurück zur Lobby</a>
+                    </li>
+                }
 
-            <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "bg-primary" : "")">
-                <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">Start</a>
-            </li>
+                <li class="nav-item badge rounded-pill nav-spacing">
+                    <a class="nav-link" @onclick="() => LayoutWrapper.ShowMemberlist = !LayoutWrapper.ShowMemberlist"><i class="fas @(LayoutWrapper.ShowMemberlist ? "fa-eye" : "fa-eye-slash")"></i> Mitglieder</a>
+                </li>
 
-            <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "bg-primary" : "")">
-                <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda">Tagesordnung</a>
-            </li>
+                <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "bg-primary" : "")">
+                    <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">Start</a>
+                </li>
 
-            <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "bg-primary" : "")">
-                <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting">Abstimmungen</a>
-            </li>
+                <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "bg-primary" : "")">
+                    <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda">Tagesordnung</a>
+                </li>
 
-            <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "bg-primary" : "")">
-                <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution">Resolution</a>
-            </li>
+                <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "bg-primary" : "")">
+                    <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting">Abstimmungen</a>
+                </li>
 
-            <li class="nav-item badge rounded-pill nav-spacing">
-                <a class="nav-link" @onclick="() => LayoutWrapper.ShowListOfSpeakers = !LayoutWrapper.ShowListOfSpeakers"><i class="fas @(LayoutWrapper.ShowListOfSpeakers ? "fa-eye" : "fa-eye-slash")"></i> Redeliste</a>
-            </li>
-        }
-        
-      </ul>
+                <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "bg-primary" : "")">
+                    <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution">Resolution</a>
+                </li>
+
+                <li class="nav-item badge rounded-pill nav-spacing">
+                    <a class="nav-link" @onclick="() => LayoutWrapper.ShowListOfSpeakers = !LayoutWrapper.ShowListOfSpeakers"><i class="fas @(LayoutWrapper.ShowListOfSpeakers ? "fa-eye" : "fa-eye-slash")"></i> Redeliste</a>
+                </li>
+            }
+
+        </ul>
       <!-- Left links -->
     </div>
     <!-- Collapsible wrapper -->

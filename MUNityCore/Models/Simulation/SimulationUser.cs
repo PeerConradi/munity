@@ -38,6 +38,8 @@ namespace MUNityCore.Models.Simulation
 
         public Simulation Simulation { get; set; }
 
+        public List<Petition> Petitions { get; set; }
+
         public SimulationUser()
         {
             this.Token = Util.Tools.IdGenerator.RandomString(20);

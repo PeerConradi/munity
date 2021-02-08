@@ -106,7 +106,18 @@ namespace MUNityClient.Services
             await client.GetAsync($"/api/Simulation/PickRole?simulationId={simulationId}&roleId={roleId}");
         }
 
-        public async Task<HttpResponseMessage> SetPhase(int simulationId, int phase)
+        public async Task<HttpResponseMessage> SetPhase(int simulationId, SimulationEnums.GamePhases phase)
+        {
+            var client = await GetSimulationClient(simulationId);
+            if (client == null) throw new Exception();
+            var body = new SetPhaseRequest();
+            body.Token = (await GetSimulationToken(simulationId)).Token;
+            body.SimulationId = simulationId;
+            body.SimulationPhase = phase;
+            return await client.PutAsJsonAsync<SetPhaseRequest>($"/api/Simulation/SetPhase", body);
+        }
+
+        public async Task<HttpResponseMessage> SetPhase(int simulationId, MUNity.Schema.Simulation.SetPhaseRequest phase)
         {
             var client = await GetSimulationClient(simulationId);
             if (client == null) throw new Exception();

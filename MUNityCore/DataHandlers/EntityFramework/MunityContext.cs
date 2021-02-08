@@ -74,7 +74,13 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<ListOfSpeakers> ListOfSpeakers { get; set; }
 
-        
+        public DbSet<AgendaItem> AgendaItems { get; set; }
+
+        public DbSet<PetitionType> PetitionTypes { get; set; }
+
+        public DbSet<Petition> Petitions { get; set; }
+
+        public DbSet<PetitionTypeSimulation> SimulationPetitionTypes { get; set; }
 
         public DbSet<Speaker> Speakers { get; set; }
 
@@ -82,6 +88,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
+
             modelBuilder.Entity<Committee>().HasOne(n => n.Conference)
                 .WithMany(a => a.Committees).OnDelete(DeleteBehavior.Cascade);
 

@@ -39,8 +39,9 @@ namespace MUNityCore.Models.Simulation
         // Chat vorerst nicht speichern.
         //public List<AllChatMessage> AllChat { get; set; }
 
-        public List<SimSimRequestModel> Requests { get; set; }
+        public List<AgendaItem> AgendaItems { get; set; }
 
+        public List<PetitionTypeSimulation> PetitionTypes { get; set; }
 
         /// <summary>
         /// Die Redner in diesem Gremium.
@@ -55,7 +56,7 @@ namespace MUNityCore.Models.Simulation
         public Simulation()
         {
             // Legacy Code:
-            Requests = new List<SimSimRequestModel>();
+            //Requests = new List<SimSimRequestModel>();
         }
     }
 }

@@ -1,46 +1,149 @@
 ﻿@using MUNityClient.Models.Simulation;
-@using System.Linq; 
+@using System.Linq;
 
 @inject MUNityClient.Services.SimulationService simulationService;
 @inject NavigationManager navigationManager;
 @* Dies ist eine Teilnehmendenansicht an dieser Stelle werden den Nutzern Rollen zugewiesen bzw. können sich diese ihre Rollen auswählen. *@
 @if (SimulationContext?.Simulation != null)
 {
-    <div class="row col-12 m-0 p-0">
-        <div class="col">
-            <div class="card">
-                <div class="card-header">
-                    <a href="/sim/home" class="btn btn-danger btn-sm">Raum verlassen</a> @SimulationContext.Simulation.Name
+    @if (SimulationContext.MyAuth != null && SimulationContext.MyAuth.CanCreateRole)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-header">
+                    <div class="btn-group">
+                        <button class="btn @((this.CurrentView == Views.Users) ? "btn-primary" : "btn-outline-primary")"
+                                @onclick="() => this.CurrentView = Views.Users">
+                            Teilnehmende
+                        </button>
+                        <button class="btn @((this.CurrentView == Views.Roles) ? "btn-primary" : "btn-outline-primary")"
+                                @onclick="() => this.CurrentView = Views.Roles">
+                            Rollen
+                        </button>
+                        <button class="btn @((this.CurrentView == Views.Petitions) ? "btn-primary" : "btn-outline-primary")"
+                                @onclick="() => this.CurrentView = Views.Petitions">
+                            Anträge
+                        </button>
+                        <button class="btn btn-secondary" @onclick="() => this.simulationService.SetPhase(this.SimulationContext.Simulation.SimulationId, MUNity.Schema.Simulation.SimulationEnums.GamePhases.Online)">Simulation beginnen</button>
+                    </div>
                 </div>
-                <div class="card-body p-0">
-                    @if (SimulationContext.MyAuth.CanCreateRole)
-                    {
-                        <AdminUserList SimulationContext="@SimulationContext"></AdminUserList>
-                    }
-                    else
-                    {
-                        <DefaultUserList SimulationContext="@SimulationContext"></DefaultUserList>
-                    }
-                </div>
-                @*
-                    Rollenerstellung vorerst deaktiviert. Arbeite halt mit den Presets...
-                <div class="card-footer">
-                    @if (Auth != null && Auth.CanCreateRole)
-                    {
-                        <button class="btn btn-block btn-success">Rolle hinzufügen</button>
-                    }
-                </div>
-                *@
+
             </div>
         </div>
+    }
 
-        @if (SimulationContext.MyAuth.CanCreateRole)
+
+    <div class="row">
+        @if (this.CurrentView == Views.Users)
         {
-            <div class="col-4">
-                <SimulationOptions SimulationContext="@SimulationContext"></SimulationOptions>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <a href="/sim/home" class="btn btn-danger btn-sm">Raum verlassen</a> @SimulationContext.Simulation.Name
+                    </div>
+                    <div class="card-body p-0">
+                        @if (SimulationContext.MyAuth.CanCreateRole)
+                        {
+                            <AdminUserList SimulationContext="@SimulationContext"></AdminUserList>
+                        }
+                        else
+                        {
+                            <DefaultUserList SimulationContext="@SimulationContext"></DefaultUserList>
+                        }
+                    </div>
+                    @*
+                            Rollenerstellung vorerst deaktiviert. Arbeite halt mit den Presets...
+                        <div class="card-footer">
+                            @if (Auth != null && Auth.CanCreateRole)
+                            {
+                                <button class="btn btn-block btn-success">Rolle hinzufügen</button>
+                            }
+                        </div>
+                    *@
+                </div>
+            </div>
+
+        }
+        else if (this.CurrentView == Views.Roles)
+        {
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <label>Rollenvorlage anwenden</label>
+                                <select class="form-control">
+                                    <option>MUN-SH Gremium 1 (TODO)</option>
+                                </select>
+                                <small>Informationen zur Vorlage...</small>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-block btn-primary">Anwenden</button>
+                            </div>
+                        </form>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Rollenname</th>
+                                    <th>Iso</th>
+                                    <th>Typ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Testrolle</td>
+                                    <td>ab</td>
+                                    <td>Delegierte*r</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-4">
+                                <input class="form-control" />
+                            </div>
+                            <div class="col-2">
+                                <input class="form-control" />
+                            </div>
+                            <div class="col-4">
+                                <select class="form-control">
+                                    <option>Vorsitzende*r</option>
+                                    <option>Delegierte*r</option>
+                                    <option>Nichtstaatliche*r Akteur*in</option>
+                                    <option>Zuschauer*in</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-success btn-block">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         }
+        else if (this.CurrentView == Views.Petitions)
+        {
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <label>Antragsvorlage anwenden</label>
+                                <select class="form-control">
+                                    <option>DMUN Konferenzen (TODO)</option>
+                                </select>
+                                <small>Informationen zur Vorlage...</small>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-block btn-primary">Anwenden</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+
     </div>
+
 }
 else
 {

@@ -20,6 +20,16 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
     {
         [Parameter]
         public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; } = null;
+
+        public enum Views
+        {
+            Users,
+            Roles,
+            Petitions
+        }
+
+        public Views CurrentView { get; set; } = Views.Users;
+
         private int SelectedRole
         {
             get => SimulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == SimulationContext.MyAuth.SimulationUserId).RoleId;

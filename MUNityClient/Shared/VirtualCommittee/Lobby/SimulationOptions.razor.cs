@@ -27,7 +27,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
 
         private async Task StartPhase()
         {
-            var response = await this.simulationService.SetPhase(SimulationContext.Simulation.SimulationId, (int)MUNity.Schema.Simulation.SimulationEnums.GamePhases.Online);
+            var response = await this.simulationService.SetPhase(SimulationContext.Simulation.SimulationId, MUNity.Schema.Simulation.SimulationEnums.GamePhases.Online);
         }
 
         private async Task ActivatePreset()

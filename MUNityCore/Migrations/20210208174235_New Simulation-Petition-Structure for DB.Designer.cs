@@ -3,14 +3,16 @@ using System;
 using MUNityCore.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityCore.Migrations
 {
     [DbContext(typeof(MunityContext))]
-    partial class MunityContextModelSnapshot : ModelSnapshot
+    [Migration("20210208174235_New Simulation-Petition-Structure for DB")]
+    partial class NewSimulationPetitionStructureforDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -868,33 +870,14 @@ namespace MUNityCore.Migrations
                     b.Property<int>("Ruling")
                         .HasColumnType("int");
 
-                    b.HasKey("PetitionTypeId");
-
-                    b.ToTable("PetitionTypes");
-                });
-
-            modelBuilder.Entity("MUNityCore.Models.Simulation.PetitionTypeSimulation", b =>
-                {
-                    b.Property<long>("PetitionTypeSimulationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("OrderIndex")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PetitionTypeId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("SimulationId")
                         .HasColumnType("int");
 
-                    b.HasKey("PetitionTypeSimulationId");
-
-                    b.HasIndex("PetitionTypeId");
+                    b.HasKey("PetitionTypeId");
 
                     b.HasIndex("SimulationId");
 
-                    b.ToTable("PetitionTypeSimulation");
+                    b.ToTable("PetitionTypes");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Simulation.Simulation", b =>
@@ -970,9 +953,6 @@ namespace MUNityCore.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
 
-                    b.Property<long?>("PetitionTypeSimulationId")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("RoleType")
                         .HasColumnType("int");
 
@@ -980,8 +960,6 @@ namespace MUNityCore.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("SimulationRoleId");
-
-                    b.HasIndex("PetitionTypeSimulationId");
 
                     b.HasIndex("SimulationId");
 
@@ -1548,19 +1526,11 @@ namespace MUNityCore.Migrations
                     b.Navigation("SimulationUser");
                 });
 
-            modelBuilder.Entity("MUNityCore.Models.Simulation.PetitionTypeSimulation", b =>
+            modelBuilder.Entity("MUNityCore.Models.Simulation.PetitionType", b =>
                 {
-                    b.HasOne("MUNityCore.Models.Simulation.PetitionType", "PetitionType")
-                        .WithMany()
-                        .HasForeignKey("PetitionTypeId");
-
-                    b.HasOne("MUNityCore.Models.Simulation.Simulation", "Simulation")
+                    b.HasOne("MUNityCore.Models.Simulation.Simulation", null)
                         .WithMany("PetitionTypes")
                         .HasForeignKey("SimulationId");
-
-                    b.Navigation("PetitionType");
-
-                    b.Navigation("Simulation");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Simulation.Simulation", b =>
@@ -1583,10 +1553,6 @@ namespace MUNityCore.Migrations
 
             modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationRole", b =>
                 {
-                    b.HasOne("MUNityCore.Models.Simulation.PetitionTypeSimulation", null)
-                        .WithMany("AllowedRoles")
-                        .HasForeignKey("PetitionTypeSimulationId");
-
                     b.HasOne("MUNityCore.Models.Simulation.Simulation", "Simulation")
                         .WithMany("Roles")
                         .HasForeignKey("SimulationId");
@@ -1736,11 +1702,6 @@ namespace MUNityCore.Migrations
             modelBuilder.Entity("MUNityCore.Models.Simulation.AgendaItem", b =>
                 {
                     b.Navigation("Petitions");
-                });
-
-            modelBuilder.Entity("MUNityCore.Models.Simulation.PetitionTypeSimulation", b =>
-                {
-                    b.Navigation("AllowedRoles");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Simulation.Simulation", b =>

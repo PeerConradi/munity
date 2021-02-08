@@ -100,10 +100,10 @@ namespace MUNityTest.SimulationTest
 
         [Test]
         [Order(7)]
-        public void TestRoleExists()
+        public async Task TestRoleExists()
         {
             var service = new SimulationService(_context);
-            var roles = service.GetSimulationsRoles(simulationId);
+            var roles = await service.GetSimulationRoles(simulationId);
             Assert.IsTrue(roles.Any(n => n.Name == "Germany"));
         }
 
@@ -127,6 +127,33 @@ namespace MUNityTest.SimulationTest
             var completeSimulation = await service.GetSimulationWithUsersAndRoles(simulationId);
             var user = completeSimulation.Users.FirstOrDefault(n => n.DisplayName == "User1");
             Assert.NotNull(user.Role);
+        }
+
+        [Test]
+        [Order(10)]
+        public async Task TestCreateDefaultPetitionTypes()
+        {
+            var service = new SimulationService(_context);
+            var result = await service.CreateDefaultPetitionTypes();
+            Assert.NotZero(result);
+        }
+
+        [Test]
+        [Order(11)]
+        public async Task AddPetitionTypeToSimulation()
+        {
+            var service = new SimulationService(_context);
+            var petitionType = (await service.GetPetitionTypes()).First();
+            Assert.NotNull(petitionType);
+            var request = new MUNity.Schema.Simulation.Managment.AddPetitionTypeRequestBody()
+            {
+                PetitionTypeId = petitionType.PetitionTypeId,
+                SimulationId = simulationId
+            };
+            await service.AddPetitionTypeToSimulation(request);
+            var list = await service.GetSimulationPetitionTypes(simulationId);
+            Assert.NotNull(list);
+            Assert.IsTrue(list.Any());
         }
     }
 }
