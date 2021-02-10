@@ -16,7 +16,7 @@ namespace MUNityCore.Services
             var auth = new MunityUserAuth()
             {
                 UserAuthName = "Admin",
-                AuthLevel = MunityUserAuth.EAuthLevel.Headadmin,
+                AuthLevel = MUNity.Schema.User.EAuthLevel.Headadmin,
                 CanCreateOrganization = true,
             };
 

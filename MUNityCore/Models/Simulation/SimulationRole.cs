@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNity.Schema.Simulation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,15 +10,6 @@ namespace MUNityCore.Models.Simulation
 {
     public class SimulationRole
     {
-
-        public enum RoleTypes
-        {
-            Spectator,
-            Chairman,
-            Delegate,
-            Moderator,
-            Ngo
-        }
 
         /// <summary>
         /// The Id for this SimulationRole.
@@ -52,6 +44,18 @@ namespace MUNityCore.Models.Simulation
             this.Iso = iso;
             this.Name = name;
             this.RoleType = roleType;
+        }
+
+        internal MUNity.Schema.Simulation.SimulationRoleItem ToSimulationRoleItem()
+        {
+            var item = new MUNity.Schema.Simulation.SimulationRoleItem()
+            {
+                Iso = Iso,
+                Name = Name,
+                RoleType = RoleType,
+                SimulationRoleId = SimulationRoleId
+            };
+            return item;
         }
     }
 }

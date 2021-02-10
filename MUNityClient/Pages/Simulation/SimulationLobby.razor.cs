@@ -32,7 +32,7 @@ namespace MUNityClient.Pages.Simulation
             if (int.TryParse(Id, out id))
             {
                 this._context = await simulationService.Subscribe(id);
-                if (_context != null && _context.Simulation.Phase == MUNity.Schema.Simulation.SimulationEnums.GamePhases.Online)
+                if (_context != null && _context.Simulation.Phase == MUNity.Schema.Simulation.GamePhases.Online)
                 {
                     navigationManager.NavigateTo($"/sim/run/{id}");
                 }

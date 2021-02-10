@@ -137,7 +137,7 @@ namespace MUNityCore.Services
 
             if (user.Auth == null) return false;
 
-            return user.Auth.AuthLevel == MunityUserAuth.EAuthLevel.Headadmin || user.Auth.AuthLevel == MunityUserAuth.EAuthLevel.Admin;
+            return user.Auth.AuthLevel == EAuthLevel.Headadmin || user.Auth.AuthLevel == EAuthLevel.Admin;
         }
 
         public MunityUserAuth CreateAuth(string name)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static MUNity.Schema.Simulation.SimulationEnums;
 
 namespace MUNity.Schema.Simulation
 {

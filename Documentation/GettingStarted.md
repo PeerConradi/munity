@@ -28,6 +28,19 @@ __MongoDB__
 For documents this projects uses a MongoDB. You can get the community edition from here: 
 https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/.
 
+## First run
+
+The projects should run out of the box, if MariaDB and MongoDB are running.
+
+### Starting the backend
+
+When you opened up the Project Solution in Visual Studio you can start the Backend by going to the top of Visual Studio and make sure that ```Debug``` and ```MUNityCore``` are selected. THen hit ```IIS Express``` to run the backend.
+
+### Starting the Frontend
+
+You can start the Frontend by going into the project folder and into the MUNityClient project and open a command line there. Then type:
+```dotnet watch run``` to start the API with HotReload. If you have also a backend running on your System make sure that the API_URL inside ```MUNityClient/Program.cs``` matches the URL and port where the API is running.
+
 ## The Projects
 
 After cloning the repository and opening the Solution File ```MunityCore.sln```.

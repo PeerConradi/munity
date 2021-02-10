@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityClient.Models.Simulation;
 using MUNity.Hubs;
 using MUNity.Schema.Simulation;
 using System.Collections.ObjectModel;
 using MUNity.Models.Simulation;
+using MUNityClient.Services;
 
 namespace MUNityClient.ViewModel
 {
@@ -30,13 +30,13 @@ namespace MUNityClient.ViewModel
         public delegate void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserItem user);
         public event OnUserDisconnected UserDisconnected;
 
-        public delegate void OnPhaseChanged(int sender, MUNity.Schema.Simulation.SimulationEnums.GamePhases phase);
+        public delegate void OnPhaseChanged(int sender, MUNity.Schema.Simulation.GamePhases phase);
         public event OnPhaseChanged PhaseChanged;
 
         public delegate void OnStatusChanged(int sender, string newStatus);
         public event OnStatusChanged StatusChanged;
 
-        public delegate void OnLobbyModeChanged(int sender, MUNity.Schema.Simulation.SimulationEnums.LobbyModes mode);
+        public delegate void OnLobbyModeChanged(int sender, MUNity.Schema.Simulation.LobbyModes mode);
         public event OnLobbyModeChanged LobbyModeChanged;
 
         public delegate void OnChatMessageRecieved(int simId, int userId, string msg);
@@ -59,7 +59,7 @@ namespace MUNityClient.ViewModel
 
         public HubConnection HubConnection { get; set; }
 
-        private readonly int _simulationId;
+        private SimulationService _simulationService;
 
         public MUNity.Schema.Simulation.SimulationResponse Simulation { get; private set; }
 
@@ -86,7 +86,7 @@ namespace MUNityClient.ViewModel
             {
                 var role = this.MyRole?.RoleType;
                 if (role == null) return false;
-                return role == SimulationEnums.RoleTypes.Chairman;
+                return role == RoleTypes.Chairman;
             }
         }
 
@@ -103,19 +103,20 @@ namespace MUNityClient.ViewModel
 
         public SimulationAuthSchema MyAuth { get; private set; }
 
-        private SimulationViewModel(SimulationResponse simulation, SimulationAuthSchema auth)
+        private SimulationViewModel(SimulationResponse simulation, SimulationAuthSchema auth, SimulationService service)
         {
             this.Simulation = simulation;
             this.MyAuth = auth;
+            this._simulationService = service;
 
             HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/simsocket").Build();
             HubConnection.On<int, IEnumerable<SimulationRoleItem>>("RolesChanged", (id, roles) => RolesChanged?.Invoke(id, roles));
             HubConnection.On<int, int, int>("UserRoleChanged", (simId, userId, roleId) => UserRoleChanged?.Invoke(simId, userId, roleId));
             HubConnection.On<int, SimulationUserItem>("UserConnected", (id, user) => UserConnected?.Invoke(id, user));
             HubConnection.On<int, SimulationUserItem>("UserDisconnected", (id, user) => UserDisconnected?.Invoke(id, user));
-            HubConnection.On<int, SimulationEnums.GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
+            HubConnection.On<int, GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
             HubConnection.On<int, string>("StatusChanged", (id, status) => StatusChanged?.Invoke(id, status));
-            HubConnection.On<int, SimulationEnums.LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
+            HubConnection.On<int, LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
             HubConnection.On<int, int, string>("ChatMessageRecieved", (simId, usrId, msg) => ChatMessageRevieved?.Invoke(simId, usrId, msg));
             HubConnection.On<IPetition>("UserPetition", (petition) => UserPetition?.Invoke(petition));
             HubConnection.On<IPetition>("UserPetitionAccepted", (petition) => UserPetitionAccpted?.Invoke(petition));
@@ -124,12 +125,23 @@ namespace MUNityClient.ViewModel
             HubConnection.On<CreatedVoteModel>("VoteCreated", (args) => VoteCreated?.Invoke(this, args));
         }
 
-        public static async Task<SimulationViewModel> CreateHander(SimulationResponse simulation, SimulationAuthSchema auth)
+        public static async Task<SimulationViewModel> CreateHander(SimulationResponse simulation, SimulationAuthSchema auth, SimulationService service)
         {
-            var socket = new SimulationViewModel(simulation, auth);
+            var socket = new SimulationViewModel(simulation, auth, service);
             await socket.HubConnection.StartAsync();
             return socket;
         }
-       
+
+        public async Task StartSimulation()
+        {
+            if (this.Simulation == null) return;
+            await this._simulationService.SetPhase(this.Simulation.SimulationId, GamePhases.Online);
+        }
+
+        public async Task GoToLobby()
+        {
+            if (this.Simulation == null) return;
+            await this._simulationService.SetPhase(this.Simulation.SimulationId, GamePhases.Lobby);
+        }
     }
 }

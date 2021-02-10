@@ -335,26 +335,6 @@ namespace MUNityCore.Controllers
 
         #endregion
 
-        /// <summary>
-        /// Updates a resolution if the user is logged in.
-        /// </summary>
-        /// <param name="tan">A transaction code created by the client to know that the client can ignore the Socket when it is calling back an answer</param>
-        /// <param name="resolution"></param>
-        /// <returns></returns>
-        [Route("[action]")]
-        [HttpPatch]
-        [AllowAnonymous]
-        public async Task<ActionResult<Resolution>> UpdateResolution(string tan, [FromBody]Resolution resolution)
-        {
-            if (!await CanUserEditResolution(resolution.ResolutionId))
-                return Forbid();
-
-            var updatedDocument = await _resolutionService.SaveResolution(resolution);
-            await _hubContext.Clients.Groups(updatedDocument.ResolutionId)
-                .ResolutionChanged(new ResolutionChangedArgs(tan, updatedDocument));
-            return Ok(updatedDocument);
-        }
-
         [Route("[action]")]
         [HttpPut]
         [AllowAnonymous]

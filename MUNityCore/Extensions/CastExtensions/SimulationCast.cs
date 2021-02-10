@@ -15,7 +15,7 @@ namespace MUNityCore.Extensions.CastExtensions
             {
                 Iso = role.Iso,
                 Name = role.Name,
-                RoleType = (SimulationEnums.RoleTypes)role.RoleType,
+                RoleType = role.RoleType,
                 SimulationRoleId = role.SimulationRoleId,
             };
             if (role.Simulation != null && role.Simulation.Users != null)
@@ -40,7 +40,7 @@ namespace MUNityCore.Extensions.CastExtensions
             var mdl = new SimulationResponse()
             {
                 Name = simulation.Name,
-                Phase = (SimulationEnums.GamePhases)simulation.Phase,
+                Phase = simulation.Phase,
                 Roles = simulation.Roles?.Select(n => n.AsRoleItem()).ToList() ?? new List<SimulationRoleItem>(),
                 Users = simulation.Users?.Select(n => n.AsUserItem()).ToList() ?? new List<SimulationUserItem>(),
                 SimulationId = simulation.SimulationId
@@ -65,7 +65,7 @@ namespace MUNityCore.Extensions.CastExtensions
             var mdl = new SimulationListItem()
             {
                 Name = simulation.Name,
-                Phase = (SimulationEnums.GamePhases)simulation.Phase,
+                Phase = simulation.Phase,
                 SimulationId = simulation.SimulationId,
                 UsingPassword = !string.IsNullOrEmpty(simulation.Password)
             };

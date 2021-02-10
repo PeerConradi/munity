@@ -1,0 +1,39 @@
+﻿@if (Roles != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Roles.Any())
+            {
+                <tr>
+                    <td>Keine Rollen</td>
+                </tr>
+            }
+            else
+            {
+                foreach(var role in Roles)
+                {
+                    <tr>
+                        <td>@role.Name</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+
+    
+}
+else
+{
+    <p>Keine Rollen geladen.</p>
+}
+
+@code {
+    [Parameter]
+    public List<MUNity.Schema.Simulation.SimulationRoleItem> Roles { get; set; }
+}

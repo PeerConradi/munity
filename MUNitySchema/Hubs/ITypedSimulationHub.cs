@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using static MUNity.Schema.Simulation.SimulationEnums;
 
 namespace MUNity.Hubs
 {

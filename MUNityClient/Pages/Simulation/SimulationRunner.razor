@@ -92,7 +92,7 @@
                 }
                 else if (string.IsNullOrEmpty(_listOfSpeakerId))
                 {
-                    if (_simulationContext.MyAuth.CanCreateRole || _simulationContext.MyRole.RoleType == MUNity.Schema.Simulation.SimulationEnums.RoleTypes.Chairman)
+                    if (_simulationContext.MyAuth.CanCreateRole || _simulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
                     {
                         <button class="btn btn-success" @onclick="() => InitListOfSpeakers()">Redeliste anlegen</button>
                     }

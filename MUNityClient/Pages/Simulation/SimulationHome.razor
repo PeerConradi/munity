@@ -47,15 +47,15 @@
                                     <tr>
                                         <td>@simulation.Name</td>
 
-                                        @if (simulation.Phase == MUNity.Schema.Simulation.SimulationEnums.GamePhases.Lobby)
+                                        @if (simulation.Phase == MUNity.Schema.Simulation.GamePhases.Lobby)
                                         {
                                             <td>Vorbereitung</td>
                                         }
-                                        else if (simulation.Phase == MUNity.Schema.Simulation.SimulationEnums.GamePhases.Online)
+                                        else if (simulation.Phase == MUNity.Schema.Simulation.GamePhases.Online)
                                         {
                                             <td class="text-success">Aktiv</td>
                                         }
-                                        else if (simulation.Phase == MUNity.Schema.Simulation.SimulationEnums.GamePhases.Offline)
+                                        else if (simulation.Phase == MUNity.Schema.Simulation.GamePhases.Offline)
                                         {
                                             <td>Offline</td>
                                         }

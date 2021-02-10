@@ -42,7 +42,7 @@ namespace MUNityCore.Extensions.CastExtensions
         {
             var mdl = new UserAuthSchema()
             {
-                AuthLevel = (UserAuthSchema.EAuthLevel)auth.AuthLevel,
+                AuthLevel = auth.AuthLevel,
                 CanCreateOrganization = auth.CanCreateOrganization,
                 UserAuthId = auth.MunityUserAuthId,
                 UserAuthName = auth.UserAuthName

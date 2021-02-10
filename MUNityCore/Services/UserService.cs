@@ -130,7 +130,7 @@ namespace MUNityCore.Services
         public IEnumerable<MunityUser> GetAdministrators()
         {
             return this._context.Users.Where(n =>
-                n.Auth.AuthLevel == MunityUserAuth.EAuthLevel.Admin || n.Auth.AuthLevel == MunityUserAuth.EAuthLevel.Headadmin);
+                n.Auth.AuthLevel == EAuthLevel.Admin || n.Auth.AuthLevel == EAuthLevel.Headadmin);
         }
 
         public async Task<UserInformation> GetUserInformation(string username)

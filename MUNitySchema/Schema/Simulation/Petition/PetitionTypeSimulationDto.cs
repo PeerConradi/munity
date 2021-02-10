@@ -1,12 +1,10 @@
-﻿using MUNity.Schema.Simulation;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace MUNityCore.Models.Simulation
+namespace MUNity.Schema.Simulation
 {
-    public class PetitionType
+    public class PetitionTypeSimulationDto
     {
         /// <summary>
         /// The identifier of the Petition type.
@@ -38,5 +36,13 @@ namespace MUNityCore.Models.Simulation
         /// A category for the petitiontype
         /// </summary>
         public string Category { get; set; }
+
+        public bool AllowChairs { get; set; }
+
+        public bool AllowDelegates { get; set; }
+
+        public bool AllowNgo { get; set; }
+
+        public bool AllowSpectator { get; set; }
     }
 }

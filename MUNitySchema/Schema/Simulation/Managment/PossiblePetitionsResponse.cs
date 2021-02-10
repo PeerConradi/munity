@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static MUNity.Schema.Simulation.PetitionType;
+using static MUNity.Schema.Simulation.PetitionTypeDto;
 
 namespace MUNity.Schema.Simulation.Managment
 {

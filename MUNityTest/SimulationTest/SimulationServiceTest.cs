@@ -131,29 +131,22 @@ namespace MUNityTest.SimulationTest
 
         [Test]
         [Order(10)]
-        public async Task TestCreateDefaultPetitionTypes()
+        public void TestLoadingPreset()
         {
+            var path = AppContext.BaseDirectory + "assets\\templates\\petitions\\DMUN2.csv";
+            Assert.IsTrue(System.IO.File.Exists(path));
             var service = new SimulationService(_context);
-            var result = await service.CreateDefaultPetitionTypes();
-            Assert.NotZero(result);
-        }
-
-        [Test]
-        [Order(11)]
-        public async Task AddPetitionTypeToSimulation()
-        {
-            var service = new SimulationService(_context);
-            var petitionType = (await service.GetPetitionTypes()).First();
-            Assert.NotNull(petitionType);
-            var request = new MUNity.Schema.Simulation.Managment.AddPetitionTypeRequestBody()
-            {
-                PetitionTypeId = petitionType.PetitionTypeId,
-                SimulationId = simulationId
-            };
-            await service.AddPetitionTypeToSimulation(request);
-            var list = await service.GetSimulationPetitionTypes(simulationId);
-            Assert.NotNull(list);
-            Assert.IsTrue(list.Any());
+            var template = service.LoadSimulationPetitionTemplate(path, "DMUN");
+            Assert.NotNull(template);
+            Assert.AreEqual("DMUN", template.TemplateName);
+            Assert.IsTrue(template.Entries.Any());
+            template.Entries.ForEach(n => Console.WriteLine(n.Name));
+            Assert.AreEqual(15, template.Entries.Count);
+            service.ApplyPetitionTemplateToSimulation(template, simulationId);
+            var saved = service.GetPetitionTypesOfSimulation(simulationId);
+            Assert.NotNull(saved);
+            Assert.IsTrue(saved.Any());
+            Assert.AreEqual(15, saved.Count);
         }
     }
 }

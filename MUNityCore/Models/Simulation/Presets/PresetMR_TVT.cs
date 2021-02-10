@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNity.Schema.Simulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,14 +16,14 @@ namespace MUNityCore.Models.Simulation.Presets
         {
             get
             {
-                yield return new SimulationRole("un", "Vorsitzende(r)", SimulationRole.RoleTypes.Chairman);
-                yield return new SimulationRole("ao", "Angola", SimulationRole.RoleTypes.Delegate);
-                yield return new SimulationRole("cn", "China", SimulationRole.RoleTypes.Delegate);
-                yield return new SimulationRole("de", "Deutschland", SimulationRole.RoleTypes.Delegate);
-                yield return new SimulationRole("mn", "Mongolei", SimulationRole.RoleTypes.Delegate);
-                yield return new SimulationRole("us", "Vereinigte Staaten", SimulationRole.RoleTypes.Delegate);
+                yield return new SimulationRole("un", "Vorsitzende(r)", RoleTypes.Chairman);
+                yield return new SimulationRole("ao", "Angola", RoleTypes.Delegate);
+                yield return new SimulationRole("cn", "China", RoleTypes.Delegate);
+                yield return new SimulationRole("de", "Deutschland", RoleTypes.Delegate);
+                yield return new SimulationRole("mn", "Mongolei", RoleTypes.Delegate);
+                yield return new SimulationRole("us", "Vereinigte Staaten", RoleTypes.Delegate);
 
-                yield return new SimulationRole("n2", "Greenpeace", SimulationRole.RoleTypes.Ngo);
+                yield return new SimulationRole("n2", "Greenpeace", RoleTypes.Ngo);
 
 
             }

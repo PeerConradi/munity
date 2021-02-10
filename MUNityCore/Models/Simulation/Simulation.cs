@@ -16,9 +16,9 @@ namespace MUNityCore.Models.Simulation
 
         public string Name { get; set; }
 
-        public MUNity.Schema.Simulation.SimulationEnums.GamePhases Phase { get; set; }
+        public MUNity.Schema.Simulation.GamePhases Phase { get; set; }
 
-        public MUNity.Schema.Simulation.SimulationEnums.LobbyModes LobbyMode { get; set; }
+        public MUNity.Schema.Simulation.LobbyModes LobbyMode { get; set; }
 
         /// <summary>
         /// Momentaner Status wie Sitzung, Abstimmung oder informelle Sitzung Pause etc. als Text.

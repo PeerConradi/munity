@@ -1,0 +1,48 @@
+﻿@if (PetitionTypes != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Vorsitz</th>
+                <th>Delegierte</th>
+                <th>NAs</th>
+                <th>Zuschauer</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!PetitionTypes.Any())
+            {
+                <tr>
+                    <td colspan="2">Keine Antragsarten gefunden</td>
+                </tr>
+            }
+            else
+            {
+                @foreach(var stp in PetitionTypes)
+                {
+                    <tr>
+                        <td>@stp.Name</td>
+                        <th>@((stp.AllowChairs) ? "Ja" : "Nein" )</th>
+                        <th>@((stp.AllowDelegates) ? "Ja" : "Nein" )</th>
+                        <th>@((stp.AllowNgo) ? "Ja" : "Nein" )</th>
+                        <th>@((stp.AllowSpectator) ? "Ja" : "Nein" )</th>
+                    </tr>
+                }
+            }
+        </tbody>
+        
+    </table>
+}
+else
+{
+    <p>Keine Antragsarten geladen :/</p>
+}
+
+
+@code {
+    [Parameter]
+    public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; set; }
+
+
+}

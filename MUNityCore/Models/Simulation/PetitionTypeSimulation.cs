@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNity.Schema.Simulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +24,22 @@ namespace MUNityCore.Models.Simulation
 
         public bool AllowSpectator { get; set; } = false;
 
-
+        internal PetitionTypeSimulationDto ToDto()
+        {
+            var dto = new PetitionTypeSimulationDto()
+            {
+                AllowChairs = AllowChairs,
+                AllowNgo = AllowNgo,
+                AllowDelegates = AllowDelegates,
+                AllowSpectator = AllowSpectator,
+                Category = PetitionType.Category,
+                Description = PetitionType.Description,
+                Name = PetitionType.Name,
+                PetitionTypeId = PetitionType.PetitionTypeId,
+                Reference = PetitionType.Reference,
+                Ruling = PetitionType.Ruling
+            };
+            return dto;
+        }
     }
 }

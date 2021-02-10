@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace MUNityClient.Models.Simulation
+namespace MUNity.Schema.Simulation
 {
-
-    [Obsolete("Use the MUNityBase /MUNitySchema Package!")]
-    public class SimulationPreset
+    public class SimulationRolesPreset
     {
         public string Id { get; set; }
 

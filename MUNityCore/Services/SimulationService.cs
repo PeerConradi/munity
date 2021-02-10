@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Schema.Simulation;
 using MUNityCore.DataHandlers.EntityFramework;
@@ -198,12 +202,12 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.SimulationId == simulationid);
 
             var currentChairmanRole = simulation.Roles.FirstOrDefault(n =>
-                n.RoleType == SimulationRole.RoleTypes.Chairman);
+                n.RoleType == RoleTypes.Chairman);
             if (currentChairmanRole == null)
             {
                 currentChairmanRole = new SimulationRole()
                 {
-                    RoleType = SimulationRole.RoleTypes.Chairman,
+                    RoleType = RoleTypes.Chairman,
                     Iso = "UN"
                 };
                 simulation.Roles.Add(currentChairmanRole);
@@ -214,7 +218,7 @@ namespace MUNityCore.Services
             return currentChairmanRole;
         }
 
-        public async Task<bool> SetPhase(int simulationId, SimulationEnums.GamePhases phase)
+        public async Task<bool> SetPhase(int simulationId, GamePhases phase)
         {
             var simulation = await this._context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == simulationId);
             if (simulation == null) return false;
@@ -231,7 +235,7 @@ namespace MUNityCore.Services
             {
                 Iso = iso,
                 Name = name,
-                RoleType = SimulationRole.RoleTypes.Delegate,
+                RoleType = RoleTypes.Delegate,
                 Simulation = simulation,
             };
             simulation.Roles.Add(role);
@@ -300,7 +304,7 @@ namespace MUNityCore.Services
             n.Simulation.SimulationId == requestSchema.SimulationId &&
             n.Token == requestSchema.Token &&
             n.Role != null &&
-            n.Role.RoleType == SimulationRole.RoleTypes.Delegate);
+            n.Role.RoleType == RoleTypes.Delegate);
         }
 
         internal Task<bool> IsTokenValidAndUserChair(SimulationRequest requestSchema)
@@ -309,7 +313,7 @@ namespace MUNityCore.Services
             n.Simulation.SimulationId == requestSchema.SimulationId &&
             n.Token == requestSchema.Token &&
             n.Role != null &&
-            n.Role.RoleType == SimulationRole.RoleTypes.Chairman);
+            n.Role.RoleType == RoleTypes.Chairman);
         }
 
         internal Task<bool> IsTokenValidAndUserChair(int simulationId, string token)
@@ -318,7 +322,7 @@ namespace MUNityCore.Services
             n.Simulation.SimulationId == simulationId &&
             n.Token == token &&
             n.Role != null &&
-            n.Role.RoleType == SimulationRole.RoleTypes.Chairman);
+            n.Role.RoleType == RoleTypes.Chairman);
         }
 
         #endregion
@@ -393,7 +397,7 @@ namespace MUNityCore.Services
             if (simulation == null)
                 return null;
 
-            if (simulation.LobbyMode == MUNity.Schema.Simulation.SimulationEnums.LobbyModes.Closed)
+            if (simulation.LobbyMode == MUNity.Schema.Simulation.LobbyModes.Closed)
                 return null;
 
             var user = new SimulationUser()
@@ -425,17 +429,68 @@ namespace MUNityCore.Services
             return this._context;
         }
 
-        public async Task<int> CreateDefaultPetitionTypes()
+        public SimulationPetitionTemplate LoadSimulationPetitionTemplate(string path, string name)
         {
-            var hasElements = await _context.PetitionTypes.AnyAsync();
-            if (hasElements) return 0;
+            var mdl = new SimulationPetitionTemplate();
+            mdl.TemplateName = name;
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                IgnoreBlankLines = true
+            };
+            using (var reader = new StreamReader(path))
+            using (var csv = new CsvReader(reader, config))
+            {
+                mdl.Entries = csv.GetRecords<PetitionTemplateEntry>().ToList();
+            }
+            return mdl;
+        }
 
-            _context.PetitionTypes.Add(new Models.Simulation.PetitionType() { Name = "Recht auf Information", Category = "Persönlicher Antrag", Description = "Für Fragen zur Geschäftsordnung oder zum Verfahren (z.B.zu Anträgen, Einreichen von Arbeitspapieren). Außerdem für Bitten(z.B.Fenster öffnen, Licht einschalten, lauter sprechen).", Reference = "§ 14 Abs. 1 Nr. 1", Ruling = MUNity.Schema.Simulation.PetitionType.PetitionRulings.Chairs });
-            _context.PetitionTypes.Add(new Models.Simulation.PetitionType() { Name = "Recht auf Wiederherstellung der Ordnung", Category = "Persönlicher Antrag", Description = "Um Verfahrensfehler oder Verstöße gegen die Geschäftsordnung zur Sprache zu bringen.", Reference = "§ 14 Abs. 1 Nr. 2", Ruling = MUNity.Schema.Simulation.PetitionType.PetitionRulings.Chairs });
-            _context.PetitionTypes.Add(new Models.Simulation.PetitionType() { Name = "Recht auf Klärung eines Missverständnisses", Category = "Persönlicher Antrag", Description = "Nur nach einer Erwiderung von dem*der Redner*in auf eine eigene missverstandene und unbeantwortet elassene Frage oder Kurzbemerkung möglich.", Reference = "$ 14 Abs. 1 Nr. 3", Ruling = MUNity.Schema.Simulation.PetitionType.PetitionRulings.Chairs });
-            //context.PetitionTypes.Add(new Models.Simulation.PetitionType() {Name = "", Category = "Persönlicher Antrag", Description = "", Reference = "", Ruling = Models.Simulation.PetitionType.PetitionRulings.Chairs });
-            await _context.SaveChangesAsync();
-            return _context.PetitionTypes.Count();
+        public void ApplyPetitionTemplateToSimulation(SimulationPetitionTemplate template, int simulationId)
+        {
+            var simulation = _context.Simulations.Include(n => n.PetitionTypes).FirstOrDefault(n => n.SimulationId == simulationId);
+            if (simulation == null) return;
+
+            simulation.PetitionTypes.Clear();
+            int index = 0;
+            // PetitionTypes erstellen
+            foreach (var petitionTypeTemplate in template.Entries)
+            {     
+                // For now we only match the name!
+                var mdlInDb = _context.PetitionTypes.FirstOrDefault(n => n.Name == petitionTypeTemplate.Name);
+                if (mdlInDb == null)
+                {
+                    mdlInDb = new PetitionType()
+                    {
+                        Name = petitionTypeTemplate.Name,
+                        Category = petitionTypeTemplate.Category,
+                        Description = petitionTypeTemplate.Description,
+                        Reference = petitionTypeTemplate.Reference,
+                        Ruling = petitionTypeTemplate.Ruling
+                    };
+                    _context.PetitionTypes.Add(mdlInDb);
+                }
+                var newLink = new PetitionTypeSimulation()
+                {
+                    AllowChairs = petitionTypeTemplate.AllowChairs,
+                    AllowDelegates = petitionTypeTemplate.AllowDelegates,
+                    AllowNgo = petitionTypeTemplate.AllowNgo,
+                    AllowSpectator = petitionTypeTemplate.AllowSpectator,
+                    OrderIndex = index,
+                    PetitionType = mdlInDb,
+                    Simulation = simulation
+                };
+                simulation.PetitionTypes.Add(newLink);
+
+                index++;
+            }
+            _context.SaveChanges();
+
+        }
+    
+        public List<PetitionTypeSimulation> GetPetitionTypesOfSimulation(int simulationId)
+        {
+            return _context.SimulationPetitionTypes.Include(n => n.PetitionType)
+                .Where(n => n.Simulation.SimulationId == simulationId).ToList();
         }
     }
 }

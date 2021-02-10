@@ -1,12 +1,12 @@
-﻿@using MUNityClient.Models.Simulation;
-@using System.Linq;
+﻿@using System.Linq;
 
 @inject MUNityClient.Services.SimulationService simulationService;
 @inject NavigationManager navigationManager;
 @* Dies ist eine Teilnehmendenansicht an dieser Stelle werden den Nutzern Rollen zugewiesen bzw. können sich diese ihre Rollen auswählen. *@
 @if (SimulationContext?.Simulation != null)
 {
-    @if (SimulationContext.MyAuth != null && SimulationContext.MyAuth.CanCreateRole)
+    @if (SimulationContext.MyAuth != null && SimulationContext.MyAuth.CanCreateRole || SimulationContext.MyRole != null && 
+        SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
     {
         <div class="row">
             <div class="col-12">
@@ -24,7 +24,7 @@
                                 @onclick="() => this.CurrentView = Views.Petitions">
                             Anträge
                         </button>
-                        <button class="btn btn-secondary" @onclick="() => this.simulationService.SetPhase(this.SimulationContext.Simulation.SimulationId, MUNity.Schema.Simulation.SimulationEnums.GamePhases.Online)">Simulation beginnen</button>
+                        <button class="btn btn-secondary" @onclick="() => this.SimulationContext.StartSimulation()">Simulation beginnen</button>
                     </div>
                 </div>
 
@@ -69,34 +69,8 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <form>
-                            <div class="form-group">
-                                <label>Rollenvorlage anwenden</label>
-                                <select class="form-control">
-                                    <option>MUN-SH Gremium 1 (TODO)</option>
-                                </select>
-                                <small>Informationen zur Vorlage...</small>
-                            </div>
-                            <div class="form-group">
-                                <button class="btn btn-block btn-primary">Anwenden</button>
-                            </div>
-                        </form>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Rollenname</th>
-                                    <th>Iso</th>
-                                    <th>Typ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Testrolle</td>
-                                    <td>ab</td>
-                                    <td>Delegierte*r</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <SelectRolePreset SimulationContext="@this.SimulationContext" />
+                        <SimulationRoleTable Roles="this.SimulationContext.Simulation.Roles" />
                         <div class="row">
                             <div class="col-4">
                                 <input class="form-control" />
@@ -125,21 +99,49 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <form>
-                            <div class="form-group">
-                                <label>Antragsvorlage anwenden</label>
-                                <select class="form-control">
-                                    <option>DMUN Konferenzen (TODO)</option>
+                        <div class="form-group">
+                            <label>Antragsvorlage anwenden</label>
+                            @if (PetitionTemplates != null)
+                            {
+
+                                <select @bind="SelectedPetitionTemplate" class="form-control">
+                                    @foreach (var a in PetitionTemplates)
+                                    {
+                                        <option value="@a">@a</option>
+                                    }
                                 </select>
-                                <small>Informationen zur Vorlage...</small>
-                            </div>
-                            <div class="form-group">
-                                <button class="btn btn-block btn-primary">Anwenden</button>
-                            </div>
-                        </form>
+                            }
+                            else
+                            {
+                                <small>Vorlagen werden geladen</small>
+                            }
+
+
+                        </div>
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(SelectedPetitionTemplate))
+                            {
+                                <button class="btn btn-block btn-primary" @onclick="() => ApplyPetitionPreset()">Anwenden</button>
+                            }
+                        </div>
+                        @if(SubmitFormSuccess)
+                        {
+                            <div class="alert alert-success">Änderung übernommen</div>
+                        }
                     </div>
                 </div>
             </div>
+        
+            @if (this.PetitionTypes != null)
+            {
+                <div class="col col-12">
+                    <PetitionTypeTable PetitionTypes="this.PetitionTypes" />
+                </div>
+            }
+            else
+            {
+                <p>Anträge werden geladen</p>
+            }
         }
 
     </div>

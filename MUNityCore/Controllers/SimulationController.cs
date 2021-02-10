@@ -111,6 +111,15 @@ namespace MUNityCore.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        public ActionResult<List<string>> PetitionTemplateNames()
+        {
+            var list = new List<string>();
+            list.Add("DMUN2");
+            return Ok(list);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
         [AllowAnonymous]
         public ActionResult<SimulationUserSetup> GetUsersAsAdmin([FromHeader]string simsimtoken, int id)
         {
@@ -243,8 +252,14 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<Models.Simulation.Presets.ISimulationPreset>> GetPresets()
+        public ActionResult<IEnumerable<SimulationRolesPreset>> GetPresets()
         {
+            var presets = this._simulationService.Presets.Select(n => new SimulationRolesPreset()
+            {
+                Id = n.Id,
+                Name = n.Name,
+                Roles = n.Roles.Select(a => a.ToSimulationRoleItem()).ToList()
+            });
             return Ok(this._simulationService.Presets);
         }
 
@@ -276,7 +291,7 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> CreateAgendaItem([FromBody]AgendaItemDto agendaItem)
+        public Task<ActionResult> CreateAgendaItem([FromBody]AgendaItemDto agendaItem)
         {
             throw new NotImplementedException();
         }
@@ -295,17 +310,6 @@ namespace MUNityCore.Controllers
             return Ok(resolutions);
         }
 
-        [Route("[action]")]
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult<string>> InstallSimulationBase()
-        {
-            int result = await _simulationService.CreateDefaultPetitionTypes();
-            if (result > 0) return Ok($"{result} PetitionTypes added");
-            return Ok("Nothing changed!");
-        }
-
-
 
         [Route("[action]")]
         [HttpGet]
@@ -315,6 +319,8 @@ namespace MUNityCore.Controllers
             var petitionTypes = await context.PetitionTypes.ToListAsync();
             return Ok(petitionTypes);
         }
+
+
 
         [HttpPut]
         [Route("[action]")]
@@ -427,7 +433,7 @@ namespace MUNityCore.Controllers
             var simulation = this._simulationService.GetSimulationWithHubsUsersAndRoles(body.SimulationId);
             if (simulation == null) return NotFound("Simulation not found!");
             var user = simulation.Users.FirstOrDefault(n => n.Token == body.Token);
-            if (user == null || user.Role == null || user.Role.RoleType != SimulationRole.RoleTypes.Chairman) return Forbid();
+            if (user == null || user.Role == null || user.Role.RoleType != RoleTypes.Chairman) return Forbid();
             var voting = new CreatedVoteModel()
             {
                 CreatedVoteModelId = Guid.NewGuid().ToString(),
@@ -437,16 +443,16 @@ namespace MUNityCore.Controllers
             if (body.Mode == EVotingMode.Everyone)
                 voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any()).Select(n => n.SimulationUserId).ToList();
             else if (body.Mode == EVotingMode.AllParticipants)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType != SimulationRole.RoleTypes.Chairman)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType != RoleTypes.Chairman)
                     .Select(n => n.SimulationUserId).ToList();
             else if (body.Mode == EVotingMode.JustDelegates)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == SimulationRole.RoleTypes.Delegate)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == RoleTypes.Delegate)
                     .Select(n => n.SimulationUserId).ToList();
             else if (body.Mode == EVotingMode.JustGuests)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == SimulationRole.RoleTypes.Spectator)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == RoleTypes.Spectator)
                     .Select(n => n.SimulationUserId).ToList();
             else if (body.Mode == EVotingMode.JustNgos)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == SimulationRole.RoleTypes.Ngo)
+                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == RoleTypes.Ngo)
                     .Select(n => n.SimulationUserId).ToList();
 
             await this._hubContext.Clients.Group($"sim_{body.SimulationId}").VoteCreated(voting);
@@ -465,5 +471,33 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<ActionResult> ApplyPetitionPreset([FromBody]ApplyPetitionTemplate body)
+        {
+            var isChair = await this._simulationService.IsTokenValidAndUserChair(body);
+            var isAdmin = await this._simulationService.IsTokenValidAndUserAdmin(body);
+            if (!isChair && !isAdmin) return Forbid();
+
+            var path = AppContext.BaseDirectory + "assets\\templates\\petitions\\" + body.Name + ".csv";
+            if (!System.IO.File.Exists(path)) return NotFound("Templatefile not found!");
+
+            var template = this._simulationService.LoadSimulationPetitionTemplate(path, "DMUN");
+            if (template == null || !template.Entries.Any()) return Problem("Unable to load the template or it has no entries");
+
+            this._simulationService.ApplyPetitionTemplateToSimulation(template, body.SimulationId);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<ActionResult<IEnumerable<PetitionTypeSimulationDto>>> SimulationPetitionTypes([FromHeader]string simsimtoken, int simulationId)
+        {
+            var isallowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            if (!isallowed) return Forbid();
+            var types = this._simulationService.GetPetitionTypesOfSimulation(simulationId);
+            var list = types.Select(n => n.ToDto());
+            return Ok(list);
+        }
     }
 }

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace MUNity.Schema.Simulation
 {
-    public class SetPhaseRequest : SimulationRequest
+    public class ApplyPetitionTemplate : SimulationRequest
     {
-        public GamePhases SimulationPhase { get; set; }
+        public string Name { get; set; }
     }
 }

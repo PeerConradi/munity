@@ -99,9 +99,9 @@ namespace MUNityClient.Pages.Simulation
             };
         }
 
-        private void OnPhaseChanged(int sender, MUNity.Schema.Simulation.SimulationEnums.GamePhases phase)
+        private void OnPhaseChanged(int sender, MUNity.Schema.Simulation.GamePhases phase)
         {
-            if (phase == MUNity.Schema.Simulation.SimulationEnums.GamePhases.Lobby)
+            if (phase == MUNity.Schema.Simulation.GamePhases.Lobby)
             {
                 navigationManager.NavigateTo($"/sim/lobby/{Id}");
             }

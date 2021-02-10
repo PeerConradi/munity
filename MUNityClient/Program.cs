@@ -15,7 +15,7 @@ namespace MUNityClient
     public class Program
     {
         //public static string API_URL = "https://mun-tools.com:5000";
-        public static string API_URL = "https://localhost:44349";
+        public static string API_URL = "https://localhost:44339";
 
         public static async Task Main(string[] args)
         {

@@ -1,5 +1,4 @@
-﻿using MUNityClient.Models.Simulation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,6 +63,11 @@ namespace MUNityClient.Services
             return await this._localStorage.GetItemAsync<ICollection<MUNity.Schema.Simulation.SimulationTokenResponse>>("munity_simsims");
         }
 
+        public async Task<List<string>> GetPetitionPresetNames()
+        {
+            return await this._httpService.HttpClient.GetFromJsonAsync<List<string>>("/api/Simulation/PetitionTemplateNames");
+        }
+
         public async Task RemoveToken(int id)
         {
             var tokens = await GetStoredTokens();
@@ -106,7 +110,7 @@ namespace MUNityClient.Services
             await client.GetAsync($"/api/Simulation/PickRole?simulationId={simulationId}&roleId={roleId}");
         }
 
-        public async Task<HttpResponseMessage> SetPhase(int simulationId, SimulationEnums.GamePhases phase)
+        public async Task<HttpResponseMessage> SetPhase(int simulationId, GamePhases phase)
         {
             var client = await GetSimulationClient(simulationId);
             if (client == null) throw new Exception();
@@ -147,6 +151,24 @@ namespace MUNityClient.Services
             var client = await GetSimulationClient(id);
             if (client == null) return null;
             return await client.GetFromJsonAsync<MUNity.Schema.Simulation.SimulationResponse>($"/api/Simulation/GetSimulation?id={id}");
+        }
+
+        public async Task<HttpResponseMessage> ApplyPetitionTemplate(int simulationId, string name)
+        {
+            var client = this._httpService.HttpClient;
+            var template = new ApplyPetitionTemplate()
+            {
+                Name = name,
+                SimulationId = simulationId,
+                Token = (await GetSimulationToken(simulationId)).Token
+            };
+            return await client.PutAsJsonAsync<ApplyPetitionTemplate>("/api/Simulation/ApplyPetitionPreset", template);
+        }
+
+        public async Task<List<PetitionTypeSimulationDto>> PetitionTypes(int simulationId)
+        {
+            var client = await GetSimulationClient(simulationId);
+            return await client.GetFromJsonAsync<List<PetitionTypeSimulationDto>>($"/api/Simulation/SimulationPetitionTypes?simulationId={simulationId}");
         }
 
         public async Task<List<MUNity.Schema.Simulation.SimulationUserSetup>> GetUserSetups(int simulationId)
@@ -199,10 +221,10 @@ namespace MUNityClient.Services
             return await client.GetFromJsonAsync<MUNity.Models.ListOfSpeakers.ListOfSpeakers>($"/api/Simulation/InitListOfSpeakers?simulationId={simulationId}");
         }
 
-        public async Task<List<SimulationPreset>> GetPresets()
+        public async Task<List<SimulationRolesPreset>> GetPresets()
         {
             var client = this._httpService.HttpClient;
-            return await client.GetFromJsonAsync<List<SimulationPreset>>("/api/Simulation/GetPresets");
+            return await client.GetFromJsonAsync<List<SimulationRolesPreset>>("/api/Simulation/GetPresets");
         }
 
         public async Task<List<ResolutionSmallInfo>> GetSimulationResolutionInfos(int simulationId)
@@ -324,7 +346,7 @@ namespace MUNityClient.Services
             var myRole = simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == auth.SimulationUserId);
 
             // Load users extra depending on auth
-            if (auth.CanCreateRole || (myRole != null && myRole.RoleType == MUNity.Schema.Simulation.SimulationEnums.RoleTypes.Chairman))
+            if (auth.CanCreateRole || (myRole != null && myRole.RoleType == RoleTypes.Chairman))
             {
                 var tmpUsers = await this.GetUserSetups(simulationId);
                 simulation.Users.Clear();
@@ -340,7 +362,7 @@ namespace MUNityClient.Services
                 if (meInThisList != null) meInThisList.IsOnline = true;
             }
 
-            var socket = await MUNityClient.ViewModel.SimulationViewModel.CreateHander(simulation, auth);
+            var socket = await MUNityClient.ViewModel.SimulationViewModel.CreateHander(simulation, auth, this);
             var connId = socket.HubConnection.ConnectionId;
             var subscribeBody = new MUNity.Schema.Simulation.SubscribeSimulation()
             {

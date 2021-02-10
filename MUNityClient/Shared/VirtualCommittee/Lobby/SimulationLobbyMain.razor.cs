@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using Microsoft.JSInterop;
 using MUNityClient;
 using MUNityClient.Shared;
-using MUNityClient.Models.Simulation;
 using System.Linq;
 
 namespace MUNityClient.Shared.VirtualCommittee.Lobby
@@ -20,6 +19,14 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
     {
         [Parameter]
         public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; } = null;
+
+        public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; set; }
+
+        public List<string> PetitionTemplates { get; set; }
+
+        public string SelectedPetitionTemplate { get; set; }
+
+        private bool SubmitFormSuccess { get; set; } = false;
 
         public enum Views
         {
@@ -39,14 +46,34 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             }
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
             if (SimulationContext.Simulation != null)
             {
                 AppendEvents(SimulationContext);
+                SimulationContext.RolesChanged += SimulationContext_RolesChanged;
             }
 
-            base.OnInitialized();
+            this.PetitionTemplates = await this.simulationService.GetPetitionPresetNames();
+            this.PetitionTypes = await this.simulationService.PetitionTypes(this.SimulationContext.Simulation.SimulationId);
+            //this.simulationService.GetPresets()
+            if (PetitionTemplates.Any())
+            {
+                this.SelectedPetitionTemplate = PetitionTemplates.First();
+            }
+            await base.OnInitializedAsync();   
+        }
+
+        private void SimulationContext_RolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem> roles)
+        {
+            this.StateHasChanged();
+        }
+
+        private async Task ApplyPetitionPreset()
+        {
+            await this.simulationService.ApplyPetitionTemplate(this.SimulationContext.Simulation.SimulationId, SelectedPetitionTemplate);
+            this.PetitionTypes = await this.simulationService.PetitionTypes(this.SimulationContext.Simulation.SimulationId);
+            this.StateHasChanged();
         }
 
         private void AppendEvents(MUNityClient.ViewModel.SimulationViewModel context)
@@ -54,9 +81,9 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             context.PhaseChanged += PhaseChanged;
         }
 
-        private void PhaseChanged(int sender, MUNity.Schema.Simulation.SimulationEnums.GamePhases phase)
+        private void PhaseChanged(int sender, MUNity.Schema.Simulation.GamePhases phase)
         {
-            if (phase == MUNity.Schema.Simulation.SimulationEnums.GamePhases.Online)
+            if (phase == MUNity.Schema.Simulation.GamePhases.Online)
             {
                 navigationManager.NavigateTo($"/sim/run/{SimulationContext.Simulation.SimulationId}");
             }

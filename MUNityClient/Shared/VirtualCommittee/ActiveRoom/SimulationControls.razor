@@ -57,7 +57,7 @@
         @* Von der Sache her könnte an dieser Stelle auch die Beiden Buttons für auf die Redelisten und auf die FuK erscheinen. *@
         @if (SpeakerlistSocket != null)
         {
-            @if (SimulationContext?.MyRole != null && SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.SimulationEnums.RoleTypes.Chairman)
+            @if (SimulationContext?.MyRole != null && SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
             {
                 <MUNityClient.Pages.LoS.ListOfSpeakerEditor Id="@SpeakerlistSocket.SourceList.ListOfSpeakersId" Socket="@SpeakerlistSocket" IsOnline="@true"></MUNityClient.Pages.LoS.ListOfSpeakerEditor>
             }
@@ -79,7 +79,7 @@
 @if (_selectedTab == TabPages.Voting)
 {
 
-    @if (SimulationContext != null && (_lastCreatedVote == null || _lastCreatedVote != null && !_lastCreatedVote.AllowedUsers.Contains(SimulationContext.Me.SimulationUserId)) && SimulationContext?.MyRole != null && SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.SimulationEnums.RoleTypes.Chairman)
+    @if (SimulationContext != null && (_lastCreatedVote == null || _lastCreatedVote != null && !_lastCreatedVote.AllowedUsers.Contains(SimulationContext.Me.SimulationUserId)) && SimulationContext?.MyRole != null && SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
     {
         <div class="card floating-card shadow-2 p-3">
             <CreateVoteComponent SimulationId="@SimulationContext.Simulation.SimulationId"></CreateVoteComponent>

@@ -46,7 +46,7 @@ else
                 @if (this.SimulationContext.IsChair)
                 {
                     <li class="nav-item badge rounded-pill nav-spacing">
-                        <a class="nav-link" @onclick="() => simulationService.SetPhase(this.SimulationContext.Simulation.SimulationId, MUNity.Schema.Simulation.SimulationEnums.GamePhases.Lobby)"> Zurück zur Lobby</a>
+                        <a class="nav-link" @onclick="() => simulationService.SetPhase(this.SimulationContext.Simulation.SimulationId, MUNity.Schema.Simulation.GamePhases.Lobby)"> Zurück zur Lobby</a>
                     </li>
                 }
 

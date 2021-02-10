@@ -8,15 +8,6 @@ namespace MUNityCore.Models.User
     /// </summary>
     public class MunityUserAuth
     {
-        public enum EAuthLevel
-        {
-            Headadmin,
-            Admin,
-            Developer,
-            Moderator,
-            User,
-            New
-        }
 
         public int MunityUserAuthId { get; set; }
 
@@ -27,20 +18,20 @@ namespace MUNityCore.Models.User
 
         public bool CanCreateOrganization { get; set; }
 
-        public EAuthLevel AuthLevel { get; set; }
+        public MUNity.Schema.User.EAuthLevel AuthLevel { get; set; }
 
         public MunityUserAuth()
         {
             Users = new List<MunityUser>();
             CanCreateOrganization = false;
-            AuthLevel = EAuthLevel.New;
+            AuthLevel = MUNity.Schema.User.EAuthLevel.New;
         }
 
         public MunityUserAuth(string name)
         {
             Users = new List<MunityUser>();
             CanCreateOrganization = false;
-            AuthLevel = EAuthLevel.New;
+            AuthLevel = MUNity.Schema.User.EAuthLevel.New;
             UserAuthName = name;
         }
     }

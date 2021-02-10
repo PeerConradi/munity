@@ -12,6 +12,5 @@ namespace MUNityCore.Models.Simulation.Presets
         string Name { get; }
 
         IEnumerable<SimulationRole> Roles { get; }
-
     }
 }
