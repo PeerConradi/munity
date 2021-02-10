@@ -42,7 +42,7 @@
     <div class="@((_layoutWrapper.ShowMemberlist) ? "col-lg-5" : "col-lg-8")  col-md-12 col-sm-12">
         @if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Agenda)
         {
-            <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda>
+            <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda ViewModel="@this._simulationContext"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda>
         }
         else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Home)
         {

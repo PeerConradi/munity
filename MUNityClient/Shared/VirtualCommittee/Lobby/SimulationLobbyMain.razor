@@ -132,10 +132,10 @@
                 </div>
             </div>
         
-            @if (this.PetitionTypes != null)
+            @if (this.SimulationContext?.PetitionTypes != null)
             {
                 <div class="col col-12">
-                    <PetitionTypeTable PetitionTypes="this.PetitionTypes" />
+                    <PetitionTypeTable PetitionTypes="this.SimulationContext.PetitionTypes" />
                 </div>
             }
             else

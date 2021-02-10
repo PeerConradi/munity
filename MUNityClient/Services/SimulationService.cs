@@ -363,6 +363,7 @@ namespace MUNityClient.Services
             }
 
             var socket = await MUNityClient.ViewModel.SimulationViewModel.CreateHander(simulation, auth, this);
+            socket.PetitionTypes = await this.PetitionTypes(simulationId);
             var connId = socket.HubConnection.ConnectionId;
             var subscribeBody = new MUNity.Schema.Simulation.SubscribeSimulation()
             {

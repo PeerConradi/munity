@@ -63,6 +63,8 @@ namespace MUNityClient.ViewModel
 
         public MUNity.Schema.Simulation.SimulationResponse Simulation { get; private set; }
 
+        public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; set; }
+
         public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
 
         /// <summary>
@@ -142,6 +144,45 @@ namespace MUNityClient.ViewModel
         {
             if (this.Simulation == null) return;
             await this._simulationService.SetPhase(this.Simulation.SimulationId, GamePhases.Lobby);
+        }
+
+        public bool CanMakeAnyPetition
+        {
+            get
+            {
+                if (this.PetitionTypes == null || !this.PetitionTypes.Any()) return false;
+
+                if (this.MyRole == null) return false;
+
+                if (MyRole.RoleType == RoleTypes.Chairman)
+                    return this.PetitionTypes.Any(n => n.AllowChairs);
+                else if (MyRole.RoleType == RoleTypes.Delegate)
+                    return this.PetitionTypes.Any(n => n.AllowDelegates);
+                else if (MyRole.RoleType == RoleTypes.Ngo)
+                    return this.PetitionTypes.Any(n => n.AllowNgo);
+                else if (MyRole.RoleType == RoleTypes.Spectator)
+                    return this.PetitionTypes.Any(n => n.AllowSpectator);
+                return false;
+            }
+        }
+
+        public IEnumerable<PetitionTypeSimulationDto> MyPetitionTypes
+        {
+            get
+            {
+                if (this.PetitionTypes == null || !this.PetitionTypes.Any() || this.MyRole == null) 
+                    return null;
+
+                if (MyRole.RoleType == RoleTypes.Chairman)
+                    return this.PetitionTypes.Where(n => n.AllowChairs);
+                else if (MyRole.RoleType == RoleTypes.Delegate)
+                    return this.PetitionTypes.Where(n => n.AllowDelegates);
+                else if (MyRole.RoleType == RoleTypes.Ngo)
+                    return this.PetitionTypes.Where(n => n.AllowNgo);
+                else if (MyRole.RoleType == RoleTypes.Spectator)
+                    return this.PetitionTypes.Where(n => n.AllowSpectator);
+                return null;
+            }
         }
     }
 }

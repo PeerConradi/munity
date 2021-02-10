@@ -1,0 +1,25 @@
+﻿<div class="row">
+    <div class="col-12">
+        @foreach(var category in Categories)
+        {
+            <button class="btn @((SelectedCategory == category) ? "btn-primary" : "btn-outline-primary")"
+                    @onclick="() => SelectedCategory = category">@category</button>
+        }
+    </div>
+    <div class="col-12">
+        @foreach(var petition in ViewModel.PetitionTypes.Where(n => n.Category == SelectedCategory))
+        {
+            <button class="btn btn-success">@petition.Name</button>
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public MUNityClient.ViewModel.SimulationViewModel ViewModel { get; set; }
+
+    public IEnumerable<string> Categories => ViewModel.MyPetitionTypes.Select(n => n.Category).Distinct();
+
+    public string SelectedCategory { get; set; }
+}

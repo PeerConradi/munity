@@ -20,8 +20,6 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         [Parameter]
         public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; } = null;
 
-        public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; set; }
-
         public List<string> PetitionTemplates { get; set; }
 
         public string SelectedPetitionTemplate { get; set; }
@@ -52,10 +50,12 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             {
                 AppendEvents(SimulationContext);
                 SimulationContext.RolesChanged += SimulationContext_RolesChanged;
+                if (this.SimulationContext.PetitionTypes == null)
+                    this.SimulationContext.PetitionTypes = await this.simulationService.PetitionTypes(this.SimulationContext.Simulation.SimulationId);
             }
 
             this.PetitionTemplates = await this.simulationService.GetPetitionPresetNames();
-            this.PetitionTypes = await this.simulationService.PetitionTypes(this.SimulationContext.Simulation.SimulationId);
+            
             //this.simulationService.GetPresets()
             if (PetitionTemplates.Any())
             {
@@ -71,8 +71,9 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
 
         private async Task ApplyPetitionPreset()
         {
+            if (this.SimulationContext == null) return;
             await this.simulationService.ApplyPetitionTemplate(this.SimulationContext.Simulation.SimulationId, SelectedPetitionTemplate);
-            this.PetitionTypes = await this.simulationService.PetitionTypes(this.SimulationContext.Simulation.SimulationId);
+            this.SimulationContext.PetitionTypes = await this.simulationService.PetitionTypes(this.SimulationContext.Simulation.SimulationId);
             this.StateHasChanged();
         }
 
