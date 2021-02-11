@@ -128,19 +128,19 @@ namespace MUNityClient.Services
             return await client.GetAsync($"/api/Simulation/SetPhase?simulationId={simulationId}&phase={phase}");
         }
 
-        public async Task<HttpResponseMessage> MakePetition(MUNity.Schema.Simulation.PetitionDto petition)
+        public async Task<HttpResponseMessage> MakePetition(MUNity.Schema.Simulation.CreatePetitionRequest petition)
         {
             petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/MakePetition", JsonContent.Create(petition));
         }
 
-        public async Task<HttpResponseMessage> AcceptPetition(MUNity.Schema.Simulation.PetitionDto petition)
+        public async Task<HttpResponseMessage> AcceptPetition(MUNity.Schema.Simulation.CreatePetitionRequest petition)
         {
             petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/AcceptPetition", JsonContent.Create(petition));
         }
 
-        public async Task<HttpResponseMessage> DeletePetition(MUNity.Schema.Simulation.PetitionDto petition)
+        public async Task<HttpResponseMessage> DeletePetition(MUNity.Schema.Simulation.CreatePetitionRequest petition)
         {
             petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/DeletePetition", JsonContent.Create(petition));
@@ -150,7 +150,15 @@ namespace MUNityClient.Services
         {
             var client = await GetSimulationClient(id);
             if (client == null) return null;
-            return await client.GetFromJsonAsync<MUNity.Schema.Simulation.SimulationResponse>($"/api/Simulation/GetSimulation?id={id}");
+            return await client.GetFromJsonAsync<MUNity.Schema.Simulation.SimulationResponse>($"/api/Simulation/Simulation?simulationId={id}");
+        }
+
+        public async Task<HttpResponseMessage> CreateAgendaItem(CreateAgendaItemDto dto)
+        {
+            var token = await GetSimulationToken(dto.SimulationId);
+            if (token == null) return null;
+            dto.Token = token.Token;
+            return await _httpService.HttpClient.PostAsJsonAsync("/api/Simulation/CreateAgendaItem", dto);
         }
 
         public async Task<HttpResponseMessage> ApplyPetitionTemplate(int simulationId, string name)

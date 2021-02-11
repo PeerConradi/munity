@@ -35,14 +35,22 @@ namespace MUNityCore.Controllers
             this._simulationService = simulationService;
         }
 
+        /// <summary>
+        /// Checks if the controller is reachable and returns a Version of this controller.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
         public ActionResult<string> IsOnline()
         {
-            return Ok("alpha-0.0.2");
+            return Ok("beta-0.0.6");
         }
 
+        /// <summary>
+        /// Returns a list of Simulations. Depricated
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -52,18 +60,32 @@ namespace MUNityCore.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Returns the general information of a simulation containing the users and
+        /// the roles.
+        /// </summary>
+        /// <param name="simsimtoken">a token to access this simulation. This is the token of the simulation user, not a token of a munity platform user.</param>
+        /// <param name="simulationId">The id of the simulation. Should be a number between 100,000 and 999,999</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<SimulationResponse> GetSimulation([FromHeader] string simsimtoken, int id)
+        public async Task<ActionResult<SimulationResponse>> Simulation([FromHeader] string simsimtoken, int simulationId)
         {
-            var simulation = this._simulationService.GetSimulationWithHubsUsersAndRoles(id);
-            if (simulation == null) return NotFound();
-            var users = this._simulationService.GetSimulationUsers(id);
-            if (!users.Any(n => n.Token == simsimtoken)) return Forbid();
-            return Ok(simulation.AsResponse());
+            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            if (!isAllowed) return Forbid();
+
+            var response = this._simulationService.GetSimulationResponse(simulationId);
+            return Ok(response);
         }
 
+        /// <summary>
+        /// Returns the id of the List of speakers of the given simulation. This will return null if tthere is no List
+        /// of Speaker at this simulation.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -84,6 +106,14 @@ namespace MUNityCore.Controllers
             return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
         }
 
+        /// <summary>
+        /// Initializes a new List of Speaker and will return the created list.
+        /// This function will be refactored with a HttpPost method with the same name
+        /// and a SimulationRequest as the body.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -249,6 +279,10 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get the Role Presets
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -291,9 +325,24 @@ namespace MUNityCore.Controllers
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
-        public Task<ActionResult> CreateAgendaItem([FromBody]AgendaItemDto agendaItem)
+        public async Task<ActionResult> CreateAgendaItem([FromBody]CreateAgendaItemDto agendaItem)
         {
-            throw new NotImplementedException();
+            var isAllowed = await this._simulationService.IsTokenValidAndUserChair(agendaItem);
+            if (!isAllowed) isAllowed = await this._simulationService.IsTokenValidAndUserAdmin(agendaItem);
+            if (!isAllowed) return Forbid();
+
+            var item = await this._simulationService.CreateAgendaItem(agendaItem);
+            if (item == null) return Problem();
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<ActionResult> AgendaItems([FromHeader]string simsimtoken, int simulationId)
+        {
+            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            //this._simulationService.GetAgendaItems(simulationId);
+            return null;
         }
 
         [Route("[action]")]
@@ -325,36 +374,41 @@ namespace MUNityCore.Controllers
         [HttpPut]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> MakePetition([FromBody]PetitionDto petition)
+        public async Task<ActionResult> MakePetition([FromBody] CreatePetitionRequest petition)
         {
             var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
             if (user == null) return Forbid();
             petition.PetitionUserId = user.SimulationUserId;
-            await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetition(petition);
-            return Ok();
+            var createdPetition = this._simulationService.SubmitPetition(petition);
+            if (createdPetition != null)
+            {
+                await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetition(createdPetition.ToPetitionDto());
+                return Ok();
+            }
+            return Problem("Unable to create the Petition.");
         }
 
-        [HttpPut]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<ActionResult> AcceptPetition([FromBody] PetitionDto petition)
-        {
-            var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
-            if (!user.CanCreateRole) return Forbid();
-            await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetitionAccepted(petition);
-            return Ok();
-        }
+        //[HttpPut]
+        //[Route("[action]")]
+        //[AllowAnonymous]
+        //public async Task<ActionResult> AcceptPetition([FromBody] PetitionDto petition)
+        //{
+        //    var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
+        //    if (!user.CanCreateRole) return Forbid();
+        //    await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetitionAccepted(petition);
+        //    return Ok();
+        //}
 
-        [HttpPut]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<ActionResult> DeletePetition([FromBody] PetitionDto petition)
-        {
-            var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
-            if (petition.PetitionUserId != user.SimulationUserId && !user.CanCreateRole) return Forbid();
-            await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetitionDeleted(petition);
-            return Ok();
-        }
+        //[HttpPut]
+        //[Route("[action]")]
+        //[AllowAnonymous]
+        //public async Task<ActionResult> DeletePetition([FromBody] PetitionDto petition)
+        //{
+        //    var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
+        //    if (petition.PetitionUserId != user.SimulationUserId && !user.CanCreateRole) return Forbid();
+        //    await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetitionDeleted(petition);
+        //    return Ok();
+        //}
 
         [HttpPost]
         [Route("[action]")]

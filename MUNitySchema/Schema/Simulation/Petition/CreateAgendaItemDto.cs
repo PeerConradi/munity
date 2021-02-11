@@ -1,6 +1,7 @@
 ﻿using MUNity.Models.Simulation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace MUNity.Schema.Simulation
@@ -10,7 +11,7 @@ namespace MUNity.Schema.Simulation
     /// 
     /// There are 
     /// </summary>
-    public class AgendaItemDto : SimulationRequest, IAgendaItem
+    public class CreateAgendaItemDto : SimulationRequest, IAgendaItem
     {
 
         /// <summary>
@@ -21,11 +22,13 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The display name of the Agenda item
         /// </summary>
+        [Required]
         public string Name { get; set; }
 
         /// <summary>
         /// An aditional text for the agenda item
         /// </summary>
+        [Required]
         public string Description { get; set; }
 
         /// <summary>

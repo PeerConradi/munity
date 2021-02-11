@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
+using MUNity.Models.Simulation;
 using MUNity.Schema.Simulation;
 using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.Simulation.Presets;
 
@@ -90,6 +92,12 @@ namespace MUNityCore.Services
             simulation.Users.Add(ownerUser);
             _context.SaveChanges();
             return ownerUser;
+        }
+
+        internal SimulationResponse GetSimulationResponse(int id)
+        {
+            var simulation = GetSimulationWithHubsUsersAndRoles(id);
+            return simulation.AsResponse();
         }
 
         public SimulationUser CreateUser(Simulation simulation, string displayName)
@@ -216,6 +224,31 @@ namespace MUNityCore.Services
             currentChairmanRole.Name = name;
             this._context.SaveChanges();
             return currentChairmanRole;
+        }
+
+        public Petition SubmitPetition(CreatePetitionRequest dto)
+        {
+            var agendaItem = this._context.AgendaItems.Include(n => n.Petitions).FirstOrDefault(n => n.AgendaItemId == dto.TargetAgendaItemId);
+            if (agendaItem == null) return null;
+
+            var petitionType = this._context.PetitionTypes.FirstOrDefault(n => n.PetitionTypeId == dto.PetitionTypeId);
+            if (petitionType == null) return null;
+
+            var user = this._context.SimulationUser.FirstOrDefault(n => n.SimulationUserId == dto.PetitionUserId);
+            if (user == null) return null;
+
+            var newItem = new Petition()
+            {
+                AgendaItem = agendaItem,
+                PetitionDate = DateTime.Now,
+                PetitionType = petitionType,
+                SimulationUser = user,
+                Status = dto.Status,
+                Text = dto.Text
+            };
+            agendaItem.Petitions.Add(newItem);
+            _context.SaveChanges();
+            return newItem;
         }
 
         public async Task<bool> SetPhase(int simulationId, GamePhases phase)
@@ -353,6 +386,36 @@ namespace MUNityCore.Services
             return true;
         }
 
+        public async Task<AgendaItem> CreateAgendaItem(CreateAgendaItemDto agendaItem)
+        {
+            
+            var simulation = this._context.Simulations.Include(n => n.AgendaItems).FirstOrDefault(n => n.SimulationId == agendaItem.SimulationId);
+            if (simulation == null) return null;
+            var hasAnyElements = simulation.AgendaItems.Any();
+            if (hasAnyElements)
+            {
+                var hasMatchingAgendaItem = simulation.AgendaItems.Any(n =>
+                (n.Name == agendaItem.Name || agendaItem.AgendaItemId == agendaItem.AgendaItemId));
+                if (hasMatchingAgendaItem) return null;
+            }
+            
+            var item = new AgendaItem(agendaItem);
+
+            if (hasAnyElements)
+            {
+                item.OrderIndex = simulation.AgendaItems.Max(n => n.OrderIndex) + 1;
+            }
+            else
+            {
+                item.OrderIndex = 1;
+            }
+
+            simulation.AgendaItems.Add(item);
+            _context.AgendaItems.Add(item);
+            await this._context.SaveChangesAsync();
+            return item;
+        }
+
         public Task<List<Models.Simulation.PetitionType>> GetSimulationPetitionTypes(int simulationId)
         {
             return _context.SimulationPetitionTypes.Where(n => n.Simulation.SimulationId == simulationId)
@@ -370,6 +433,40 @@ namespace MUNityCore.Services
                 .Include(n => n.Users)
                 .FirstOrDefaultAsync(n => n.SimulationId == id);
         }
+
+        public async Task<List<AgendaItemDto>> GetAgendaItemsAndPetitionsDto(int simulationId)
+        {
+            var test = _context.AgendaItems
+                .Where(n => n.Simulation.SimulationId == simulationId)
+                .Select(n => new AgendaItemDto()
+                {
+                    Name = n.Name,
+                    Description = n.Description,
+                    Status = n.Status,
+                    Petitions = n.Petitions.Select(a => new PetitionDto()
+                    {
+                        PetitionDate = a.PetitionDate,
+                        PetitionId = a.PetitionId,
+                        PetitionTypeId = a.PetitionType.PetitionTypeId,
+                        PetitionUserId = a.SimulationUser.SimulationUserId,
+                        Status = a.Status,
+                        TargetAgendaItemId = a.AgendaItem.AgendaItemId,
+                        Text = a.Text
+                    })
+                });
+            if (test.Any())
+                return await test.ToListAsync();
+            return new List<AgendaItemDto>();
+        }
+
+        public async Task<List<AgendaItem>> GetAgendaItems(int simulationId)
+        {
+            var query = _context.AgendaItems.Where(n => n.Simulation.SimulationId == simulationId);
+            var hasElements = await query.AnyAsync();
+            if (hasElements) return await query.ToListAsync();
+            return new List<AgendaItem>();
+        }
+        
 
         public List<SimulationHubConnection> UserConnections(int userId)
         {

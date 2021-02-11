@@ -98,5 +98,20 @@ namespace MUNityCore.Extensions.CastExtensions
             };
             return setup;
         }
+
+        public static PetitionDto ToPetitionDto(this Models.Simulation.Petition petition)
+        {
+            var model = new PetitionDto()
+            {
+                PetitionDate = petition.PetitionDate,
+                PetitionId = petition.PetitionId,
+                PetitionTypeId = petition.PetitionType.PetitionTypeId,
+                PetitionUserId = petition.SimulationUser.SimulationUserId,
+                TargetAgendaItemId = petition.AgendaItem.AgendaItemId,
+                Status = petition.Status,
+                Text = petition.Text,
+            };
+            return model;
+        }
     }
 }

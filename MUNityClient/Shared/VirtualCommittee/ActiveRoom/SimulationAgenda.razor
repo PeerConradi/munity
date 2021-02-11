@@ -5,7 +5,7 @@
             <div class="card">
                 <div class="card-header">
                     Tagesordnungspunkte
-                    @if (this.ViewModel.IsChair)
+                    @if (this.ViewModel.IsChair || this.ViewModel.MyAuth != null && this.ViewModel.MyAuth.CanCreateRole)
                     {
                         <button class="btn btn-success btn-sm">Neuer Tagesordnungspunkt</button>
                     }

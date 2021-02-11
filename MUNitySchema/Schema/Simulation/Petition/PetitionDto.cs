@@ -9,7 +9,7 @@ namespace MUNity.Schema.Simulation
     /// <summary>
     /// Users inside the Simulation can make Petition that can be accepted or denied by the Leader.
     /// </summary>
-    public class PetitionDto : SimulationRequest, MUNity.Models.Simulation.IPetition
+    public class PetitionDto : MUNity.Models.Simulation.IPetition
     {
 
         /// <summary>
@@ -46,18 +46,6 @@ namespace MUNity.Schema.Simulation
         /// The AgendaItem that this petition is refering to.
         /// </summary>
         public int TargetAgendaItemId { get; set; }
-
-        /// <summary>
-        /// Creates a new Petition and sets the SimulationId.
-        /// </summary>
-        /// <param name="simulationId"></param>
-        public PetitionDto(int simulationId)
-        {
-            this.PetitionId = Guid.NewGuid().ToString();
-            this.Text = "";
-            this.PetitionDate = DateTime.Now;
-            this.SimulationId = simulationId;
-        }
 
         /// <summary>
         /// Creates a new Petition and generates a new Guid, Text will be string.Empty and the PetitionDate the current DateTime.

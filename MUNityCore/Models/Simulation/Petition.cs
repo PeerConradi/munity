@@ -19,5 +19,10 @@ namespace MUNityCore.Models.Simulation
         public SimulationUser SimulationUser { get; set; }
 
         public AgendaItem AgendaItem { get; set; }
+
+        public Petition()
+        {
+            PetitionId = Guid.NewGuid().ToString();
+        }
     }
 }

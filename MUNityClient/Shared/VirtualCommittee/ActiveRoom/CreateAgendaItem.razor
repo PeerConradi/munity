@@ -1,0 +1,73 @@
+﻿@if (ViewModel != null && FormModel != null)
+{
+    @if (State == FormStates.Start)
+    {
+        <EditForm Model="@this.FormModel" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-control">
+                <label>Name</label>
+                <InputText Value="@this.FormModel.Name" class="form-control" />
+            </div>
+            <div class="form-control">
+                <label>Beschreibung</label>
+                <InputTextArea Value="@this.FormModel.Description" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" />
+            </div>
+        </EditForm>
+    }
+    else if (State == FormStates.Success)
+    {
+        <div class="alert alert-success">Tagesordnungspunkt angelegt!</div>
+    }
+    else if (State == FormStates.ClientError || State == FormStates.ServerError)
+    {
+        <div class="alert alert-danger">Fehler @Message</div>
+    }
+
+}
+
+@code {
+    [Parameter]
+    public ViewModel.SimulationViewModel ViewModel { get; set; }
+
+    public MUNity.Schema.Simulation.CreateAgendaItemDto FormModel { get; set; } = new MUNity.Schema.Simulation.CreateAgendaItemDto();
+
+    private enum FormStates
+    {
+        Start,
+        ClientError,
+        ServerError,
+        Success
+    }
+
+    private FormStates State { get; set; }
+
+    private string Message { get; set; }
+
+    public async Task HandleSubmit()
+    {
+        var result = await ViewModel.CreateAgendaItem(this.FormModel);
+        if (result == null)
+        {
+            State = FormStates.ClientError;
+            return;
+        }
+        else
+        {
+            if (result.IsSuccessStatusCode)
+            {
+                State = FormStates.Success;
+                return;
+            }
+            else
+            {
+                State = FormStates.ServerError;
+                Message = result.ReasonPhrase;
+            }
+        }
+    }
+}

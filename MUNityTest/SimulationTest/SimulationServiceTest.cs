@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNityCore.DataHandlers.EntityFramework;
+using MUNity.Schema.Simulation;
 
 namespace MUNityTest.SimulationTest
 {
@@ -148,5 +149,57 @@ namespace MUNityTest.SimulationTest
             Assert.IsTrue(saved.Any());
             Assert.AreEqual(15, saved.Count);
         }
+
+        [Test]
+        [Order(11)]
+        public async Task TestCreateAgendaItem()
+        {
+            var service = new SimulationService(_context);
+            var dto = new CreateAgendaItemDto()
+            {
+                Name = "Test",
+                Description = "Description",
+                SimulationId = simulationId
+            };
+            var result = await service.CreateAgendaItem(dto);
+            Assert.NotNull(result);
+            var recall = await service.GetAgendaItems(simulationId);
+            Assert.IsTrue(recall.Any());
+            var recallWithPetitions = await service.GetAgendaItemsAndPetitionsDto(simulationId);
+            Assert.IsTrue(recallWithPetitions.Any());
+        }
+
+        [Test]
+        [Order(12)]
+        public async Task TestMakePetition()
+        {
+            var service = new SimulationService(_context);
+            var petitionTypes = await service.GetPetitionTypes();
+            var user = await service.GetSimulationUsers(simulationId).FirstOrDefaultAsync();
+            var agendaItems = await service.GetAgendaItems(simulationId);
+
+            Assert.IsTrue(petitionTypes.Any());
+            Assert.NotNull(user);
+            Assert.IsTrue(agendaItems.Any());
+
+            var dto = new CreatePetitionRequest()
+            {
+                PetitionDate = DateTime.Now,
+                PetitionTypeId = petitionTypes.First().PetitionTypeId,
+                PetitionUserId = user.SimulationUserId,
+                SimulationId = simulationId,                                    // SimulationId should be optional
+                Status = MUNitySchema.Models.Simulation.EPetitionStates.Unkown,
+                TargetAgendaItemId = agendaItems.First().AgendaItemId,
+                Text = "More info",
+            };
+
+            bool created = service.SubmitPetition(dto);
+            Assert.IsTrue(created);
+            var recall = await service.GetAgendaItemsAndPetitionsDto(simulationId);
+            Assert.NotNull(recall);
+            Assert.IsTrue(recall.Any());
+            Assert.IsTrue(recall.First().Petitions.Any());
+        }
+
     }
 }

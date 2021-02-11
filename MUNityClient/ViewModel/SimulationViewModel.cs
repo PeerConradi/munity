@@ -8,6 +8,7 @@ using MUNity.Schema.Simulation;
 using System.Collections.ObjectModel;
 using MUNity.Models.Simulation;
 using MUNityClient.Services;
+using System.Net.Http;
 
 namespace MUNityClient.ViewModel
 {
@@ -183,6 +184,13 @@ namespace MUNityClient.ViewModel
                     return this.PetitionTypes.Where(n => n.AllowSpectator);
                 return null;
             }
+        }
+
+        public Task<HttpResponseMessage> CreateAgendaItem(CreateAgendaItemDto model)
+        {
+            if (this.Simulation == null) return null;
+            model.SimulationId = this.Simulation.SimulationId;
+            return this._simulationService.CreateAgendaItem(model);
         }
     }
 }
