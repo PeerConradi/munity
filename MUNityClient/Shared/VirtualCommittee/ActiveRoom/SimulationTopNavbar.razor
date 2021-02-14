@@ -66,13 +66,12 @@ else
                             </a>
                         </li>
 
-
+                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeaker ? "badge badge-primary" : "")" title="Einstellungen">
+                            <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeaker">
+                                <i class="fa fa-comments"></i>
+                            </a>
+                        </li>
                     }
-
-
-                    <li class="nav-item badge rounded-pill nav-spacing">
-                        <a class="nav-link" @onclick="() => LayoutWrapper.ShowListOfSpeakers = !LayoutWrapper.ShowListOfSpeakers"><i class="fas @(LayoutWrapper.ShowListOfSpeakers ? "fa-eye" : "fa-eye-slash")"></i> Redeliste</a>
-                    </li>
                 }
 
             </ul>

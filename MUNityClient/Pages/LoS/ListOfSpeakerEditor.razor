@@ -193,18 +193,18 @@
                             <h5>Fragen und Kurzbemerkungen</h5>
                             @foreach (var question in Speakerlist.Questions)
                         {
-                                    <div class="card border p-2">@question.Name</div>
+                                    <div class="card border p-2">@question.Name <i class="fas fa-times mr-2 text-danger" @onclick="() => RemoveSpeaker(question)"></i></div>
                         }
                             @if (Speakerlist.QuestionsClosed)
                         {
-                                    <button @onclick="() => Speakerlist.QuestionsClosed = true"
-                                        class="btn btn-outline-success">Redeliste
+                                    <button @onclick="() => Speakerlist.QuestionsClosed = !Speakerlist.QuestionsClosed"
+                                        class="btn btn-outline-success">FuK
                                         öffnen</button>
                         }
                         else
                         {
-                                    <div type="button" @onclick="() => Speakerlist.QuestionsClosed = false"
-                                        class="border mx-0 mt-2 p-2"><i class="fas fa-ban mr-2 text-danger"></i>Redeliste
+                                    <div type="button" @onclick="() => Speakerlist.QuestionsClosed = !Speakerlist.QuestionsClosed"
+                                        class="border mx-0 mt-2 p-2"><i class="fas fa-ban mr-2 text-danger"></i>FuK
                                         schließen</div>
                         }
                         </div>

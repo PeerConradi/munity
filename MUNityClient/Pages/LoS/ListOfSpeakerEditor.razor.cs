@@ -217,7 +217,15 @@ namespace MUNityClient.Pages.LoS
             if (IsOnline)
             {
                 // The syncing when a speaker has been added will happen in StoreOnCollectionChanged
-                if (e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.SpeakerTime) || e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.QuestionTime) || e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.CurrentSpeaker) || e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.CurrentQuestion) || e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.Status) || e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.StartQuestionTime) || e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.StartSpeakerTime) || e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.ListClosed) || e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.QuestionsClosed))
+                if (e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.SpeakerTime) || 
+                    e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.QuestionTime) || 
+                    e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.CurrentSpeaker) || 
+                    e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.CurrentQuestion) || 
+                    e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.Status) || 
+                    e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.StartQuestionTime) || 
+                    e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.StartSpeakerTime) || 
+                    e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.ListClosed) || 
+                    e.PropertyName == nameof(MUNity.Models.ListOfSpeakers.ListOfSpeakers.QuestionsClosed))
                 {
                     this.listOfSpeakerService.SyncSpeakerlist(this.Speakerlist);
                 }

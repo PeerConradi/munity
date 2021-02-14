@@ -40,9 +40,6 @@ namespace MUNityClient.Pages.Simulation
             if (int.TryParse(Id, out id))
             {
                 SimulationViewModelInstance = await simulationService.Subscribe(id);
-                if (SimulationViewModelInstance != null)
-                {
-                }
 
                 AddHandlers(SimulationViewModelInstance);
                 this._listOfSpeakerId = await this.simulationService.GetListOfSpeakerId(id);
@@ -54,12 +51,49 @@ namespace MUNityClient.Pages.Simulation
                         ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(_listOfSpeakers);
                         if (ListOfSpeakersInstance != null)
                         {
-                        //_listOfSpeakerSocket.SpeakerListChanged += OnSpeakerlistChanged;
+                            // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
+                            ListOfSpeakersInstance.SpeakerListChanged += delegate { this.StateHasChanged(); };
                         }
                     }
                 }
 
                 this.StateHasChanged();
+            }
+        }
+
+        private void AddMeToListOfSpeakers()
+        {
+            if (ListOfSpeakersInstance == null)
+                return;
+            if (SimulationViewModelInstance?.MyRole != null)
+            {
+                listOfSpeakerService.AddSpeakerToList(ListOfSpeakersInstance.SourceList.ListOfSpeakersId, SimulationViewModelInstance.MyRole.Name, SimulationViewModelInstance.MyRole.Iso);
+                return;
+            }
+            else
+            {
+                if (SimulationViewModelInstance?.Me != null)
+                {
+                    listOfSpeakerService.AddSpeakerToList(ListOfSpeakersInstance.SourceList.ListOfSpeakersId, SimulationViewModelInstance.Me.DisplayName, "");
+                }
+            }
+        }
+
+        private void AddMeToListOfQuestions()
+        {
+            if (ListOfSpeakersInstance == null)
+                return;
+            if (SimulationViewModelInstance?.MyRole != null)
+            {
+                listOfSpeakerService.AddQuestionToList(ListOfSpeakersInstance.SourceList.ListOfSpeakersId, SimulationViewModelInstance.MyRole.Name, SimulationViewModelInstance.MyRole.Iso);
+                return;
+            }
+            else
+            {
+                if (SimulationViewModelInstance?.Me != null)
+                {
+                    listOfSpeakerService.AddQuestionToList(ListOfSpeakersInstance.SourceList.ListOfSpeakersId, SimulationViewModelInstance.Me.DisplayName, "");
+                }
             }
         }
 
@@ -70,8 +104,6 @@ namespace MUNityClient.Pages.Simulation
 
         private void AddHandlers(MUNityClient.ViewModels.SimulationViewModel context)
         {
-            context.UserConnected += OnUserConnected;
-            context.UserDisconnected += OnUserDisconnected;
             context.PhaseChanged += OnPhaseChanged;
             context.CurrentResolutionChanged += delegate { this.StateHasChanged(); };
             context.HubConnection.Closed += (ex) =>
@@ -105,33 +137,6 @@ namespace MUNityClient.Pages.Simulation
             if (phase == MUNity.Schema.Simulation.GamePhases.Lobby)
             {
                 navigationManager.NavigateTo($"/sim/lobby/{Id}");
-            }
-        }
-
-        private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user)
-        {
-            if (SimulationViewModelInstance?.Simulation?.Users != null)
-            {
-                var tmpUser = SimulationViewModelInstance.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
-                if (tmpUser != null)
-                {
-                    tmpUser.IsOnline = true;
-                    tmpUser.DisplayName = user.DisplayName;
-                    this.StateHasChanged();
-                }
-            }
-        }
-
-        private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user)
-        {
-            if (SimulationViewModelInstance?.Simulation?.Users != null)
-            {
-                var tmpUser = SimulationViewModelInstance.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
-                if (tmpUser != null)
-                {
-                    tmpUser.IsOnline = false;
-                    this.StateHasChanged();
-                }
             }
         }
 
