@@ -122,17 +122,6 @@
     }
 </div>
 
-    @* Ansicht für die Steuerung (Kann entfernt werden sobald die Redeiste über den bearbeiten Button einstellbar ist) *@
-    @if (this.SimulationViewModelInstance.IsChair)
-    {
-        <div class="row m-0 p-0">
-            <div class="col-12">
-                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationControls SpeakerlistSocket="ListOfSpeakersInstance"
-                                                                                    ViewModel="@SimulationViewModelInstance"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationControls>
-            </div>
-        </div>
-    }
-
 
     @*<MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationNotifications />*@
 }
