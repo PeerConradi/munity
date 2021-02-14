@@ -23,13 +23,13 @@ namespace MUNity.Schema.Simulation
         /// The display name of the Agenda item
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = "Name";
 
         /// <summary>
         /// An aditional text for the agenda item
         /// </summary>
         [Required]
-        public string Description { get; set; }
+        public string Description { get; set; } = "Beschreibung";
 
         /// <summary>
         /// The current State of the Agenda Item

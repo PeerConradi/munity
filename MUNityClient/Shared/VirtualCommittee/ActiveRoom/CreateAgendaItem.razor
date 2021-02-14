@@ -1,21 +1,22 @@
 ﻿@if (ViewModel != null && FormModel != null)
 {
+<MUNityClient.Shared.Bootstrap.Modal Title="Neuer Tagesordnungspunkt" @ref="_myModal" ShowSubmitButton="false">
     @if (State == FormStates.Start)
     {
         <EditForm Model="@this.FormModel" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
-            <div class="form-control">
+            <div class="form-group">
                 <label>Name</label>
-                <InputText Value="@this.FormModel.Name" class="form-control" />
-            </div>
-            <div class="form-control">
-                <label>Beschreibung</label>
-                <InputTextArea Value="@this.FormModel.Description" />
+                <InputText @bind-Value="@this.FormModel.Name" class="form-control" />
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary" />
+                <label>Beschreibung</label>
+                <InputTextArea @bind-Value="@this.FormModel.Description" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Tagesordnungspunkt erstellen" />
             </div>
         </EditForm>
     }
@@ -27,14 +28,35 @@
     {
         <div class="alert alert-danger">Fehler @Message</div>
     }
+</MUNityClient.Shared.Bootstrap.Modal>
 
+}
+else
+{
+    <p>An das Steuerelement wurde kein ViewModel übergeben.</p>
 }
 
 @code {
     [Parameter]
     public ViewModel.SimulationViewModel ViewModel { get; set; }
 
-    public MUNity.Schema.Simulation.CreateAgendaItemDto FormModel { get; set; } = new MUNity.Schema.Simulation.CreateAgendaItemDto();
+    public bool IsVisible {
+        get => _myModal.IsOpen;
+        set
+        {
+            if (value)
+                _myModal.Open();
+            else
+                _myModal.Close();
+        }
+    }
+
+    private MUNityClient.Shared.Bootstrap.Modal _myModal;
+
+    public MUNity.Schema.Simulation.CreateAgendaItemDto FormModel { get; set; } = new MUNity.Schema.Simulation.CreateAgendaItemDto()
+    {
+        Token = "test"
+    };
 
     private enum FormStates
     {
@@ -44,9 +66,9 @@
         Success
     }
 
-    private FormStates State { get; set; }
+    private FormStates State { get; set; } = FormStates.Start;
 
-    private string Message { get; set; }
+    private string Message { get; set; } = "";
 
     public async Task HandleSubmit()
     {
@@ -61,6 +83,7 @@
             if (result.IsSuccessStatusCode)
             {
                 State = FormStates.Success;
+                _myModal.Close();
                 return;
             }
             else

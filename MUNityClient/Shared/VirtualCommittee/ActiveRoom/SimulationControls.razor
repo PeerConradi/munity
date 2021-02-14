@@ -22,34 +22,11 @@
 <!-- Grey with black text -->
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark nav-bottom w-100" style="opacity: 0.75;">
     <ul class="navbar-nav">
-        <li class="nav-item @((_selectedTab == TabPages.GeneralControls) ? "active" : "")">
-            <a class="nav-link" @onclick="() => _selectedTab = (_selectedTab == TabPages.GeneralControls) ? TabPages.None : TabPages.GeneralControls">Allgemeine Funktionen</a>
-        </li>
         <li class="nav-item @((_selectedTab == TabPages.ListOfSpeakers) ? "active" : "")">
             <a class="nav-link" @onclick="() => _selectedTab = (_selectedTab == TabPages.ListOfSpeakers) ? TabPages.None : TabPages.ListOfSpeakers">Redeliste</a>
         </li>
-        <li class="nav-item @((_selectedTab == TabPages.Voting) ? "active" : "")">
-            <a class="nav-link" @onclick="() => { _selectedTab = (_selectedTab == TabPages.Voting) ? TabPages.None : TabPages.Voting; _hasNewVotes = false; }">
-                Abstimmung @if (_hasNewVotes && _lastCreatedVote.AllowedUsers.Contains(SimulationContext.Me.SimulationUserId))
-                {
-                    <span class="badge badge-danger">Neu</span>
-                }
-            </a>
-
-        </li>
-        <!--
-        <li class="nav-item">
-            <a class="nav-link">Anwesenheit</a>
-        </li>
-        -->
-
     </ul>
 </nav>
-
-@if (_selectedTab == TabPages.GeneralControls)
-{
-    <p>Kann gelöscht werden</p>
-}
 
 @if (_selectedTab == TabPages.ListOfSpeakers)
 {
@@ -76,40 +53,6 @@
     </div>
 }
 
-@if (_selectedTab == TabPages.Voting)
-{
-
-    @if (SimulationContext != null && (_lastCreatedVote == null || _lastCreatedVote != null && !_lastCreatedVote.AllowedUsers.Contains(SimulationContext.Me.SimulationUserId)) && SimulationContext?.MyRole != null && SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
-    {
-        <div class="card floating-card shadow-2 p-3">
-            <CreateVoteComponent SimulationId="@SimulationContext.Simulation.SimulationId"></CreateVoteComponent>
-            <span class="close-floating-card badge badge-warning hoverable" @onclick="() => _selectedTab = TabPages.None">Fenster schließen</span>
-        </div>
-    }
-    else if (_lastCreatedVote != null && _lastCreatedVote.AllowedUsers.Contains(SimulationContext.Me.SimulationUserId))
-    {
-        <div class="card floating-card shadow-2">
-            <div class="row">
-                <div class="col-12">
-                    <p>@_lastCreatedVote.Text</p>
-                </div>
-                <div class="col-12">
-                    <button class="btn btn-success btn-block" @onclick="VotePro">Dafür</button>
-                </div>
-                <div class="col-12">
-                    <button class="btn btn-danger btn-block" @onclick="VoteCon">Dagegen</button>
-                </div>
-                @if (_lastCreatedVote.AllowAbstention)
-                {
-                    <div class="col-12">
-                        <button class="btn btn-primary btn-block" @onclick="VoteAbstention">Enthaltung</button>
-                    </div>
-                }
-            </div>
-        </div>
-    }
-}
-
 
 
 
@@ -118,9 +61,9 @@
         transition: .3s;
     }
 
-        .header-item:not(.selected-tab):hover {
-            background-color: #dedede;
-        }
+    .header-item:not(.selected-tab):hover {
+        background-color: #dedede;
+    }
 
     .selected-tab {
         background-color: #1266F1;

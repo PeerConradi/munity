@@ -19,14 +19,14 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The current or new roles
         /// </summary>
-        public IEnumerable<SimulationRoleItem> Roles { get; private set; }
+        public IEnumerable<SimulationRoleDto> Roles { get; private set; }
 
         /// <summary>
         /// Create event arguments with all given parameters
         /// </summary>
         /// <param name="simulationId"></param>
         /// <param name="roles"></param>
-        public RolesChangedEventArgs(int simulationId, IEnumerable<SimulationRoleItem> roles)
+        public RolesChangedEventArgs(int simulationId, IEnumerable<SimulationRoleDto> roles)
         {
             this.SimulationId = simulationId;
             this.Roles = roles;

@@ -7,7 +7,7 @@ namespace MUNity.Schema.Simulation
     /// <summary>
     /// A role of a simulation/virtual committee.
     /// </summary>
-    public class SimulationRoleItem
+    public class SimulationRoleDto
     {
         
         /// <summary>

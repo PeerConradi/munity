@@ -20,11 +20,7 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
         private enum TabPages
         {
             None,
-            GeneralControls,
             ListOfSpeakers,
-            Voting,
-            Presents,
-            Petitions
         }
 
         [Parameter]
@@ -47,64 +43,19 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
             get;
             set;
         } = false;
-        private bool _hasNewVotes { get; set; } = false;
+        
 
-        private MUNity.Schema.Simulation.CreatedVoteModel _lastCreatedVote { get; set; } = null;
+        
 
         private MUNity.Models.ListOfSpeakers.ListOfSpeakers _listOfSpeakers;
         protected override void OnInitialized()
         {
-            if (SimulationContext != null)
-            {
-                SimulationContext.VoteCreated += VoteCreated;
-            }
-
             base.OnInitialized();
         }
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-        }
-
-        private void VoteCreated(object sender, MUNity.Schema.Simulation.CreatedVoteModel args)
-        {
-            _hasNewVotes = true;
-            _lastCreatedVote = args;
-            StateHasChanged();
-        }
-
-        private async Task VotePro()
-        {
-            if (_lastCreatedVote != null)
-            {
-                await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 0);
-                _lastCreatedVote = null;
-                _hasNewVotes = false;
-                _selectedTab = TabPages.None;
-            }
-        }
-
-        private async Task VoteCon()
-        {
-            if (_lastCreatedVote != null)
-            {
-                await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 1);
-                _lastCreatedVote = null;
-                _hasNewVotes = false;
-                _selectedTab = TabPages.None;
-            }
-        }
-
-        private async Task VoteAbstention()
-        {
-            if (_lastCreatedVote != null)
-            {
-                await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 2);
-                _lastCreatedVote = null;
-                _hasNewVotes = false;
-                _selectedTab = TabPages.None;
-            }
         }
 
         private void AddMeToListOfSpeakers()

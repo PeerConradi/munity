@@ -18,11 +18,11 @@ namespace MUNityClient.Shared.Bootstrap
     public partial class Modal
     {
         [Parameter]
-        public string Title
-        {
-            get;
-            set;
-        }
+        public string Title { get; set; }
+
+        private bool _isOpen;
+
+        public bool IsOpen => _isOpen;
 
         [Parameter]
         public RenderFragment ChildContent
@@ -39,13 +39,11 @@ namespace MUNityClient.Shared.Bootstrap
         }
 
         [Parameter]
-        public string SubmitText
-        {
-            get;
-            set;
-        }
+        public string SubmitText { get; set; } = "Bestätigen";
 
-        = "Bestätigen";
+        [Parameter]
+        public bool ShowSubmitButton { get; set; } = true;
+
         public Guid Guid = Guid.NewGuid();
         public string ModalDisplay = "none;";
         public string ModalClass = "";
@@ -55,6 +53,7 @@ namespace MUNityClient.Shared.Bootstrap
             ModalDisplay = "block;";
             ModalClass = "Show";
             ShowBackdrop = true;
+            _isOpen = true;
             StateHasChanged();
         }
 
@@ -63,6 +62,7 @@ namespace MUNityClient.Shared.Bootstrap
             ModalDisplay = "none";
             ModalClass = "";
             ShowBackdrop = false;
+            _isOpen = false;
             StateHasChanged();
         }
     }

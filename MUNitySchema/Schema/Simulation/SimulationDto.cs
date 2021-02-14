@@ -7,7 +7,7 @@ namespace MUNity.Schema.Simulation
     /// <summary>
     /// The schema you will get when asking for a simulation with a valid token.
     /// </summary>
-    public class SimulationResponse
+    public class SimulationDto
     {
         /// <summary>
         /// the id of the simulation.
@@ -27,11 +27,11 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The roles of the simulation.
         /// </summary>
-        public List<SimulationRoleItem> Roles { get; set; }
+        public List<SimulationRoleDto> Roles { get; set; }
 
         /// <summary>
         /// The users of the simulation.
         /// </summary>
-        public List<SimulationUserItem> Users { get; set; }
+        public List<SimulationUserDefaultDto> Users { get; set; }
     }
 }

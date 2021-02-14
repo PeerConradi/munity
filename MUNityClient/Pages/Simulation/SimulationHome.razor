@@ -102,8 +102,10 @@ else if (_connectionState == ConnectionStates.CantReachServer)
 
 
 <MUNityClient.Shared.Bootstrap.Modal Title="Simulation Betreten" @ref="this._passwordModal"
-                                        OnSubmitCallback="JoinSimulation">
-    <EditForm Model="_joinForm" OnSubmit="JoinSimulation">
+                                        ShowSubmitButton="false">
+    <EditForm Model="_joinForm" OnValidSubmit="JoinSimulation">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
         <div class="form-group">
             <label>Anzeigename</label>
             <InputText @bind-Value="_joinForm.DisplayName" class="form-control"></InputText>

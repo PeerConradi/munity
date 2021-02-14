@@ -10,10 +10,13 @@
             <div class="modal-body">
                 @ChildContent
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" @onclick="@(() => {OnSubmitCallback.InvokeAsync(null); Close();})">@SubmitText</button>
-                <button type="button" class="btn btn-light" data-dismiss="modal" @onclick="() => Close()">Abbrechen</button>
-            </div>
+            @if (ShowSubmitButton)
+            {
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="@(() => {OnSubmitCallback.InvokeAsync(null); Close();})">@SubmitText</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal" @onclick="() => Close()">Abbrechen</button>
+                </div>
+            }
         </div>
     </div>
 </div>

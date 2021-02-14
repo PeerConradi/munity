@@ -24,14 +24,14 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             set;
         }
 
-        public IEnumerable<MUNity.Schema.Simulation.SimulationUserItem> Users
+        public IEnumerable<MUNity.Schema.Simulation.SimulationUserDefaultDto> Users
         {
             get;
             set;
         }
 
         [Parameter]
-        public IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem> Roles
+        public IEnumerable<MUNity.Schema.Simulation.SimulationRoleDto> Roles
         {
             get;
             set;
@@ -66,7 +66,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             }
         }
 
-        private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserItem usr)
+        private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto usr)
         {
             var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
             if (user != null)
@@ -78,7 +78,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             }
         }
 
-        private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserItem usr)
+        private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto usr)
         {
             var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
             if (user != null)

@@ -29,7 +29,7 @@ namespace MUNityCore.Hubs
             var disconnectedUser = simulation.Users.FirstOrDefault(n => n.HubConnections.Any(a => a.ConnectionId == this.Context.ConnectionId));
             if (disconnectedUser.HubConnections.Any())
             {
-                this.Clients.Group($"sim_{simulation.SimulationId}").UserDisconnected(simulation.SimulationId, disconnectedUser.AsUserItem());
+                this.Clients.Group($"sim_{simulation.SimulationId}").UserDisconnected(simulation.SimulationId, disconnectedUser.AsSimulationUserDefaultDto());
             }
             this._service.RemoveHubs(disconnectedUser.HubConnections);
             return base.OnDisconnectedAsync(exception);

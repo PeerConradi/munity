@@ -9,9 +9,9 @@ namespace MUNityCore.Extensions.CastExtensions
 {
     public static class SimulationCast
     {
-        public static SimulationRoleItem AsRoleItem(this SimulationRole role)
+        public static SimulationRoleDto ToSimulationRoleDto(this SimulationRole role)
         {
-            var mdl = new SimulationRoleItem()
+            var mdl = new SimulationRoleDto()
             {
                 Iso = role.Iso,
                 Name = role.Name,
@@ -23,9 +23,9 @@ namespace MUNityCore.Extensions.CastExtensions
             return mdl;
         }
 
-        public static SimulationUserItem AsUserItem(this SimulationUser user)
+        public static SimulationUserDefaultDto AsSimulationUserDefaultDto(this SimulationUser user)
         {
-            var mdl = new SimulationUserItem()
+            var mdl = new SimulationUserDefaultDto()
             {
                 DisplayName = user.DisplayName,
                 RoleId = user.Role?.SimulationRoleId ?? -2,
@@ -35,20 +35,20 @@ namespace MUNityCore.Extensions.CastExtensions
             return mdl;
         }
 
-        public static SimulationResponse AsResponse (this Simulation simulation)
+        public static SimulationDto ToSimulationDto (this Simulation simulation)
         {
-            var mdl = new SimulationResponse()
+            var mdl = new SimulationDto()
             {
                 Name = simulation.Name,
                 Phase = simulation.Phase,
-                Roles = simulation.Roles?.Select(n => n.AsRoleItem()).ToList() ?? new List<SimulationRoleItem>(),
-                Users = simulation.Users?.Select(n => n.AsUserItem()).ToList() ?? new List<SimulationUserItem>(),
+                Roles = simulation.Roles?.Select(n => n.ToSimulationRoleDto()).ToList() ?? new List<SimulationRoleDto>(),
+                Users = simulation.Users?.Select(n => n.AsSimulationUserDefaultDto()).ToList() ?? new List<SimulationUserDefaultDto>(),
                 SimulationId = simulation.SimulationId
             };
             return mdl;
         }
 
-        public static SimulationTokenResponse AsTokenResponse(this SimulationUser user)
+        public static SimulationTokenResponse ToTokenResponse(this SimulationUser user)
         {
             var mdl = new SimulationTokenResponse()
             {
@@ -60,9 +60,9 @@ namespace MUNityCore.Extensions.CastExtensions
             return mdl;
         }
 
-        public static SimulationListItem AsListItem(this Simulation simulation)
+        public static SimulationListItemDto ToSimulationListItemDto(this Simulation simulation)
         {
-            var mdl = new SimulationListItem()
+            var mdl = new SimulationListItemDto()
             {
                 Name = simulation.Name,
                 Phase = simulation.Phase,
@@ -72,9 +72,9 @@ namespace MUNityCore.Extensions.CastExtensions
             return mdl;
         }
 
-        public static SimulationAuthSchema AsAuthSchema(this SimulationUser user)
+        public static SimulationAuthDto ToSimulationAuthDto(this SimulationUser user)
         {
-            var mdl = new SimulationAuthSchema()
+            var mdl = new SimulationAuthDto()
             {
                 CanCreateRole = user.CanCreateRole,
                 CanEditListOfSpeakers = user.CanEditListOfSpeakers,
@@ -85,9 +85,9 @@ namespace MUNityCore.Extensions.CastExtensions
             return mdl;
         }
 
-        public static SimulationUserSetup AsUserSetup(this SimulationUser user) 
+        public static SimulationUserAdminDto ToSimulationUserAdminDto(this SimulationUser user) 
         {
-            var setup = new SimulationUserSetup()
+            var setup = new SimulationUserAdminDto()
             {
                 SimulationUserId = user.SimulationUserId,
                 DisplayName = user.DisplayName,
@@ -112,6 +112,26 @@ namespace MUNityCore.Extensions.CastExtensions
                 Text = petition.Text,
             };
             return model;
+        }
+
+        public static AgendaItemDto ToAgendaItemDto(this AgendaItem agendaItem)
+        {
+            var mdl = new AgendaItemDto()
+            {
+                AgendaItemId = agendaItem.AgendaItemId,
+                Description = agendaItem.Description,
+                Name = agendaItem.Name,
+                Petitions = agendaItem.Petitions.ToPetitionDtoList(),
+                Status = agendaItem.Status
+            };
+            return mdl;
+        }
+
+        public static IEnumerable<PetitionDto> ToPetitionDtoList(this List<Petition> petitions)
+        {
+            if (petitions == null)
+                return new List<PetitionDto>();
+            return petitions.Select(n => n.ToPetitionDto());
         }
     }
 }

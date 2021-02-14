@@ -40,7 +40,7 @@ namespace MUNity.Hubs
         /// <param name="simulationId"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        Task UserConnected(int simulationId, SimulationUserItem user);
+        Task UserConnected(int simulationId, SimulationUserDefaultDto user);
 
         /// <summary>
         /// A user has disconnected.
@@ -48,7 +48,7 @@ namespace MUNity.Hubs
         /// <param name="simulationId"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        Task UserDisconnected(int simulationId, SimulationUserItem user);
+        Task UserDisconnected(int simulationId, SimulationUserDefaultDto user);
 
         /// <summary>
         /// The current phase of the simulation has changed.
@@ -131,5 +131,11 @@ namespace MUNity.Hubs
         /// <param name="args">Arguments</param>
         /// <returns></returns>
         Task Voted(VotedEventArgs args);
+
+        Task AgendaItemAdded(AgendaItemDto agendaItem);
+
+        Task AgendaItemRemoved(AgendaItemDto agendaItem);
+
+        Task AgendaItemChanged(AgendaItemDto agendaItem);
     }
 }

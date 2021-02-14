@@ -18,7 +18,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
     public partial class UserListItemAdmin
     {
         [Parameter]
-        public MUNity.Schema.Simulation.SimulationUserSetup User
+        public MUNity.Schema.Simulation.SimulationUserAdminDto User
         {
             get;
             set;
@@ -32,7 +32,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         }
 
         [Parameter]
-        public List<MUNity.Schema.Simulation.SimulationRoleItem> Roles
+        public List<MUNity.Schema.Simulation.SimulationRoleDto> Roles
         {
             get;
             set;

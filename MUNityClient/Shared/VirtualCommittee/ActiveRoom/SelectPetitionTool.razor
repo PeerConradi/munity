@@ -1,23 +1,61 @@
-﻿<div class="row">
-    <div class="col-12">
-        @foreach(var category in Categories)
-        {
-            <button class="btn @((SelectedCategory == category) ? "btn-primary" : "btn-outline-primary")"
-                    @onclick="() => SelectedCategory = category">@category</button>
-        }
-    </div>
-    <div class="col-12">
-        @foreach(var petition in ViewModel.PetitionTypes.Where(n => n.Category == SelectedCategory))
-        {
-            <button class="btn btn-success">@petition.Name</button>
-        }
-    </div>
-</div>
+﻿<MUNityClient.Shared.Bootstrap.Modal Title="Neuer Antrag" @ref="_modalRef" ShowSubmitButton="false">
+    @if (ViewModel != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group w-100" role="group">
+                    @foreach (var category in Categories)
+                    {
+                        <button class="btn @((SelectedCategory == category) ? "btn-primary" : "btn-outline-primary")"
+                                @onclick="() => SelectedCategory = category">
+                            @category
+                        </button>
+                    }
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="list-group scroll-list">
+                    @foreach (var petition in ViewModel.PetitionTypes.Where(n => n.Category == SelectedCategory))
+                    {
+                        <a class="list-group-item">@petition.Name</a>
+                    }
+                </div>
+                    
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Es wurde kein ViewModel übergeben. Versuche die Seite neu zu laden und probiere es erneut. Hilft das nicht bitte einen Administrator informieren.</p>
+    }
+</MUNityClient.Shared.Bootstrap.Modal>
+
+<style>
+    .scroll-list {
+        max-height: 200px;
+        overflow-y: scroll;
+    }
+</style>
 
 @code {
 
     [Parameter]
     public MUNityClient.ViewModel.SimulationViewModel ViewModel { get; set; }
+
+    [Parameter]
+    public bool IsVisible { 
+        get => _modalRef.IsOpen;
+        set 
+        {
+            if (_modalRef == null) return;
+            if (value)
+                _modalRef.Open();
+            else
+                _modalRef.Close();
+        }
+     }
+
+    private MUNityClient.Shared.Bootstrap.Modal _modalRef;
 
     public IEnumerable<string> Categories => ViewModel.MyPetitionTypes.Select(n => n.Category).Distinct();
 

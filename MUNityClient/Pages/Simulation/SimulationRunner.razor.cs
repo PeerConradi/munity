@@ -107,7 +107,7 @@ namespace MUNityClient.Pages.Simulation
             }
         }
 
-        private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserItem user)
+        private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user)
         {
             if (_simulationContext?.Simulation?.Users != null)
             {
@@ -121,7 +121,7 @@ namespace MUNityClient.Pages.Simulation
             }
         }
 
-        private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserItem user)
+        private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user)
         {
             if (_simulationContext?.Simulation?.Users != null)
             {

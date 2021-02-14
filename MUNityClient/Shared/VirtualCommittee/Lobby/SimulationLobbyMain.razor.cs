@@ -50,8 +50,6 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             {
                 AppendEvents(SimulationContext);
                 SimulationContext.RolesChanged += SimulationContext_RolesChanged;
-                if (this.SimulationContext.PetitionTypes == null)
-                    this.SimulationContext.PetitionTypes = await this.simulationService.PetitionTypes(this.SimulationContext.Simulation.SimulationId);
             }
 
             this.PetitionTemplates = await this.simulationService.GetPetitionPresetNames();
@@ -64,7 +62,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             await base.OnInitializedAsync();   
         }
 
-        private void SimulationContext_RolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem> roles)
+        private void SimulationContext_RolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleDto> roles)
         {
             this.StateHasChanged();
         }
@@ -73,7 +71,6 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         {
             if (this.SimulationContext == null) return;
             await this.simulationService.ApplyPetitionTemplate(this.SimulationContext.Simulation.SimulationId, SelectedPetitionTemplate);
-            this.SimulationContext.PetitionTypes = await this.simulationService.PetitionTypes(this.SimulationContext.Simulation.SimulationId);
             this.StateHasChanged();
         }
 

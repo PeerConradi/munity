@@ -19,7 +19,7 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The public user id of the slot you want to join in
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Eine Kennung wird benötigt.")]
         [MaxLength(100)]
         public string UserId { get; set; }
 
@@ -27,14 +27,14 @@ namespace MUNity.Schema.Simulation
         /// The password of the simulation you want to enter.
         /// </summary>
         [MaxLength(100)]
-        [Required]
+        [Required(ErrorMessage = "Ein Passwort wird benötogt.")]
         public string Password { get; set; }
 
         /// <summary>
         /// The display name you want to enter with.
         /// </summary>
         [MaxLength(50)]
-        [Required]
+        [Required(ErrorMessage = "Ein Anzeigename wird benötigt.")]
         public string DisplayName { get; set; }
     }
 }

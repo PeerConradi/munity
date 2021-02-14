@@ -1,0 +1,18 @@
+﻿<div class="row">
+    @if (this.ViewModel != null)
+    {
+        <div class="col-12">
+            <button class="btn btn-outline-primary btn-block" @onclick="() => ViewModel.GoToLobby()">Zurück in die Lobby</button>
+        </div>
+    }
+    else
+    {
+        <p>Dem Steuerelement wurde kein ViewModel übergeben. Versuche die Seite neu zu laden, sollte der Fehler weiterhin bestehen informiere bitte einen Administrator.</p>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public ViewModel.SimulationViewModel ViewModel { get; set; }
+}

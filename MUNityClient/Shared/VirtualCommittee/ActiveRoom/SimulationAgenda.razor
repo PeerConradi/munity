@@ -7,63 +7,76 @@
                     Tagesordnungspunkte
                     @if (this.ViewModel.IsChair || this.ViewModel.MyAuth != null && this.ViewModel.MyAuth.CanCreateRole)
                     {
-                        <button class="btn btn-success btn-sm">Neuer Tagesordnungspunkt</button>
+                        <button class="btn btn-success btn-sm" @onclick="() => _createAgendaItemRef.IsVisible = !_createAgendaItemRef.IsVisible">Neuer Tagesordnungspunkt</button>
                     }
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-dark m-0">Ein alter Tagesordnungspunkt</div>
-                    <div class="alert alert-primary m-0">Der aktive Tagesordnungspunkt</div>
-                    <div class="alert alert-dark m-0">Ein noch kommender Tagesordnungspunkt</div>
+                    <div class="row">
+                        <div class="col-12">
+                            @if (this.ViewModel.AgendaItems != null)
+                            {
+                                if (this.ViewModel.AgendaItems.Any())
+                                {
+                                    @foreach (var agendaItem in this.ViewModel.AgendaItems)
+                                    {
+                                        <a class="alert w-100 @((_currentSelectedAgendaItem == agendaItem) ? "alert-primary" : "alert-dark") m-0"
+                                           @onclick="() => _currentSelectedAgendaItem = agendaItem">@agendaItem.Name</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info m-0">Keine Tagesordnungspunkte</div>
+                                }
+                            }
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
     </div>
-
-    @if (ShowNewPetitionBox)
-    {
-        <SelectPetitionTool ViewModel="@this.ViewModel" />
-    }
 
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
                 <div class="card-header">
                     Anträge
-                    @if (this.ViewModel.CanMakeAnyPetition)
+                    @if (_currentSelectedAgendaItem != null && this.ViewModel.CanMakeAnyPetition)
                     {
                         <button class="btn btn-success btn-sm" @onclick="() => ShowNewPetitionBox = !ShowNewPetitionBox">Neuer Antrag</button>
                     }
                 </div>
 
                 <div class="card-body">
+                    @if (_currentSelectedAgendaItem != null)
+                    {
                     <div class="list-group">
-                        <div class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">Recht auf Information</h5>
-                                <small class="text-muted">01.02.2021 12:00</small>
-                            </div>
-                            <div class="mb-0">
-                                <p>Einbringer</p>
-                                <p>Art des Antrags</p>
-                            </div>
-                            <div class="mb-1">
-                                <a class="badge badge-success">Antrag als aktiv setzen</a>
-                                <a class="badge badge-danger">Antrag löschen</a>
-                            </div>
-                        </div>
+                        @if (_currentSelectedAgendaItem.Petitions == null)
+                        {
+                            <p>Keine Anträge geladen</p>
+                        }
+                        else
+                        {
+                            if (_currentSelectedAgendaItem.Petitions.Any())
+                            {
+                                @foreach (var petition in _currentSelectedAgendaItem.Petitions)
+                                {
+                                    <PetitionListItem ViewModel="@this.ViewModel" />
+                                }
+                            }
+                            else
+                            {
+                                <p>Es liegen keine Anträge vor.</p>
+                            }
+                        }
 
-                        <a class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between">
-
-                                <h5 class="mb-1">Recht auf Information</h5>
-                                <small class="text-muted">01.02.2021 12:00</small>
-                            </div>
-                            <div class="mb-1">
-                                <p>Einbringer</p>
-                                <p>Art des Antrags</p>
-                            </div>
-                        </a>
                     </div>
+                    }
+                    else 
+                    {
+                        <p>Kein Tagesordnungspunkt ausgewählt</p>
+                    }
+
                 </div>
             </div>
 
@@ -72,6 +85,10 @@
 
 
     </div>
+
+    <CreateAgendaItem @ref="_createAgendaItemRef" ViewModel="ViewModel" />
+
+    <SelectPetitionTool ViewModel="@this.ViewModel" IsVisible="ShowNewPetitionBox" />
 }
 
 
@@ -80,4 +97,17 @@
     public MUNityClient.ViewModel.SimulationViewModel ViewModel { get; set; }
 
     public bool ShowNewPetitionBox { get; set; } = false;
+
+    private CreateAgendaItem _createAgendaItemRef;
+
+    private MUNity.Schema.Simulation.AgendaItemDto _currentSelectedAgendaItem = null;
+
+    protected override void OnInitialized()
+    {
+        if (this.ViewModel != null)
+        {
+            this.ViewModel.AgendaItemAdded += delegate { this.StateHasChanged(); };
+        }
+        base.OnInitialized();
+    }
 }

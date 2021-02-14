@@ -5,7 +5,7 @@
     <div class="widget-list-media ">
         @if (Role != null && !string.IsNullOrEmpty(Role.Iso))
         {
-            <img src="/img/flags/small/@(Role.Iso).png" alt="" class="rounded ">
+            <img src="/img/flags/small/un.png" alt="" class="rounded ">
         }
         else
         {
@@ -124,7 +124,7 @@
     public MUNity.Schema.Simulation.IUserItem User { get; set; }
 
     [Parameter]
-    public MUNity.Schema.Simulation.SimulationRoleItem Role { get; set; }
+    public MUNity.Schema.Simulation.SimulationRoleDto Role { get; set; }
 
     [Parameter]
     public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; }

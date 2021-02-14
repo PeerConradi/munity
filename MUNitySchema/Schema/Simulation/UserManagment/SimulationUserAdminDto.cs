@@ -7,7 +7,7 @@ namespace MUNity.Schema.Simulation
     /// <summary>
     /// User Package for the administrators that can see and edit the users.
     /// </summary>
-    public class SimulationUserSetup : SimulationUserItem
+    public class SimulationUserAdminDto : SimulationUserDefaultDto
     {
 
         /// <summary>

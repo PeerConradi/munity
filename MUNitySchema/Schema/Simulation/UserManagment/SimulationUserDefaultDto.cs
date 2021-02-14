@@ -7,7 +7,7 @@ namespace MUNity.Schema.Simulation
     /// <summary>
     /// The user of a simulation.
     /// </summary>
-    public class SimulationUserItem : IUserItem
+    public class SimulationUserDefaultDto : IUserItem
     {
         /// <summary>
         /// The simulation user Id.

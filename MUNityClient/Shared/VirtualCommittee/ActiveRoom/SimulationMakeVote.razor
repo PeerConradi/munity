@@ -1,0 +1,64 @@
+﻿@inject Services.SimulationService simulationService;
+
+<div class="card floating-card shadow-2">
+    <div class="row">
+        <div class="col-12">
+            <p>@_lastCreatedVote.Text</p>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-success btn-block" @onclick="VotePro">Dafür</button>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-danger btn-block" @onclick="VoteCon">Dagegen</button>
+        </div>
+        @if (_lastCreatedVote.AllowAbstention)
+        {
+            <div class="col-12">
+                <button class="btn btn-primary btn-block" @onclick="VoteAbstention">Enthaltung</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public MUNityClient.ViewModel.SimulationViewModel SimulationContext
+    {
+        get;
+        set;
+    }
+
+    private bool _hasNewVotes { get; set; } = false;
+
+    private MUNity.Schema.Simulation.CreatedVoteModel _lastCreatedVote { get; set; } = null;
+
+    private async Task VotePro()
+    {
+        if (_lastCreatedVote != null)
+        {
+            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 0);
+            _lastCreatedVote = null;
+            _hasNewVotes = false;
+        }
+    }
+
+    private async Task VoteCon()
+    {
+        if (_lastCreatedVote != null)
+        {
+            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 1);
+            _lastCreatedVote = null;
+            _hasNewVotes = false;
+        }
+    }
+
+    private async Task VoteAbstention()
+    {
+        if (_lastCreatedVote != null)
+        {
+            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 2);
+            _lastCreatedVote = null;
+            _hasNewVotes = false;
+        }
+    }
+}

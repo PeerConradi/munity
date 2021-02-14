@@ -94,10 +94,10 @@ namespace MUNityCore.Services
             return ownerUser;
         }
 
-        internal SimulationResponse GetSimulationResponse(int id)
+        internal SimulationDto GetSimulationResponse(int id)
         {
             var simulation = GetSimulationWithHubsUsersAndRoles(id);
-            return simulation.AsResponse();
+            return simulation.ToSimulationDto();
         }
 
         public SimulationUser CreateUser(Simulation simulation, string displayName)

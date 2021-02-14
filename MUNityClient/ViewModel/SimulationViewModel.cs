@@ -14,21 +14,25 @@ namespace MUNityClient.ViewModel
 {
 
     /// <summary>
-    /// The SocketHandler is turning more and more into some kind of ViewModel.
-    /// It handles the Socket operations and holds the Simulation Object.
+    /// The SimulationViewModel is holding data and information about the Simulation.
+    /// For example the users, roles and petitions.
+    /// You should use the Subscribe Method inside the SimulationService <see cref="Services.SimulationService.Subscribe(int)"/> Method to get an
+    /// instance of this class.
+    /// The instance is creating a SignalR Socket Listener that will update properties of this view model
+    /// if necessary.
     /// </summary>
     public class SimulationViewModel
     {
-        public delegate void OnRolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem> roles);
+        public delegate void OnRolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleDto> roles);
         public event OnRolesChanged RolesChanged;
 
         public delegate void OnUserRoleChanged(int sender, int userId, int roleId);
         public event OnUserRoleChanged UserRoleChanged;
 
-        public delegate void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserItem user);
+        public delegate void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user);
         public event OnUserConnected UserConnected;
 
-        public delegate void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserItem user);
+        public delegate void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user);
         public event OnUserDisconnected UserDisconnected;
 
         public delegate void OnPhaseChanged(int sender, MUNity.Schema.Simulation.GamePhases phase);
@@ -58,13 +62,17 @@ namespace MUNityClient.ViewModel
 
         public event EventHandler<string> CurrentResolutionChanged;
 
+        public event EventHandler<AgendaItemDto> AgendaItemAdded;
+
         public HubConnection HubConnection { get; set; }
 
         private SimulationService _simulationService;
 
-        public MUNity.Schema.Simulation.SimulationResponse Simulation { get; private set; }
+        public MUNity.Schema.Simulation.SimulationDto Simulation { get; private set; }
 
-        public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; set; }
+        public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; private set; }
+
+        public List<MUNity.Schema.Simulation.AgendaItemDto> AgendaItems { get; private set; }
 
         public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
 
@@ -83,6 +91,9 @@ namespace MUNityClient.ViewModel
             }
         }
 
+        /// <summary>
+        /// Returns true if currently signed in user has a role which RoleType is Chairman.
+        /// </summary>
         public bool IsChair
         {
             get
@@ -93,9 +104,18 @@ namespace MUNityClient.ViewModel
             }
         }
 
+        public bool IsAdmin
+        {
+            get
+            {
+                if (MyAuth == null) return false;
+                return MyAuth.CanCreateRole;
+            }
+        }
+
         public ObservableCollection<IPetition> Petitions { get; set; }
 
-        public SimulationRoleItem MyRole
+        public SimulationRoleDto MyRole
         {
             get
             {
@@ -104,19 +124,18 @@ namespace MUNityClient.ViewModel
             }
         }
 
-        public SimulationAuthSchema MyAuth { get; private set; }
+        public SimulationAuthDto MyAuth { get; private set; }
 
-        private SimulationViewModel(SimulationResponse simulation, SimulationAuthSchema auth, SimulationService service)
+        private SimulationViewModel(SimulationDto simulation, SimulationService service)
         {
             this.Simulation = simulation;
-            this.MyAuth = auth;
             this._simulationService = service;
 
             HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/simsocket").Build();
-            HubConnection.On<int, IEnumerable<SimulationRoleItem>>("RolesChanged", (id, roles) => RolesChanged?.Invoke(id, roles));
+            HubConnection.On<int, IEnumerable<SimulationRoleDto>>("RolesChanged", (id, roles) => RolesChanged?.Invoke(id, roles));
             HubConnection.On<int, int, int>("UserRoleChanged", (simId, userId, roleId) => UserRoleChanged?.Invoke(simId, userId, roleId));
-            HubConnection.On<int, SimulationUserItem>("UserConnected", (id, user) => UserConnected?.Invoke(id, user));
-            HubConnection.On<int, SimulationUserItem>("UserDisconnected", (id, user) => UserDisconnected?.Invoke(id, user));
+            HubConnection.On<int, SimulationUserDefaultDto>("UserConnected", (id, user) => UserConnected?.Invoke(id, user));
+            HubConnection.On<int, SimulationUserDefaultDto>("UserDisconnected", (id, user) => UserDisconnected?.Invoke(id, user));
             HubConnection.On<int, GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
             HubConnection.On<int, string>("StatusChanged", (id, status) => StatusChanged?.Invoke(id, status));
             HubConnection.On<int, LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
@@ -126,11 +145,24 @@ namespace MUNityClient.ViewModel
             HubConnection.On<IPetition>("UserPetitionDeleted", (petition) => UserPetitionDeleted?.Invoke(petition));
             HubConnection.On<VotedEventArgs>("Voted", (args) => UserVoted?.Invoke(this, args));
             HubConnection.On<CreatedVoteModel>("VoteCreated", (args) => VoteCreated?.Invoke(this, args));
+            HubConnection.On<AgendaItemDto>(nameof(ITypedSimulationHub.AgendaItemAdded), (args) => this.AgendaItemAdded?.Invoke(this, args));
+
+            this.AgendaItemAdded += SimulationViewModel_AgendaItemAdded;
         }
 
-        public static async Task<SimulationViewModel> CreateHander(SimulationResponse simulation, SimulationAuthSchema auth, SimulationService service)
+        private void SimulationViewModel_AgendaItemAdded(object sender, AgendaItemDto e)
         {
-            var socket = new SimulationViewModel(simulation, auth, service);
+            if (this.AgendaItems == null)
+                this.AgendaItems = new List<AgendaItemDto>();
+
+            if (this.AgendaItems.All(n => n.AgendaItemId != e.AgendaItemId))
+                this.AgendaItems.Add(e);
+        }
+
+        public static async Task<SimulationViewModel> CreateViewModel(SimulationDto simulation, SimulationService service)
+        {
+            var socket = new SimulationViewModel(simulation, service);
+            await socket.LoadDataAsync();
             await socket.HubConnection.StartAsync();
             return socket;
         }
@@ -186,11 +218,60 @@ namespace MUNityClient.ViewModel
             }
         }
 
+        /// <summary>
+        /// Creates a new instance Agenda Item and will return a Success Method if the
+        /// creation was successful.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public Task<HttpResponseMessage> CreateAgendaItem(CreateAgendaItemDto model)
         {
             if (this.Simulation == null) return null;
             model.SimulationId = this.Simulation.SimulationId;
             return this._simulationService.CreateAgendaItem(model);
+        }
+    
+        public async Task LoadDataAsync()
+        {
+            if (this.Simulation != null)
+            {
+                var loadRoles = this._simulationService.GetRoles(this.Simulation.SimulationId);
+                var loadAuth = this._simulationService.GetMyAuth(this.Simulation.SimulationId);
+
+                await Task.WhenAll(loadRoles, loadAuth);
+                this.MyAuth = loadAuth.Result;
+                this.Simulation.Roles = loadRoles.Result;
+
+                _ = LoadUsersDependingAuth().ConfigureAwait(false);
+
+                var petitionTypesTask = this._simulationService.PetitionTypes(this.Simulation.SimulationId);
+                var agendaItemsTask = this._simulationService.AgendaItems(this.Simulation.SimulationId);
+
+                await Task.WhenAll(petitionTypesTask, agendaItemsTask);
+                this.PetitionTypes = petitionTypesTask.Result;
+                this.AgendaItems = agendaItemsTask.Result;
+            }
+        }
+
+        private async Task LoadUsersDependingAuth()
+        {
+            if (IsChair || IsAdmin)
+            {
+                var users = await this._simulationService.GetUserSetups(this.Simulation.SimulationId);
+                this.Simulation.Users.Clear();
+                this.Simulation.Users.AddRange(users);
+            }
+            else
+            {
+                var users = await this._simulationService.GetUsers(this.Simulation.SimulationId);
+                this.Simulation.Users.Clear();
+                this.Simulation.Users.AddRange(users);
+            }
+
+            if (Me != null)
+            {
+                Me.IsOnline = true;
+            }
         }
     }
 }

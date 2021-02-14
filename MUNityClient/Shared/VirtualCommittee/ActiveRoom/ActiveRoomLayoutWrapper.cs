@@ -14,7 +14,9 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
             Home,
             Agenda,
             Voting,
-            Resolution
+            Resolution,
+            Presents,
+            Options
         }
 
         public enum ResolutionModes

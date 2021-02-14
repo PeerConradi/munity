@@ -38,13 +38,13 @@ namespace MUNityClient.Pages.Simulation
             set;
         }
 
-        private ICollection<MUNity.Schema.Simulation.SimulationListItem> _simulations
+        private ICollection<MUNity.Schema.Simulation.SimulationListItemDto> _simulations
         {
             get;
             set;
         }
 
-        private MUNity.Schema.Simulation.SimulationListItem _selectedSimulation;
+        private MUNity.Schema.Simulation.SimulationListItemDto _selectedSimulation;
         private MUNity.Schema.Simulation.JoinAuthenticate _joinForm = new MUNity.Schema.Simulation.JoinAuthenticate();
 
         private void EnterSimulation(int id)

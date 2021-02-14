@@ -7,7 +7,7 @@ namespace MUNity.Schema.Simulation
     /// <summary>
     /// The Auth Schema sent by the API when given a token.
     /// </summary>
-    public class SimulationAuthSchema
+    public class SimulationAuthDto
     {
         /// <summary>
         /// The internal user id used to identify the user inside the simulation.

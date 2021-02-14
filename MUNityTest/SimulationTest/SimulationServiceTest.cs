@@ -193,8 +193,8 @@ namespace MUNityTest.SimulationTest
                 Text = "More info",
             };
 
-            bool created = service.SubmitPetition(dto);
-            Assert.IsTrue(created);
+            var created = service.SubmitPetition(dto);
+            Assert.NotNull(created);
             var recall = await service.GetAgendaItemsAndPetitionsDto(simulationId);
             Assert.NotNull(recall);
             Assert.IsTrue(recall.Any());

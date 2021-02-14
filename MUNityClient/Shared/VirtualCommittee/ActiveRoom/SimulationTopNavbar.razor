@@ -1,12 +1,11 @@
 ﻿@using MUNityClient.Shared.VirtualCommittee.ActiveRoom
 @inject Services.SimulationService simulationService;
-
 <!-- As a link -->
 @if (SimulationContext == null)
 {
     <nav class="navbar navbar-light bg-light">
         <div class="spinner-border" role="status">
-            
+
         </div>
     </nav>
 }
@@ -14,81 +13,129 @@ else
 {
 
     <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <!-- Container wrapper -->
-  <div class="container-fluid">
-    <!-- Navbar brand -->
-    <a class="navbar-brand" href="#">@SimulationContext.Simulation.Name</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Container wrapper -->
+        <div class="container-fluid">
+            <!-- Navbar brand -->
+            <a class="navbar-brand menu-bars hidden-lg" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
 
-    @if (SimulationContext.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
-    {
-        <span class="badge badge-success">Verbunden</span>
-    }
-    else if (SimulationContext.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connecting)
-    {
-        <span class="badge badge-warning">Verbindung wird hergestellt</span>
-    }
-    else if (SimulationContext.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Disconnected)
-    {
-        <span class="badge badge-danger" @onclick="() => SimulationContext.HubConnection.StartAsync()">Keine Verbindung</span>
-    }
-    else if (SimulationContext.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Reconnecting)
-    {
-        <span class="badge badge-warning">Verbindungsaufbau</span>
-    }
+            <a class="navbar-brand">@SimulationContext.Simulation.Name</a>
 
-    <!-- Collapsible wrapper -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <!-- Left links -->
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            @if (LayoutWrapper != null)
-            {
-                @if (this.SimulationContext.IsChair)
+            <ConnectionStateBadge ViewModel="@SimulationContext" />
+
+
+            <ul class="nav nav-pills hidden-md">
+                @if (LayoutWrapper != null)
                 {
                     <li class="nav-item badge rounded-pill nav-spacing">
-                        <a class="nav-link" @onclick="() => this.SimulationContext.GoToLobby()"> Zurück zur Lobby</a>
+                        <a class="nav-link" @onclick="() => LayoutWrapper.ShowMemberlist = !LayoutWrapper.ShowMemberlist"><i class="fas @(LayoutWrapper.ShowMemberlist ? "fa-eye" : "fa-eye-slash")"></i> Mitglieder</a>
+                    </li>
+
+                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "badge badge-primary" : "")" title="Dashboard">
+                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">
+                            <i class="fa fa-home"></i>
+                        </a>
+                    </li>
+
+                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "badge badge-primary" : "")" title="Tagesordnung">
+                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda">
+                            <i class="fa fa-calendar-check"></i>
+                        </a>
+                    </li>
+
+                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "badge badge-primary" : "")" title="Abstimmungen">
+                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting">
+                            <i class="fa fa-vote-yea"></i>
+                        </a>
+                    </li>
+
+                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "badge badge-primary" : "")" title="Resolutionen">
+                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution">
+                            <i class="fa fa-file-alt"></i>
+                        </a>
+                    </li>
+
+                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "badge badge-primary" : "")" title="Anwesenheit">
+                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents">
+                            <i class="fa fa-users"></i>
+                        </a>
+                    </li>
+
+                    @if (this.SimulationContext.IsChair)
+                    {
+                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "badge badge-primary" : "")" title="Einstellungen">
+                            <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options">
+                                <i class="fa fa-cogs"></i>
+                            </a>
+                        </li>
+
+
+                    }
+
+
+                    <li class="nav-item badge rounded-pill nav-spacing">
+                        <a class="nav-link" @onclick="() => LayoutWrapper.ShowListOfSpeakers = !LayoutWrapper.ShowListOfSpeakers"><i class="fas @(LayoutWrapper.ShowListOfSpeakers ? "fa-eye" : "fa-eye-slash")"></i> Redeliste</a>
                     </li>
                 }
 
-                <li class="nav-item badge rounded-pill nav-spacing">
-                    <a class="nav-link" @onclick="() => LayoutWrapper.ShowMemberlist = !LayoutWrapper.ShowMemberlist"><i class="fas @(LayoutWrapper.ShowMemberlist ? "fa-eye" : "fa-eye-slash")"></i> Mitglieder</a>
-                </li>
-
-                <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "bg-primary" : "")">
-                    <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">Start</a>
-                </li>
-
-                <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "bg-primary" : "")">
-                    <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda">Tagesordnung</a>
-                </li>
-
-                <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "bg-primary" : "")">
-                    <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting">Abstimmungen</a>
-                </li>
-
-                <li class="nav-item badge nav-spacing @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "bg-primary" : "")">
-                    <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution">Resolution</a>
-                </li>
-
-                <li class="nav-item badge rounded-pill nav-spacing">
-                    <a class="nav-link" @onclick="() => LayoutWrapper.ShowListOfSpeakers = !LayoutWrapper.ShowListOfSpeakers"><i class="fas @(LayoutWrapper.ShowListOfSpeakers ? "fa-eye" : "fa-eye-slash")"></i> Redeliste</a>
-                </li>
-            }
-
-        </ul>
-      <!-- Left links -->
-    </div>
-    <!-- Collapsible wrapper -->
-    <span class="badge badge-primary">Aktueller Status</span>
-  </div>
-  <!-- Container wrapper -->
-</nav>
-<!-- Navbar -->
+            </ul>
+            <!-- Left links -->
+            <span class="badge badge-primary">Aktueller Status</span>
+        </div>
+        <!-- Container wrapper -->
+    </nav>
+    <!-- Navbar -->
 }
+
+@if (_showSmallSideMenu)
+{
+<div class="mobile-side-menu hidden-lg">
+
+    <div class="list-group">
+        <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home"
+           class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "active" : "")">
+            <i class="fa fa-home"></i> Home
+        </a>
+        <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda"
+           class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "active" : "")"><i class="fa fa-calendar-check"></i> Tagesordnung</a>
+        <a href="#" class="list-group-item list-group-item-action">A third link item</a>
+        <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>
+        <a href="#" class="list-group-item list-group-item-action disabled" tabindex="-1" aria-disabled="true">A disabled link item</a>
+    </div>
+</div>
+
+    
+}
+
 
 <style>
     .nav-spacing {
         margin-left: 5px;
+    }
+
+
+    @@media (max-width: 768px) {
+        .mobile-side-menu {
+            position: fixed;
+            left: 0;
+            top: 45px;
+            z-index: 20;
+        }
+
+        .hidden-md {
+            visibility: collapse;
+        }
+    }
+
+
+    @@media (min-width: 768px) {
+        .mobile-side-menu {
+            visibility: hidden;
+        }
+
+        .hidden-lg {
+            visibility: hidden;
+        }
     }
 </style>
 
@@ -98,4 +145,6 @@ else
 
     [Parameter]
     public MUNityClient.Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper LayoutWrapper { get; set; } = null;
+
+    private bool _showSmallSideMenu = false;
 }

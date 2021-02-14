@@ -46,9 +46,9 @@ namespace MUNityCore.Models.Simulation
             this.RoleType = roleType;
         }
 
-        internal MUNity.Schema.Simulation.SimulationRoleItem ToSimulationRoleItem()
+        internal MUNity.Schema.Simulation.SimulationRoleDto ToSimulationRoleItem()
         {
-            var item = new MUNity.Schema.Simulation.SimulationRoleItem()
+            var item = new MUNity.Schema.Simulation.SimulationRoleDto()
             {
                 Iso = Iso,
                 Name = Name,

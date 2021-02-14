@@ -25,14 +25,14 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         }
 
         private Boolean showPasswords = false;
-        public List<MUNity.Schema.Simulation.SimulationUserSetup> Users
+        public List<MUNity.Schema.Simulation.SimulationUserAdminDto> Users
         {
             get;
             set;
         }
 
         [Parameter]
-        public List<MUNity.Schema.Simulation.SimulationRoleItem> Roles
+        public List<MUNity.Schema.Simulation.SimulationRoleDto> Roles
         {
             get;
             set;
@@ -74,13 +74,13 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             return EventCallback.Empty;
         }
 
-        private void OnRolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleItem> roles)
+        private void OnRolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleDto> roles)
         {
             this.Roles = roles.ToList();
             this.StateHasChanged();
         }
 
-        private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserItem usr)
+        private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto usr)
         {
             var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
             if (user != null)
@@ -92,7 +92,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             }
         }
 
-        private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserItem usr)
+        private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto usr)
         {
             var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
             if (user != null)

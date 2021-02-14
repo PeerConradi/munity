@@ -7,7 +7,7 @@ namespace MUNity.Schema.Simulation
     /// <summary>
     /// The schema the API will give you when asking for a lis of simulations.
     /// </summary>
-    public class SimulationListItem
+    public class SimulationListItemDto
     {
         /// <summary>
         /// The id of the simulation.

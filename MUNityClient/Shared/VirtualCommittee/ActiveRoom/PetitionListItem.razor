@@ -1,0 +1,30 @@
+﻿@if (this.ViewModel != null)
+{
+<div class="list-group-item list-group-item-action">
+    <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Recht auf Information</h5>
+        <small class="text-muted">01.02.2021 12:00</small>
+    </div>
+    <div class="mb-0">
+        <p>Einbringer</p>
+        <p>Art des Antrags</p>
+    </div>
+    @if (this.ViewModel.IsChair)
+    {
+        <div class="mb-1">
+            <a class="badge badge-success">Antrag als aktiv setzen</a>
+            <a class="badge badge-danger">Antrag löschen</a>
+        </div>
+    }
+</div>
+}
+else
+{
+    <p>ViewModel-Fehler</p>
+}
+
+
+@code {
+    [Parameter]
+    public MUNityClient.ViewModel.SimulationViewModel ViewModel { get; set; }
+}

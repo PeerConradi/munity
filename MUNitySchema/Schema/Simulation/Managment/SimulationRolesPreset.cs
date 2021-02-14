@@ -10,6 +10,6 @@ namespace MUNity.Schema.Simulation
 
         public string Name { get; set; }
 
-        public List<MUNity.Schema.Simulation.SimulationRoleItem> Roles { get; set; }
+        public List<MUNity.Schema.Simulation.SimulationRoleDto> Roles { get; set; }
     }
 }

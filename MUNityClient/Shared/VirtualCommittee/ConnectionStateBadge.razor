@@ -1,0 +1,28 @@
+﻿@if (ViewModel != null)
+{
+    @if (ViewModel.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
+    {
+        <span class="badge badge-success">Verbunden</span>
+    }
+    else if (ViewModel.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connecting)
+    {
+        <span class="badge badge-warning">Verbindung wird hergestellt</span>
+    }
+    else if (ViewModel.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Disconnected)
+    {
+        <span class="badge badge-danger" @onclick="() => ViewModel.HubConnection.StartAsync()">Keine Verbindung</span>
+    }
+    else if (ViewModel.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Reconnecting)
+    {
+        <span class="badge badge-warning">Verbindungsaufbau</span>
+    }
+}
+else
+{
+    <span class="badge badge-primary">Unbekannt</span>
+}
+
+@code {
+    [Parameter]
+    public ViewModel.SimulationViewModel ViewModel { get; set; }
+}

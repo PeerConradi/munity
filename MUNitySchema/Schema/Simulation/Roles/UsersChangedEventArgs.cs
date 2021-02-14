@@ -17,6 +17,6 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The new List of users.
         /// </summary>
-        public List<SimulationUserItem> Users { get; set; }
+        public List<SimulationUserDefaultDto> Users { get; set; }
     }
 }
