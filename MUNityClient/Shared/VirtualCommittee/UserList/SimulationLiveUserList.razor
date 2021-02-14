@@ -5,7 +5,7 @@
         @foreach (var user in SimulationContext?.Simulation?.Users)
         {
             <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user" Role="@SimulationContext.Simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId)"
-                                                                                  SimulationContext="@SimulationContext" />
+                                                                                  ViewModel="@SimulationContext" />
         }
     </div>
 }
@@ -23,6 +23,6 @@
 @code {
 
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; }
+    public MUNityClient.ViewModels.SimulationViewModel SimulationContext { get; set; }
 
 }

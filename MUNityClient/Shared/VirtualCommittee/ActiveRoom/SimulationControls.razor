@@ -34,7 +34,7 @@
         @* Von der Sache her könnte an dieser Stelle auch die Beiden Buttons für auf die Redelisten und auf die FuK erscheinen. *@
         @if (SpeakerlistSocket != null)
         {
-            @if (SimulationContext?.MyRole != null && SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+            @if (ViewModel?.MyRole != null && ViewModel.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
             {
                 <MUNityClient.Pages.LoS.ListOfSpeakerEditor Id="@SpeakerlistSocket.SourceList.ListOfSpeakersId" Socket="@SpeakerlistSocket" IsOnline="@true"></MUNityClient.Pages.LoS.ListOfSpeakerEditor>
             }

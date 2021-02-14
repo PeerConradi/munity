@@ -48,7 +48,7 @@
 
 @code {
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; }
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
     private MUNity.Schema.Simulation.CreatedVoteModel _currentVoting { get; set; } = null;
 
@@ -71,10 +71,10 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if (SimulationContext != null)
+        if (ViewModel != null)
         {
-            SimulationContext.VoteCreated += VoteCreated;
-            SimulationContext.UserVoted += UserVoted;
+            ViewModel.VoteCreated += VoteCreated;
+            ViewModel.UserVoted += UserVoted;
         }
     }
 

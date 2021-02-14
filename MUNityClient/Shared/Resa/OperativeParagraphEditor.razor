@@ -111,7 +111,7 @@
     public OperativeParagraph Paragraph { get; set; }
 
     [Parameter]
-    public ViewModel.ResolutionViewModel ResolutionViewModel { get; set; }
+    public MUNityClient.ViewModels.ResolutionViewModel ResolutionViewModel { get; set; }
 
     public int Index => this.ResolutionViewModel?.Resolution.OperativeSection?.Paragraphs?.IndexOf(this.Paragraph) ?? -1;
 

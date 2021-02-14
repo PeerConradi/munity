@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNity.Models.Resolution.EventArguments;
 
-namespace MUNityClient.ViewModel.ViewModelLogic
+namespace MUNityClient.ViewModels.ViewModelLogic
 {
     /// <summary>
     /// Turns event thrown by an ResolutionObserver into calls for the MUNity API.

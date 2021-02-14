@@ -37,7 +37,8 @@ namespace MUNityCore.Models.Simulation
                 Name = PetitionType.Name,
                 PetitionTypeId = PetitionType.PetitionTypeId,
                 Reference = PetitionType.Reference,
-                Ruling = PetitionType.Ruling
+                Ruling = PetitionType.Ruling,
+                OrderIndex = this.OrderIndex
             };
             return dto;
         }

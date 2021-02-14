@@ -130,7 +130,13 @@ namespace MUNityClient.Services
 
         public async Task<HttpResponseMessage> MakePetition(MUNity.Schema.Simulation.CreatePetitionRequest petition)
         {
-            petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
+            var tokenObject = await GetSimulationToken(petition.SimulationId);
+            if (tokenObject == null)
+            {
+                Console.WriteLine($"No token element found for MakePetition! For simulation: {petition.SimulationId}");
+                return null;
+            }
+            petition.Token = tokenObject.Token;
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/Petition/MakePetition", JsonContent.Create(petition));
         }
 
@@ -164,7 +170,7 @@ namespace MUNityClient.Services
         public async Task<List<AgendaItemDto>> AgendaItems(int simulationId)
         {
             var client = await GetSimulationClient(simulationId);
-            return await client.GetFromJsonAsync<List<AgendaItemDto>>($"/api/Simulation/AgendaItem/AgendaItems?simulationId={simulationId}");
+            return await client.GetFromJsonAsync<List<AgendaItemDto>>($"/api/Simulation/AgendaItem/AgendaItems?simulationId={simulationId}&withPetitions=true");
         }
 
         public async Task<HttpResponseMessage> ApplyPetitionTemplate(int simulationId, string name)
@@ -341,7 +347,7 @@ namespace MUNityClient.Services
         /// </summary>
         /// <param name="simulationId"></param>
         /// <returns></returns>
-        public async Task<MUNityClient.ViewModel.SimulationViewModel> Subscribe(int simulationId)
+        public async Task<MUNityClient.ViewModels.SimulationViewModel> Subscribe(int simulationId)
         {
             var token = await GetSimulationToken(simulationId);
             if (token == null) return null;
@@ -349,7 +355,7 @@ namespace MUNityClient.Services
             var simulation = await this.GetSimulation(simulationId);
             if (simulation == null) return null;
 
-            var viewModel = await MUNityClient.ViewModel.SimulationViewModel.CreateViewModel(simulation, this);
+            var viewModel = await MUNityClient.ViewModels.SimulationViewModel.CreateViewModel(simulation, this);
             var connId = viewModel.HubConnection.ConnectionId;
             var subscribeBody = new MUNity.Schema.Simulation.SubscribeSimulation()
             {

@@ -10,7 +10,7 @@ using MUNity.Models.Simulation;
 using MUNityClient.Services;
 using System.Net.Http;
 
-namespace MUNityClient.ViewModel
+namespace MUNityClient.ViewModels
 {
 
     /// <summary>
@@ -47,9 +47,6 @@ namespace MUNityClient.ViewModel
         public delegate void OnChatMessageRecieved(int simId, int userId, string msg);
         public event OnChatMessageRecieved ChatMessageRevieved;
 
-        public delegate void OnUserPetition(IPetition petition);
-        public event OnUserPetition UserPetition;
-
         public delegate void OnUserPetitionAccepted(IPetition petition);
         public event OnUserPetitionAccepted UserPetitionAccpted;
 
@@ -63,6 +60,8 @@ namespace MUNityClient.ViewModel
         public event EventHandler<string> CurrentResolutionChanged;
 
         public event EventHandler<AgendaItemDto> AgendaItemAdded;
+
+        public event EventHandler<PetitionDto> PetitionAdded;
 
         public HubConnection HubConnection { get; set; }
 
@@ -113,8 +112,6 @@ namespace MUNityClient.ViewModel
             }
         }
 
-        public ObservableCollection<IPetition> Petitions { get; set; }
-
         public SimulationRoleDto MyRole
         {
             get
@@ -140,14 +137,63 @@ namespace MUNityClient.ViewModel
             HubConnection.On<int, string>("StatusChanged", (id, status) => StatusChanged?.Invoke(id, status));
             HubConnection.On<int, LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
             HubConnection.On<int, int, string>("ChatMessageRecieved", (simId, usrId, msg) => ChatMessageRevieved?.Invoke(simId, usrId, msg));
-            HubConnection.On<IPetition>("UserPetition", (petition) => UserPetition?.Invoke(petition));
             HubConnection.On<IPetition>("UserPetitionAccepted", (petition) => UserPetitionAccpted?.Invoke(petition));
             HubConnection.On<IPetition>("UserPetitionDeleted", (petition) => UserPetitionDeleted?.Invoke(petition));
             HubConnection.On<VotedEventArgs>("Voted", (args) => UserVoted?.Invoke(this, args));
             HubConnection.On<CreatedVoteModel>("VoteCreated", (args) => VoteCreated?.Invoke(this, args));
             HubConnection.On<AgendaItemDto>(nameof(ITypedSimulationHub.AgendaItemAdded), (args) => this.AgendaItemAdded?.Invoke(this, args));
+            HubConnection.On<PetitionDto>(nameof(ITypedSimulationHub.PetitionAdded), (args) => this.PetitionAdded?.Invoke(this, args));
 
             this.AgendaItemAdded += SimulationViewModel_AgendaItemAdded;
+            this.PetitionAdded += SimulationViewModel_PetitionAdded;
+            this.UserConnected += SimulationViewModel_UserConnected;
+            this.UserDisconnected += SimulationViewModel_UserDisconnected;
+            this.RolesChanged += SimulationViewModel_RolesChanged;
+            this.UserRoleChanged += SimulationViewModel_UserRoleChanged;
+        }
+
+        private void SimulationViewModel_UserRoleChanged(int sender, int userId, int roleId)
+        {
+            var user = Simulation?.Users?.FirstOrDefault(n => n.SimulationUserId == userId);
+            if (user != null)
+            {
+                user.RoleId = roleId;
+            }
+        }
+
+        private void SimulationViewModel_UserDisconnected(int sender, SimulationUserDefaultDto user)
+        {
+            var userInSim = Simulation?.Users?.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
+            if (user != null)
+            {
+                user.IsOnline = false;
+            }
+        }
+
+        private void SimulationViewModel_RolesChanged(int sender, IEnumerable<SimulationRoleDto> roles)
+        {
+            this.Simulation.Roles = roles.ToList();
+        }
+
+        private void SimulationViewModel_UserConnected(int sender, SimulationUserDefaultDto user)
+        {
+            var userInSim = this.Simulation?.Users?.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
+            if (userInSim != null)
+            {
+                user.IsOnline = true;
+                if (!string.IsNullOrEmpty(user.DisplayName) && user.DisplayName != user.DisplayName)
+                    user.DisplayName = user.DisplayName;
+            }
+        }
+
+        private void SimulationViewModel_PetitionAdded(object sender, PetitionDto e)
+        {
+            var agendaItem = this.AgendaItems?.FirstOrDefault(n => n.AgendaItemId == e.TargetAgendaItemId);
+            if (agendaItem != null)
+            {
+                if (agendaItem.Petitions.All(n => n.PetitionId != e.PetitionId))
+                    agendaItem.Petitions.Add(e);
+            }
         }
 
         private void SimulationViewModel_AgendaItemAdded(object sender, AgendaItemDto e)
@@ -199,6 +245,30 @@ namespace MUNityClient.ViewModel
             }
         }
 
+        public async Task<HttpResponseMessage> MakePetition(PetitionTypeSimulationDto type, int agendaItemId)
+        {
+            if (type == null)
+            {
+                throw new ArgumentException("No type argument given!");
+            }
+
+            if (MyAuth == null)
+            {
+                Console.WriteLine("Not authenticated to make petitions!");
+                return null;
+            }
+            var mdl = new MUNity.Schema.Simulation.CreatePetitionRequest()
+            {
+                PetitionDate = DateTime.Now,
+                PetitionTypeId = type.PetitionTypeId,
+                PetitionUserId = MyAuth.SimulationUserId,
+                TargetAgendaItemId = agendaItemId,
+                Text = "",
+                SimulationId = Simulation.SimulationId
+            };
+
+            return await this._simulationService.MakePetition(mdl);
+        }
         public IEnumerable<PetitionTypeSimulationDto> MyPetitionTypes
         {
             get

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNity.Extensions.ResolutionExtensions;
 
-namespace MUNityClient.ViewModel
+namespace MUNityClient.ViewModels
 {
     /// <summary>
     /// The ResaSocketHandler is connecting with the SignalR Socket of the MUNity API.

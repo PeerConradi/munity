@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using MUNity.Models.Resolution;
-using MUNityClient.ViewModel;
+using MUNityClient.ViewModels;
 using System.Linq;
 using Moq;
 

@@ -25,8 +25,10 @@ namespace MUNityClient.Pages.Resa
         public string Id { get; set; }
 
         private Boolean fetchingResolutionErrored = false;
+
         private bool fullUpdate = false;
-        private ViewModel.ResolutionViewModel _viewModel;
+
+        public ViewModels.ResolutionViewModel ViewModel { get; set; }
 
         private MUNityClient.Shared.Bootstrap.Modal AddAmendmentModal { get; set; }
 
@@ -53,8 +55,8 @@ namespace MUNityClient.Pages.Resa
             var localResolution = await this.resolutionService.GetStoredResolution(Id);
             if (localResolution != null)
             {
-                this._viewModel = ViewModel.ResolutionViewModel.CreateViewModelOffline(localResolution, resolutionService);
-                this._viewModel.SyncMode = ViewModel.ResolutionViewModel.SyncModes.Offline;
+                this.ViewModel = ViewModels.ResolutionViewModel.CreateViewModelOffline(localResolution, resolutionService);
+                this.ViewModel.SyncMode = ViewModels.ResolutionViewModel.SyncModes.Offline;
                 this.StateHasChanged();
             }
             else
@@ -63,10 +65,10 @@ namespace MUNityClient.Pages.Resa
                 var onlineResolution = await this.resolutionService.GetResolutionFromServer(Id);
                 if (onlineResolution != null)
                 {
-                    this._viewModel = await this.resolutionService.Subscribe(onlineResolution);
-                    this._viewModel.SyncMode = ViewModel.ResolutionViewModel.SyncModes.OnlineButNotSyncing;
-                    this._viewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
-                    this._viewModel.OperativeSeciontChangedFromExtern += delegate { this.StateHasChanged(); };
+                    this.ViewModel = await this.resolutionService.Subscribe(onlineResolution);
+                    this.ViewModel.SyncMode = ViewModels.ResolutionViewModel.SyncModes.OnlineButNotSyncing;
+                    this.ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
+                    this.ViewModel.OperativeSeciontChangedFromExtern += delegate { this.StateHasChanged(); };
                     onlineResolution.Preamble.Paragraphs.CollectionChanged += delegate { this.StateHasChanged(); };
 
                 }

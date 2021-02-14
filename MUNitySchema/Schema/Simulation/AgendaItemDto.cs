@@ -15,6 +15,6 @@ namespace MUNity.Schema.Simulation
 
         public EAgendaItemStatuses Status { get; set; }
 
-        public IEnumerable<PetitionDto> Petitions { get; set; }
+        public List<PetitionDto> Petitions { get; set; }
     }
 }

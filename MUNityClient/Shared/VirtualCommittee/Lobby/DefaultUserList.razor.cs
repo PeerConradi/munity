@@ -18,7 +18,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
     public partial class DefaultUserList
     {
         [Parameter]
-        public MUNityClient.ViewModel.SimulationViewModel SimulationContext
+        public MUNityClient.ViewModels.SimulationViewModel ViewModel
         {
             get;
             set;
@@ -30,28 +30,16 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             set;
         }
 
-        [Parameter]
-        public IEnumerable<MUNity.Schema.Simulation.SimulationRoleDto> Roles
-        {
-            get;
-            set;
-        }
-
         protected override async Task OnInitializedAsync()
         {
-            if (SimulationContext != null)
+            if (ViewModel != null)
             {
-                SimulationContext.UserConnected += OnUserConnected;
-                SimulationContext.UserDisconnected += OnUserDisconnected;
-                SimulationContext.UserRoleChanged += OnUserRoleChanged;
+                ViewModel.UserConnected += OnUserConnected;
+                ViewModel.UserDisconnected += OnUserDisconnected;
+                ViewModel.UserRoleChanged += OnUserRoleChanged;
             }
 
-            if (Roles == null)
-            {
-                this.Roles = await _simulationService.GetRoles(SimulationContext.Simulation.SimulationId);
-            }
-
-            this.Users = await _simulationService.GetUsers(SimulationContext.Simulation.SimulationId);
+            this.Users = await _simulationService.GetUsers(ViewModel.Simulation.SimulationId);
         }
 
         private void OnUserRoleChanged(int sender, int userId, int roleId)

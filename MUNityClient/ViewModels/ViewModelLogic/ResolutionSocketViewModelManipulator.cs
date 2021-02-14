@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using MUNity.Extensions.ResolutionExtensions;
 
-namespace MUNityClient.ViewModel.ViewModelLogic
+namespace MUNityClient.ViewModels.ViewModelLogic
 {
     public class ResolutionSocketViewModelManipulator
     {

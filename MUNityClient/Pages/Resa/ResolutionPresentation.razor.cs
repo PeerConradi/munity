@@ -31,7 +31,7 @@ namespace MUNityClient.Pages.Resa
             set;
         }
 
-        public ViewModel.ResolutionViewModel ResolutionViewModel { get; set; }
+        public ViewModels.ResolutionViewModel ResolutionViewModel { get; set; }
 
         private enum SyncModes
         {

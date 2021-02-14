@@ -1,5 +1,5 @@
 ﻿<MUNityClient.Shared.Bootstrap.Modal Title="Neuer Antrag" @ref="_modalRef" ShowSubmitButton="false">
-    @if (ViewModel != null)
+    @if (ViewModel != null && CurrentAgendaItem != null)
     {
         <div class="row">
             <div class="col-12">
@@ -15,9 +15,9 @@
             </div>
             <div class="col-12">
                 <div class="list-group scroll-list">
-                    @foreach (var petition in ViewModel.PetitionTypes.Where(n => n.Category == SelectedCategory))
+                    @foreach (var petitionType in ViewModel.PetitionTypes.Where(n => n.Category == SelectedCategory))
                     {
-                        <a class="list-group-item">@petition.Name</a>
+                        <a class="list-group-item" @onclick="() => MakePetition(petitionType)">@petitionType.Name</a>
                     }
                 </div>
                     
@@ -40,12 +40,15 @@
 @code {
 
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel ViewModel { get; set; }
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
     [Parameter]
-    public bool IsVisible { 
+    public MUNity.Schema.Simulation.AgendaItemDto CurrentAgendaItem { get; set; }
+
+    [Parameter]
+    public bool IsVisible {
         get => _modalRef.IsOpen;
-        set 
+        set
         {
             if (_modalRef == null) return;
             if (value)
@@ -53,11 +56,23 @@
             else
                 _modalRef.Close();
         }
-     }
+    }
 
     private MUNityClient.Shared.Bootstrap.Modal _modalRef;
 
     public IEnumerable<string> Categories => ViewModel.MyPetitionTypes.Select(n => n.Category).Distinct();
 
     public string SelectedCategory { get; set; }
+
+    private async Task MakePetition(MUNity.Schema.Simulation.PetitionTypeSimulationDto type)
+    {
+        if (CurrentAgendaItem == null)
+        {
+            Console.WriteLine("No Agenda Item set");
+            return;
+        }
+        var result = await this.ViewModel.MakePetition(type, CurrentAgendaItem.AgendaItemId);
+        if (result.IsSuccessStatusCode)
+            this.IsVisible = false;
+    }
 }

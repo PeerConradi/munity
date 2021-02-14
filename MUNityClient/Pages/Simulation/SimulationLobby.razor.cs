@@ -24,7 +24,7 @@ namespace MUNityClient.Pages.Simulation
             set;
         }
 
-        private MUNityClient.ViewModel.SimulationViewModel _context = null;
+        private MUNityClient.ViewModels.SimulationViewModel _context = null;
 
         protected override async Task OnInitializedAsync()
         {

@@ -127,11 +127,13 @@ namespace MUNityCore.Extensions.CastExtensions
             return mdl;
         }
 
-        public static IEnumerable<PetitionDto> ToPetitionDtoList(this List<Petition> petitions)
+        public static List<PetitionDto> ToPetitionDtoList(this List<Petition> petitions)
         {
             if (petitions == null)
                 return new List<PetitionDto>();
-            return petitions.Select(n => n.ToPetitionDto());
+            var items = petitions.Select(n => n.ToPetitionDto());
+            if (items != null && items.Any()) return items.ToList();
+            return new List<PetitionDto>();
         }
     }
 }

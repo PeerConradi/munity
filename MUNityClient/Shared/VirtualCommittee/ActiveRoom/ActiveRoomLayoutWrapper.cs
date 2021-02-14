@@ -37,18 +37,6 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
             }
         }
 
-        private bool _showMemberlist = true;
-        public bool ShowMemberlist
-        {
-            get => _showMemberlist;
-            set
-            {
-                if (_showMemberlist == value) return;
-                _showMemberlist = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         private bool _showListOfSpeakers = true;
         public bool ShowListOfSpeakers 
         {

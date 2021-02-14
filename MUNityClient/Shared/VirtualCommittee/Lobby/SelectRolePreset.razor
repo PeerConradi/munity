@@ -1,6 +1,6 @@
 ﻿@inject MUNityClient.Services.SimulationService simulationService
 
-@if (_presets != null && _presets.Any() && SimulationContext.MyAuth.CanCreateRole)
+@if (_presets != null && _presets.Any() && ViewModel.MyAuth.CanCreateRole)
 {
     <div class="form-group">
         <label>Vorlage</label>
@@ -29,7 +29,8 @@
 
 @code {
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; } = null;
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; } = null;
+
     private IEnumerable<MUNity.Schema.Simulation.SimulationRolesPreset> _presets { get; set; }
 
     private MUNity.Schema.Simulation.SimulationRolesPreset SelectedPreset { get; set; }
@@ -38,16 +39,16 @@
 
     private async Task ActivatePreset()
     {
-        if (SimulationContext.Simulation != null)
+        if (ViewModel.Simulation != null)
         {
-            await this.simulationService.ApplyPreset(SimulationContext.Simulation.SimulationId, SelectedPresetId);
-            SimulationContext.Simulation.Roles = await this.simulationService.GetRoles(SimulationContext.Simulation.SimulationId);
+            await this.simulationService.ApplyPreset(ViewModel.Simulation.SimulationId, SelectedPresetId);
+            ViewModel.Simulation.Roles = await this.simulationService.GetRoles(ViewModel.Simulation.SimulationId);
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
-        if (this.SimulationContext != null)
+        if (this.ViewModel != null)
         {
             this._presets = await this.simulationService.GetPresets();
         }

@@ -44,19 +44,28 @@ namespace MUNityCore.Controllers.Simulation
         }
 
         /// <summary>
-        /// Returns a list of agenda items. Elements in this list will not contain their petitions.
+        /// Returns a list of agenda items. Toggle between the options of also loading the petitions.
         /// </summary>
         /// <param name="simsimtoken"></param>
         /// <param name="simulationId"></param>
+        /// <param name="withPetitions">Should the result contain the petitions</param>
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public async Task<ActionResult<IEnumerable<AgendaItemDto>>> AgendaItems([FromHeader] string simsimtoken, int simulationId)
+        public async Task<ActionResult<IEnumerable<AgendaItemDto>>> AgendaItems([FromHeader] string simsimtoken, int simulationId, bool withPetitions = false)
         {
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            var agendaItems = await this._simulationService.GetAgendaItems(simulationId);
-            var dtos = agendaItems.Select(n => n.ToAgendaItemDto());
-            return Ok(dtos);
+            if (!isAllowed) return Forbid();
+            if (withPetitions)
+            {
+                var dto = await this._simulationService.GetAgendaItemsAndPetitionsDto(simulationId);
+                return Ok(dto);
+            }
+            else
+            {
+                var agendaItems = await this._simulationService.GetAgendaItems(simulationId);
+                return Ok(agendaItems);
+            }
         }
     }
 }

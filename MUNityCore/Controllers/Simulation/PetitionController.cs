@@ -62,15 +62,23 @@ namespace MUNityCore.Controllers.Simulation
         [Route("[action]")]
         public async Task<ActionResult> MakePetition([FromBody] CreatePetitionRequest petition)
         {
-            var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
-            if (user == null) return Forbid();
-            petition.PetitionUserId = user.SimulationUserId;
-            var createdPetition = this._simulationService.SubmitPetition(petition);
-            if (createdPetition != null)
+            try
             {
-                await this.SocketGroup(petition).UserPetition(createdPetition.ToPetitionDto());
-                return Ok();
+                var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
+                if (user == null) return Forbid();
+                petition.PetitionUserId = user.SimulationUserId;
+                var createdPetition = this._simulationService.SubmitPetition(petition);
+                if (createdPetition != null)
+                {
+                    await this.SocketGroup(petition).PetitionAdded(createdPetition.ToPetitionDto());
+                    return Ok();
+                }
             }
+            catch (Exception ex)
+            {
+                return Problem("Unable to create the Petition. " + ex.Message);
+            }
+            
             return Problem("Unable to create the Petition.");
         }
 

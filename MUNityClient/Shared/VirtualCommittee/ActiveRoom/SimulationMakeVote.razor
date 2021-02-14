@@ -22,7 +22,7 @@
 
 @code {
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel SimulationContext
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel
     {
         get;
         set;
@@ -36,7 +36,7 @@
     {
         if (_lastCreatedVote != null)
         {
-            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 0);
+            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 0);
             _lastCreatedVote = null;
             _hasNewVotes = false;
         }
@@ -46,7 +46,7 @@
     {
         if (_lastCreatedVote != null)
         {
-            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 1);
+            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 1);
             _lastCreatedVote = null;
             _hasNewVotes = false;
         }
@@ -56,7 +56,7 @@
     {
         if (_lastCreatedVote != null)
         {
-            await this.simulationService.Vote(SimulationContext.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 2);
+            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 2);
             _lastCreatedVote = null;
             _hasNewVotes = false;
         }

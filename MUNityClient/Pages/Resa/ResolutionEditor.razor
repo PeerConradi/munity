@@ -6,7 +6,7 @@
 @using MUNityClient.Shared.Resa;
 @inject MUNityClient.Services.ResolutionService resolutionService;
 
-@if (this._viewModel?.Resolution != null)
+@if (this.ViewModel?.Resolution != null)
 {
 
     @*var corruptionResult = MUNity.Troubleshooting.Resa.ResolutionTroubleshooting.IsResolutionCorrupted(this._viewModel.Resolution);
@@ -20,8 +20,7 @@
             </div>
         }*@
 
-    <MUNityClient.Shared.Resa.ResolutionSyncInformation ResolutionViewModel="this._viewModel" />
-
+    <MUNityClient.Shared.Resa.ResolutionSyncInformation ResolutionViewModel="this.ViewModel" />
     <div class="row p-0 m-0 d-flex justify-content-center">
         <div class="row col-lg-8 col-xl-6 p-2 paragraphs">
             <div class="accordion col-12" id="accordion">
@@ -36,7 +35,7 @@
                     </div>
                     @* Head content *@
                     <div id="collapseHead" class="collapse show" aria-labelledby="headingHead" data-parent="#accordion">
-                        <MUNityClient.Shared.Resa.ResolutionHeader ResolutionViewModel="@this._viewModel"></MUNityClient.Shared.Resa.ResolutionHeader>
+                        <MUNityClient.Shared.Resa.ResolutionHeader ResolutionViewModel="@this.ViewModel"></MUNityClient.Shared.Resa.ResolutionHeader>
                     </div>
                     @* Preamble header *@
                     <div class="row col-12 m-0 p-0">
@@ -47,7 +46,7 @@
                                 <i class="fas fa-angle-down ml-2 expansionIcon"></i>
                             </h3>
                         </div>
-                        <button class="col-1 m-0 btn btn-dark-green d-flex justify-content-center align-items-center custom-plus-button" @onclick="() => this._viewModel.AddPreambleParagraph()" title="Paragraph hinzufügen">
+                        <button class="col-1 m-0 btn btn-dark-green d-flex justify-content-center align-items-center custom-plus-button" @onclick="() => this.ViewModel.AddPreambleParagraph()" title="Paragraph hinzufügen">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
@@ -55,9 +54,9 @@
                     <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                         @* Preamble *@
                         <div class="card-body paragraph-body row p-0 m-0">
-                            @foreach (var preambleParagraph in this._viewModel.Resolution.Preamble.Paragraphs)
+                            @foreach (var preambleParagraph in this.ViewModel.Resolution.Preamble.Paragraphs)
                             {
-                                <PreambleParagraphEditor Paragraph="preambleParagraph" ResolutionViewModel="this._viewModel" />
+                                <PreambleParagraphEditor Paragraph="preambleParagraph" ResolutionViewModel="this.ViewModel" />
                             }
                         </div>
                     </div>
@@ -71,7 +70,7 @@
                             </h3>
                         </div>
                         <button class="col-1 m-0 btn btn-dark-green d-flex justify-content-center align-items-center" title="Paragraph hinzufügen"
-                                @onclick="() => this._viewModel.Resolution.OperativeSection.CreateOperativeParagraph()">
+                                @onclick="() => this.ViewModel.Resolution.OperativeSection.CreateOperativeParagraph()">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
@@ -79,15 +78,15 @@
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                         @* Operative section *@
                         <div class="card-body paragraph-body row p-0 m-0">
-                            @foreach (var operative in this._viewModel.Resolution.OperativeSection.Paragraphs)
+                            @foreach (var operative in this.ViewModel.Resolution.OperativeSection.Paragraphs)
                             {
                                 @if (!operative.IsVirtual)
                                 {
-                                    <OperativeParagraphEditor ResolutionViewModel="this._viewModel" Paragraph="operative" />
+                                    <OperativeParagraphEditor ResolutionViewModel="this.ViewModel" Paragraph="operative" />
                                 }
                                 else
                                 {
-                                    <OperativeParagraphEditorGhost ResolutionViewModel="this._viewModel" Paragraph="operative" />
+                                    <OperativeParagraphEditorGhost ResolutionViewModel="this.ViewModel" Paragraph="operative" />
                                 }
                             }
                         </div>
@@ -107,9 +106,9 @@
                     </button>
                 </div>
                 <div class="card-body ammendment-body row p-0 m-0">
-                    @foreach (var amendment in this._viewModel.OrderedAmendments)
+                    @foreach (var amendment in this.ViewModel.OrderedAmendments)
                     {
-                        <MUNityClient.Shared.Resa.AmendmentCard Amendment="amendment" Interaction="AmendmentInteracted" Resolution="this._viewModel.Resolution" />
+                        <MUNityClient.Shared.Resa.AmendmentCard Amendment="amendment" Interaction="AmendmentInteracted" Resolution="this.ViewModel.Resolution" />
                     }
                 </div>
             </div>
@@ -130,7 +129,7 @@
 
     <MUNityClient.Shared.Bootstrap.Modal Title="Neuer Änderungsantrag" @ref="AddAmendmentModal"
                                          OnSubmitCallback="NewAmendment">
-        <MUNityClient.Shared.Resa.NewAmendmentForm Resolution="this._viewModel.Resolution" @ref="NewAmendmentForm">
+        <MUNityClient.Shared.Resa.NewAmendmentForm Resolution="this.ViewModel.Resolution" @ref="NewAmendmentForm">
         </MUNityClient.Shared.Resa.NewAmendmentForm>
     </MUNityClient.Shared.Bootstrap.Modal>
 }

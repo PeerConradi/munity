@@ -31,7 +31,7 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
         }
 
         [Parameter]
-        public MUNityClient.ViewModel.SimulationViewModel SimulationContext
+        public MUNityClient.ViewModels.SimulationViewModel ViewModel
         {
             get;
             set;
@@ -62,16 +62,16 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
         {
             if (SpeakerlistSocket == null)
                 return;
-            if (SimulationContext?.MyRole != null)
+            if (ViewModel?.MyRole != null)
             {
-                listOfSpeakerService.AddSpeakerToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.MyRole.Name, SimulationContext.MyRole.Iso);
+                listOfSpeakerService.AddSpeakerToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, ViewModel.MyRole.Name, ViewModel.MyRole.Iso);
                 return;
             }
             else
             {
-                if (SimulationContext?.Me != null)
+                if (ViewModel?.Me != null)
                 {
-                    listOfSpeakerService.AddSpeakerToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.Me.DisplayName, "");
+                    listOfSpeakerService.AddSpeakerToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, ViewModel.Me.DisplayName, "");
                 }
             }
         }
@@ -80,16 +80,16 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
         {
             if (SpeakerlistSocket == null)
                 return;
-            if (SimulationContext?.MyRole != null)
+            if (ViewModel?.MyRole != null)
             {
-                listOfSpeakerService.AddQuestionToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.MyRole.Name, SimulationContext.MyRole.Iso);
+                listOfSpeakerService.AddQuestionToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, ViewModel.MyRole.Name, ViewModel.MyRole.Iso);
                 return;
             }
             else
             {
-                if (SimulationContext?.Me != null)
+                if (ViewModel?.Me != null)
                 {
-                    listOfSpeakerService.AddQuestionToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, SimulationContext.Me.DisplayName, "");
+                    listOfSpeakerService.AddQuestionToList(SpeakerlistSocket.SourceList.ListOfSpeakersId, ViewModel.Me.DisplayName, "");
                 }
             }
         }

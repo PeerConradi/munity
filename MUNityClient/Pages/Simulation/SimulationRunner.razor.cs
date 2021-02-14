@@ -25,8 +25,9 @@ namespace MUNityClient.Pages.Simulation
             set;
         }
 
-        private MUNityClient.ViewModel.SimulationViewModel _simulationContext;
-        private Services.SocketHandlers.ListOfSpeakerSocketHandler _listOfSpeakerSocket;
+        private MUNityClient.ViewModels.SimulationViewModel SimulationViewModelInstance { get; set; }
+        private Services.SocketHandlers.ListOfSpeakerSocketHandler ListOfSpeakersInstance { get; set; }
+
         private MUNity.Models.ListOfSpeakers.ListOfSpeakers _listOfSpeakers;
         //private MUNity.Schema.Simulation.SimulationRoleItem _myRole;
         private string _listOfSpeakerId = "_loading_";
@@ -38,20 +39,20 @@ namespace MUNityClient.Pages.Simulation
             int id = 0;
             if (int.TryParse(Id, out id))
             {
-                _simulationContext = await simulationService.Subscribe(id);
-                if (_simulationContext != null)
+                SimulationViewModelInstance = await simulationService.Subscribe(id);
+                if (SimulationViewModelInstance != null)
                 {
                 }
 
-                AddHandlers(_simulationContext);
+                AddHandlers(SimulationViewModelInstance);
                 this._listOfSpeakerId = await this.simulationService.GetListOfSpeakerId(id);
                 if (!string.IsNullOrEmpty(_listOfSpeakerId))
                 {
                     this._listOfSpeakers = await listOfSpeakerService.GetFromApi(_listOfSpeakerId);
                     if (_listOfSpeakers != null)
                     {
-                        _listOfSpeakerSocket = await listOfSpeakerService.Subscribe(_listOfSpeakers);
-                        if (_listOfSpeakerSocket != null)
+                        ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(_listOfSpeakers);
+                        if (ListOfSpeakersInstance != null)
                         {
                         //_listOfSpeakerSocket.SpeakerListChanged += OnSpeakerlistChanged;
                         }
@@ -67,7 +68,7 @@ namespace MUNityClient.Pages.Simulation
             this.StateHasChanged();
         }
 
-        private void AddHandlers(MUNityClient.ViewModel.SimulationViewModel context)
+        private void AddHandlers(MUNityClient.ViewModels.SimulationViewModel context)
         {
             context.UserConnected += OnUserConnected;
             context.UserDisconnected += OnUserDisconnected;
@@ -109,9 +110,9 @@ namespace MUNityClient.Pages.Simulation
 
         private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user)
         {
-            if (_simulationContext?.Simulation?.Users != null)
+            if (SimulationViewModelInstance?.Simulation?.Users != null)
             {
-                var tmpUser = _simulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
+                var tmpUser = SimulationViewModelInstance.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
                 if (tmpUser != null)
                 {
                     tmpUser.IsOnline = true;
@@ -123,9 +124,9 @@ namespace MUNityClient.Pages.Simulation
 
         private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user)
         {
-            if (_simulationContext?.Simulation?.Users != null)
+            if (SimulationViewModelInstance?.Simulation?.Users != null)
             {
-                var tmpUser = _simulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
+                var tmpUser = SimulationViewModelInstance.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
                 if (tmpUser != null)
                 {
                     tmpUser.IsOnline = false;
@@ -136,9 +137,9 @@ namespace MUNityClient.Pages.Simulation
 
         private async void InitListOfSpeakers()
         {
-            if (this._simulationContext?.Simulation != null)
+            if (this.SimulationViewModelInstance?.Simulation != null)
             {
-                var list = await this.simulationService.InitListOfSpeakers(this._simulationContext.Simulation.SimulationId);
+                var list = await this.simulationService.InitListOfSpeakers(this.SimulationViewModelInstance.Simulation.SimulationId);
                 if (list != null)
                 {
                     this._listOfSpeakerId = list.ListOfSpeakersId;

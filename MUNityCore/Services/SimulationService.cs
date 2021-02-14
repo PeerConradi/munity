@@ -229,13 +229,13 @@ namespace MUNityCore.Services
         public Petition SubmitPetition(CreatePetitionRequest dto)
         {
             var agendaItem = this._context.AgendaItems.Include(n => n.Petitions).FirstOrDefault(n => n.AgendaItemId == dto.TargetAgendaItemId);
-            if (agendaItem == null) return null;
+            if (agendaItem == null) throw new Exception("Agenda Item Not found");
 
             var petitionType = this._context.PetitionTypes.FirstOrDefault(n => n.PetitionTypeId == dto.PetitionTypeId);
-            if (petitionType == null) return null;
+            if (petitionType == null) throw new Exception("Petition not found");
 
             var user = this._context.SimulationUser.FirstOrDefault(n => n.SimulationUserId == dto.PetitionUserId);
-            if (user == null) return null;
+            if (user == null) throw new Exception("User not found!");
 
             var newItem = new Petition()
             {
@@ -440,6 +440,7 @@ namespace MUNityCore.Services
                 .Where(n => n.Simulation.SimulationId == simulationId)
                 .Select(n => new AgendaItemDto()
                 {
+                    AgendaItemId = n.AgendaItemId,
                     Name = n.Name,
                     Description = n.Description,
                     Status = n.Status,
@@ -452,7 +453,7 @@ namespace MUNityCore.Services
                         Status = a.Status,
                         TargetAgendaItemId = a.AgendaItem.AgendaItemId,
                         Text = a.Text
-                    })
+                    }).ToList()
                 });
             if (test.Any())
                 return await test.ToListAsync();

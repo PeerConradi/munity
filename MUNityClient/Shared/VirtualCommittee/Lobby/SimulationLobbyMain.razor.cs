@@ -18,7 +18,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
     public partial class SimulationLobbyMain
     {
         [Parameter]
-        public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; } = null;
+        public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; } = null;
 
         public List<string> PetitionTemplates { get; set; }
 
@@ -37,7 +37,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
 
         private int SelectedRole
         {
-            get => SimulationContext.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == SimulationContext.MyAuth.SimulationUserId).RoleId;
+            get => ViewModel.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == ViewModel.MyAuth.SimulationUserId).RoleId;
             set
             {
                 SelectRole(value).ConfigureAwait(false);
@@ -46,10 +46,10 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
 
         protected override async Task OnInitializedAsync()
         {
-            if (SimulationContext.Simulation != null)
+            if (ViewModel.Simulation != null)
             {
-                AppendEvents(SimulationContext);
-                SimulationContext.RolesChanged += SimulationContext_RolesChanged;
+                AppendEvents(ViewModel);
+                ViewModel.RolesChanged += SimulationContext_RolesChanged;
             }
 
             this.PetitionTemplates = await this.simulationService.GetPetitionPresetNames();
@@ -69,12 +69,12 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
 
         private async Task ApplyPetitionPreset()
         {
-            if (this.SimulationContext == null) return;
-            await this.simulationService.ApplyPetitionTemplate(this.SimulationContext.Simulation.SimulationId, SelectedPetitionTemplate);
+            if (this.ViewModel == null) return;
+            await this.simulationService.ApplyPetitionTemplate(this.ViewModel.Simulation.SimulationId, SelectedPetitionTemplate);
             this.StateHasChanged();
         }
 
-        private void AppendEvents(MUNityClient.ViewModel.SimulationViewModel context)
+        private void AppendEvents(MUNityClient.ViewModels.SimulationViewModel context)
         {
             context.PhaseChanged += PhaseChanged;
         }
@@ -83,13 +83,13 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         {
             if (phase == MUNity.Schema.Simulation.GamePhases.Online)
             {
-                navigationManager.NavigateTo($"/sim/run/{SimulationContext.Simulation.SimulationId}");
+                navigationManager.NavigateTo($"/sim/run/{ViewModel.Simulation.SimulationId}");
             }
         }
 
         private async Task SelectRole(int roleId)
         {
-            await this.simulationService.PickRole(SimulationContext.Simulation.SimulationId, roleId);
+            await this.simulationService.PickRole(ViewModel.Simulation.SimulationId, roleId);
         }
     }
 }

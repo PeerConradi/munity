@@ -1,4 +1,4 @@
-﻿@if (this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.Offline || this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.ErrorWhenSyncing)
+﻿@if (this.ViewModel.SyncMode == ViewModels.ResolutionViewModel.SyncModes.Offline || this.ViewModel.SyncMode == ViewModels.ResolutionViewModel.SyncModes.ErrorWhenSyncing)
     {
 <div class="row col-12 d-flex justify-content-center my-1 align-items-center">
     <div class="col-8 alert alert-warning alert-dismissible my-0">
@@ -7,7 +7,7 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    @if (this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.ErrorWhenSyncing)
+    @if (this.ViewModel.SyncMode == ViewModels.ResolutionViewModel.SyncModes.ErrorWhenSyncing)
     {
         <button type="button" class="btn btn-success col-2" alt="Retry connection" title="Erneuter Verbindungsversuch"><i class="fas fa-redo"></i></button>
     }
@@ -15,7 +15,7 @@
     <button type="button" class="btn btn-primary col-2" alt="Download resolution" title="Resolution herunterladen"><i class="fas fa-arrow-down"></i></button>
 </div>
     }
-    else if (this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.PingingServer)
+    else if (this.ViewModel.SyncMode == ViewModels.ResolutionViewModel.SyncModes.PingingServer)
     {
 <div class="row col-12 d-flex justify-content-center my-2 align-items-center">
     <div class="alert alert-info d-flex align-items-center">
@@ -26,7 +26,7 @@
     </div>
 </div>
     }
-    else if (this.ResolutionViewModel.SyncMode == ViewModel.ResolutionViewModel.SyncModes.Syncing)
+    else if (this.ViewModel.SyncMode == ViewModels.ResolutionViewModel.SyncModes.Syncing)
     {
 <div class="row d-flex justify-content-center my-2 align-items-center">
     <div class="col-12 alert alert-info d-flex align-items-center">
@@ -40,5 +40,5 @@
 
 @code {
     [Parameter]
-    public ViewModel.ResolutionViewModel ResolutionViewModel { get; set; }
+    public ViewModels.ResolutionViewModel ViewModel { get; set; }
 }

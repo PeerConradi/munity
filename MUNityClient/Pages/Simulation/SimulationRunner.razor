@@ -16,9 +16,9 @@
     Diese Komponente soll auch das Basis Layout für das Simulationsfenster stellen.
 *@
 
-<MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationTopNavbar SimulationContext="@_simulationContext" LayoutWrapper="@_layoutWrapper" />
+<MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationTopNavbar ViewModel="@SimulationViewModelInstance" LayoutWrapper="@_layoutWrapper" />
 
-@if (_simulationContext?.Simulation != null && _simulationContext.MyAuth != null && _layoutWrapper != null)
+@if (SimulationViewModelInstance?.Simulation != null && SimulationViewModelInstance.MyAuth != null && _layoutWrapper != null)
 {
     <div class="row m-0 p-0">
 
@@ -26,48 +26,48 @@
         <div class="col-lg-8 col-md-12 col-sm-12">
             @if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Agenda)
             {
-                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda ViewModel="@this._simulationContext"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda>
+                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda ViewModel="@this.SimulationViewModelInstance"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda>
             }
             else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Home)
             {
                 <div class="col-12">
-                    <MUNityClient.Shared.VirtualCommittee.UserList.SimulationLiveUserList SimulationContext="@_simulationContext" />
+                    <MUNityClient.Shared.VirtualCommittee.UserList.SimulationLiveUserList SimulationContext="@SimulationViewModelInstance" />
                 </div>
             }
             else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Resolution)
             {
-                @if (this._simulationContext.CurrentResolutionId == null)
+                @if (this.SimulationViewModelInstance.CurrentResolutionId == null)
                 {
-                    <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationResolutionList SimulationViewModel="this._simulationContext" />
+                    <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationResolutionList SimulationViewModel="this.SimulationViewModelInstance" />
                 }
                 else
                 {
                     <div class="row">
-                        <button class="btn btn-block btn-primary" @onclick="() => this._simulationContext.CurrentResolutionId = null">Zurück zur Übersicht</button>
+                        <button class="btn btn-block btn-primary" @onclick="() => this.SimulationViewModelInstance.CurrentResolutionId = null">Zurück zur Übersicht</button>
                     </div>
                     if (this._layoutWrapper.ResolutionMode == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Read)
                     {
-                        @if (this._simulationContext.IsChair)
+                        @if (this.SimulationViewModelInstance.IsChair)
                         {
                             <div class="row">
                                 <button class="btn btn-block btn-secondary" @onclick="() => this._layoutWrapper.ResolutionMode = Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Write">Zur Schreibansicht wechseln</button>
                             </div>
                         }
-                        <MUNityClient.Pages.Resa.ResolutionPresentation Id="@this._simulationContext.CurrentResolutionId" />
+                        <MUNityClient.Pages.Resa.ResolutionPresentation Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
                     }
                     else
                     {
                         <div class="row">
                             <button class="btn btn-block btn-secondary" @onclick="() => this._layoutWrapper.ResolutionMode = Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Read">Zur Leseansicht wechseln</button>
                         </div>
-                        <MUNityClient.Pages.Resa.ResolutionEditor Id="@this._simulationContext.CurrentResolutionId" />
+                        <MUNityClient.Pages.Resa.ResolutionEditor Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
                     }
                 }
 
             }
             else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Options)
             {
-                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationLiveOptions ViewModel="@_simulationContext" />
+                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationLiveOptions ViewModel="@SimulationViewModelInstance" />
             }
             else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Presents)
             {
@@ -86,7 +86,7 @@
                     }
                     else if (string.IsNullOrEmpty(_listOfSpeakerId))
                     {
-                        if (_simulationContext.MyAuth.CanCreateRole || _simulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+                        if (SimulationViewModelInstance.MyAuth.CanCreateRole || SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
                         {
                             <button class="btn btn-sm btn-success btn-block" @onclick="() => InitListOfSpeakers()">Redeliste anlegen</button>
                         }
@@ -97,13 +97,13 @@
                     }
                     else
                     {
-                        @if (this._simulationContext.IsChair)
+                        @if (this.SimulationViewModelInstance.IsChair)
                         {
                             <button class="btn btn-sm btn-primary btn-block">Redeliste bearbeiten</button>
                         }
-                        else if (this._simulationContext.MyRole != null &&
-                            (this._simulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
-                            this._simulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo))
+                        else if (this.SimulationViewModelInstance.MyRole != null &&
+                            (this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
+                            this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo))
                         {
                             <button class="btn btn-outline-success">Auf die Redeliste setzen</button>
                             <button class="btn btn-outline-success">Auf Fragen und Kurzbemerkungen setzen</button>
@@ -117,12 +117,12 @@
     </div>
 
     @* Ansicht für die Steuerung (Kann entfernt werden sobald die Redeiste über den bearbeiten Button einstellbar ist) *@
-    @if (this._simulationContext.IsChair)
+    @if (this.SimulationViewModelInstance.IsChair)
     {
         <div class="row m-0 p-0">
             <div class="col-12">
-                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationControls SpeakerlistSocket="_listOfSpeakerSocket"
-                                                                                    SimulationContext="@_simulationContext"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationControls>
+                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationControls SpeakerlistSocket="ListOfSpeakersInstance"
+                                                                                    ViewModel="@SimulationViewModelInstance"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationControls>
             </div>
         </div>
     }

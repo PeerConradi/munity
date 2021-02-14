@@ -1,13 +1,12 @@
-﻿@if (this.ViewModel != null)
+﻿@if (this.ViewModel != null && Petition != null && PetitionType != null)
 {
 <div class="list-group-item list-group-item-action">
     <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Recht auf Information</h5>
-        <small class="text-muted">01.02.2021 12:00</small>
+        <h5 class="mb-1">@PetitionType.Name</h5>
+        <small class="text-muted">@Petition.PetitionDate</small>
     </div>
     <div class="mb-0">
-        <p>Einbringer</p>
-        <p>Art des Antrags</p>
+        <p>@SubmitterName</p>
     </div>
     @if (this.ViewModel.IsChair)
     {
@@ -26,5 +25,29 @@ else
 
 @code {
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel ViewModel { get; set; }
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
+
+    [Parameter]
+    public MUNity.Schema.Simulation.PetitionDto Petition { get; set; }
+
+    private string SubmitterName
+    {
+        get
+        {
+            if (this.ViewModel == null || this.Petition == null) return "";
+            var user = ViewModel.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == Petition.PetitionUserId);
+            if (user != null)
+                return user.DisplayName;
+            return "";
+        }
+    }
+
+    private MUNity.Schema.Simulation.PetitionTypeSimulationDto PetitionType
+    {
+        get
+        {
+            if (this.Petition == null) return null;
+            return ViewModel?.PetitionTypes?.FirstOrDefault(n => n.PetitionTypeId == Petition.PetitionTypeId);
+        }
+    }
 }

@@ -59,9 +59,11 @@
                         {
                             if (_currentSelectedAgendaItem.Petitions.Any())
                             {
-                                @foreach (var petition in _currentSelectedAgendaItem.Petitions)
+                                @foreach (var petition in _currentSelectedAgendaItem.Petitions
+                                    .OrderBy(n => ViewModel.PetitionTypes.FirstOrDefault(a => a.PetitionTypeId == n.PetitionTypeId).OrderIndex)
+                                    .ThenBy(n => n.PetitionDate))
                                 {
-                                    <PetitionListItem ViewModel="@this.ViewModel" />
+                                    <PetitionListItem ViewModel="@this.ViewModel" Petition="petition" />
                                 }
                             }
                             else
@@ -86,15 +88,15 @@
 
     </div>
 
-    <CreateAgendaItem @ref="_createAgendaItemRef" ViewModel="ViewModel" />
+    <CreateAgendaItem @ref="_createAgendaItemRef" ViewModel="@this.ViewModel" />
 
-    <SelectPetitionTool ViewModel="@this.ViewModel" IsVisible="ShowNewPetitionBox" />
+    <SelectPetitionTool ViewModel="@this.ViewModel" CurrentAgendaItem="@_currentSelectedAgendaItem" IsVisible="ShowNewPetitionBox" />
 }
 
 
 @code {
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel ViewModel { get; set; }
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
     public bool ShowNewPetitionBox { get; set; } = false;
 
@@ -107,7 +109,10 @@
         if (this.ViewModel != null)
         {
             this.ViewModel.AgendaItemAdded += delegate { this.StateHasChanged(); };
+            this.ViewModel.PetitionAdded += delegate { this.StateHasChanged(); };
         }
         base.OnInitialized();
     }
+
+    
 }

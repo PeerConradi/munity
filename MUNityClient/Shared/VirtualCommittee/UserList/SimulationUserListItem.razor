@@ -37,6 +37,18 @@
                 <span class="badge badge-primary">Enthaltung</span>
             }
         }
+
+        @if (Petitions.Any())
+        {
+            if (Petitions.Count() == 1)
+            {
+                <span class="badge badge-warning">Stellt Antrag: @ViewModel.PetitionTypes.FirstOrDefault(n => n.PetitionTypeId == Petitions.First().PetitionTypeId)?.Name</span>
+            }
+            else
+            {
+                <span class="badge badge-warning">Stellt mehrere Anträge!</span>
+            }
+        }
     </div>
 </div>
 
@@ -127,19 +139,32 @@
     public MUNity.Schema.Simulation.SimulationRoleDto Role { get; set; }
 
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; }
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
     private MUNity.Schema.Simulation.VotedEventArgs _lastVoteArgs { get; set; } = null;
 
+    private IEnumerable<MUNity.Schema.Simulation.PetitionDto> Petitions
+    {
+        get
+        {
+            var agendaItem = ViewModel.AgendaItems.FirstOrDefault(n => n.Status == MUNity.Models.Simulation.EAgendaItemStatuses.Active);
+            if (agendaItem == null)
+                agendaItem = ViewModel.AgendaItems.FirstOrDefault();
+            if (agendaItem == null)
+                return new List<MUNity.Schema.Simulation.PetitionDto>();
+
+            return agendaItem.Petitions.Where(n => n.PetitionUserId == this.User.SimulationUserId);
+        }
+    }
 
     private bool _currentPetitionIsActive = false;
 
     protected override void OnInitialized()
     {
-        if (SimulationContext != null)
+        if (ViewModel != null)
         {
-            SimulationContext.UserVoted += UserVoted;
-            SimulationContext.VoteCreated += VoteCreated;
+            ViewModel.UserVoted += UserVoted;
+            ViewModel.VoteCreated += VoteCreated;
         }
         base.OnInitialized();
     }

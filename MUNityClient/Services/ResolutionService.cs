@@ -301,9 +301,9 @@ namespace MUNityClient.Services
 
         #region SignalR WebSocket
 
-        public async Task<ViewModel.ResolutionViewModel> Subscribe(Resolution resolution)
+        public async Task<ViewModels.ResolutionViewModel> Subscribe(Resolution resolution)
         {
-            var handler = await ViewModel.ResolutionViewModel.CreateViewModelOnline(resolution, this);
+            var handler = await ViewModels.ResolutionViewModel.CreateViewModelOnline(resolution, this);
             var connId = handler.HubConnection.ConnectionId;
             await this._httpService.HttpClient.GetAsync($"/api/Resolution/SubscribeToResolution?resolutionid={resolution.ResolutionId}&connectionid={connId}");
             return handler;

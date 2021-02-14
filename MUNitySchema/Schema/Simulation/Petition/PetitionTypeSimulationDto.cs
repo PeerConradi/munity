@@ -21,6 +21,8 @@ namespace MUNity.Schema.Simulation
         /// </summary>
         public string Description { get; set; }
 
+        public int OrderIndex { get; set; }
+
         /// <summary>
         /// A Reference to where you get more information about this petition. This could be a link or
         /// a name of the paragraph insiide the rules of procedure.

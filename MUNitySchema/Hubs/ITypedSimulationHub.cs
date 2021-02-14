@@ -84,13 +84,6 @@ namespace MUNity.Hubs
         Task ChatMessageRecieved(int simulationId, int userId, string msg);
 
         /// <summary>
-        /// A user has filed a request.
-        /// </summary>
-        /// <param name="petition"></param>
-        /// <returns></returns>
-        Task UserPetition(PetitionDto petition);
-
-        /// <summary>
         /// The request of a user has beed accepted.
         /// </summary>
         /// <param name="petition"></param>
@@ -137,5 +130,7 @@ namespace MUNity.Hubs
         Task AgendaItemRemoved(AgendaItemDto agendaItem);
 
         Task AgendaItemChanged(AgendaItemDto agendaItem);
+
+        Task PetitionAdded(PetitionDto petition);
     }
 }

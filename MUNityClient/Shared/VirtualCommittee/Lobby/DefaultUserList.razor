@@ -25,13 +25,13 @@
                 }
 
                 @{
-                    if (Roles == null)
+                    if (ViewModel.Simulation?.Roles == null)
                     {
                         <td>Rollen nicht geladen.</td>
                     }
                     else
                     {
-                        var role = Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId);
+                        var role = ViewModel.Simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId);
                         if (role != null)
                         {
                             <td>@role.Name</td>

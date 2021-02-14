@@ -1,7 +1,7 @@
 ﻿@using MUNityClient.Shared.VirtualCommittee.ActiveRoom
 @inject Services.SimulationService simulationService;
 <!-- As a link -->
-@if (SimulationContext == null)
+@if (ViewModel == null)
 {
     <nav class="navbar navbar-light bg-light">
         <div class="spinner-border" role="status">
@@ -19,17 +19,14 @@ else
             <!-- Navbar brand -->
             <a class="navbar-brand menu-bars hidden-lg" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
 
-            <a class="navbar-brand">@SimulationContext.Simulation.Name</a>
+            <a class="navbar-brand">@ViewModel.Simulation.Name</a>
 
-            <ConnectionStateBadge ViewModel="@SimulationContext" />
+            <ConnectionStateBadge ViewModel="@ViewModel" />
 
 
             <ul class="nav nav-pills hidden-md">
                 @if (LayoutWrapper != null)
                 {
-                    <li class="nav-item badge rounded-pill nav-spacing">
-                        <a class="nav-link" @onclick="() => LayoutWrapper.ShowMemberlist = !LayoutWrapper.ShowMemberlist"><i class="fas @(LayoutWrapper.ShowMemberlist ? "fa-eye" : "fa-eye-slash")"></i> Mitglieder</a>
-                    </li>
 
                     <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "badge badge-primary" : "")" title="Dashboard">
                         <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">
@@ -61,7 +58,7 @@ else
                         </a>
                     </li>
 
-                    @if (this.SimulationContext.IsChair)
+                    @if (this.ViewModel.IsChair)
                     {
                         <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "badge badge-primary" : "")" title="Einstellungen">
                             <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options">
@@ -141,7 +138,7 @@ else
 
 @code {
     [Parameter]
-    public MUNityClient.ViewModel.SimulationViewModel SimulationContext { get; set; } = null;
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; } = null;
 
     [Parameter]
     public MUNityClient.Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper LayoutWrapper { get; set; } = null;

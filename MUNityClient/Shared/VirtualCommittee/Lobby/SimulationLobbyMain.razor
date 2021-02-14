@@ -3,10 +3,10 @@
 @inject MUNityClient.Services.SimulationService simulationService;
 @inject NavigationManager navigationManager;
 @* Dies ist eine Teilnehmendenansicht an dieser Stelle werden den Nutzern Rollen zugewiesen bzw. können sich diese ihre Rollen auswählen. *@
-@if (SimulationContext?.Simulation != null)
+@if (ViewModel?.Simulation != null)
 {
-    @if (SimulationContext.MyAuth != null && SimulationContext.MyAuth.CanCreateRole || SimulationContext.MyRole != null && 
-        SimulationContext.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+    @if (ViewModel.MyAuth != null && ViewModel.MyAuth.CanCreateRole || ViewModel.MyRole != null &&
+       ViewModel.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
     {
         <div class="row">
             <div class="col-12">
@@ -24,7 +24,7 @@
                                 @onclick="() => this.CurrentView = Views.Petitions">
                             Anträge
                         </button>
-                        <button class="btn btn-secondary" @onclick="() => this.SimulationContext.StartSimulation()">Simulation beginnen</button>
+                        <button class="btn btn-secondary" @onclick="() => this.ViewModel.StartSimulation()">Simulation beginnen</button>
                     </div>
                 </div>
 
@@ -39,16 +39,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="/sim/home" class="btn btn-danger btn-sm">Raum verlassen</a> @SimulationContext.Simulation.Name
+                        <a href="/sim/home" class="btn btn-danger btn-sm">Raum verlassen</a> @ViewModel.Simulation.Name
                     </div>
                     <div class="card-body p-0">
-                        @if (SimulationContext.MyAuth.CanCreateRole)
+                        @if (ViewModel.MyAuth.CanCreateRole)
                         {
-                            <AdminUserList SimulationContext="@SimulationContext"></AdminUserList>
+                            <AdminUserList SimulationContext="@ViewModel"></AdminUserList>
                         }
                         else
                         {
-                            <DefaultUserList SimulationContext="@SimulationContext"></DefaultUserList>
+                            <DefaultUserList SimulationContext="@ViewModel"></DefaultUserList>
                         }
                     </div>
                     @*
@@ -69,8 +69,8 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <SelectRolePreset SimulationContext="@this.SimulationContext" />
-                        <SimulationRoleTable Roles="this.SimulationContext.Simulation.Roles" />
+                        <SelectRolePreset SimulationContext="@this.ViewModel" />
+                        <SimulationRoleTable Roles="this.ViewModel.Simulation.Roles" />
                         <div class="row">
                             <div class="col-4">
                                 <input class="form-control" />
@@ -132,10 +132,10 @@
                 </div>
             </div>
         
-            @if (this.SimulationContext?.PetitionTypes != null)
+            @if (this.ViewModel?.PetitionTypes != null)
             {
                 <div class="col col-12">
-                    <PetitionTypeTable PetitionTypes="this.SimulationContext.PetitionTypes" />
+                    <PetitionTypeTable PetitionTypes="this.ViewModel.PetitionTypes" />
                 </div>
             }
             else

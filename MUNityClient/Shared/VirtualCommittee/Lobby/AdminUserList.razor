@@ -31,11 +31,11 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var user in Users)
+                @foreach (var user in this.Users)
                 {
                     if (user != null)
                     {
-                        <UserListItemAdmin User="user" SimulationId="SimulationContext.Simulation.SimulationId" UserRemoveClicked="@OnUserRemoved" Roles="Roles" PasswordShown="@showPasswords"></UserListItemAdmin>
+                        <UserListItemAdmin User="user" SimulationId="ViewModel.Simulation.SimulationId" UserRemoveClicked="@OnUserRemoved" Roles="this.ViewModel.Simulation.Roles" PasswordShown="@showPasswords"></UserListItemAdmin>
                     }
                 }
             </tbody>

@@ -25,18 +25,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         }
 
         [Parameter]
-        public int SimulationId
-        {
-            get;
-            set;
-        }
-
-        [Parameter]
-        public List<MUNity.Schema.Simulation.SimulationRoleDto> Roles
-        {
-            get;
-            set;
-        }
+        public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
         [Parameter]
         public Boolean PasswordShown
@@ -60,19 +49,16 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             {
                 if (_roleId != value)
                 {
-                    this.simulationService.SetUserRole(this.SimulationId, this.User.SimulationUserId, value).ConfigureAwait(false);
+                    this.simulationService.SetUserRole(this.ViewModel.Simulation.SimulationId, this.User.SimulationUserId, value).ConfigureAwait(false);
                     _roleId = value;
                 }
             }
         }
 
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
             this._roleId = User.RoleId;
-            if (Roles == null)
-            {
-                this.Roles = await this.simulationService.GetRoles(SimulationId);
-            }
+            return base.OnInitializedAsync();
         }
 
         private void CopyPasswordToClippboard()
