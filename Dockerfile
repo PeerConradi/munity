@@ -8,7 +8,8 @@ WORKDIR /app
 # API
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["MUNityCore/MUNityCore.csproj", "MUNityCore/"]
+COPY ["src/MUNityCore/MUNityCore.csproj", "MUNityCore/"]
+COPY ["src/MUNitySchema/MUNitySchema.csproj", "MUNitySchema/"]
 RUN dotnet restore "MUNityCore/MUNityCore.csproj"
 COPY . .
 #RUN dotnet build "MUNityCore/MUNityCore.csproj" -c Release -o /app/build
