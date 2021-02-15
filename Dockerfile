@@ -16,7 +16,7 @@ COPY . .
 
 
 FROM build AS publish
-RUN dotnet publish "MUNityCore/MUNityCore.csproj" -c Release -o /app/publish
+RUN dotnet publish "src/MUNityCore/MUNityCore.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
