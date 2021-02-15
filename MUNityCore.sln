@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29505.145
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityCore", "MUNityCore\MUNityCore.csproj", "{5FC8AD2A-CF67-4917-B486-9CE6F8350099}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityCore", "src\MUNityCore\MUNityCore.csproj", "{5FC8AD2A-CF67-4917-B486-9CE6F8350099}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{59ED0521-0107-4357-A511-042FA536934C}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,15 +25,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Conference", "Conference", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{1F5E6F9F-22EC-4EFA-B4BF-8F37CB519D6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNitySchema", "MUNitySchema\MUNitySchema.csproj", "{EE46279E-C1B5-4DD8-8AAB-D1F29AD5A940}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNitySchema", "src\MUNitySchema\MUNitySchema.csproj", "{EE46279E-C1B5-4DD8-8AAB-D1F29AD5A940}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityClient", "MUNityClient\MUNityClient.csproj", "{1A810EC8-9BED-4072-BFC6-8EF4E9768484}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityClient", "src\MUNityClient\MUNityClient.csproj", "{1A810EC8-9BED-4072-BFC6-8EF4E9768484}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityCoreTest", "MUNityTest\MUNityCoreTest.csproj", "{2C98EA14-1F98-48EA-B5A7-85A4615B8B06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityCoreTest", "src\MUNityTest\MUNityCoreTest.csproj", "{2C98EA14-1F98-48EA-B5A7-85A4615B8B06}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MunitySchemaTest", "MunityNUnitTest\MunitySchemaTest.csproj", "{57535B27-2030-42E4-B7AA-6DDB38E69F53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MunitySchemaTest", "src\MunityNUnitTest\MunitySchemaTest.csproj", "{57535B27-2030-42E4-B7AA-6DDB38E69F53}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MunityClientTest", "MunityClientTest\MunityClientTest.csproj", "{BE4B7FC1-3708-47C5-AECA-A40C7C38EA87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MunityClientTest", "src\MunityClientTest\MunityClientTest.csproj", "{BE4B7FC1-3708-47C5-AECA-A40C7C38EA87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
