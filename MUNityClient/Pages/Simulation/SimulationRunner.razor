@@ -22,66 +22,66 @@
 {
 <div class="row m-0 p-0">
 
-    @* Hauptinhalt *@
-    <div class="col-lg-8 col-md-12 col-sm-12">
-        @if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Agenda)
-        {
-            <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda ViewModel="@this.SimulationViewModelInstance"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda>
-        }
-        else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Home)
-        {
-            <div class="col-12">
-                <MUNityClient.Shared.VirtualCommittee.UserList.SimulationLiveUserList SimulationContext="@SimulationViewModelInstance" />
-            </div>
-        }
-        else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Resolution)
-        {
-            @if (this.SimulationViewModelInstance.CurrentResolutionId == null)
+    @* Ansicht für die Redeliste sollte ausgeblendet werden, wenn der Editor eingeblendet wird *@
+    @if (_layoutWrapper.MainContent != Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor)
+    {
+        @* Hauptinhalt *@
+        <div class="col-lg-8 col-md-12 col-sm-12">
+            @if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Agenda)
             {
-                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationResolutionList SimulationViewModel="this.SimulationViewModelInstance" />
+                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda ViewModel="@this.SimulationViewModelInstance"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationAgenda>
             }
-            else
+            else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Home)
             {
-                <div class="row">
-                    <button class="btn btn-block btn-primary" @onclick="() => this.SimulationViewModelInstance.CurrentResolutionId = null">Zurück zur Übersicht</button>
+                <div class="col-12">
+                    <MUNityClient.Shared.VirtualCommittee.UserList.SimulationLiveUserList SimulationContext="@SimulationViewModelInstance" />
                 </div>
-                if (this._layoutWrapper.ResolutionMode == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Read)
+            }
+            else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Resolution)
+            {
+                @if (this.SimulationViewModelInstance.CurrentResolutionId == null)
                 {
-                    @if (this.SimulationViewModelInstance.IsChair)
-                    {
-                        <div class="row">
-                            <button class="btn btn-block btn-secondary" @onclick="() => this._layoutWrapper.ResolutionMode = Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Write">Zur Schreibansicht wechseln</button>
-                        </div>
-                    }
-                    <MUNityClient.Pages.Resa.ResolutionPresentation Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
+                    <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationResolutionList SimulationViewModel="this.SimulationViewModelInstance" />
                 }
                 else
                 {
                     <div class="row">
-                        <button class="btn btn-block btn-secondary" @onclick="() => this._layoutWrapper.ResolutionMode = Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Read">Zur Leseansicht wechseln</button>
+                        <button class="btn btn-block btn-primary" @onclick="() => this.SimulationViewModelInstance.CurrentResolutionId = null">Zurück zur Übersicht</button>
                     </div>
-                    <MUNityClient.Pages.Resa.ResolutionEditor Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
+                    if (this._layoutWrapper.ResolutionMode == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Read)
+                    {
+                        @if (this.SimulationViewModelInstance.IsChair)
+                        {
+                            <div class="row">
+                                <button class="btn btn-block btn-secondary" @onclick="() => this._layoutWrapper.ResolutionMode = Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Write">Zur Schreibansicht wechseln</button>
+                            </div>
+                        }
+                        <MUNityClient.Pages.Resa.ResolutionPresentation Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <button class="btn btn-block btn-secondary" @onclick="() => this._layoutWrapper.ResolutionMode = Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Read">Zur Leseansicht wechseln</button>
+                        </div>
+                        <MUNityClient.Pages.Resa.ResolutionEditor Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
+                    }
                 }
+
             }
+            else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Options)
+            {
+                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationLiveOptions ViewModel="@SimulationViewModelInstance" />
+            }
+            else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Presents)
+            {
+                <p>TODO Anwesenheit</p>
+            }
+            else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Voting)
+            {
+                <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationVotePage ViewModel="@this.SimulationViewModelInstance" />
+            }
+        </div>
 
-        }
-        else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Options)
-        {
-            <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationLiveOptions ViewModel="@SimulationViewModelInstance" />
-        }
-        else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Presents)
-        {
-            <p>TODO Anwesenheit</p>
-        }
-        else if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.Voting)
-        {
-            <p>TODO Abstimmung</p>
-        }
-    </div>
-
-    @* Ansicht für die Redeliste *@
-    @if (_layoutWrapper.MainContent != Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.ListOfSpeaker)
-    {
         <div class="col-md-12 col-lg-4 col-sm-12">
             <div class="row">
                 @if (_listOfSpeakerId == "_loading_")
@@ -102,13 +102,13 @@
                 else
                 {
                     @if (this.SimulationViewModelInstance.MyRole != null &&
-                        (this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
-                        this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo))
+                       (this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
+                       this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo))
                     {
-            <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-success" @onclick="() => AddMeToListOfSpeakers()" disabled="@ListOfSpeakersInstance.SourceList.ListClosed">Auf die Redeliste setzen</button>
-                <button class="btn btn-outline-success" @onclick="() => AddMeToListOfQuestions()" disabled="@ListOfSpeakersInstance.SourceList.QuestionsClosed">Auf Fragen und Kurzbemerkungen setzen</button>
-            </div>   
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success" @onclick="() => AddMeToListOfSpeakers()" disabled="@ListOfSpeakersInstance.SourceList.ListClosed">Auf die Redeliste setzen</button>
+                            <button class="btn btn-outline-success" @onclick="() => AddMeToListOfQuestions()" disabled="@ListOfSpeakersInstance.SourceList.QuestionsClosed">Auf Fragen und Kurzbemerkungen setzen</button>
+                        </div>
                     }
                     <MUNityClient.Shared.Los.LoSReaderComponent ListOfSpeakersId="@_listOfSpeakerId" IsOnline="true"></MUNityClient.Shared.Los.LoSReaderComponent>
                 }
@@ -116,7 +116,7 @@
         </div>
     }
 
-    @if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.ListOfSpeaker)
+    @if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor)
     {
         <MUNityClient.Pages.LoS.ListOfSpeakerEditor Id="@ListOfSpeakersInstance.SourceList.ListOfSpeakersId" Socket="@ListOfSpeakersInstance" IsOnline="@true"></MUNityClient.Pages.LoS.ListOfSpeakerEditor>
     }

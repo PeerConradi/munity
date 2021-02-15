@@ -146,10 +146,19 @@ namespace MUNityClient.Services
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/Petition/AcceptPetition", JsonContent.Create(petition));
         }
 
-        public async Task<HttpResponseMessage> DeletePetition(MUNity.Schema.Simulation.CreatePetitionRequest petition)
+        public async Task<HttpResponseMessage> DeletePetition(int simulationId, MUNity.Schema.Simulation.PetitionDto petition)
         {
-            petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
-            return await _httpService.HttpClient.PutAsync($"/api/Simulation/Petition/DeletePetition", JsonContent.Create(petition));
+            var token = await GetSimulationToken(simulationId);
+            if (token == null) return null;
+
+            var requestBody = new MUNity.Schema.Simulation.PetitionInteractRequest()
+            {
+                AgendaItemId = petition.TargetAgendaItemId,
+                PetitionId = petition.PetitionId,
+                SimulationId = simulationId,
+                Token = token.Token
+            };
+            return await _httpService.HttpClient.PutAsync($"/api/Simulation/Petition/DeletePetition", JsonContent.Create(requestBody));
         }
 
         public async Task<MUNity.Schema.Simulation.SimulationDto> GetSimulation(int id)
@@ -157,6 +166,18 @@ namespace MUNityClient.Services
             var client = await GetSimulationClient(id);
             if (client == null) return null;
             return await client.GetFromJsonAsync<MUNity.Schema.Simulation.SimulationDto>($"/api/Simulation/Simulation?simulationId={id}");
+        }
+
+        public async Task<HttpResponseMessage> CloseAllConnections(int simulationId)
+        {
+            var token = await this.GetSimulationToken(simulationId);
+            if (token == null) return null;
+            var body = new SimulationRequest()
+            {
+                SimulationId = simulationId,
+                Token = token.Token
+            };
+            return await this._httpService.HttpClient.PutAsJsonAsync($"/api/Simulation/CloseAllConnections", body);
         }
 
         public async Task<HttpResponseMessage> CreateAgendaItem(CreateAgendaItemDto dto)

@@ -435,6 +435,24 @@ namespace MUNityCore.Controllers
             await this.HubContext.Clients.Group($"sim_{simulationId}").Voted(args);
             return Ok();
         }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<ActionResult> CloseAllConnections([FromBody]SimulationRequest request)
+        {
+            var isAllowed = await this._simulationService.IsTokenValidAndUserAdmin(request);
+            if (!isAllowed)
+                isAllowed = await this._simulationService.IsTokenValidAndUserChair(request);
+            if (!isAllowed) return Forbid();
+
+            List<SimulationHubConnection> hubConnections = this._simulationService.GetHubConnections(request.SimulationId);
+            foreach(var connection in hubConnections)
+            {
+                await this.HubContext.Groups.RemoveFromGroupAsync(connection.ConnectionId, $"sim_{request.SimulationId}");
+                this._simulationService.RemoveHubConnection(connection);
+            }
+            return Ok();
+        }
         
     }
 }

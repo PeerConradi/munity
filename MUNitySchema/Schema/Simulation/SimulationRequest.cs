@@ -9,7 +9,7 @@ namespace MUNity.Schema.Simulation
     /// Every Request that is happening inside the Simulation must be authenticated.
     /// This abstraction will ensure that a Token is passed.
     /// </summary>
-    public abstract class SimulationRequest
+    public class SimulationRequest
     {
         /// <summary>
         /// The token of the current logged in SimulationUser.

@@ -20,7 +20,7 @@
                                     @foreach (var agendaItem in this.ViewModel.AgendaItems)
                                     {
                                         <a class="alert w-100 @((_currentSelectedAgendaItem == agendaItem) ? "alert-primary" : "alert-dark") m-0"
-                                           @onclick="() => _currentSelectedAgendaItem = agendaItem">@agendaItem.Name</a>
+                                           @onclick="() => _currentSelectedAgendaItem = agendaItem">@agendaItem.Name (@agendaItem.Petitions.Count @((agendaItem.Petitions.Count == 1) ? "Antrag" : "Anträge"))</a>
                                     }
                                 }
                                 else
@@ -110,9 +110,10 @@
         {
             this.ViewModel.AgendaItemAdded += delegate { this.StateHasChanged(); };
             this.ViewModel.PetitionAdded += delegate { this.StateHasChanged(); };
+            this.ViewModel.PetitionDeleted += delegate { this.StateHasChanged(); };
         }
         base.OnInitialized();
     }
 
-    
+
 }

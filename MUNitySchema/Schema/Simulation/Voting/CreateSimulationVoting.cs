@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace MUNity.Schema.Simulation
@@ -12,6 +13,8 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The display Text of the voting.
         /// </summary>
+        [Required(ErrorMessage = "Ein Anzeigetext wird benötigt.")]
+        [MaxLength(200)]
         public string Text { get; set; }
 
         /// <summary>

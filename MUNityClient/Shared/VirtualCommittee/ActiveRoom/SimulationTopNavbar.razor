@@ -17,12 +17,11 @@ else
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Navbar brand -->
-            <a class="navbar-brand menu-bars hidden-lg" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
+            <a class="navbar-brand hidden-lg" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
 
             <a class="navbar-brand">@ViewModel.Simulation.Name</a>
 
             <ConnectionStateBadge ViewModel="@ViewModel" />
-
 
             <ul class="nav nav-pills hidden-md">
                 @if (LayoutWrapper != null)
@@ -60,15 +59,15 @@ else
 
                     @if (this.ViewModel.IsChair)
                     {
-                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "badge badge-primary" : "")" title="Einstellungen">
-                            <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options">
-                                <i class="fa fa-cogs"></i>
+                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "badge badge-primary" : "")" title="Einstellungen">
+                            <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor">
+                                <i class="fa fa-comments"></i>
                             </a>
                         </li>
 
-                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeaker ? "badge badge-primary" : "")" title="Einstellungen">
-                            <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeaker">
-                                <i class="fa fa-comments"></i>
+                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "badge badge-primary" : "")" title="Einstellungen">
+                            <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options">
+                                <i class="fa fa-cogs"></i>
                             </a>
                         </li>
                     }
@@ -83,6 +82,7 @@ else
     <!-- Navbar -->
 }
 
+@* Menü für Smartphones. *@
 @if (_showSmallSideMenu)
 {
 <div class="mobile-side-menu hidden-lg">
@@ -93,10 +93,33 @@ else
             <i class="fa fa-home"></i> Home
         </a>
         <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda"
-           class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "active" : "")"><i class="fa fa-calendar-check"></i> Tagesordnung</a>
-        <a href="#" class="list-group-item list-group-item-action">A third link item</a>
-        <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>
-        <a href="#" class="list-group-item list-group-item-action disabled" tabindex="-1" aria-disabled="true">A disabled link item</a>
+           class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "active" : "")">
+            <i class="fa fa-calendar-check"></i> Tagesordnung
+        </a>
+        <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting"
+           class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "active" : "")">
+            <i class="fa fa-vote-yea"></i> Abstimmungen
+        </a>
+        <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution"
+           class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "active" : "")">
+            <i class="fa fa-file-alt"></i> Resolutionen
+        </a>
+        <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents"
+           class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "active" : "")">
+            <i class="fa fa-users"></i> Anwesenheit
+        </a>
+        @if (ViewModel.IsChair)
+        {
+            <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor"
+               class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "active" : "")">
+                <i class="fa fa-comments"></i> Redeliste bearbeiten
+            </a>
+
+            <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options"
+               class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "active" : "")">
+                <i class="fa fa-cogs"></i> Einstellungen
+            </a>
+        }
     </div>
 </div>
 

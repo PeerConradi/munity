@@ -132,5 +132,7 @@ namespace MUNity.Hubs
         Task AgendaItemChanged(AgendaItemDto agendaItem);
 
         Task PetitionAdded(PetitionDto petition);
+
+        Task PetitionDeleted(PetitionInteractedDto petition);
     }
 }

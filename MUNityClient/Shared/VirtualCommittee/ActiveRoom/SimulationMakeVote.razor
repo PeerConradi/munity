@@ -1,24 +1,41 @@
 ﻿@inject Services.SimulationService simulationService;
-
-<div class="card floating-card shadow-2">
-    <div class="row">
-        <div class="col-12">
-            <p>@_lastCreatedVote.Text</p>
-        </div>
-        <div class="col-12">
-            <button class="btn btn-success btn-block" @onclick="VotePro">Dafür</button>
-        </div>
-        <div class="col-12">
-            <button class="btn btn-danger btn-block" @onclick="VoteCon">Dagegen</button>
-        </div>
-        @if (_lastCreatedVote.AllowAbstention)
+@if (ViewModel != null)
+{
+    <div class="card card-body shadow-2">
+        @if (ViewModel.CurrentVoting != null)
         {
-            <div class="col-12">
-                <button class="btn btn-primary btn-block" @onclick="VoteAbstention">Enthaltung</button>
-            </div>
+            if (ViewModel.CurrentVoting.AllowedUsers.Any(n => n == ViewModel.Me.SimulationUserId))
+            {
+                if (ViewModel.CurrentVoting.Choices.ContainsKey(ViewModel.Me.SimulationUserId))
+                {
+                    <p>Sie haben bereits abgestimmt</p>
+                }
+                else
+                {
+                    <div class="btn-group">
+                        <button class="btn btn-outline-success" @onclick="() => VotePro()">Dafür</button>
+                        <button class="btn btn-outline-danger" @onclick="() => VoteCon()">Dagegen</button>
+                        <button class="btn btn-outline-primary" @onclick="() => VoteAbstention()">Enthaltung</button>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Sie sind nicht zur Abstimmung berechtigt.</p>
+            }
+        }
+        else
+        {
+        <p>Es liegt keine Abstimmung vor.</p>
         }
     </div>
-</div>
+}
+else
+{
+    <p>View Model Fehler!</p>
+}
+
+
 
 @code {
     [Parameter]
@@ -28,37 +45,27 @@
         set;
     }
 
-    private bool _hasNewVotes { get; set; } = false;
-
-    private MUNity.Schema.Simulation.CreatedVoteModel _lastCreatedVote { get; set; } = null;
-
     private async Task VotePro()
     {
-        if (_lastCreatedVote != null)
+        if (ViewModel.CurrentVoting != null)
         {
-            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 0);
-            _lastCreatedVote = null;
-            _hasNewVotes = false;
+            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, ViewModel.CurrentVoting.CreatedVoteModelId, 0);
         }
     }
 
     private async Task VoteCon()
     {
-        if (_lastCreatedVote != null)
+        if (ViewModel.CurrentVoting != null)
         {
-            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 1);
-            _lastCreatedVote = null;
-            _hasNewVotes = false;
+            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, ViewModel.CurrentVoting.CreatedVoteModelId, 1);
         }
     }
 
     private async Task VoteAbstention()
     {
-        if (_lastCreatedVote != null)
+        if (ViewModel.CurrentVoting != null)
         {
-            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, _lastCreatedVote.CreatedVoteModelId, 2);
-            _lastCreatedVote = null;
-            _hasNewVotes = false;
+            await this.simulationService.Vote(ViewModel.Simulation.SimulationId, ViewModel.CurrentVoting.CreatedVoteModelId, 2);
         }
     }
 }

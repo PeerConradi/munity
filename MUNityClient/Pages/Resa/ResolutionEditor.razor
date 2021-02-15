@@ -19,8 +19,14 @@
                 <button @onclick="() => RepairResolution()" class="btn aqua-gradient">Jetzt reparieren</button>
             </div>
         }*@
+    <div class="row">
+        <div class="alert">
+            <MUNityClient.Shared.Resa.SendResolutionToSimulation />
+        </div>
+    </div>
+    
 
-    <MUNityClient.Shared.Resa.ResolutionSyncInformation ResolutionViewModel="this.ViewModel" />
+    <MUNityClient.Shared.Resa.ResolutionSyncInformation ViewModel="this.ViewModel" />
     <div class="row p-0 m-0 d-flex justify-content-center">
         <div class="row col-lg-8 col-xl-6 p-2 paragraphs">
             <div class="accordion col-12" id="accordion">

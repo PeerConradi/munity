@@ -1,0 +1,33 @@
+﻿@if (ViewModel != null)
+{
+    <SimulationVotingBanner ViewModel="@this.ViewModel" />
+
+    @if (ViewModel.CurrentVoting != null && ViewModel.CurrentVoting.AllowedUsers.Any(id => id == ViewModel.Me.SimulationUserId))
+    {
+        <SimulationMakeVote ViewModel="@this.ViewModel" />
+    }
+
+    @if (ViewModel.IsChair)
+    {
+        <CreateVoteComponent SimulationId="ViewModel.Simulation.SimulationId" />
+    }
+}
+else
+{
+    <p>View Model Fehler!</p>
+}
+
+
+@code {
+    [Parameter]
+    public ViewModels.SimulationViewModel ViewModel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+        {
+            ViewModel.VoteCreated += delegate { this.StateHasChanged(); };
+        }
+        base.OnInitialized();
+    }
+}

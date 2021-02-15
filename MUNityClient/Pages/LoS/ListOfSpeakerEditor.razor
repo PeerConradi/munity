@@ -92,22 +92,24 @@
                             </div>
                         </div>
                         @* Controls *@
-                        <div class="col-12 p-0 my-3">
-                            @if (Speakerlist.Status == ListOfSpeakers.EStatus.Speaking)
+                    <div class="col-12 p-0 my-3">
+                        @if (Speakerlist.Status == ListOfSpeakers.EStatus.Speaking || Speakerlist.Status == ListOfSpeakers.EStatus.Answer)
                         {
-                                    <i title="Rede pausieren" type="button" class="fas mx-2 fa-lg fa-pause"
-                                        @onclick="() => Speakerlist.Pause()"></i>
+                            <i title="Rede pausieren" type="button" class="fas mx-2 fa-lg fa-pause"
+                               @onclick="() => Speakerlist.Pause()"></i>
                         }
                         else
                         {
-                                    <i title="Rede fortsetzen" type="button" class="fas mx-2 fa-lg fa-play"
-                                        @onclick="() => Speakerlist.ResumeSpeaker()"></i>
+                            <i title="Rede fortsetzen" type="button" class="fas mx-2 fa-lg fa-play"
+                               @onclick="() => Speakerlist.ResumeSpeaker()"></i>
                         }
-                            <i title="Nächste Rede" type="button" class="fas mx-2 fa-lg fa-step-forward"
-                                @onclick="() => Speakerlist.NextSpeaker()"></i>
-                            <i title="Redezeit zurücksetzen" type="button" class="fas fa-lg fa-undo ml-3"
-                                @onclick="() => Speakerlist.ResetSpeakerTime()"></i>
-                        </div>
+                        <i title="Nächste Rede" type="button" class="fas mx-2 fa-lg fa-step-forward"
+                           @onclick="() => Speakerlist.NextSpeaker()"></i>
+                        <i title="Redezeit zurücksetzen" type="button" class="fas fa-lg fa-undo ml-3"
+                           @onclick="() => Speakerlist.ResetSpeakerTime()"></i>
+                        <i title="Antwort starten" type="button" class="fas mx-2 fa-lg fa-redo"
+                           @onclick="() => Speakerlist.StartAnswer()"></i>
+                    </div>
 
                         <div>
                         <h5>Warteliste</h5>
@@ -188,6 +190,7 @@
                                 @onclick="() => Speakerlist.NextQuestion()"></i>
                             <i title="Redezeit zurücksetzen" type="button" class="fas fa-lg fa-undo ml-3"
                                 @onclick="() => Speakerlist.ResumeQuestion()"></i>
+                            
                         </div>
                         <div class="col-12 mx-0 px-0">
                             <h5>Fragen und Kurzbemerkungen</h5>

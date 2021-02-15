@@ -12,7 +12,14 @@
     {
         <div class="mb-1">
             <a class="badge badge-success">Antrag als aktiv setzen</a>
-            <a class="badge badge-danger">Antrag löschen</a>
+            <a class="badge badge-danger" @onclick="() => Delete()">Antrag löschen</a>
+        </div>
+    }
+
+    @if (this.ViewModel.MyAuth.SimulationUserId == Petition.PetitionUserId)
+    {
+        <div class="mb-1">
+            <a class="badge badge-danger" @onclick="() => Delete()">Antrag zurückziehen</a>
         </div>
     }
 </div>
@@ -49,5 +56,10 @@ else
             if (this.Petition == null) return null;
             return ViewModel?.PetitionTypes?.FirstOrDefault(n => n.PetitionTypeId == Petition.PetitionTypeId);
         }
+    }
+
+    private void Delete()
+    {
+        this.ViewModel.DeletePetition(this.Petition);
     }
 }

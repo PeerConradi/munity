@@ -95,16 +95,29 @@ namespace MUNityCore.Controllers.Simulation
         //    return Ok();
         //}
 
-        //[HttpPut]
-        //[Route("[action]")]
-        //[AllowAnonymous]
-        //public async Task<ActionResult> DeletePetition([FromBody] PetitionDto petition)
-        //{
-        //    var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
-        //    if (petition.PetitionUserId != user.SimulationUserId && !user.CanCreateRole) return Forbid();
-        //    await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetitionDeleted(petition);
-        //    return Ok();
-        //}
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<ActionResult> DeletePetition([FromBody] PetitionInteractRequest body)
+        {
+            var isValid = await this._simulationService.IsPetitionInteractionAllowed(body);
+            if (!isValid) return Forbid();
+
+            var removed = this._simulationService.RemovePetition(body);
+            if (removed)
+            {
+                var mdl = new PetitionInteractedDto()
+                {
+                    AgendaItemId = body.AgendaItemId,
+                    PetitionId = body.PetitionId
+                };
+                _ = this.SocketGroup(body).PetitionDeleted(mdl).ConfigureAwait(false);
+                return Ok();
+            }
+            else
+            {
+                return NotFound("Petition was not removed because it wasnt found");
+            }
+        }
 
         [HttpPut]
         [Route("[action]")]

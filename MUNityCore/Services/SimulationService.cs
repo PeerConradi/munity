@@ -117,6 +117,23 @@ namespace MUNityCore.Services
             return baseUser;
         }
 
+        internal bool RemovePetition(PetitionInteractRequest body)
+        {
+            var petition = _context.Petitions.FirstOrDefault(n => n.PetitionId == body.PetitionId);
+            if (petition == null) return false;
+            _context.Petitions.Remove(petition);
+            int changes = _context.SaveChanges();
+            return changes == 1;
+        }
+
+        internal async Task<bool> IsPetitionInteractionAllowed(PetitionInteractRequest body)
+        {
+            var petition = this._context.Petitions.Include(n => n.SimulationUser).FirstOrDefault(n => n.PetitionId == body.PetitionId);
+            var isUsersPetition = petition.SimulationUser.Token == body.Token;
+            if (isUsersPetition) return true;
+            return await IsTokenValidAndUserChair(body);
+        }
+
         public Task<Simulation> GetSimulation(int id)
         {
             return this._context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == id);
@@ -541,6 +558,17 @@ namespace MUNityCore.Services
                 mdl.Entries = csv.GetRecords<PetitionTemplateEntry>().ToList();
             }
             return mdl;
+        }
+
+        internal List<SimulationHubConnection> GetHubConnections(int simulationId)
+        {
+            return this._context.SimulationHubConnections.Where(n => n.User.Simulation.SimulationId == simulationId).ToList();
+        }
+
+        internal int RemoveHubConnection(SimulationHubConnection connection)
+        {
+            this._context.SimulationHubConnections.Remove(connection);
+            return this._context.SaveChanges();
         }
 
         public void ApplyPetitionTemplateToSimulation(SimulationPetitionTemplate template, int simulationId)

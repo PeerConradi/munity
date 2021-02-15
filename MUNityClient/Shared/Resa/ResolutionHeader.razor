@@ -15,22 +15,6 @@
         <textarea class="md-textarea form-control" rows="3" placeholder="Unterstützerstaaten"></textarea>
     </div>
 </div>
-@* TODO: Logik anbinden *@
-<div class="row py-0 px-4 my-2 mx-0 col-12 justify-content-center">
-    <div class="custom-control custom-checkbox row m-0 py-0 col d-flex align-items-center">
-        <input role="button" type="checkbox" class="custom-control-input" id="publicRead">
-        <label role="button" class="custom-control-label" for="publicRead">öffentliches Lesen aktiv - ID: 782663</label>
-    </div>
-    @* Geschlossen, privat, öffentlich *@
-    <select role="button" class="browser-default custom-select col-7">
-        <option selected> Privat - Niemand sonst kann Änderungsanträge einreichen</option>
-        <option>Beschränkt - Team und Komitee kann Änderungsanträge einreichen, müssen bestätigt werden</option>
-        <option>Komitee -  Komitee kann Änderungsanträge einreichen</option>
-        <option>Beschränkt - Team und Komitee kann Änderungsanträge einreichen</option>
-        <option>Nach Bestätigung - Öffentlich, aber muss bestätigt werden</option>
-        <option>Öffentlich - Jeder kann Änderungsanträge einreichen</option>
-    </select>
-</div>
 
 @code {
     [Parameter]

@@ -22,11 +22,6 @@ namespace MUNity.Schema.Simulation
         public string CreatedVoteModelId { get; set; }
 
         /// <summary>
-        /// The amount of participants that can take part in this voting.
-        /// </summary>
-        public int ParticipantCount { get; set; }
-
-        /// <summary>
         /// The DIsplay Text of the voting.
         /// </summary>
         public string Text { get; set; }

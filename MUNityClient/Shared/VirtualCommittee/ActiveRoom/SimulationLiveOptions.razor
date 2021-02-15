@@ -3,6 +3,8 @@
     {
         <div class="col-12">
             <button class="btn btn-outline-primary btn-block" @onclick="() => ViewModel.GoToLobby()">Zurück in die Lobby</button>
+            <hr />
+            <button class="btn btn-danger btn-block" @onclick="() => ViewModel.CloseAllConnections()">Alle Verbindungen trennen</button>
         </div>
     }
     else

@@ -17,7 +17,8 @@ namespace MUNityClient.Shared.VirtualCommittee.ActiveRoom
             Resolution,
             Presents,
             Options,
-            ListOfSpeaker
+            ListOfSpeakerEditor,
+            ListOfSpeakerReader
         }
 
         public enum ResolutionModes
