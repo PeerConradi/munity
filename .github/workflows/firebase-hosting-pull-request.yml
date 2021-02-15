@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.x'
-      - run: cd MUNityClient && dotnet publish -c Release -o ../dist
+      - run: cd src/MUNityClient && dotnet publish -c Release -o ../dist
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
