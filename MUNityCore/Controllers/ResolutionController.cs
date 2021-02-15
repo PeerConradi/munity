@@ -157,6 +157,7 @@ namespace MUNityCore.Controllers
                 return Forbid();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
+            
             if (resolution.ResolutionId == null) return NotFound();
             if (body.Text == null) return BadRequest();
             if (body.Text == resolution.Header.Topic) return Ok();
@@ -164,6 +165,7 @@ namespace MUNityCore.Controllers
             resolution.Header.Topic = body.Text;
             _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
             _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderTopicChanged(body).ConfigureAwait(false);
+            await this._resolutionService.SetNameInDb(body.ResolutionId, body.Text);
             return Ok();
         }
 

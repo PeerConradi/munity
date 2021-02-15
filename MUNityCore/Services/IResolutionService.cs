@@ -28,5 +28,6 @@ namespace MUNityCore.Services
         Task<bool> UpdateOperativeParagraph(Resolution resolution, OperativeParagraph newValues);
 
         Task<bool> ResolutionExists(string id);
+        Task SetNameInDb(string resolutionId, string text);
     }
 }

@@ -162,6 +162,16 @@ namespace MUNityCore.Services
             return this._munityContext.ResolutionAuths.CountAsync();
         }
 
+
+
+        public async Task SetNameInDb(string resolutionId, string text)
+        {
+            var resolution = this._munityContext.ResolutionAuths.FirstOrDefault(n => n.ResolutionId == resolutionId);
+            if (resolution == null) return;
+            resolution.Name = text;
+            await this._munityContext.SaveChangesAsync();
+        }
+
         public NewResolutionService(MunityContext munityContext, IMunityMongoDatabaseSettings mongoSettings)
         {
             _munityContext = munityContext;
