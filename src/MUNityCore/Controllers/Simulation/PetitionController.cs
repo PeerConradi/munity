@@ -34,8 +34,16 @@ namespace MUNityCore.Controllers.Simulation
         public ActionResult<List<string>> PetitionTemplateNames()
         {
             var list = new List<string>();
-            var dir = new System.IO.DirectoryInfo(AppContext.BaseDirectory + "assets\\templates\\petitions\\");
+            string path = AppContext.BaseDirectory + "assets\\templates\\petitions\\";
+            if (!System.IO.Directory.Exists(path))
+                return NotFound("Directory for presets not found: " + path);
+
+            var dir = new System.IO.DirectoryInfo(path);
             var files = dir.GetFiles("*.csv");
+            if (!files.Any())
+            {
+                return NotFound("No files in directory: " + path);
+            }
             return Ok(files.Select(n => n.Name.Substring(0, n.Name.Length - 4)).ToList());
         }
 
