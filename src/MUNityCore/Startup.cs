@@ -214,33 +214,6 @@ namespace MUNityCore
 
             });
 
-
-            //app.UseSpa(spa =>
-            //{
-            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
-            //    // see https://go.microsoft.com/fwlink/?linkid=864501
-            //    spa.Options.SourcePath = "ClientApp";
-            //    if (env.IsDevelopment())
-            //    {
-            //        spa.UseAngularCliServer(npmScript: "start");
-            //    }
-            //});
-
-            // Check the Database connection
-            //using (var serviceScrop = app.ApplicationServices
-            //    .GetRequiredService<IServiceScopeFactory>().CreateScope())
-            //{
-            //    using (var munityContext = serviceScrop.ServiceProvider.GetService<MunityContext>())
-            //    {
-            //        if (!munityContext.Database.CanConnect())
-            //        {
-            //            Console.WriteLine("Unable to connect to the Munity Database. " + munityContext.Database.ProviderName);
-            //            Console.WriteLine("Application shuts down!");
-            //            Environment.Exit(-1);
-            //        }
-            //    }
-            //}
-
             try
             {
                 UpdateDatabase(app);
