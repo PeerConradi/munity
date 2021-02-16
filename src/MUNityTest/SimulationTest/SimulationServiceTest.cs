@@ -135,7 +135,7 @@ namespace MUNityTest.SimulationTest
         [Order(10)]
         public void TestLoadingPreset()
         {
-            var path = AppContext.BaseDirectory + "assets\\templates\\petitions\\DMUN.csv";
+            var path = AppContext.BaseDirectory + "assets/templates/etitions/DMUN.csv";
             var fileExists = System.IO.File.Exists(path);
             if (fileExists)
             {

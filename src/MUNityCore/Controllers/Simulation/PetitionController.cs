@@ -34,7 +34,7 @@ namespace MUNityCore.Controllers.Simulation
         public ActionResult<List<string>> PetitionTemplateNames()
         {
             var list = new List<string>();
-            string path = AppContext.BaseDirectory + "assets\\templates\\petitions\\";
+            string path = AppContext.BaseDirectory + "assets/templates/petitions/";
             if (!System.IO.Directory.Exists(path))
                 return NotFound("Directory for presets not found: " + path);
 
