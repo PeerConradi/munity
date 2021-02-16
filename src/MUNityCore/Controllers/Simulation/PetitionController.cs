@@ -136,10 +136,10 @@ namespace MUNityCore.Controllers.Simulation
             var isAdmin = await this._simulationService.IsTokenValidAndUserAdmin(body);
             if (!isChair && !isAdmin) return Forbid();
 
-            var path = AppContext.BaseDirectory + "assets\\templates\\petitions\\" + body.Name + ".csv";
+            var path = AppContext.BaseDirectory + "assets/templates/petitions/" + body.Name + ".csv";
             if (!System.IO.File.Exists(path)) return NotFound("Templatefile not found!");
 
-            var template = this._simulationService.LoadSimulationPetitionTemplate(path, "DMUN");
+            var template = this._simulationService.LoadSimulationPetitionTemplate(path, body.Name);
             if (template == null || !template.Entries.Any()) return Problem("Unable to load the template or it has no entries");
 
             this._simulationService.ApplyPetitionTemplateToSimulation(template, body.SimulationId);
