@@ -12,6 +12,7 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <OutputType>Exe</OutputType>
+    <StartupObject>MUNityCore.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
