@@ -34,8 +34,9 @@ namespace MUNityCore.Controllers.Simulation
         public ActionResult<List<string>> PetitionTemplateNames()
         {
             var list = new List<string>();
-            list.Add("DMUN2");
-            return Ok(list);
+            var dir = new System.IO.DirectoryInfo(AppContext.BaseDirectory + "assets\\templates\\petitions\\");
+            var files = dir.GetFiles("*.csv");
+            return Ok(files.Select(n => n.Name.Substring(0, n.Name.Length - 4)).ToList());
         }
 
         [HttpPut]

@@ -44,11 +44,11 @@
                     <div class="card-body p-0">
                         @if (ViewModel.MyAuth.CanCreateRole)
                         {
-                            <AdminUserList SimulationContext="@ViewModel"></AdminUserList>
+                            <AdminUserList ViewModel="@ViewModel"></AdminUserList>
                         }
                         else
                         {
-                            <DefaultUserList SimulationContext="@ViewModel"></DefaultUserList>
+                            <DefaultUserList ViewModel="@ViewModel"></DefaultUserList>
                         }
                     </div>
                     @*
@@ -69,7 +69,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <SelectRolePreset SimulationContext="@this.ViewModel" />
+                        <SelectRolePreset ViewModel="@this.ViewModel" />
                         <SimulationRoleTable Roles="this.ViewModel.Simulation.Roles" />
                         <div class="row">
                             <div class="col-4">

@@ -130,30 +130,45 @@ namespace MUNityTest.SimulationTest
             Assert.NotNull(user.Role);
         }
 
+        bool skipTestsDependingOnDMUNFile = false;
         [Test]
         [Order(10)]
         public void TestLoadingPreset()
         {
-            var path = AppContext.BaseDirectory + "assets\\templates\\petitions\\DMUN2.csv";
-            Assert.IsTrue(System.IO.File.Exists(path));
-            var service = new SimulationService(_context);
-            var template = service.LoadSimulationPetitionTemplate(path, "DMUN");
-            Assert.NotNull(template);
-            Assert.AreEqual("DMUN", template.TemplateName);
-            Assert.IsTrue(template.Entries.Any());
-            template.Entries.ForEach(n => Console.WriteLine(n.Name));
-            Assert.AreEqual(15, template.Entries.Count);
-            service.ApplyPetitionTemplateToSimulation(template, simulationId);
-            var saved = service.GetPetitionTypesOfSimulation(simulationId);
-            Assert.NotNull(saved);
-            Assert.IsTrue(saved.Any());
-            Assert.AreEqual(15, saved.Count);
+            var path = AppContext.BaseDirectory + "assets\\templates\\petitions\\DMUN.csv";
+            var fileExists = System.IO.File.Exists(path);
+            if (fileExists)
+            {
+                var service = new SimulationService(_context);
+                var template = service.LoadSimulationPetitionTemplate(path, "DMUN");
+                Assert.NotNull(template);
+                Assert.AreEqual("DMUN", template.TemplateName);
+                Assert.IsTrue(template.Entries.Any());
+                template.Entries.ForEach(n => Console.WriteLine(n.Name));
+                Assert.AreEqual(15, template.Entries.Count);
+                service.ApplyPetitionTemplateToSimulation(template, simulationId);
+                var saved = service.GetPetitionTypesOfSimulation(simulationId);
+                Assert.NotNull(saved);
+                Assert.IsTrue(saved.Any());
+                Assert.AreEqual(15, saved.Count);
+            }
+            else
+            {
+                Assert.Ignore("The DMUN2.csv was not found that is needed for this test.");
+                skipTestsDependingOnDMUNFile = true;
+            }
         }
 
         [Test]
         [Order(11)]
         public async Task TestCreateAgendaItem()
         {
+            if (skipTestsDependingOnDMUNFile)
+            {
+                Assert.Ignore("Ignored because the DMUN File was not found!");
+                return;
+            }
+
             var service = new SimulationService(_context);
             var dto = new CreateAgendaItemDto()
             {
@@ -173,6 +188,12 @@ namespace MUNityTest.SimulationTest
         [Order(12)]
         public async Task TestMakePetition()
         {
+            if (skipTestsDependingOnDMUNFile)
+            {
+                Assert.Ignore("Ignored because the DMUN File was not found!");
+                return;
+            }
+
             var service = new SimulationService(_context);
             var petitionTypes = await service.GetPetitionTypes();
             var user = await service.GetSimulationUsers(simulationId).FirstOrDefaultAsync();

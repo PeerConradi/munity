@@ -35,7 +35,7 @@
                 {
                     if (user != null)
                     {
-                        <UserListItemAdmin User="user" SimulationId="ViewModel.Simulation.SimulationId" UserRemoveClicked="@OnUserRemoved" Roles="this.ViewModel.Simulation.Roles" PasswordShown="@showPasswords"></UserListItemAdmin>
+                        <UserListItemAdmin User="user" ViewModel="@ViewModel" UserRemoveClicked="@OnUserRemoved" PasswordShown="@showPasswords"></UserListItemAdmin>
                     }
                 }
             </tbody>
