@@ -8,8 +8,8 @@
     @if (ViewModel.MyAuth != null && ViewModel.MyAuth.CanCreateRole || ViewModel.MyRole != null &&
        ViewModel.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
     {
-        <div class="row">
-            <div class="col-12">
+        <div class="row m-0 p-0">
+            <div class="col-12 m-0 p-0">
                 <div class="card card-header">
                     <div class="btn-group">
                         <button class="btn @((this.CurrentView == Views.Users) ? "btn-primary" : "btn-outline-primary")"
@@ -33,10 +33,10 @@
     }
 
 
-    <div class="row">
+    <div class="row m-0 p-0">
         @if (this.CurrentView == Views.Users)
         {
-            <div class="col-12">
+            <div class="col-12 m-0 p-0">
                 <div class="card">
                     <div class="card-header">
                         <a href="/sim/home" class="btn btn-danger btn-sm">Raum verlassen</a> @ViewModel.Simulation.Name
@@ -87,7 +87,7 @@
                                 </select>
                             </div>
                             <div class="col-2">
-                                <button class="btn btn-success btn-block">+</button>
+                                <button class="btn btn-success btn-block"><i class="fas fa-plus"></i></button>
                             </div>
                         </div>
                     </div>
