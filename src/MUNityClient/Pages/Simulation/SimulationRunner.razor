@@ -108,11 +108,13 @@
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-outline-success" 
                                     @onclick="() => AddMeToListOfSpeakers()" 
-                                    disabled="@(ListOfSpeakersInstance.SourceList.ListClosed || ListOfSpeakersInstance.SourceList.Speakers.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))">
+                                    title="@AddToListOfSpeakerPhrase"
+                                    disabled="@(!AllowedToAddToSpeakers)">
                             Auf die Redeliste setzen</button>
                             <button class="btn btn-outline-success" 
                                     @onclick="() => AddMeToListOfQuestions()" 
-                                    disabled="@(ListOfSpeakersInstance.SourceList.QuestionsClosed || ListOfSpeakersInstance.SourceList.Questions.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))">
+                                    title="@AddToQuestionsPhrase"
+                                    disabled="@(!AllowedToAddToQuestions)">
                             Auf Fragen und Kurzbemerkungen setzen</button>
                         </div>
                     }

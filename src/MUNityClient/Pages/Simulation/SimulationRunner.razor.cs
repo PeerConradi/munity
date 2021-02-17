@@ -25,6 +25,78 @@ namespace MUNityClient.Pages.Simulation
             set;
         }
 
+        private string AddToListOfSpeakerPhrase
+        {
+            get
+            {
+                if (ListOfSpeakersInstance == null)
+                    return "Keine Redeliste gefunden";
+                if (ListOfSpeakersInstance.SourceList == null)
+                    return "Redeliste fehlerhaft geladen";
+                if (ListOfSpeakersInstance.SourceList.ListClosed)
+                    return "Redeliste ist geschlossen";
+                if (SimulationViewModelInstance.MyRole == null)
+                    return "Diese funktion ist nur möglich, wenn eine entsprechende Rolle vorliegt.";
+                if (ListOfSpeakersInstance.SourceList.Speakers.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))
+                    return $"Es befindet sich bereits ein Eintrag {SimulationViewModelInstance.MyRole.Name} auf der Redeliste";
+                return $"Als {SimulationViewModelInstance.MyRole.Name} auf die Redeliste setzen.";
+            }
+        }
+
+        private string AddToQuestionsPhrase
+        {
+            get
+            {
+                if (ListOfSpeakersInstance == null)
+                    return "Keine Redeliste gefunden.";
+                if (ListOfSpeakersInstance.SourceList == null)
+                    return "Redeliste fehlerhaft geladen.";
+                if (ListOfSpeakersInstance.SourceList.QuestionsClosed)
+                    return "Fragen und Kurzbemerkungen sind geschlossen.";
+                if (SimulationViewModelInstance.MyRole == null)
+                    return "Diese funktion ist nur möglich, wenn eine entsprechende Rolle vorliegt.";
+                if (ListOfSpeakersInstance.SourceList.Questions.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))
+                    return $"Es befindet sich bereits ein Eintrag {SimulationViewModelInstance.MyRole.Name} auf den Fragen und Kurzbemerkungen.";
+                return $"Als {SimulationViewModelInstance.MyRole.Name} auf die Fragen und Kurzbemerkungen setzen.";
+            }
+        }
+
+        private bool AllowedToAddToSpeakers
+        {
+            get
+            {
+                if (ListOfSpeakersInstance == null)
+                    return false;
+                if (ListOfSpeakersInstance.SourceList == null)
+                    return false;
+                if (ListOfSpeakersInstance.SourceList.ListClosed)
+                    return false;
+                if (SimulationViewModelInstance.MyRole == null)
+                    return false;
+                if (ListOfSpeakersInstance.SourceList.Speakers.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))
+                    return false;
+                return true;
+            }
+        }
+
+        private bool AllowedToAddToQuestions
+        {
+            get
+            {
+                if (ListOfSpeakersInstance == null)
+                    return false;
+                if (ListOfSpeakersInstance.SourceList == null)
+                    return false;
+                if (ListOfSpeakersInstance.SourceList.QuestionsClosed)
+                    return false;
+                if (SimulationViewModelInstance.MyRole == null)
+                    return false;
+                if (ListOfSpeakersInstance.SourceList.Questions.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))
+                    return false;
+                return true;
+            }
+        }
+
         private MUNityClient.ViewModels.SimulationViewModel SimulationViewModelInstance { get; set; }
         private Services.SocketHandlers.ListOfSpeakerSocketHandler ListOfSpeakersInstance { get; set; }
 
