@@ -102,8 +102,8 @@
                 else
                 {
                     @if (this.SimulationViewModelInstance.MyRole != null &&
-                       (this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
-                       this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo))
+                      (this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
+                      this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo))
                     {
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-outline-success" @onclick="() => AddMeToListOfSpeakers()" disabled="@ListOfSpeakersInstance.SourceList.ListClosed">Auf die Redeliste setzen</button>
@@ -118,7 +118,14 @@
 
     @if (_layoutWrapper.MainContent == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor)
     {
-        <MUNityClient.Pages.LoS.ListOfSpeakerEditor Id="@ListOfSpeakersInstance.SourceList.ListOfSpeakersId" Socket="@ListOfSpeakersInstance" IsOnline="@true"></MUNityClient.Pages.LoS.ListOfSpeakerEditor>
+        @if (this.ListOfSpeakersInstance != null)
+        {
+            <MUNityClient.Pages.LoS.ListOfSpeakerEditor Id="@ListOfSpeakersInstance.SourceList.ListOfSpeakersId" Socket="@ListOfSpeakersInstance" IsOnline="@true"></MUNityClient.Pages.LoS.ListOfSpeakerEditor>
+        }
+        else
+        {
+            <button class="btn btn-success btn-block" @onclick="() => InitListOfSpeakers()">Redeliste anlegen</button>
+        }
     }
 </div>
 
