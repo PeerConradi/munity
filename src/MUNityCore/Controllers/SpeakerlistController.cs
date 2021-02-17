@@ -35,6 +35,11 @@ namespace MUNityCore.Controllers
             this._speakerlistService = speakerlistService;
         }
 
+        /// <summary>
+        /// Checks if a list of speaker is registered inside on the server and is available.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public ActionResult<bool> IsSpeakerlistOnline(string id)
@@ -43,7 +48,8 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
-        /// Gets a speakerlist
+        /// Gets a List of speakers model by the given id.
+        /// <see cref="ListOfSpeakers"/>
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -61,6 +67,11 @@ namespace MUNityCore.Controllers
             return StatusCode(StatusCodes.Status200OK, speakerlist);
         }
 
+        /// <summary>
+        /// Request to sync a list of speakers with the given model.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public ActionResult SyncSpeakerlist([FromBody]ListOfSpeakers list)
@@ -103,7 +114,15 @@ namespace MUNityCore.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
-
+        /// <summary>
+        /// Will add the given speaker to the list of speakers and return the
+        /// new updated list. If the speaker was already in the list of speakers
+        /// it will not add the speaker a second time and return the list as it is.
+        /// </summary>
+        /// <param name="listid"></param>
+        /// <param name="model"></param>
+        /// <param name="speakerlistService"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
         public ActionResult<ListOfSpeakers> AddSpeakerModelToList(string listid, [FromBody] Speaker model,
@@ -113,6 +132,12 @@ namespace MUNityCore.Controllers
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
 
+            if (speakerlist.ListClosed)
+                return Forbid("The list of speakers is currently closed!");
+
+            if (speakerlist.Speakers.Any(n => n.Name == model.Name && n.Iso == model.Iso))
+                return Ok(speakerlist);
+
             speakerlist.AddSpeaker(model.Name, model.Iso);
             speakerlistService.SaveChanges();
             this._hubContext.Clients.Group("los_" + speakerlist.ListOfSpeakersId).SpeakerListChanged(speakerlist);
@@ -120,7 +145,12 @@ namespace MUNityCore.Controllers
         }
 
 
-
+        /// <summary>
+        /// Will add the given Question to the list of speakers but only if it isnt already inside the list.
+        /// </summary>
+        /// <param name="listid"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
         public ActionResult<ListOfSpeakers> AddQuestionModelToList(string listid, [FromBody] Speaker model)
@@ -128,6 +158,13 @@ namespace MUNityCore.Controllers
             var speakerlist = _speakerlistService.GetSpeakerlist(listid);
             if (speakerlist == null)
                 return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+
+            if (speakerlist.QuestionsClosed)
+                return Forbid("The List of questions is currently closed!");
+
+            if (speakerlist.Questions.Any(n => n.Name == model.Name && n.Iso == model.Iso))
+                return Ok(speakerlist);
+
             speakerlist.AddQuestion(model.Name, model.Iso);
             _speakerlistService.SaveChanges();
             this._hubContext.Clients.Group("los_" + speakerlist.ListOfSpeakersId).SpeakerListChanged(speakerlist);
