@@ -147,8 +147,7 @@ namespace MUNityClient.Pages.Simulation
                 var list = await this.simulationService.InitListOfSpeakers(this.SimulationViewModelInstance.Simulation.SimulationId);
                 if (list != null)
                 {
-                    this._listOfSpeakerId = list.ListOfSpeakersId;
-                    ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(_listOfSpeakers);
+                    ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(list);
                     if (ListOfSpeakersInstance != null)
                     {
                         // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
