@@ -148,6 +148,12 @@ namespace MUNityClient.Pages.Simulation
                 if (list != null)
                 {
                     this._listOfSpeakerId = list.ListOfSpeakersId;
+                    ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(_listOfSpeakers);
+                    if (ListOfSpeakersInstance != null)
+                    {
+                        // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
+                        ListOfSpeakersInstance.SpeakerListChanged += delegate { this.StateHasChanged(); };
+                    }
                     this.StateHasChanged();
                 }
             }
