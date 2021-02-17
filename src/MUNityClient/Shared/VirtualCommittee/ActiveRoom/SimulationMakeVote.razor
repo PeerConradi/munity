@@ -15,7 +15,10 @@
                     <div class="btn-group">
                         <button class="btn btn-outline-success" @onclick="() => VotePro()">Dafür</button>
                         <button class="btn btn-outline-danger" @onclick="() => VoteCon()">Dagegen</button>
-                        <button class="btn btn-outline-primary" @onclick="() => VoteAbstention()">Enthaltung</button>
+                        @if (ViewModel.CurrentVoting.AllowAbstention)
+                        {
+                            <button class="btn btn-outline-primary" @onclick="() => VoteAbstention()">Enthaltung</button>
+                        }
                     </div>
                 }
             }
@@ -34,8 +37,6 @@ else
 {
     <p>View Model Fehler!</p>
 }
-
-
 
 @code {
     [Parameter]
