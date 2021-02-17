@@ -13,15 +13,17 @@ else
 {
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg bg-primary text-white">
         <!-- Container wrapper -->
-        <div class="container-fluid">
+        <div class="container-fluid justify-content-between">
             <!-- Navbar brand -->
             <a class="navbar-brand hidden-lg" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
 
-            <a class="navbar-brand">@ViewModel.Simulation.Name</a>
+            <div>
+                <a class="navbar-brand">@ViewModel.Simulation.Name</a>
+                 <ConnectionStateBadge ViewModel="@ViewModel" />
+            </div>
 
-            <ConnectionStateBadge ViewModel="@ViewModel" />
 
             <ul class="nav nav-pills hidden-md">
                 @if (LayoutWrapper != null)
@@ -59,7 +61,7 @@ else
 
                     @if (this.ViewModel.IsChair)
                     {
-                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "badge badge-primary" : "")" title="Einstellungen">
+                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "badge badge-primary" : "")" title="Redeliste">
                             <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor">
                                 <i class="fa fa-comments"></i>
                             </a>
@@ -128,10 +130,6 @@ else
 
 
 <style>
-    .nav-spacing {
-        margin-left: 5px;
-    }
-
 
     @@media (max-width: 768px) {
         .mobile-side-menu {
@@ -147,14 +145,18 @@ else
     }
 
 
-    @@media (min-width: 768px) {
+    @@media (min-width: 769px) {
         .mobile-side-menu {
             visibility: hidden;
         }
 
         .hidden-lg {
-            visibility: hidden;
+            display: none;
         }
+    }
+
+    .text-white {
+        color: white;
     }
 </style>
 
