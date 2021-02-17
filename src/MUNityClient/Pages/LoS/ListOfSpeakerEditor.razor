@@ -132,16 +132,20 @@
                         }
                         </div>
                         <div class="col-12 row mx-0 px-0 my-3">
-                            <div class="col-11 py-0 pl-0">
-                               <EditForm Model="NewSpeaker">
-                                   <div class="form-group">
-                                        <InputText @bind-Value="NewSpeaker.Name" class="form-control" placeholder="Land hinzufügen..."/>
+                            <EditForm Model="NewSpeaker" OnValidSubmit="AddToSpeakers()">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary />
+                                <div class="col-11 py-0 pl-0">
+
+                                    <div class="form-group">
+                                        <InputText @bind-Value="NewSpeaker.Name" class="form-control" placeholder="Land hinzufügen..." disabled="@Speakerlist.ListClosed" />
                                     </div>
-                                </EditForm>
-                            </div>
-                            <div class="col-1 p-0">
-                                <button type="button" @onclick="() => AddToSpeakers()" class="btn btn-success m-0 py-2 px-0 w-100"><i class="fas fa-plus fa-lg"></i></button>
-                            </div>
+
+                                </div>
+                                <div class="col-1 p-0">
+                                    <button type="submit" class="btn btn-success m-0 py-2 px-0 w-100" disabled="@Speakerlist.ListClosed"><i class="fas fa-plus fa-lg"></i></button>
+                                </div>
+                            </EditForm>
                         </div>
                     </div>
                     @* Comments *@
@@ -212,16 +216,20 @@
                         }
                         </div>
                         <div class="col-12 row mx-0 px-0 my-3">
-                            <div class="col-11 py-0 pl-0">
-                               <EditForm Model="NewCommentator">
-                                   <div class="form-group">
-                                        <InputText @bind-Value="NewCommentator.Name" class="form-control" placeholder="Land hinzufügen..."/>
+                            <EditForm Model="NewCommentator" OnValidSubmit="AddToQuestions()">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary />
+                                <div class="col-11 py-0 pl-0">
+
+                                    <div class="form-group">
+                                        <InputText @bind-Value="NewCommentator.Name" class="form-control" placeholder="Land hinzufügen..." />
                                     </div>
-                                </EditForm>
-                            </div>
-                            <div class="col-1 p-0">
-                                <button type="button" @onclick="() => AddToQuestions()" class="btn btn-success m-0 py-2 px-0 w-100"><i class="fas fa-plus fa-lg"></i></button>
-                            </div>
+
+                                </div>
+                                <div class="col-1 p-0">
+                                    <button type="submit" class="btn btn-success m-0 py-2 px-0 w-100"><i class="fas fa-plus fa-lg"></i></button>
+                                </div>
+                            </EditForm>
                         </div>
                     </div>
                 </div>

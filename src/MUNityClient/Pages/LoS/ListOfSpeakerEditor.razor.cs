@@ -15,6 +15,7 @@ using MUNityClient.Shared;
 using MUNity.Models.ListOfSpeakers;
 using MUNity.Extensions.LoSExtensions;
 using System.Timers;
+using System.ComponentModel.DataAnnotations;
 
 namespace MUNityClient.Pages.LoS
 {
@@ -61,6 +62,7 @@ namespace MUNityClient.Pages.LoS
                 set;
             }
 
+            [Required]
             public string Name
             {
                 get;
