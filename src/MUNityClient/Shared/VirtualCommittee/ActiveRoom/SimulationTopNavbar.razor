@@ -12,76 +12,47 @@
 else
 {
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-primary text-white mb-4">
-        <!-- Container wrapper -->
-        <div class="container-fluid justify-content-between">
-            <!-- Navbar brand -->
-            <a class="navbar-brand hidden-lg" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
+       <nav class="row p-0 m-0 d-flex justify-content-start justify-content-sm-between bg-primary mb-3">
+           <a class="navbar-brand d-sm-none ml-2" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
+           <div class="col col-sm-3 p-0 ml-2 d-flex align-items-center">
+               <div class="navbar-brand mr-2">@ViewModel.Simulation.Name</div>
+                <ConnectionStateBadge ViewModel="@ViewModel" />
+           </div>
+           <div class="row p-0 col-4 col-md ml-4 d-none d-sm-flex">
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">
+                   <i class="fa fa-home"></i>
+               </a>
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda">
+                   <i class="fa fa-calendar-check"></i>
+               </a>
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting">
+                   <i class="fa fa-vote-yea"></i>
+               </a>
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution">
+                   <i class="fa fa-file-alt"></i>
+               </a>
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents">
+                   <i class="fa fa-users"></i>
+               </a>
+                   @if (this.ViewModel.IsChair)
+                   {
+                   <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor">
+                       <i class="fa fa-comments"></i>
+                   </a>
+                   <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options">
+                       <i class="fa fa-cogs"></i>
+                   </a>
+                   }
+           </div>
 
-            <div>
-                <div class="navbar-brand">@ViewModel.Simulation.Name</div>
-                 <ConnectionStateBadge ViewModel="@ViewModel" />
-            </div>
-
-
-            <ul class="nav nav-pills hidden-md">
-                @if (LayoutWrapper != null)
-                {
-
-                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "badge badge-primary" : "")" title="Dashboard">
-                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">
-                            <i class="fa fa-home"></i>
-                        </a>
-                    </li>
-
-                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "badge badge-primary" : "")" title="Tagesordnung">
-                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda">
-                            <i class="fa fa-calendar-check"></i>
-                        </a>
-                    </li>
-
-                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "badge badge-primary" : "")" title="Abstimmungen">
-                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting">
-                            <i class="fa fa-vote-yea"></i>
-                        </a>
-                    </li>
-
-                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "badge badge-primary" : "")" title="Resolutionen">
-                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution">
-                            <i class="fa fa-file-alt"></i>
-                        </a>
-                    </li>
-
-                    <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "badge badge-primary" : "")" title="Anwesenheit">
-                        <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents">
-                            <i class="fa fa-users"></i>
-                        </a>
-                    </li>
-
-                    @if (this.ViewModel.IsChair)
-                    {
-                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "badge badge-primary" : "")" title="Redeliste">
-                            <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor">
-                                <i class="fa fa-comments"></i>
-                            </a>
-                        </li>
-
-                        <li class="nav-item @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "badge badge-primary" : "")" title="Einstellungen">
-                            <a class="nav-link" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options">
-                                <i class="fa fa-cogs"></i>
-                            </a>
-                        </li>
-                    }
-                }
-
-            </ul>
             <!-- Left links -->
-            <span class="badge badge-primary">Aktueller Status</span>
-        </div>
-        <!-- Container wrapper -->
-    </nav>
-    <!-- Navbar -->
+            @if (this.ViewModel.IsChair)
+            {
+            <input class="currentState col col-sm-3 pl-0 ml-3" placeholder="Aktueller Status..." type="text"/>
+            } else {
+            <span class="col col-sm-3 pl-0 ml-3">Aktueller Status</span>
+            }
+        </nav>
 }
 
 @* Menü für Smartphones. *@
@@ -155,9 +126,46 @@ else
         }
     }
 
+    nav {
+        color: white;
+    }
+
     .text-white {
         color: white;
     }
+
+    .currentState {
+        background: none;
+        border: none;
+        color: white;
+        transition: .3s;
+        border-bottom: 0px solid;
+        outline:none;
+    }
+
+    .currentState:focus {
+        opacity: .7;
+    }
+
+    .currentState::placeholder {
+        color: #f2f2f2;
+        opacity: 1;
+    }
+
+    .currentState::-ms-input-placeholder { /* Microsoft Edge */
+        color: #f2f2f2;
+    }
+
+    .nav-element:hover {
+        background-color: #5b95f3;
+    }
+
+    .selected {
+        border-color: white;
+        border-bottom: 5px solid;
+    }
+
+    
 </style>
 
 @code {

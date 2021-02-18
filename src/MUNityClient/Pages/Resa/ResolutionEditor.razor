@@ -19,11 +19,11 @@
                 <button @onclick="() => RepairResolution()" class="btn aqua-gradient">Jetzt reparieren</button>
             </div>
         }*@
-    <div class="row">
+    @* <div class="row">                -> in den Resolutions Header verschoben
         <div class="alert">
             <MUNityClient.Shared.Resa.SendResolutionToSimulation />
         </div>
-    </div>
+    </div> *@
     
 
     <MUNityClient.Shared.Resa.ResolutionSyncInformation ViewModel="this.ViewModel" />

@@ -8,32 +8,29 @@
     @if (ViewModel.MyAuth != null && ViewModel.MyAuth.CanCreateRole || ViewModel.MyRole != null &&
        ViewModel.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
     {
-        <div class="row m-0 p-0">
-            <div class="col-12 m-0 p-0">
-                <div class="card card-header">
-                    <div class="btn-group">
-                        <button class="btn @((this.CurrentView == Views.Users) ? "btn-primary" : "btn-outline-primary")"
-                                @onclick="() => this.CurrentView = Views.Users">
-                            Teilnehmende
-                        </button>
-                        <button class="btn @((this.CurrentView == Views.Roles) ? "btn-primary" : "btn-outline-primary")"
-                                @onclick="() => this.CurrentView = Views.Roles">
-                            Rollen
-                        </button>
-                        <button class="btn @((this.CurrentView == Views.Petitions) ? "btn-primary" : "btn-outline-primary")"
-                                @onclick="() => this.CurrentView = Views.Petitions">
-                            Anträge
-                        </button>
-                        <button class="btn btn-secondary" @onclick="() => this.ViewModel.StartSimulation()">Simulation beginnen</button>
-                    </div>
-                </div>
-
+        <div class="row mx-0 p-0 mb-3">
+            <div class="col-12 m-0 p-0 d-flex justify-content-between">
+               <div class="btn-group col-8">
+                   <button class="btn @((this.CurrentView == Views.Users) ? "btn-primary" : "btn-outline-primary")"
+                           @onclick="() => this.CurrentView = Views.Users">
+                       Teilnehmende
+                   </button>
+                   <button class="btn @((this.CurrentView == Views.Roles) ? "btn-primary" : "btn-outline-primary")"
+                           @onclick="() => this.CurrentView = Views.Roles">
+                       Rollen
+                   </button>
+                   <button class="btn @((this.CurrentView == Views.Petitions) ? "btn-primary" : "btn-outline-primary")"
+                           @onclick="() => this.CurrentView = Views.Petitions">
+                       Anträge
+                   </button>
+               </div>
+               <button class="btn btn-secondary col-3" @onclick="() => this.ViewModel.StartSimulation()">Simulation beginnen<i class="fas fa-lg fa-arrow-right ml-2"></i></button>
             </div>
         </div>
     }
 
 
-    <div class="row m-0 p-0">
+    <div class="row m-0 mb-3 py-0 px-3">
         @if (this.CurrentView == Views.Users)
         {
             <div class="col-12 m-0 p-0">
