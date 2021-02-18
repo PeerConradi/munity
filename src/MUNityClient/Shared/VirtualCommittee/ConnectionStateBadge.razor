@@ -2,7 +2,7 @@
 {
     @if (ViewModel.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
     {
-        <span class="badge badge-success">Verbunden</span>
+        <span class="badge badge-success p-2" title="Verbunden"><i class="fas fa-signal d-block d-md-none"></i><span class="d-none d-md-block">Verbunden</span></span>
     }
     else if (ViewModel.HubConnection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connecting)
     {
