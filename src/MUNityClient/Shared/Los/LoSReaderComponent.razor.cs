@@ -38,7 +38,7 @@ namespace MUNityClient.Shared.Los
             set;
         }
 
-        private Services.SocketHandlers.ListOfSpeakerSocketHandler _socket;
+        private Services.SocketHandlers.ListOfSpeakerViewModel _socket;
         // TODO: Implement different modes
         private enum SyncModes
         {

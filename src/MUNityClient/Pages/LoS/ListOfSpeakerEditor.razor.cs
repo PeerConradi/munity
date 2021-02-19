@@ -48,7 +48,7 @@ namespace MUNityClient.Pages.LoS
         }
 
         [Parameter]
-        public Services.SocketHandlers.ListOfSpeakerSocketHandler Socket
+        public Services.SocketHandlers.ListOfSpeakerViewModel Socket
         {
             get;
             set;

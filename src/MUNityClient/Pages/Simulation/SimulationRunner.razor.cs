@@ -98,7 +98,7 @@ namespace MUNityClient.Pages.Simulation
         }
 
         private MUNityClient.ViewModels.SimulationViewModel SimulationViewModelInstance { get; set; }
-        private Services.SocketHandlers.ListOfSpeakerSocketHandler ListOfSpeakersInstance { get; set; }
+        private Services.SocketHandlers.ListOfSpeakerViewModel ListOfSpeakersInstance { get; set; }
 
         private MUNity.Models.ListOfSpeakers.ListOfSpeakers _listOfSpeakers;
         //private MUNity.Schema.Simulation.SimulationRoleItem _myRole;
@@ -107,14 +107,17 @@ namespace MUNityClient.Pages.Simulation
         protected override async Task OnInitializedAsync()
         {
             _layoutWrapper = new Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper();
+            
             _layoutWrapper.PropertyChanged += LayoutChanged;
-            int id = 0;
-            if (int.TryParse(Id, out id))
+            int simulationId = 0;
+            if (int.TryParse(Id, out simulationId))
             {
-                SimulationViewModelInstance = await simulationService.Subscribe(id);
+                var tabId = await this.simulationService.GetLastOpenedTab(simulationId);
+                _layoutWrapper.MainContent = (Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContents)tabId;
+                SimulationViewModelInstance = await simulationService.Subscribe(simulationId);
 
                 AddHandlers(SimulationViewModelInstance);
-                this._listOfSpeakerId = await this.simulationService.GetListOfSpeakerId(id);
+                this._listOfSpeakerId = await this.simulationService.GetListOfSpeakerId(simulationId);
                 if (!string.IsNullOrEmpty(_listOfSpeakerId))
                 {
                     this._listOfSpeakers = await listOfSpeakerService.GetFromApi(_listOfSpeakerId);

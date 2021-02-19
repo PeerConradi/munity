@@ -412,7 +412,7 @@ namespace MUNityCore.Services
             if (hasAnyElements)
             {
                 var hasMatchingAgendaItem = simulation.AgendaItems.Any(n =>
-                (n.Name == agendaItem.Name || agendaItem.AgendaItemId == agendaItem.AgendaItemId));
+                (n.Name == agendaItem.Name));
                 if (hasMatchingAgendaItem) return null;
             }
             

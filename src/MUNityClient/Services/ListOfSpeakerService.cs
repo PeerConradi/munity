@@ -76,9 +76,9 @@ namespace MUNityClient.Services
             await this._httpService.HttpClient.PostAsync($"/api/Speakerlist/AddQuestionModelToList?listid={listOfSpeakersId}", JsonContent.Create(mdl));
         }
 
-        public async Task<SocketHandlers.ListOfSpeakerSocketHandler> Subscribe(ListOfSpeakers list)
+        public async Task<SocketHandlers.ListOfSpeakerViewModel> Subscribe(ListOfSpeakers list)
         {
-            var handler = await SocketHandlers.ListOfSpeakerSocketHandler.CreateHandler(list);
+            var handler = await SocketHandlers.ListOfSpeakerViewModel.CreateHandler(list);
             var connId = handler.HubConnection.ConnectionId;
             await this._httpService.HttpClient.GetAsync($"/api/Speakerlist/SubscribeToList?listId={list.ListOfSpeakersId}&connectionid={connId}");
             return handler;

@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using MUNity.Models.Simulation;
 using MUNityClient.Services;
 using System.Net.Http;
+using MUNityClient.Extensions.Simulation;
 
 namespace MUNityClient.ViewModels
 {
@@ -59,15 +60,31 @@ namespace MUNityClient.ViewModels
 
         public event EventHandler<PetitionInteractedDto> PetitionDeleted;
 
+        public event EventHandler<NotificationViewModel> NotificationChanged;
+
+        public string Token { get; set; }
+
+        private NotificationViewModel _currentNotification;
+        public NotificationViewModel CurrentNotification
+        {
+            get => _currentNotification;
+            set
+            {
+                if (this._currentNotification == value) return;
+                _currentNotification = value;
+                NotificationChanged?.Invoke(this, value);
+            }
+        }
+
         public HubConnection HubConnection { get; set; }
 
         private SimulationService _simulationService;
 
         public MUNity.Schema.Simulation.SimulationDto Simulation { get; private set; }
 
-        public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; private set; }
+        public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; set; }
 
-        public List<MUNity.Schema.Simulation.AgendaItemDto> AgendaItems { get; private set; }
+        public List<MUNity.Schema.Simulation.AgendaItemDto> AgendaItems { get; set; }
 
         public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
 
@@ -119,7 +136,7 @@ namespace MUNityClient.ViewModels
             }
         }
 
-        public SimulationAuthDto MyAuth { get; private set; }
+        public SimulationAuthDto MyAuth { get; set; }
 
         private SimulationViewModel(SimulationDto simulation, SimulationService service)
         {
@@ -234,9 +251,20 @@ namespace MUNityClient.ViewModels
                 this.AgendaItems.Add(e);
         }
 
+        /// <summary>
+        /// Creates a new ViewModel instance. Note that this will load a token from the stored tokens so you need to have
+        /// a valid token for the simulation created before calling this method, otherwise it will return null.
+        /// </summary>
+        /// <param name="simulation"></param>
+        /// <param name="service"></param>
+        /// <returns></returns>
         public static async Task<SimulationViewModel> CreateViewModel(SimulationDto simulation, SimulationService service)
         {
+            var token = await service.GetSimulationToken(simulation.SimulationId);
+            if (token == null) return null;
+
             var socket = new SimulationViewModel(simulation, service);
+            socket.Token = token.Token;
             await socket.LoadDataAsync();
             await socket.HubConnection.StartAsync();
             return socket;
@@ -339,21 +367,18 @@ namespace MUNityClient.ViewModels
         {
             if (this.Simulation != null)
             {
-                var loadRoles = this._simulationService.GetRoles(this.Simulation.SimulationId);
-                var loadAuth = this._simulationService.GetMyAuth(this.Simulation.SimulationId);
+
+                var loadRoles = this._simulationService.SecureGetRoles(this);
+                var loadAuth = this._simulationService.SecureGetMyAuth(this);
 
                 await Task.WhenAll(loadRoles, loadAuth);
-                this.MyAuth = loadAuth.Result;
-                this.Simulation.Roles = loadRoles.Result;
 
                 _ = LoadUsersDependingAuth().ConfigureAwait(false);
 
-                var petitionTypesTask = this._simulationService.PetitionTypes(this.Simulation.SimulationId);
-                var agendaItemsTask = this._simulationService.AgendaItems(this.Simulation.SimulationId);
+                var petitionTypesTask = this._simulationService.SecurePetitionTypes(this);
+                var agendaItemsTask = this._simulationService.SecureAgendaItems(this);
 
                 await Task.WhenAll(petitionTypesTask, agendaItemsTask);
-                this.PetitionTypes = petitionTypesTask.Result;
-                this.AgendaItems = agendaItemsTask.Result;
             }
         }
 

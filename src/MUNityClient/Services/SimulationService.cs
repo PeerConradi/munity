@@ -7,6 +7,9 @@ using Blazored.LocalStorage;
 using System.Net.Http;
 using MUNity.Schema.Simulation;
 using MUNitySchema.Schema.Simulation.Resolution;
+using MUNityClient.ViewModels;
+using MUNityClient.Extensions.Simulation;
+using System.Runtime.CompilerServices;
 
 namespace MUNityClient.Services
 {
@@ -188,10 +191,45 @@ namespace MUNityClient.Services
             return await _httpService.HttpClient.PostAsJsonAsync("/api/Simulation/AgendaItem/CreateAgendaItem", dto);
         }
 
-        public async Task<List<AgendaItemDto>> AgendaItems(int simulationId)
+        public async Task SecureAgendaItems(SimulationViewModel viewModel)
         {
-            var client = await GetSimulationClient(simulationId);
-            return await client.GetFromJsonAsync<List<AgendaItemDto>>($"/api/Simulation/AgendaItem/AgendaItems?simulationId={simulationId}&withPetitions=true");
+            var client = GetSimulationClient(viewModel);
+            var response = await client.GetAsync($"/api/Simulation/AgendaItem/AgendaItems?simulationId={viewModel.Simulation.SimulationId}&withPetitions=true");
+            if (response.IsSuccessStatusCode)
+            {
+                viewModel.AgendaItems = await response.Content.ReadFromJsonAsync<List<AgendaItemDto>>();
+            }
+            else
+            {
+                NotifyError(viewModel, response);
+            }
+        }
+
+        public async Task StoreOpenedTab(int simulationId, int tabId)
+        {
+            string name = "simlastopenedtab";
+            var tabs = await _localStorage.GetItemAsync<List<MUNityClient.Models.Simulation.LastOpenedTab>>(name);
+            if (tabs == null)
+                tabs = new List<Models.Simulation.LastOpenedTab>();
+            var content = tabs.FirstOrDefault(n => n.SimulationId == simulationId);
+            if (content == null)
+            {
+                content = new Models.Simulation.LastOpenedTab() { SimulationId = simulationId };
+                tabs.Add(content);
+            }             
+            content.TabId = tabId;
+            await _localStorage.SetItemAsync<List<MUNityClient.Models.Simulation.LastOpenedTab>>(name, tabs);
+        }
+
+        public async Task<int> GetLastOpenedTab(int simulationId)
+        {
+            string name = "simlastopenedtab";
+            var tabs = await _localStorage.GetItemAsync<List<MUNityClient.Models.Simulation.LastOpenedTab>>(name);
+            if (tabs == null)
+                return 0;
+            var content = tabs.FirstOrDefault(n => n.SimulationId == simulationId);
+            if (content == null) return 0;
+            return content.TabId;
         }
 
         public async Task<HttpResponseMessage> ApplyPetitionTemplate(int simulationId, string name)
@@ -206,10 +244,23 @@ namespace MUNityClient.Services
             return await client.PutAsJsonAsync<ApplyPetitionTemplate>("/api/Simulation/Petition/ApplyPetitionPreset", template);
         }
 
-        public async Task<List<PetitionTypeSimulationDto>> PetitionTypes(int simulationId)
+        public async Task SecurePetitionTypes(SimulationViewModel viewModel)
         {
-            var client = await GetSimulationClient(simulationId);
-            return await client.GetFromJsonAsync<List<PetitionTypeSimulationDto>>($"/api/Simulation/Petition/SimulationPetitionTypes?simulationId={simulationId}");
+            var client = GetSimulationClient(viewModel);
+            var response = await client.GetAsync($"/api/Simulation/Petition/SimulationPetitionTypes?simulationId={viewModel.Simulation.SimulationId}");
+            if (response.IsSuccessStatusCode)
+            {
+                viewModel.PetitionTypes = await response.Content.ReadFromJsonAsync<List<PetitionTypeSimulationDto>>();
+            }
+            else
+            {
+                NotifyError(viewModel, response);
+            }
+        }
+
+        private void NotifyError(SimulationViewModel viewModel, HttpResponseMessage response, [CallerMemberName] string caller = "SimulationService")
+        {
+            viewModel.ShowError("Error", $"Error in {caller} ({response.StatusCode} - {response.ReasonPhrase})");
         }
 
         public async Task<List<MUNity.Schema.Simulation.SimulationUserAdminDto>> GetUserSetups(int simulationId)
@@ -227,11 +278,18 @@ namespace MUNityClient.Services
             return await client.GetFromJsonAsync<ICollection<MUNity.Schema.Simulation.SimulationUserDefaultDto>>($"/api/Simulation/GetUsersDefault?id={simulationId}");
         }
 
-        public async Task<MUNity.Schema.Simulation.SimulationAuthDto> GetMyAuth(int id)
+        public async Task SecureGetMyAuth(SimulationViewModel viewModel)
         {
-            var client = await GetSimulationClient(id);
-            if (client == null) return null;
-            return await client.GetFromJsonAsync<MUNity.Schema.Simulation.SimulationAuthDto>($"/api/Simulation/GetSimulationAuth?id={id}");
+            var client = GetSimulationClient(viewModel);
+            var response = await client.GetAsync($"/api/Simulation/GetSimulationAuth?id={viewModel.Simulation.SimulationId}");
+            if (response.IsSuccessStatusCode)
+            {
+                viewModel.MyAuth = await response.Content.ReadFromJsonAsync<SimulationAuthDto>();
+            }
+            else
+            {
+                viewModel.ShowError("Unable to get Authentication", $"Problem when loading your authentication for the simulation. Error code: {response.StatusCode}");
+            }
         }
 
         public async Task SetUserRole(int simulationId, int userId, int roleId)
@@ -275,11 +333,22 @@ namespace MUNityClient.Services
             return await client.GetFromJsonAsync<List<ResolutionSmallInfo>>($"/api/Simulation/SimulationResolutions?simulationId={simulationId}");
         }
 
-        public async Task<List<MUNity.Schema.Simulation.SimulationRoleDto>> GetRoles(int id)
+        public async Task SecureGetRoles(SimulationViewModel viewModel)
         {
-            var client = await GetSimulationClient(id);
-            if (client == null) return null;
-            return await client.GetFromJsonAsync<List<MUNity.Schema.Simulation.SimulationRoleDto>>($"/api/Simulation/GetSimulationRoles?id={id}");
+            var client = GetSimulationClient(viewModel.Simulation.SimulationId, viewModel.Token);
+            var response = await client.GetAsync($"/api/Simulation/GetSimulationRoles?id={viewModel.Simulation.SimulationId}");
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    viewModel.Simulation.Roles = await response.Content.ReadFromJsonAsync<List<MUNity.Schema.Simulation.SimulationRoleDto>>();
+                }
+                catch (Exception ex)
+                {
+                    viewModel.ShowError("Unable to load roles", $"Error when parsing the incoming result. {nameof(SimulationService)} {nameof(SecureGetRoles)}");
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
 
         public async Task ApplyPreset(int simulationId, string presetId)
@@ -327,8 +396,10 @@ namespace MUNityClient.Services
             var token = await GetSimulationToken(id);
             if (token == null) return null;
             var client = this._httpService.HttpClient;
+            
             if (client.DefaultRequestHeaders.Contains("simsimtoken"))
             {
+                
                 // Its easier to just remove this header element and create a newone than
                 // it is to search of there is more than one value behind it.
                 client.DefaultRequestHeaders.Remove("simsimtoken");
@@ -338,7 +409,32 @@ namespace MUNityClient.Services
             return client;
         }
 
+        private HttpClient GetSimulationClient(SimulationViewModel viewModel)
+        {
+            var client = this._httpService.HttpClient;
+            if (client.DefaultRequestHeaders.Contains("simsimtoken"))
+            {
+                client.DefaultRequestHeaders.Remove("simsimtoken");
+            }
 
+            client.DefaultRequestHeaders.Add("simsimtoken", viewModel.Token);
+            return client;
+        }
+
+        private HttpClient GetSimulationClient(int simulationId, string token)
+        {
+            var client = this._httpService.HttpClient;
+            if (client.DefaultRequestHeaders.Contains("simsimtoken"))
+            {
+
+                // Its easier to just remove this header element and create a newone than
+                // it is to search of there is more than one value behind it.
+                client.DefaultRequestHeaders.Remove("simsimtoken");
+            }
+
+            client.DefaultRequestHeaders.Add("simsimtoken", token);
+            return client;
+        }
 
         public async Task StoreToken(MUNity.Schema.Simulation.SimulationTokenResponse token)
         {

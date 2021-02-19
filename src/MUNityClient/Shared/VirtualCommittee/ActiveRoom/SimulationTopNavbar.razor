@@ -176,4 +176,24 @@ else
     public MUNityClient.Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper LayoutWrapper { get; set; } = null;
 
     private bool _showSmallSideMenu = false;
+
+    protected override void OnInitialized()
+    {
+        if (LayoutWrapper != null)
+        {
+            LayoutWrapper.PropertyChanged += StoreCurrentTabInLocalStorage;
+        }
+        base.OnInitialized();
+    }
+
+    private async void StoreCurrentTabInLocalStorage(object sender, System.ComponentModel.PropertyChangedEventArgs args)
+    {
+        if (this.ViewModel == null) return;
+        if (this.ViewModel.Simulation == null) return;
+        if (this.LayoutWrapper == null) return;
+        if (args.PropertyName == nameof(MUNityClient.Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.MainContent))
+        {
+            await this.simulationService.StoreOpenedTab(this.ViewModel.Simulation.SimulationId, (int)LayoutWrapper.MainContent);
+        }
+    }
 }

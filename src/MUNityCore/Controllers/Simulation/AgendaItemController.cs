@@ -36,7 +36,7 @@ namespace MUNityCore.Controllers.Simulation
             if (!isAllowed) return Forbid();
 
             var item = await this._simulationService.CreateAgendaItem(agendaItem);
-            if (item == null) return Problem();
+            if (item == null) return BadRequest();
 
             _ = this.SocketGroup(agendaItem).AgendaItemAdded(item.ToAgendaItemDto());
 

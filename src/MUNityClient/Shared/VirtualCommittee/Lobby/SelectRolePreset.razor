@@ -42,7 +42,7 @@
         if (ViewModel.Simulation != null)
         {
             await this.simulationService.ApplyPreset(ViewModel.Simulation.SimulationId, SelectedPresetId);
-            ViewModel.Simulation.Roles = await this.simulationService.GetRoles(ViewModel.Simulation.SimulationId);
+            await this.simulationService.SecureGetRoles(ViewModel);
         }
     }
 

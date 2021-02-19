@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 namespace MUNityClient.Services.SocketHandlers
 {
     /// <summary>
-    /// A Handler for the SignalR Socket in Context of the Simulation.
-    /// 
-    /// Maps the incoming SingalR Signals and maps them to Events.
+    /// The List of Speaker View Model handles all the logic and importand part of a List of Speakers.
+    /// It contains the List Model iside the SourceList-Property <see cref="ListOfSpeakerViewModel.SourceList"/>.
     /// </summary>
-    public class ListOfSpeakerSocketHandler
+    public class ListOfSpeakerViewModel
     {
 
         public ListOfSpeakers SourceList { get; private set; }
@@ -28,7 +27,7 @@ namespace MUNityClient.Services.SocketHandlers
 
         public HubConnection HubConnection { get; set; }
 
-        private ListOfSpeakerSocketHandler(ListOfSpeakers listOfSpeakers)
+        private ListOfSpeakerViewModel(ListOfSpeakers listOfSpeakers)
         {
             SourceList = listOfSpeakers;
             
@@ -50,9 +49,9 @@ namespace MUNityClient.Services.SocketHandlers
             }
         }
 
-        public static async Task<ListOfSpeakerSocketHandler> CreateHandler(ListOfSpeakers listOfSpeakers)
+        public static async Task<ListOfSpeakerViewModel> CreateHandler(ListOfSpeakers listOfSpeakers)
         {
-            var instance = new ListOfSpeakerSocketHandler(listOfSpeakers);
+            var instance = new ListOfSpeakerViewModel(listOfSpeakers);
             await instance.HubConnection.StartAsync();
             return instance;
         }
