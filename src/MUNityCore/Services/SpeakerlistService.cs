@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using MUNity.Models.ListOfSpeakers;
 using Microsoft.EntityFrameworkCore;
+using MUNity.Extensions.LoSExtensions;
 
 namespace MUNityCore.Services
 {
@@ -32,6 +33,38 @@ namespace MUNityCore.Services
             return this._context.ListOfSpeakers.Include(n => n.AllSpeakers).FirstOrDefault(n => n.ListOfSpeakersId == id);
         }
 
+        public Task<bool> IsOnline(string id)
+        {
+            return this._context.ListOfSpeakers.AnyAsync(n => n.ListOfSpeakersId == id);
+        }
+
+        public async Task<Speaker> AddSpeaker(string listId, Speaker speaker)
+        {
+            var list = await _context.ListOfSpeakers.Include(n => n.Speakers).FirstOrDefaultAsync(n => n.ListOfSpeakersId == listId);
+            if (list == null) throw new Exception("List of speakers not found!");
+            var mdl = list.AddSpeaker(speaker.Name, speaker.Iso);
+            list.AllSpeakers.Add(mdl);
+            await _context.SaveChangesAsync();
+            return mdl;
+        }
+
+        public async Task<Speaker> AddSpeaker(ListOfSpeakers list, Speaker speaker)
+        {
+            var mdl = list.AddSpeaker(speaker.Name, speaker.Iso);
+            list.AllSpeakers.Add(mdl);
+            await _context.SaveChangesAsync();
+            return mdl;
+        }
+
+        public async Task<Speaker> AddQuestion(ListOfSpeakers list, Speaker question)
+        {
+            var mdl = list.AddSpeaker(question.Name, question.Iso);
+            list.AllSpeakers.Add(mdl);
+            await _context.SaveChangesAsync();
+            return mdl;
+        }
+
+        [Obsolete("You should not call this from outside the service")]
         public void SaveChanges()
         {
             this._context.SaveChanges();

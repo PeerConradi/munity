@@ -41,5 +41,9 @@ namespace MUNity.Hubs
         /// </summary>
         /// <returns></returns>
         Task TimerStopped();
+
+        Task SpeakerAdded(Speaker speaker);
+
+        Task QuestionAdded(Speaker question);
     }
 }
