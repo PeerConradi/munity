@@ -26,7 +26,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         {
             this._viewModel = viewModel;
             HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/slsocket").Build();
-
+            await HubConnection.StartAsync();
             //SpeakerListChanged += ListOfSpeakerSocketHandler_SpeakerListChanged;
 
             HubConnection.On<int>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.QuestionTimerStarted), (seconds) => QuestionTimerStarted?.Invoke(this, seconds));

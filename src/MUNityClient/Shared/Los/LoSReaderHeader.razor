@@ -1,0 +1,62 @@
+﻿@if (Mode == ReaderHeaderModes.Speaker && ViewModel.SourceList.CurrentSpeaker != null ||
+   Mode == ReaderHeaderModes.Question && ViewModel.SourceList.CurrentQuestion != null)
+{
+    <h5>Es spricht:</h5>
+    @if (Mode == ReaderHeaderModes.Speaker)
+    {
+        <h5>@ViewModel.SourceList.CurrentSpeaker.Name</h5>
+    }
+    else
+    {
+        <h5>@ViewModel.SourceList.CurrentQuestion.Name</h5>
+    }
+
+    @if (Mode == ReaderHeaderModes.Speaker && ViewModel.OutOfSpeakerTime || Mode == ReaderHeaderModes.Question && ViewModel.OutOfQuestionTime)
+    {
+        <h6 class="text-danger">Bitte zum Ende kommen</h6>
+    }
+    else if (Mode == ReaderHeaderModes.Speaker && ViewModel.LowOnSpeakerTime)
+    {
+        <h6 class="text-danger">Verbleibende Zeit: @ViewModel.SourceList.RemainingSpeakerTime.ToString(@"mm\:ss")</h6>
+    }
+    else if (Mode == ReaderHeaderModes.Speaker)
+    {
+        <h6>Verbleibende Zeit: @ViewModel.SourceList.RemainingSpeakerTime.ToString(@"mm\:ss")</h6>
+    }
+    else if (Mode == ReaderHeaderModes.Question && ViewModel.LowOnQuestionTime)
+    {
+        <h6 class="text-danger">Verbleibende Zeit: @ViewModel.SourceList.RemainingQuestionTime.ToString(@"mm\:ss")</h6>
+    }
+    else if (Mode == ReaderHeaderModes.Question)
+    {
+        <h6>Verbleibende Zeit: @ViewModel.SourceList.RemainingQuestionTime.ToString(@"mm\:ss")</h6>
+    }
+
+}
+else
+{
+    <h5>Aktuell kein(e) RednerIn</h5>
+    @if (Mode == ReaderHeaderModes.Speaker)
+    {
+        <h5>Redezeit: @ViewModel.SourceList.SpeakerTime.ToString(@"mm\:ss")</h5>
+    }
+    else if (Mode == ReaderHeaderModes.Question)
+    {
+        <h5>Redezeit: @ViewModel.SourceList.QuestionTime.ToString(@"mm\:ss")</h5>
+    }
+
+}
+
+@code {
+    public enum ReaderHeaderModes
+    {
+        Speaker,
+        Question
+    }
+
+    [Parameter]
+    public ReaderHeaderModes Mode { get; set; }
+
+    [Parameter]
+    public ViewModels.ListOfSpeakerViewModel ViewModel { get; set; }
+}

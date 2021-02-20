@@ -53,7 +53,7 @@ namespace MUNityClient.ViewModels
                 return await CreateFromOffline(service, listId);
         }
 
-        public static async Task<ListOfSpeakerViewModel> CreateFromOffline(Services.ListOfSpeakerService service, string listId)
+        private static async Task<ListOfSpeakerViewModel> CreateFromOffline(Services.ListOfSpeakerService service, string listId)
         {
             var list = await service.GetListOfSpeakersOffline(listId);
             var mdl = new ListOfSpeakerViewModel(list, service);
@@ -61,17 +61,16 @@ namespace MUNityClient.ViewModels
             return mdl;
         }
 
-        public static async Task<ListOfSpeakerViewModel> CreateFromOnline(Services.ListOfSpeakerService service, string listId)
+        private static async Task<ListOfSpeakerViewModel> CreateFromOnline(Services.ListOfSpeakerService service, string listId)
         {
             var list = await service.GetFromApi(listId);
             var mdl = new ListOfSpeakerViewModel(list, service);
-            mdl.Handler = new ViewModelLogic.ListOfSpeakerOnlineHandler();
+            var onlineHandler = new ViewModelLogic.ListOfSpeakerOnlineHandler();
+            mdl.Handler = onlineHandler;
             await mdl.Handler.Init(mdl);
+            var subscribeResponse = await service.Subscribe(listId, onlineHandler.HubConnection.ConnectionId);
+            // TODO: Log if subscription failed!
             return mdl;
-        }
-
-
-
-        
+        }  
     }
 }
