@@ -47,5 +47,11 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         Task OpenQuestions();
 
         Task CloseQuestions();
+
+        Task AddSpeaker(Models.ListOfSpeaker.SpeakerToAdd speaker);
+
+        Task AddQuestion(Models.ListOfSpeaker.SpeakerToAdd question);
+
+        Task Remove(MUNity.Models.ListOfSpeakers.Speaker speaker);
     }
 }

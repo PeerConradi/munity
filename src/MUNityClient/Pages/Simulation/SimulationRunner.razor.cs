@@ -98,7 +98,7 @@ namespace MUNityClient.Pages.Simulation
         }
 
         private MUNityClient.ViewModels.SimulationViewModel SimulationViewModelInstance { get; set; }
-        private Services.SocketHandlers.ListOfSpeakerViewModel ListOfSpeakersInstance { get; set; }
+        private ViewModels.ListOfSpeakerViewModel ListOfSpeakersInstance { get; set; }
 
         private MUNity.Models.ListOfSpeakers.ListOfSpeakers _listOfSpeakers;
         //private MUNity.Schema.Simulation.SimulationRoleItem _myRole;
@@ -123,12 +123,12 @@ namespace MUNityClient.Pages.Simulation
                     this._listOfSpeakers = await listOfSpeakerService.GetFromApi(_listOfSpeakerId);
                     if (_listOfSpeakers != null)
                     {
-                        ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(_listOfSpeakers);
-                        if (ListOfSpeakersInstance != null)
-                        {
-                            // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
-                            ListOfSpeakersInstance.SpeakerListChanged += delegate { this.StateHasChanged(); };
-                        }
+                        //ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(_listOfSpeakers);
+                        //if (ListOfSpeakersInstance != null)
+                        //{
+                        //    // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
+                        //    ListOfSpeakersInstance.Handler.SpeakerListChanged += delegate { this.StateHasChanged(); };
+                        //}
                     }
                 }
 
@@ -217,20 +217,20 @@ namespace MUNityClient.Pages.Simulation
 
         private async void InitListOfSpeakers()
         {
-            if (this.SimulationViewModelInstance?.Simulation != null)
-            {
-                var list = await this.simulationService.InitListOfSpeakers(this.SimulationViewModelInstance.Simulation.SimulationId);
-                if (list != null)
-                {
-                    ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(list);
-                    if (ListOfSpeakersInstance != null)
-                    {
-                        // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
-                        ListOfSpeakersInstance.SpeakerListChanged += delegate { this.StateHasChanged(); };
-                    }
-                    this.StateHasChanged();
-                }
-            }
+            //if (this.SimulationViewModelInstance?.Simulation != null)
+            //{
+            //    var list = await this.simulationService.InitListOfSpeakers(this.SimulationViewModelInstance.Simulation.SimulationId);
+            //    if (list != null)
+            //    {
+            //        ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(list);
+            //        if (ListOfSpeakersInstance != null)
+            //        {
+            //            // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
+            //            ListOfSpeakersInstance.SpeakerListChanged += delegate { this.StateHasChanged(); };
+            //        }
+            //        this.StateHasChanged();
+            //    }
+            //}
         }
     }
 }

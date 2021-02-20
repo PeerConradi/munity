@@ -1,42 +1,42 @@
 ﻿@using MUNity.Models.ListOfSpeakers;
 @inject MUNityClient.Services.ListOfSpeakerService listOfSpeakerService;
 
-@if (Speakerlist != null)
+@if (ViewModel?.SourceList != null)
 {
     <div class="row col-12 m-0 p-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    @if (Speakerlist.CurrentSpeaker != null)
+                    @if (ViewModel.SourceList.CurrentSpeaker != null)
                     {
                         <h5>Es spricht:</h5>
-                        <h5>@Speakerlist.CurrentSpeaker.Name</h5>
+                        <h5>@ViewModel.SourceList.CurrentSpeaker.Name</h5>
 
-                        @if (Speakerlist.RemainingSpeakerTime.TotalSeconds <= 0)
+                        @if (ViewModel.OutOfSpeakerTime)
                         {
                             <h6 class="text-danger">Bitte zum Ende kommen</h6>
                         }
-                        else if (Speakerlist.RemainingSpeakerTime.TotalSeconds <= 10)
+                        else if (ViewModel.LowOnSpeakerTime)
                         {
-                            <h6 class="text-danger">Verbleibende Zeit: @Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h6>
+                            <h6 class="text-danger">Verbleibende Zeit: @ViewModel.SourceList.RemainingSpeakerTime.ToString(@"mm\:ss")</h6>
                         }
                         else
                         {
-                            <h6>Verbleibende Zeit: @Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h6>
+                            <h6>Verbleibende Zeit: @ViewModel.SourceList.RemainingSpeakerTime.ToString(@"mm\:ss")</h6>
                         }
                     }
                     else
                     {
                         <h5>Aktuell kein(e) RednerIn</h5>
-                        <h5>Redezeit: @Speakerlist.SpeakerTime.ToString(@"mm\:ss")</h5>
+                        <h5>Redezeit: @ViewModel.SourceList.SpeakerTime.ToString(@"mm\:ss")</h5>
                     }
                 </div>
                 <div class="card-body">
                     <h4>Redeliste</h4>
-                    @if (Speakerlist.Speakers.Any())
+                    @if (ViewModel.SourceList.Speakers.Any())
                     {
                         <ul class="list-group">
-                            @foreach (var speaker in Speakerlist.Speakers)
+                            @foreach (var speaker in ViewModel.SourceList.Speakers)
                             {
                                 
                             <li class="list-group-item">
@@ -67,36 +67,36 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    @if (Speakerlist.CurrentQuestion != null)
+                    @if (ViewModel.SourceList.CurrentQuestion != null)
                     {
                         <h5>Es spricht:</h5>
-                        <h5>@Speakerlist.CurrentQuestion.Name</h5>
+                        <h5>@ViewModel.SourceList.CurrentQuestion.Name</h5>
 
-                        @if (Speakerlist.RemainingQuestionTime.TotalSeconds <= 0)
+                        @if (ViewModel.SourceList.RemainingQuestionTime.TotalSeconds <= 0)
                         {
                             <h6 class="text-danger">Bitte zum Ende kommen</h6>
                         }
-                        else if (Speakerlist.RemainingQuestionTime.TotalSeconds <= 10)
+                        else if (ViewModel.SourceList.RemainingQuestionTime.TotalSeconds <= 10)
                         {
-                            <h6 class="text-danger">Verbleibende Zeit: @Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h6>
+                            <h6 class="text-danger">Verbleibende Zeit: @ViewModel.SourceList.RemainingQuestionTime.ToString(@"mm\:ss")</h6>
                         }
                         else
                         {
-                            <h6>Verbleibende Zeit: @Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h6>
+                            <h6>Verbleibende Zeit: @ViewModel.SourceList.RemainingQuestionTime.ToString(@"mm\:ss")</h6>
                         }
                     }
                     else
                     {
                         <h5>Aktuell keine Frage oder Kurzbemerkung</h5>
-                        <h5>Redezeit: @Speakerlist.QuestionTime.ToString(@"mm\:ss")</h5>
+                        <h5>Redezeit: @ViewModel.SourceList.QuestionTime.ToString(@"mm\:ss")</h5>
                     }
                 </div>
                 <div class="card-body">
                     <h4>Warteliste Fragen und Kurzbemerkungen</h4>
-                    @if (Speakerlist.Questions.Any())
+                    @if (ViewModel.SourceList.Questions.Any())
                     {
                         <ul class="list-group">
-                            @foreach (var speaker in Speakerlist.Questions)
+                            @foreach (var speaker in ViewModel.SourceList.Questions)
                             {
                                 <li class="list-group-item">@speaker.Name</li>
                             }

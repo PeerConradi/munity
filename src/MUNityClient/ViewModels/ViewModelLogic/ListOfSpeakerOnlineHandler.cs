@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using MUNity.Models.ListOfSpeakers;
+using MUNityClient.Models.ListOfSpeaker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,6 +106,21 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         }
 
         public Task CloseQuestions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddSpeaker(SpeakerToAdd speaker)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddQuestion(SpeakerToAdd question)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Remove(Speaker speaker)
         {
             throw new NotImplementedException();
         }

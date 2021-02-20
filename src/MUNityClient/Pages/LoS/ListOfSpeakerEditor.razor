@@ -77,8 +77,8 @@
                                       @onclick="() => this.ViewModel.Handler.AddSpeakerSeconds(-10)">-10</span>
                                 @if (this.ViewModel.SourceList.CurrentSpeaker != null)
                                 {
-                                    <h3 class="m-0 text-center @(LowOnSpeakerTime ? "text-danger" : "")">
-                                        @(OutOfSpeakerTime ? "-" : "")
+                                    <h3 class="m-0 text-center @(ViewModel.LowOnSpeakerTime ? "text-danger" : "")">
+                                        @(ViewModel.OutOfSpeakerTime ? "-" : "")
                                         @ViewModel.SourceList.RemainingSpeakerTime.ToString(@"mm\:ss")
                                     </h3>
                                 }
@@ -171,8 +171,8 @@
                                 <span type="button" class="py-1 px-3 text-danger hover-enabled"
                                     @onclick="() => this.ViewModel.Handler.AddQuestionSeconds(-10)">-10</span>
                                 <h3
-                                    class="m-0 text-center @(LowOnQuestionTime ? "text-danger" : "")">
-                                    @(OutOfQuestionTime ? "-" : "")
+                                    class="m-0 text-center @(ViewModel.LowOnQuestionTime ? "text-danger" : "")">
+                                    @(ViewModel.OutOfQuestionTime ? "-" : "")
                                     @ViewModel.SourceList.RemainingQuestionTime.ToString(@"mm\:ss")</h3>
                                 <span type="button" class="py-1 px-3 text-success hover-enabled"
                                     @onclick="() => this.ViewModel.Handler.AddQuestionSeconds(10)">+10</span>

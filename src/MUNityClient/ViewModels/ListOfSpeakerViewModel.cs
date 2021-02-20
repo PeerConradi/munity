@@ -22,6 +22,14 @@ namespace MUNityClient.ViewModels
 
         public ViewModelLogic.IListOfSpeakerHandler Handler { get; set; }
 
+        public bool LowOnSpeakerTime => this.SourceList.RemainingSpeakerTime.TotalSeconds < 11;
+
+        public bool OutOfSpeakerTime => this.SourceList.RemainingSpeakerTime.TotalSeconds < 0;
+
+        public bool LowOnQuestionTime => this.SourceList.RemainingQuestionTime.TotalSeconds < 11;
+
+        public bool OutOfQuestionTime => this.SourceList.RemainingQuestionTime.TotalSeconds < 0;
+
         private ListOfSpeakerViewModel(ListOfSpeakers listOfSpeakers, Services.ListOfSpeakerService service)
         {
             SourceList = listOfSpeakers;
