@@ -12,4 +12,4 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Run NUnit Tests
-      run: dotnet test src/MUNityNUnitTest/MunitySchemaTest.csproj
+      run: dotnet test src/MunityNUnitTest
