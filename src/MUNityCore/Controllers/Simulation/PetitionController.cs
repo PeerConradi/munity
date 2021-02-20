@@ -29,6 +29,11 @@ namespace MUNityCore.Controllers.Simulation
             this._simulationService = simulationService;
         }
 
+        /// <summary>
+        /// Gives back a list of simulation Petition type templates you can use with
+        /// ApplyPetitionPreset <see cref="ApplyPetitionPreset"/>
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public ActionResult<List<string>> PetitionTemplateNames()
@@ -47,6 +52,11 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(files.Select(n => n.Name.Substring(0, n.Name.Length - 4)).ToList());
         }
 
+        /// <summary>
+        /// Not implemented yet!
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<ActionResult> AddPetitionTypeToSimulation([FromBody] AddPetitionTypeRequestBody body)
@@ -56,6 +66,11 @@ namespace MUNityCore.Controllers.Simulation
             return Ok();
         }
 
+        /// <summary>
+        /// Returns a list of all possible petition types.
+        /// This petition types can be linked to a conference to use them there.
+        /// </summary>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public async Task<ActionResult<List<Models.Simulation.PetitionType>>> AllPetitionTypes()
@@ -66,7 +81,11 @@ namespace MUNityCore.Controllers.Simulation
         }
 
 
-
+        /// <summary>
+        /// Creates a new Petition inside an Agenda Item of a conference.
+        /// </summary>
+        /// <param name="petition"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<ActionResult> MakePetition([FromBody] CreatePetitionRequest petition)
@@ -104,6 +123,11 @@ namespace MUNityCore.Controllers.Simulation
         //    return Ok();
         //}
 
+        /// <summary>
+        /// Removes a petition from an agenda item of a conference.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<ActionResult> DeletePetition([FromBody] PetitionInteractRequest body)

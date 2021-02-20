@@ -27,6 +27,12 @@ namespace MUNityCore.Controllers.Simulation
             this._simulationService = simulationService;
         }
 
+        /// <summary>
+        /// Creates a new agenda item with an empty set of petitions.
+        /// You need to either be the owner of the simulation or have a role that is of type Chairman.
+        /// </summary>
+        /// <param name="agendaItem"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public async Task<ActionResult> CreateAgendaItem([FromBody] CreateAgendaItemDto agendaItem)

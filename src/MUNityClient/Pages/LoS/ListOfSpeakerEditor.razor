@@ -19,7 +19,7 @@
 @inject MUNityClient.Services.ListOfSpeakerService listOfSpeakerService;
 @inject IJSRuntime jsRuntime
 
-@if (Speakerlist != null)
+@if (ViewModel != null)
 {
         <div class="row m-0 px-2 col-12 d-flex justify-content-center">
             @* Settings/Alert Row *@
@@ -54,18 +54,18 @@
                             <div class="col p-0 m-0 mr-2">
                                 <h5 class="col-12 p-0">
                                     <i class="fas fa-user-alt mr-2"></i>
-                                    @if (Speakerlist.CurrentSpeaker != null)
+                                    @if (ViewModel.SourceList.CurrentSpeaker != null)
                                     {
-                                        @Speakerlist.CurrentSpeaker.Name
+                                        @ViewModel.SourceList.CurrentSpeaker.Name
                                     }
                                     else
                                     {
                                         <span>-</span>
                                     }
-                                    @if (Speakerlist.CurrentSpeaker != null)
+                                    @if (ViewModel.SourceList.CurrentSpeaker != null)
                                     {
                                         <span type="button" class="text-danger hover-enabled" title="Kopf leeren"
-                                              @onclick="() => this.Speakerlist.ClearCurrentSpeaker()">
+                                              @onclick="() => this.ViewModel.Handler.ClearCurrentSpeaker()">
                                             <i class="fas fa-trash ml-3"></i>
                                         </span>
                                     }
@@ -74,59 +74,59 @@
                             </div>
                             <div class="col-7 row m-0 p-0 d-flex justify-content-end">
                                 <span type="button" class="py-1 px-3 text-danger hover-enabled"
-                                      @onclick="() => this.Speakerlist.AddSpeakerSeconds(-10)">-10</span>
-                                @if (this.Speakerlist.CurrentSpeaker != null)
+                                      @onclick="() => this.ViewModel.Handler.AddSpeakerSeconds(-10)">-10</span>
+                                @if (this.ViewModel.SourceList.CurrentSpeaker != null)
                                 {
-                                    <h3 class="m-0 text-center @(Speakerlist.RemainingSpeakerTime.TotalSeconds < 11 ? "text-danger" : "")">
-                                        @(Speakerlist.RemainingSpeakerTime.TotalSeconds < 0 ? "-" : "")
-                                        @Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")
+                                    <h3 class="m-0 text-center @(LowOnSpeakerTime ? "text-danger" : "")">
+                                        @(OutOfSpeakerTime ? "-" : "")
+                                        @ViewModel.SourceList.RemainingSpeakerTime.ToString(@"mm\:ss")
                                     </h3>
                                 }
                                 else
                                 {
-                                    <h3>@Speakerlist.SpeakerTime.ToString(@"mm\:ss")</h3>
+                                    <h3>@ViewModel.SourceList.SpeakerTime.ToString(@"mm\:ss")</h3>
                                 }
 
                                 <span type="button" class="py-1 px-3 text-success hover-enabled"
-                                      @onclick="() => this.Speakerlist.AddSpeakerSeconds(10)">+10</span>
+                                      @onclick="() => this.ViewModel.Handler.AddSpeakerSeconds(10)">+10</span>
                             </div>
                         </div>
                         @* Controls *@
                     <div class="col-12 p-0 my-3">
-                        @if (Speakerlist.Status == ListOfSpeakers.EStatus.Speaking || Speakerlist.Status == ListOfSpeakers.EStatus.Answer)
+                        @if (ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Speaking || ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Answer)
                         {
                             <i title="Rede pausieren" type="button" class="fas mx-2 fa-lg fa-pause"
-                               @onclick="() => Speakerlist.Pause()"></i>
+                               @onclick="() => ViewModel.Handler.Pause()"></i>
                         }
                         else
                         {
                             <i title="Rede fortsetzen" type="button" class="fas mx-2 fa-lg fa-play"
-                               @onclick="() => Speakerlist.ResumeSpeaker()"></i>
+                               @onclick="() => ViewModel.Handler.ResumeSpeaker()"></i>
                         }
                         <i title="Nächste Rede" type="button" class="fas mx-2 fa-lg fa-step-forward"
-                           @onclick="() => Speakerlist.NextSpeaker()"></i>
+                           @onclick="() => ViewModel.Handler.NextSpeaker()"></i>
                         <i title="Redezeit zurücksetzen" type="button" class="fas fa-lg fa-undo ml-3"
-                           @onclick="() => Speakerlist.ResetSpeakerTime()"></i>
+                           @onclick="() => ViewModel.Handler.ResetSpeakerTime()"></i>
                         <i title="Antwort starten" type="button" class="fas mx-2 fa-lg fa-redo"
-                           @onclick="() => Speakerlist.StartAnswer()"></i>
+                           @onclick="() => ViewModel.Handler.StartAnswer()"></i>
                     </div>
 
                         <div>
                         <h5>Warteliste</h5>
-                        @foreach (var speaker in Speakerlist.Speakers)
+                        @foreach (var speaker in ViewModel.SourceList.Speakers)
                         {
                                 <div class="card border p-2">@speaker.Name <i class="fas fa-times mr-2 text-danger" @onclick="() => RemoveSpeaker(speaker)"></i></div>
                         }
 
 
-                        @if (Speakerlist.ListClosed)
+                        @if (ViewModel.SourceList.ListClosed)
                         {
-                                <button @onclick="() => Speakerlist.ListClosed = !Speakerlist.ListClosed" class="btn btn-outline-success">Redeliste
+                                <button @onclick="() => ViewModel.Handler.OpenSpeakers()" class="btn btn-outline-success">Redeliste
                                     öffnen</button>
                         }
                         else
                         {
-                                <div type="button" @onclick="() => Speakerlist.ListClosed = !Speakerlist.ListClosed" class="border mx-0 mt-2 p-2"><i
+                                <div type="button" @onclick="() => ViewModel.Handler.CloseSpeakers()" class="border mx-0 mt-2 p-2"><i
                                         class="fas fa-ban mr-2 text-danger"></i>Redeliste
                                     schließen</div>
                         }
@@ -138,12 +138,12 @@
                                 <div class="col-11 py-0 pl-0">
 
                                     <div class="form-group">
-                                        <InputText @bind-Value="NewSpeaker.Name" class="form-control" placeholder="Land hinzufügen..." disabled="@Speakerlist.ListClosed" />
+                                        <InputText @bind-Value="NewSpeaker.Name" class="form-control" placeholder="Land hinzufügen..." disabled="@ViewModel.SourceList.ListClosed" />
                                     </div>
 
                                 </div>
                                 <div class="col-1 p-0">
-                                    <button type="submit" class="btn btn-success m-0 py-2 px-0 w-100" disabled="@Speakerlist.ListClosed"><i class="fas fa-plus fa-lg"></i></button>
+                                    <button type="submit" class="btn btn-success m-0 py-2 px-0 w-100" disabled="@ViewModel.SourceList.ListClosed"><i class="fas fa-plus fa-lg"></i></button>
                                 </div>
                             </EditForm>
                         </div>
@@ -154,63 +154,63 @@
                             <div class="col p-0 m-0 mr-2">
                                 <h5 class="col-12 p-0">
                                     <i class="fas fa-user-alt mr-2"></i>
-                                    @if (Speakerlist.CurrentQuestion != null)
+                                    @if (ViewModel.SourceList.CurrentQuestion != null)
                                 {
-                                            @Speakerlist.CurrentQuestion.Name
+                                            @ViewModel.SourceList.CurrentQuestion.Name
                                 }
                                 else
                                 {
                                             <span>-</span>
                                 }
                                     <span type="button" class="text-danger hover-enabled" title="Kopf leeren"
-                                        @onclick="() => this.Speakerlist.ClearCurrentQuestion()"><i
+                                        @onclick="() => this.ViewModel.Handler.ClearCurrentQuestion()"><i
                                             class="fas fa-trash ml-3"></i></span>
                                 </h5>
                             </div>
                             <div class="col-7 row m-0 p-0 d-flex justify-content-end">
                                 <span type="button" class="py-1 px-3 text-danger hover-enabled"
-                                    @onclick="() => this.Speakerlist.AddQuestionSeconds(-10)">-10</span>
+                                    @onclick="() => this.ViewModel.Handler.AddQuestionSeconds(-10)">-10</span>
                                 <h3
-                                    class="m-0 text-center @(Speakerlist.RemainingQuestionTime.TotalSeconds < 11 ? "text-danger" : "")">
-                                    @(Speakerlist.RemainingQuestionTime.TotalSeconds < 0 ? "-" : "")
-                                    @Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h3>
+                                    class="m-0 text-center @(LowOnQuestionTime ? "text-danger" : "")">
+                                    @(OutOfQuestionTime ? "-" : "")
+                                    @ViewModel.SourceList.RemainingQuestionTime.ToString(@"mm\:ss")</h3>
                                 <span type="button" class="py-1 px-3 text-success hover-enabled"
-                                    @onclick="() => this.Speakerlist.AddQuestionSeconds(10)">+10</span>
+                                    @onclick="() => this.ViewModel.Handler.AddQuestionSeconds(10)">+10</span>
                             </div>
                         </div>
                         @* Controls *@
                         <div class="col-12 p-0 my-3">
-                        @if (Speakerlist.Status == ListOfSpeakers.EStatus.Question)
+                        @if (ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Question)
                         {
                             <i title="Rede pausieren" type="button" class="fas mx-2 fa-lg fa-pause"
-                            @onclick="() => Speakerlist.Pause()"></i>
+                            @onclick="() => ViewModel.Handler.Pause()"></i>
                         }
                         else
                         {
                             <i title="Rede fortsetzen" type="button" class="fas mx-2 fa-lg fa-play"
-                            @onclick="() => Speakerlist.ResumeQuestion()"></i>
+                            @onclick="() => ViewModel.Handler.ResumeQuestion()"></i>
                         }
                             <i title="Nächste Rede" type="button" class="fas mx-2 fa-lg fa-step-forward"
-                                @onclick="() => Speakerlist.NextQuestion()"></i>
+                                @onclick="() => ViewModel.Handler.NextQuestion()"></i>
                             <i title="Redezeit zurücksetzen" type="button" class="fas fa-lg fa-undo ml-3"
-                                @onclick="() => Speakerlist.ResumeQuestion()"></i>
+                                @onclick="() => ViewModel.Handler.ResumeQuestion()"></i>
                             
                         </div>
                         <div class="col-12 mx-0 px-0">
                             <h5>Fragen und Kurzbemerkungen</h5>
-                            @foreach (var question in Speakerlist.Questions)
+                            @foreach (var question in ViewModel.SourceList.Questions)
                         {
                                     <div class="card border p-2">@question.Name <i class="fas fa-times mr-2 text-danger" @onclick="() => RemoveSpeaker(question)"></i></div>
                         }
-                            @if (Speakerlist.QuestionsClosed)
+                            @if (ViewModel.SourceList.QuestionsClosed)
                         {
-                                    <button @onclick="() => Speakerlist.QuestionsClosed = !Speakerlist.QuestionsClosed"
+                                    <button @onclick="() => ViewModel.Handler.OpenQuestions()"
                                         class="btn btn-outline-success">FuK
                                         öffnen</button>
                         }
                         else
                         {
-                                    <div type="button" @onclick="() => Speakerlist.QuestionsClosed = !Speakerlist.QuestionsClosed"
+                                    <div type="button" @onclick="() => ViewModel.Handler.CloseQuestions()"
                                         class="border mx-0 mt-2 p-2"><i class="fas fa-ban mr-2 text-danger"></i>FuK
                                         schließen</div>
                         }
@@ -262,10 +262,10 @@
 <style>
     .list-head .hover-enabled {
         transition: .3s ease;
-        opacity: 0%;
+        opacity: 0;
     }
 
     .list-head:hover .hover-enabled {
-        opacity: 100%;
+        opacity: 1;
     }
 </style>

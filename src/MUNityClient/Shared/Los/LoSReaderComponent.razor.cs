@@ -50,7 +50,7 @@ namespace MUNityClient.Shared.Los
         {
             if (IsOnline == false)
             {
-                this.Speakerlist = await this.listOfSpeakerService.GetListOfSpeakers(ListOfSpeakersId);
+                this.Speakerlist = await this.listOfSpeakerService.GetListOfSpeakersOffline(ListOfSpeakersId);
             }
             else
             {
@@ -87,7 +87,7 @@ namespace MUNityClient.Shared.Los
         {
             if (!IsOnline)
             {
-                var list = await this.listOfSpeakerService.GetListOfSpeakers(ListOfSpeakersId);
+                var list = await this.listOfSpeakerService.GetListOfSpeakersOffline(ListOfSpeakersId);
                 if (list != null)
                 {
                     this.Speakerlist = list;

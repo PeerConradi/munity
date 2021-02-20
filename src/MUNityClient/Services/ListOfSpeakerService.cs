@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using MUNity.Models.ListOfSpeakers;
 using System.Net.Http.Json;
+using System.Net.Http;
 
 namespace MUNityClient.Services
 {
@@ -24,7 +25,7 @@ namespace MUNityClient.Services
             return listOfSpeakers;
         }
 
-        public async Task<ListOfSpeakers> GetListOfSpeakers(string id)
+        public async Task<ListOfSpeakers> GetListOfSpeakersOffline(string id)
         {
             return await this._localStorage.GetItemAsync<ListOfSpeakers>(ListOfSpeakerIdInStorage(id));
         }
@@ -76,12 +77,9 @@ namespace MUNityClient.Services
             await this._httpService.HttpClient.PostAsync($"/api/Speakerlist/AddQuestionModelToList?listid={listOfSpeakersId}", JsonContent.Create(mdl));
         }
 
-        public async Task<SocketHandlers.ListOfSpeakerViewModel> Subscribe(ListOfSpeakers list)
+        public Task<HttpResponseMessage> Subscribe(string listId, string connectionId)
         {
-            var handler = await SocketHandlers.ListOfSpeakerViewModel.CreateHandler(list);
-            var connId = handler.HubConnection.ConnectionId;
-            await this._httpService.HttpClient.GetAsync($"/api/Speakerlist/SubscribeToList?listId={list.ListOfSpeakersId}&connectionid={connId}");
-            return handler;
+            return this._httpService.HttpClient.GetAsync($"/api/Speakerlist/SubscribeToList?listId={listId}&connectionid={connectionId}");
         }
 
         [JSInvokable]

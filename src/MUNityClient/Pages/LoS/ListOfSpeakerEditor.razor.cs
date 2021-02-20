@@ -22,24 +22,7 @@ namespace MUNityClient.Pages.LoS
     public partial class ListOfSpeakerEditor
     {
         [Parameter]
-        public string Id
-        {
-            get;
-            set;
-        }
-
-        public ListOfSpeakers Speakerlist
-        {
-            get;
-            set;
-        }
-
-        [Parameter]
-        public bool IsOnline
-        {
-            get;
-            set;
-        }
+        public string Id { get; set; }
 
         private MUNityClient.Shared.Bootstrap.Modal SpeakingTimeConfigModal
         {
@@ -47,8 +30,16 @@ namespace MUNityClient.Pages.LoS
             set;
         }
 
+        private bool LowOnSpeakerTime => this.ViewModel.SourceList.RemainingSpeakerTime.TotalSeconds < 11;
+
+        private bool OutOfSpeakerTime => this.ViewModel.SourceList.RemainingSpeakerTime.TotalSeconds < 0;
+
+        private bool LowOnQuestionTime => this.ViewModel.SourceList.RemainingQuestionTime.TotalSeconds < 11;
+
+        private bool OutOfQuestionTime => this.ViewModel.SourceList.RemainingQuestionTime.TotalSeconds < 0;
+
         [Parameter]
-        public Services.SocketHandlers.ListOfSpeakerViewModel Socket
+        public ViewModels.ListOfSpeakerViewModel ViewModel
         {
             get;
             set;
@@ -171,16 +162,16 @@ namespace MUNityClient.Pages.LoS
             {
                 this.Speakerlist = await this.listOfSpeakerService.GetFromApi(this.Id);
                 // Check if the socket is already passed as a Parameter
-                if (Socket != null)
-                    Socket = await listOfSpeakerService.Subscribe(Speakerlist);
-                if (Socket != null)
+                if (ViewModel != null)
+                    ViewModel = await listOfSpeakerService.Subscribe(Speakerlist);
+                if (ViewModel != null)
                 {
-                    Socket.SpeakerListChanged += OnSpeakerlistChanged;
+                    ViewModel.SpeakerListChanged += OnSpeakerlistChanged;
                 }
             }
             else
             {
-                this.Speakerlist = await this.listOfSpeakerService.GetListOfSpeakers(this.Id);
+                this.Speakerlist = await this.listOfSpeakerService.GetListOfSpeakersOffline(this.Id);
             }
 
             if (this.Speakerlist != null)
