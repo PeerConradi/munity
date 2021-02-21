@@ -309,6 +309,44 @@ namespace MUNityCoreTest.ControllerTest.SpeakerlistControllerTest
             Assert.GreaterOrEqual(list.RemainingSpeakerTime.TotalSeconds, startRemainingSeconds + 9);
         }
 
+        [Test]
+        public void TestClearSpeaker()
+        {
+            var list = GetTestSpeakerlist();
+            Assert.NotNull(list);
+            Assert.NotNull(list.CurrentSpeaker);
+            var dto = new ListOfSpeakersRequest()
+            {
+                ListOfSpeakersId = listId,
+                Token = "test"
+            };
+            var result = controller.ClearSpeaker(dto);
+            Assert.IsTrue(result is OkResult);
+            list = GetTestSpeakerlist();
+            Assert.IsNull(list.CurrentSpeaker);
+            Assert.AreNotEqual(ListOfSpeakers.EStatus.Speaking, list.Status);
+            Assert.AreNotEqual(ListOfSpeakers.EStatus.SpeakerPaused, list.Status);
+        }
+
+        [Test]
+        public void TestClearQuestion()
+        {
+            var list = GetTestSpeakerlist();
+            Assert.NotNull(list);
+            Assert.NotNull(list.CurrentQuestion);
+            var dto = new ListOfSpeakersRequest()
+            {
+                ListOfSpeakersId = listId,
+                Token = "test"
+            };
+            var result = controller.ClearQuestion(dto);
+            Assert.IsTrue(result is OkResult);
+            list = GetTestSpeakerlist();
+            Assert.IsNull(list.CurrentQuestion);
+            Assert.AreNotEqual(ListOfSpeakers.EStatus.Question, list.Status);
+            Assert.AreNotEqual(ListOfSpeakers.EStatus.QuestionPaused, list.Status);
+        }
+
         private ListOfSpeakers GetTestSpeakerlist()
         {
             var response = controller.GetSpeakerlist(listId);

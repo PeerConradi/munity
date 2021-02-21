@@ -58,5 +58,7 @@ namespace MUNity.Hubs
 
         Task SpeakerSecondsAdded(int seconds);
         Task AnswerTimerStarted(DateTime value);
+        Task ClearSpeaker();
+        Task ClearQuestion();
     }
 }

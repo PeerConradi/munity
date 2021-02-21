@@ -310,42 +310,33 @@ namespace MUNityCore.Controllers
         /// <summary>
         /// Clears the current Speaker from the list.
         /// </summary>
-        /// <param name="listid"></param>
+        /// <param name="body"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public IActionResult ClearSpeaker([FromHeader]string listid)
+        public IActionResult ClearSpeaker([FromBody]ListOfSpeakersRequest body)
         {
-            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
+            bool result = _speakerlistService.ClearSpeaker(body);
 
-            speakerlist.ClearCurrentSpeaker();
+            if (!result) return NotFound();
 
-            this._hubContext.Clients.Groups("los_" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-            _speakerlistService.SaveChanges();
-            return StatusCode(StatusCodes.Status200OK);
+            GetHubGroup(body)?.ClearSpeaker();
+            return Ok();
         }
 
         /// <summary>
         /// Clears the current Question from the list
         /// </summary>
-        /// <param name="listid"></param>
+        /// <param name="body"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public IActionResult ClearQuestion([FromHeader]string listid)
+        public IActionResult ClearQuestion([FromBody]ListOfSpeakersRequest body)
         {
-            var speakerlist = _speakerlistService.GetSpeakerlist(listid);
-            if (speakerlist == null)
-                return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-
-
-            speakerlist.ClearCurrentQuestion();
-
-            this._hubContext.Clients.Groups("los_" + speakerlist.PublicId).SpeakerListChanged(speakerlist);
-            _speakerlistService.SaveChanges();
-            return StatusCode(StatusCodes.Status200OK);
+            bool result = _speakerlistService.ClearQuestion(body);
+            if (!result) return NotFound();
+            GetHubGroup(body)?.ClearQuestion();
+            return Ok();
         }
 
     }

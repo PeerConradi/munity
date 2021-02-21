@@ -193,5 +193,23 @@ namespace MUNityCore.Services
             list.QuestionTime = body.QuestionTime;
             return true;
         }
+
+        internal bool ClearSpeaker(ListOfSpeakersRequest body)
+        {
+            var list = _context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return false;
+            list.ClearCurrentSpeaker();
+            return true;
+        }
+
+        internal bool ClearQuestion(ListOfSpeakersRequest body)
+        {
+            var list = _context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return false;
+            list.ClearCurrentQuestion();
+            return true;
+        }
     }
 }
