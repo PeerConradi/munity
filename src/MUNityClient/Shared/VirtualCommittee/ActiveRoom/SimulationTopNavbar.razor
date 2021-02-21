@@ -3,11 +3,7 @@
 <!-- As a link -->
 @if (ViewModel == null)
 {
-    <nav class="navbar navbar-light bg-light">
-        <div class="spinner-border" role="status">
-
-        </div>
-    </nav>
+    <MUNityClient.Shared.Bootstrap.Spinner></MUNityClient.Shared.Bootstrap.Spinner>
 }
 else
 {
@@ -19,27 +15,27 @@ else
                 <ConnectionStateBadge ViewModel="@ViewModel" />
            </div>
            <div class="row p-0 col-4 col-md ml-4 d-none d-sm-flex">
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home">
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home" title="Home">
                    <i class="fa fa-home"></i>
                </a>
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda">
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda" title="Agenda">
                    <i class="fa fa-calendar-check"></i>
                </a>
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting">
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting" title="Abstimmungen">
                    <i class="fa fa-vote-yea"></i>
                </a>
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution">
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution" title="Resolutionen">
                    <i class="fa fa-file-alt"></i>
                </a>
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents">
+               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents" title="Anwesenheit">
                    <i class="fa fa-users"></i>
                </a>
                    @if (this.ViewModel.IsChair)
                    {
-                   <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor">
+                   <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor" title="Redeliste">
                        <i class="fa fa-comments"></i>
                    </a>
-                   <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options">
+                   <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options" title="Optionen">
                        <i class="fa fa-cogs"></i>
                    </a>
                    }
