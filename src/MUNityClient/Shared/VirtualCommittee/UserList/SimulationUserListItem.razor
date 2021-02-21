@@ -1,7 +1,7 @@
 ﻿@inject Services.SimulationService simulationService;
 
 
-<div class="widget-list-item bg-light w-100 border @((User.IsOnline) ? "border-success" : "border-danger")" style="border-width: 2px !important;" >
+<div class="widget-list-item w-100 border" style="border-width: 2px !important;" >
     <div class="widget-list-media ">
         @if (Role != null && !string.IsNullOrEmpty(Role.Iso))
         {
@@ -14,12 +14,20 @@
 
     </div>
     <div class="widget-list-content">
-        @if (Role != null)
-        {
-            <h4 class="widget-list-title">@Role.Name</h4>
-        }
+        <div class="row m-0 p-0 col-7">
+            @if (User.IsOnline)
+            {
+               <span class="badge badge-danger d-flex align-items-center">Offline</span>
+            }
+            <div class="col m-0 p-0">
+                @if (Role != null)
+                {
+                    <h4 class="widget-list-title col-12">@Role.Name</h4>
+                }
+                <p class="widget-list-desc col-12">@User?.DisplayName</p>
+            </div>
 
-        <p class="widget-list-desc">@User?.DisplayName</p>
+        </div>
     </div>
     <div class="widget-list-action">
         @if (_lastVoteArgs != null)
@@ -46,7 +54,7 @@
             }
             else
             {
-                <span class="badge badge-warning">Stellt mehrere Anträge!</span>
+                <span class="badge badge-warning">Stellt @Petitions.Count() Anträge!</span>
             }
         }
     </div>

@@ -1,7 +1,7 @@
 ﻿@inject Services.SimulationService simulationService;
 @if (ViewModel != null)
 {
-    <div class="card card-body shadow-2">
+    <div class="row p-0 m-0 col-12">
         @if (ViewModel.CurrentVoting != null)
         {
             if (ViewModel.CurrentVoting.AllowedUsers.Any(n => n == ViewModel.Me.SimulationUserId))
@@ -12,7 +12,7 @@
                 }
                 else
                 {
-                    <div class="btn-group">
+                    <div class="btn-group col-12 m-0 p-0">
                         <button class="btn btn-outline-success" @onclick="() => VotePro()">Dafür</button>
                         <button class="btn btn-outline-danger" @onclick="() => VoteCon()">Dagegen</button>
                         @if (ViewModel.CurrentVoting.AllowAbstention)

@@ -1,7 +1,22 @@
 ﻿@inject MUNityClient.Services.SimulationService _simulationService;
 
-<div class="row m-3">
-    <div class="col-12">
+
+@if (LastState != VoteSubmitStates.NonCreated)
+{
+    <div class="col-12 mx-0 my-4 p-0">
+        @if (LastState == VoteSubmitStates.Success)
+        {
+            <div class="alert alert-success">Abstimmung erstellt <i class="fas fa-check ml-2"></i></div>
+        }
+        else
+        {
+            <div class="alert alert-danger">Fehler beim Erstellen der Abstimmung <i class="fas fa-times ml-2"></i></div>
+        }
+    </div>
+}
+
+<div class="row m-2">
+    <div class="col-12 m-0 p-0">
         <div class="card">
             <div class="card-header">Neue Abstimmung</div>
             <div class="card-body">
@@ -33,20 +48,6 @@
             </div>
         </div>
     </div>
-
-    @if (LastState != VoteSubmitStates.NonCreated)
-    {
-        <div class="col-12">
-            @if (LastState == VoteSubmitStates.Success)
-            {
-                <div class="alert alert-success">Abstimmung erstellt</div>
-            }
-            else
-            {
-                <div class="alert alert-danger">Fehler beim Erstellen der Abstimmung</div>
-            }
-        </div>
-    }
 
 </div>
 
