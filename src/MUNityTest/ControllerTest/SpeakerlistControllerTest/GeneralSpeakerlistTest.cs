@@ -6,7 +6,6 @@ using MUNity.Models.ListOfSpeakers;
 using MUNity.Schema.ListOfSpeakers;
 using MUNityCore.Controllers;
 using MUNityCore.DataHandlers.EntityFramework;
-using MUNitySchema.Schema.ListOfSpeakers;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
