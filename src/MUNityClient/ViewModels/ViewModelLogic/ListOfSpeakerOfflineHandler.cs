@@ -13,6 +13,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         public event EventHandler<ListOfSpeakers> SpeakerListChanged;
         public event EventHandler<int> SpeakerTimerStarted;
         public event EventHandler TimerStopped;
+        public event EventHandler<Speaker> SpeakerAdded;
 
         public Task AddQuestion(SpeakerToAdd question)
         {

@@ -84,15 +84,18 @@ namespace MUNityClient.Shared.Los
             this.ViewModel.Handler.Remove(speaker);
         }
 
-        
-
         protected override async Task OnInitializedAsync()
         {
-
+            Settings = new SpeakerlistSettings();
             // TODO: Get the ViewModel
             if (!string.IsNullOrEmpty(this.Id))
             {
+                Console.WriteLine("List of speaker id: " + this.Id);
                 this.ViewModel = await ViewModels.ListOfSpeakerViewModel.CreateViewModel(listOfSpeakerService, this.Id);
+            }
+            else
+            {
+                Console.WriteLine("No list of speaker id given!");
             }
         }
 

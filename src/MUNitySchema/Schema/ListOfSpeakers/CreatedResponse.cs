@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MUNitySchema.Schema.ListOfSpeakers
+namespace MUNity.Schema.ListOfSpeakers
 {
     public class CreatedResponse
     {

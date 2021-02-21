@@ -13,7 +13,7 @@ using MUNityCore.Services;
 using System.Collections.ObjectModel;
 using MUNity.Extensions.LoSExtensions;
 using MUNity.Schema.ListOfSpeakers;
-using MUNitySchema.Schema.ListOfSpeakers;
+
 
 namespace MUNityCore.Controllers
 {
@@ -149,30 +149,6 @@ namespace MUNityCore.Controllers
             _ = GetHubGroup(body)?.QuestionAdded(result);
             return Ok();
         }
-
-
-        /// <summary>
-        /// Will add the given Question to the list of speakers but only if it isnt already inside the list.
-        /// </summary>
-        /// <returns></returns>
-        //[Route("[action]")]
-        //[HttpPost]
-        //public async Task<ActionResult> AddQuestionModelToList([FromBody] AddSpeakerBody body)
-        //{
-        //    var speakerlist = _speakerlistService.GetSpeakerlist(body.ListOfSpeakersId);
-        //    if (speakerlist == null)
-        //        return StatusCode(StatusCodes.Status404NotFound, "Speakerlist not found!");
-
-        //    if (speakerlist.QuestionsClosed)
-        //        return Forbid("The List of questions is currently closed!");
-
-        //    if (speakerlist.Questions.Any(n => n.Name == body.Speaker.Name && n.Iso == body.Speaker.Iso))
-        //        return Ok(speakerlist);
-
-        //    var result = await _speakerlistService.AddQuestion(speakerlist, body.Speaker);
-        //    _ = this._hubContext.Clients.Group("los_" + speakerlist.ListOfSpeakersId).QuestionAdded(result);
-        //    return Ok();
-        //}
 
 
         /// <summary>
@@ -320,7 +296,7 @@ namespace MUNityCore.Controllers
 
             if (!result) return NotFound();
 
-            GetHubGroup(body)?.ClearSpeaker();
+            _ = GetHubGroup(body)?.ClearSpeaker();
             return Ok();
         }
 
@@ -335,7 +311,17 @@ namespace MUNityCore.Controllers
         {
             bool result = _speakerlistService.ClearQuestion(body);
             if (!result) return NotFound();
-            GetHubGroup(body)?.ClearQuestion();
+            _ = GetHubGroup(body)?.ClearQuestion();
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult Pause([FromBody]ListOfSpeakersRequest body)
+        {
+            bool result = _speakerlistService.Pause(body);
+            if (!result) return NotFound();
+            _ = GetHubGroup(body)?.Pause();
             return Ok();
         }
 

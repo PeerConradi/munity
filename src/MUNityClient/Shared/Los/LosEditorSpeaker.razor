@@ -123,4 +123,13 @@
 
         return EventCallback.Empty;
     }
+
+    protected override void OnInitialized()
+    {
+        if (this.ViewModel?.Handler != null)
+        {
+            this.ViewModel.Handler.SpeakerAdded += delegate { this.StateHasChanged(); };
+        }
+        base.OnInitialized();
+    }
 }

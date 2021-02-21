@@ -60,5 +60,7 @@ namespace MUNity.Hubs
         Task AnswerTimerStarted(DateTime value);
         Task ClearSpeaker();
         Task ClearQuestion();
+
+        Task Pause();
     }
 }

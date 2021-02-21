@@ -82,6 +82,11 @@ namespace MUNityClient.Services
             return this._httpService.HttpClient.GetAsync($"/api/Speakerlist/SubscribeToList?listId={listId}&connectionid={connectionId}");
         }
 
+        public Task<HttpResponseMessage> CreateOnline()
+        {
+            return this._httpService.HttpClient.GetAsync($"/api/Speakerlist/CreateListOfSpeaker");
+        }
+
         [JSInvokable]
         public Task StorageHasChanged()
         {

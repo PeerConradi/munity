@@ -16,6 +16,8 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         event EventHandler TimerStopped;
 
+        event EventHandler<Speaker> SpeakerAdded;
+
         Task Init(ListOfSpeakerViewModel viewModel);
 
         Task ClearCurrentSpeaker();

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace MUNityClient.ViewModels.ViewModelLogic
 {
@@ -22,42 +24,61 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         public event EventHandler TimerStopped;
 
+        public event EventHandler<Speaker> SpeakerAdded;
+
+        private HttpClient httpClient;
+
         public async Task Init(ListOfSpeakerViewModel viewModel)
         {
             this._viewModel = viewModel;
             HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/slsocket").Build();
             await HubConnection.StartAsync();
-            //SpeakerListChanged += ListOfSpeakerSocketHandler_SpeakerListChanged;
+            this.SpeakerAdded += ListOfSpeakerOnlineHandler_SpeakerAdded;
 
-            HubConnection.On<int>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.QuestionTimerStarted), (seconds) => QuestionTimerStarted?.Invoke(this, seconds));
-            HubConnection.On<ListOfSpeakers>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerListChanged), (list) => SpeakerListChanged?.Invoke(this, list));
-            HubConnection.On<int>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerTimerStarted), (seconds) => SpeakerTimerStarted.Invoke(this, seconds));
-            HubConnection.On<string>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.TimerStopped), (s) => TimerStopped?.Invoke(this, new EventArgs()));
+            HubConnection.On<Speaker>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerAdded), (speaker) => this.SpeakerAdded?.Invoke(this, speaker));
+            
+            httpClient = new HttpClient();
         }
 
-        public Task ClearCurrentSpeaker()
+        private void ListOfSpeakerOnlineHandler_SpeakerAdded(object sender, Speaker e)
         {
-            throw new NotImplementedException();
+            this._viewModel.SourceList.AllSpeakers.Add(e);
         }
 
-        public Task AddSpeakerSeconds(int seconds)
+        public async Task ClearCurrentSpeaker()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/ClearSpeaker";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task Pause()
+        public async Task AddSpeakerSeconds(int seconds)
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/AddSpeakerSeconds";
+            var dto = new MUNity.Schema.ListOfSpeakers.AddSpeakerSeconds()
+            {
+                ListOfSpeakersId = this._viewModel.SourceList.ListOfSpeakersId,
+                Token = "test",
+                Seconds = seconds
+            };
+            var result = await httpClient.PutAsJsonAsync(url, dto);
         }
 
-        public Task ResumeSpeaker()
+        public async Task Pause()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/Pause";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task NextSpeaker()
+        public async Task ResumeSpeaker()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/StartSpeaker";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
+        }
+
+        public async Task NextSpeaker()
+        {
+            string url = Program.API_URL + "/api/Speakerlist/NextSpeaker";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
         public Task ResetSpeakerTime()
@@ -65,9 +86,10 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             throw new NotImplementedException();
         }
 
-        public Task StartAnswer()
+        public async Task StartAnswer()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/StartAnswer";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
         public Task CloseSpeakers()
@@ -80,24 +102,34 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             throw new NotImplementedException();
         }
 
-        public Task ClearCurrentQuestion()
+        public async Task ClearCurrentQuestion()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/ClearQuestion";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task AddQuestionSeconds(int seconds)
+        public async Task AddQuestionSeconds(int seconds)
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/AddQuestionSeconds";
+            var dto = new MUNity.Schema.ListOfSpeakers.AddSpeakerSeconds()
+            {
+                ListOfSpeakersId = this._viewModel.SourceList.ListOfSpeakersId,
+                Token = "test",
+                Seconds = seconds
+            };
+            var result = await httpClient.PutAsJsonAsync(url, dto);
         }
 
-        public Task ResumeQuestion()
+        public async Task ResumeQuestion()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/StartQuestion";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task NextQuestion()
+        public async Task NextQuestion()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/NextQuestion";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
         public Task OpenQuestions()
@@ -110,19 +142,53 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             throw new NotImplementedException();
         }
 
-        public Task AddSpeaker(SpeakerToAdd speaker)
+        public async Task AddSpeaker(SpeakerToAdd speaker)
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/AddSpeaker";
+            var result = await httpClient.PostAsJsonAsync(url, AddSpeakerBody(speaker));
         }
 
-        public Task AddQuestion(SpeakerToAdd question)
+        public async Task AddQuestion(SpeakerToAdd question)
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/AddQuestion";
+            var result = await httpClient.PostAsJsonAsync(url, AddSpeakerBody(question));
         }
 
-        public Task Remove(Speaker speaker)
+        public async Task Remove(Speaker speaker)
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/RemoveSpeakerFromList";
+            var dto = new MUNity.Schema.ListOfSpeakers.RemoveSpeakerBody()
+            {
+                ListOfSpeakersId = _viewModel.SourceList.ListOfSpeakersId,
+                SpeakerId = speaker.Id,
+                Token = "test"
+            };
+            var result = await httpClient.PutAsJsonAsync(url, dto);
+        }
+
+        private MUNity.Schema.ListOfSpeakers.ListOfSpeakersRequest DefaultRequestBody
+        {
+            get
+            {
+                var dto = new MUNity.Schema.ListOfSpeakers.ListOfSpeakersRequest()
+                {
+                    ListOfSpeakersId = this._viewModel.SourceList.ListOfSpeakersId,
+                    Token = "test"
+                };
+                return dto;
+            }
+        }
+
+        private MUNity.Schema.ListOfSpeakers.AddSpeakerBody AddSpeakerBody(SpeakerToAdd speaker)
+        {
+            var body = new MUNity.Schema.ListOfSpeakers.AddSpeakerBody()
+            {
+                Iso = speaker.Iso,
+                ListOfSpeakersId = _viewModel.SourceList.ListOfSpeakersId,
+                Name = speaker.Name,
+                Token = "test"
+            };
+            return body;
         }
     }
 }

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace MUNityClient.ViewModels
 {
@@ -46,14 +48,25 @@ namespace MUNityClient.ViewModels
 
         public static async Task<ListOfSpeakerViewModel> CreateViewModel(Services.ListOfSpeakerService service, string listId)
         {
+
             var isOnline = await service.IsListOfSpeakersOnline(listId);
+            Console.WriteLine("Is list of speaker online: " + isOnline);
             if (isOnline)
-                return await CreateFromOnline(service, listId);
+                return await GetFromOnline(service, listId);
             else
-                return await CreateFromOffline(service, listId);
+                return await GetFromOffline(service, listId);
         }
 
-        private static async Task<ListOfSpeakerViewModel> CreateFromOffline(Services.ListOfSpeakerService service, string listId)
+        public static async Task<ListOfSpeakerViewModel> CreateNewOnline(Services.ListOfSpeakerService service)
+        {
+            var created = await service.CreateOnline();
+            if (!created.IsSuccessStatusCode)
+                return null;
+            var result = await created.Content.ReadFromJsonAsync<MUNity.Schema.ListOfSpeakers.CreatedResponse>();
+            return await GetFromOnline(service, result.ListOfSpeakersId);
+        }
+
+        private static async Task<ListOfSpeakerViewModel> GetFromOffline(Services.ListOfSpeakerService service, string listId)
         {
             var list = await service.GetListOfSpeakersOffline(listId);
             var mdl = new ListOfSpeakerViewModel(list, service);
@@ -61,8 +74,9 @@ namespace MUNityClient.ViewModels
             return mdl;
         }
 
-        private static async Task<ListOfSpeakerViewModel> CreateFromOnline(Services.ListOfSpeakerService service, string listId)
+        private static async Task<ListOfSpeakerViewModel> GetFromOnline(Services.ListOfSpeakerService service, string listId)
         {
+            Console.WriteLine("Try to init list of speakers from server!");
             var list = await service.GetFromApi(listId);
             var mdl = new ListOfSpeakerViewModel(list, service);
             var onlineHandler = new ViewModelLogic.ListOfSpeakerOnlineHandler();

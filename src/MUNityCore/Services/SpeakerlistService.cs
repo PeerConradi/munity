@@ -211,5 +211,14 @@ namespace MUNityCore.Services
             list.ClearCurrentQuestion();
             return true;
         }
+
+        internal bool Pause(ListOfSpeakersRequest body)
+        {
+            var list = _context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return false;
+            list.Pause();
+            return true;
+        }
     }
 }

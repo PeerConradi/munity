@@ -118,6 +118,7 @@ namespace MUNityClient.Pages.Simulation
 
                 AddHandlers(SimulationViewModelInstance);
                 this._listOfSpeakerId = await this.simulationService.GetListOfSpeakerId(simulationId);
+                Console.WriteLine("list of speakers id: " + this._listOfSpeakerId);
                 if (!string.IsNullOrEmpty(_listOfSpeakerId))
                 {
                     this._listOfSpeakers = await listOfSpeakerService.GetFromApi(_listOfSpeakerId);

@@ -2,12 +2,10 @@
 @using MUNity.Extensions.LoSExtensions;
 @using System.Timers;
 
-@page "/los/edit/{id}"
-
 @inject MUNityClient.Services.ListOfSpeakerService listOfSpeakerService;
 @inject IJSRuntime jsRuntime
 
-@if (ViewModel != null)
+@if (ViewModel != null && Settings != null)
 {
     <div class="row m-0 px-2 col-12 d-flex justify-content-center">
         @* Settings/Alert Row *@
