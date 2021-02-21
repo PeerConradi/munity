@@ -46,8 +46,8 @@
                 </div>
             </div>
             @* Speaker List Card *@
-            <div class="card col-12 mx-0 mt-3 p-0">
-                <div class="card-body row col-12 m-0 p-0">
+            <div class="col-12 mx-0 mt-3 p-0">
+                <div class="row col-12 m-0 p-0">
                     @* Speakers *@
                     <div class="col-12 col-md-6 m-0 p-3">
                         <div class="row m-0 p-0 d-flex justify-content-between list-head border-bottom">
@@ -72,7 +72,7 @@
 
                                 </h5>
                             </div>
-                            <div class="col-7 row m-0 p-0 d-flex justify-content-end">
+                            <div class="col-5 row m-0 p-0 d-flex justify-content-end">
                                 <span type="button" class="py-1 px-3 text-danger hover-enabled"
                                       @onclick="() => this.ViewModel.Handler.AddSpeakerSeconds(-10)">-10</span>
                                 @if (this.ViewModel.SourceList.CurrentSpeaker != null)
@@ -107,7 +107,7 @@
                            @onclick="() => ViewModel.Handler.NextSpeaker()"></i>
                         <i title="Redezeit zurücksetzen" type="button" class="fas fa-lg fa-undo ml-3"
                            @onclick="() => ViewModel.Handler.ResetSpeakerTime()"></i>
-                        <i title="Antwort starten" type="button" class="fas mx-2 fa-lg fa-redo"
+                        <i title="Antwort starten" type="button" class="fas ml-4 fa-lg fa-redo"
                            @onclick="() => ViewModel.Handler.StartAnswer()"></i>
                     </div>
 
@@ -167,7 +167,7 @@
                                             class="fas fa-trash ml-3"></i></span>
                                 </h5>
                             </div>
-                            <div class="col-7 row m-0 p-0 d-flex justify-content-end">
+                            <div class="col-5 row m-0 p-0 d-flex justify-content-end">
                                 <span type="button" class="py-1 px-3 text-danger hover-enabled"
                                     @onclick="() => this.ViewModel.Handler.AddQuestionSeconds(-10)">-10</span>
                                 <h3
