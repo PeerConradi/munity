@@ -1,11 +1,10 @@
 ﻿@if (ViewModel.CurrentVoting != null)
 {
-<div class="alert alert-primary">
-    <b>Aktive Abstimmung</b>
-    <span>@ViewModel.CurrentVoting.Text</span>
+<div class="">
+    <h3>@ViewModel.CurrentVoting.Text</h3>
     <br />
-    <b>Stimmen: </b>
-    <div class="progress">
+    <b>Abgegebene Stimmen: </b>
+    <div class="progress mb-3">
         <div class="progress-bar"
              role="progressbar"
              style="width: @(ViewModel.CurrentVoting.TotalVotes * 100 / ViewModel.CurrentVoting.AllowedUsers.Count)%"
@@ -52,7 +51,10 @@
         }
 
     </div>
-    <span class="text-success">Dafür @ViewModel.CurrentVoting.PercentagePro %</span> <span class="text-danger">Dagegen @ViewModel.CurrentVoting.PercentageContra %</span>
+    <div class="row p-0 m-0 mb-3">
+        <span class="text-success col-6 p-0 d-flex justify-content-start">Dafür @ViewModel.CurrentVoting.PercentagePro %</span>
+        <span class="text-danger col-6 p-0 d-flex justify-content-end">Dagegen @ViewModel.CurrentVoting.PercentageContra %</span>
+    </div>
 </div>
 }
 
