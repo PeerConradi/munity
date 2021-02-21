@@ -1,4 +1,5 @@
 ﻿using MUNity.Models.ListOfSpeakers;
+using MUNity.Schema.ListOfSpeakers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,16 +26,16 @@ namespace MUNity.Hubs
         /// The SpeakerTimer has started with the given seconds as remaining time. The clients should Sync their 
         /// SpeakerStartTime according.
         /// </summary>
-        /// <param name="seconds"></param>
+        /// <param name="speakerStartTime">The timestamp when the speaker started talking in universal-time.</param>
         /// <returns></returns>
-        Task SpeakerTimerStarted(int seconds);
+        Task SpeakerTimerStarted(DateTime speakerStartTime);
 
         /// <summary>
         /// The QuestionTimer was started the clients should set the QuestionStartTime accordingly.
         /// </summary>
-        /// <param name="seconds"></param>
+        /// <param name="questionStartTime">The timestamp when the questionair started talking in universal-time</param>
         /// <returns></returns>
-        Task QuestionTimerStarted(int seconds);
+        Task QuestionTimerStarted(DateTime questionStartTime);
 
         /// <summary>
         /// The Status of the List Of Speaker has been set to STOPPED.
@@ -45,5 +46,17 @@ namespace MUNity.Hubs
         Task SpeakerAdded(Speaker speaker);
 
         Task QuestionAdded(Speaker question);
+
+        Task SpeakerRemoved(string speakerId);
+
+        Task NextSpeaker();
+
+        Task NextQuestion();
+
+        Task SettingsChanged(IListTimeSettings settings);
+        Task QuestionSecondsAdded(int seconds);
+
+        Task SpeakerSecondsAdded(int seconds);
+        Task AnswerTimerStarted(DateTime value);
     }
 }

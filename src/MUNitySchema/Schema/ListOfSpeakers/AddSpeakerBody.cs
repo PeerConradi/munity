@@ -6,6 +6,8 @@ namespace MUNity.Schema.ListOfSpeakers
 {
     public class AddSpeakerBody : ListOfSpeakersRequest
     {
-        public Models.ListOfSpeakers.Speaker Speaker { get; set; }
+        public string Name { get; set; }
+
+        public string Iso { get; set; }
     }
 }

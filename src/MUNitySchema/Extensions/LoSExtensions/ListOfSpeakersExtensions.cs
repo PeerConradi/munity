@@ -187,19 +187,11 @@ namespace MUNity.Extensions.LoSExtensions
             if (list.CurrentSpeaker != null)
             {
                 if (list.Status == EStatus.SpeakerPaused)
-                {
-                    list.StartSpeakerTime = DateTime.Now.ToUniversalTime().AddSeconds(list.RemainingSpeakerTime.TotalSeconds - list.SpeakerTime.TotalSeconds);
-                    list.Status = EStatus.Speaking;
-                }  
+                    list.ContinueSpeaker();
                 else if (list.Status == EStatus.AnswerPaused)
-                {
-                    list.StartSpeakerTime = DateTime.Now.ToUniversalTime().AddSeconds(list.RemainingSpeakerTime.TotalSeconds - list.QuestionTime.TotalSeconds);
-                    list.Status = EStatus.Answer;
-                }
+                    list.ContinueAnswer();
                 else
-                {
                     list.StartSpeaker();
-                }
 
                 // Fixes a small glitch in the Question time!
                 list.StartQuestionTime = DateTime.Now.ToUniversalTime();
@@ -209,6 +201,18 @@ namespace MUNity.Extensions.LoSExtensions
             {
                 list.Status = EStatus.Stopped;
             }
+        }
+
+        private static void ContinueAnswer(this ListOfSpeakers list)
+        {
+            list.StartSpeakerTime = DateTime.Now.ToUniversalTime().AddSeconds(list.RemainingSpeakerTime.TotalSeconds - list.QuestionTime.TotalSeconds);
+            list.Status = EStatus.Answer;
+        }
+
+        private static void ContinueSpeaker(this ListOfSpeakers list)
+        {
+            list.StartSpeakerTime = DateTime.Now.ToUniversalTime().AddSeconds(list.RemainingSpeakerTime.TotalSeconds - list.SpeakerTime.TotalSeconds);
+            list.Status = EStatus.Speaking;
         }
 
         /// <summary>

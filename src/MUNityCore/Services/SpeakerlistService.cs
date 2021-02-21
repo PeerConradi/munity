@@ -6,6 +6,7 @@ using System.Threading;
 using MUNity.Models.ListOfSpeakers;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Extensions.LoSExtensions;
+using MUNity.Schema.ListOfSpeakers;
 
 namespace MUNityCore.Services
 {
@@ -38,83 +39,78 @@ namespace MUNityCore.Services
             return this._context.ListOfSpeakers.AnyAsync(n => n.ListOfSpeakersId == id);
         }
 
-        public async Task<Speaker> AddSpeaker(string listId, Speaker speaker)
+        public async Task<Speaker> AddSpeaker(AddSpeakerBody body)
         {
-            var list = await _context.ListOfSpeakers.Include(n => n.Speakers).FirstOrDefaultAsync(n => n.ListOfSpeakersId == listId);
-            if (list == null) throw new Exception("List of speakers not found!");
-            var mdl = list.AddSpeaker(speaker.Name, speaker.Iso);
-            list.AllSpeakers.Add(mdl);
+            var list = await _context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
+                .FirstOrDefaultAsync(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return null;
+
+            var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == body.Iso &&
+            n.Name == body.Name && n.Mode == Speaker.SpeakerModes.WaitToSpeak);
+
+            if (existing != null) return existing;
+
+            var mdl = list.AddSpeaker(body.Name, body.Iso);
             await _context.SaveChangesAsync();
             return mdl;
         }
 
-        public async Task<Speaker> AddSpeaker(ListOfSpeakers list, Speaker speaker)
+        public async Task<Speaker> AddQuestion(AddSpeakerBody body)
         {
-            var mdl = list.AddSpeaker(speaker.Name, speaker.Iso);
-            list.AllSpeakers.Add(mdl);
+            var list = await _context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
+                .FirstOrDefaultAsync(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return null;
+
+            var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == body.Iso &&
+            n.Name == body.Name && n.Mode == Speaker.SpeakerModes.WaitForQuesiton);
+
+            if (existing != null) 
+                return existing;
+
+            var mdl = list.AddQuestion(body.Name, body.Iso);
+            //list.AllSpeakers.Add(mdl);
             await _context.SaveChangesAsync();
             return mdl;
         }
 
-        public async Task<Speaker> AddQuestion(ListOfSpeakers list, Speaker question)
+        public bool IsListClosed(ListOfSpeakersRequest request)
         {
-            var mdl = list.AddSpeaker(question.Name, question.Iso);
-            list.AllSpeakers.Add(mdl);
-            await _context.SaveChangesAsync();
-            return mdl;
+            return this._context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == request.ListOfSpeakersId)?.ListClosed ?? true;
+        }
+
+        public bool IsQuestionsClosed(ListOfSpeakersRequest request)
+        {
+            return this._context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == request.ListOfSpeakersId)?
+                .QuestionsClosed ?? true;
+        }
+
+        internal bool AddQuestionSeconds(AddSpeakerSeconds body)
+        {
+            var list = _context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return false;
+            list.AddQuestionSeconds(body.Seconds);
+            _ = _context.SaveChangesAsync();
+            return true;
+        }
+
+        internal bool AddSpeakerSeconds(AddSpeakerSeconds body)
+        {
+            var list = _context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return false;
+            list.AddSpeakerSeconds(body.Seconds);
+            _ = _context.SaveChangesAsync();
+            return true;
         }
 
         [Obsolete("You should not call this from outside the service")]
         public void SaveChanges()
         {
             this._context.SaveChanges();
-        }
-
-        public void OverwriteList(ListOfSpeakers original, ListOfSpeakers newList)
-        {
-            try
-            {
-                foreach (var speaker in newList.AllSpeakers)
-                {
-                    var inList = original.AllSpeakers.FirstOrDefault(n => n.Id == speaker.Id);
-                    if (inList != null)
-                    {
-                        if (inList.Name != speaker.Name) inList.Name = speaker.Name;
-                        if (inList.Mode != speaker.Mode) inList.Mode = speaker.Mode;
-                        if (inList.OrdnerIndex != speaker.OrdnerIndex) inList.OrdnerIndex = speaker.OrdnerIndex;
-                        if (inList.Iso != speaker.Iso) inList.Iso = speaker.Iso;
-                    }
-                    else
-                    {
-                        speaker.ListOfSpeakers = original;
-                        original.AllSpeakers.Add(speaker);
-                    }
-                }
-                var removedSpeakers = original.AllSpeakers.Where(n => newList.AllSpeakers.All(a => a.Id != n.Id)).ToList();
-                removedSpeakers.ForEach(n => original.AllSpeakers.Remove(n));
-
-                // For some reason we get empty speaker elements
-                // lets clear them:
-                var lostSpeakers = _context.Speakers.Where(n => n.ListOfSpeakers == null);
-                _context.Speakers.RemoveRange(lostSpeakers);
-
-                if (original.ListClosed != newList.ListClosed) original.ListClosed = newList.ListClosed;
-                if (original.Name != newList.Name) original.Name = newList.Name;
-                if (original.PausedQuestionTime != newList.PausedQuestionTime) original.PausedQuestionTime = newList.PausedQuestionTime;
-                if (original.PausedSpeakerTime != newList.PausedSpeakerTime) original.PausedSpeakerTime = newList.PausedSpeakerTime;
-                if (original.QuestionsClosed != newList.QuestionsClosed) original.QuestionsClosed = newList.QuestionsClosed;
-                if (original.QuestionTime != newList.QuestionTime) original.QuestionTime = newList.QuestionTime;
-                if (original.SpeakerTime != newList.SpeakerTime) original.SpeakerTime = newList.SpeakerTime;
-                if (original.StartQuestionTime != newList.StartQuestionTime) original.StartQuestionTime = newList.StartQuestionTime;
-                if (original.StartSpeakerTime != newList.StartSpeakerTime) original.StartSpeakerTime = newList.StartSpeakerTime;
-                if (original.Status != newList.Status) original.Status = newList.Status;
-                this._context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Tracker error: " + ex.Message + ex.StackTrace);
-            }
-            
         }
 
         public ListOfSpeakers GetSpeakerlistByPublicId(string publicId)
@@ -126,6 +122,76 @@ namespace MUNityCore.Services
         public SpeakerlistService(DataHandlers.EntityFramework.MunityContext context)
         {
             _context = context;
+        }
+
+        internal async Task<bool> RemoveSpeaker(RemoveSpeakerBody body)
+        {
+            var speakerToRemove = await _context.Speakers
+                .FirstOrDefaultAsync(n => n.ListOfSpeakers.ListOfSpeakersId == body.ListOfSpeakersId &&
+            n.Id == body.SpeakerId);
+            if (speakerToRemove == null) return false;
+            _context.Speakers.Remove(speakerToRemove);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        internal async Task<bool> NextSpeaker(string listid)
+        {
+            var list = await this._context.ListOfSpeakers.Include(n => n.AllSpeakers).FirstOrDefaultAsync(n => n.ListOfSpeakersId == listid);
+            if (list == null) return false;
+            list.NextSpeaker();
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        internal async Task<bool> NextQuestion(string listid)
+        {
+            var list = await this._context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
+                .FirstOrDefaultAsync(n => n.ListOfSpeakersId == listid);
+            if (list == null) return false;
+            list.NextQuestion();
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        internal DateTime? ResumeSpeaker(ListOfSpeakersRequest body)
+        {
+            var list = this._context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return null;
+            list.ResumeSpeaker();
+            _ = this._context.SaveChangesAsync();
+            return list.StartSpeakerTime.ToUniversalTime();
+        }
+
+        internal DateTime? ResumeAnswer(ListOfSpeakersRequest body)
+        {
+            var list = this._context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return null;
+            list.StartAnswer();
+            _ = this._context.SaveChangesAsync();
+            return list.StartSpeakerTime.ToUniversalTime();
+        }
+
+        internal DateTime? ResumeQuestion(ListOfSpeakersRequest body)
+        {
+            var list = this._context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return null;
+            list.ResumeQuestion();
+            _ = this._context.SaveChangesAsync();
+            return list.StartQuestionTime.ToUniversalTime();
+        }
+
+        internal bool SetSettings(SetListSettingsBody body)
+        {
+            var list = this._context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return false;
+            list.SpeakerTime = body.SpeakerTime;
+            list.QuestionTime = body.QuestionTime;
+            return true;
         }
     }
 }
