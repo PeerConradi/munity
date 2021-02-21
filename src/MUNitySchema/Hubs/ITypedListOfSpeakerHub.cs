@@ -14,13 +14,6 @@ namespace MUNity.Hubs
     /// </summary>
     public interface ITypedListOfSpeakerHub
     {
-        /// <summary>
-        /// Somehting in this listOfSpeaker has changed. The Clients should reload the whole list or figure out what
-        /// has changed on their own.
-        /// </summary>
-        /// <param name="listOfSpeaker"></param>
-        /// <returns></returns>
-        Task SpeakerListChanged(ListOfSpeakers listOfSpeaker);
 
         /// <summary>
         /// The SpeakerTimer has started with the given seconds as remaining time. The clients should Sync their 
@@ -37,16 +30,15 @@ namespace MUNity.Hubs
         /// <returns></returns>
         Task QuestionTimerStarted(DateTime questionStartTime);
 
-        /// <summary>
-        /// The Status of the List Of Speaker has been set to STOPPED.
-        /// </summary>
-        /// <returns></returns>
-        Task TimerStopped();
-
         Task SpeakerAdded(Speaker speaker);
 
         Task QuestionAdded(Speaker question);
 
+        /// <summary>
+        /// Gets called when a speaker or question gets removed
+        /// </summary>
+        /// <param name="speakerId"></param>
+        /// <returns></returns>
         Task SpeakerRemoved(string speakerId);
 
         Task NextSpeaker();

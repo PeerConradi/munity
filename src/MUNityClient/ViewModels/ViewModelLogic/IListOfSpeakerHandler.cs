@@ -8,15 +8,17 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 {
     public interface IListOfSpeakerHandler
     {
-        event EventHandler<int> QuestionTimerStarted;
+        event EventHandler<DateTime?> QuestionTimerStarted;
 
-        event EventHandler<ListOfSpeakers> SpeakerListChanged;
-
-        event EventHandler<int> SpeakerTimerStarted;
+        event EventHandler<DateTime?> SpeakerTimerStarted;
 
         event EventHandler TimerStopped;
 
         event EventHandler<Speaker> SpeakerAdded;
+
+        event EventHandler<string> SpeakerRemoved;
+
+        event EventHandler NextSpeakerPushed;
 
         Task Init(ListOfSpeakerViewModel viewModel);
 

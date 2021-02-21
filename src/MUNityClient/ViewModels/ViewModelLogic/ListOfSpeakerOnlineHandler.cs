@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Json;
+using MUNity.Extensions.LoSExtensions;
 
 namespace MUNityClient.ViewModels.ViewModelLogic
 {
@@ -16,15 +17,17 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         private ListOfSpeakerViewModel _viewModel;
 
-        public event EventHandler<int> QuestionTimerStarted;
-
-        public event EventHandler<ListOfSpeakers> SpeakerListChanged;
-
-        public event EventHandler<int> SpeakerTimerStarted;
+        public event EventHandler<DateTime?> QuestionTimerStarted;
 
         public event EventHandler TimerStopped;
 
         public event EventHandler<Speaker> SpeakerAdded;
+
+        public event EventHandler<string> SpeakerRemoved;
+
+        public event EventHandler NextSpeakerPushed;
+
+        public event EventHandler<DateTime?> SpeakerTimerStarted;
 
         private HttpClient httpClient;
 
@@ -34,10 +37,34 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/slsocket").Build();
             await HubConnection.StartAsync();
             this.SpeakerAdded += ListOfSpeakerOnlineHandler_SpeakerAdded;
+            this.SpeakerRemoved += ListOfSpeakerOnlineHandler_SpeakerRemoved;
+            this.NextSpeakerPushed += ListOfSpeakerOnlineHandler_NextSpeaker;
+            this.SpeakerTimerStarted += ListOfSpeakerOnlineHandler_SpeakerTimerStarted;
 
             HubConnection.On<Speaker>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerAdded), (speaker) => this.SpeakerAdded?.Invoke(this, speaker));
-            
+            HubConnection.On<string>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerRemoved), (id) => this.SpeakerRemoved?.Invoke(this, id));
+            HubConnection.On(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.NextSpeaker), () => this.NextSpeakerPushed?.Invoke(this, new EventArgs()));
+            HubConnection.On<DateTime?>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerTimerStarted), (args) => this.SpeakerTimerStarted?.Invoke(this, args));
+
             httpClient = new HttpClient();
+        }
+
+        private void ListOfSpeakerOnlineHandler_SpeakerTimerStarted(object sender, DateTime? e)
+        {
+            this._viewModel.SourceList.ResumeSpeaker();
+            //this._viewModel.SourceList.StartSpeakerTime = e.Value;
+        }
+
+        private void ListOfSpeakerOnlineHandler_NextSpeaker(object sender, EventArgs e)
+        {
+            this._viewModel.SourceList.NextSpeaker();
+        }
+
+        private void ListOfSpeakerOnlineHandler_SpeakerRemoved(object sender, string e)
+        {
+            var speakerToRemove = this._viewModel.SourceList.AllSpeakers.FirstOrDefault(n => n.Id == e);
+            if (speakerToRemove != null)
+                this._viewModel.SourceList.AllSpeakers.Remove(speakerToRemove);
         }
 
         private void ListOfSpeakerOnlineHandler_SpeakerAdded(object sender, Speaker e)

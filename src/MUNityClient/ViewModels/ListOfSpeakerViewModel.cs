@@ -24,6 +24,8 @@ namespace MUNityClient.ViewModels
 
         public ViewModelLogic.IListOfSpeakerHandler Handler { get; set; }
 
+        public string CurrentMessage { get; set; } = "";
+
         public bool LowOnSpeakerTime => this.SourceList.RemainingSpeakerTime.TotalSeconds < 11;
 
         public bool OutOfSpeakerTime => this.SourceList.RemainingSpeakerTime.TotalSeconds < 0;

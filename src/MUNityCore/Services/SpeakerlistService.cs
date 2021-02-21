@@ -93,7 +93,7 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return false;
             list.AddQuestionSeconds(body.Seconds);
-            _ = _context.SaveChangesAsync();
+            this._context.SaveChanges();
             return true;
         }
 
@@ -103,7 +103,7 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return false;
             list.AddSpeakerSeconds(body.Seconds);
-            _ = _context.SaveChangesAsync();
+            this._context.SaveChanges();
             return true;
         }
 
@@ -157,30 +157,34 @@ namespace MUNityCore.Services
 
         internal DateTime? ResumeSpeaker(ListOfSpeakersRequest body)
         {
-            var list = this._context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            var list = this._context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
+                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return null;
             list.ResumeSpeaker();
-            _ = this._context.SaveChangesAsync();
+            this._context.SaveChanges();
             return list.StartSpeakerTime.ToUniversalTime();
         }
 
         internal DateTime? ResumeAnswer(ListOfSpeakersRequest body)
         {
             var list = this._context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return null;
             list.StartAnswer();
-            _ = this._context.SaveChangesAsync();
+            this._context.SaveChanges();
             return list.StartSpeakerTime.ToUniversalTime();
         }
 
         internal DateTime? ResumeQuestion(ListOfSpeakersRequest body)
         {
             var list = this._context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return null;
             list.ResumeQuestion();
-            _ = this._context.SaveChangesAsync();
+            this._context.SaveChanges();
             return list.StartQuestionTime.ToUniversalTime();
         }
 
@@ -200,6 +204,7 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return false;
             list.ClearCurrentSpeaker();
+            _context.SaveChanges();
             return true;
         }
 
@@ -209,6 +214,7 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return false;
             list.ClearCurrentQuestion();
+            _context.SaveChanges();
             return true;
         }
 
@@ -218,6 +224,7 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return false;
             list.Pause();
+            _context.SaveChanges();
             return true;
         }
     }

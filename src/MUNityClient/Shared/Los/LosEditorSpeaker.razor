@@ -108,6 +108,8 @@
 
     private Models.ListOfSpeaker.SpeakerToAdd NewSpeaker = new Models.ListOfSpeaker.SpeakerToAdd();
 
+    System.Timers.Timer timer;
+
     private void RemoveSpeaker(MUNity.Models.ListOfSpeakers.Speaker speaker)
     {
         this.ViewModel.Handler.Remove(speaker);
@@ -126,10 +128,32 @@
 
     protected override void OnInitialized()
     {
+        this.timer = new System.Timers.Timer(1000);
+        timer.Elapsed += TimerElapsed;
         if (this.ViewModel?.Handler != null)
         {
             this.ViewModel.Handler.SpeakerAdded += delegate { this.StateHasChanged(); };
+            this.ViewModel.Handler.SpeakerRemoved += delegate { this.StateHasChanged(); };
+            this.ViewModel.Handler.NextSpeakerPushed += delegate { this.StateHasChanged(); };
+            this.ViewModel.Handler.SpeakerTimerStarted += SpeakerTimerChanged;
+
+            if (this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
+                this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
+            {
+                this.timer.Start();
+            }
         }
         base.OnInitialized();
+    }
+
+    private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
+    {
+        this.StateHasChanged();
+    }
+
+    private void SpeakerTimerChanged(object sender, DateTime? time)
+    {
+        this.StateHasChanged();
+        timer.Start();
     }
 }

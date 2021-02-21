@@ -9,11 +9,12 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 {
     public class ListOfSpeakerOfflineHandler : IListOfSpeakerHandler
     {
-        public event EventHandler<int> QuestionTimerStarted;
-        public event EventHandler<ListOfSpeakers> SpeakerListChanged;
-        public event EventHandler<int> SpeakerTimerStarted;
+        public event EventHandler<DateTime?> QuestionTimerStarted;
+        public event EventHandler<DateTime?> SpeakerTimerStarted;
         public event EventHandler TimerStopped;
         public event EventHandler<Speaker> SpeakerAdded;
+        public event EventHandler<string> SpeakerRemoved;
+        public event EventHandler NextSpeakerPushed;
 
         public Task AddQuestion(SpeakerToAdd question)
         {
