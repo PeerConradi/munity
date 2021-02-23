@@ -146,7 +146,7 @@ namespace MUNityCore.Controllers
             if (result == null)
                 return NotFound();
 
-            _ = GetHubGroup(body)?.QuestionAdded(result);
+            _ = GetHubGroup(body)?.SpeakerAdded(result);
             return Ok();
         }
 

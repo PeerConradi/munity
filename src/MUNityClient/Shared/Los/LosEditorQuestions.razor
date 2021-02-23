@@ -91,6 +91,8 @@
     [Parameter]
     public ViewModels.ListOfSpeakerViewModel ViewModel { get; set; }
 
+    System.Timers.Timer timer;
+
     private Models.ListOfSpeaker.SpeakerToAdd NewCommentator = new Models.ListOfSpeaker.SpeakerToAdd();
 
     private EventCallback AddToQuestions()
@@ -102,6 +104,44 @@
         }
 
         return EventCallback.Empty;
+    }
+
+    protected override void OnInitialized()
+    {
+        this.timer = new System.Timers.Timer(1000);
+        timer.Elapsed += TimerElapsed;
+        if (this.ViewModel?.Handler != null)
+        {
+            this.ViewModel.Handler.SpeakerAdded += delegate { this.StateHasChanged(); };
+            this.ViewModel.Handler.SpeakerRemoved += delegate { this.StateHasChanged(); };
+            this.ViewModel.Handler.NextQuestionPushed += delegate { this.StateHasChanged(); };
+            this.ViewModel.Handler.QuestionTimerStarted += SpeakerTimerChanged;
+            this.ViewModel.Handler.ClearQuestion += delegate { this.StateHasChanged(); };
+            this.ViewModel.Handler.Paused += Paused;
+
+            if (this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
+            {
+                this.timer.Start();
+            }
+        }
+        base.OnInitialized();
+    }
+
+    private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
+    {
+        this.StateHasChanged();
+    }
+
+    private void Paused(object sender, EventArgs args)
+    {
+        this.StateHasChanged();
+        timer.Stop();
+    }
+
+    private void SpeakerTimerChanged(object sender, DateTime time)
+    {
+        this.StateHasChanged();
+        timer.Start();
     }
 
     private void RemoveSpeaker(MUNity.Models.ListOfSpeakers.Speaker speaker)

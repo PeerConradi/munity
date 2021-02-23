@@ -136,6 +136,9 @@
             this.ViewModel.Handler.SpeakerRemoved += delegate { this.StateHasChanged(); };
             this.ViewModel.Handler.NextSpeakerPushed += delegate { this.StateHasChanged(); };
             this.ViewModel.Handler.SpeakerTimerStarted += SpeakerTimerChanged;
+            this.ViewModel.Handler.AnswerTimerStarted += SpeakerTimerChanged;
+            this.ViewModel.Handler.ClearSpeaker += delegate { this.StateHasChanged(); };
+            this.ViewModel.Handler.Paused += Paused;
 
             if (this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
                 this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
@@ -151,7 +154,13 @@
         this.StateHasChanged();
     }
 
-    private void SpeakerTimerChanged(object sender, DateTime? time)
+    private void Paused(object sender, EventArgs args)
+    {
+        this.StateHasChanged();
+        timer.Stop();
+    }
+
+    private void SpeakerTimerChanged(object sender, DateTime time)
     {
         this.StateHasChanged();
         timer.Start();

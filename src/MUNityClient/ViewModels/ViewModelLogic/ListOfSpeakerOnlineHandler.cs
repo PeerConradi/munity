@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Json;
 using MUNity.Extensions.LoSExtensions;
+using MUNity.Hubs;
 
 namespace MUNityClient.ViewModels.ViewModelLogic
 {
@@ -17,17 +18,21 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         private ListOfSpeakerViewModel _viewModel;
 
-        public event EventHandler<DateTime?> QuestionTimerStarted;
-
+        public event EventHandler<DateTime> SpeakerTimerStarted;
+        public event EventHandler<DateTime> QuestionTimerStarted;
         public event EventHandler TimerStopped;
-
         public event EventHandler<Speaker> SpeakerAdded;
-
         public event EventHandler<string> SpeakerRemoved;
-
+        public event EventHandler<Speaker> QuestionAdded;
         public event EventHandler NextSpeakerPushed;
-
-        public event EventHandler<DateTime?> SpeakerTimerStarted;
+        public event EventHandler NextQuestionPushed;
+        public event EventHandler<DateTime> AnswerTimerStarted;
+        public event EventHandler<MUNity.Schema.ListOfSpeakers.IListTimeSettings> SettingsChanged;
+        public event EventHandler<int> QuestionSecondsAdded;
+        public event EventHandler<int> SpeakerSecondsAdded;
+        public event EventHandler ClearSpeaker;
+        public event EventHandler ClearQuestion;
+        public event EventHandler Paused;
 
         private HttpClient httpClient;
 
@@ -39,17 +44,59 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             this.SpeakerAdded += ListOfSpeakerOnlineHandler_SpeakerAdded;
             this.SpeakerRemoved += ListOfSpeakerOnlineHandler_SpeakerRemoved;
             this.NextSpeakerPushed += ListOfSpeakerOnlineHandler_NextSpeaker;
+            this.NextQuestionPushed += ListOfSpeakerOnlineHandler_NextQuestionPushed;
             this.SpeakerTimerStarted += ListOfSpeakerOnlineHandler_SpeakerTimerStarted;
+            this.QuestionTimerStarted += ListOfSpeakerOnlineHandler_QuestionTimerStarted;
+            this.AnswerTimerStarted += ListOfSpeakerOnlineHandler_AnswerTimerStarted;
+            this.ClearSpeaker += ListOfSpeakerOnlineHandler_ClearSpeaker;
+            this.ClearQuestion += ListOfSpeakerOnlineHandler_ClearQuestion;
+            this.Paused += ListOfSpeakerOnlineHandler_Paused;
 
-            HubConnection.On<Speaker>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerAdded), (speaker) => this.SpeakerAdded?.Invoke(this, speaker));
-            HubConnection.On<string>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerRemoved), (id) => this.SpeakerRemoved?.Invoke(this, id));
-            HubConnection.On(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.NextSpeaker), () => this.NextSpeakerPushed?.Invoke(this, new EventArgs()));
-            HubConnection.On<DateTime?>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerTimerStarted), (args) => this.SpeakerTimerStarted?.Invoke(this, args));
+            HubConnection.On<Speaker>(nameof(ITypedListOfSpeakerHub.SpeakerAdded), (speaker) => this.SpeakerAdded?.Invoke(this, speaker));
+            HubConnection.On<string>(nameof(ITypedListOfSpeakerHub.SpeakerRemoved), (id) => this.SpeakerRemoved?.Invoke(this, id));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.NextSpeaker), () => this.NextSpeakerPushed?.Invoke(this, new EventArgs()));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.NextQuestion), () => this.NextQuestionPushed?.Invoke(this, new EventArgs()));
+            HubConnection.On<DateTime>(nameof(ITypedListOfSpeakerHub.SpeakerTimerStarted), (args) => this.SpeakerTimerStarted?.Invoke(this, args));
+            HubConnection.On<DateTime>(nameof(ITypedListOfSpeakerHub.QuestionTimerStarted), (a) => QuestionTimerStarted?.Invoke(this, a));
+            HubConnection.On<DateTime>(nameof(ITypedListOfSpeakerHub.AnswerTimerStarted), (a) => AnswerTimerStarted?.Invoke(this, a));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.ClearSpeaker), () => ClearSpeaker?.Invoke(this, new EventArgs()));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.ClearQuestion), () => ClearQuestion?.Invoke(this, new EventArgs()));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.Pause), () => Paused?.Invoke(this, new EventArgs()));
 
             httpClient = new HttpClient();
         }
 
-        private void ListOfSpeakerOnlineHandler_SpeakerTimerStarted(object sender, DateTime? e)
+        private void ListOfSpeakerOnlineHandler_Paused(object sender, EventArgs e)
+        {
+            this._viewModel.SourceList.Pause();
+        }
+
+        private void ListOfSpeakerOnlineHandler_ClearQuestion(object sender, EventArgs e)
+        {
+            this._viewModel.SourceList.ClearCurrentQuestion();
+        }
+
+        private void ListOfSpeakerOnlineHandler_ClearSpeaker(object sender, EventArgs e)
+        {
+            this._viewModel.SourceList.ClearCurrentSpeaker();
+        }
+
+        private void ListOfSpeakerOnlineHandler_AnswerTimerStarted(object sender, DateTime e)
+        {
+            this._viewModel.SourceList.StartAnswer();
+        }
+
+        private void ListOfSpeakerOnlineHandler_QuestionTimerStarted(object sender, DateTime e)
+        {
+            this._viewModel.SourceList.ResumeQuestion();
+        }
+
+        private void ListOfSpeakerOnlineHandler_NextQuestionPushed(object sender, EventArgs e)
+        {
+            this._viewModel.SourceList.NextQuestion();
+        }
+
+        private void ListOfSpeakerOnlineHandler_SpeakerTimerStarted(object sender, DateTime e)
         {
             this._viewModel.SourceList.ResumeSpeaker();
             //this._viewModel.SourceList.StartSpeakerTime = e.Value;

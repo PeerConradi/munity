@@ -32,8 +32,6 @@ namespace MUNity.Hubs
 
         Task SpeakerAdded(Speaker speaker);
 
-        Task QuestionAdded(Speaker question);
-
         /// <summary>
         /// Gets called when a speaker or question gets removed
         /// </summary>
