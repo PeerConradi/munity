@@ -37,6 +37,21 @@ namespace MUNityCore.Services
             }
         }
 
+        internal SimulationStatus SetStatus(SetSimulationStatusDto body)
+        {
+            var simulation = _context.Simulations.FirstOrDefault(n => n.SimulationId == body.SimulationId);
+            if (simulation == null) return null;
+            var status = new SimulationStatus()
+            {
+                Simulation = simulation,
+                StatusText = body.StatusText,
+                StatusTime = DateTime.Now
+            };
+            simulation.Statuses.Add(status);
+            this._context.SaveChanges();
+            return status;
+        }
+
         public void RemoveHubs(IEnumerable<SimulationHubConnection> hubs)
         {
             try
@@ -89,7 +104,7 @@ namespace MUNityCore.Services
                 Role = null,
                 Simulation = simulation,
             };
-            simulation.Users.Add(ownerUser);
+            _context.SimulationUser.Add(ownerUser);
             _context.SaveChanges();
             return ownerUser;
         }
@@ -100,7 +115,7 @@ namespace MUNityCore.Services
             return simulation.ToSimulationDto();
         }
 
-        public SimulationUser CreateUser(Simulation simulation, string displayName)
+        public SimulationUser CreateUser(int simulationId, string displayName)
         {
             var baseUser = new SimulationUser()
             {
@@ -109,10 +124,15 @@ namespace MUNityCore.Services
                 CanEditResolution = false,
                 CanSelectRole = false,
                 DisplayName = displayName,
-                Role = null,
-                Simulation = simulation
+                Role = null
             };
-            simulation.Users.Add(baseUser);
+            // I have no idea why this is necessary but this will fix
+            // that the users are suddenly empty...
+            var users = _context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId).ToList();
+            var simulation = _context.Simulations.Include(n => n.Users).FirstOrDefault(n => n.SimulationId == simulationId);
+            simulation.Users.AddRange(users);
+            baseUser.Simulation = simulation;
+            _context.SimulationUser.Add(baseUser);
             _context.SaveChanges();
             return baseUser;
         }
@@ -288,7 +308,7 @@ namespace MUNityCore.Services
                 RoleType = RoleTypes.Delegate,
                 Simulation = simulation,
             };
-            simulation.Roles.Add(role);
+            _context.SimulationRoles.Add(role);
             this._context.SaveChanges();
             return role;
         }
@@ -326,11 +346,19 @@ namespace MUNityCore.Services
 
         #region Validation
 
-        internal Task<bool> IsTokenValidAndUserAdmin(SimulationRequest requestSchema)
+        public Task<bool> IsTokenValidAndUserAdmin(SimulationRequest requestSchema)
         {
             return _context.SimulationUser.AnyAsync(n => 
             n.Simulation.SimulationId == requestSchema.SimulationId && 
             n.Token == requestSchema.Token &&
+            n.CanCreateRole);
+        }
+
+        public async Task<bool> IsTokenValidAndUserAdmin(int simulationId, string token)
+        {
+            return await _context.SimulationUser.AnyAsync(n =>
+            n.Simulation.SimulationId == simulationId &&
+            n.Token == token &&
             n.CanCreateRole);
         }
 
@@ -341,14 +369,14 @@ namespace MUNityCore.Services
             n.Token == requestSchema.Token);
         }
 
-        internal Task<bool> IsTokenValid(int simulationId, string token)
+        public Task<bool> IsTokenValid(int simulationId, string token)
         {
             return _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == simulationId &&
             n.Token == token);
         }
 
-        internal Task<bool> IsTokenValidAndUserDelegate(SimulationRequest requestSchema)
+        public Task<bool> IsTokenValidAndUserDelegate(SimulationRequest requestSchema)
         {
             return _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == requestSchema.SimulationId &&
@@ -357,7 +385,7 @@ namespace MUNityCore.Services
             n.Role.RoleType == RoleTypes.Delegate);
         }
 
-        internal Task<bool> IsTokenValidAndUserChair(SimulationRequest requestSchema)
+        public Task<bool> IsTokenValidAndUserChair(SimulationRequest requestSchema)
         {
             return _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == requestSchema.SimulationId &&
@@ -366,13 +394,23 @@ namespace MUNityCore.Services
             n.Role.RoleType == RoleTypes.Chairman);
         }
 
-        internal Task<bool> IsTokenValidAndUserChair(int simulationId, string token)
+        public Task<bool> IsTokenValidAndUserChair(int simulationId, string token)
         {
             return _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == simulationId &&
             n.Token == token &&
             n.Role != null &&
             n.Role.RoleType == RoleTypes.Chairman);
+        }
+
+        public Task<bool> IsTokenValidAndUserChairOrOwner(int simulationId, string token)
+        {
+            return _context.SimulationUser.AnyAsync(n =>
+            n.Simulation.SimulationId == simulationId &&
+            n.Token == token &&
+            (n.CanCreateRole ||
+            n.Role != null &&
+            n.Role.RoleType == RoleTypes.Chairman));
         }
 
         #endregion
@@ -617,6 +655,13 @@ namespace MUNityCore.Services
         {
             return _context.SimulationPetitionTypes.Include(n => n.PetitionType)
                 .Where(n => n.Simulation.SimulationId == simulationId).ToList();
+        }
+
+        internal SimulationStatus GetCurrentStatus(int simulationId)
+        {
+            return _context.SimulationStatuses
+                .OrderByDescending(n => n.StatusTime)
+                .FirstOrDefault(n => n.Simulation.SimulationId == simulationId);
         }
     }
 }

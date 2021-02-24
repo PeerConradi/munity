@@ -55,9 +55,15 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<SimulationListItemDto>> GetListOfSimulations()
+        public ActionResult<List<SimulationListItemDto>> GetListOfSimulations()
         {
-            var result = this._simulationService.GetSimulations().Select(n => n);
+            var result = this._simulationService.GetSimulations().Select(n => new SimulationListItemDto()
+            {
+                Name = n.Name,
+                Phase = n.Phase,
+                SimulationId = n.SimulationId,
+                UsingPassword = !string.IsNullOrEmpty(n.Password)
+            });
             return Ok(result);
         }
 
@@ -132,11 +138,12 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<SimulationUserAdminDto>> CreateUser([FromHeader]string simsimtoken, int id)
         {
-            var isAllowed = await this._simulationService.IsTokenValidAndUserChair(id, simsimtoken);
-            if (!isAllowed) return Forbid();
-            var simulation = await this._simulationService.GetSimulation(id);
-            if (simulation == null) return NotFound();
-            var newUser = this._simulationService.CreateUser(simulation, "");
+            //var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
+            //if (!isAllowed) return Forbid();
+            var newUser = this._simulationService.CreateUser(id, "");
+            //var newUser = new SimulationUser();
+            if (newUser == null)
+                return NotFound();
             return Ok(newUser.ToSimulationUserAdminDto());
         }
 
@@ -145,10 +152,10 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<SimulationUserAdminDto> GetUsersAsAdmin([FromHeader]string simsimtoken, int id)
+        public async Task<ActionResult<List<SimulationUserAdminDto>>> GetUsersAsAdmin([FromHeader]string simsimtoken, int id)
         {
-            var user = this._simulationService.GetSimulationUser(id, simsimtoken);
-            if (user == null || user.CanCreateRole == false) return Forbid();
+            var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
+            if (!isAllowed) return Forbid();
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
                 .Include(n => n.HubConnections)

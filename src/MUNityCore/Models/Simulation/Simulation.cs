@@ -20,11 +20,6 @@ namespace MUNityCore.Models.Simulation
 
         public MUNity.Schema.Simulation.LobbyModes LobbyMode { get; set; }
 
-        /// <summary>
-        /// Momentaner Status wie Sitzung, Abstimmung oder informelle Sitzung Pause etc. als Text.
-        /// </summary>
-        public string Status { get; set; }
-
         public DateTime? LastStatusChange { get; set; }
 
         /// <summary>
@@ -32,12 +27,14 @@ namespace MUNityCore.Models.Simulation
         /// </summary>
         public string Password { get; set; }
 
-        public List<SimulationRole> Roles { get; set; } = new List<SimulationRole>();
+        public List<SimulationRole> Roles { get; set; }
 
-        public List<SimulationUser> Users { get; set; } = new List<SimulationUser>();
+        public List<SimulationUser> Users { get; set; }
 
         // Chat vorerst nicht speichern.
         //public List<AllChatMessage> AllChat { get; set; }
+
+        public List<SimulationStatus> Statuses { get; set; }
 
         public List<AgendaItem> AgendaItems { get; set; }
 
@@ -55,6 +52,9 @@ namespace MUNityCore.Models.Simulation
 
         public Simulation()
         {
+            //Users = new List<SimulationUser>();
+            //Roles = new List<SimulationRole>();
+            //Statuses = new List<SimulationStatus>();
             // Legacy Code:
             //Requests = new List<SimSimRequestModel>();
         }
