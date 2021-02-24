@@ -2,25 +2,31 @@
 @inject NavigationManager navigationManager;
 @page "/redelisten"
 
-<div class="row m-0 p-0 d-flex justify-content-center">
-    <div class="card col-6 col-md-12 p-0 my-3">
+<div class="row m-0 p-0 d-flex justify-content-around">
+    <div class="card col-11 col-md-5 p-0 my-3">
         <div class="card-body pb-0 px-0 row m-0 d-flex justify-content-center">
-            <i class="fas fa-5x fa-list-alt text-primary mb-4"></i>
+            <i class="fas fa-5x fa-cloud text-primary mb-4"></i>
             <p class="col-12 text-justify">
                 Erstelle eine Redeliste um die verschiedenen Teilnehmenden und ihre Redebeiträge anzeigen und verwalten zu können.
-                Die Redelisten sind dabei offline und nicht über verschiedene Geräte oder Browser hinweg abrufbar.
+                Eine Online Redeliste kann über verschiedene Geräte hinweg angezeigt werden und wird mit unserem Server synchronisiert.
+                Für Simulationen ist eine online Redeliste notwendig.
             </p>
-            <button @onclick="() => CreateListOfSpeakers()" class="btn btn-success m-0 col-12">Redeliste erstellen</button>
+            <button @onclick="() => CreateListOnline()" class="btn btn-success m-0 col-12">Cloud Redeliste Erstellen</button>
         </div>
     </div>
 
-    <div class="card col-6 col-md-12 p-0 my-3">
+    <div class="card col-11 col-md-5 p-0 my-3">
         <div class="card-body pb-0 px-0 row m-0 d-flex justify-content-center">
-            <i class="fas fa-5x fa-list-alt text-primary mb-4"></i>
+            <i class="fas fa-5x fa-download text-primary mb-4"></i>
             <p class="col-12 text-justify">
-                Erstelle eine Redeliste, welche auch auf anderen Geräte abgerufen werden kann und mit unserem Server syncronisiert wird.
+                Eine lokale Redeliste ist eine Redeliste in deinem Browser. Sie ist nur für dich in verschiedenen
+                Tabs
+                des selben Browsers aufrufbar, nicht jedoch in anderen
+                Browsern oder auf anderen Geräten.
+                Verwende diese Option nur
+                wenn keine Internetverbindung besteht, oder zum Ausprobieren der Anwendung.
             </p>
-            <button @onclick="() => CreateListOnline()" class="btn btn-success m-0 col-12">Online Redeliste</button>
+            <button @onclick="() => CreateListOfSpeakers()" class="btn btn-success m-0 col-12">Lokale Redeliste erstellen</button>
         </div>
     </div>
 </div>
