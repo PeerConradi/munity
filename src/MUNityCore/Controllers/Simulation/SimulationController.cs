@@ -135,7 +135,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<SimulationUserAdminDto>>> GetUsersAsAdmin([FromHeader]string simsimtoken, int id)
+        public async Task<ActionResult<List<SimulationUserAdminDto>>> GetUsersAsAdmin([FromHeader] string simsimtoken, int id)
         {
             var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
             if (!isAllowed) return Forbid();
@@ -149,7 +149,7 @@ namespace MUNityCore.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<ActionResult<bool>> IsUserOnline([FromHeader]string simsimtoken, int simulationId, int userId)
+        public async Task<ActionResult<bool>> IsUserOnline([FromHeader] string simsimtoken, int simulationId, int userId)
         {
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
             if (!isAllowed) return Forbid();
@@ -159,7 +159,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<SimulationUserDefaultDto>> GetUsersDefault([FromHeader]string simsimtoken, int id)
+        public async Task<ActionResult<SimulationUserDefaultDto>> GetUsersDefault([FromHeader] string simsimtoken, int id)
         {
             var isAllowed = await this._simulationService.IsTokenValid(id, simsimtoken);
             if (!isAllowed) return Forbid();
@@ -174,7 +174,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<SimulationAuthDto> GetSimulationAuth([FromHeader]string simsimtoken, int id)
+        public ActionResult<SimulationAuthDto> GetSimulationAuth([FromHeader] string simsimtoken, int id)
         {
             var user = this._simulationService.GetSimulationUser(id, simsimtoken);
             if (user == null) return NotFound();
@@ -184,7 +184,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> PickRole([FromHeader]string simsimtoken, int simulationId, int roleId)
+        public async Task<ActionResult> PickRole([FromHeader] string simsimtoken, int simulationId, int roleId)
         {
             var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
             if (simulation == null) return NotFound();
@@ -201,7 +201,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> SetUserRole([FromHeader]string simsimtoken, int simulationId, int userId, int roleId)
+        public async Task<ActionResult> SetUserRole([FromHeader] string simsimtoken, int simulationId, int userId, int roleId)
         {
             var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
             if (simulation == null) return NotFound();
@@ -226,7 +226,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> ApplyPreset([FromHeader]string simsimtoken, int simulationId, string presetId)
+        public async Task<ActionResult> ApplyPreset([FromHeader] string simsimtoken, int simulationId, string presetId)
         {
             var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
             if (simulation == null) return NotFound();
@@ -241,7 +241,7 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult> RemoveSimulationUser([FromHeader]string simsimtoken, int simulationId, int userId)
+        public async Task<ActionResult> RemoveSimulationUser([FromHeader] string simsimtoken, int simulationId, int userId)
         {
             var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
             if (simulation == null) return NotFound();
@@ -271,7 +271,7 @@ namespace MUNityCore.Controllers
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<ActionResult> SetPhase([FromBody]SetPhaseRequest body)
+        public async Task<ActionResult> SetPhase([FromBody] SetPhaseRequest body)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!isAllowed) return Forbid();
@@ -283,7 +283,22 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
-        
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<ActionResult<ResolutionSmallInfo>> CreateResolution([FromServices]IResolutionService resaService, [FromBody]SimulationRequest body)
+        {
+            var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
+            if (!isAllowed) return Forbid();
+
+            var resolution = await resaService.CreateSimulationResolution(body.SimulationId);
+            var smallInfo = new ResolutionSmallInfo()
+            {
+                LastChangedTime = resolution.LastChangeTime,
+                Name = resolution.Name,
+                ResolutionId = resolution.ResolutionId
+            };
+            return Ok(smallInfo);
+        }
 
         [Route("[action]")]
         [HttpGet]

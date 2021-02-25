@@ -49,6 +49,25 @@ namespace MUNityCore.Services
             return resolution;
         }
 
+        public async Task<ResolutionAuth> CreateSimulationResolution(int simulationId)
+        {
+            var simulation = _munityContext.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
+            if (simulation == null) return null;
+            var resolution = new Resolution();
+            resolution.ResolutionId = Util.Tools.IdGenerator.RandomString(36);
+            resolution.Header.Topic = "Neue Resolution";
+
+            // Save in MongoDb
+            await _resolutions.InsertOneAsync(resolution);
+            var auth = new ResolutionAuth(resolution) { AllowPublicEdit = true, AllowPublicRead = true };
+            auth.Name = "Neue Resolution";
+            auth.Simulation = simulation;
+            await _munityContext.ResolutionAuths.AddAsync(auth);
+            await _munityContext.SaveChangesAsync();
+
+            return auth;
+        }
+
         public async Task<Resolution> GetResolution(string id)
         {
             return await _resolutions.Find(n => n.ResolutionId == id).FirstOrDefaultAsync();
