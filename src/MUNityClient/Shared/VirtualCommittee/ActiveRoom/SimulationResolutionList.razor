@@ -1,6 +1,6 @@
 ﻿@inject MUNityClient.Services.SimulationService simulationService;
 
-@if (Resolutions == null)
+@if (SimulationViewModel.Resolutions == null)
 {
     <MUNityClient.Shared.Bootstrap.Spinner DisplayText="Resolutionen werden geladen" />
 }
@@ -16,7 +16,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @if (!Resolutions.Any())
+                @if (!SimulationViewModel.Resolutions.Any())
                 {
                     <tr>
                         <td rowspan="3">Keine Resolutionen gefunden</td>
@@ -24,7 +24,7 @@ else
                 }
                 else
                 {
-                    @foreach (var resolution in Resolutions)
+                    @foreach (var resolution in SimulationViewModel.Resolutions)
                     {
                         <tr>
                             <td>@resolution.Name</td>
@@ -39,7 +39,7 @@ else
     {
         <div class="col-12">
             @* TODO! *@
-            <button class="btn btn-block btn-success" disabled>Neue Resolution</button>
+            <button class="btn btn-block btn-success" @onclick="() => CreateNew()" disabled="@creatingNew">Neue Resolution</button>
         </div>
     }
 
@@ -50,16 +50,25 @@ else
     [Parameter]
     public MUNityClient.ViewModels.SimulationViewModel SimulationViewModel { get; set; }
 
-    private List<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo> Resolutions { get; set; } = null;
-
-    
+    private bool creatingNew = false;
 
     protected override async Task OnInitializedAsync()
     {
         if (SimulationViewModel != null)
         {
-            Resolutions = await simulationService.GetSimulationResolutionInfos(SimulationViewModel.Simulation.SimulationId);
+            await this.SimulationViewModel.UpdateResolutions();
+            this.StateHasChanged();
+            SimulationViewModel.Resolutions.CollectionChanged += delegate { this.StateHasChanged(); };
         }
         await base.OnInitializedAsync();
+    }
+
+    private async Task CreateNew()
+    {
+        creatingNew = true;
+        this.StateHasChanged();
+        await this.SimulationViewModel.CreateResolution();
+        this.creatingNew = false;
+        this.StateHasChanged();
     }
 }

@@ -11,6 +11,7 @@ using MUNityClient.Services;
 using System.Net.Http;
 using MUNityClient.Extensions.Simulation;
 using System.Net.Http.Json;
+using MUNitySchema.Schema.Simulation.Resolution;
 
 namespace MUNityClient.ViewModels
 {
@@ -74,6 +75,33 @@ namespace MUNityClient.ViewModels
         public event EventHandler<NotificationViewModel> NotificationChanged;
 
 
+        public async Task CreateResolution()
+        {
+            var client = new HttpClient();
+            var body = new SimulationRequest()
+            {
+                SimulationId = this.Simulation.SimulationId,
+                Token = this.Token
+            };
+            var result = await client.PostAsJsonAsync(Program.API_URL + "/api/Simulation/CreateResolution", body);
+            if (result.IsSuccessStatusCode)
+            {
+                var newResolution = await result.Content.ReadFromJsonAsync<ResolutionSmallInfo>();
+                if (newResolution != null)
+                {
+                    this.Resolutions.Add(newResolution);
+                }
+                else
+                {
+                    this.ShowError("Cast Fehler", "Resolution wurde nicht erstellt, bei dem Erzeugen des Elements ist ein Fehler aufgetreten");
+                }
+            }
+            else
+            {
+                this.ShowError("Fehler", $"Resolution wurde nicht erstellt {result.StatusCode}");
+            }
+        }
+
         internal async Task UpdatePetitionTypes()
         {
             await this._simulationService.SecurePetitionTypes(this);
@@ -119,6 +147,18 @@ namespace MUNityClient.ViewModels
                 if (_currentResolutionId == value) return;
                 _currentResolutionId = value;
                 this.CurrentResolutionChanged?.Invoke(this, value);
+            }
+        }
+
+        public ObservableCollection<ResolutionSmallInfo> Resolutions { get; set; } = new ObservableCollection<ResolutionSmallInfo>();
+
+        public async Task UpdateResolutions()
+        {
+            this.Resolutions.Clear();
+            var resolutions = await _simulationService.GetSimulationResolutionInfos(this.Simulation.SimulationId);
+            foreach(var item in resolutions)
+            {
+                this.Resolutions.Add(item);
             }
         }
 

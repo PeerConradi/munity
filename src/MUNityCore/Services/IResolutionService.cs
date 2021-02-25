@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using MUNityCore.Models.Resolution.V2;
 using MUNity.Models.Resolution;
+using MUNity.Schema.Simulation;
 
 namespace MUNityCore.Services
 {
@@ -29,5 +30,7 @@ namespace MUNityCore.Services
 
         Task<bool> ResolutionExists(string id);
         Task SetNameInDb(string resolutionId, string text);
+
+        Task<ResolutionAuth> CreateSimulationResolution(int simulationId);
     }
 }
