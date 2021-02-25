@@ -55,9 +55,15 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<SimulationListItemDto>> GetListOfSimulations()
+        public ActionResult<List<SimulationListItemDto>> GetListOfSimulations()
         {
-            var result = this._simulationService.GetSimulations().Select(n => n);
+            var result = this._simulationService.GetSimulations().Select(n => new SimulationListItemDto()
+            {
+                Name = n.Name,
+                Phase = n.Phase,
+                SimulationId = n.SimulationId,
+                UsingPassword = !string.IsNullOrEmpty(n.Password)
+            });
             return Ok(result);
         }
 
@@ -126,29 +132,13 @@ namespace MUNityCore.Controllers
             return Ok(this._simulationService.InitListOfSpeakers(simulationId));
         }
 
-
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<SimulationUserAdminDto>> CreateUser([FromHeader]string simsimtoken, int id)
+        public async Task<ActionResult<List<SimulationUserAdminDto>>> GetUsersAsAdmin([FromHeader]string simsimtoken, int id)
         {
-            var isAllowed = await this._simulationService.IsTokenValidAndUserChair(id, simsimtoken);
+            var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
             if (!isAllowed) return Forbid();
-            var simulation = await this._simulationService.GetSimulation(id);
-            if (simulation == null) return NotFound();
-            var newUser = this._simulationService.CreateUser(simulation, "");
-            return Ok(newUser.ToSimulationUserAdminDto());
-        }
-
-        
-
-        [HttpGet]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public ActionResult<SimulationUserAdminDto> GetUsersAsAdmin([FromHeader]string simsimtoken, int id)
-        {
-            var user = this._simulationService.GetSimulationUser(id, simsimtoken);
-            if (user == null || user.CanCreateRole == false) return Forbid();
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
                 .Include(n => n.HubConnections)
@@ -179,18 +169,6 @@ namespace MUNityCore.Controllers
                 .Include(n => n.Simulation).ToList();
             var result = users.Select(n => n.AsSimulationUserDefaultDto());
             return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<SimulationRoleDto>>> GetSimulationRoles([FromHeader]string simsimtoken, int id)
-        {
-            var isAllowed = await this._simulationService.IsTokenValid(id, simsimtoken);
-            if (!isAllowed) return Forbid();
-            var roles = await this._simulationService.GetSimulationRoles(id);
-            var models = roles.Select(n => n.ToSimulationRoleDto());
-            return Ok(models);
         }
 
         [HttpGet]
@@ -295,7 +273,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         public async Task<ActionResult> SetPhase([FromBody]SetPhaseRequest body)
         {
-            var isAllowed = await this._simulationService.IsTokenValidAndUserChair(body);
+            var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!isAllowed) return Forbid();
             var hasChanged = await this._simulationService.SetPhase(body.SimulationId, body.SimulationPhase);
             if (hasChanged)

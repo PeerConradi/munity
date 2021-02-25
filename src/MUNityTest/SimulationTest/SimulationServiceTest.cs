@@ -82,11 +82,10 @@ namespace MUNityTest.SimulationTest
 
         [Test]
         [Order(5)]
-        public async Task TestCreateNewUser()
+        public void TestCreateNewUser()
         {
             var service = new SimulationService(_context);
-            var simulation = await service.GetSimulation(simulationId);
-            var user = service.CreateUser(simulation, "User1");
+            var user = service.CreateUser(simulationId, "User1");
             Assert.NotNull(user);
         }
 

@@ -1,0 +1,88 @@
+﻿@using MUNity.Models.ListOfSpeakers;
+@using MUNity.Extensions.LoSExtensions;
+@using System.Timers;
+
+@inject MUNityClient.Services.ListOfSpeakerService listOfSpeakerService;
+@inject IJSRuntime jsRuntime
+
+@if (ViewModel != null && Settings != null)
+{
+    <!-- for debugging -->
+    <div class="row">
+        <p>@ViewModel.SourceList.Status</p>
+    </div>
+
+    if(!string.IsNullOrEmpty(ViewModel.CurrentMessage))
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning">@ViewModel.CurrentMessage</div>
+            </div>
+        </div>
+    }
+
+    <div class="row m-0 px-2 col-12 d-flex justify-content-center">
+        @* Settings/Alert Row *@
+        <div class="row col-12 m-0 p-0 d-flex align-items-center">
+            <div class="col row">
+                @if (invalidFormatSpeakerTime)
+                {
+                    <div class="col alert alert-danger my-0 ml-0 mr-3" role="alert">
+                        Formatfehler in der Sprecher Zeitangabe!
+                    </div>
+                }
+                @if (invalidFormatQuestionTime)
+                {
+                    <div class="col alert alert-danger my-0 mr-0 ml-3" role="alert">
+                        Formatfehler in der Frage Zeitangabe!
+                    </div>
+                }
+            </div>
+            <div class="col-5 col-md-2 d-flex justify-content-end">
+                <i type="button" title="Lese Ansicht öffnen" class="fas fa-external-link-alt fa-lg p-2"
+                   @onclick="() => OpenReaderSpectatorView()"></i>
+                <i type="button" title="Redezeiten einstellen" class="fas fa-cog fa-lg p-2"
+                   @onclick="() => SpeakingTimeConfigModal.Open()"></i>
+            </div>
+        </div>
+        @* Speaker List Card *@
+        <div class="card col-12 mx-0 mt-3 p-0">
+            <div class="card-body row col-12 m-0 p-0">
+                @* Speakers *@
+                <LosEditorSpeaker ViewModel="@ViewModel" />
+                @* Comments *@
+                <LosEditorQuestions ViewModel="@ViewModel" />
+            </div>
+        </div>
+        <div class="col-12 mx-0 mt-3 p-0">
+
+        </div>
+    </div>
+
+
+    <MUNityClient.Shared.Bootstrap.Modal Title="Sprechzeiten konfigurieren" @ref="SpeakingTimeConfigModal"
+                                         OnSubmitCallback="SaveSettings">
+        <EditForm Model="@Settings">
+            <div class="form-group">
+                <label>Redezeit</label>
+                <InputText @bind-Value="Settings.Speakertime" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Zeit für Fragen, Kurzbemerkungen und Antworten</label>
+                <InputText @bind-Value="Settings.Questiontime" class="form-control" />
+            </div>
+        </EditForm>
+    </MUNityClient.Shared.Bootstrap.Modal>
+
+}
+
+<style>
+    .list-head .hover-enabled {
+        transition: .3s ease;
+        opacity: 0;
+    }
+
+    .list-head:hover .hover-enabled {
+        opacity: 1;
+    }
+</style>

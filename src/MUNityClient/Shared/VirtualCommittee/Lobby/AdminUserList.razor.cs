@@ -29,13 +29,15 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
 
         protected override async Task OnInitializedAsync()
         {
-            this.Users = await _simulationService.GetUserSetups(ViewModel.Simulation.SimulationId);
             if (ViewModel != null)
             {
+                await ViewModel.UpdateAdminUserList();
+
                 ViewModel.RolesChanged += delegate { this.StateHasChanged(); };
                 ViewModel.UserConnected += delegate { this.StateHasChanged(); };
                 ViewModel.UserDisconnected += delegate { this.StateHasChanged(); };
                 ViewModel.UserRoleChanged += delegate { this.StateHasChanged(); };
+                ViewModel.AdminUsers.CollectionChanged += delegate { this.StateHasChanged(); };
             }
         }
 
@@ -48,11 +50,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
 
         private async Task NewUser()
         {
-            var user = await _simulationService.CreateUser(this.ViewModel.Simulation.SimulationId);
-            if (user != null)
-            {
-                Users.Add(user);
-            }
+            await this.ViewModel.CreateUser();
         }
 
         private void CopyListToClipboard()

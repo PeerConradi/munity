@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using MUNity.Models.ListOfSpeakers;
+using MUNityClient.Models.ListOfSpeaker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
+using MUNity.Extensions.LoSExtensions;
+using MUNity.Hubs;
 
 namespace MUNityClient.ViewModels.ViewModelLogic
 {
@@ -13,50 +18,141 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         private ListOfSpeakerViewModel _viewModel;
 
-        public event EventHandler<int> QuestionTimerStarted;
-
-        public event EventHandler<ListOfSpeakers> SpeakerListChanged;
-
-        public event EventHandler<int> SpeakerTimerStarted;
-
+        public event EventHandler<DateTime> SpeakerTimerStarted;
+        public event EventHandler<DateTime> QuestionTimerStarted;
         public event EventHandler TimerStopped;
+        public event EventHandler<Speaker> SpeakerAdded;
+        public event EventHandler<string> SpeakerRemoved;
+        public event EventHandler<Speaker> QuestionAdded;
+        public event EventHandler NextSpeakerPushed;
+        public event EventHandler NextQuestionPushed;
+        public event EventHandler<DateTime> AnswerTimerStarted;
+        public event EventHandler<MUNity.Schema.ListOfSpeakers.IListTimeSettings> SettingsChanged;
+        public event EventHandler<int> QuestionSecondsAdded;
+        public event EventHandler<int> SpeakerSecondsAdded;
+        public event EventHandler ClearSpeaker;
+        public event EventHandler ClearQuestion;
+        public event EventHandler Paused;
+
+        private HttpClient httpClient;
 
         public async Task Init(ListOfSpeakerViewModel viewModel)
         {
             this._viewModel = viewModel;
             HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/slsocket").Build();
+            await HubConnection.StartAsync();
+            this.SpeakerAdded += ListOfSpeakerOnlineHandler_SpeakerAdded;
+            this.SpeakerRemoved += ListOfSpeakerOnlineHandler_SpeakerRemoved;
+            this.NextSpeakerPushed += ListOfSpeakerOnlineHandler_NextSpeaker;
+            this.NextQuestionPushed += ListOfSpeakerOnlineHandler_NextQuestionPushed;
+            this.SpeakerTimerStarted += ListOfSpeakerOnlineHandler_SpeakerTimerStarted;
+            this.QuestionTimerStarted += ListOfSpeakerOnlineHandler_QuestionTimerStarted;
+            this.AnswerTimerStarted += ListOfSpeakerOnlineHandler_AnswerTimerStarted;
+            this.ClearSpeaker += ListOfSpeakerOnlineHandler_ClearSpeaker;
+            this.ClearQuestion += ListOfSpeakerOnlineHandler_ClearQuestion;
+            this.Paused += ListOfSpeakerOnlineHandler_Paused;
 
-            //SpeakerListChanged += ListOfSpeakerSocketHandler_SpeakerListChanged;
+            HubConnection.On<Speaker>(nameof(ITypedListOfSpeakerHub.SpeakerAdded), (speaker) => this.SpeakerAdded?.Invoke(this, speaker));
+            HubConnection.On<string>(nameof(ITypedListOfSpeakerHub.SpeakerRemoved), (id) => this.SpeakerRemoved?.Invoke(this, id));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.NextSpeaker), () => this.NextSpeakerPushed?.Invoke(this, new EventArgs()));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.NextQuestion), () => this.NextQuestionPushed?.Invoke(this, new EventArgs()));
+            HubConnection.On<DateTime>(nameof(ITypedListOfSpeakerHub.SpeakerTimerStarted), (args) => this.SpeakerTimerStarted?.Invoke(this, args));
+            HubConnection.On<DateTime>(nameof(ITypedListOfSpeakerHub.QuestionTimerStarted), (a) => QuestionTimerStarted?.Invoke(this, a));
+            HubConnection.On<DateTime>(nameof(ITypedListOfSpeakerHub.AnswerTimerStarted), (a) => AnswerTimerStarted?.Invoke(this, a));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.ClearSpeaker), () => ClearSpeaker?.Invoke(this, new EventArgs()));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.ClearQuestion), () => ClearQuestion?.Invoke(this, new EventArgs()));
+            HubConnection.On(nameof(ITypedListOfSpeakerHub.Pause), () => Paused?.Invoke(this, new EventArgs()));
 
-            HubConnection.On<int>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.QuestionTimerStarted), (seconds) => QuestionTimerStarted?.Invoke(this, seconds));
-            HubConnection.On<ListOfSpeakers>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerListChanged), (list) => SpeakerListChanged?.Invoke(this, list));
-            HubConnection.On<int>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.SpeakerTimerStarted), (seconds) => SpeakerTimerStarted.Invoke(this, seconds));
-            HubConnection.On<string>(nameof(MUNity.Hubs.ITypedListOfSpeakerHub.TimerStopped), (s) => TimerStopped?.Invoke(this, new EventArgs()));
+            httpClient = new HttpClient();
         }
 
-        public Task ClearCurrentSpeaker()
+        private void ListOfSpeakerOnlineHandler_Paused(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            this._viewModel.SourceList.Pause();
         }
 
-        public Task AddSpeakerSeconds(int seconds)
+        private void ListOfSpeakerOnlineHandler_ClearQuestion(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            this._viewModel.SourceList.ClearCurrentQuestion();
         }
 
-        public Task Pause()
+        private void ListOfSpeakerOnlineHandler_ClearSpeaker(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            this._viewModel.SourceList.ClearCurrentSpeaker();
         }
 
-        public Task ResumeSpeaker()
+        private void ListOfSpeakerOnlineHandler_AnswerTimerStarted(object sender, DateTime e)
         {
-            throw new NotImplementedException();
+            this._viewModel.SourceList.StartAnswer();
         }
 
-        public Task NextSpeaker()
+        private void ListOfSpeakerOnlineHandler_QuestionTimerStarted(object sender, DateTime e)
         {
-            throw new NotImplementedException();
+            this._viewModel.SourceList.ResumeQuestion();
+        }
+
+        private void ListOfSpeakerOnlineHandler_NextQuestionPushed(object sender, EventArgs e)
+        {
+            this._viewModel.SourceList.NextQuestion();
+        }
+
+        private void ListOfSpeakerOnlineHandler_SpeakerTimerStarted(object sender, DateTime e)
+        {
+            this._viewModel.SourceList.ResumeSpeaker();
+            //this._viewModel.SourceList.StartSpeakerTime = e.Value;
+        }
+
+        private void ListOfSpeakerOnlineHandler_NextSpeaker(object sender, EventArgs e)
+        {
+            this._viewModel.SourceList.NextSpeaker();
+        }
+
+        private void ListOfSpeakerOnlineHandler_SpeakerRemoved(object sender, string e)
+        {
+            var speakerToRemove = this._viewModel.SourceList.AllSpeakers.FirstOrDefault(n => n.Id == e);
+            if (speakerToRemove != null)
+                this._viewModel.SourceList.AllSpeakers.Remove(speakerToRemove);
+        }
+
+        private void ListOfSpeakerOnlineHandler_SpeakerAdded(object sender, Speaker e)
+        {
+            this._viewModel.SourceList.AllSpeakers.Add(e);
+        }
+
+        public async Task ClearCurrentSpeaker()
+        {
+            string url = Program.API_URL + "/api/Speakerlist/ClearSpeaker";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
+        }
+
+        public async Task AddSpeakerSeconds(int seconds)
+        {
+            string url = Program.API_URL + "/api/Speakerlist/AddSpeakerSeconds";
+            var dto = new MUNity.Schema.ListOfSpeakers.AddSpeakerSeconds()
+            {
+                ListOfSpeakersId = this._viewModel.SourceList.ListOfSpeakersId,
+                Token = "test",
+                Seconds = seconds
+            };
+            var result = await httpClient.PutAsJsonAsync(url, dto);
+        }
+
+        public async Task Pause()
+        {
+            string url = Program.API_URL + "/api/Speakerlist/Pause";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
+        }
+
+        public async Task ResumeSpeaker()
+        {
+            string url = Program.API_URL + "/api/Speakerlist/StartSpeaker";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
+        }
+
+        public async Task NextSpeaker()
+        {
+            string url = Program.API_URL + "/api/Speakerlist/NextSpeaker";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
         public Task ResetSpeakerTime()
@@ -64,9 +160,10 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             throw new NotImplementedException();
         }
 
-        public Task StartAnswer()
+        public async Task StartAnswer()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/StartAnswer";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
         public Task CloseSpeakers()
@@ -79,24 +176,34 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             throw new NotImplementedException();
         }
 
-        public Task ClearCurrentQuestion()
+        public async Task ClearCurrentQuestion()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/ClearQuestion";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task AddQuestionSeconds(int seconds)
+        public async Task AddQuestionSeconds(int seconds)
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/AddQuestionSeconds";
+            var dto = new MUNity.Schema.ListOfSpeakers.AddSpeakerSeconds()
+            {
+                ListOfSpeakersId = this._viewModel.SourceList.ListOfSpeakersId,
+                Token = "test",
+                Seconds = seconds
+            };
+            var result = await httpClient.PutAsJsonAsync(url, dto);
         }
 
-        public Task ResumeQuestion()
+        public async Task ResumeQuestion()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/StartQuestion";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task NextQuestion()
+        public async Task NextQuestion()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/NextQuestion";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
         public Task OpenQuestions()
@@ -107,6 +214,55 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         public Task CloseQuestions()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task AddSpeaker(SpeakerToAdd speaker)
+        {
+            string url = Program.API_URL + "/api/Speakerlist/AddSpeaker";
+            var result = await httpClient.PostAsJsonAsync(url, AddSpeakerBody(speaker));
+        }
+
+        public async Task AddQuestion(SpeakerToAdd question)
+        {
+            string url = Program.API_URL + "/api/Speakerlist/AddQuestion";
+            var result = await httpClient.PostAsJsonAsync(url, AddSpeakerBody(question));
+        }
+
+        public async Task Remove(Speaker speaker)
+        {
+            string url = Program.API_URL + "/api/Speakerlist/RemoveSpeakerFromList";
+            var dto = new MUNity.Schema.ListOfSpeakers.RemoveSpeakerBody()
+            {
+                ListOfSpeakersId = _viewModel.SourceList.ListOfSpeakersId,
+                SpeakerId = speaker.Id,
+                Token = "test"
+            };
+            var result = await httpClient.PutAsJsonAsync(url, dto);
+        }
+
+        private MUNity.Schema.ListOfSpeakers.ListOfSpeakersRequest DefaultRequestBody
+        {
+            get
+            {
+                var dto = new MUNity.Schema.ListOfSpeakers.ListOfSpeakersRequest()
+                {
+                    ListOfSpeakersId = this._viewModel.SourceList.ListOfSpeakersId,
+                    Token = "test"
+                };
+                return dto;
+            }
+        }
+
+        private MUNity.Schema.ListOfSpeakers.AddSpeakerBody AddSpeakerBody(SpeakerToAdd speaker)
+        {
+            var body = new MUNity.Schema.ListOfSpeakers.AddSpeakerBody()
+            {
+                Iso = speaker.Iso,
+                ListOfSpeakersId = _viewModel.SourceList.ListOfSpeakersId,
+                Name = speaker.Name,
+                Token = "test"
+            };
+            return body;
         }
     }
 }

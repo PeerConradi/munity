@@ -1,4 +1,5 @@
 ﻿using MUNity.Models.ListOfSpeakers;
+using MUNity.Schema.ListOfSpeakers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,33 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 {
     public interface IListOfSpeakerHandler
     {
-        event EventHandler<int> QuestionTimerStarted;
+        event EventHandler<DateTime> QuestionTimerStarted;
 
-        event EventHandler<ListOfSpeakers> SpeakerListChanged;
+        event EventHandler<DateTime> SpeakerTimerStarted;
 
-        event EventHandler<int> SpeakerTimerStarted;
+        event EventHandler<DateTime> AnswerTimerStarted;
 
         event EventHandler TimerStopped;
+
+        event EventHandler<Speaker> SpeakerAdded;
+
+        event EventHandler<string> SpeakerRemoved;
+
+        event EventHandler NextSpeakerPushed;
+
+        event EventHandler NextQuestionPushed;
+
+        event EventHandler<IListTimeSettings> SettingsChanged;
+
+        event EventHandler<int> QuestionSecondsAdded;
+
+        event EventHandler<int> SpeakerSecondsAdded;
+
+        event EventHandler ClearSpeaker;
+
+        event EventHandler ClearQuestion;
+
+        event EventHandler Paused;
 
         Task Init(ListOfSpeakerViewModel viewModel);
 
@@ -47,5 +68,11 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         Task OpenQuestions();
 
         Task CloseQuestions();
+
+        Task AddSpeaker(Models.ListOfSpeaker.SpeakerToAdd speaker);
+
+        Task AddQuestion(Models.ListOfSpeaker.SpeakerToAdd question);
+
+        Task Remove(MUNity.Models.ListOfSpeakers.Speaker speaker);
     }
 }

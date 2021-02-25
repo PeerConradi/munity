@@ -215,9 +215,9 @@ namespace MUNity.Models.ListOfSpeakers
         {
             get
             {
-                
-                if (Status == EStatus.Stopped || 
-                    Status == EStatus.Question || 
+                if (Status == EStatus.Stopped)
+                    return SpeakerTime;
+                if (Status == EStatus.Question || 
                     Status == EStatus.SpeakerPaused || 
                     Status == EStatus.QuestionPaused || 
                     Status == EStatus.AnswerPaused)

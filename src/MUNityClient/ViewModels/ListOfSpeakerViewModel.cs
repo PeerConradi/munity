@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace MUNityClient.ViewModels
 {
@@ -22,6 +24,16 @@ namespace MUNityClient.ViewModels
 
         public ViewModelLogic.IListOfSpeakerHandler Handler { get; set; }
 
+        public string CurrentMessage { get; set; } = "";
+
+        public bool LowOnSpeakerTime => this.SourceList.RemainingSpeakerTime.TotalSeconds < 11;
+
+        public bool OutOfSpeakerTime => this.SourceList.RemainingSpeakerTime.TotalSeconds < 0;
+
+        public bool LowOnQuestionTime => this.SourceList.RemainingQuestionTime.TotalSeconds < 11;
+
+        public bool OutOfQuestionTime => this.SourceList.RemainingQuestionTime.TotalSeconds < 0;
+
         private ListOfSpeakerViewModel(ListOfSpeakers listOfSpeakers, Services.ListOfSpeakerService service)
         {
             SourceList = listOfSpeakers;
@@ -38,14 +50,24 @@ namespace MUNityClient.ViewModels
 
         public static async Task<ListOfSpeakerViewModel> CreateViewModel(Services.ListOfSpeakerService service, string listId)
         {
+
             var isOnline = await service.IsListOfSpeakersOnline(listId);
             if (isOnline)
-                return await CreateFromOnline(service, listId);
+                return await GetFromOnline(service, listId);
             else
-                return await CreateFromOffline(service, listId);
+                return await GetFromOffline(service, listId);
         }
 
-        public static async Task<ListOfSpeakerViewModel> CreateFromOffline(Services.ListOfSpeakerService service, string listId)
+        public static async Task<ListOfSpeakerViewModel> CreateNewOnline(Services.ListOfSpeakerService service)
+        {
+            var created = await service.CreateOnline();
+            if (!created.IsSuccessStatusCode)
+                return null;
+            var result = await created.Content.ReadFromJsonAsync<MUNity.Schema.ListOfSpeakers.CreatedResponse>();
+            return await GetFromOnline(service, result.ListOfSpeakersId);
+        }
+
+        private static async Task<ListOfSpeakerViewModel> GetFromOffline(Services.ListOfSpeakerService service, string listId)
         {
             var list = await service.GetListOfSpeakersOffline(listId);
             var mdl = new ListOfSpeakerViewModel(list, service);
@@ -53,17 +75,17 @@ namespace MUNityClient.ViewModels
             return mdl;
         }
 
-        public static async Task<ListOfSpeakerViewModel> CreateFromOnline(Services.ListOfSpeakerService service, string listId)
+        private static async Task<ListOfSpeakerViewModel> GetFromOnline(Services.ListOfSpeakerService service, string listId)
         {
+            Console.WriteLine("Try to init list of speakers from server!");
             var list = await service.GetFromApi(listId);
             var mdl = new ListOfSpeakerViewModel(list, service);
-            mdl.Handler = new ViewModelLogic.ListOfSpeakerOnlineHandler();
+            var onlineHandler = new ViewModelLogic.ListOfSpeakerOnlineHandler();
+            mdl.Handler = onlineHandler;
             await mdl.Handler.Init(mdl);
+            var subscribeResponse = await service.Subscribe(listId, onlineHandler.HubConnection.ConnectionId);
+            // TODO: Log if subscription failed!
             return mdl;
-        }
-
-
-
-        
+        }  
     }
 }

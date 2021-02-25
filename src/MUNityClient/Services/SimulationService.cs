@@ -336,12 +336,13 @@ namespace MUNityClient.Services
         public async Task SecureGetRoles(SimulationViewModel viewModel)
         {
             var client = GetSimulationClient(viewModel.Simulation.SimulationId, viewModel.Token);
-            var response = await client.GetAsync($"/api/Simulation/GetSimulationRoles?id={viewModel.Simulation.SimulationId}");
+            var response = await client.GetAsync($"/api/Simulation/Roles/GetSimulationRoles?id={viewModel.Simulation.SimulationId}");
             if (response.IsSuccessStatusCode)
             {
                 try
                 {
                     viewModel.Simulation.Roles = await response.Content.ReadFromJsonAsync<List<MUNity.Schema.Simulation.SimulationRoleDto>>();
+                    viewModel.NotifyRolesChanged();
                 }
                 catch (Exception ex)
                 {

@@ -1,4 +1,4 @@
-﻿@if (Roles != null)
+﻿@if (ViewModel?.Simulation?.Roles != null)
 {
     <table class="table">
         <thead>
@@ -7,7 +7,7 @@
             </tr>
         </thead>
         <tbody>
-            @if (!Roles.Any())
+            @if (!ViewModel.Simulation.Roles.Any())
             {
                 <tr>
                     <td>Keine Rollen</td>
@@ -15,7 +15,7 @@
             }
             else
             {
-                foreach(var role in Roles)
+                foreach(var role in ViewModel.Simulation.Roles)
                 {
                     <tr>
                         <td>@role.Name</td>
@@ -24,9 +24,6 @@
             }
         </tbody>
     </table>
-
-
-    
 }
 else
 {
@@ -35,5 +32,14 @@ else
 
 @code {
     [Parameter]
-    public List<MUNity.Schema.Simulation.SimulationRoleDto> Roles { get; set; }
+    public ViewModels.SimulationViewModel ViewModel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (this.ViewModel != null)
+        {
+            this.ViewModel.RolesChanged += delegate { this.StateHasChanged(); };
+        }
+        base.OnInitialized();
+    }
 }

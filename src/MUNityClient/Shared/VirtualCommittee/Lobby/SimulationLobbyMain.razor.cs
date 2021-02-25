@@ -71,6 +71,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         {
             if (this.ViewModel == null) return;
             await this.simulationService.ApplyPetitionTemplate(this.ViewModel.Simulation.SimulationId, SelectedPetitionTemplate);
+            await this.ViewModel.UpdatePetitionTypes();
             this.StateHasChanged();
         }
 

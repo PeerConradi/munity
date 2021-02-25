@@ -19,82 +19,43 @@ namespace MUNityClient.Shared.Los
     public partial class LoSReaderComponent
     {
         [Parameter]
-        public string ListOfSpeakersId
-        {
-            get;
-            set;
-        }
+        public string ListOfSpeakersId { get; set; }
 
-        [Parameter]
-        public bool IsOnline
-        {
-            get;
-            set;
-        }
+        private ViewModels.ListOfSpeakerViewModel ViewModel { get; set; }
 
-        public ListOfSpeakers Speakerlist
-        {
-            get;
-            set;
-        }
-
-        private Services.SocketHandlers.ListOfSpeakerViewModel _socket;
-        // TODO: Implement different modes
-        private enum SyncModes
-        {
-            FromLocalStorage,
-            FromSocket
-        }
+        private System.Timers.Timer timer;
 
         protected override async Task OnInitializedAsync()
         {
-            if (IsOnline == false)
+            timer = new System.Timers.Timer(1000);
+            timer.Elapsed += TimerElapsed;
+            this.ViewModel = await ViewModels.ListOfSpeakerViewModel.CreateViewModel(listOfSpeakerService, ListOfSpeakersId);
+
+            if (this.ViewModel != null)
             {
-                this.Speakerlist = await this.listOfSpeakerService.GetListOfSpeakersOffline(ListOfSpeakersId);
-            }
-            else
-            {
-                this.Speakerlist = await this.listOfSpeakerService.GetFromApi(ListOfSpeakersId);
-                // Add Handlers
-                _socket = await this.listOfSpeakerService.Subscribe(this.Speakerlist);
-                if (_socket != null)
+                this.ViewModel.Handler.AnswerTimerStarted += delegate { timer.Start(); };
+                this.ViewModel.Handler.QuestionTimerStarted += delegate { timer.Start(); };
+                this.ViewModel.Handler.Paused += delegate { timer.Stop(); this.StateHasChanged(); };
+                this.ViewModel.Handler.QuestionSecondsAdded += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.SpeakerSecondsAdded += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.SpeakerAdded += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.SpeakerRemoved += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.ClearSpeaker += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.ClearQuestion += delegate { this.StateHasChanged(); };
+
+                if (this.ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Question ||
+                    this.ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Answer ||
+                    this.ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Speaking)
                 {
-                    _socket.SpeakerListChanged += OnSpeakerlistChanged;
+                    this.timer.Start();
                 }
             }
 
-            if (Speakerlist != null)
-            {
-                var timer = new System.Timers.Timer(1000);
-                timer.Elapsed += TimerElapsed;
-                timer.Start();
-            }
+            await base.OnInitializedAsync();
         }
 
-        private async void OnSpeakerlistChanged(object sender, ListOfSpeakers newList)
+        private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
         {
-            if (this.Speakerlist != null && this.Speakerlist.ListOfSpeakersId == newList.ListOfSpeakersId)
-            {
-                this.Speakerlist = newList;
-                await this.listOfSpeakerService.StoreListOfSpeakers(newList);
-                this.StateHasChanged();
-            }
-        }
-
-        // Wir aktualisieren zunächst wieder jede Sekunden, da für den Countdown ohnehin jede Sekunde
-        // gezählt werden muss.
-        private async void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
-        {
-            if (!IsOnline)
-            {
-                var list = await this.listOfSpeakerService.GetListOfSpeakersOffline(ListOfSpeakersId);
-                if (list != null)
-                {
-                    this.Speakerlist = list;
-                    this.StateHasChanged();
-                }
-            }
-
             this.StateHasChanged();
         }
     }

@@ -1,0 +1,145 @@
+﻿@if (Mode == ReaderHeaderModes.Speaker && ViewModel.SourceList.CurrentSpeaker != null ||
+Mode == ReaderHeaderModes.Question && ViewModel.SourceList.CurrentQuestion != null)
+{
+    <h5>Es spricht:</h5>
+    <h5>@CurrentName</h5>
+
+
+    @if (IsOutOfTime)
+    {
+        <h6 class="text-danger">Bitte zum Ende kommen</h6>
+    }
+    else
+    {
+        <h6 class="@((IsLowOnTime) ? "text-danger" : "")">Verbleibende Zeit: @RemainingTime.ToString(@"mm\:ss")</h6>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="@RemainingTimePercentage"
+                     aria-valuemin="0" aria-valuemax="100" style="width:@RemainingTimePercentage%">
+                    <span class="sr-only">70% Complete</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <h5>Aktuell kein(e) RednerIn</h5>
+    @if (Mode == ReaderHeaderModes.Speaker)
+    {
+        <h5>Redezeit: @ViewModel.SourceList.SpeakerTime.ToString(@"mm\:ss")</h5>
+    }
+    else if (Mode == ReaderHeaderModes.Question)
+    {
+        <h5>Redezeit: @ViewModel.SourceList.QuestionTime.ToString(@"mm\:ss")</h5>
+    }
+
+}
+
+    @code {
+        public enum ReaderHeaderModes
+        {
+            Speaker,
+            Question
+        }
+
+        public int RemainingTimePercentage
+        {
+            get
+            {
+                if (Mode == ReaderHeaderModes.Speaker)
+                    return (int)(ViewModel.SourceList.RemainingSpeakerTime.TotalSeconds * 100 / ViewModel.SourceList.SpeakerTime.TotalSeconds);
+                else
+                    return (int)(ViewModel.SourceList.RemainingQuestionTime.TotalSeconds * 100 / ViewModel.SourceList.QuestionTime.TotalSeconds);
+            }
+        }
+
+        public bool IsLowOnTime
+        {
+            get
+            {
+                if (Mode == ReaderHeaderModes.Speaker)
+                    return ViewModel.LowOnSpeakerTime;
+                else
+                    return ViewModel.LowOnQuestionTime;
+            }
+        }
+
+        public bool IsOutOfTime
+        {
+            get
+            {
+                if (Mode == ReaderHeaderModes.Speaker)
+                    return ViewModel.OutOfSpeakerTime;
+                else
+                    return ViewModel.OutOfQuestionTime;
+            }
+        }
+
+        public TimeSpan RemainingTime
+        {
+            get
+            {
+                if (Mode == ReaderHeaderModes.Speaker)
+                    return ViewModel.SourceList.RemainingSpeakerTime;
+                else
+                    return ViewModel.SourceList.RemainingQuestionTime;
+            }
+        }
+
+        public string CurrentName
+        {
+            get
+            {
+                if (Mode == ReaderHeaderModes.Speaker)
+                    return ViewModel.SourceList.CurrentSpeaker.Name;
+                else
+                    return ViewModel.SourceList.CurrentQuestion.Name;
+            }
+        }
+
+        [Parameter]
+        public ReaderHeaderModes Mode { get; set; }
+
+        [Parameter]
+        public ViewModels.ListOfSpeakerViewModel ViewModel { get; set; }
+
+        private System.Timers.Timer timer;
+
+        protected override async Task OnInitializedAsync()
+        {
+            timer = new System.Timers.Timer(1000);
+            timer.Elapsed += TimerElapsed;
+
+            if (this.ViewModel != null)
+            {
+                this.ViewModel.Handler.AnswerTimerStarted += delegate { timer.Start(); };
+                this.ViewModel.Handler.QuestionTimerStarted += delegate { timer.Start(); };
+                this.ViewModel.Handler.Paused += delegate { timer.Stop(); this.StateHasChanged(); };
+                this.ViewModel.Handler.QuestionSecondsAdded += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.SpeakerSecondsAdded += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.SpeakerAdded += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.SpeakerRemoved += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.ClearSpeaker += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.ClearQuestion += delegate { this.StateHasChanged(); };
+
+                if (this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question ||
+                    this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
+                    this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking)
+                {
+                    this.timer.Start();
+                }
+            }
+
+            await base.OnInitializedAsync();
+        }
+
+        private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
+        {
+            this.StateHasChanged();
+        }
+
+    }

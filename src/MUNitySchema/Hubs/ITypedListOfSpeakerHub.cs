@@ -1,4 +1,5 @@
 ﻿using MUNity.Models.ListOfSpeakers;
+using MUNity.Schema.ListOfSpeakers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,33 +14,43 @@ namespace MUNity.Hubs
     /// </summary>
     public interface ITypedListOfSpeakerHub
     {
-        /// <summary>
-        /// Somehting in this listOfSpeaker has changed. The Clients should reload the whole list or figure out what
-        /// has changed on their own.
-        /// </summary>
-        /// <param name="listOfSpeaker"></param>
-        /// <returns></returns>
-        Task SpeakerListChanged(ListOfSpeakers listOfSpeaker);
 
         /// <summary>
         /// The SpeakerTimer has started with the given seconds as remaining time. The clients should Sync their 
         /// SpeakerStartTime according.
         /// </summary>
-        /// <param name="seconds"></param>
+        /// <param name="speakerStartTime">The timestamp when the speaker started talking in universal-time.</param>
         /// <returns></returns>
-        Task SpeakerTimerStarted(int seconds);
+        Task SpeakerTimerStarted(DateTime speakerStartTime);
 
         /// <summary>
         /// The QuestionTimer was started the clients should set the QuestionStartTime accordingly.
         /// </summary>
-        /// <param name="seconds"></param>
+        /// <param name="questionStartTime">The timestamp when the questionair started talking in universal-time</param>
         /// <returns></returns>
-        Task QuestionTimerStarted(int seconds);
+        Task QuestionTimerStarted(DateTime questionStartTime);
+
+        Task SpeakerAdded(Speaker speaker);
 
         /// <summary>
-        /// The Status of the List Of Speaker has been set to STOPPED.
+        /// Gets called when a speaker or question gets removed
         /// </summary>
+        /// <param name="speakerId"></param>
         /// <returns></returns>
-        Task TimerStopped();
+        Task SpeakerRemoved(string speakerId);
+
+        Task NextSpeaker();
+
+        Task NextQuestion();
+
+        Task SettingsChanged(IListTimeSettings settings);
+        Task QuestionSecondsAdded(int seconds);
+
+        Task SpeakerSecondsAdded(int seconds);
+        Task AnswerTimerStarted(DateTime value);
+        Task ClearSpeaker();
+        Task ClearQuestion();
+
+        Task Pause();
     }
 }

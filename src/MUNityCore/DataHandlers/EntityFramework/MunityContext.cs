@@ -86,6 +86,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<MunitySetting> Settings { get; set; }
 
+        public DbSet<SimulationStatus> SimulationStatuses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
@@ -143,13 +145,17 @@ namespace MUNityCore.DataHandlers.EntityFramework
                 .HasMany(n => n.Users).WithOne(n => n.Auth);
 
 
-            modelBuilder.Entity<ResolutionAuth>().HasOne(n => n.Simulation).WithMany(n => n.Resolutions);
+            modelBuilder.Entity<ResolutionAuth>()
+                .HasOne(n => n.Simulation)
+                .WithMany(n => n.Resolutions);
 
             modelBuilder.Entity<SimulationRole>().HasOne(n => n.Simulation).WithMany(n =>
                 n.Roles);
 
-            modelBuilder.Entity<SimulationUser>().HasOne(n => n.Simulation).WithMany(n =>
-                n.Users);
+            modelBuilder.Entity<Simulation>().HasMany(n => n.Users).WithOne(n => n.Simulation);
+
+            //modelBuilder.Entity<SimulationUser>().HasOne(n => n.Simulation).WithMany(n =>
+            //    n.Users);
 
             modelBuilder.Entity<SimulationHubConnection>().HasOne(n => n.User).WithMany(n => n.HubConnections);
 

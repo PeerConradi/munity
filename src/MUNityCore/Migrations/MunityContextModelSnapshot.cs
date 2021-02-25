@@ -936,9 +936,6 @@ namespace MUNityCore.Migrations
                     b.Property<int>("Phase")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
                     b.HasKey("SimulationId");
 
                     b.HasIndex("ListOfSpeakersId");
@@ -993,6 +990,28 @@ namespace MUNityCore.Migrations
                     b.HasIndex("SimulationId");
 
                     b.ToTable("SimulationRoles");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationStatus", b =>
+                {
+                    b.Property<int>("SimulationStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SimulationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StatusText")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("StatusTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("SimulationStatusId");
+
+                    b.HasIndex("SimulationId");
+
+                    b.ToTable("SimulationStatuses");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationUser", b =>
@@ -1595,6 +1614,15 @@ namespace MUNityCore.Migrations
                     b.Navigation("Simulation");
                 });
 
+            modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationStatus", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Simulation.Simulation", "Simulation")
+                        .WithMany("Statuses")
+                        .HasForeignKey("SimulationId");
+
+                    b.Navigation("Simulation");
+                });
+
             modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationUser", b =>
                 {
                     b.HasOne("MUNityCore.Models.Simulation.SimulationRole", "Role")
@@ -1748,6 +1776,8 @@ namespace MUNityCore.Migrations
                     b.Navigation("Resolutions");
 
                     b.Navigation("Roles");
+
+                    b.Navigation("Statuses");
 
                     b.Navigation("Users");
                 });
