@@ -132,23 +132,6 @@ namespace MUNityCore.Controllers
             return Ok(this._simulationService.InitListOfSpeakers(simulationId));
         }
 
-
-        [HttpGet]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<ActionResult<SimulationUserAdminDto>> CreateUser([FromHeader]string simsimtoken, int id)
-        {
-            //var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
-            //if (!isAllowed) return Forbid();
-            var newUser = this._simulationService.CreateUser(id, "");
-            //var newUser = new SimulationUser();
-            if (newUser == null)
-                return NotFound();
-            return Ok(newUser.ToSimulationUserAdminDto());
-        }
-
-        
-
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -186,18 +169,6 @@ namespace MUNityCore.Controllers
                 .Include(n => n.Simulation).ToList();
             var result = users.Select(n => n.AsSimulationUserDefaultDto());
             return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<SimulationRoleDto>>> GetSimulationRoles([FromHeader]string simsimtoken, int id)
-        {
-            var isAllowed = await this._simulationService.IsTokenValid(id, simsimtoken);
-            if (!isAllowed) return Forbid();
-            var roles = await this._simulationService.GetSimulationRoles(id);
-            var models = roles.Select(n => n.ToSimulationRoleDto());
-            return Ok(models);
         }
 
         [HttpGet]
@@ -302,7 +273,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         public async Task<ActionResult> SetPhase([FromBody]SetPhaseRequest body)
         {
-            var isAllowed = await this._simulationService.IsTokenValidAndUserChair(body);
+            var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!isAllowed) return Forbid();
             var hasChanged = await this._simulationService.SetPhase(body.SimulationId, body.SimulationPhase);
             if (hasChanged)

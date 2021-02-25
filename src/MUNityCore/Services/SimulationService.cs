@@ -52,6 +52,18 @@ namespace MUNityCore.Services
             return status;
         }
 
+        internal SimulationRole CreateRole(CreateRoleRequest body)
+        {
+            var simulation = _context.Simulations.FirstOrDefault(n => n.SimulationId == body.SimulationId);
+            if (simulation == null) return null;
+
+            var newRole = new SimulationRole(body.Iso, body.Name, body.RoleType);
+            newRole.Simulation = simulation;
+            _context.SimulationRoles.Add(newRole);
+            _context.SaveChanges();
+            return newRole;
+        }
+
         public void RemoveHubs(IEnumerable<SimulationHubConnection> hubs)
         {
             try
@@ -63,6 +75,32 @@ namespace MUNityCore.Services
             {
                 // TODO: Logger
             }
+        }
+
+        internal PetitionType CreatePetitionType(CreatePetitionTypeRequest body)
+        {
+            var newPetitionType = new PetitionType()
+            {
+                Category = body.Category,
+                Description = body.Description,
+                Name = body.Name,
+                Reference = body.Reference,
+                Ruling = body.Ruling
+            };
+            _context.PetitionTypes.Add(newPetitionType);
+            _context.SaveChanges();
+            return newPetitionType;
+        }
+
+        internal bool SetUserRole(SetUserSimulationRole body)
+        {
+            var role = _context.SimulationRoles.FirstOrDefault(n => n.SimulationRoleId == body.RoleId);
+            if (role == null) return false;
+            var user = _context.SimulationUser.FirstOrDefault(n => n.SimulationUserId == body.UserId);
+            if (user == null) return false;
+            user.Role = role;
+            _context.SaveChanges();
+            return true;
         }
 
         public Simulation CreateSimulation(string name, string password)
@@ -411,6 +449,11 @@ namespace MUNityCore.Services
             (n.CanCreateRole ||
             n.Role != null &&
             n.Role.RoleType == RoleTypes.Chairman));
+        }
+
+        public Task<bool> IsTokenValidAndUserChairOrOwner(SimulationRequest request)
+        {
+            return IsTokenValidAndUserChairOrOwner(request.SimulationId, request.Token);
         }
 
         #endregion

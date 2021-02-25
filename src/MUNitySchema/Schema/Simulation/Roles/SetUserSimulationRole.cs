@@ -12,7 +12,7 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The SimulationUserId that the Roles should be changed of.
         /// </summary>
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
         /// The RoleId that the user should select

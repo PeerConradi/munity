@@ -52,6 +52,20 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(files.Select(n => n.Name.Substring(0, n.Name.Length - 4)).ToList());
         }
 
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<ActionResult<PetitionTypeDto>> CreatePetitionType([FromBody]CreatePetitionTypeRequest body)
+        {
+            var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(body);
+            if (!isAllowed) return Forbid();
+
+            Models.Simulation.PetitionType type = _simulationService.CreatePetitionType(body);
+            if (type == null)
+                return NotFound("Something went wrong");
+
+            return Ok(type.ToPetitionTypeDto());
+        }
+
         /// <summary>
         /// Not implemented yet!
         /// </summary>
@@ -63,6 +77,11 @@ namespace MUNityCore.Controllers.Simulation
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserAdmin(body);
             if (!isAllowed) return Forbid();
+
+            var success = await this._simulationService.AddPetitionTypeToSimulation(body);
+            if (!success)
+                return NotFound("Something went wrong maybe the simulation or petitiontype was not found!");
+
             return Ok();
         }
 
@@ -76,7 +95,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult<List<Models.Simulation.PetitionType>>> AllPetitionTypes()
         {
             var context = _simulationService.GetDatabaseInstance();
-            var petitionTypes = await context.PetitionTypes.ToListAsync();
+            var petitionTypes = context.PetitionTypes.Select(n => n.ToPetitionTypeDto()).ToList();
             return Ok(petitionTypes);
         }
 
@@ -172,12 +191,12 @@ namespace MUNityCore.Controllers.Simulation
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<ActionResult<IEnumerable<PetitionTypeSimulationDto>>> SimulationPetitionTypes([FromHeader] string simsimtoken, int simulationId)
+        public async Task<ActionResult<List<PetitionTypeSimulationDto>>> SimulationPetitionTypes([FromHeader] string simsimtoken, int simulationId)
         {
             var isallowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
             if (!isallowed) return Forbid();
             var types = this._simulationService.GetPetitionTypesOfSimulation(simulationId);
-            var list = types.Select(n => n.ToDto());
+            var list = types.Select(n => n.ToDto()).ToList();
             return Ok(list);
         }
     }

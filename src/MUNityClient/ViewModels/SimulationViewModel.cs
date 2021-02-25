@@ -10,6 +10,7 @@ using MUNity.Models.Simulation;
 using MUNityClient.Services;
 using System.Net.Http;
 using MUNityClient.Extensions.Simulation;
+using System.Net.Http.Json;
 
 namespace MUNityClient.ViewModels
 {
@@ -25,6 +26,14 @@ namespace MUNityClient.ViewModels
     public class SimulationViewModel
     {
         public delegate void OnRolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleDto> roles);
+
+        internal async Task UpdateAdminUserList()
+        {
+            this.AdminUsers.Clear();
+            var users = await _simulationService.GetUserSetups(this.Simulation.SimulationId);
+            users.ForEach(n => this.AdminUsers.Add(n));
+        }
+
         public event OnRolesChanged RolesChanged;
 
         public delegate void OnUserRoleChanged(int sender, int userId, int roleId);
@@ -54,6 +63,8 @@ namespace MUNityClient.ViewModels
 
         public event EventHandler<string> CurrentResolutionChanged;
 
+        
+
         public event EventHandler<AgendaItemDto> AgendaItemAdded;
 
         public event EventHandler<PetitionDto> PetitionAdded;
@@ -61,6 +72,12 @@ namespace MUNityClient.ViewModels
         public event EventHandler<PetitionInteractedDto> PetitionDeleted;
 
         public event EventHandler<NotificationViewModel> NotificationChanged;
+
+
+        internal async Task UpdatePetitionTypes()
+        {
+            await this._simulationService.SecurePetitionTypes(this);
+        }
 
         public string Token { get; set; }
 
@@ -85,6 +102,8 @@ namespace MUNityClient.ViewModels
         public List<MUNity.Schema.Simulation.PetitionTypeSimulationDto> PetitionTypes { get; set; }
 
         public List<MUNity.Schema.Simulation.AgendaItemDto> AgendaItems { get; set; }
+
+        public ObservableCollection<SimulationUserAdminDto> AdminUsers { get; set; } = new ObservableCollection<SimulationUserAdminDto>();
 
         public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
 
@@ -240,6 +259,11 @@ namespace MUNityClient.ViewModels
                 if (agendaItem.Petitions.All(n => n.PetitionId != e.PetitionId))
                     agendaItem.Petitions.Add(e);
             }
+        }
+
+        public void NotifyRolesChanged()
+        {
+            this.RolesChanged?.Invoke(0, this.Simulation.Roles);
         }
 
         private void SimulationViewModel_AgendaItemAdded(object sender, AgendaItemDto e)
@@ -400,6 +424,29 @@ namespace MUNityClient.ViewModels
             if (Me != null)
             {
                 Me.IsOnline = true;
+            }
+        }
+
+        public async Task CreateUser()
+        {
+            var client = new HttpClient();
+            var body = new SimulationRequest()
+            {
+                SimulationId = this.Simulation.SimulationId,
+                Token = this.Token
+            };
+            var response = await client.PostAsJsonAsync(Program.API_URL + "/api/Simulation/User/CreateUser", body);
+            if (!response.IsSuccessStatusCode)
+            {
+                this.ShowError("Fehler", $"Benutzer konnte nicht erstellt werden {response.StatusCode}");
+            }
+            else
+            {
+                var newUser = await response.Content.ReadFromJsonAsync<SimulationUserAdminDto>();
+                if (newUser != null)
+                {
+                    AdminUsers.Add(newUser);
+                }
             }
         }
     }

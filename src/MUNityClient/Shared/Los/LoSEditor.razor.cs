@@ -90,7 +90,6 @@ namespace MUNityClient.Shared.Los
             // TODO: Get the ViewModel
             if (!string.IsNullOrEmpty(this.Id))
             {
-                Console.WriteLine("List of speaker id: " + this.Id);
                 this.ViewModel = await ViewModels.ListOfSpeakerViewModel.CreateViewModel(listOfSpeakerService, this.Id);
             }
             else

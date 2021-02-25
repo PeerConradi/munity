@@ -52,7 +52,6 @@ namespace MUNityClient.ViewModels
         {
 
             var isOnline = await service.IsListOfSpeakersOnline(listId);
-            Console.WriteLine("Is list of speaker online: " + isOnline);
             if (isOnline)
                 return await GetFromOnline(service, listId);
             else

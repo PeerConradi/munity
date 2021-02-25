@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using MUNity.Schema.Simulation;
+using MUNity.Schema.Simulation.Managment;
 using MUNityCore.Controllers;
+using MUNityCore.Controllers.Simulation;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Hubs;
 using MUNityCore.Services;
@@ -14,7 +16,9 @@ using System.Threading.Tasks;
 
 namespace MUNityTest.SimulationTest
 {
-    [TestFixture]
+    [TestFixture(Author = "Peer Conradi", Category = "Simulation", 
+        Description = "Testing the Simulation Controller Endpoints with an SQLite Database", 
+        TestName = "SimulationControllerTest")]
     public class SimulationControllerTest
     {
         private MunityContext _context;
@@ -43,7 +47,7 @@ namespace MUNityTest.SimulationTest
         [Test]
         [Order(0)]
         [Description("Should created a simulation that can be used for future tests.")]
-        public void TestCreatingASimulation()
+        public void T00CreatingASimulation()
         {
             var controller = new SimulationController(_mockedSimulationHub.Object, _service);
             var request = new MUNity.Schema.Simulation.CreateSimulationRequest() 
@@ -67,7 +71,7 @@ namespace MUNityTest.SimulationTest
 
         [Test]
         [Order(1)]
-        public void TestSimulationIsInLobbyList()
+        public void T01SimulationIsInLobbyList()
         {
             var controller = new SimulationController(_mockedSimulationHub.Object, _service);
             var response = controller.GetListOfSimulations();
@@ -81,7 +85,7 @@ namespace MUNityTest.SimulationTest
 
         [Test]
         [Order(2)]
-        public async Task TestGetSimulation()
+        public async Task T02GetSimulation()
         {
             var simulation = await GetTestSimulation();
             Assert.NotNull(simulation);
@@ -89,26 +93,17 @@ namespace MUNityTest.SimulationTest
 
         [Test]
         [Order(3)]
-        public async Task TestCreateNewUser()
+        public async Task T03CreateNewUser()
         {
-            var isOwner = await this._service.IsTokenValidAndUserAdmin(simulationId, token);
-            Assert.IsTrue(isOwner, "Current user should be owner");
             var startUsers = await GetTestUsersAdminDto();
             Assert.AreEqual(1, startUsers.Count);
-            var controller = GetTestController();
-            var isOwnerStill = await this._service.IsTokenValidAndUserAdmin(simulationId, token); 
-            
-            Assert.IsTrue(isOwnerStill, "Current user should be owner");
-
-            // Main Action
-            PrintUserTable();
-            var result = await controller.CreateUser(token, simulationId);
-            System.Console.WriteLine("------");
-            PrintUserTable();
-            var me = _context.SimulationUser.FirstOrDefault(n => n.Token == token);
-            var isOwnerNow = await this._service.IsTokenValidAndUserAdmin(simulationId, token);
-            
-            Assert.IsTrue(isOwnerNow, "Current user should still be owner");
+            var controller = new SimulationUserController(_mockedSimulationHub.Object, _service);
+            var body = new SimulationRequest()
+            {
+                SimulationId = simulationId,
+                Token = token
+            };
+            var result = await controller.CreateUser(body);
             var okObjetResult = result.Result as OkObjectResult;
             Assert.NotNull(okObjetResult, $"Expected an okObjectResult for successful created a new user but got: {result.Result.GetType().Name}");
             var createdUser = okObjetResult.Value as SimulationUserAdminDto;
@@ -116,6 +111,217 @@ namespace MUNityTest.SimulationTest
             var usersNow = await GetTestUsersAdminDto();
             Assert.NotNull(usersNow, "Error when getting the Users another time see logs!");
             Assert.AreEqual(2, usersNow.Count);
+        }
+
+        [Test]
+        [Order(4)]
+        public async Task T04GetRolesAreEmpty()
+        {
+            var roles = await GetTestSimulationRoles();
+            Assert.NotNull(roles);
+            Assert.IsFalse(roles.Any());
+        }
+
+        [Test]
+        [Order(5)]
+        public async Task T05CreateChairmanRole()
+        {
+            var request = new CreateRoleRequest()
+            {
+                Iso = "un",
+                Name = "Vorsitzender",
+                RoleType = RoleTypes.Chairman,
+                SimulationId = simulationId,
+                Token = token
+            };
+            var controller = new SimulationRolesController(_mockedSimulationHub.Object, _service);
+            var response = await controller.CreateRole(request);
+            Assert.NotNull(response);
+            var objectResult = response.Result as OkObjectResult;
+            Assert.NotNull(objectResult);
+            var newRole = objectResult.Value as SimulationRoleDto;
+            Assert.NotNull(newRole);
+            Assert.AreEqual("un", newRole.Iso);
+            Assert.AreEqual("Vorsitzender", newRole.Name);
+            Assert.AreEqual(RoleTypes.Chairman, newRole.RoleType);
+
+            var roles = await GetTestSimulationRoles();
+            Assert.NotNull(roles);
+            Assert.IsTrue(roles.Any(n => n.RoleType == RoleTypes.Chairman));
+        }
+
+        [Test]
+        [Order(6)]
+        public async Task T06CreateDelegateRole()
+        {
+            var request = new CreateRoleRequest()
+            {
+                Iso = "de",
+                Name = "Deutschland",
+                RoleType = RoleTypes.Delegate,
+                SimulationId = simulationId,
+                Token = token
+            };
+            var controller = new SimulationRolesController(_mockedSimulationHub.Object, _service);
+            var response = await controller.CreateRole(request);
+            Assert.NotNull(response);
+            var objectResult = response.Result as OkObjectResult;
+            Assert.NotNull(objectResult);
+            var newRole = objectResult.Value as SimulationRoleDto;
+            Assert.NotNull(newRole);
+            Assert.AreEqual("de", newRole.Iso);
+            Assert.AreEqual("Deutschland", newRole.Name);
+            Assert.AreEqual(RoleTypes.Delegate, newRole.RoleType);
+
+            var roles = await GetTestSimulationRoles();
+            Assert.NotNull(roles);
+            Assert.IsTrue(roles.Any(n => n.RoleType == RoleTypes.Delegate));
+            Assert.AreEqual(2, roles.Count);
+        }
+
+        [Test]
+        [Order(7)]
+        public async Task T07SetOwnerRoleToChairman()
+        {
+            var users = await GetTestUsersAdminDto();
+            var roles = await GetTestSimulationRoles();
+            Assert.AreEqual(2, users.Count);
+            Assert.AreEqual(2, roles.Count);
+
+            var owner = users.FirstOrDefault(n => n.DisplayName == "Peer");
+            var chairRole = roles.FirstOrDefault(n => n.RoleType == RoleTypes.Chairman);
+            Assert.NotNull(owner);
+
+            var controller = new SimulationRolesController(_mockedSimulationHub.Object, _service);
+            var body = new SetUserSimulationRole()
+            {
+                RoleId = chairRole.SimulationRoleId,
+                SimulationId = simulationId,
+                Token = token,
+                UserId = owner.SimulationUserId
+            };
+
+            var result = await controller.SetUserRole(body);
+            Assert.IsTrue(result is OkResult);
+
+            var regetUsers = await GetTestUsersAdminDto();
+            var regetOwner = regetUsers.FirstOrDefault(n => n.DisplayName == "Peer");
+            Assert.AreEqual(chairRole.SimulationRoleId, regetOwner.RoleId);
+        }
+
+        [Test]
+        [Order(8)]
+        public async Task T08SetOtherUserToDelegateRole()
+        {
+            var users = await GetTestUsersAdminDto();
+            var roles = await GetTestSimulationRoles();
+            Assert.AreEqual(2, users.Count);
+            Assert.AreEqual(2, roles.Count);
+
+            var delegateUser = users.FirstOrDefault(n => n.DisplayName != "Peer");
+            var delegateRole = roles.FirstOrDefault(n => n.RoleType == RoleTypes.Delegate);
+            Assert.NotNull(delegateUser);
+            Assert.NotNull(delegateRole);
+
+            var controller = new SimulationRolesController(_mockedSimulationHub.Object, _service);
+            var body = new SetUserSimulationRole()
+            {
+                RoleId = delegateRole.SimulationRoleId,
+                SimulationId = simulationId,
+                Token = token,
+                UserId = delegateUser.SimulationUserId
+            };
+
+            var result = await controller.SetUserRole(body);
+            Assert.IsTrue(result is OkResult);
+
+            var regetUsers = await GetTestUsersAdminDto();
+            var regetDelegate = regetUsers.FirstOrDefault(n => n.DisplayName != "Peer");
+            Assert.AreEqual(delegateRole.SimulationRoleId, regetDelegate.RoleId);
+        }
+
+        [Test]
+        [Order(9)]
+        public async Task T09CreatePetitionType()
+        {
+            var body = new CreatePetitionTypeRequest()
+            {
+                Category = "Persönlicher Antrag",
+                Description = "Recht auf Information",
+                Name = "Recht auf Information",
+                Reference = "§1",
+                Ruling = PetitionRulings.Chairs,
+                SimulationId = simulationId,
+                Token = token
+            };
+            var controller = new PetitionController(_mockedSimulationHub.Object, _service);
+            var result = await controller.CreatePetitionType(body);
+            Assert.NotNull(result, $"Expected a result but got nothing");
+            var okObjectResult = result.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult, $"Expected an okObjectResult but got {result.Result.GetType().Name}");
+            var petition = okObjectResult.Value as PetitionTypeDto;
+            Assert.NotNull(petition, $"Expected an PetitionTypeDto but got {okObjectResult.Value.GetType().Name}");
+            Assert.AreEqual("Persönlicher Antrag", petition.Category);
+            Assert.AreEqual("Recht auf Information", petition.Description);
+            Assert.AreEqual("Recht auf Information", petition.Name);
+            Assert.AreEqual("§1", petition.Reference);
+            Assert.AreEqual(PetitionRulings.Chairs, petition.Ruling);
+
+            var allPetitionTypes = await GetAllPetitionTypes();
+            Assert.NotNull(allPetitionTypes, "Expected something from all petition types but got nothing.");
+            Assert.IsTrue(allPetitionTypes.Any());
+        }
+
+        [Test]
+        [Order(10)]
+        public async Task T10AddPetitionTypeToSimulation()
+        {
+            var controller = new PetitionController(_mockedSimulationHub.Object, _service);
+            var petitionTypes = await GetAllPetitionTypes();
+            Assert.NotNull(petitionTypes);
+            var petitionType = petitionTypes.FirstOrDefault();
+            Assert.NotNull(petitionType);
+
+            var body = new AddPetitionTypeRequestBody()
+            {
+                AllowChairs = false,
+                AllowDelegates = true,
+                AllowNgo = true,
+                AllowSpectator = false,
+                OrderIndex = 1,
+                PetitionTypeId = petitionType.PetitionTypeId,
+                SimulationId = simulationId,
+                Token = token
+            };
+
+            var result = await controller.AddPetitionTypeToSimulation(body);
+            Assert.IsTrue(result is OkResult);
+
+            var getSimPetitionTypesResult = await controller.SimulationPetitionTypes(token, simulationId);
+            Assert.NotNull(getSimPetitionTypesResult);
+            var okObjectResult = getSimPetitionTypesResult.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult, $"Expected Sim Petition Types to be okObjectResult but was {getSimPetitionTypesResult.Result.GetType().Name}");
+            var simPetitionTypes = okObjectResult.Value as List<PetitionTypeSimulationDto>;
+            Assert.NotNull(simPetitionTypes);
+            Assert.IsTrue(simPetitionTypes.Any());
+        }
+
+        private async Task<List<SimulationRoleDto>> GetTestSimulationRoles()
+        {
+            var controller = new SimulationRolesController(_mockedSimulationHub.Object, _service);
+            var result = await controller.GetSimulationRoles(token, simulationId);
+            var okObjectResult = result.Result as OkObjectResult;
+            if (okObjectResult == null) return null;
+            return okObjectResult.Value as List<SimulationRoleDto>;
+        }
+
+        private async Task<List<PetitionTypeDto>> GetAllPetitionTypes()
+        {
+            var controller = new PetitionController(_mockedSimulationHub.Object, _service);
+            var result = await controller.AllPetitionTypes();
+            var okObjectResult = result.Result as OkObjectResult;
+            if (okObjectResult == null) return null;
+            return okObjectResult.Value as List<PetitionTypeDto>;
         }
 
         private void PrintUserTable()
@@ -151,10 +357,6 @@ namespace MUNityTest.SimulationTest
                 var tokenServiceResponse = await this._service.IsTokenValidAndUserChairOrOwner(simulationId, token);
                 var isChair = await this._service.IsTokenValidAndUserChair(simulationId, token);
                 var isOwner = await this._service.IsTokenValidAndUserAdmin(simulationId, token);
-                System.Console.WriteLine("Is Chair: " + isChair.ToString());
-                System.Console.WriteLine("Is Owner: " + isOwner.ToString());
-                System.Console.WriteLine("Token is chair or owner: " + tokenServiceResponse.ToString());
-                System.Console.WriteLine("Registered Tokens: " + string.Join(", ",allowedTokens));
                 return null;
             }
             var users = okResult.Value as List<SimulationUserAdminDto>;

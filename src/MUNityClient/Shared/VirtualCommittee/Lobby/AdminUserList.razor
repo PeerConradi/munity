@@ -4,7 +4,7 @@
 @inject Services.SimulationService _simulationService;
 @inject IJSRuntime JS;
 
-@if (Users != null)
+@if (ViewModel.AdminUsers != null)
 {
     <div>
         <table class="table">
@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var user in this.Users)
+                @foreach (var user in ViewModel.AdminUsers)
                 {
                     if (user != null)
                     {

@@ -218,20 +218,15 @@ namespace MUNityClient.Pages.Simulation
 
         private async void InitListOfSpeakers()
         {
-            //if (this.SimulationViewModelInstance?.Simulation != null)
-            //{
-            //    var list = await this.simulationService.InitListOfSpeakers(this.SimulationViewModelInstance.Simulation.SimulationId);
-            //    if (list != null)
-            //    {
-            //        ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(list);
-            //        if (ListOfSpeakersInstance != null)
-            //        {
-            //            // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
-            //            ListOfSpeakersInstance.SpeakerListChanged += delegate { this.StateHasChanged(); };
-            //        }
-            //        this.StateHasChanged();
-            //    }
-            //}
+            if (this.SimulationViewModelInstance?.Simulation != null)
+            {
+                var list = await this.simulationService.InitListOfSpeakers(this.SimulationViewModelInstance.Simulation.SimulationId);
+                if (list != null)
+                {
+                    this._listOfSpeakerId = list.ListOfSpeakersId;
+                    this.StateHasChanged();
+                }
+            }
         }
     }
 }
