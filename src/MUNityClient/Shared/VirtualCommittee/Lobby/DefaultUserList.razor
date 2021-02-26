@@ -14,7 +14,7 @@
             @foreach (var user in Users)
             {
             <tr>
-                <td>@user.IsOnline</td>
+                <td><i class="fa fa-circle ml-2 @(user.IsOnline ? "text-success" : "text-danger")" aria-hidden="true"></i></td>
                 @if (user.DisplayName != null)
                 {
                     <td>@user.DisplayName</td>
