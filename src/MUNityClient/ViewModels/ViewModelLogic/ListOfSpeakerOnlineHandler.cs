@@ -33,6 +33,8 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         public event EventHandler ClearSpeaker;
         public event EventHandler ClearQuestion;
         public event EventHandler Paused;
+        public event EventHandler<bool> SpeakerStateChanged;
+        public event EventHandler<bool> QuestionsStateChanged;
 
         private HttpClient httpClient;
 
@@ -51,6 +53,8 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             this.ClearSpeaker += ListOfSpeakerOnlineHandler_ClearSpeaker;
             this.ClearQuestion += ListOfSpeakerOnlineHandler_ClearQuestion;
             this.Paused += ListOfSpeakerOnlineHandler_Paused;
+            this.SpeakerStateChanged += ListOfSpeakerOnlineHandler_SpeakerStateChanged;
+            this.QuestionsStateChanged += ListOfSpeakerOnlineHandler_QuestionsStateChanged;
 
             HubConnection.On<Speaker>(nameof(ITypedListOfSpeakerHub.SpeakerAdded), (speaker) => this.SpeakerAdded?.Invoke(this, speaker));
             HubConnection.On<string>(nameof(ITypedListOfSpeakerHub.SpeakerRemoved), (id) => this.SpeakerRemoved?.Invoke(this, id));
@@ -62,8 +66,20 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             HubConnection.On(nameof(ITypedListOfSpeakerHub.ClearSpeaker), () => ClearSpeaker?.Invoke(this, new EventArgs()));
             HubConnection.On(nameof(ITypedListOfSpeakerHub.ClearQuestion), () => ClearQuestion?.Invoke(this, new EventArgs()));
             HubConnection.On(nameof(ITypedListOfSpeakerHub.Pause), () => Paused?.Invoke(this, new EventArgs()));
+            HubConnection.On<bool>(nameof(ITypedListOfSpeakerHub.SpeakersStateChanged), (args) => this.SpeakerStateChanged?.Invoke(this, args));
+            HubConnection.On<bool>(nameof(ITypedListOfSpeakerHub.QuestionsStateChanged), (args) => this.QuestionsStateChanged?.Invoke(this, args));
 
             httpClient = new HttpClient();
+        }
+
+        private void ListOfSpeakerOnlineHandler_QuestionsStateChanged(object sender, bool e)
+        {
+            this._viewModel.SourceList.QuestionsClosed = e;
+        }
+
+        private void ListOfSpeakerOnlineHandler_SpeakerStateChanged(object sender, bool e)
+        {
+            this._viewModel.SourceList.ListClosed = e;
         }
 
         private void ListOfSpeakerOnlineHandler_Paused(object sender, EventArgs e)
@@ -119,6 +135,19 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             this._viewModel.SourceList.AllSpeakers.Add(e);
         }
 
+        public async Task SetTimes(string speakerTime, string questionTime)
+        {
+            var body = new MUNity.Schema.ListOfSpeakers.SetListSettingsBody()
+            {
+                ListOfSpeakersId = this._viewModel.SourceList.ListOfSpeakersId,
+                QuestionTime = questionTime,
+                SpeakerTime = speakerTime,
+                Token = "test"
+            };
+            string url = Program.API_URL + "/api/Speakerlist/SetSettings";
+            var result = await httpClient.PutAsJsonAsync(url, body);
+        }
+
         public async Task ClearCurrentSpeaker()
         {
             string url = Program.API_URL + "/api/Speakerlist/ClearSpeaker";
@@ -166,14 +195,16 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task CloseSpeakers()
+        public async Task CloseSpeakers()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/CloseList";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task OpenSpeakers()
+        public async Task OpenSpeakers()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/OpenList";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
         public async Task ClearCurrentQuestion()
@@ -206,14 +237,16 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task OpenQuestions()
+        public async Task OpenQuestions()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/OpenQuestions";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
-        public Task CloseQuestions()
+        public async Task CloseQuestions()
         {
-            throw new NotImplementedException();
+            string url = Program.API_URL + "/api/Speakerlist/CloseQuestions";
+            var result = await httpClient.PutAsJsonAsync(url, DefaultRequestBody);
         }
 
         public async Task AddSpeaker(SpeakerToAdd speaker)

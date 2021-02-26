@@ -193,8 +193,17 @@ namespace MUNityCore.Services
             var list = this._context.ListOfSpeakers
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return false;
-            list.SpeakerTime = body.SpeakerTime;
-            list.QuestionTime = body.QuestionTime;
+            TimeSpan speakerTime;
+            TimeSpan questionTime;
+            if (!TimeSpan.TryParseExact(body.SpeakerTime, @"mm\:ss", null, out speakerTime))
+                return false;
+
+            if (!TimeSpan.TryParseExact(body.QuestionTime, @"mm\:ss", null, out questionTime))
+                return false;
+
+            list.SpeakerTime = speakerTime;
+            list.QuestionTime = questionTime;
+            _context.SaveChanges();
             return true;
         }
 
@@ -224,6 +233,46 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
             if (list == null) return false;
             list.Pause();
+            _context.SaveChanges();
+            return true;
+        }
+
+        internal bool CloseList(ListOfSpeakersRequest body)
+        {
+            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null)
+                return false;
+            list.ListClosed = true;
+            _context.SaveChanges();
+            return true;
+        }
+
+        internal bool OpenList(ListOfSpeakersRequest body)
+        {
+            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null)
+                return false;
+            list.ListClosed = false;
+            _context.SaveChanges();
+            return true;
+        }
+
+        internal bool CloseQuestions(ListOfSpeakersRequest body)
+        {
+            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null)
+                return false;
+            list.QuestionsClosed = true;
+            _context.SaveChanges();
+            return true;
+        }
+
+        internal bool OpenQuestions(ListOfSpeakersRequest body)
+        {
+            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null)
+                return false;
+            list.QuestionsClosed = false;
             _context.SaveChanges();
             return true;
         }

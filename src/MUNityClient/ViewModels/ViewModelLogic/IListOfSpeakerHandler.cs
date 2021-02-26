@@ -37,6 +37,9 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         event EventHandler Paused;
 
+        event EventHandler<bool> SpeakerStateChanged;
+        event EventHandler<bool> QuestionsStateChanged;
+
         Task Init(ListOfSpeakerViewModel viewModel);
 
         Task ClearCurrentSpeaker();
@@ -74,5 +77,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         Task AddQuestion(Models.ListOfSpeaker.SpeakerToAdd question);
 
         Task Remove(MUNity.Models.ListOfSpeakers.Speaker speaker);
+
+        Task SetTimes(string speakerTime, string questionTime);
     }
 }

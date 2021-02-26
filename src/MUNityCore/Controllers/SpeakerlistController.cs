@@ -283,6 +283,51 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult CloseList([FromBody]ListOfSpeakersRequest body)
+        {
+            bool success = this._speakerlistService.CloseList(body);
+            if (!success) return NotFound();
+
+            GetHubGroup(body)?.SpeakersStateChanged(true);
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult OpenList([FromBody] ListOfSpeakersRequest body)
+        {
+            bool success = this._speakerlistService.OpenList(body);
+            if (!success) return NotFound();
+
+            GetHubGroup(body)?.SpeakersStateChanged(false);
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult CloseQuestions([FromBody] ListOfSpeakersRequest body)
+        {
+            bool success = this._speakerlistService.CloseQuestions(body);
+            if (!success) return NotFound();
+
+            GetHubGroup(body)?.QuestionsStateChanged(true);
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult OpenQuestions([FromBody] ListOfSpeakersRequest body)
+        {
+            bool success = this._speakerlistService.OpenQuestions(body);
+            if (!success) return NotFound();
+
+            GetHubGroup(body)?.QuestionsStateChanged(false);
+            return Ok();
+        }
+
+
         /// <summary>
         /// Clears the current Speaker from the list.
         /// </summary>

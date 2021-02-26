@@ -6,15 +6,15 @@ namespace MUNity.Schema.ListOfSpeakers
 {
     public class SetListSettingsBody : ListOfSpeakersRequest, IListTimeSettings
     {
-        public TimeSpan SpeakerTime { get; set; }
+        public string SpeakerTime { get; set; }
 
-        public TimeSpan QuestionTime { get; set; }
+        public string QuestionTime { get; set; }
     }
 
     public interface IListTimeSettings
     {
-        TimeSpan SpeakerTime { get; set; }
+        string SpeakerTime { get; set; }
 
-        TimeSpan QuestionTime { get; set; }
+        string QuestionTime { get; set; }
     }
 }

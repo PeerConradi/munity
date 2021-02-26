@@ -118,6 +118,7 @@
             this.ViewModel.Handler.QuestionTimerStarted += SpeakerTimerChanged;
             this.ViewModel.Handler.ClearQuestion += delegate { this.StateHasChanged(); };
             this.ViewModel.Handler.Paused += Paused;
+            this.ViewModel.Handler.QuestionsStateChanged += delegate { this.StateHasChanged(); };
 
             if (this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
             {

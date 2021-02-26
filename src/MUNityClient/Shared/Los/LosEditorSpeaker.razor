@@ -139,6 +139,7 @@
             this.ViewModel.Handler.AnswerTimerStarted += SpeakerTimerChanged;
             this.ViewModel.Handler.ClearSpeaker += delegate { this.StateHasChanged(); };
             this.ViewModel.Handler.Paused += Paused;
+            this.ViewModel.Handler.SpeakerStateChanged += delegate { this.StateHasChanged(); };
 
             if (this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
                 this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)

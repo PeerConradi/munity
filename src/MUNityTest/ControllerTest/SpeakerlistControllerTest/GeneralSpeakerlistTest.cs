@@ -76,8 +76,8 @@ namespace MUNityCoreTest.ControllerTest.SpeakerlistControllerTest
             {
                 ListOfSpeakersId = listId,
                 Token = "test",
-                SpeakerTime = new TimeSpan(0, 2, 0),
-                QuestionTime = new TimeSpan(0, 0, 20)
+                SpeakerTime = "02:00",
+                QuestionTime = "00:20"
             };
             var result = controller.SetSettings(dto);
             Assert.IsTrue(result is OkResult);

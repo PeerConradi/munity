@@ -24,6 +24,8 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         public event EventHandler ClearSpeaker;
         public event EventHandler ClearQuestion;
         public event EventHandler Paused;
+        public event EventHandler<bool> SpeakerStateChanged;
+        public event EventHandler<bool> QuestionsStateChanged;
 
         public Task AddQuestion(SpeakerToAdd question)
         {
@@ -116,6 +118,11 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         }
 
         public Task StartAnswer()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetTimes(string speakerTime, string questionTime)
         {
             throw new NotImplementedException();
         }

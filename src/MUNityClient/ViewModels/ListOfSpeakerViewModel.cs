@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Json;
+using MUNityClient.Models.ListOfSpeaker;
+using MUNity.Schema.ListOfSpeakers;
 
 namespace MUNityClient.ViewModels
 {
@@ -19,6 +21,8 @@ namespace MUNityClient.ViewModels
         public ListOfSpeakers SourceList { get; private set; }
 
         public Services.ListOfSpeakerService Service { get; private set; }
+
+        public string Token { get; set; }
             
         public bool IsOnline { get; private set; }
 

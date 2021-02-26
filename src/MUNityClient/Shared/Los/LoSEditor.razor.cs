@@ -50,7 +50,7 @@ namespace MUNityClient.Shared.Los
         
         private Boolean invalidFormatSpeakerTime = false;
         private Boolean invalidFormatQuestionTime = false;
-        private void SaveSettings()
+        private async Task SaveSettings()
         {
             var speakerTime = ViewModel.SourceList.SpeakerTime;
             var questionTime = ViewModel.SourceList.QuestionTime;
@@ -64,6 +64,7 @@ namespace MUNityClient.Shared.Los
             {
                 // Die Eingabe der Redezeit ist ungültig!
                 invalidFormatSpeakerTime = true;
+                return;
             }
 
             if (TimeSpan.TryParseExact(Settings.Questiontime, @"mm\:ss", null, out questionTime))
@@ -74,7 +75,10 @@ namespace MUNityClient.Shared.Los
             {
                 // Die Eingegebene Zeit für Fragen und Kurzbemerkungen ist ungültig.
                 invalidFormatQuestionTime = true;
+                return;
             }
+
+            await this.ViewModel.Handler.SetTimes(Settings.Speakertime, Settings.Questiontime);
         }
 
         

@@ -52,5 +52,9 @@ namespace MUNity.Hubs
         Task ClearQuestion();
 
         Task Pause();
+
+        Task SpeakersStateChanged(bool state);
+
+        Task QuestionsStateChanged(bool state);
     }
 }
