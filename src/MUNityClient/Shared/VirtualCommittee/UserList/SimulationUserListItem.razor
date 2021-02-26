@@ -15,7 +15,7 @@
     </div>
     <div class="widget-list-content">
         <div class="row m-0 p-0 col-7">
-            @if (User.IsOnline)
+            @if (!User.IsOnline)
             {
                <span class="badge badge-danger d-flex align-items-center">Offline</span>
             }
