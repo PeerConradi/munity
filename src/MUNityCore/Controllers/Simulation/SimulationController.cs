@@ -48,6 +48,13 @@ namespace MUNityCore.Controllers
             return Ok("beta-0.0.6");
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public bool CanCreateSimulation()
+        {
+            return false;
+        }
+
         /// <summary>
         /// Returns a list of Simulations. Depricated
         /// </summary>

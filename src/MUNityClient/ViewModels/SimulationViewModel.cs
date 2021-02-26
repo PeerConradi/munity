@@ -37,8 +37,7 @@ namespace MUNityClient.ViewModels
 
         public event OnRolesChanged RolesChanged;
 
-        public delegate void OnUserRoleChanged(int sender, int userId, int roleId);
-        public event OnUserRoleChanged UserRoleChanged;
+        public event EventHandler<UserRoleChangedEventArgs> UserRoleChanged;
 
         public delegate void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto user);
         public event OnUserConnected UserConnected;
@@ -204,7 +203,7 @@ namespace MUNityClient.ViewModels
 
             HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/simsocket").Build();
             HubConnection.On<int, IEnumerable<SimulationRoleDto>>("RolesChanged", (id, roles) => RolesChanged?.Invoke(id, roles));
-            HubConnection.On<int, int, int>("UserRoleChanged", (simId, userId, roleId) => UserRoleChanged?.Invoke(simId, userId, roleId));
+            HubConnection.On<UserRoleChangedEventArgs>(nameof(ITypedSimulationHub.UserRoleChanged), (args) => UserRoleChanged?.Invoke(this, args));
             HubConnection.On<int, SimulationUserDefaultDto>("UserConnected", (id, user) => UserConnected?.Invoke(id, user));
             HubConnection.On<int, SimulationUserDefaultDto>("UserDisconnected", (id, user) => UserDisconnected?.Invoke(id, user));
             HubConnection.On<int, GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
@@ -250,12 +249,12 @@ namespace MUNityClient.ViewModels
             }
         }
 
-        private void SimulationViewModel_UserRoleChanged(int sender, int userId, int roleId)
+        private void SimulationViewModel_UserRoleChanged(object sender, UserRoleChangedEventArgs args)
         {
-            var user = Simulation?.Users?.FirstOrDefault(n => n.SimulationUserId == userId);
+            var user = Simulation?.Users?.FirstOrDefault(n => n.SimulationUserId == args.UserId);
             if (user != null)
             {
-                user.RoleId = roleId;
+                user.RoleId = args.RoleId;
             }
         }
 

@@ -320,6 +320,15 @@ namespace MUNityClient.Services
             return await client.GetFromJsonAsync<MUNity.Models.ListOfSpeakers.ListOfSpeakers>($"/api/Simulation/InitListOfSpeakers?simulationId={simulationId}");
         }
 
+        public async Task<bool> CanCreateSimulation()
+        {
+            var client = new HttpClient();
+            var result = await client.GetAsync(Program.API_URL + "/api/Simulation/CanCreateSimulation");
+            if (!result.IsSuccessStatusCode) return false;
+            var canCreate = await result.Content.ReadAsStringAsync();
+            return canCreate == "true";
+        }
+
         public async Task<List<SimulationRolesPreset>> GetPresets()
         {
             var client = this._httpService.HttpClient;

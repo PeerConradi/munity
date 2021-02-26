@@ -46,6 +46,8 @@ namespace MUNityClient.Pages.Simulation
         private MUNity.Schema.Simulation.SimulationListItemDto _selectedSimulation;
         private MUNity.Schema.Simulation.JoinAuthenticate _joinForm = new MUNity.Schema.Simulation.JoinAuthenticate();
 
+        private bool CanCreate { get; set; }
+
         private void EnterSimulation(int id)
         {
             _joinForm.SimulationId = id;
@@ -108,6 +110,7 @@ namespace MUNityClient.Pages.Simulation
             {
                 _tokens = await simulationService.GetStoredTokens();
                 _simulations = await simulationService.GetSimulationList();
+                CanCreate = await simulationService.CanCreateSimulation();
             }
         }
     }

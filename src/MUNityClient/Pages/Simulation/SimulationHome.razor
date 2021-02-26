@@ -18,7 +18,14 @@
         <div class="col-lg-4 col-md-12 col-xs-12">
             <div class="card">
                 <div class="card-body">
-                    <MUNityClient.Shared.VirtualCommittee.CreateVirtualCommittee></MUNityClient.Shared.VirtualCommittee.CreateVirtualCommittee>
+                    @if (CanCreate)
+                    {
+                        <MUNityClient.Shared.VirtualCommittee.CreateVirtualCommittee></MUNityClient.Shared.VirtualCommittee.CreateVirtualCommittee>
+                    }
+                    else
+                    {
+                        <p>Derzeit können keine neuen Simulationen erstellt werden.</p>
+                    }
                 </div>
             </div>
         </div>

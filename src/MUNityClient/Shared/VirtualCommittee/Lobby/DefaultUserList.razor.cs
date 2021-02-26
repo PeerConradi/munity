@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using Microsoft.JSInterop;
 using MUNityClient;
 using MUNityClient.Shared;
+using MUNity.Schema.Simulation;
 
 namespace MUNityClient.Shared.VirtualCommittee.Lobby
 {
@@ -42,16 +43,9 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             this.Users = await _simulationService.GetUsers(ViewModel.Simulation.SimulationId);
         }
 
-        private void OnUserRoleChanged(int sender, int userId, int roleId)
+        private void OnUserRoleChanged(object sender, UserRoleChangedEventArgs args)
         {
-            if (this.Users == null)
-                return;
-            var user = Users.FirstOrDefault(n => n.SimulationUserId == userId);
-            if (user != null)
-            {
-                user.RoleId = roleId;
-                this.StateHasChanged();
-            }
+            this.StateHasChanged();
         }
 
         private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto usr)
