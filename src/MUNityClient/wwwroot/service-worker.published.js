@@ -1,6 +1,5 @@
 // Caution! Be sure you understand the caveats before publishing an application with
-// offline support. See https://aka.ms/blazor-offline-considerations
-// updated 26.02.2021 - Bellevue
+// offline support. See https://aka.ms/blazor-offline-consideration
 
 self.importScripts('./service-worker-assets.js');
 self.addEventListener('install', event => event.waitUntil(onInstall(event)));
@@ -47,3 +46,5 @@ async function onFetch(event) {
 
     return cachedResponse || fetch(event.request);
 }
+
+/* Please update yourself 26.02.2021 */
