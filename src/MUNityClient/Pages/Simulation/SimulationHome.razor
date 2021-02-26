@@ -69,7 +69,7 @@
                                         @if (_tokens != null && _tokens.Any(n => n.SimulationId == simulation.SimulationId))
                                         {
                                             <td class="text-center">
-                                                <i type="button" class="fas fa-2x mr-3 fa-sign-in-alt text-success" title="Simulation beitreten" @onclick="() => EnterSimulation(simulation.SimulationId)">B</i>
+                                                <i type="button" class="fas fa-2x mr-3 fa-sign-in-alt text-success" title="Simulation beitreten" @onclick="() => EnterSimulation(simulation.SimulationId)"></i>
                                                 <i type="button" class="fas fa-2x fa-sign-out-alt text-danger" title="Zugangsdaten löschen und Simulation verlassen" @onclick="() => DeleteToken(simulation.SimulationId)"></i>
                                             </td>
                                         }
