@@ -1,7 +1,7 @@
 ﻿@inject Services.SimulationService simulationService;
 
 
-<div class="widget-list-item w-100 border" style="border-width: 2px !important;" >
+<div class="widget-list-item w-100 border @((User.SimulationUserId == ViewModel.Me.SimulationUserId) ? "bg-light" : "")" style="border-width: 2px !important;" >
     <div class="widget-list-media ">
         @if (Role != null && !string.IsNullOrEmpty(Role.Iso))
         {

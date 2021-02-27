@@ -243,6 +243,10 @@ namespace MUNityCore.Services
             return this._context.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.Token == token);
         }
 
+        public int? GetSimulationUserId(int simulationId, string token)
+        {
+            return this._context.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.Token == token)?.SimulationUserId;
+        }
         
 
         public MUNity.Models.ListOfSpeakers.ListOfSpeakers InitListOfSpeakers(int simulationId)
@@ -518,6 +522,27 @@ namespace MUNityCore.Services
         {
             return _context.SimulationPetitionTypes.Where(n => n.Simulation.SimulationId == simulationId)
                 .Include(n => n.PetitionType).Select(n => n.PetitionType).ToListAsync();
+        }
+
+        internal List<SimulationSlotDto> GetSlots(int simulationId)
+        {
+            var t = from user in _context.SimulationUser
+                    where user.Simulation.SimulationId == simulationId
+                    select new SimulationSlotDto()
+                    {
+                        CanCreateRole = user.CanCreateRole,
+                        CanEditListOfSpeakers = user.CanEditListOfSpeakers,
+                        CanEditResolution = user.CanEditResolution,
+                        CanSelectRole = user.CanSelectRole,
+                        DisplayName = user.DisplayName,
+                        IsOnline = user.HubConnections.Any(),
+                        RoleId = (user.Role != null) ? user.Role.SimulationRoleId : -2,
+                        RoleName = (user.Role != null) ? user.Role.Name : "",
+                        RoleType = (user.Role != null) ? user.Role.RoleType : RoleTypes.None,
+                        RoleIso = (user.Role != null) ? user.Role.Iso : "",
+                        SimulationUserId = user.SimulationUserId
+                    };
+            return t.ToList();
         }
 
         #endregion

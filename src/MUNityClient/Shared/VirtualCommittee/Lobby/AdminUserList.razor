@@ -12,30 +12,17 @@
                 <tr>
                     <th>Nutzername</th>
                     <th>Online</th>
-                    <th>PublicId</th>
                     <th>Rolle</th>
-                    <th>
-                        <div type="button" @onclick="() => showPasswords = !showPasswords">
-                            @if (showPasswords)
-                            {
-                                <i class="fas fa-eye mr-2"></i>
-                            }
-                            else
-                            {
-                                <i class="fas fa-eye-slash mr-2"></i>
-                            }
-                            Passwort
-                        </div>
-                    </th>
                     <th>Löschen</th>
+                    <th>Beitrittslink</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var user in ViewModel.AdminUsers)
+                @foreach (var user in ViewModel.Slots)
                 {
                     if (user != null)
                     {
-                        <UserListItemAdmin User="user" ViewModel="@ViewModel" UserRemoveClicked="@OnUserRemoved" PasswordShown="@showPasswords"></UserListItemAdmin>
+                        <UserListItemAdmin User="user" ViewModel="@ViewModel" UserRemoveClicked="@OnUserRemoved"></UserListItemAdmin>
                     }
                 }
             </tbody>

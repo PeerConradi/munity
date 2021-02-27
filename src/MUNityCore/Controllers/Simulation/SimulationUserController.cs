@@ -37,5 +37,28 @@ namespace MUNityCore.Controllers.Simulation
                 return NotFound();
             return Ok(newUser.ToSimulationUserAdminDto());
         }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<ActionResult<string>> UserToken([FromBody]SimulationUserTokenRequest request)
+        {
+            var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(request);
+            if (!isAllowed) return Forbid();
+            var db = _simulationService.GetDatabaseInstance();
+            var token = db.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == request.SimulationId &&
+            n.SimulationUserId == request.UserId).Token;
+            if (token == null)
+                return NotFound();
+            return Ok(token);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<int> MyUserId([FromHeader]string simsimtoken, int simulationId)
+        {
+            int? userId = this._simulationService.GetSimulationUserId(simulationId, simsimtoken);
+            if (!userId.HasValue) return Forbid();
+            return Ok(userId.Value);
+        }
     }
 }

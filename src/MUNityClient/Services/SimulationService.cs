@@ -34,6 +34,12 @@ namespace MUNityClient.Services
             }
         }
 
+        public async Task<HttpResponseMessage> GetSimulationInfo(int simulationId)
+        {
+            var client = new HttpClient();
+            return await client.GetAsync(Program.API_URL + $"/api/Simulation/Info?simulationId={simulationId}");
+        }
+
         /// <summary>
         /// Creates a Simulation and returns its token. The token will also be stored inside the 
         /// munity_simsims local storage.
@@ -290,13 +296,6 @@ namespace MUNityClient.Services
             {
                 viewModel.ShowError("Unable to get Authentication", $"Problem when loading your authentication for the simulation. Error code: {response.StatusCode}");
             }
-        }
-
-        public async Task SetUserRole(int simulationId, int userId, int roleId)
-        {
-            var client = await GetSimulationClient(simulationId);
-            if (client == null) return;
-            await client.GetAsync($"/api/Simulation/SetUserRole?simulationId={simulationId}&userId={userId}&roleId={roleId}");
         }
 
         public async Task<string> GetListOfSpeakerId(int simulationId)

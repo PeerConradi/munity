@@ -55,6 +55,24 @@ namespace MUNityCore.Controllers
             return false;
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<SimulationListItemDto> Info(int simulationId)
+        {
+            var instance = this._simulationService.GetDatabaseInstance();
+            var sim = instance.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
+            if (sim == null)
+                return NotFound();
+            var mdl = new SimulationListItemDto()
+            {
+                Name = sim.Name,
+                Phase = sim.Phase,
+                SimulationId = sim.SimulationId,
+                UsingPassword = false
+            };
+            return Ok(mdl);
+        }
+
         /// <summary>
         /// Returns a list of Simulations. Depricated
         /// </summary>
@@ -201,31 +219,6 @@ namespace MUNityCore.Controllers
             var role = simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == roleId);
             if (role == null) return NotFound();
             this._simulationService.BecomeRole(simulation, user, role);
-            await this.HubContext.Clients.Group($"sim_{simulationId}").UserRoleChanged(new UserRoleChangedEventArgs(simulationId, user.SimulationUserId, roleId));
-            return Ok();
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<ActionResult> SetUserRole([FromHeader] string simsimtoken, int simulationId, int userId, int roleId)
-        {
-            var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
-            if (simulation == null) return NotFound();
-            var user = simulation.Users.FirstOrDefault(n => n.Token == simsimtoken);
-            if (user == null || user.CanCreateRole == false) return Forbid();
-            var targetUser = simulation.Users.FirstOrDefault(n => n.SimulationUserId == userId);
-            if (targetUser == null) return NotFound();
-            if (roleId == -2)
-            {
-                this._simulationService.BecomeRole(simulation, targetUser, null);
-                await this.HubContext.Clients.Group($"sim_{simulationId}").UserRoleChanged(new UserRoleChangedEventArgs(simulationId, user.SimulationUserId, roleId));
-                return Ok();
-            }
-            var targetRole = simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == roleId);
-            if (targetRole == null) return NotFound();
-
-            this._simulationService.BecomeRole(simulation, targetUser, targetRole);
             await this.HubContext.Clients.Group($"sim_{simulationId}").UserRoleChanged(new UserRoleChangedEventArgs(simulationId, user.SimulationUserId, roleId));
             return Ok();
         }
@@ -434,6 +427,17 @@ namespace MUNityCore.Controllers
             var args = new MUNity.Schema.Simulation.VotedEventArgs(voteId, user.SimulationUserId, choice);
             await this.HubContext.Clients.Group($"sim_{simulationId}").Voted(args);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<ActionResult<List<SimulationSlotDto>>> Slots([FromHeader]string simsimtoken, int simulationId)
+        {
+            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            if (!isAllowed) Forbid();
+
+            List<SimulationSlotDto> slots = this._simulationService.GetSlots(simulationId);
+            return Ok(slots);
         }
 
         [HttpPut]

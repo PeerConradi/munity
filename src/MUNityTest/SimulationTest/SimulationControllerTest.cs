@@ -306,6 +306,62 @@ namespace MUNityTest.SimulationTest
             Assert.IsTrue(simPetitionTypes.Any());
         }
 
+        [Test]
+        [Order(11)]
+        public async Task T11GetSlots()
+        {
+            var controller = GetTestController();
+            var result = await controller.Slots(token, simulationId);
+            Assert.NotNull(result);
+            var okResult = result.Result as OkObjectResult;
+            Assert.NotNull(okResult);
+            var slotList = okResult.Value as List<SimulationSlotDto>;
+            Assert.NotNull(slotList);
+            Assert.AreEqual(2, slotList.Count);
+            Assert.AreEqual("Peer", slotList[0].DisplayName);
+            Assert.AreEqual("Vorsitzender", slotList[0].RoleName);
+        }
+
+        [Test]
+        [Order(12)]
+        public async Task T12CreateThirdUserNoRole()
+        {
+            var startUsers = await GetTestUsersAdminDto();
+            Assert.AreEqual(2, startUsers.Count);
+            var controller = new SimulationUserController(_mockedSimulationHub.Object, _service);
+            var body = new SimulationRequest()
+            {
+                SimulationId = simulationId,
+                Token = token
+            };
+            var result = await controller.CreateUser(body);
+            var okObjetResult = result.Result as OkObjectResult;
+            Assert.NotNull(okObjetResult, $"Expected an okObjectResult for successful created a new user but got: {result.Result.GetType().Name}");
+            var createdUser = okObjetResult.Value as SimulationUserAdminDto;
+            Assert.NotNull(createdUser);
+            var usersNow = await GetTestUsersAdminDto();
+            Assert.NotNull(usersNow, "Error when getting the Users another time see logs!");
+            Assert.AreEqual(3, usersNow.Count);
+        }
+
+        [Test]
+        [Order(13)]
+        [Description("This testcase contains a user slot that has not selected a role")]
+        public async Task T13GetSlotsWithEmptyRole()
+        {
+            var controller = GetTestController();
+            var result = await controller.Slots(token, simulationId);
+            Assert.NotNull(result);
+            var okResult = result.Result as OkObjectResult;
+            Assert.NotNull(okResult);
+            var slotList = okResult.Value as List<SimulationSlotDto>;
+            Assert.NotNull(slotList);
+            Assert.AreEqual(3, slotList.Count);
+            Assert.IsTrue(string.IsNullOrEmpty(slotList[2].DisplayName));
+            Assert.IsTrue(string.IsNullOrEmpty(slotList[2].RoleName));
+            Assert.AreEqual(-2, slotList[2].RoleId);
+        }
+
         private async Task<List<SimulationRoleDto>> GetTestSimulationRoles()
         {
             var controller = new SimulationRolesController(_mockedSimulationHub.Object, _service);

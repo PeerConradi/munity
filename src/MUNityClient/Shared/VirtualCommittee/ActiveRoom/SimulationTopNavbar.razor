@@ -83,12 +83,16 @@ else
                class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "active" : "")">
                 <i class="fa fa-comments"></i> Redeliste bearbeiten
             </a>
+        }
 
+        @if (ViewModel.IsChair || ViewModel.IsAdmin)
+        {
             <a @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options"
                class="list-group-item list-group-item-action @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "active" : "")">
                 <i class="fa fa-cogs"></i> Einstellungen
             </a>
         }
+
     </div>
 </div>
 

@@ -1,18 +1,34 @@
 ﻿@inject Services.SimulationService simulationService;
+@inject NavigationManager navManager;
 @inject IJSRuntime JS;
 
 <tr class="table-row align-items-center">
-    @if (User.DisplayName != null)
+    @if (!string.IsNullOrEmpty(User.DisplayName))
     {
         <td>@User.DisplayName</td>
     }
     else
     {
-        <td>KEIN NAME</td>
+        @if (!showEditField)
+        {
+            <td><a @onclick="() => showEditField = true"><i class="far fa-edit"></i></a></td>
+        }
+        else
+        {
+            <td>
+                <div class="row">
+                    <div class="col-10">
+                        <input class="form-control" />
+                    </div>
+                    <div class="col-2">
+                        <a @onclick="() => showEditField = false"><i class="fas fa-check"></i></a>
+                    </div>
+                </div>
+            </td>
+        }
     }
 
     <td><i class="fa fa-circle ml-2 @(User.IsOnline ? "text-success" : "text-danger")" aria-hidden="true"></i></td>
-    <td class="pointer" @onclick="CopyUserIDToClippboard" title="Klicken zum kopieren">@User.PublicId</td>
     @if (this.ViewModel?.Simulation?.Roles != null)
     {
         <td>
@@ -29,21 +45,15 @@
     {
         <td>Rollen werden geladen/Keine Rollen gefunden</td>
     }
-    <td class="pointer" @onclick="CopyPasswordToClippboard" title="Klicken zum kopieren">
-        @if (PasswordShown)
-        {
-            @User.Password
-        }
-        else
-        {
-            <span>********</span>
-        }
-
-    
-    </td>
 
     <td>
-        <i class="fas fa-trash" @onclick="() => UserRemoveClicked.InvokeAsync(User.SimulationUserId)"></i>
+        @if (this.ViewModel.Me.SimulationUserId != User.SimulationUserId)
+        {
+            <a @onclick="() => UserRemoveClicked.InvokeAsync(User.SimulationUserId)"><i class="fas fa-trash"></i></a>
+        }
+    </td>
+    <td>
+        <a @onclick="CopyJoinLinkToClipboard">Link kopieren</a>
     </td>
 </tr>
 

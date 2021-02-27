@@ -18,7 +18,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
     public partial class UserListItemAdmin
     {
         [Parameter]
-        public MUNity.Schema.Simulation.SimulationUserAdminDto User
+        public MUNity.Schema.Simulation.SimulationSlotDto User
         {
             get;
             set;
@@ -28,18 +28,13 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
         [Parameter]
-        public Boolean PasswordShown
-        {
-            get;
-            set;
-        }
-
-        [Parameter]
         public EventCallback<int> UserRemoveClicked
         {
             get;
             set;
         }
+
+        private bool showEditField { get; set; } = false;
 
         private int _roleId;
         public int RoleId
@@ -49,7 +44,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             {
                 if (_roleId != value)
                 {
-                    this.simulationService.SetUserRole(this.ViewModel.Simulation.SimulationId, this.User.SimulationUserId, value).ConfigureAwait(false);
+                    this.ViewModel.SetUserRole(this.User.SimulationUserId, value);
                     _roleId = value;
                 }
             }
@@ -61,14 +56,10 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             return base.OnInitializedAsync();
         }
 
-        private void CopyPasswordToClippboard()
+        private async Task CopyJoinLinkToClipboard()
         {
-            JS.InvokeAsync<string>("navigator.clipboard.writeText", @User.Password);
-        }
-
-        private void CopyUserIDToClippboard()
-        {
-            JS.InvokeAsync<string>("navigator.clipboard.writeText", @User.PublicId);
+            var id = await this.ViewModel.GetDirectJoinLink(this.User.SimulationUserId);
+            await JS.InvokeAsync<string>("navigator.clipboard.writeText", navManager.BaseUri + id);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿@inject Services.SimulationService _simulationService;
 
-@if (Users != null)
+@if (ViewModel != null)
 {
     <table class="table">
         <thead>
@@ -11,37 +11,12 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in Users)
+            @foreach (var user in this.ViewModel.Slots)
             {
-            <tr>
+            <tr class="@((ViewModel.Me.SimulationUserId == user.SimulationUserId) ? "bg-light" : "")">
                 <td><i class="fa fa-circle ml-2 @(user.IsOnline ? "text-success" : "text-danger")" aria-hidden="true"></i></td>
-                @if (user.DisplayName != null)
-                {
-                    <td>@user.DisplayName</td>
-                }
-                else
-                {
-                    <td>KEIN NAME</td>
-                }
-
-                @{
-                    if (ViewModel.Simulation?.Roles == null)
-                    {
-                        <td>Rollen nicht geladen.</td>
-                    }
-                    else
-                    {
-                        var role = ViewModel.Simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId);
-                        if (role != null)
-                        {
-                            <td>@role.Name</td>
-                        }
-                        else
-                        {
-                            <td>Keine Rolle</td>
-                        }
-                    }
-                }
+                <td>@user?.DisplayName</td>
+                <td>@user?.RoleName</td>
             </tr>
             }
         </tbody>

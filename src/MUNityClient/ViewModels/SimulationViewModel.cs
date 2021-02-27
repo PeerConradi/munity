@@ -12,6 +12,7 @@ using System.Net.Http;
 using MUNityClient.Extensions.Simulation;
 using System.Net.Http.Json;
 using MUNitySchema.Schema.Simulation.Resolution;
+using Microsoft.AspNetCore.Components;
 
 namespace MUNityClient.ViewModels
 {
@@ -33,6 +34,20 @@ namespace MUNityClient.ViewModels
             this.AdminUsers.Clear();
             var users = await _simulationService.GetUserSetups(this.Simulation.SimulationId);
             users.ForEach(n => this.AdminUsers.Add(n));
+        }
+
+        internal async Task SetUserRole(int simulationUserId, int value)
+        {
+            var body = new SetUserSimulationRole()
+            {
+                RoleId = value,
+                SimulationId = this.Simulation.SimulationId,
+                UserId = simulationUserId,
+                Token = this.Token
+            };
+            var client = new HttpClient();
+            Console.WriteLine("Setze Rolle");
+            await client.PutAsJsonAsync(Program.API_URL + "/api/Simulation/Roles/SetUserRole", body);
         }
 
         public event OnRolesChanged RolesChanged;
@@ -73,6 +88,11 @@ namespace MUNityClient.ViewModels
 
         public event EventHandler<NotificationViewModel> NotificationChanged;
 
+        public int MyUserId { get; set; }
+
+        public SimulationSlotDto MySlot => Slots.FirstOrDefault(n => n.SimulationUserId == MyUserId);
+
+        public ObservableCollection<SimulationSlotDto> Slots { get; set; } = new ObservableCollection<SimulationSlotDto>();
 
         public async Task CreateResolution()
         {
@@ -205,7 +225,7 @@ namespace MUNityClient.ViewModels
             HubConnection.On<int, IEnumerable<SimulationRoleDto>>("RolesChanged", (id, roles) => RolesChanged?.Invoke(id, roles));
             HubConnection.On<UserRoleChangedEventArgs>(nameof(ITypedSimulationHub.UserRoleChanged), (args) => UserRoleChanged?.Invoke(this, args));
             HubConnection.On<int, SimulationUserDefaultDto>("UserConnected", (id, user) => UserConnected?.Invoke(id, user));
-            HubConnection.On<int, SimulationUserDefaultDto>("UserDisconnected", (id, user) => UserDisconnected?.Invoke(id, user));
+            HubConnection.On<int, SimulationUserDefaultDto>(nameof(ITypedSimulationHub.UserDisconnected), (id, user) => UserDisconnected?.Invoke(id, user));
             HubConnection.On<int, GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
             HubConnection.On<int, string>("StatusChanged", (id, status) => StatusChanged?.Invoke(id, status));
             HubConnection.On<int, LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
@@ -251,19 +271,21 @@ namespace MUNityClient.ViewModels
 
         private void SimulationViewModel_UserRoleChanged(object sender, UserRoleChangedEventArgs args)
         {
-            var user = Simulation?.Users?.FirstOrDefault(n => n.SimulationUserId == args.UserId);
+            var user = Slots.FirstOrDefault(n => n.SimulationUserId == args.UserId);
             if (user != null)
             {
                 user.RoleId = args.RoleId;
+                user.RoleName = this.Simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == args.RoleId)?.Name ?? "";
             }
         }
 
         private void SimulationViewModel_UserDisconnected(int sender, SimulationUserDefaultDto user)
         {
-            var userInSim = Simulation?.Users?.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
-            if (user != null)
+            Console.WriteLine($"User diconnected {user.SimulationUserId}");
+            var userInSim = Slots.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
+            if (userInSim != null)
             {
-                user.IsOnline = false;
+                userInSim.IsOnline = false;
             }
         }
 
@@ -281,12 +303,12 @@ namespace MUNityClient.ViewModels
 
         private void SimulationViewModel_UserConnected(int sender, SimulationUserDefaultDto user)
         {
-            var userInSim = this.Simulation?.Users?.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
+            var userInSim = this.Slots.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
             if (userInSim != null)
             {
-                user.IsOnline = true;
-                if (!string.IsNullOrEmpty(user.DisplayName) && user.DisplayName != user.DisplayName)
-                    user.DisplayName = user.DisplayName;
+                userInSim.IsOnline = true;
+                if (!string.IsNullOrEmpty(user.DisplayName) && userInSim.DisplayName != user.DisplayName)
+                    userInSim.DisplayName = user.DisplayName;
             }
         }
 
@@ -326,11 +348,46 @@ namespace MUNityClient.ViewModels
             var token = await service.GetSimulationToken(simulation.SimulationId);
             if (token == null) return null;
 
-            var socket = new SimulationViewModel(simulation, service);
-            socket.Token = token.Token;
-            await socket.LoadDataAsync();
-            await socket.HubConnection.StartAsync();
-            return socket;
+            var viewModel = new SimulationViewModel(simulation, service);
+            viewModel.Token = token.Token;
+
+            await LoadMe(viewModel, token.Token);
+            await LoadSlots(viewModel, token.Token);
+
+            await viewModel.LoadDataAsync();
+            await viewModel.HubConnection.StartAsync();
+            return viewModel;
+        }
+
+        private static async Task LoadSlots(SimulationViewModel viewModel, string token)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("simsimtoken", token);
+            var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/Slots?simulationId={viewModel.Simulation.SimulationId}");
+            if (result.IsSuccessStatusCode)
+            {
+                var slots = await result.Content.ReadFromJsonAsync<List<SimulationSlotDto>>();
+                if (slots != null && slots.Any())
+                {
+                    slots.ForEach(n => viewModel.Slots.Add(n));
+                }
+            }
+        }
+
+        private static async Task LoadMe(SimulationViewModel viewModel, string token)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("simsimtoken", token);
+            var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/User/MyUserId?simulationId={viewModel.Simulation.SimulationId}");
+            if (result.IsSuccessStatusCode)
+            {
+                var userId = await result.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    viewModel.MyUserId = int.Parse(userId);
+                    Console.WriteLine($"I am {viewModel.MyUserId}");
+                }
+            }
         }
 
         public async Task StartSimulation()
@@ -348,6 +405,29 @@ namespace MUNityClient.ViewModels
         public async Task CloseAllConnections()
         {
             await this._simulationService.CloseAllConnections(this.Simulation.SimulationId);
+        }
+
+        public async Task<string> GetDirectJoinLink(int userId)
+        {
+            var client = new HttpClient();
+            var body = new SimulationUserTokenRequest()
+            {
+                SimulationId = this.Simulation.SimulationId,
+                Token = this.Token,
+                UserId = userId
+            };
+            var response = await client.PutAsJsonAsync(Program.API_URL + "/api/Simulation/User/UserToken", body);
+            if (response.IsSuccessStatusCode)
+            {
+                var token = await response.Content.ReadAsStringAsync();
+                return $"Sim/DirectJoin/{this.Simulation.SimulationId}/{token}";
+            }
+            else
+            {
+                this.ShowError("Fehler", "Link konnte nicht geholt werden!");
+                return null;
+            }
+
         }
 
         public bool CanMakeAnyPetition

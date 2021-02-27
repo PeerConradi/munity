@@ -25,49 +25,16 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             set;
         }
 
-        public IEnumerable<MUNity.Schema.Simulation.SimulationUserDefaultDto> Users
-        {
-            get;
-            set;
-        }
-
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             if (ViewModel != null)
             {
-                ViewModel.UserConnected += OnUserConnected;
-                ViewModel.UserDisconnected += OnUserDisconnected;
-                ViewModel.UserRoleChanged += OnUserRoleChanged;
+                ViewModel.UserConnected += delegate { this.StateHasChanged(); };
+                ViewModel.UserDisconnected += delegate { this.StateHasChanged(); };
+                ViewModel.UserRoleChanged += delegate { this.StateHasChanged(); };
             }
-
-            this.Users = await _simulationService.GetUsers(ViewModel.Simulation.SimulationId);
+            base.OnInitialized();
         }
 
-        private void OnUserRoleChanged(object sender, UserRoleChangedEventArgs args)
-        {
-            this.StateHasChanged();
-        }
-
-        private void OnUserConnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto usr)
-        {
-            var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
-            if (user != null)
-            {
-                user.IsOnline = true;
-                if (!string.IsNullOrEmpty(usr.DisplayName) && usr.DisplayName != user.DisplayName)
-                    user.DisplayName = usr.DisplayName;
-                StateHasChanged();
-            }
-        }
-
-        private void OnUserDisconnected(int sender, MUNity.Schema.Simulation.SimulationUserDefaultDto usr)
-        {
-            var user = Users.FirstOrDefault(n => n.SimulationUserId == usr.SimulationUserId);
-            if (user != null)
-            {
-                user.IsOnline = false;
-                this.StateHasChanged();
-            }
-        }
     }
 }

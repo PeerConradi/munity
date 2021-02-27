@@ -30,6 +30,7 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// A non government organization that has some ability to interact with the simulation but not as much as a delegate (cant vote etc.)
         /// </summary>
-        Ngo
+        Ngo,
+        None
     }
 }
