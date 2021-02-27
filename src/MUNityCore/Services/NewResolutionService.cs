@@ -11,6 +11,7 @@ using MUNityCore.DataHandlers.EntityFramework;
 using MUNity.Models.Resolution;
 using MUNityCore.Models.Resolution.V2;
 using MUNity.Extensions.ResolutionExtensions;
+using MUNity.Schema.Simulation;
 
 namespace MUNityCore.Services
 {
@@ -189,6 +190,11 @@ namespace MUNityCore.Services
             if (resolution == null) return;
             resolution.Name = text;
             await this._munityContext.SaveChangesAsync();
+        }
+
+        public bool SetOnlineAmendmentMode(SetResolutionOnlineAmendmentState state)
+        {
+            throw new NotImplementedException();
         }
 
         public NewResolutionService(MunityContext munityContext, IMunityMongoDatabaseSettings mongoSettings)

@@ -16,42 +16,6 @@ namespace MUNityCore.Models.Resolution.V2
     /// </summary>
     public class ResolutionAuth
     {
-        public enum EAmendmentModes
-        {
-            /// <summary>
-            /// Noone can Posts Amendments except the editors
-            /// </summary>
-            NotAllowed,
-            /// <summary>
-            /// Everyone can post amendments and they go directly into the list
-            /// </summary>
-            AllowPublicPost,
-            /// <summary>
-            /// Everyone can post amendments but they need to be accepted by an editor first.
-            /// </summary>
-            AllowPublicRequest,
-            /// <summary>
-            /// Everypne that is part of the conference that this resolution is linked (voer the committee) to is
-            /// allowed to post an amendment directly into the document
-            /// </summary>
-            AllowConferencePost,
-            /// <summary>
-            /// Everyone that is part of the conference that this resolution is linked (over the committee) to is
-            /// allowed to post an amendment that needs to be accepted by an editor before
-            /// going into the document.
-            /// </summary>
-            AllowConferenceRequest,
-            /// <summary>
-            /// Everyone that is part of the committee that this resolution is linked to can post amendments directly into
-            /// the document.
-            /// </summary>
-            AllowCommitteePost,
-            /// <summary>
-            /// Everyone that is part of the committee that this resolution is linked to can post amendments that need to
-            /// be accepted by an editor before going into the document.
-            /// </summary>
-            AllowCommitteeRequest
-        }
 
         public string ResolutionId { get; set; }
 
@@ -73,7 +37,7 @@ namespace MUNityCore.Models.Resolution.V2
 
         public bool AllowCommitteeRead { get; set; }
 
-        public EAmendmentModes AmendmentMode { get; set; }
+        public bool AllowOnlineAmendments { get; set; }
 
         public string PublicShortKey { get; set; }
 

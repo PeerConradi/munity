@@ -108,145 +108,6 @@ namespace MUNityCore.Controllers
             return await CanUserEditResolution(id);
         }
 
-        #region "Header"
-
-        [Route("[action]")]
-        [HttpPut]
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdateHeaderName([FromBody]HeaderStringPropChangedEventArgs body)
-        {
-            if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
-
-            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
-            if (resolution.ResolutionId == null) return NotFound();
-            if (body.Text == null) return BadRequest();
-            if (body.Text == resolution.Header.Name) return Ok();
-
-            resolution.Header.Name = body.Text;
-            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
-            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderNameChanged(body).ConfigureAwait(false);
-            return Ok();
-        }
-
-        [Route("[action]")]
-        [HttpPut]
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdateHeaderFullName([FromBody] HeaderStringPropChangedEventArgs body)
-        {
-            if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
-
-            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
-            if (resolution.ResolutionId == null) return NotFound();
-            if (body.Text == null) return BadRequest();
-            if (body.Text == resolution.Header.FullName) return Ok();
-
-            resolution.Header.FullName = body.Text;
-            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
-            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderFullNameChanged(body).ConfigureAwait(false);
-            return Ok();
-        }
-
-        [Route("[action]")]
-        [HttpPut]
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdateHeaderTopic([FromBody] HeaderStringPropChangedEventArgs body)
-        {
-            if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
-
-            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
-            
-            if (resolution.ResolutionId == null) return NotFound();
-            if (body.Text == null) return BadRequest();
-            if (body.Text == resolution.Header.Topic) return Ok();
-
-            resolution.Header.Topic = body.Text;
-            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
-            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderTopicChanged(body).ConfigureAwait(false);
-            await this._resolutionService.SetNameInDb(body.ResolutionId, body.Text);
-            return Ok();
-        }
-
-        [Route("[action]")]
-        [HttpPut]
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdateHeaderAgendaItem([FromBody] HeaderStringPropChangedEventArgs body)
-        {
-            if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
-
-            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
-            if (resolution.ResolutionId == null) return NotFound();
-            if (body.Text == null) return BadRequest();
-            if (body.Text == resolution.Header.AgendaItem) return Ok();
-
-            resolution.Header.AgendaItem = body.Text;
-            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
-            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderAgendaItemChanged(body).ConfigureAwait(false);
-            return Ok();
-        }
-
-        [Route("[action]")]
-        [HttpPut]
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdateHeaderSession([FromBody] HeaderStringPropChangedEventArgs body)
-        {
-            if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
-
-            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
-            if (resolution.ResolutionId == null) return NotFound();
-            if (body.Text == null) return BadRequest();
-            if (body.Text == resolution.Header.Session) return Ok();
-
-            resolution.Header.Session = body.Text;
-            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
-            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderSessionChanged(body).ConfigureAwait(false);
-            return Ok();
-        }
-
-        [Route("[action]")]
-        [HttpPut]
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdateHeaderSubmitterName([FromBody] HeaderStringPropChangedEventArgs body)
-        {
-            if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
-
-            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
-            if (resolution.ResolutionId == null) return NotFound();
-            if (body.Text == null) return BadRequest();
-            if (body.Text == resolution.Header.SubmitterName) return Ok();
-
-            resolution.Header.SubmitterName = body.Text;
-            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
-            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderSubmitterNameChanged(body).ConfigureAwait(false);
-            return Ok();
-        }
-
-        [Route("[action]")]
-        [HttpPut]
-        [AllowAnonymous]
-        public async Task<ActionResult> UpdateHeaderCommitteeName([FromBody] HeaderStringPropChangedEventArgs body)
-        {
-            if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
-
-            var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
-            if (resolution.ResolutionId == null) return NotFound();
-            if (body.Text == null) return BadRequest();
-            if (body.Text == resolution.Header.CommitteeName) return Ok();
-
-            resolution.Header.CommitteeName = body.Text;
-            _ = _resolutionService.SaveResolution(resolution).ConfigureAwait(false);
-            _ = this._hubContext.Clients.Group(body.ResolutionId).HeaderCommitteeNameChanged(body).ConfigureAwait(false);
-            return Ok();
-        }
-
-        #endregion
-
         #region "Preamble"
 
         [Route("[action]")]
@@ -380,18 +241,6 @@ namespace MUNityCore.Controllers
         }
 
         [Route("[action]")]
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult<bool>> CanUserPostAmendments(string resolutionId)
-        {
-            var result = await CanUserSubmitAmendments(resolutionId);
-            if (result == EPostAmendmentMode.NotAllowed)
-                return Ok(false);
-
-            return Ok(true);
-        }
-
-        [Route("[action]")]
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> PostDeleteAmendment(string resolutionId, string tan, [FromBody]DeleteAmendment amendment)
@@ -466,10 +315,7 @@ namespace MUNityCore.Controllers
 
         private async Task<bool> CanUserReadResolution(string id, string password = null)
         {
-            // Reading must be allowed to the user, when he should be allowed to post amendments.
-            if (await CanUserSubmitAmendments(id) != EPostAmendmentMode.NotAllowed) return true;
             var resolutionAuth = await this._resolutionService.GetResolutionAuth(id);
-            
             if (resolutionAuth == null) return false;
             if (resolutionAuth.AllowPublicRead) return true;
             // The resolution is protected by a reading password!
@@ -480,16 +326,6 @@ namespace MUNityCore.Controllers
             var user = this._authService.GetUserOfClaimPrincipal(User);
             if (user == null) return false;
             return resolutionAuth.Users.Any(n => n.User.MunityUserId == user.MunityUserId && n.CanRead);
-        }
-
-        private async Task<EPostAmendmentMode> CanUserSubmitAmendments(string resolutionId)
-        {
-            var resolutionAuth = await this._resolutionService.GetResolutionAuth(resolutionId);
-            if (resolutionAuth == null) return EPostAmendmentMode.NotAllowed;
-            if (resolutionAuth.AmendmentMode == ResolutionAuth.EAmendmentModes.NotAllowed) return EPostAmendmentMode.NotAllowed;
-            if (resolutionAuth.AmendmentMode == ResolutionAuth.EAmendmentModes.AllowPublicPost) return EPostAmendmentMode.AllowedPost;
-
-            throw new NotImplementedException("This case is not implemented yet!");
         }
 
         private bool CanAmendmentBeAdded(AbstractAmendment amendment, OperativeSection operativeSection)

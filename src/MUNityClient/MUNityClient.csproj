@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Conference\**" />
+    <Content Remove="Pages\Conference\**" />
+    <EmbeddedResource Remove="Pages\Conference\**" />
+    <None Remove="Pages\Conference\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.376" />
     <PackageReference Include="Markdig" Version="0.23.0" />
@@ -21,10 +28,6 @@
 
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Conference\" />
   </ItemGroup>
 
   <ItemGroup>
