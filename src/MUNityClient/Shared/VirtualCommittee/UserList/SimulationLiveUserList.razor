@@ -1,10 +1,47 @@
 ﻿
 @if (SimulationContext?.Simulation?.Users != null && SimulationContext?.Simulation?.Roles != null && SimulationContext.Simulation.Users.Any())
 {
+    <div class="row">
+        <div class="col-12"><h3>Vorsitz</h3></div>
+    </div>
     <div class="widget-list widget-list-rounded m-b-30">
-        @foreach (var user in SimulationContext?.Simulation?.Users)
+        @foreach (var user in SimulationContext?.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman))
         {
-            <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user" Role="@SimulationContext.Simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == user.RoleId)"
+            <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user"
+                                                                                  ViewModel="@SimulationContext" />
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-12"><h3>Delegierte</h3></div>
+    </div>
+    <div class="widget-list widget-list-rounded m-b-30">
+        @foreach (var user in SimulationContext?.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate).OrderBy(n => n.RoleName))
+        {
+            <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user"
+                                                                                  ViewModel="@SimulationContext" />
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-12"><h3>Nichtstaatliche Akteure</h3></div>
+    </div>
+    <div class="widget-list widget-list-rounded m-b-30">
+        @foreach (var user in SimulationContext?.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo).OrderBy(n => n.RoleName))
+        {
+            <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user"
+                                                                                  ViewModel="@SimulationContext" />
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-12"><h3>Zuschauer und weitere</h3></div>
+    </div>
+    <div class="widget-list widget-list-rounded m-b-30">
+        @foreach (var user in SimulationContext?.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Spectator ||
+         n.RoleType == MUNity.Schema.Simulation.RoleTypes.None).OrderBy(n => n.RoleName).OrderBy(n => n.DisplayName))
+        {
+            <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user"
                                                                                   ViewModel="@SimulationContext" />
         }
     </div>

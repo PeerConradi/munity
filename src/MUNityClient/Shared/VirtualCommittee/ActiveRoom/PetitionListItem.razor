@@ -6,7 +6,7 @@
         <small class="text-muted">@Petition.PetitionDate</small>
     </div>
     <div class="mb-0">
-        <p>@SubmitterName</p>
+        <p>@SubmitterRoleName (@SubmitterName)</p>
     </div>
     @if (this.ViewModel.IsChair)
     {
@@ -46,6 +46,15 @@ else
             if (user != null)
                 return user.DisplayName;
             return "";
+        }
+    }
+
+    private string SubmitterRoleName
+    {
+        get
+        {
+            if (this.ViewModel == null || this.Petition == null) return "";
+            return ViewModel.Slots.FirstOrDefault(n => n.SimulationUserId == Petition.PetitionUserId)?.RoleName ?? "";
         }
     }
 

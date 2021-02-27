@@ -19,8 +19,8 @@
                                 {
                                     @foreach (var agendaItem in this.ViewModel.AgendaItems)
                                     {
-                                        <a class="alert w-100 @((_currentSelectedAgendaItem == agendaItem) ? "alert-primary" : "alert-dark") m-0"
-                                           @onclick="() => _currentSelectedAgendaItem = agendaItem">@agendaItem.Name (@agendaItem.Petitions.Count @((agendaItem.Petitions.Count == 1) ? "Antrag" : "Anträge"))</a>
+                                        <a class="alert w-100 @((ViewModel.SelectedAgendaItem == agendaItem) ? "alert-primary" : "alert-dark") m-0"
+                                           @onclick="() => ViewModel.SelectedAgendaItem = agendaItem">@agendaItem.Name (@agendaItem.Petitions.Count @((agendaItem.Petitions.Count == 1) ? "Antrag" : "Anträge"))</a>
                                     }
                                 }
                                 else
@@ -41,25 +41,25 @@
             <div class="card">
                 <div class="card-header">
                     Anträge
-                    @if (_currentSelectedAgendaItem != null && this.ViewModel.CanMakeAnyPetition)
+                    @if (ViewModel.SelectedAgendaItem != null && this.ViewModel.CanMakeAnyPetition)
                     {
                         <button class="btn btn-success btn-sm" @onclick="() => ShowNewPetitionBox = !ShowNewPetitionBox">Neuer Antrag</button>
                     }
                 </div>
 
                 <div class="card-body">
-                    @if (_currentSelectedAgendaItem != null)
+                    @if (ViewModel.SelectedAgendaItem != null)
                     {
                     <div class="list-group">
-                        @if (_currentSelectedAgendaItem.Petitions == null)
+                        @if (ViewModel.SelectedAgendaItem.Petitions == null)
                         {
                             <p>Keine Anträge geladen</p>
                         }
                         else
                         {
-                            if (_currentSelectedAgendaItem.Petitions.Any())
+                            if (ViewModel.SelectedAgendaItem.Petitions.Any())
                             {
-                                @foreach (var petition in _currentSelectedAgendaItem.Petitions
+                                @foreach (var petition in ViewModel.SelectedAgendaItem.Petitions
                                     .OrderBy(n => ViewModel.PetitionTypes.FirstOrDefault(a => a.PetitionTypeId == n.PetitionTypeId).OrderIndex)
                                     .ThenBy(n => n.PetitionDate))
                                 {
@@ -90,7 +90,7 @@
 
     <CreateAgendaItem @ref="_createAgendaItemRef" ViewModel="@this.ViewModel" />
 
-    <SelectPetitionTool ViewModel="@this.ViewModel" CurrentAgendaItem="@_currentSelectedAgendaItem" IsVisible="ShowNewPetitionBox" />
+    <SelectPetitionTool ViewModel="@this.ViewModel" CurrentAgendaItem="@ViewModel.SelectedAgendaItem" IsVisible="ShowNewPetitionBox" />
 }
 
 
@@ -101,8 +101,6 @@
     public bool ShowNewPetitionBox { get; set; } = false;
 
     private CreateAgendaItem _createAgendaItemRef;
-
-    private MUNity.Schema.Simulation.AgendaItemDto _currentSelectedAgendaItem = null;
 
     protected override void OnInitialized()
     {

@@ -154,6 +154,8 @@ namespace MUNityClient.ViewModels
 
         public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
 
+        public MUNity.Schema.Simulation.AgendaItemDto SelectedAgendaItem { get; set; }
+
         /// <summary>
         /// The Id of the resolution that the user is currently reading. Not the one that the committee is currently working on!
         /// </summary>
@@ -190,9 +192,8 @@ namespace MUNityClient.ViewModels
         {
             get
             {
-                var role = this.MyRole?.RoleType;
-                if (role == null) return false;
-                return role == RoleTypes.Chairman;
+                if (MySlot == null) return false;
+                return MySlot.RoleType == RoleTypes.Chairman;
             }
         }
 
@@ -200,8 +201,8 @@ namespace MUNityClient.ViewModels
         {
             get
             {
-                if (MyAuth == null) return false;
-                return MyAuth.CanCreateRole;
+                if (MySlot == null) return false;
+                return MySlot.CanCreateRole;
             }
         }
 

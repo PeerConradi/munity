@@ -1,11 +1,10 @@
 ﻿@inject Services.SimulationService simulationService;
 
-
 <div class="widget-list-item w-100 border @((User.SimulationUserId == ViewModel.Me.SimulationUserId) ? "bg-light" : "")" style="border-width: 2px !important;" >
     <div class="widget-list-media ">
-        @if (Role != null && !string.IsNullOrEmpty(Role.Iso))
+        @if (!string.IsNullOrEmpty(User.RoleIso))
         {
-            <img src="/img/flags/small/un.png" alt="" class="rounded ">
+            <img src="/img/flags/small/@(User.RoleIso).png" alt="" class="rounded ">
         }
         else
         {
@@ -20,9 +19,9 @@
                <span class="badge badge-danger d-flex align-items-center">Offline</span>
             }
             <div class="col m-0 p-0">
-                @if (Role != null)
+                @if (!string.IsNullOrEmpty(User.RoleName))
                 {
-                    <h4 class="widget-list-title col-12">@Role.Name</h4>
+                    <h4 class="widget-list-title col-12">@User.RoleName</h4>
                 }
                 <p class="widget-list-desc col-12">@User?.DisplayName</p>
             </div>
@@ -141,10 +140,7 @@
 
 @code {
     [Parameter]
-    public MUNity.Schema.Simulation.IUserItem User { get; set; }
-
-    [Parameter]
-    public MUNity.Schema.Simulation.SimulationRoleDto Role { get; set; }
+    public MUNity.Schema.Simulation.SimulationSlotDto User { get; set; }
 
     [Parameter]
     public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
@@ -173,6 +169,8 @@
         {
             ViewModel.UserVoted += UserVoted;
             ViewModel.VoteCreated += VoteCreated;
+            ViewModel.UserConnected += delegate { this.StateHasChanged(); };
+            ViewModel.UserDisconnected += delegate { this.StateHasChanged(); };
         }
         base.OnInitialized();
     }

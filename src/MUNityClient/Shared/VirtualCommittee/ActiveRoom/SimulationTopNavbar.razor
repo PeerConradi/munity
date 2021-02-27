@@ -30,15 +30,21 @@ else
                <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents" title="Anwesenheit">
                    <i class="fa fa-users"></i>
                </a>
-                   @if (this.ViewModel.IsChair)
-                   {
+               @if (this.ViewModel.IsChair)
+               {
                    <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor" title="Redeliste">
                        <i class="fa fa-comments"></i>
                    </a>
+               }
+
+               @if (this.ViewModel.IsChair || this.ViewModel.IsAdmin)
+               {
                    <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options" title="Optionen">
                        <i class="fa fa-cogs"></i>
                    </a>
-                   }
+               }
+
+
            </div>
 
             <!-- Left links -->

@@ -79,7 +79,7 @@ namespace MUNityClient.ViewModels
             return mdl;
         }
 
-        private static async Task<ListOfSpeakerViewModel> GetFromOnline(Services.ListOfSpeakerService service, string listId)
+        public static async Task<ListOfSpeakerViewModel> GetFromOnline(Services.ListOfSpeakerService service, string listId)
         {
             Console.WriteLine("Try to init list of speakers from server!");
             var list = await service.GetFromApi(listId);

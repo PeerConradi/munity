@@ -29,7 +29,7 @@ namespace MUNityCore.Models.Simulation
         /// Read all about the Alpha-2 codes here:
         /// https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
         /// </summary>
-        [MaxLength(2)]
+        [MaxLength(5)]
         public string Iso { get; set; }
 
         public Simulation Simulation { get; set; }

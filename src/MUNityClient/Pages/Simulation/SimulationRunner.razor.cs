@@ -13,6 +13,7 @@ using Microsoft.JSInterop;
 using MUNityClient;
 using MUNityClient.Shared;
 using System.ComponentModel;
+using MUNityClient.Models.ListOfSpeaker;
 
 namespace MUNityClient.Pages.Simulation
 {
@@ -124,12 +125,12 @@ namespace MUNityClient.Pages.Simulation
                     this._listOfSpeakers = await listOfSpeakerService.GetFromApi(_listOfSpeakerId);
                     if (_listOfSpeakers != null)
                     {
-                        //ListOfSpeakersInstance = await listOfSpeakerService.Subscribe(_listOfSpeakers);
-                        //if (ListOfSpeakersInstance != null)
-                        //{
-                        //    // To update/lock the Add Me to List of Speakers buttons when a list is closed or opened
-                        //    ListOfSpeakersInstance.Handler.SpeakerListChanged += delegate { this.StateHasChanged(); };
-                        //}
+                        ListOfSpeakersInstance = await MUNityClient.ViewModels.ListOfSpeakerViewModel.GetFromOnline(listOfSpeakerService, _listOfSpeakerId);
+                        if (ListOfSpeakersInstance != null)
+                        {
+                            ListOfSpeakersInstance.Handler.SpeakerStateChanged += delegate { this.StateHasChanged(); };
+                            ListOfSpeakersInstance.Handler.QuestionsStateChanged += delegate { this.StateHasChanged(); };
+                        }
                     }
                 }
 
@@ -137,39 +138,59 @@ namespace MUNityClient.Pages.Simulation
             }
         }
 
-        private void AddMeToListOfSpeakers()
+        private async Task AddMeToListOfSpeakers()
         {
             if (ListOfSpeakersInstance == null)
                 return;
-            if (SimulationViewModelInstance?.MyRole != null)
+
+            if (SimulationViewModelInstance != null && !string.IsNullOrEmpty(SimulationViewModelInstance.MySlot.RoleName))
             {
-                listOfSpeakerService.AddSpeakerToList(ListOfSpeakersInstance.SourceList.ListOfSpeakersId, SimulationViewModelInstance.MyRole.Name, SimulationViewModelInstance.MyRole.Iso);
+                var body = new SpeakerToAdd()
+                {
+                    Iso = SimulationViewModelInstance.MySlot.RoleIso,
+                    Name = SimulationViewModelInstance.MySlot.RoleName
+                };
+                await ListOfSpeakersInstance.Handler.AddSpeaker(body);
                 return;
             }
             else
             {
-                if (SimulationViewModelInstance?.Me != null)
+                var body = new SpeakerToAdd()
                 {
-                    listOfSpeakerService.AddSpeakerToList(ListOfSpeakersInstance.SourceList.ListOfSpeakersId, SimulationViewModelInstance.Me.DisplayName, "");
-                }
+                    Iso = "un",
+                    Name = SimulationViewModelInstance.MySlot.DisplayName
+                };
+                await ListOfSpeakersInstance.Handler.AddSpeaker(body);
+                return;
             }
         }
 
-        private void AddMeToListOfQuestions()
+        private async Task AddMeToListOfQuestions()
         {
             if (ListOfSpeakersInstance == null)
                 return;
-            if (SimulationViewModelInstance?.MyRole != null)
+
+            
+
+            if (SimulationViewModelInstance != null && !string.IsNullOrEmpty(SimulationViewModelInstance.MySlot.RoleName))
             {
-                listOfSpeakerService.AddQuestionToList(ListOfSpeakersInstance.SourceList.ListOfSpeakersId, SimulationViewModelInstance.MyRole.Name, SimulationViewModelInstance.MyRole.Iso);
+                var body = new SpeakerToAdd()
+                {
+                    Iso = SimulationViewModelInstance.MySlot.RoleIso,
+                    Name = SimulationViewModelInstance.MySlot.RoleName
+                };
+                await ListOfSpeakersInstance.Handler.AddQuestion(body);
                 return;
             }
             else
             {
-                if (SimulationViewModelInstance?.Me != null)
+                var body = new SpeakerToAdd()
                 {
-                    listOfSpeakerService.AddQuestionToList(ListOfSpeakersInstance.SourceList.ListOfSpeakersId, SimulationViewModelInstance.Me.DisplayName, "");
-                }
+                    Iso = "un",
+                    Name = SimulationViewModelInstance.MySlot.DisplayName
+                };
+                await ListOfSpeakersInstance.Handler.AddQuestion(body);
+                return;
             }
         }
 

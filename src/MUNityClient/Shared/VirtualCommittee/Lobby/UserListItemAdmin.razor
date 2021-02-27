@@ -34,10 +34,30 @@
         <td>
             <select class="form-control" @bind="@this.RoleId">
                 <option value="-2">Keine Rolle</option>
-                @foreach (var role in this.ViewModel.Simulation.Roles)
-                {
-                    <option value="@role.SimulationRoleId">@role.Name</option>
-                }
+                <optgroup label="Vorsitz">
+                    @foreach (var role in this.ViewModel.Simulation.Roles.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman))
+                    {
+                        <option value="@role.SimulationRoleId">@role.Name</option>
+                    }
+                </optgroup>
+                <optgroup label="Delegationen">
+                    @foreach (var role in this.ViewModel.Simulation.Roles.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate).OrderBy(n => n.Name))
+                    {
+                        <option value="@role.SimulationRoleId">@role.Name</option>
+                    }
+                </optgroup>
+                <optgroup label="Nichtstaatliche Akteure">
+                    @foreach (var role in this.ViewModel.Simulation.Roles.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo).OrderBy(n => n.Name))
+                    {
+                        <option value="@role.SimulationRoleId">@role.Name</option>
+                    }
+                </optgroup>
+                <optgroup label="Weitere">
+                    @foreach (var role in this.ViewModel.Simulation.Roles.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Spectator).OrderBy(n => n.Name))
+                    {
+                        <option value="@role.SimulationRoleId">@role.Name</option>
+                    }
+                </optgroup>
             </select>
         </td>
     }
