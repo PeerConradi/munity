@@ -1,15 +1,22 @@
 ﻿<MUNityClient.Shared.Bootstrap.Modal Title="Neuer Antrag" @ref="_modalRef" ShowSubmitButton="false">
-    @if (ViewModel != null && CurrentAgendaItem != null)
+    @if (ViewModel != null)
     {
         <div class="row">
             <div class="col-12">
                 <div class="btn-group w-100" role="group">
-                    @foreach (var category in Categories)
+                    @if (!Categories.Any())
                     {
-                        <button class="btn @((SelectedCategory == category) ? "btn-primary" : "btn-outline-primary")"
-                                @onclick="() => SelectedCategory = category">
-                            @category
-                        </button>
+                        <p>Es sind keine Antragsarten hinterlegt!</p>
+                    }
+                    else
+                    {
+                        foreach (var category in Categories)
+                        {
+                            <button class="btn @((SelectedCategory == category) ? "btn-primary" : "btn-outline-primary")"
+                                    @onclick="() => SelectedCategory = category">
+                                @category
+                            </button>
+                        }
                     }
                 </div>
             </div>
@@ -43,9 +50,6 @@
     public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
     [Parameter]
-    public MUNity.Schema.Simulation.AgendaItemDto CurrentAgendaItem { get; set; }
-
-    [Parameter]
     public bool IsVisible {
         get => _modalRef.IsOpen;
         set
@@ -60,18 +64,18 @@
 
     private MUNityClient.Shared.Bootstrap.Modal _modalRef;
 
-    public IEnumerable<string> Categories => ViewModel.MyPetitionTypes.Select(n => n.Category).Distinct();
+    public IEnumerable<string> Categories => ViewModel.MyPetitionTypes?.Select(n => n.Category)?.Distinct() ?? new List<string>();
 
     public string SelectedCategory { get; set; }
 
     private async Task MakePetition(MUNity.Schema.Simulation.PetitionTypeSimulationDto type)
     {
-        if (CurrentAgendaItem == null)
+        if (this.ViewModel.SelectedAgendaItem == null)
         {
             Console.WriteLine("No Agenda Item set");
             return;
         }
-        var result = await this.ViewModel.MakePetition(type, CurrentAgendaItem.AgendaItemId);
+        var result = await this.ViewModel.MakePetition(type, ViewModel.SelectedAgendaItem.AgendaItemId);
         if (result.IsSuccessStatusCode)
             this.IsVisible = false;
     }

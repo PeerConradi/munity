@@ -64,7 +64,7 @@ namespace MUNity.Hubs
         /// <param name="simulationId"></param>
         /// <param name="newStatus"></param>
         /// <returns></returns>
-        Task StatusChanged(int simulationId, string newStatus);
+        Task StatusChanged(SimulationStatusDto body);
 
         /// <summary>
         /// The mode of the lobby (if users can pick roles etc.) has changed.

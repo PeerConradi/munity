@@ -8,53 +8,62 @@
 else
 {
 
-       <nav class="row p-0 m-0 d-flex justify-content-start justify-content-sm-between bg-primary mb-3">
-           <a class="navbar-brand d-sm-none ml-2" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
-           <div class="col col-sm-3 p-0 ml-2 d-flex align-items-center">
-               <div class="navbar-brand mr-2">@ViewModel.Simulation.Name</div>
-                <ConnectionStateBadge ViewModel="@ViewModel" />
-           </div>
-           <div class="row p-0 col-4 col-md ml-4 d-none d-sm-flex">
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home" title="Home">
-                   <i class="fa fa-home"></i>
-               </a>
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda" title="Agenda">
-                   <i class="fa fa-calendar-check"></i>
-               </a>
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting" title="Abstimmungen">
-                   <i class="fa fa-vote-yea"></i>
-               </a>
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution" title="Resolutionen">
-                   <i class="fa fa-file-alt"></i>
-               </a>
-               <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents" title="Anwesenheit">
-                   <i class="fa fa-users"></i>
-               </a>
-               @if (this.ViewModel.IsChair)
-               {
-                   <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor" title="Redeliste">
-                       <i class="fa fa-comments"></i>
-                   </a>
-               }
+<nav class="row p-0 m-0 d-flex justify-content-start justify-content-sm-between bg-primary mb-3">
+    <a class="navbar-brand d-sm-none ml-2" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
+    <div class="col col-sm-3 p-0 ml-2 d-flex align-items-center">
+        <div class="navbar-brand mr-2">@ViewModel.Simulation.Name</div>
+        <ConnectionStateBadge ViewModel="@ViewModel" />
+    </div>
+    <div class="row p-0 col-4 col-md ml-4 d-none d-sm-flex">
+        <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Home ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Home" title="Home">
+            <i class="fa fa-home"></i>
+        </a>
+        <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Agenda ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Agenda" title="Agenda">
+            <i class="fa fa-calendar-check"></i>
+        </a>
+        <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Voting ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Voting" title="Abstimmungen">
+            <i class="fa fa-vote-yea"></i>
+        </a>
+        <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Resolution ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Resolution" title="Resolutionen">
+            <i class="fa fa-file-alt"></i>
+        </a>
+        <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Presents ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Presents" title="Anwesenheit">
+            <i class="fa fa-users"></i>
+        </a>
+        @if (this.ViewModel.IsChair)
+        {
+            <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.ListOfSpeakerEditor" title="Redeliste">
+                <i class="fa fa-comments"></i>
+            </a>
+        }
 
-               @if (this.ViewModel.IsChair || this.ViewModel.IsAdmin)
-               {
-                   <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options" title="Optionen">
-                       <i class="fa fa-cogs"></i>
-                   </a>
-               }
+        @if (this.ViewModel.IsChair || this.ViewModel.IsAdmin)
+        {
+            <a class="nav-link col d-flex justify-content-center nav-element m-0 py-4 px-2 @(LayoutWrapper.MainContent == ActiveRoomLayoutWrapper.MainContents.Options ? "selected" : "")" @onclick="() => LayoutWrapper.MainContent = ActiveRoomLayoutWrapper.MainContents.Options" title="Optionen">
+                <i class="fa fa-cogs"></i>
+            </a>
+        }
 
 
-           </div>
+    </div>
 
-            <!-- Left links -->
-            @if (this.ViewModel.IsChair)
-            {
-            <input class="currentState col col-sm-3 pl-0 ml-3" placeholder="Aktueller Status..." type="text"/>
-            } else {
-            <span class="col col-sm-3 pl-0 ml-3">Aktueller Status</span>
-            }
-        </nav>
+    <!-- Left links -->
+    @if (this.ViewModel.IsChair)
+    {
+        <input class="currentState col col-sm-3 pl-0 ml-3" placeholder="@(ViewModel.CurrentStatus?.StatusText ?? "Status eingeben...")" @bind="@StatusText" type="text" />
+    }
+    else
+    {
+        @if (this.ViewModel.CurrentStatus != null)
+        {
+            <span class="col col-sm-3 pl-0 ml-3">@ViewModel.CurrentStatus.StatusText</span>
+        }
+        else
+        {
+            <span class="col col-sm-3 pl-0 ml-3 text-warning">Status unbekannt</span>
+        }
+    }
+</nav>
 }
 
 @* Menü für Smartphones. *@
@@ -175,11 +184,34 @@ else
 </style>
 
 @code {
+    private MUNityClient.ViewModels.SimulationViewModel _viewModel;
     [Parameter]
-    public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; } = null;
+    public MUNityClient.ViewModels.SimulationViewModel ViewModel {
+        get => _viewModel;
+        set
+        {
+            if (this._viewModel == value) return;
+            this._viewModel = value;
+            this._statusText = _viewModel.CurrentStatus?.StatusText ?? "";
+            this._viewModel.StatusChanged += delegate { Console.WriteLine("Redraw"); this.StateHasChanged(); };
+            this.StateHasChanged();
+        }
+    }
 
     [Parameter]
     public MUNityClient.Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper LayoutWrapper { get; set; } = null;
+
+    private string _statusText = "";
+    private string StatusText
+    {
+        get => _statusText;
+        set
+        {
+            if (_statusText == value) return;
+            _statusText = value;
+            this.ViewModel.SetStatus(value);
+        }
+    }
 
     private bool _showSmallSideMenu = false;
 

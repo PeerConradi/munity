@@ -47,7 +47,7 @@ namespace MUNityCore.Services
                 StatusText = body.StatusText,
                 StatusTime = DateTime.Now
             };
-            simulation.Statuses.Add(status);
+            _context.SimulationStatuses.Add(status);
             this._context.SaveChanges();
             return status;
         }

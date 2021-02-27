@@ -63,8 +63,7 @@ namespace MUNityClient.ViewModels
         public delegate void OnPhaseChanged(int sender, MUNity.Schema.Simulation.GamePhases phase);
         public event OnPhaseChanged PhaseChanged;
 
-        public delegate void OnStatusChanged(int sender, string newStatus);
-        public event OnStatusChanged StatusChanged;
+        public event EventHandler<SimulationStatusDto> StatusChanged;
 
         public delegate void OnLobbyModeChanged(int sender, MUNity.Schema.Simulation.LobbyModes mode);
         public event OnLobbyModeChanged LobbyModeChanged;
@@ -121,6 +120,23 @@ namespace MUNityClient.ViewModels
             }
         }
 
+        internal async Task SetStatus(string statusText)
+        {
+            var client = new HttpClient();
+            var body = new SetSimulationStatusDto()
+            {
+                SimulationId = this.Simulation.SimulationId,
+                StatusText = statusText,
+                Token = Token
+            };
+            var result = await client.PutAsJsonAsync(Program.API_URL + "/api/Simulation/Status/CurrentStatus", body);
+            //if (!result.IsSuccessStatusCode)
+            //{
+                
+            //}
+            this.ShowError("Fehler", "Status konnte nicht geändert werden!");
+        }
+
         internal async Task UpdatePetitionTypes()
         {
             await this._simulationService.SecurePetitionTypes(this);
@@ -153,6 +169,8 @@ namespace MUNityClient.ViewModels
         public ObservableCollection<SimulationUserAdminDto> AdminUsers { get; set; } = new ObservableCollection<SimulationUserAdminDto>();
 
         public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
+
+        public SimulationStatusDto CurrentStatus { get; set; }
 
         public MUNity.Schema.Simulation.AgendaItemDto SelectedAgendaItem { get; set; }
 
@@ -228,7 +246,7 @@ namespace MUNityClient.ViewModels
             HubConnection.On<int, SimulationUserDefaultDto>("UserConnected", (id, user) => UserConnected?.Invoke(id, user));
             HubConnection.On<int, SimulationUserDefaultDto>(nameof(ITypedSimulationHub.UserDisconnected), (id, user) => UserDisconnected?.Invoke(id, user));
             HubConnection.On<int, GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
-            HubConnection.On<int, string>("StatusChanged", (id, status) => StatusChanged?.Invoke(id, status));
+            HubConnection.On<SimulationStatusDto>(nameof(ITypedSimulationHub.StatusChanged), (body) => StatusChanged?.Invoke(this, body));
             HubConnection.On<int, LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
             HubConnection.On<int, int, string>("ChatMessageRecieved", (simId, usrId, msg) => ChatMessageRevieved?.Invoke(simId, usrId, msg));
             HubConnection.On<VotedEventArgs>("Voted", (args) => UserVoted?.Invoke(this, args));
@@ -248,6 +266,14 @@ namespace MUNityClient.ViewModels
 
             this.VoteCreated += SimulationViewModel_VoteCreated;
             this.UserVoted += SimulationViewModel_UserVoted;
+
+            this.StatusChanged += SimulationViewModel_StatusChanged;
+        }
+
+        private void SimulationViewModel_StatusChanged(object sender, SimulationStatusDto e)
+        {
+            Console.WriteLine("Status has changed!");
+            this.CurrentStatus = e;
         }
 
         private void SimulationViewModel_UserVoted(object sender, VotedEventArgs e)
@@ -354,6 +380,7 @@ namespace MUNityClient.ViewModels
 
             await LoadMe(viewModel, token.Token);
             await LoadSlots(viewModel, token.Token);
+            await LoadStatus(viewModel);
 
             await viewModel.LoadDataAsync();
             await viewModel.HubConnection.StartAsync();
@@ -386,8 +413,17 @@ namespace MUNityClient.ViewModels
                 if (!string.IsNullOrEmpty(userId))
                 {
                     viewModel.MyUserId = int.Parse(userId);
-                    Console.WriteLine($"I am {viewModel.MyUserId}");
                 }
+            }
+        }
+
+        private static async Task LoadStatus(SimulationViewModel viewModel)
+        {
+            var httpClient = new HttpClient();
+            var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/Status/Current?simulationId={viewModel.Simulation.SimulationId}");
+            if (result.IsSuccessStatusCode)
+            {
+                viewModel.CurrentStatus = await result.Content.ReadFromJsonAsync<SimulationStatusDto>();
             }
         }
 
