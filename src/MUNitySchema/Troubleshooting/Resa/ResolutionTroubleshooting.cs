@@ -78,7 +78,7 @@ namespace MUNity.Troubleshooting.Resa
                 if (resolution.Header.Name == null) resolution.Header.Name = string.Empty;
                 if (resolution.Header.Session == null) resolution.Header.Session = string.Empty;
                 if (resolution.Header.SubmitterName == null) resolution.Header.SubmitterName = string.Empty;
-                if (resolution.Header.Supporters == null) resolution.Header.Supporters = new System.Collections.ObjectModel.ObservableCollection<ResolutionSupporter>();
+                if (resolution.Header.Supporters == null) resolution.Header.Supporters = new List<ResolutionSupporter>();
                 if (resolution.Header.Topic == null) resolution.Header.Topic = string.Empty;
                 return true;
             }
@@ -129,7 +129,7 @@ namespace MUNity.Troubleshooting.Resa
             public bool Fix(Resolution resolution)
             {
                 if (resolution.Preamble == null) resolution.Preamble = new ResolutionPreamble();
-                if (resolution.Preamble.Paragraphs == null) resolution.Preamble.Paragraphs = new System.Collections.ObjectModel.ObservableCollection<PreambleParagraph>();
+                if (resolution.Preamble.Paragraphs == null) resolution.Preamble.Paragraphs = new List<PreambleParagraph>();
                 if (string.IsNullOrEmpty(resolution.Preamble.PreambleId)) resolution.Preamble.PreambleId = Guid.NewGuid().ToString();
                 return true;
             }
@@ -173,12 +173,12 @@ namespace MUNity.Troubleshooting.Resa
             public bool Fix(Resolution resolution)
             {
                 if (resolution.OperativeSection == null) resolution.OperativeSection = new OperativeSection();
-                if (resolution.OperativeSection.AddAmendments == null) resolution.OperativeSection.AddAmendments = new ObservableCollection<AddAmendment>();
-                if (resolution.OperativeSection.ChangeAmendments == null) resolution.OperativeSection.ChangeAmendments = new ObservableCollection<ChangeAmendment>();
-                if (resolution.OperativeSection.DeleteAmendments == null) resolution.OperativeSection.DeleteAmendments = new ObservableCollection<DeleteAmendment>();
-                if (resolution.OperativeSection.MoveAmendments == null) resolution.OperativeSection.MoveAmendments = new ObservableCollection<MoveAmendment>();
+                if (resolution.OperativeSection.AddAmendments == null) resolution.OperativeSection.AddAmendments = new List<AddAmendment>();
+                if (resolution.OperativeSection.ChangeAmendments == null) resolution.OperativeSection.ChangeAmendments = new List<ChangeAmendment>();
+                if (resolution.OperativeSection.DeleteAmendments == null) resolution.OperativeSection.DeleteAmendments = new List<DeleteAmendment>();
+                if (resolution.OperativeSection.MoveAmendments == null) resolution.OperativeSection.MoveAmendments = new List<MoveAmendment>();
                 if (string.IsNullOrEmpty(resolution.OperativeSection.OperativeSectionId)) resolution.OperativeSection.OperativeSectionId = Guid.NewGuid().ToString();
-                if (resolution.OperativeSection.Paragraphs == null) resolution.OperativeSection.Paragraphs = new ObservableCollection<OperativeParagraph>();
+                if (resolution.OperativeSection.Paragraphs == null) resolution.OperativeSection.Paragraphs = new List<OperativeParagraph>();
                 return Detect(resolution) == false;
             }
         }

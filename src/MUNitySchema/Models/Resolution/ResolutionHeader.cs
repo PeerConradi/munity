@@ -126,7 +126,7 @@ namespace MUNity.Models.Resolution
         /// <summary>
         /// List of the names of supporters for this document.
         /// </summary>
-        public ObservableCollection<ResolutionSupporter> Supporters { get; set; }
+        public List<ResolutionSupporter> Supporters { get; set; }
 
         /// <summary>
         /// Creates a new resolution Header.
@@ -134,7 +134,7 @@ namespace MUNity.Models.Resolution
         public ResolutionHeader()
         {
             this.ResolutionHeaderId = Guid.NewGuid().ToString();
-            Supporters = new ObservableCollection<ResolutionSupporter>();
+            Supporters = new List<ResolutionSupporter>();
         }
 
         /// <summary>

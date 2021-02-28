@@ -122,7 +122,7 @@ namespace MUNity.Models.Resolution
         /// <summary>
         /// Child paragraphs of this operative paragraph.
         /// </summary>
-        public ObservableCollection<OperativeParagraph> Children { get; set; }
+        public List<OperativeParagraph> Children { get; set; }
 
         private string _comment = "";
         public string Comment
@@ -161,7 +161,7 @@ namespace MUNity.Models.Resolution
         {
             this.Text = text;
             this.OperativeParagraphId = Guid.NewGuid().ToString();
-            this.Children = new ObservableCollection<OperativeParagraph>();
+            this.Children = new List<OperativeParagraph>();
             this.Comments = new ObservableCollection<Comment>();
         }
     }

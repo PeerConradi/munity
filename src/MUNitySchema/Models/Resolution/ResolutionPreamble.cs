@@ -20,7 +20,7 @@ namespace MUNity.Models.Resolution
         /// <summary>
         /// a list of paragraphs of the preamble.
         /// </summary>
-        public ObservableCollection<PreambleParagraph> Paragraphs { get; set; }
+        public List<PreambleParagraph> Paragraphs { get; set; }
 
         /// <summary>
         /// creates a new preamble.
@@ -28,7 +28,7 @@ namespace MUNity.Models.Resolution
         public ResolutionPreamble()
         {
             PreambleId = Guid.NewGuid().ToString();
-            Paragraphs = new ObservableCollection<PreambleParagraph>();
+            Paragraphs = new List<PreambleParagraph>();
         }
     }
 }

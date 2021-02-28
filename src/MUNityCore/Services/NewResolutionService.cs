@@ -121,7 +121,7 @@ namespace MUNityCore.Services
 
         public async Task<PreambleParagraph> AddPreambleParagraph(Resolution resolution, string text = "")
         {
-            resolution.Preamble.Paragraphs ??= new System.Collections.ObjectModel.ObservableCollection<PreambleParagraph>();
+            resolution.Preamble.Paragraphs ??= new List<PreambleParagraph>();
             var paragraph = new PreambleParagraph {Text = text};
             resolution.Preamble.Paragraphs.Add(paragraph);
             await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);

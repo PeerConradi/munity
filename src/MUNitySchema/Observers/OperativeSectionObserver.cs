@@ -28,11 +28,11 @@ namespace MUNity.Observers
             this._resolutionWorker = resoluionWorker;
             this._operativeSection = operativeSection;
             _resolutionWorker.RegisterOperativeSectionWorker(this);
-            _operativeSection.Paragraphs.CollectionChanged += Paragraphs_CollectionChanged;
-            _operativeSection.AddAmendments.CollectionChanged += AddAmendments_CollectionChanged;
-            _operativeSection.ChangeAmendments.CollectionChanged += ChangeAmendments_CollectionChanged;
-            _operativeSection.DeleteAmendments.CollectionChanged += DeleteAmendments_CollectionChanged;
-            _operativeSection.MoveAmendments.CollectionChanged += MoveAmendments_CollectionChanged;
+            //_operativeSection.Paragraphs.CollectionChanged += Paragraphs_CollectionChanged;
+            //_operativeSection.AddAmendments.CollectionChanged += AddAmendments_CollectionChanged;
+            //_operativeSection.ChangeAmendments.CollectionChanged += ChangeAmendments_CollectionChanged;
+            //_operativeSection.DeleteAmendments.CollectionChanged += DeleteAmendments_CollectionChanged;
+            //_operativeSection.MoveAmendments.CollectionChanged += MoveAmendments_CollectionChanged;
             AppendOperativeSectionEvents(operativeSection.Paragraphs);
         }
 

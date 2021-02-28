@@ -33,7 +33,7 @@ namespace MUNity.Observers
         {
             _resolutionWorker = resolutionWorker;
             _preamble = preamble;
-            preamble.Paragraphs.CollectionChanged += Paragraphs_CollectionChanged;
+            //preamble.Paragraphs.CollectionChanged += Paragraphs_CollectionChanged;
             foreach(var paragraph in preamble.Paragraphs)
             {
                 var paragraphObserver = new PreambleParagraphObserver(this, paragraph);

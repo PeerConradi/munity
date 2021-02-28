@@ -27,7 +27,10 @@ namespace MUNityCore.Models.Resolution.SqlResa
 
         public List<ResaPreambleParagraph> PreambleParagraphs { get; set; }
 
+        public List<ResaOperativeParagraph> OperativeParagraphs { get; set; }
 
+        public List<ResaSupporter> Supporters { get; set; }
+        public List<ResaAmendment> Amendments { get; set; }
 
         public ResaElement()
         {

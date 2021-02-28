@@ -25,7 +25,7 @@ namespace MUNity.Observers
         {
             _sectionWorker = sectionWorker;
             _paragraph = paragraph;
-            paragraph.Children.CollectionChanged += Children_CollectionChanged;
+            //paragraph.Children.CollectionChanged += Children_CollectionChanged;
             paragraph.PropertyChanged += Paragraph_PropertyChanged;
         }
 
