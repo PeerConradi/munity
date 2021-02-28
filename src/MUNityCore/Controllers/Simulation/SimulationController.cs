@@ -52,7 +52,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         public bool CanCreateSimulation()
         {
-            return false;
+            return true;
         }
 
         [HttpGet]

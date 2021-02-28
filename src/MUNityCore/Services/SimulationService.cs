@@ -31,9 +31,14 @@ namespace MUNityCore.Services
         {
             get
             {
-                yield return new Models.Simulation.Presets.PresetSicherheitsrat();
-                yield return new Models.Simulation.Presets.PresetGV_TVT();
-                yield return new Models.Simulation.Presets.PresetMR_TVT();
+                yield return new Models.Simulation.Presets.GV_Preset();
+                yield return new Models.Simulation.Presets.HA3_Preset();
+                yield return new Models.Simulation.Presets.KFK_Preset();
+                yield return new Models.Simulation.Presets.KWT_Preset();
+                yield return new Models.Simulation.Presets.MRR_Preset();
+                yield return new Models.Simulation.Presets.SR_Preset();
+                yield return new Models.Simulation.Presets.WHO_Preset();
+                yield return new Models.Simulation.Presets.WiSo_Preset();
             }
         }
 

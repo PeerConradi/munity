@@ -7,11 +7,6 @@
 
 @if (ViewModel != null && Settings != null)
 {
-    <!-- for debugging -->
-    <div class="row">
-        <p>@ViewModel.SourceList.Status</p>
-    </div>
-
     if(!string.IsNullOrEmpty(ViewModel.CurrentMessage))
     {
         <div class="row">
