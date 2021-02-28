@@ -9,21 +9,21 @@ namespace MUNityCore.Models.Resolution.SqlResa
     {
         public string ResaElementId { get; set; }
 
-        public string Topic { get; set; }
+        public string Topic { get; set; } = "";
 
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
-        public string FullName { get; set; }
+        public string FullName { get; set; } = "";
 
-        public string AgendaItem { get; set; }
+        public string AgendaItem { get; set; } = "";
 
-        public string Session { get; set; }
+        public string Session { get; set; } = "";
 
-        public string SubmitterName { get; set; }
+        public string SubmitterName { get; set; } = "";
 
-        public string CommitteeName { get; set; }
+        public string CommitteeName { get; set; } = "";
 
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         public List<ResaPreambleParagraph> PreambleParagraphs { get; set; }
 
@@ -35,6 +35,10 @@ namespace MUNityCore.Models.Resolution.SqlResa
         public ResaElement()
         {
             this.ResaElementId = Guid.NewGuid().ToString();
+            this.PreambleParagraphs = new List<ResaPreambleParagraph>();
+            this.OperativeParagraphs = new List<ResaOperativeParagraph>();
+            this.Supporters = new List<ResaSupporter>();
+            this.Amendments = new List<ResaAmendment>();
         }
     }
 }

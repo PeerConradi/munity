@@ -332,10 +332,10 @@ namespace MUNityCoreTest.ResolutionTest.ServiceTest
 
         [Test]
         [Order(23)]
-        public void GetDto()
+        public async Task GetDto()
         {
             var resolutionDb = this._context.Resolutions.Find(resolutionId);
-            MUNity.Models.Resolution.Resolution resolution = _service.GetResolutionDto(resolutionId);
+            MUNity.Models.Resolution.Resolution resolution = await _service.GetResolutionDtoAsync(resolutionId);
             Assert.NotNull(resolution);
             Assert.AreEqual(resolutionDb.Topic, resolution.Header.Topic);
             Assert.AreEqual(resolutionDb.SubmitterName, resolution.Header.SubmitterName);

@@ -19,7 +19,7 @@ namespace MUNityCore.Services
             this._context = context;
         }
 
-        public async Task CreatePublicResolutionAsync(string name)
+        public async Task<string> CreatePublicResolutionAsync(string name)
         {
             var resolution = new ResaElement()
             {
@@ -30,6 +30,7 @@ namespace MUNityCore.Services
 
             this._context.Resolutions.Add(resolution);
             await this._context.SaveChangesAsync();
+            return resolution.ResaElementId;
         }
 
         public async Task<bool> ChangeTopicAsync(string resolutionId, string topic
@@ -41,6 +42,51 @@ namespace MUNityCore.Services
             await this._context.SaveChangesAsync();
             return true;
 
+        }
+
+        public async Task<bool> SetNameAsync(string resolutionId, string name)
+        {
+            var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
+            if (reso == null) return false;
+            reso.Name = name;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetFullNameAsync(string resolutionId, string fullName)
+        {
+            var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
+            if (reso == null) return false;
+            reso.FullName = fullName;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetTopicAsync(string resolutionId, string topic)
+        {
+            var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
+            if (reso == null) return false;
+            reso.Topic = topic;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetAgendaItem(string resolutionId, string agendaItem)
+        {
+            var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
+            if (reso == null) return false;
+            reso.AgendaItem = agendaItem;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetSession(string resolutionId, string agendaItem)
+        {
+            var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
+            if (reso == null) return false;
+            reso.Session = agendaItem;
+            await this._context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> SetSubmitterNameAsync(string resolutionId, string newSubmitterName)
@@ -305,104 +351,165 @@ namespace MUNityCore.Services
             return amendment;
         }
 
-        public Resolution GetResolutionDto(string resolutionId)
+        public async Task<ResolutionHeader> GetHeaderDto(string resolutionId)
+        {
+            var resolutionElement = await this._context.Resolutions.FindAsync(resolutionId);
+            if (resolutionElement == null) return null;
+            var header = new ResolutionHeader()
+            {
+                AgendaItem = resolutionElement.AgendaItem,
+                CommitteeName = resolutionElement.CommitteeName,
+                FullName = resolutionElement.FullName,
+                Name = resolutionElement.Name,
+                ResolutionHeaderId = resolutionElement.ResaElementId + "_header",
+                Session = resolutionElement.Session,
+                SubmitterName = resolutionElement.SubmitterName,
+                Topic = resolutionElement.Topic,
+                Supporters = resolutionElement.Supporters.Select(n => new ResolutionSupporter()
+                {
+                    Name = n.Name,
+                    ResolutionSupporterId = n.ResaSupporterId
+                }).ToList()
+            };
+            return header;
+        }
+
+        public async Task<ResolutionPreamble> GetPreambleDto(string resolutionId)
+        {
+            var resolutionDb = this._context.Resolutions.Find(resolutionId);
+            if (resolutionDb == null) return null;
+
+            var preamble = new ResolutionPreamble()
+            {
+                PreambleId = resolutionDb.ResaElementId + "_preamble",
+                Paragraphs = resolutionDb.PreambleParagraphs.OrderBy(n => n.OrderIndex).Select(n => new PreambleParagraph()
+                {
+                    Comment = n.Comment,
+                    Corrected = n.IsCorrected,
+                    IsLocked = n.IsLocked,
+                    PreambleParagraphId = n.ResaPreambleParagraphId,
+                    Text = n.Text
+                }).ToList()
+            };
+            return preamble;
+        }
+
+        public async Task<List<AddAmendment>> GetAddAmendmentsDto(string resolutionId)
+        {
+            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
+            if (resolutionDb == null) return null;
+
+            var amendments = resolutionDb.Amendments.OfType<ResaAddAmendment>().Select(n => new AddAmendment()
+            {
+                Name = "AddAmendment",
+                Activated = n.Activated,
+                Id = n.ResaAmendmentId,
+                SubmitterName = n.SubmitterName,
+                TargetSectionId = n.VirtualParagraph.ResaOperativeParagraphId,
+                SubmitTime = n.SubmitTime,
+                Type = n.ResaAmendmentType
+            }).ToList();
+            return amendments;
+        }
+
+        public async Task<List<ChangeAmendment>> GetChangeAmendmentsDto(string resolutionId)
+        {
+            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
+            if (resolutionDb == null) return null;
+
+            var amendments = resolutionDb.Amendments.OfType<ResaChangeAmendment>().Select(n => new ChangeAmendment()
+            {
+                Activated = n.Activated,
+                Id = n.ResaAmendmentId,
+                Name = "ChangeAmendment",
+                NewText = n.NewText,
+                SubmitterName = n.SubmitterName,
+                SubmitTime = n.SubmitTime,
+                TargetSectionId = n.TargetParagraph.ResaOperativeParagraphId,
+                Type = n.ResaAmendmentType
+            }).ToList();
+            return amendments;
+        }
+
+        public async Task<List<DeleteAmendment>> GetDeleteAmendemtsDto(string resolutionId)
+        {
+            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
+            if (resolutionDb == null) return null;
+
+            var amendments = resolutionDb.Amendments.OfType<ResaDeleteAmendment>().Select(n => new DeleteAmendment()
+            {
+                Activated = n.Activated,
+                Id = n.ResaAmendmentId,
+                Name = "DeleteAmendment",
+                SubmitterName = n.SubmitterName,
+                SubmitTime = n.SubmitTime,
+                TargetSectionId = n.TargetParagraph.ResaOperativeParagraphId,
+                Type = n.ResaAmendmentType
+            }).ToList();
+            return amendments;
+        }
+
+        public async Task<List<MoveAmendment>> GetMoveAmendmentsDto(string resolutionId)
+        {
+            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
+            if (resolutionDb == null) return null;
+            var amendments = resolutionDb.Amendments.OfType<ResaMoveAmendment>().Select(n => new MoveAmendment()
+            {
+                Activated = n.Activated,
+                Id = n.ResaAmendmentId,
+                Name = "MoveAmendment",
+                NewTargetSectionId = n.VirtualParagraph.ResaOperativeParagraphId,
+                SubmitterName = n.SubmitterName,
+                SubmitTime = n.SubmitTime,
+                TargetSectionId = n.SourceParagraph.ResaOperativeParagraphId,
+                Type = n.ResaAmendmentType
+            }).ToList();
+            return amendments;
+        }
+        
+        public async Task<List<OperativeParagraph>> GetOperativeParagraphs(string resolutionId)
+        {
+            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
+            if (resolutionDb == null) return null;
+
+            var paragraphs = resolutionDb.OperativeParagraphs.Where(n => n.Parent == null).Select(n => new OperativeParagraph()
+            {
+                Comment = n.Comment,
+                Corrected = n.Corrected,
+                IsLocked = n.IsLocked,
+                IsVirtual = n.IsVirtual,
+                Name = n.Name,
+                OperativeParagraphId = n.ResaOperativeParagraphId,
+                Text = n.Text,
+                Visible = n.Visible,
+            }).ToList();
+            return paragraphs;
+        }
+
+        public async Task<Resolution> GetResolutionDtoAsync(string resolutionId)
         {
             var resolutionDb = this._context.Resolutions.Find(resolutionId);
             if (resolutionDb == null) return null;
             var dto = new Resolution()
             {
                 Date = resolutionDb.CreatedDate,
-                Header = new ResolutionHeader()
-                {
-                    AgendaItem = resolutionDb.AgendaItem,
-                    CommitteeName = resolutionDb.CommitteeName,
-                    FullName = resolutionDb.FullName,
-                    Name = resolutionDb.Name,
-                    ResolutionHeaderId = resolutionDb.ResaElementId + "_header",
-                    Session = resolutionDb.Session,
-                    SubmitterName = resolutionDb.SubmitterName,
-                    Topic = resolutionDb.Topic,
-                    Supporters = resolutionDb.Supporters.Select(n => new ResolutionSupporter()
-                    {
-                        Name = n.Name,
-                        ResolutionSupporterId = n.ResaSupporterId
-                    }).ToList()
-                },
+                Header = await GetHeaderDto(resolutionId),
 
-                Preamble = new ResolutionPreamble()
-                {
-                    PreambleId = resolutionDb.ResaElementId + "_preamble",
-                    Paragraphs = resolutionDb.PreambleParagraphs.OrderBy(n => n.OrderIndex).Select(n => new PreambleParagraph()
-                    {
-                        Comment = n.Comment,
-                        Corrected = n.IsCorrected,
-                        IsLocked = n.IsLocked,
-                        PreambleParagraphId = n.ResaPreambleParagraphId,
-                        Text = n.Text
-                    }).ToList()
-                },
+                Preamble = await GetPreambleDto(resolutionId),
 
                 OperativeSection = new OperativeSection()
                 {
                     OperativeSectionId = resolutionDb.ResaElementId + "_os",
 
-                    AddAmendments = resolutionDb.Amendments.OfType<ResaAddAmendment>().Select(n => new AddAmendment()
-                    {
-                        Name = "AddAmendment",
-                        Activated = n.Activated,
-                        Id = n.ResaAmendmentId,
-                        SubmitterName = n.SubmitterName,
-                        TargetSectionId = n.VirtualParagraph.ResaOperativeParagraphId,
-                        SubmitTime = n.SubmitTime,
-                        Type = n.ResaAmendmentType
-                    }).ToList(),
+                    AddAmendments = await GetAddAmendmentsDto(resolutionId),
 
-                    ChangeAmendments = resolutionDb.Amendments.OfType<ResaChangeAmendment>().Select(n => new ChangeAmendment()
-                    {
-                        Activated = n.Activated,
-                        Id = n.ResaAmendmentId,
-                        Name = "ChangeAmendment",
-                        NewText = n.NewText,
-                        SubmitterName = n.SubmitterName,
-                        SubmitTime = n.SubmitTime,
-                        TargetSectionId = n.TargetParagraph.ResaOperativeParagraphId,
-                        Type = n.ResaAmendmentType
-                    }).ToList(),
+                    ChangeAmendments = await GetChangeAmendmentsDto(resolutionId),
 
-                    DeleteAmendments = resolutionDb.Amendments.OfType<ResaDeleteAmendment>().Select(n => new DeleteAmendment()
-                    {
-                        Activated = n.Activated,
-                        Id = n.ResaAmendmentId,
-                        Name = "DeleteAmendment",
-                        SubmitterName = n.SubmitterName,
-                        SubmitTime = n.SubmitTime,
-                        TargetSectionId = n.TargetParagraph.ResaOperativeParagraphId,
-                        Type = n.ResaAmendmentType
-                    }).ToList(),
+                    DeleteAmendments = await GetDeleteAmendemtsDto(resolutionId),
 
-                    MoveAmendments = resolutionDb.Amendments.OfType<ResaMoveAmendment>().Select(n => new MoveAmendment()
-                    {
-                        Activated = n.Activated,
-                        Id = n.ResaAmendmentId,
-                        Name = "MoveAmendment",
-                        NewTargetSectionId = n.VirtualParagraph.ResaOperativeParagraphId,
-                        SubmitterName = n.SubmitterName,
-                        SubmitTime = n.SubmitTime,
-                        TargetSectionId = n.SourceParagraph.ResaOperativeParagraphId,
-                        Type = n.ResaAmendmentType
-                    }).ToList(),
+                    MoveAmendments = await GetMoveAmendmentsDto(resolutionId),
 
-                    Paragraphs = resolutionDb.OperativeParagraphs.Where(n => n.Parent == null).Select(n => new OperativeParagraph()
-                    {
-                        Comment = n.Comment,
-                        Corrected = n.Corrected,
-                        IsLocked = n.IsLocked,
-                        IsVirtual = n.IsVirtual,
-                        Name = n.Name,
-                        OperativeParagraphId = n.ResaOperativeParagraphId,
-                        Text = n.Text,
-                        Visible = n.Visible,
-                    }).ToList()
+                    Paragraphs = await GetOperativeParagraphs(resolutionId)
                 }
             };
             return dto;
