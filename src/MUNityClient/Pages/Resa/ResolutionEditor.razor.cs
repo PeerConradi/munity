@@ -69,7 +69,7 @@ namespace MUNityClient.Pages.Resa
                     this.ViewModel.SyncMode = ViewModels.ResolutionViewModel.SyncModes.OnlineButNotSyncing;
                     this.ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
                     this.ViewModel.OperativeSeciontChangedFromExtern += delegate { this.StateHasChanged(); };
-                    onlineResolution.Preamble.Paragraphs.CollectionChanged += delegate { this.StateHasChanged(); };
+                    //onlineResolution.Preamble.Paragraphs.CollectionChanged += delegate { this.StateHasChanged(); };
 
                 }
                 else

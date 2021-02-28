@@ -88,10 +88,6 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\Resa2\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -20,7 +20,7 @@ namespace MunityNUnitTest.ResolutionWorkerTest
         //    Assert.IsTrue(wasRaised);
         //}
 
-        [Test]
+        //[Test]
         public void TestCalledOnParagraphAdded()
         {
             var resolution = new Resolution();
@@ -31,7 +31,7 @@ namespace MunityNUnitTest.ResolutionWorkerTest
             Assert.IsTrue(wasRaised);
         }
 
-        [Test]
+        //[Test]
         public void TestCalledOnAddAmendmendmentCreated()
         {
             var resolution = new Resolution();
