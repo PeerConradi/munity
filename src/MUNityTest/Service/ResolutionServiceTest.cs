@@ -56,76 +56,76 @@ namespace MUNityTest.Service
             client.DropDatabase(settings.DatabaseName);
         }
 
-        [Test]
-        public async Task TestCreateResolution()
-        {
-            var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = await service.CreateResolution("Test");
-            Assert.NotNull(resolution);
-            Assert.AreEqual("Test", resolution.Header.Topic);
-        }
-
-        [Test]
-        public async Task TestGetResolution()
-        {
-            var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = await service.CreateResolution("Test2");
-            Assert.NotNull(resolution);
-            Assert.AreEqual("Test2", resolution.Header.Topic);
-            var reloadResolution = await service.GetResolution(resolution.ResolutionId);
-            Assert.NotNull(reloadResolution);
-            Assert.AreEqual(resolution.ResolutionId, reloadResolution.ResolutionId);
-            Assert.AreEqual(resolution.Header.Topic, reloadResolution.Header.Topic);
-        }
-
-        [Test]
-        public async Task TestAddPreambleParagraph()
-        {
-            var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = await service.CreateResolution("Test2");
-            var result = await service.AddPreambleParagraph(resolution);
-            Assert.AreEqual(1, resolution.Preamble.Paragraphs.Count);
-            Assert.NotNull(result.PreambleParagraphId);
-            Assert.NotNull(result);
-        }
-
-        [Test]
-        public async Task TestAddOperativeParagraph()
-        {
-            var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = await service.CreateResolution("Test2");
-            var result = await service.AddOperativeParagraph(resolution);
-            Assert.AreEqual(1, resolution.OperativeSection.Paragraphs.Count);
-            Assert.NotNull(result);
-        }
+        //[Test]
+        //public async Task TestCreateResolution()
+        //{
+        //    var service = new NewResolutionService(_munityContext, new MongoTestString());
+        //    var resolution = await service.CreateResolution("Test");
+        //    Assert.NotNull(resolution);
+        //    Assert.AreEqual("Test", resolution.Header.Topic);
+        //}
 
         //[Test]
-        public async Task TestDeleteResolution()
-        {
-            var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = await service.CreateResolution("Test2");
-            var reloadResolution = await service.GetResolution(resolution.ResolutionId);
-            Assert.NotNull(reloadResolution);
-            var result = await service.DeleteResolution(reloadResolution);
-            Assert.NotNull(result);
-            reloadResolution = await service.GetResolution(resolution.ResolutionId);
-            Assert.Null(reloadResolution);
-        }
+        //public async Task TestGetResolution()
+        //{
+        //    var service = new NewResolutionService(_munityContext, new MongoTestString());
+        //    var resolution = await service.CreateResolution("Test2");
+        //    Assert.NotNull(resolution);
+        //    Assert.AreEqual("Test2", resolution.Header.Topic);
+        //    var reloadResolution = await service.GetResolution(resolution.ResolutionId);
+        //    Assert.NotNull(reloadResolution);
+        //    Assert.AreEqual(resolution.ResolutionId, reloadResolution.ResolutionId);
+        //    Assert.AreEqual(resolution.Header.Topic, reloadResolution.Header.Topic);
+        //}
 
         //[Test]
-        public async Task TestRemovePreambleParagraph()
-        {
-            var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = await service.CreateResolution("Test Remove Preamble Paragraph");
-            var result = await service.AddPreambleParagraph(resolution);
-            var reloadResolution = await service.GetResolution(resolution.ResolutionId);
-            Assert.AreEqual(1, reloadResolution.Preamble.Paragraphs.Count);
-            Assert.AreEqual(1, resolution.Preamble.Paragraphs.Count);
-            await service.RemovePreambleParagraph(resolution, result.PreambleParagraphId);
-            Assert.AreEqual(0, resolution.Preamble.Paragraphs.Count);
-            reloadResolution = await service.GetResolution(resolution.ResolutionId);
-            Assert.AreEqual(0, reloadResolution.Preamble.Paragraphs.Count);
-        }
+        //public async Task TestAddPreambleParagraph()
+        //{
+        //    var service = new NewResolutionService(_munityContext, new MongoTestString());
+        //    var resolution = await service.CreateResolution("Test2");
+        //    var result = await service.AddPreambleParagraph(resolution);
+        //    Assert.AreEqual(1, resolution.Preamble.Paragraphs.Count);
+        //    Assert.NotNull(result.PreambleParagraphId);
+        //    Assert.NotNull(result);
+        //}
+
+        //[Test]
+        //public async Task TestAddOperativeParagraph()
+        //{
+        //    var service = new NewResolutionService(_munityContext, new MongoTestString());
+        //    var resolution = await service.CreateResolution("Test2");
+        //    var result = await service.AddOperativeParagraph(resolution);
+        //    Assert.AreEqual(1, resolution.OperativeSection.Paragraphs.Count);
+        //    Assert.NotNull(result);
+        //}
+
+        ////[Test]
+        //public async Task TestDeleteResolution()
+        //{
+        //    var service = new NewResolutionService(_munityContext, new MongoTestString());
+        //    var resolution = await service.CreateResolution("Test2");
+        //    var reloadResolution = await service.GetResolution(resolution.ResolutionId);
+        //    Assert.NotNull(reloadResolution);
+        //    var result = await service.DeleteResolution(reloadResolution);
+        //    Assert.NotNull(result);
+        //    reloadResolution = await service.GetResolution(resolution.ResolutionId);
+        //    Assert.Null(reloadResolution);
+        //}
+
+        ////[Test]
+        //public async Task TestRemovePreambleParagraph()
+        //{
+        //    var service = new NewResolutionService(_munityContext, new MongoTestString());
+        //    var resolution = await service.CreateResolution("Test Remove Preamble Paragraph");
+        //    var result = await service.AddPreambleParagraph(resolution);
+        //    var reloadResolution = await service.GetResolution(resolution.ResolutionId);
+        //    Assert.AreEqual(1, reloadResolution.Preamble.Paragraphs.Count);
+        //    Assert.AreEqual(1, resolution.Preamble.Paragraphs.Count);
+        //    await service.RemovePreambleParagraph(resolution, result.PreambleParagraphId);
+        //    Assert.AreEqual(0, resolution.Preamble.Paragraphs.Count);
+        //    reloadResolution = await service.GetResolution(resolution.ResolutionId);
+        //    Assert.AreEqual(0, reloadResolution.Preamble.Paragraphs.Count);
+        //}
 
         //[Test]
         //public async Task TestMovePreambleParagraphUp()
@@ -159,45 +159,45 @@ namespace MUNityTest.Service
         //}
 
         //[Test]
-        public async Task TestMovePreambleParagraphDown()
-        {
-            var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = await service.CreateResolution("Test Move Paragraph Up");
-            var paragraphOne = await service.AddPreambleParagraph(resolution, "Paragraph One");
-            var paragraphTwo = await service.AddPreambleParagraph(resolution, "Paragraph Two");
+        //public async Task TestMovePreambleParagraphDown()
+        //{
+        //    var service = new NewResolutionService(_munityContext, new MongoTestString());
+        //    var resolution = await service.CreateResolution("Test Move Paragraph Up");
+        //    var paragraphOne = await service.AddPreambleParagraph(resolution, "Paragraph One");
+        //    var paragraphTwo = await service.AddPreambleParagraph(resolution, "Paragraph Two");
 
-            Assert.AreEqual(2, resolution.Preamble.Paragraphs.Count);
-            Assert.IsFalse(paragraphOne.PreambleParagraphId == paragraphTwo.PreambleParagraphId);
-            Assert.IsTrue(paragraphOne.PreambleParagraphId == resolution.Preamble.Paragraphs[0].PreambleParagraphId);
-            Assert.IsTrue(paragraphTwo.PreambleParagraphId == resolution.Preamble.Paragraphs[1].PreambleParagraphId);
+        //    Assert.AreEqual(2, resolution.Preamble.Paragraphs.Count);
+        //    Assert.IsFalse(paragraphOne.PreambleParagraphId == paragraphTwo.PreambleParagraphId);
+        //    Assert.IsTrue(paragraphOne.PreambleParagraphId == resolution.Preamble.Paragraphs[0].PreambleParagraphId);
+        //    Assert.IsTrue(paragraphTwo.PreambleParagraphId == resolution.Preamble.Paragraphs[1].PreambleParagraphId);
 
-            // Validate if everything is saved!
-            var reloadResolution = await service.GetResolution(resolution.ResolutionId);
-            Assert.AreEqual(2, reloadResolution.Preamble.Paragraphs.Count);
-            Assert.IsTrue(paragraphOne.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[0].PreambleParagraphId);
-            Assert.IsTrue(paragraphTwo.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[1].PreambleParagraphId);
+        //    // Validate if everything is saved!
+        //    var reloadResolution = await service.GetResolution(resolution.ResolutionId);
+        //    Assert.AreEqual(2, reloadResolution.Preamble.Paragraphs.Count);
+        //    Assert.IsTrue(paragraphOne.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[0].PreambleParagraphId);
+        //    Assert.IsTrue(paragraphTwo.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[1].PreambleParagraphId);
 
-            // Move the paragraph
-            await service.MovePreambleParagraphDown(resolution, paragraphOne.PreambleParagraphId);
+        //    // Move the paragraph
+        //    await service.MovePreambleParagraphDown(resolution, paragraphOne.PreambleParagraphId);
 
-            Assert.IsTrue(paragraphTwo.PreambleParagraphId == resolution.Preamble.Paragraphs[0].PreambleParagraphId);
-            Assert.IsTrue(paragraphOne.PreambleParagraphId == resolution.Preamble.Paragraphs[1].PreambleParagraphId);
+        //    Assert.IsTrue(paragraphTwo.PreambleParagraphId == resolution.Preamble.Paragraphs[0].PreambleParagraphId);
+        //    Assert.IsTrue(paragraphOne.PreambleParagraphId == resolution.Preamble.Paragraphs[1].PreambleParagraphId);
 
-            // Validate if everything has been saved!
-            reloadResolution = await service.GetResolution(resolution.ResolutionId);
-            Assert.IsTrue(paragraphTwo.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[0].PreambleParagraphId, "The order is not as expected this element should be paragraphTwo");
-            Assert.IsTrue(paragraphOne.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[1].PreambleParagraphId);
-        }
+        //    // Validate if everything has been saved!
+        //    reloadResolution = await service.GetResolution(resolution.ResolutionId);
+        //    Assert.IsTrue(paragraphTwo.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[0].PreambleParagraphId, "The order is not as expected this element should be paragraphTwo");
+        //    Assert.IsTrue(paragraphOne.PreambleParagraphId == reloadResolution.Preamble.Paragraphs[1].PreambleParagraphId);
+        //}
 
-        //[Test]
-        [Author(("Peer Conradi"))]
-        public async Task TestSaveResolutionThatsNotCreated()
-        {
-            var service = new NewResolutionService(_munityContext, new MongoTestString());
-            var resolution = new MUNity.Models.Resolution.Resolution();
-            var result = await service.SaveResolution(resolution);
-            Assert.IsNull(result);
-        }
+        ////[Test]
+        //[Author(("Peer Conradi"))]
+        //public async Task TestSaveResolutionThatsNotCreated()
+        //{
+        //    var service = new NewResolutionService(_munityContext, new MongoTestString());
+        //    var resolution = new MUNity.Models.Resolution.Resolution();
+        //    var result = await service.SaveResolution(resolution);
+        //    Assert.IsNull(result);
+        //}
 
     }
 }

@@ -78,7 +78,7 @@ namespace MUNity.Troubleshooting.Resa
                 if (resolution.Header.Name == null) resolution.Header.Name = string.Empty;
                 if (resolution.Header.Session == null) resolution.Header.Session = string.Empty;
                 if (resolution.Header.SubmitterName == null) resolution.Header.SubmitterName = string.Empty;
-                if (resolution.Header.Supporters == null) resolution.Header.Supporters = new System.Collections.ObjectModel.ObservableCollection<string>();
+                if (resolution.Header.Supporters == null) resolution.Header.Supporters = new System.Collections.ObjectModel.ObservableCollection<ResolutionSupporter>();
                 if (resolution.Header.Topic == null) resolution.Header.Topic = string.Empty;
                 return true;
             }

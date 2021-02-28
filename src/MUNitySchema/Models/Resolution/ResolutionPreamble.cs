@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace MUNity.Models.Resolution
@@ -13,6 +14,7 @@ namespace MUNity.Models.Resolution
         /// <summary>
         /// The id of the preamble
         /// </summary>
+        [Key]
         public string PreambleId { get; set; }
 
         /// <summary>

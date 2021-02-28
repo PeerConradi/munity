@@ -11,6 +11,7 @@ using MUNityCore.Models.Simulation;
 using MUNityCore.Models.User;
 using MUNityCore.Models;
 using MUNity.Models.ListOfSpeakers;
+using MUNityCore.Models.Resolution.SqlResa;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {
@@ -87,6 +88,12 @@ namespace MUNityCore.DataHandlers.EntityFramework
         public DbSet<MunitySetting> Settings { get; set; }
 
         public DbSet<SimulationStatus> SimulationStatuses { get; set; }
+
+        public DbSet<ResaElement> Resolutions { get; set; }
+
+        public DbSet<ResaPreambleParagraph> PreambleParagraphs { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -10,8 +10,11 @@ namespace MUNity.Models.Resolution
     /// <summary>
     /// The header and information of a resoltion.
     /// </summary>
-    public class ResolutionHeader : INotifyPropertyChanged
+    public partial class ResolutionHeader : INotifyPropertyChanged
     {
+
+        public string ResolutionHeaderId { get; set; }
+
         private string _name = "";
         /// <summary>
         /// The name to find the document inside a register or list. This should not be used as the display name
@@ -123,14 +126,15 @@ namespace MUNity.Models.Resolution
         /// <summary>
         /// List of the names of supporters for this document.
         /// </summary>
-        public ObservableCollection<string> Supporters { get; set; }
+        public ObservableCollection<ResolutionSupporter> Supporters { get; set; }
 
         /// <summary>
         /// Creates a new resolution Header.
         /// </summary>
         public ResolutionHeader()
         {
-            Supporters = new ObservableCollection<string>();
+            this.ResolutionHeaderId = Guid.NewGuid().ToString();
+            Supporters = new ObservableCollection<ResolutionSupporter>();
         }
 
         /// <summary>

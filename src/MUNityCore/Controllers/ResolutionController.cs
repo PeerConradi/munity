@@ -245,10 +245,8 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> PostDeleteAmendment(string resolutionId, string tan, [FromBody]DeleteAmendment amendment)
         {
-            var mode = await CanUserSubmitAmendments(resolutionId);
-            if (mode == EPostAmendmentMode.NotAllowed) return Forbid();
 
-            if (mode == EPostAmendmentMode.AllowedPost)
+            if (true)
             {
                 var resolution = await this._resolutionService.GetResolution(resolutionId);
                 if (resolution == null) return NotFound("Resolution not found.");
