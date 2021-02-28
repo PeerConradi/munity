@@ -222,7 +222,6 @@ namespace MUNityCore
             {
                 Console.WriteLine(e);
                 Console.WriteLine("Database-Service not found. Make sure that the MariaDB service is started and the app can access it.");
-                throw;
             }
             
         }
