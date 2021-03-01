@@ -31,10 +31,10 @@ namespace MUNityClient.Pages.Resa
 
         private async Task CreatePublicResolution()
         {
-            var resolution = await this.resolutionService.CreatePublicResolution("Neue Cloud Resolution");
-            if (resolution != null)
+            var resolutionId = await this.resolutionService.CreatePublicResolution();
+            if (resolutionId != null)
             {
-                navigationManager.NavigateTo($"resa/edit/{resolution.ResolutionId}");
+                navigationManager.NavigateTo($"resa/edit/{resolutionId}");
             }
         }
 

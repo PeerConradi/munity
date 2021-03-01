@@ -31,8 +31,6 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         {
             if (ViewModel != null)
             {
-                await ViewModel.UpdateAdminUserList();
-
                 ViewModel.RolesChanged += delegate { this.StateHasChanged(); };
                 ViewModel.UserConnected += delegate { this.StateHasChanged(); };
                 ViewModel.UserDisconnected += delegate { this.StateHasChanged(); };
@@ -51,6 +49,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         private async Task NewUser()
         {
             await this.ViewModel.CreateUser();
+            this.StateHasChanged();
         }
 
         private void CopyListToClipboard()

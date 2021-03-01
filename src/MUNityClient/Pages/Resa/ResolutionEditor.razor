@@ -4,9 +4,16 @@
 @using MUNity.Extensions.ResolutionExtensions;
 @using MUNityClient.Extensions;
 @using MUNityClient.Shared.Resa;
-@inject MUNityClient.Services.ResolutionService resolutionService;
+@inject MUNityClient.Services.IResolutionService resolutionService;
 
-@if (this.ViewModel?.Resolution != null)
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning">#Belastend - Der Resolutionseditor und die Leseansicht sind derzeit nicht verfügbar.</div>
+        </div>
+    </div>
+
+@* Deactivated! *@
+@if (this.ViewModel?.Resolution != null && false)
 {
 
     @*var corruptionResult = MUNity.Troubleshooting.Resa.ResolutionTroubleshooting.IsResolutionCorrupted(this._viewModel.Resolution);

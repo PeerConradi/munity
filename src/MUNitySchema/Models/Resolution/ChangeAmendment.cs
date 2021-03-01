@@ -10,18 +10,10 @@ namespace MUNity.Models.Resolution
     /// </summary>
     public class ChangeAmendment : AbstractAmendment
     {
-        private string _newText = "";
         /// <summary>
         /// The Text that the operative Paragraph should be changed to.
         /// </summary>
-        public string NewText {
-            get => _newText;
-            set
-            {
-                _newText = value;
-                NotifyPropertyChanged(nameof(NewText));
-            } 
-        }
+        public string NewText { get; set; }
 
         /// <summary>
         /// Changes the text and removes the amendment.

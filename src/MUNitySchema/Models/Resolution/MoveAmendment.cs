@@ -10,19 +10,10 @@ namespace MUNity.Models.Resolution
     /// </summary>
     public class MoveAmendment : AbstractAmendment
     {
-
-        private string _newTargetSectionId;
         /// <summary>
         /// The Id of the virtual paragraph that represents the new position of the operative paragraph.
         /// </summary>
-        public string NewTargetSectionId {
-            get => _newTargetSectionId; 
-            set
-            {
-                _newTargetSectionId = value;
-                NotifyPropertyChanged(nameof(NewTargetSectionId));
-            }
-        }
+        public string NewTargetSectionId { get; set; }
 
         /// <summary>
         /// Will delete the opld amendment and move all its settings to the currently virtual paragraph.

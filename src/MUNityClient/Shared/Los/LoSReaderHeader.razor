@@ -113,25 +113,28 @@ else
         {
             timer = new System.Timers.Timer(1000);
             timer.Elapsed += TimerElapsed;
+            this.timer.Start();
 
             if (this.ViewModel != null)
             {
-                this.ViewModel.Handler.AnswerTimerStarted += delegate { timer.Start(); };
-                this.ViewModel.Handler.QuestionTimerStarted += delegate { timer.Start(); };
-                this.ViewModel.Handler.Paused += delegate { timer.Stop(); this.StateHasChanged(); };
+                this.ViewModel.Handler.AnswerTimerStarted += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.QuestionTimerStarted += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.Paused += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.QuestionSecondsAdded += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.SpeakerSecondsAdded += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.SpeakerAdded += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.SpeakerRemoved += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.ClearSpeaker += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.ClearQuestion += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.NextSpeakerPushed += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.NextQuestionPushed += delegate { this.StateHasChanged(); };
 
-                if (this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question ||
-                    this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
-                    this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking)
-                {
-                    this.timer.Start();
-                }
+                //if (this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question ||
+                //    this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
+                //    this.ViewModel.SourceList.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking)
+                //{
+
+                //}
             }
 
             await base.OnInitializedAsync();

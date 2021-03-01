@@ -29,13 +29,6 @@ namespace MUNityClient.ViewModels
     {
         public delegate void OnRolesChanged(int sender, IEnumerable<MUNity.Schema.Simulation.SimulationRoleDto> roles);
 
-        internal async Task UpdateAdminUserList()
-        {
-            this.AdminUsers.Clear();
-            var users = await _simulationService.GetUserSetups(this.Simulation.SimulationId);
-            users.ForEach(n => this.AdminUsers.Add(n));
-        }
-
         internal async Task SetUserRole(int simulationUserId, int value)
         {
             var body = new SetUserSimulationRole()
@@ -601,7 +594,22 @@ namespace MUNityClient.ViewModels
                 var newUser = await response.Content.ReadFromJsonAsync<SimulationUserAdminDto>();
                 if (newUser != null)
                 {
-                    AdminUsers.Add(newUser);
+                    var slot = new SimulationSlotDto()
+                    {
+                        CanCreateRole = false,
+                        CanEditListOfSpeakers = false,
+                        CanEditResolution = false,
+                        CanSelectRole = false,
+                        DisplayName = newUser.DisplayName,
+                        IsOnline = newUser.IsOnline,
+                        RoleId = newUser.RoleId,
+                        RoleIso = "un",
+                        RoleName = "",
+                        RoleType = RoleTypes.None,
+                        SimulationUserId = newUser.SimulationUserId
+                    };
+                    this.Slots.Add(slot);
+                    //AdminUsers.Add(newUser);
                 }
             }
         }

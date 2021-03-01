@@ -2,8 +2,16 @@
 @using MUNityClient.Shared.Resa.Reader;
 @using MUNity.Extensions.ResolutionExtensions;
 
-@inject MUNityClient.Services.ResolutionService resolutionService;
-@if (ViewModel?.Resolution != null)
+@inject MUNityClient.Services.IResolutionService resolutionService;
+
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-warning">#Belastend - Der Resolutionseditor und die Leseansicht sind derzeit nicht verfügbar.</div>
+    </div>
+</div>
+
+@* Deactivated for rwork *@
+@if (ViewModel?.Resolution != null && false)
 {
 
     <!-- Header -->

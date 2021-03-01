@@ -11,6 +11,7 @@ using MUNityCore.DataHandlers.EntityFramework;
 using MUNity.Models.Resolution;
 using MUNityCore.Models.Resolution.V2;
 using MUNity.Extensions.ResolutionExtensions;
+using MUNity.Schema.Simulation;
 
 namespace MUNityCore.Services
 {
@@ -80,7 +81,6 @@ namespace MUNityCore.Services
             // Maybe writing just replacing the List entry would be better idk.
             targetParagraph.Corrected = newValues.Corrected;
             targetParagraph.IsLocked = newValues.IsLocked;
-            targetParagraph.Comments = newValues.Comments;
             targetParagraph.Text = newValues.Text;
             await this.SaveResolution(resolution);
             return true;
@@ -94,7 +94,6 @@ namespace MUNityCore.Services
             targetParagraph.IsLocked = newValues.IsLocked;
             targetParagraph.IsVirtual = newValues.IsVirtual;
             targetParagraph.Name = newValues.Name;
-            targetParagraph.Comments = newValues.Comments;
             targetParagraph.Text = newValues.Text;
             targetParagraph.Visible = newValues.Visible;
             targetParagraph.Comment = newValues.Comment;
@@ -120,7 +119,7 @@ namespace MUNityCore.Services
 
         public async Task<PreambleParagraph> AddPreambleParagraph(Resolution resolution, string text = "")
         {
-            resolution.Preamble.Paragraphs ??= new System.Collections.ObjectModel.ObservableCollection<PreambleParagraph>();
+            resolution.Preamble.Paragraphs ??= new List<PreambleParagraph>();
             var paragraph = new PreambleParagraph {Text = text};
             resolution.Preamble.Paragraphs.Add(paragraph);
             await _resolutions.FindOneAndReplaceAsync(n => n.ResolutionId == resolution.ResolutionId, resolution);
@@ -189,6 +188,11 @@ namespace MUNityCore.Services
             if (resolution == null) return;
             resolution.Name = text;
             await this._munityContext.SaveChangesAsync();
+        }
+
+        public bool SetOnlineAmendmentMode(SetResolutionOnlineAmendmentState state)
+        {
+            throw new NotImplementedException();
         }
 
         public NewResolutionService(MunityContext munityContext, IMunityMongoDatabaseSettings mongoSettings)

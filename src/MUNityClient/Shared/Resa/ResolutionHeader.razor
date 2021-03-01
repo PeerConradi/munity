@@ -1,12 +1,12 @@
 ﻿<div class="row py-0 mx-0 my-2 col-12 d-flex justify-content-between">
     <div class="col p-0 mr-2">
-        <input type="text" @bind="ResolutionViewModel.Resolution.Header.Topic" class="form-control" placeholder="Thema">
+        <input type="text" @bind="Topic" class="form-control" placeholder="Thema">
     </div>
     <div class="col p-0 mx-2">
-        <input type="text" @bind="ResolutionViewModel.Resolution.Header.CommitteeName" class="form-control" placeholder="Gremium">
+        <input type="text" @bind="CommitteeName" class="form-control" placeholder="Gremium">
     </div>
     <div class="col p-0 ml-2">
-        <input type="text" @bind="ResolutionViewModel.Resolution.Header.SubmitterName" class="form-control" placeholder="Einbringerstaat">
+        <input type="text" @bind="SubmitterName" class="form-control" placeholder="Einbringerstaat">
     </div>
 </div>
 <div class="row py-0 m-0 col-12 justify-content-center">
@@ -15,15 +15,68 @@
         <textarea class="md-textarea form-control my-2" rows="3" placeholder="Unterstützerstaaten"></textarea>
     </div>
 </div>
+<div class="row py-0 m-0 col-12">
+    @*<InputCheckbox @bind-Value="allowAmendments" />*@
+    <label>Online Änderungsanträge erlaueb</label>
+</div>
 <div class="row py-0 mx-0 my-2 col-12 justify-content-center">
     <div class="w-100">
-        <SendResolutionToSimulation></SendResolutionToSimulation>
+        @*<SendResolutionToSimulation></SendResolutionToSimulation>*@
     </div>
 </div>
 
 @code {
     [Parameter]
     public MUNityClient.ViewModels.ResolutionViewModel ResolutionViewModel { get; set; }
+
+    private string Topic
+    {
+        get => ResolutionViewModel.Resolution.Header.Topic;
+        set
+        {
+            if (ResolutionViewModel.Resolution.Header.Topic != value)
+            {
+                ResolutionViewModel.Handler.SetTopic(value);
+                ResolutionViewModel.Resolution.Header.Topic = value;
+            }
+        }
+    }
+
+    private string CommitteeName
+    {
+        get => ResolutionViewModel.Resolution.Header.CommitteeName;
+        set
+        {
+            if (ResolutionViewModel.Resolution.Header.CommitteeName != value)
+            {
+                ResolutionViewModel.Handler.SetCommitteeName(value);
+                ResolutionViewModel.Resolution.Header.CommitteeName = value;
+            }
+        }
+    }
+
+    private string SubmitterName
+    {
+        get => ResolutionViewModel.Resolution.Header.SubmitterName;
+        set
+        {
+            if (ResolutionViewModel.Resolution.Header.SubmitterName != value)
+            {
+                ResolutionViewModel.Handler.SetSubmitterName(value);
+                ResolutionViewModel.Resolution.Header.SubmitterName = value;
+            }
+        }
+    }
+
+    private bool _allowAmendments;
+    public bool allowAmendments
+    {
+        get => _allowAmendments;
+        set
+        {
+            _allowAmendments = value;
+        }
+    }
 
     protected override void OnInitialized()
     {

@@ -90,7 +90,7 @@ namespace MUNity.Models.Resolution
         /// <summary>
         /// List of names that have marked to comment as read.
         /// </summary>
-        public ObservableCollection<string> ReadBy { get; set; }
+        public ObservableCollection<ResaCommentSign> ReadBy { get; set; }
 
         /// <summary>
         /// Creates a new Instance of a comment for operative paragraphs or preamble paragraphs and give them a new guid.
@@ -99,7 +99,7 @@ namespace MUNity.Models.Resolution
         {
             CommentId = Guid.NewGuid().ToString();
             Tags = new ObservableCollection<CommentTag>();
-            ReadBy = new ObservableCollection<string>();
+            ReadBy = new ObservableCollection<ResaCommentSign>();
         }
 
         /// <summary>

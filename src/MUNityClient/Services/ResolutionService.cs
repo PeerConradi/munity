@@ -109,7 +109,7 @@ namespace MUNityClient.Services
             {
                 try
                 {
-                    var result = await this._httpService.HttpClient.GetAsync($"/api/Resolution/IsUp");
+                    var result = await this._httpService.HttpClient.GetAsync($"/api/Resa/IsUp");
                     _isOnline = result.IsSuccessStatusCode;
                 }
                 catch (Exception)
@@ -163,16 +163,8 @@ namespace MUNityClient.Services
 
         public async Task<Resolution> GetResolutionFromServer(string resolutionId)
         {
-            try
-            {
-                var authedClient = await this._httpService.GetAuthClient();
-                return await authedClient.GetFromJsonAsync<Resolution>($"/api/Resolution/GetResolution?id={resolutionId}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
+            var client = new HttpClient();
+            return await client.GetFromJsonAsync<Resolution>(Program.API_URL +  $"/api/Resa/Public?id={resolutionId}");
         }
 
         public async Task<bool> SyncResolutionWithServer(Resolution resolution)
@@ -240,13 +232,13 @@ namespace MUNityClient.Services
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
-        public async Task<Resolution> CreatePublicResolution(string title)
+        public async Task<string> CreatePublicResolution()
         {
-            var resolution = await this._httpService.HttpClient.GetFromJsonAsync<Resolution>($"/api/Resolution/CreatePublic?title={title}");
-            if (resolution == null)
+            var client = new HttpClient();
+            var response = await client.PostAsync(Program.API_URL + "/api/Resa/Public", null);
+            if (!response.IsSuccessStatusCode)
                 return null;
-            //await this.StoreResolution(resolution);
-            return resolution;
+            return await response.Content.ReadAsStringAsync();
         }
 
         public async Task<Resolution> GetStoredResolution(string id)

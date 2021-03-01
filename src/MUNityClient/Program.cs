@@ -15,7 +15,7 @@ namespace MUNityClient
     public class Program
     {
         public static string API_URL = "https://mun-tools.com:5000";
-        //public static string API_URL = "https://localhost:44339";
+        //public static string API_URL = "https://localhost:44303";
 
         public static async Task Main(string[] args)
         {
@@ -27,7 +27,7 @@ namespace MUNityClient
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<Services.HttpService>();
             builder.Services.AddScoped<Services.UserService>();
-            builder.Services.AddScoped<Services.ResolutionService>();
+            builder.Services.AddScoped<Services.IResolutionService, Services.ResolutionService>();
             builder.Services.AddScoped<Services.ListOfSpeakerService>();
             builder.Services.AddScoped<Services.SimulationService>();
             builder.Services.AddScoped<IHtmlSanitizer, HtmlSanitizer>(x =>

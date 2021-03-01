@@ -23,40 +23,24 @@ namespace MUNityClient.Shared.Los
 
         private ViewModels.ListOfSpeakerViewModel ViewModel { get; set; }
 
-        private System.Timers.Timer timer;
-
         protected override async Task OnInitializedAsync()
         {
-            timer = new System.Timers.Timer(1000);
-            timer.Elapsed += TimerElapsed;
             this.ViewModel = await ViewModels.ListOfSpeakerViewModel.CreateViewModel(listOfSpeakerService, ListOfSpeakersId);
 
             if (this.ViewModel != null)
             {
-                this.ViewModel.Handler.AnswerTimerStarted += delegate { timer.Start(); };
-                this.ViewModel.Handler.QuestionTimerStarted += delegate { timer.Start(); };
-                this.ViewModel.Handler.Paused += delegate { timer.Stop(); this.StateHasChanged(); };
+                this.ViewModel.Handler.Paused += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.QuestionSecondsAdded += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.SpeakerSecondsAdded += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.SpeakerAdded += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.SpeakerRemoved += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.ClearSpeaker += delegate { this.StateHasChanged(); };
                 this.ViewModel.Handler.ClearQuestion += delegate { this.StateHasChanged(); };
-
-                if (this.ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Question ||
-                    this.ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Answer ||
-                    this.ViewModel.SourceList.Status == ListOfSpeakers.EStatus.Speaking)
-                {
-                    this.timer.Start();
-                }
+                this.ViewModel.Handler.NextSpeakerPushed += delegate { this.StateHasChanged(); };
+                this.ViewModel.Handler.NextQuestionPushed += delegate { this.StateHasChanged(); };
             }
 
             await base.OnInitializedAsync();
-        }
-
-        private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
-        {
-            this.StateHasChanged();
         }
     }
 }

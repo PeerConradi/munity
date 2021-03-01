@@ -11,6 +11,7 @@ using MUNityCore.Models.Simulation;
 using MUNityCore.Models.User;
 using MUNityCore.Models;
 using MUNity.Models.ListOfSpeakers;
+using MUNityCore.Models.Resolution.SqlResa;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {
@@ -87,6 +88,21 @@ namespace MUNityCore.DataHandlers.EntityFramework
         public DbSet<MunitySetting> Settings { get; set; }
 
         public DbSet<SimulationStatus> SimulationStatuses { get; set; }
+
+        public DbSet<ResaElement> Resolutions { get; set; }
+
+        public DbSet<ResaPreambleParagraph> PreambleParagraphs { get; set; }
+
+        public DbSet<ResaOperativeParagraph> OperativeParagraphs { get; set; }
+
+        public DbSet<ResaSupporter> ResolutionSupporters { get; set; }
+
+        public DbSet<ResaAmendment> Amendments { get; set; }
+
+        public DbSet<ResaDeleteAmendment> DeleteAmendments { get; set; }
+        public DbSet<ResaChangeAmendment> ChangeAmendments { get; set; }
+        public DbSet<ResaMoveAmendment> MoveAmendments { get; set; }
+        public DbSet<ResaAddAmendment> AddAmendments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -166,6 +182,20 @@ namespace MUNityCore.DataHandlers.EntityFramework
             modelBuilder.Entity<ListOfSpeakers>().Ignore(n => n.Questions);
 
             modelBuilder.Entity<Speaker>().HasKey(n => n.Id);
+
+            modelBuilder.Entity<ResaElement>().HasMany(n => n.PreambleParagraphs).WithOne(n => n.ResaElement);
+
+            modelBuilder.Entity<ResaElement>().HasMany(n => n.OperativeParagraphs).WithOne(n => n.Resolution);
+
+            
+
+            modelBuilder.Entity<ResaOperativeParagraph>().HasOne(n => n.Parent).WithMany(n => n.Children);
+
+            modelBuilder.Entity<ResaOperativeParagraph>().HasMany(n => n.DeleteAmendments).WithOne(n => n.TargetParagraph);
+
+            modelBuilder.Entity<ResaOperativeParagraph>().HasMany(n => n.MoveAmendments).WithOne(n => n.SourceParagraph);
+
+            modelBuilder.Entity<ResaElement>().HasMany(n => n.Amendments).WithOne(n => n.Resolution);
         }
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)

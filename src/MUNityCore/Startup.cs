@@ -135,7 +135,7 @@ namespace MUNityCore
             services.AddScoped<Services.IUserService, Services.UserService>();
             services.AddScoped<Services.IOrganisationService, Services.OrganisationService>();
             services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
-            services.AddScoped<Services.IResolutionService, Services.NewResolutionService>();
+            services.AddScoped<Services.SqlResolutionService>();
             services.AddScoped<Services.SpeakerlistService>();
             services.AddScoped<Services.SimulationService>();
 

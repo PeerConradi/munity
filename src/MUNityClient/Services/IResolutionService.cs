@@ -1,5 +1,6 @@
 ﻿using MUNity.Models.Resolution;
 using MUNity.Models.Resolution.EventArguments;
+using MUNityClient.Models.Resolution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,28 @@ namespace MUNityClient.Services
         Task<HttpResponseMessage> UpdateOperativeParagraph(OperativeParagraphChangedEventArgs args);
 
         Task<HttpResponseMessage> UpdateOperativeSection(OperativeSectionChangedEventArgs args);
+
+        Task<List<ResolutionInfo>> GetStoredResolutions();
+
+        Task<Resolution> GetResolution(string resolutionId);
+
+        Task<Resolution> GetStoredResolution(string id);
+
+        Task<bool> IsOnline(bool forceRefresh = false);
+
+        Task<ViewModels.ResolutionViewModel> Subscribe(Resolution resolution);
+
+        Task<string> CreatePublicResolution();
+
+        Task<Resolution> CreateResolution(string title = "");
+
+        Task<bool> CanUserPostAmendments(string resolutionId);
+
+        Task<HttpResponseMessage> PostDeleteAmendment(string resolutionId, DeleteAmendment amendment);
+
+        Task<Resolution> GetResolutionFromServer(string resolutionId);
+
+        Task<bool> ResolutionExistsServerside(string id);
 
         string GenerateTan();
     }
