@@ -15,9 +15,9 @@ namespace MUNityCore.Models.Resolution.SqlResa
 
         public string SubmitterName { get; set; }
 
-        public Simulation.SimulationUser Submitter { get; set; }
+        //public Simulation.SimulationUser Submitter { get; set; }
 
-        public List<Simulation.SimulationUser> Supporter { get; set; }
+        //public List<Simulation.SimulationUser> Supporter { get; set; }
 
         public virtual string ResaAmendmentType { get; }
 

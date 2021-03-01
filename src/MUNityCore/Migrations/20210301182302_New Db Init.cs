@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MUNityCore.Migrations
 {
-    public partial class Init : Migration
+    public partial class NewDbInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,6 +42,28 @@ namespace MUNityCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ListOfSpeakers",
+                columns: table => new
+                {
+                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    PublicId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    SpeakerTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    QuestionTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    PausedSpeakerTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    PausedQuestionTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    ListClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    QuestionsClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    StartSpeakerTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    StartQuestionTime = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ListOfSpeakers", x => x.ListOfSpeakersId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Organizations",
                 columns: table => new
                 {
@@ -54,6 +76,42 @@ namespace MUNityCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Organizations", x => x.OrganizationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PetitionTypes",
+                columns: table => new
+                {
+                    PetitionTypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Reference = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Ruling = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PetitionTypes", x => x.PetitionTypeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Resolutions",
+                columns: table => new
+                {
+                    ResaElementId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Topic = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    FullName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    AgendaItem = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Session = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    SubmitterName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    CommitteeName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Resolutions", x => x.ResaElementId);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,6 +145,53 @@ namespace MUNityCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserAuths", x => x.MunityUserAuthId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Simulations",
+                columns: table => new
+                {
+                    SimulationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Phase = table.Column<int>(type: "int", nullable: false),
+                    LobbyMode = table.Column<int>(type: "int", nullable: false),
+                    LastStatusChange = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Password = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    CurrentResolutionId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Simulations", x => x.SimulationId);
+                    table.ForeignKey(
+                        name: "FK_Simulations_ListOfSpeakers_ListOfSpeakersId",
+                        column: x => x.ListOfSpeakersId,
+                        principalTable: "ListOfSpeakers",
+                        principalColumn: "ListOfSpeakersId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Speakers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Iso = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Mode = table.Column<int>(type: "int", nullable: false),
+                    OrdnerIndex = table.Column<int>(type: "int", nullable: false),
+                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Speakers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Speakers_ListOfSpeakers_ListOfSpeakersId",
+                        column: x => x.ListOfSpeakersId,
+                        principalTable: "ListOfSpeakers",
+                        principalColumn: "ListOfSpeakersId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,6 +234,330 @@ namespace MUNityCore.Migrations
                         column: x => x.ProjectOrganizationOrganizationId,
                         principalTable: "Organizations",
                         principalColumn: "OrganizationId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OperativeParagraphs",
+                columns: table => new
+                {
+                    ResaOperativeParagraphId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Text = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    IsLocked = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsVirtual = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Visible = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Corrected = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Comment = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    OrderIndex = table.Column<int>(type: "int", nullable: false),
+                    ResolutionResaElementId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    ParentResaOperativeParagraphId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OperativeParagraphs", x => x.ResaOperativeParagraphId);
+                    table.ForeignKey(
+                        name: "FK_OperativeParagraphs_OperativeParagraphs_ParentResaOperativeP~",
+                        column: x => x.ParentResaOperativeParagraphId,
+                        principalTable: "OperativeParagraphs",
+                        principalColumn: "ResaOperativeParagraphId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OperativeParagraphs_Resolutions_ResolutionResaElementId",
+                        column: x => x.ResolutionResaElementId,
+                        principalTable: "Resolutions",
+                        principalColumn: "ResaElementId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PreambleParagraphs",
+                columns: table => new
+                {
+                    ResaPreambleParagraphId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Text = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    IsLocked = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsCorrected = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Comment = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ResaElementId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    OrderIndex = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PreambleParagraphs", x => x.ResaPreambleParagraphId);
+                    table.ForeignKey(
+                        name: "FK_PreambleParagraphs_Resolutions_ResaElementId",
+                        column: x => x.ResaElementId,
+                        principalTable: "Resolutions",
+                        principalColumn: "ResaElementId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ResolutionSupporters",
+                columns: table => new
+                {
+                    ResaSupporterId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ResolutionResaElementId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResolutionSupporters", x => x.ResaSupporterId);
+                    table.ForeignKey(
+                        name: "FK_ResolutionSupporters_Resolutions_ResolutionResaElementId",
+                        column: x => x.ResolutionResaElementId,
+                        principalTable: "Resolutions",
+                        principalColumn: "ResaElementId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AgendaItems",
+                columns: table => new
+                {
+                    AgendaItemId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    PlannedDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DueDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DoneDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    OrderIndex = table.Column<int>(type: "int", nullable: false),
+                    SimulationId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AgendaItems", x => x.AgendaItemId);
+                    table.ForeignKey(
+                        name: "FK_AgendaItems_Simulations_SimulationId",
+                        column: x => x.SimulationId,
+                        principalTable: "Simulations",
+                        principalColumn: "SimulationId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SimulationPetitionTypes",
+                columns: table => new
+                {
+                    PetitionTypeSimulationId = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    SimulationId = table.Column<int>(type: "int", nullable: true),
+                    PetitionTypeId = table.Column<int>(type: "int", nullable: true),
+                    OrderIndex = table.Column<int>(type: "int", nullable: false),
+                    AllowChairs = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AllowDelegates = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AllowNgo = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AllowSpectator = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimulationPetitionTypes", x => x.PetitionTypeSimulationId);
+                    table.ForeignKey(
+                        name: "FK_SimulationPetitionTypes_PetitionTypes_PetitionTypeId",
+                        column: x => x.PetitionTypeId,
+                        principalTable: "PetitionTypes",
+                        principalColumn: "PetitionTypeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SimulationPetitionTypes_Simulations_SimulationId",
+                        column: x => x.SimulationId,
+                        principalTable: "Simulations",
+                        principalColumn: "SimulationId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SimulationRoles",
+                columns: table => new
+                {
+                    SimulationRoleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
+                    RoleType = table.Column<int>(type: "int", nullable: false),
+                    Iso = table.Column<string>(type: "varchar(5) CHARACTER SET utf8mb4", maxLength: 5, nullable: true),
+                    SimulationId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimulationRoles", x => x.SimulationRoleId);
+                    table.ForeignKey(
+                        name: "FK_SimulationRoles_Simulations_SimulationId",
+                        column: x => x.SimulationId,
+                        principalTable: "Simulations",
+                        principalColumn: "SimulationId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SimulationStatuses",
+                columns: table => new
+                {
+                    SimulationStatusId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    StatusText = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    StatusTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    SimulationId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimulationStatuses", x => x.SimulationStatusId);
+                    table.ForeignKey(
+                        name: "FK_SimulationStatuses_Simulations_SimulationId",
+                        column: x => x.SimulationId,
+                        principalTable: "Simulations",
+                        principalColumn: "SimulationId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Amendments",
+                columns: table => new
+                {
+                    ResaAmendmentId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    ResolutionResaElementId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    SubmitterName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Activated = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    SubmitTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Discriminator = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
+                    VirtualParagraphResaOperativeParagraphId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    TargetParagraphResaOperativeParagraphId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    NewText = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ResaDeleteAmendment_TargetParagraphResaOperativeParagraphId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    SourceParagraphResaOperativeParagraphId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    ResaMoveAmendment_VirtualParagraphResaOperativeParagraphId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Amendments", x => x.ResaAmendmentId);
+                    table.ForeignKey(
+                        name: "FK_Amendments_OperativeParagraphs_ResaDeleteAmendment_TargetPar~",
+                        column: x => x.ResaDeleteAmendment_TargetParagraphResaOperativeParagraphId,
+                        principalTable: "OperativeParagraphs",
+                        principalColumn: "ResaOperativeParagraphId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Amendments_OperativeParagraphs_ResaMoveAmendment_VirtualPara~",
+                        column: x => x.ResaMoveAmendment_VirtualParagraphResaOperativeParagraphId,
+                        principalTable: "OperativeParagraphs",
+                        principalColumn: "ResaOperativeParagraphId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Amendments_OperativeParagraphs_SourceParagraphResaOperativeP~",
+                        column: x => x.SourceParagraphResaOperativeParagraphId,
+                        principalTable: "OperativeParagraphs",
+                        principalColumn: "ResaOperativeParagraphId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Amendments_OperativeParagraphs_TargetParagraphResaOperativeP~",
+                        column: x => x.TargetParagraphResaOperativeParagraphId,
+                        principalTable: "OperativeParagraphs",
+                        principalColumn: "ResaOperativeParagraphId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Amendments_OperativeParagraphs_VirtualParagraphResaOperative~",
+                        column: x => x.VirtualParagraphResaOperativeParagraphId,
+                        principalTable: "OperativeParagraphs",
+                        principalColumn: "ResaOperativeParagraphId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Amendments_Resolutions_ResolutionResaElementId",
+                        column: x => x.ResolutionResaElementId,
+                        principalTable: "Resolutions",
+                        principalColumn: "ResaElementId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SimulationUser",
+                columns: table => new
+                {
+                    SimulationUserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Token = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    DisplayName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    PublicUserId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Password = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    PinRetries = table.Column<int>(type: "int", nullable: false),
+                    RoleSimulationRoleId = table.Column<int>(type: "int", nullable: true),
+                    CanCreateRole = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CanSelectRole = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CanEditResolution = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CanEditListOfSpeakers = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    SimulationId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimulationUser", x => x.SimulationUserId);
+                    table.ForeignKey(
+                        name: "FK_SimulationUser_SimulationRoles_RoleSimulationRoleId",
+                        column: x => x.RoleSimulationRoleId,
+                        principalTable: "SimulationRoles",
+                        principalColumn: "SimulationRoleId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SimulationUser_Simulations_SimulationId",
+                        column: x => x.SimulationId,
+                        principalTable: "Simulations",
+                        principalColumn: "SimulationId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Petitions",
+                columns: table => new
+                {
+                    PetitionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Text = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    PetitionDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    PetitionTypeId = table.Column<int>(type: "int", nullable: true),
+                    SimulationUserId = table.Column<int>(type: "int", nullable: true),
+                    AgendaItemId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Petitions", x => x.PetitionId);
+                    table.ForeignKey(
+                        name: "FK_Petitions_AgendaItems_AgendaItemId",
+                        column: x => x.AgendaItemId,
+                        principalTable: "AgendaItems",
+                        principalColumn: "AgendaItemId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Petitions_PetitionTypes_PetitionTypeId",
+                        column: x => x.PetitionTypeId,
+                        principalTable: "PetitionTypes",
+                        principalColumn: "PetitionTypeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Petitions_SimulationUser_SimulationUserId",
+                        column: x => x.SimulationUserId,
+                        principalTable: "SimulationUser",
+                        principalColumn: "SimulationUserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SimulationHubConnections",
+                columns: table => new
+                {
+                    SimulationHubConnectionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserSimulationUserId = table.Column<int>(type: "int", nullable: true),
+                    ConnectionId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimulationHubConnections", x => x.SimulationHubConnectionId);
+                    table.ForeignKey(
+                        name: "FK_SimulationHubConnections_SimulationUser_UserSimulationUserId",
+                        column: x => x.UserSimulationUserId,
+                        principalTable: "SimulationUser",
+                        principalColumn: "SimulationUserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -448,6 +877,7 @@ namespace MUNityCore.Migrations
                 columns: table => new
                 {
                     ResolutionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     CreationUserMunityUserId = table.Column<int>(type: "int", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastChangeTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -455,9 +885,12 @@ namespace MUNityCore.Migrations
                     AllowPublicEdit = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     AllowConferenceRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     AllowCommitteeRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AmendmentMode = table.Column<int>(type: "int", nullable: false),
+                    AllowOnlineAmendments = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     PublicShortKey = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    CommitteeId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
+                    EditPassword = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ReadPassword = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    CommitteeId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    SimulationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -467,6 +900,12 @@ namespace MUNityCore.Migrations
                         column: x => x.CommitteeId,
                         principalTable: "Committees",
                         principalColumn: "CommitteeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ResolutionAuths_Simulations_SimulationId",
+                        column: x => x.SimulationId,
+                        principalTable: "Simulations",
+                        principalColumn: "SimulationId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ResolutionAuths_Users_CreationUserMunityUserId",
@@ -655,184 +1094,6 @@ namespace MUNityCore.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Simulations",
-                columns: table => new
-                {
-                    SimulationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Phase = table.Column<int>(type: "int", nullable: false),
-                    LobbyMode = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Password = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    AdminPassword = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    CanJoin = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
-                    CurrentResolutionResolutionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Simulations", x => x.SimulationId);
-                    table.ForeignKey(
-                        name: "FK_Simulations_ResolutionAuths_CurrentResolutionResolutionId",
-                        column: x => x.CurrentResolutionResolutionId,
-                        principalTable: "ResolutionAuths",
-                        principalColumn: "ResolutionId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AllChatMessage",
-                columns: table => new
-                {
-                    AllChatMessageId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
-                    AuthorId = table.Column<int>(type: "int", nullable: false),
-                    AuthorName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Text = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Timestamp = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    SimulationId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AllChatMessage", x => x.AllChatMessageId);
-                    table.ForeignKey(
-                        name: "FK_AllChatMessage_Simulations_SimulationId",
-                        column: x => x.SimulationId,
-                        principalTable: "Simulations",
-                        principalColumn: "SimulationId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SimSimRequestModel",
-                columns: table => new
-                {
-                    SimSimRequestModelId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserToken = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    RequestType = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Message = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    RequestTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    SimulationId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SimSimRequestModel", x => x.SimSimRequestModelId);
-                    table.ForeignKey(
-                        name: "FK_SimSimRequestModel_Simulations_SimulationId",
-                        column: x => x.SimulationId,
-                        principalTable: "Simulations",
-                        principalColumn: "SimulationId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SimulationRoles",
-                columns: table => new
-                {
-                    SimulationRoleId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
-                    RoleType = table.Column<int>(type: "int", nullable: false),
-                    Iso = table.Column<string>(type: "varchar(2) CHARACTER SET utf8mb4", maxLength: 2, nullable: true),
-                    SimulationId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SimulationRoles", x => x.SimulationRoleId);
-                    table.ForeignKey(
-                        name: "FK_SimulationRoles_Simulations_SimulationId",
-                        column: x => x.SimulationId,
-                        principalTable: "Simulations",
-                        principalColumn: "SimulationId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SimulationUser",
-                columns: table => new
-                {
-                    SimulationUserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Token = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    DisplayName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Pin = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    RoleSimulationRoleId = table.Column<int>(type: "int", nullable: true),
-                    CanCreateRole = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CanSelectRole = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CanEditResolution = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CanEditListOfSpeakers = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    SimulationId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SimulationUser", x => x.SimulationUserId);
-                    table.ForeignKey(
-                        name: "FK_SimulationUser_SimulationRoles_RoleSimulationRoleId",
-                        column: x => x.RoleSimulationRoleId,
-                        principalTable: "SimulationRoles",
-                        principalColumn: "SimulationRoleId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_SimulationUser_Simulations_SimulationId",
-                        column: x => x.SimulationId,
-                        principalTable: "Simulations",
-                        principalColumn: "SimulationId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Speakers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
-                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Iso = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
-                    ListOfSpeakersId1 = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Speakers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ListOfSpeakers",
-                columns: table => new
-                {
-                    ListOfSpeakersId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
-                    PublicId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    SpeakerTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
-                    QuestionTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
-                    PausedSpeakerTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
-                    PausedQuestionTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
-                    CurrentSpeakerId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
-                    CurrentQuestionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
-                    ListClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    QuestionsClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    StartSpeakerTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    StartQuestionTime = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ListOfSpeakers", x => x.ListOfSpeakersId);
-                    table.ForeignKey(
-                        name: "FK_ListOfSpeakers_Speakers_CurrentQuestionId",
-                        column: x => x.CurrentQuestionId,
-                        principalTable: "Speakers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ListOfSpeakers_Speakers_CurrentSpeakerId",
-                        column: x => x.CurrentSpeakerId,
-                        principalTable: "Speakers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AbstractRole_CommitteeId",
                 table: "AbstractRole",
@@ -869,9 +1130,39 @@ namespace MUNityCore.Migrations
                 column: "TeamRoleGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AllChatMessage_SimulationId",
-                table: "AllChatMessage",
+                name: "IX_AgendaItems_SimulationId",
+                table: "AgendaItems",
                 column: "SimulationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Amendments_ResaDeleteAmendment_TargetParagraphResaOperativeP~",
+                table: "Amendments",
+                column: "ResaDeleteAmendment_TargetParagraphResaOperativeParagraphId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Amendments_ResaMoveAmendment_VirtualParagraphResaOperativePa~",
+                table: "Amendments",
+                column: "ResaMoveAmendment_VirtualParagraphResaOperativeParagraphId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Amendments_ResolutionResaElementId",
+                table: "Amendments",
+                column: "ResolutionResaElementId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Amendments_SourceParagraphResaOperativeParagraphId",
+                table: "Amendments",
+                column: "SourceParagraphResaOperativeParagraphId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Amendments_TargetParagraphResaOperativeParagraphId",
+                table: "Amendments",
+                column: "TargetParagraphResaOperativeParagraphId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Amendments_VirtualParagraphResaOperativeParagraphId",
+                table: "Amendments",
+                column: "VirtualParagraphResaOperativeParagraphId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Committees_ConferenceId",
@@ -919,14 +1210,14 @@ namespace MUNityCore.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ListOfSpeakers_CurrentQuestionId",
-                table: "ListOfSpeakers",
-                column: "CurrentQuestionId");
+                name: "IX_OperativeParagraphs_ParentResaOperativeParagraphId",
+                table: "OperativeParagraphs",
+                column: "ParentResaOperativeParagraphId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ListOfSpeakers_CurrentSpeakerId",
-                table: "ListOfSpeakers",
-                column: "CurrentSpeakerId");
+                name: "IX_OperativeParagraphs_ResolutionResaElementId",
+                table: "OperativeParagraphs",
+                column: "ResolutionResaElementId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganizationMember_OrganizationId",
@@ -959,6 +1250,26 @@ namespace MUNityCore.Migrations
                 column: "UserMunityUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Petitions_AgendaItemId",
+                table: "Petitions",
+                column: "AgendaItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Petitions_PetitionTypeId",
+                table: "Petitions",
+                column: "PetitionTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Petitions_SimulationUserId",
+                table: "Petitions",
+                column: "SimulationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PreambleParagraphs_ResaElementId",
+                table: "PreambleParagraphs",
+                column: "ResaElementId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Projects_ProjectOrganizationOrganizationId",
                 table: "Projects",
                 column: "ProjectOrganizationOrganizationId");
@@ -972,6 +1283,16 @@ namespace MUNityCore.Migrations
                 name: "IX_ResolutionAuths_CreationUserMunityUserId",
                 table: "ResolutionAuths",
                 column: "CreationUserMunityUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResolutionAuths_SimulationId",
+                table: "ResolutionAuths",
+                column: "SimulationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResolutionSupporters_ResolutionResaElementId",
+                table: "ResolutionSupporters",
+                column: "ResolutionResaElementId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResolutionUsers_AuthResolutionId",
@@ -1009,8 +1330,18 @@ namespace MUNityCore.Migrations
                 column: "SetByMunityUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SimSimRequestModel_SimulationId",
-                table: "SimSimRequestModel",
+                name: "IX_SimulationHubConnections_UserSimulationUserId",
+                table: "SimulationHubConnections",
+                column: "UserSimulationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SimulationPetitionTypes_PetitionTypeId",
+                table: "SimulationPetitionTypes",
+                column: "PetitionTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SimulationPetitionTypes_SimulationId",
+                table: "SimulationPetitionTypes",
                 column: "SimulationId");
 
             migrationBuilder.CreateIndex(
@@ -1019,14 +1350,14 @@ namespace MUNityCore.Migrations
                 column: "SimulationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Simulations_CurrentResolutionResolutionId",
-                table: "Simulations",
-                column: "CurrentResolutionResolutionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Simulations_ListOfSpeakersId",
                 table: "Simulations",
                 column: "ListOfSpeakersId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SimulationStatuses_SimulationId",
+                table: "SimulationStatuses",
+                column: "SimulationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SimulationUser_RoleSimulationRoleId",
@@ -1042,11 +1373,6 @@ namespace MUNityCore.Migrations
                 name: "IX_Speakers_ListOfSpeakersId",
                 table: "Speakers",
                 column: "ListOfSpeakersId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Speakers_ListOfSpeakersId1",
-                table: "Speakers",
-                column: "ListOfSpeakersId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPrivacySettings_UserRef",
@@ -1084,30 +1410,6 @@ namespace MUNityCore.Migrations
                 principalTable: "Delegation",
                 principalColumn: "DelegationId",
                 onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Simulations_ListOfSpeakers_ListOfSpeakersId",
-                table: "Simulations",
-                column: "ListOfSpeakersId",
-                principalTable: "ListOfSpeakers",
-                principalColumn: "ListOfSpeakersId",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Speakers_ListOfSpeakers_ListOfSpeakersId",
-                table: "Speakers",
-                column: "ListOfSpeakersId",
-                principalTable: "ListOfSpeakers",
-                principalColumn: "ListOfSpeakersId",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Speakers_ListOfSpeakers_ListOfSpeakersId1",
-                table: "Speakers",
-                column: "ListOfSpeakersId1",
-                principalTable: "ListOfSpeakers",
-                principalColumn: "ListOfSpeakersId",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -1128,16 +1430,8 @@ namespace MUNityCore.Migrations
                 name: "FK_RoleAuths_Conferences_ConferenceId",
                 table: "RoleAuths");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_ListOfSpeakers_Speakers_CurrentQuestionId",
-                table: "ListOfSpeakers");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ListOfSpeakers_Speakers_CurrentSpeakerId",
-                table: "ListOfSpeakers");
-
             migrationBuilder.DropTable(
-                name: "AllChatMessage");
+                name: "Amendments");
 
             migrationBuilder.DropTable(
                 name: "CommitteeSession");
@@ -1152,6 +1446,15 @@ namespace MUNityCore.Migrations
                 name: "Participations");
 
             migrationBuilder.DropTable(
+                name: "Petitions");
+
+            migrationBuilder.DropTable(
+                name: "PreambleParagraphs");
+
+            migrationBuilder.DropTable(
+                name: "ResolutionSupporters");
+
+            migrationBuilder.DropTable(
                 name: "ResolutionUsers");
 
             migrationBuilder.DropTable(
@@ -1161,19 +1464,43 @@ namespace MUNityCore.Migrations
                 name: "Settings");
 
             migrationBuilder.DropTable(
-                name: "SimSimRequestModel");
+                name: "SimulationHubConnections");
 
             migrationBuilder.DropTable(
-                name: "SimulationUser");
+                name: "SimulationPetitionTypes");
+
+            migrationBuilder.DropTable(
+                name: "SimulationStatuses");
+
+            migrationBuilder.DropTable(
+                name: "Speakers");
 
             migrationBuilder.DropTable(
                 name: "UserPrivacySettings");
 
             migrationBuilder.DropTable(
+                name: "OperativeParagraphs");
+
+            migrationBuilder.DropTable(
                 name: "OrganizationRoles");
 
             migrationBuilder.DropTable(
+                name: "AgendaItems");
+
+            migrationBuilder.DropTable(
+                name: "ResolutionAuths");
+
+            migrationBuilder.DropTable(
                 name: "GroupedRoleApplications");
+
+            migrationBuilder.DropTable(
+                name: "SimulationUser");
+
+            migrationBuilder.DropTable(
+                name: "PetitionTypes");
+
+            migrationBuilder.DropTable(
+                name: "Resolutions");
 
             migrationBuilder.DropTable(
                 name: "SimulationRoles");
@@ -1182,7 +1509,7 @@ namespace MUNityCore.Migrations
                 name: "Simulations");
 
             migrationBuilder.DropTable(
-                name: "ResolutionAuths");
+                name: "ListOfSpeakers");
 
             migrationBuilder.DropTable(
                 name: "Committees");
@@ -1219,12 +1546,6 @@ namespace MUNityCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "TeamRoleGroups");
-
-            migrationBuilder.DropTable(
-                name: "Speakers");
-
-            migrationBuilder.DropTable(
-                name: "ListOfSpeakers");
         }
     }
 }

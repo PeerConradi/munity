@@ -666,6 +666,162 @@ namespace MUNityCore.Migrations
                     b.ToTable("OrganizationRoles");
                 });
 
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaAmendment", b =>
+                {
+                    b.Property<string>("ResaAmendmentId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<bool>("Activated")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ResolutionResaElementId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("SubmitTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("SubmitterName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("ResaAmendmentId");
+
+                    b.HasIndex("ResolutionResaElementId");
+
+                    b.ToTable("Amendments");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("ResaAmendment");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaElement", b =>
+                {
+                    b.Property<string>("ResaElementId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("AgendaItem")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("CommitteeName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Session")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("SubmitterName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Topic")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("ResaElementId");
+
+                    b.ToTable("Resolutions");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", b =>
+                {
+                    b.Property<string>("ResaOperativeParagraphId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<bool>("Corrected")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsVirtual")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ParentResaOperativeParagraphId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ResolutionResaElementId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("ResaOperativeParagraphId");
+
+                    b.HasIndex("ParentResaOperativeParagraphId");
+
+                    b.HasIndex("ResolutionResaElementId");
+
+                    b.ToTable("OperativeParagraphs");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaPreambleParagraph", b =>
+                {
+                    b.Property<string>("ResaPreambleParagraphId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<bool>("IsCorrected")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResaElementId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("ResaPreambleParagraphId");
+
+                    b.HasIndex("ResaElementId");
+
+                    b.ToTable("PreambleParagraphs");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaSupporter", b =>
+                {
+                    b.Property<string>("ResaSupporterId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ResolutionResaElementId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.HasKey("ResaSupporterId");
+
+                    b.HasIndex("ResolutionResaElementId");
+
+                    b.ToTable("ResolutionSupporters");
+                });
+
             modelBuilder.Entity("MUNityCore.Models.Resolution.V2.ResolutionAuth", b =>
                 {
                     b.Property<string>("ResolutionId")
@@ -677,14 +833,14 @@ namespace MUNityCore.Migrations
                     b.Property<bool>("AllowConferenceRead")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("AllowOnlineAmendments")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("AllowPublicEdit")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("AllowPublicRead")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("AmendmentMode")
-                        .HasColumnType("int");
 
                     b.Property<string>("CommitteeId")
                         .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
@@ -1318,6 +1474,64 @@ namespace MUNityCore.Migrations
                     b.HasDiscriminator().HasValue("VisitorRole");
                 });
 
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment", b =>
+                {
+                    b.HasBaseType("MUNityCore.Models.Resolution.SqlResa.ResaAmendment");
+
+                    b.Property<string>("VirtualParagraphResaOperativeParagraphId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.HasIndex("VirtualParagraphResaOperativeParagraphId");
+
+                    b.HasDiscriminator().HasValue("ResaAddAmendment");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment", b =>
+                {
+                    b.HasBaseType("MUNityCore.Models.Resolution.SqlResa.ResaAmendment");
+
+                    b.Property<string>("NewText")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("TargetParagraphResaOperativeParagraphId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.HasIndex("TargetParagraphResaOperativeParagraphId");
+
+                    b.HasDiscriminator().HasValue("ResaChangeAmendment");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment", b =>
+                {
+                    b.HasBaseType("MUNityCore.Models.Resolution.SqlResa.ResaAmendment");
+
+                    b.Property<string>("TargetParagraphResaOperativeParagraphId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4")
+                        .HasColumnName("ResaDeleteAmendment_TargetParagraphResaOperativeParagraphId");
+
+                    b.HasIndex("TargetParagraphResaOperativeParagraphId");
+
+                    b.HasDiscriminator().HasValue("ResaDeleteAmendment");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment", b =>
+                {
+                    b.HasBaseType("MUNityCore.Models.Resolution.SqlResa.ResaAmendment");
+
+                    b.Property<string>("SourceParagraphResaOperativeParagraphId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("VirtualParagraphResaOperativeParagraphId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4")
+                        .HasColumnName("ResaMoveAmendment_VirtualParagraphResaOperativeParagraphId");
+
+                    b.HasIndex("SourceParagraphResaOperativeParagraphId");
+
+                    b.HasIndex("VirtualParagraphResaOperativeParagraphId");
+
+                    b.HasDiscriminator().HasValue("ResaMoveAmendment");
+                });
+
             modelBuilder.Entity("MUNity.Models.ListOfSpeakers.Speaker", b =>
                 {
                     b.HasOne("MUNity.Models.ListOfSpeakers.ListOfSpeakers", "ListOfSpeakers")
@@ -1495,6 +1709,48 @@ namespace MUNityCore.Migrations
                         .HasForeignKey("OrganizationId");
 
                     b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaAmendment", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaElement", "Resolution")
+                        .WithMany("Amendments")
+                        .HasForeignKey("ResolutionResaElementId");
+
+                    b.Navigation("Resolution");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentResaOperativeParagraphId");
+
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaElement", "Resolution")
+                        .WithMany("OperativeParagraphs")
+                        .HasForeignKey("ResolutionResaElementId");
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("Resolution");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaPreambleParagraph", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaElement", "ResaElement")
+                        .WithMany("PreambleParagraphs")
+                        .HasForeignKey("ResaElementId");
+
+                    b.Navigation("ResaElement");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaSupporter", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaElement", "Resolution")
+                        .WithMany("Supporters")
+                        .HasForeignKey("ResolutionResaElementId");
+
+                    b.Navigation("Resolution");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Resolution.V2.ResolutionAuth", b =>
@@ -1702,6 +1958,48 @@ namespace MUNityCore.Migrations
                     b.Navigation("TeamRoleGroup");
                 });
 
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", "VirtualParagraph")
+                        .WithMany()
+                        .HasForeignKey("VirtualParagraphResaOperativeParagraphId");
+
+                    b.Navigation("VirtualParagraph");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", "TargetParagraph")
+                        .WithMany("ChangeAmendments")
+                        .HasForeignKey("TargetParagraphResaOperativeParagraphId");
+
+                    b.Navigation("TargetParagraph");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", "TargetParagraph")
+                        .WithMany("DeleteAmendments")
+                        .HasForeignKey("TargetParagraphResaOperativeParagraphId");
+
+                    b.Navigation("TargetParagraph");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment", b =>
+                {
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", "SourceParagraph")
+                        .WithMany("MoveAmendments")
+                        .HasForeignKey("SourceParagraphResaOperativeParagraphId");
+
+                    b.HasOne("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", "VirtualParagraph")
+                        .WithMany()
+                        .HasForeignKey("VirtualParagraphResaOperativeParagraphId");
+
+                    b.Navigation("SourceParagraph");
+
+                    b.Navigation("VirtualParagraph");
+                });
+
             modelBuilder.Entity("MUNity.Models.ListOfSpeakers.ListOfSpeakers", b =>
                 {
                     b.Navigation("AllSpeakers");
@@ -1755,6 +2053,28 @@ namespace MUNityCore.Migrations
             modelBuilder.Entity("MUNityCore.Models.Organization.OrganizationRole", b =>
                 {
                     b.Navigation("MembersWithRole");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaElement", b =>
+                {
+                    b.Navigation("Amendments");
+
+                    b.Navigation("OperativeParagraphs");
+
+                    b.Navigation("PreambleParagraphs");
+
+                    b.Navigation("Supporters");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph", b =>
+                {
+                    b.Navigation("ChangeAmendments");
+
+                    b.Navigation("Children");
+
+                    b.Navigation("DeleteAmendments");
+
+                    b.Navigation("MoveAmendments");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Resolution.V2.ResolutionAuth", b =>

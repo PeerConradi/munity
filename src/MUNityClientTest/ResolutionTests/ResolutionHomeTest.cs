@@ -11,7 +11,7 @@ namespace MunityClientTest.ResolutionTests
     public class ResolutionHomeTest
     {
         [Fact]
-        public void TestHomeHasNoLKocalResolution()
+        public void TestHomeHasNoLocalResolution()
         {
             var mockedService = new Mock<MUNityClient.Services.IResolutionService>();
 

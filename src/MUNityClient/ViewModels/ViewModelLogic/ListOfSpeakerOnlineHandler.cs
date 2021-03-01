@@ -105,6 +105,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         private void ListOfSpeakerOnlineHandler_QuestionTimerStarted(object sender, DateTime e)
         {
             this._viewModel.SourceList.ResumeQuestion();
+            this._viewModel.SourceList.StartQuestionTime = e;
         }
 
         private void ListOfSpeakerOnlineHandler_NextQuestionPushed(object sender, EventArgs e)
@@ -115,7 +116,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         private void ListOfSpeakerOnlineHandler_SpeakerTimerStarted(object sender, DateTime e)
         {
             this._viewModel.SourceList.ResumeSpeaker();
-            //this._viewModel.SourceList.StartSpeakerTime = e.Value;
+            this._viewModel.SourceList.StartSpeakerTime = e;
         }
 
         private void ListOfSpeakerOnlineHandler_NextSpeaker(object sender, EventArgs e)
