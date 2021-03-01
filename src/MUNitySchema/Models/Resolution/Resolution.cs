@@ -15,10 +15,8 @@ namespace MUNity.Models.Resolution
     /// The Preamble contains a list of paragraphs.
     /// The operative section contains a list of paragraphs and amendments for the different paragraphs that are created.
     /// </summary>
-    public class Resolution : INotifyPropertyChanged
+    public class Resolution
     {
-
-        public string _id { get => ResolutionId; set => ResolutionId = value; }
 
         /// <summary>
         /// An id to let the system identify the resolution. Note that the header contains a property for name or full name
@@ -28,57 +26,26 @@ namespace MUNity.Models.Resolution
         [Key]
         public string ResolutionId { get; set; }
 
-        private DateTime _date;
+
         /// <summary>
         /// A Date that is first set when the resolution is created and can be used as a last change date.
         /// </summary>
-        public DateTime Date {
-            get => _date;
-            set
-            {
-                _date = value;
-                NotifyPropertyChanged(nameof(Date));
-            }
-        }
+        public DateTime Date { get; set; }
 
-        private ResolutionHeader _header;
         /// <summary>
         /// The header of the resolution containing the general information of the document.
         /// </summary>
-        public ResolutionHeader Header {
-            get => _header;
-            set
-            {
-                this._header = value;
-                NotifyPropertyChanged(nameof(Header));
-            }
-        }
+        public ResolutionHeader Header { get; set; }
 
-        private ResolutionPreamble _preamble;
         /// <summary>
         /// The preamble of the resolution containing the different paragraphs.
         /// </summary>
-        public ResolutionPreamble Preamble {
-            get => _preamble;
-            set
-            {
-                _preamble = value;
-                NotifyPropertyChanged(nameof(Preamble));
-            }
-        }
+        public ResolutionPreamble Preamble { get; set; }
 
-        private OperativeSection _operativeSection;
         /// <summary>
         /// The operative section of the resolution containing the paragraphs and amendments.
         /// </summary>
-        public OperativeSection OperativeSection {
-            get => _operativeSection;
-            set
-            {
-                _operativeSection = value;
-                NotifyPropertyChanged(nameof(OperativeSection));
-            }
-        }
+        public OperativeSection OperativeSection { get; set; }
 
         /// <summary>
         /// Creates a new instance of a resolution with a new Id.
@@ -90,20 +57,6 @@ namespace MUNity.Models.Resolution
             OperativeSection = new OperativeSection();
             Header = new ResolutionHeader();
             Date = DateTime.Now;
-        }
-
-        /// <summary>
-        /// Event that is fired when a property has changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Internal Event to fire the Property Changed event.
-        /// </summary>
-        /// <param name="name"></param>
-        protected void NotifyPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

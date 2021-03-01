@@ -46,7 +46,7 @@ namespace MUNityCoreTest.ResolutionTest.ControllerTests
         [Order(0)]
         public async Task CreatePublic()
         {
-            var controller = new MainResaController(this._service);
+            var controller = new MainResaController(this._mockHub.Object, this._service);
             var result = await controller.Public();
             Assert.NotNull(result);
             var okResult = result.Result as OkObjectResult;
@@ -353,7 +353,7 @@ namespace MUNityCoreTest.ResolutionTest.ControllerTests
 
         private async Task<Resolution> GetTestResolution()
         {
-            var controller = new MainResaController(this._service);
+            var controller = new MainResaController(this._mockHub.Object, this._service);
             var result = await controller.Public(resolutionId);
             Assert.NotNull(result);
             var okObjectResult = result.Result as OkObjectResult;

@@ -12,7 +12,7 @@ namespace MUNity.Models.Resolution
     /// An operative Paragraph is a paragraph inside the operative section. You can create amendments for this type of
     /// paragraph and they can also have child paragraphs.
     /// </summary>
-    public class OperativeParagraph : INotifyPropertyChanged
+    public class OperativeParagraph
     {
 
         /// <summary>
@@ -20,138 +20,47 @@ namespace MUNity.Models.Resolution
         /// </summary>
         public string OperativeParagraphId { get; set; }
 
-        private string _name = "";
         /// <summary>
         /// The name of the paragraph if you want to identify it by a given name.
         /// </summary>
-        public string Name {
-            get => _name; 
-            set
-            {
-                _name = value;
-                NotifyPropertyChanged(nameof(Name));
-            }
-        }
+        public string Name { get; set; }
 
-        public void SetNameNoPropertyChanged(string name) => _name = name;
-
-        private bool _isLocked = false;
         /// <summary>
         /// Is the paragraph marked as locked. This will not effect the logic you can still submit amendments
         /// or apply amendments to it. This may change in future implementations!
         /// </summary>
-        public bool IsLocked {
-            get => _isLocked; 
-            set
-            {
-                _isLocked = value;
-                NotifyPropertyChanged(nameof(IsLocked));
-            }
-        }
+        public bool IsLocked { get; set; }
 
-        public void SetIsLockedNoPropertyChanged(bool isLocked) => _isLocked = isLocked;
-
-        private bool _isVirtual = false;
         /// <summary>
         /// Virtual is true when the Operative Paragraph comes from an AddAmendment and doesn't really count as an
         /// paragraph or if it is from a move amendment and is the paragraph where the orignal should be moved to.
         /// </summary>
-        public bool IsVirtual {
-            get => _isVirtual; 
-            set
-            {
-                _isVirtual = value;
-                NotifyPropertyChanged(nameof(IsVirtual));
-            } 
-        }
-
-        public void SetIsVirtualNoPropertyChanged(bool isVirtual) => _isVirtual = isVirtual;
-
-        private string _text = "";
+        public bool IsVirtual { get; set; }
 
         
         /// <summary>
         /// The text of the operative Paragraph.
         /// </summary>
-        public string Text
-        {
-            get => this._text;
-            set
-            {
-                if (_text == value) return;
-                var oldText = this._text;
-                this._text = value;
-                this.NotifyPropertyChanged(nameof(Text));
-            }
-        }
+        public string Text { get; set; }
 
-        public void SetTextNoPropertyChanged(string text) => _text = text;
-
-        private bool _visible = true;
         /// <summary>
         /// Is the operative Paragraph visible inside the views.
         /// </summary>
-        public bool Visible {
-            get => _visible; 
-            set
-            {
-                _visible = value;
-                NotifyPropertyChanged(nameof(Visible));
-            }
-        }
+        public bool Visible { get; set; }
 
-        public void SetVisibleNoPropertyChanged(bool visible) => _visible = visible;
-
-        private bool _corrected = false;
         /// <summary>
         /// Is the operative paragraph marked as corrected. Note that this
         /// does not interact with any form of logic, if the Text is changed it will
         /// still be marked as corrected.
         /// </summary>
-        public bool Corrected {
-            get => _corrected; 
-            set
-            {
-                _corrected = value;
-                NotifyPropertyChanged(nameof(Corrected));
-            }
-        }
-
-        public void SetCorrectedNoPropertyChanged(bool corrected) => _corrected = corrected;
+        public bool Corrected { get; set; }
 
         /// <summary>
         /// Child paragraphs of this operative paragraph.
         /// </summary>
         public List<OperativeParagraph> Children { get; set; }
 
-        private string _comment = "";
-        public string Comment
-        {
-            get => _comment;
-            set
-            {
-                if (_comment == value) return;
-                _comment = value;
-                NotifyPropertyChanged(nameof(Comment));
-            }
-        }
-
-        public void SetCommentNoPropertyChanged(string comment) => _comment = comment;
-
-        /// <summary>
-        /// The comments of this operative paragraph.
-        /// </summary>
-        public ObservableCollection<Comment> Comments { get; set; }
-
-        /// <summary>
-        /// Has a property of the operative paragraph changed. This is not implemented complitly by now!
-        /// </summary>
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public string Comment { get; set; }
 
         /// <summary>
         /// Creates a new Operative Paragraph and will give it an id.
@@ -162,7 +71,6 @@ namespace MUNity.Models.Resolution
             this.Text = text;
             this.OperativeParagraphId = Guid.NewGuid().ToString();
             this.Children = new List<OperativeParagraph>();
-            this.Comments = new ObservableCollection<Comment>();
         }
     }
 }

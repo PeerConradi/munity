@@ -89,7 +89,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         private HeaderStringPropChangedEventArgs DefaultChangeHeaderRequest(string value)
         {
-            Console.WriteLine("ResolutionId: " + resolutionId);
             return new HeaderStringPropChangedEventArgs(resolutionId, value)
             {
                 Tan = new Random().Next(100000, 999999).ToString()

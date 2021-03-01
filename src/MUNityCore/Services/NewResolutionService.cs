@@ -81,7 +81,6 @@ namespace MUNityCore.Services
             // Maybe writing just replacing the List entry would be better idk.
             targetParagraph.Corrected = newValues.Corrected;
             targetParagraph.IsLocked = newValues.IsLocked;
-            targetParagraph.Comments = newValues.Comments;
             targetParagraph.Text = newValues.Text;
             await this.SaveResolution(resolution);
             return true;
@@ -95,7 +94,6 @@ namespace MUNityCore.Services
             targetParagraph.IsLocked = newValues.IsLocked;
             targetParagraph.IsVirtual = newValues.IsVirtual;
             targetParagraph.Name = newValues.Name;
-            targetParagraph.Comments = newValues.Comments;
             targetParagraph.Text = newValues.Text;
             targetParagraph.Visible = newValues.Visible;
             targetParagraph.Comment = newValues.Comment;

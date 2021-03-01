@@ -57,17 +57,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 var paragraph = viewModel?.Resolution?.OperativeSection?.FirstOrDefault(n => n.OperativeParagraphId == args.Paragraph.OperativeParagraphId);
                 if (paragraph != null)
                 {
-                    //paragraph = args.Paragraph;
-                    paragraph.SetTextNoPropertyChanged(args.Paragraph.Text);
-                    paragraph.SetCommentNoPropertyChanged(args.Paragraph.Comment);
-                    paragraph.SetCorrectedNoPropertyChanged(args.Paragraph.Corrected);
-                    paragraph.SetIsLockedNoPropertyChanged(args.Paragraph.IsLocked);
-                    paragraph.SetIsVirtualNoPropertyChanged(args.Paragraph.IsVirtual);
-                    paragraph.SetNameNoPropertyChanged(args.Paragraph.Name);
-                    paragraph.SetVisibleNoPropertyChanged(args.Paragraph.Visible);
-                    if (args.Paragraph.Children != null && args.Paragraph.Children.Count != paragraph.Children.Count)
-                        paragraph.Children = args.Paragraph.Children;
-                    viewModel.InvokeOperativeParagraphChangedFromExtern(this, args);
+                    viewModel.Resolution.OperativeSection.Paragraphs.Add(args.Paragraph);
                 }
             });
         }
@@ -103,7 +93,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 var targetParagraph = viewModel.Resolution.Preamble.Paragraphs.FirstOrDefault(n => n.PreambleParagraphId == args.ParagraphId);
                 if (targetParagraph != null)
                 {
-                    targetParagraph.SetTextNoNotifyPropertyChanged(args.Text);
                     viewModel.InvokePreambleChangedFromExtern(this, args);
                 }
             });
@@ -117,7 +106,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 var targetParagraph = viewModel.Resolution.Preamble.Paragraphs.FirstOrDefault(n => n.PreambleParagraphId == args.PreambleParagraphId);
                 if (targetParagraph != null)
                 {
-                    targetParagraph.SetCommentTextNoNotifyPropertyChanged(args.Text);
                     viewModel.InvokePreambleChangedFromExtern(this, args);
                 }
             });
@@ -144,7 +132,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
                 if (viewModel.Resolution.Header.Name != args.Text)
                 {
-                    viewModel.Resolution.Header.SetNameNoPropertyChanged(args.Text);
                     viewModel.InvokeHeaderChangedFromExtern(this, args);
                 }
             });
@@ -157,7 +144,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
                 if (viewModel.Resolution.Header.FullName != args.Text)
                 {
-                    viewModel.Resolution.Header.SetFullNameNoPropertyChanged(args.Text);
                     viewModel.InvokeHeaderChangedFromExtern(this, args);
                 }
             });
@@ -183,7 +169,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
                 if (viewModel.Resolution.Header.AgendaItem != args.Text)
                 {
-                    viewModel.Resolution.Header.SetAgendaItemNoPropertyChanged(args.Text);
                     viewModel.InvokeHeaderChangedFromExtern(this, args);
                 }
             });
@@ -196,7 +181,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
                 if (viewModel.Resolution.Header.Session != args.Text)
                 {
-                    viewModel.Resolution.Header.SetSessionNoPropertyChanged(args.Text);
                     viewModel.InvokeHeaderChangedFromExtern(this, args);
                 }
             });
@@ -209,7 +193,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
                 if (viewModel.Resolution.Header.SubmitterName != args.Text)
                 {
-                    viewModel.Resolution.Header.SetSubmitterNameNoPropertyChanged(args.Text);
                     viewModel.InvokeHeaderChangedFromExtern(this, args);
                 }
             });
@@ -222,7 +205,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
                 if (viewModel.Resolution.Header.CommitteeName != args.Text)
                 {
-                    viewModel.Resolution.Header.SetCommitteeNameNoPropertyChanged(args.Text);
                     viewModel.InvokeHeaderChangedFromExtern(this, args);
                 }
             });

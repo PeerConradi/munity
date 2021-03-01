@@ -6,7 +6,7 @@
         <input type="text" @bind="CommitteeName" class="form-control" placeholder="Gremium">
     </div>
     <div class="col p-0 ml-2">
-        <input type="text" @bind="ResolutionViewModel.Resolution.Header.SubmitterName" class="form-control" placeholder="Einbringerstaat">
+        <input type="text" @bind="SubmitterName" class="form-control" placeholder="Einbringerstaat">
     </div>
 </div>
 <div class="row py-0 m-0 col-12 justify-content-center">
@@ -51,6 +51,19 @@
             {
                 ResolutionViewModel.Handler.SetCommitteeName(value);
                 ResolutionViewModel.Resolution.Header.CommitteeName = value;
+            }
+        }
+    }
+
+    private string SubmitterName
+    {
+        get => ResolutionViewModel.Resolution.Header.SubmitterName;
+        set
+        {
+            if (ResolutionViewModel.Resolution.Header.SubmitterName != value)
+            {
+                ResolutionViewModel.Handler.SetSubmitterName(value);
+                ResolutionViewModel.Resolution.Header.SubmitterName = value;
             }
         }
     }
