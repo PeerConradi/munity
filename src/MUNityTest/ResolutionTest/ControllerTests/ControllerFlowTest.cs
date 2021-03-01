@@ -282,6 +282,47 @@ namespace MUNityCoreTest.ResolutionTest.ControllerTests
             Assert.AreEqual("One", resolution.Preamble.Paragraphs[1].Text);
         }
 
+        [Test]
+        [Order(14)]
+        public async Task CreateOperativeParagraph()
+        {
+            var controller = new OperativeParagraphController(_mockHub.Object, _service);
+            var body = new AddOperativeParagraphRequest()
+            {
+                ResolutionId = resolutionId
+            };
+            var response = controller.AddParagraph(body);
+            Assert.NotNull(response);
+            var okObjectResult = response.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            var paragraph = okObjectResult.Value as OperativeParagraph;
+            Assert.NotNull(paragraph);
+
+            var resolution = await GetTestResolution();
+            Assert.AreEqual(1, resolution.OperativeSection.Paragraphs.Count);
+        }
+
+        [Test]
+        [Order(15)]
+        public async Task ChangeOperativeParagraphText()
+        {
+            var resolution = await GetTestResolution();
+            var paragraph = resolution.OperativeSection.Paragraphs.First();
+            Assert.NotNull(paragraph);
+
+            var controller = new OperativeParagraphController(_mockHub.Object, _service);
+            var body = new ChangeOperativeParagraphTestRequest()
+            {
+                NewText = "New Paragraph Text",
+                OperativeParagraphId = paragraph.OperativeParagraphId,
+                ResolutionId = resolutionId
+            };
+
+            var response = controller.Text(body);
+            Assert.NotNull(response);
+            Assert.IsTrue(response is OkResult);
+        }
+
         private bool SetTestResolutionPreambleParagraphText(string paragraphId, string text)
         {
             var preambleController = new PreambleController(_mockHub.Object, _service);

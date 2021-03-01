@@ -1,5 +1,6 @@
 ﻿using MUNity.Models.Resolution;
 using MUNity.Models.Resolution.EventArguments;
+using MUNityClient.Models.Resolution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,14 @@ namespace MUNityClient.Services
         Task<HttpResponseMessage> UpdateOperativeParagraph(OperativeParagraphChangedEventArgs args);
 
         Task<HttpResponseMessage> UpdateOperativeSection(OperativeSectionChangedEventArgs args);
+
+        Task<List<ResolutionInfo>> GetStoredResolutions();
+
+        Task<bool> IsOnline(bool forceRefresh = false);
+
+        Task<Resolution> CreatePublicResolution(string title);
+
+        Task<Resolution> CreateResolution(string title = "");
 
         string GenerateTan();
     }
