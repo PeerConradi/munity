@@ -2,7 +2,7 @@
 @using MUNity.Extensions.ResolutionExtensions;
 @using MUNity.Extensions.ObservableCollectionExtensions; 
 @using MUNity.Models.Resolution.EventArguments;
-@inject MUNityClient.Services.ResolutionService resolutionService;
+@inject MUNityClient.Services.IResolutionService resolutionService;
 
 
 @if (ResolutionViewModel.Resolution.OperativeSection.Paragraphs.Contains(this.Paragraph))

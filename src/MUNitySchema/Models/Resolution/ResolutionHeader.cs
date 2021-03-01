@@ -47,20 +47,10 @@ namespace MUNity.Models.Resolution
 
         public void SetFullNameNoPropertyChanged(string fullName) => this._fullName = fullName;
 
-        private string _topic;
         /// <summary>
         /// The topic of the resolution. This should be displayed as the header of a resolution.
         /// </summary>
-        public string Topic {
-            get => _topic; 
-            set
-            {
-                _topic = value;
-                NotifyPropertyChanged(nameof(Topic));
-            }
-        }
-
-        public void SetTopicNoPropertyChanged(string topic) => this._topic = topic;
+        public string Topic { get; set; }
 
         private string _agendaItem = "";
         /// <summary>

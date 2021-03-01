@@ -41,11 +41,25 @@ namespace MUNityClient.Services
 
         Task<List<ResolutionInfo>> GetStoredResolutions();
 
+        Task<Resolution> GetResolution(string resolutionId);
+
+        Task<Resolution> GetStoredResolution(string id);
+
         Task<bool> IsOnline(bool forceRefresh = false);
 
-        Task<Resolution> CreatePublicResolution(string title);
+        Task<ViewModels.ResolutionViewModel> Subscribe(Resolution resolution);
+
+        Task<string> CreatePublicResolution();
 
         Task<Resolution> CreateResolution(string title = "");
+
+        Task<bool> CanUserPostAmendments(string resolutionId);
+
+        Task<HttpResponseMessage> PostDeleteAmendment(string resolutionId, DeleteAmendment amendment);
+
+        Task<Resolution> GetResolutionFromServer(string resolutionId);
+
+        Task<bool> ResolutionExistsServerside(string id);
 
         string GenerateTan();
     }

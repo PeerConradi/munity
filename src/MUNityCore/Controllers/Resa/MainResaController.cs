@@ -31,6 +31,13 @@ namespace MUNityCore.Controllers.Resa
 
         [HttpGet]
         [Route("[action]")]
+        public IActionResult IsUp()
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
         public async Task<ActionResult<Resolution>> Public(string id)
         {
             var resolution = await this._resolutionService.GetResolutionDtoAsync(id);

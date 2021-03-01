@@ -39,7 +39,7 @@ namespace MUNityClient.ViewModels
             }
         }
 
-        
+        public ViewModelLogic.IResolutionHandler Handler { get; set; }
 
         private bool _isOnlineResolution = false;
 
@@ -61,17 +61,6 @@ namespace MUNityClient.ViewModels
 
         public event EventHandler<OperativeParagraphChangedEventArgs> OperativeParagraphChangedFromExtern;
 
-        //public event EventHandler<PreambleParagraphChangedArgs> PreambleParagraphChanged;
-
-        //public event EventHandler<OperativeParagraphChangedEventArgs> OperativeParagraphChanged;
-
-        //public event EventHandler<AmendmentActivatedChangedEventArgs> AmendmentActivatedChanged;
-
-        //public event EventHandler<PreambleParagraphTextChangedEventArgs> PreambleParagraphTextChanged;
-
-        //public event EventHandler<OperativeParagraphTextChangedEventArgs> OperativeParagraphTextChanged;
-
-        //public event EventHandler<PreambleParagraphAddedEventArgs> PreambleParagraphAdded;
 
         public event EventHandler SyncModeChanged;
 
@@ -162,8 +151,6 @@ namespace MUNityClient.ViewModels
             return false;
         }
 
-        
-
         private void _resolutionObserver_PreambleParagraphTextChanged(object sender, PreambleParagraphTextChangedEventArgs args)
         {
             if (!_isOnlineResolution)
@@ -206,6 +193,8 @@ namespace MUNityClient.ViewModels
         public static async Task<ResolutionViewModel> CreateViewModelOnline(Resolution resolution, MUNityClient.Services.IResolutionService resolutionService)
         {
             var instance = new ResolutionViewModel(resolution, true, resolutionService);
+            instance.Handler = new ViewModelLogic.ResolutionOnlineHandler(resolution.ResolutionId);
+            
             await instance.HubConnection.StartAsync();
             return instance;
         }
@@ -216,5 +205,6 @@ namespace MUNityClient.ViewModels
             //await instance.HubConnection.StartAsync();
             return instance;
         }
+
     }
 }

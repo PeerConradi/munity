@@ -16,7 +16,9 @@ namespace MUNity.Models.Resolution
     /// The operative section contains a list of paragraphs and amendments for the different paragraphs that are created.
     /// </summary>
     public class Resolution : INotifyPropertyChanged
-    { 
+    {
+
+        public string _id { get => ResolutionId; set => ResolutionId = value; }
 
         /// <summary>
         /// An id to let the system identify the resolution. Note that the header contains a property for name or full name

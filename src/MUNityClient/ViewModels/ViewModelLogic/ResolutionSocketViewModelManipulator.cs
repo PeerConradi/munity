@@ -119,13 +119,6 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 {
                     targetParagraph.SetCommentTextNoNotifyPropertyChanged(args.Text);
                     viewModel.InvokePreambleChangedFromExtern(this, args);
-                    // This is for future implementaiton were multiple comments for one paragraph should be possible...
-                    //var targetComment = targetParagraph.Comments.FirstOrDefault(n => n.CommentId == args.CommentId);
-                    //if (targetComment != null)
-                    //{
-                    //    targetComment.SetTextNoNotifyPropertyChanged(args.Text);
-                    //    viewModel.InvokePreambleChangedFromExtern(this, args);
-                    //}
                 }
             });
         }
@@ -177,7 +170,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 if (viewModel.VerifyTanAndRemoveItIfExisting(args)) return;
                 if (viewModel.Resolution.Header.Topic != args.Text)
                 {
-                    viewModel.Resolution.Header.SetTopicNoPropertyChanged(args.Text);
+                    //viewModel.Resolution.Header.SetTopicNoPropertyChanged(args.Text);
                     viewModel.InvokeHeaderChangedFromExtern(this, args);
                 }
             });

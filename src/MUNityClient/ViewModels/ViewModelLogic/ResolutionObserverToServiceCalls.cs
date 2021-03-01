@@ -131,8 +131,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         private void Observer_HeaderNameChanged(object sender, HeaderStringPropChangedEventArgs e)
         {
-            GenerateAndSaveTan(e);
-            _service.UpdateResolutionHeaderName(e).ConfigureAwait(false);
+            _viewModel.Handler.SetName(e.Text);
         }
             
 

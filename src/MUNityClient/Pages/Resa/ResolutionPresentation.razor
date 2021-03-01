@@ -1,6 +1,6 @@
 ﻿@page "/resa/read/{id}"
 @using MUNity.Models.Resolution;
-@inject MUNityClient.Services.ResolutionService resolutionService;
+@inject MUNityClient.Services.IResolutionService resolutionService;
 
 @if (this.ResolutionViewModel != null)
 {

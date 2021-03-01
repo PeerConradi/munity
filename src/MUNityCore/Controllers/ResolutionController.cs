@@ -17,8 +17,9 @@ namespace MUNityCore.Controllers
     /// <summary>
     /// The ResolutionController offers endpoints to work with resolution documents.
     /// </summary>
-    [Route("api/[controller]")]
-    [ApiController]
+    // Deactivated! Old controller
+    //[Route("api/[controller]")]
+    //[ApiController]
     public class ResolutionController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

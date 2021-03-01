@@ -496,7 +496,7 @@ namespace MUNityCore.Services
                 Header = await GetHeaderDto(resolutionId),
 
                 Preamble = await GetPreambleDto(resolutionId),
-
+                ResolutionId = resolutionDb.ResaElementId,
                 OperativeSection = new OperativeSection()
                 {
                     OperativeSectionId = resolutionDb.ResaElementId + "_os",
