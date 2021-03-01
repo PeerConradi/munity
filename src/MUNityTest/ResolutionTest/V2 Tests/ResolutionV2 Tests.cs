@@ -51,7 +51,6 @@ namespace MUNityTest.Resolution.V2_Tests
 
             // Test that the Id is generated!
             Assert.False(string.IsNullOrEmpty(paragraph.PreambleParagraphId));
-            Assert.NotNull(paragraph.Comments);
             Assert.AreEqual(1, resolution.Preamble.Paragraphs.Count);
             Assert.Contains(paragraph, resolution.Preamble.Paragraphs);
         }
@@ -71,33 +70,15 @@ namespace MUNityTest.Resolution.V2_Tests
         [Order(5)]
         [Author("Peer Conradi")]
         [Description("Test adding a notice to the Preamble Paragraph")]
-        public void TestAddANotice()
+        public void TestChangeComment()
         {
             var paragraph = resolution.Preamble.Paragraphs.First();
-            var notice = new Comment()
-            {
-                Text = "New Notice"
-            };
-            paragraph.Comments.Add(notice);
-            Assert.False(string.IsNullOrEmpty(notice.CommentId));
-            Assert.NotNull(notice.ReadBy);
-            Assert.Contains(notice, paragraph.Comments);
+            paragraph.Comment = "New comment";
+            Assert.AreEqual("New comment", paragraph.Comment);
         }
 
         [Test]
         [Order(6)]
-        [Author("Peer Conradi")]
-        [Description("Test removing the notice again")]
-        public void TestRemoveNotice()
-        {
-            var paragraph = resolution.Preamble.Paragraphs.First();
-            var notice = paragraph.Comments.First();
-            paragraph.Comments.Remove(notice);
-            Assert.AreEqual(0, paragraph.Comments.Count);
-        }
-
-        [Test]
-        [Order(7)]
         [Author("Peer Conradi")]
         [Description("Test Removing the Preamble paragraph")]
         public void TestRemovePreambleParagraph()
@@ -108,7 +89,7 @@ namespace MUNityTest.Resolution.V2_Tests
         }
 
         [Test]
-        [Order(8)]
+        [Order(7)]
         [Author("Peer Conradi")]
         [Description("Test Creating a operative paragraph")]
         public void TestCreateOperativeParagraph()
@@ -119,7 +100,7 @@ namespace MUNityTest.Resolution.V2_Tests
         }
 
         [Test]
-        [Order(9)]
+        [Order(8)]
         [Author("Peer Conradi")]
         [Description("Test set the operative paragraph text")]
         public void TestSetOperativeParagraphText()
@@ -130,7 +111,7 @@ namespace MUNityTest.Resolution.V2_Tests
         }
 
         [Test]
-        [Order(10)]
+        [Order(9)]
         [Author("Peer Conradi")]
         [Description("Test creating a Child for the operative paragraph")]
         public void TestCreatingOperativeParagraphChild()

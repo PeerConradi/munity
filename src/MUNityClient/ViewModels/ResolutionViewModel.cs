@@ -43,8 +43,6 @@ namespace MUNityClient.ViewModels
 
         private bool _isOnlineResolution = false;
 
-        private MUNity.Observers.ResolutionObserver _resolutionObserver = null;
-
         private MUNityClient.Services.IResolutionService _resolutionService;
 
         public HubConnection HubConnection { get; set; }
@@ -90,8 +88,6 @@ namespace MUNityClient.ViewModels
         {
             _isOnlineResolution = isOnline;
             this._resolutionService = resolutionService;
-            this._resolutionObserver = new MUNity.Observers.ResolutionObserver(resolution);
-            this._resolutionObserver.PreambleParagraphTextChanged += _resolutionObserver_PreambleParagraphTextChanged;
             Resolution = resolution;
             if (isOnline)
             {
@@ -99,9 +95,6 @@ namespace MUNityClient.ViewModels
                 HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/resasocket").Build();
 
                 var manipulator = new ViewModelLogic.ResolutionSocketViewModelManipulator(this);
-
-                // Observer dazu bringen Updates an den Server zu senden
-                var observerToServer = new ViewModelLogic.ResolutionObserverToServiceCalls(this, this._resolutionObserver, resolutionService);
             }
         }
 
