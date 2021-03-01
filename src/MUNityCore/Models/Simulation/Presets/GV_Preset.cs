@@ -65,11 +65,11 @@ namespace MUNityCore.Models.Simulation.Presets
                 yield return new SimulationRole("ve", "Venezuela", RoleTypes.Delegate);
                 yield return new SimulationRole("ae", "Vereinigte Arabische Emirate", RoleTypes.Delegate);
                 yield return new SimulationRole("gb", "Großbritannien", RoleTypes.Delegate);
-                yield return new SimulationRole("us", "Vereinigte Staaten von Amerika", RoleTypes.Delegate);
+                yield return new SimulationRole("us", "Vereinigte Staaten", RoleTypes.Delegate);
 
-                yield return new SimulationRole("", "Freedom House", RoleTypes.Ngo);
-                yield return new SimulationRole("", "Greenpeace International", RoleTypes.Ngo);
-                yield return new SimulationRole("", "UN Women", RoleTypes.Ngo);
+                yield return new SimulationRole("na-01", "Freedom House", RoleTypes.Ngo);
+                yield return new SimulationRole("na-02", "Greenpeace International", RoleTypes.Ngo);
+                yield return new SimulationRole("na-03", "UN Women", RoleTypes.Ngo);
             }
         }
     }

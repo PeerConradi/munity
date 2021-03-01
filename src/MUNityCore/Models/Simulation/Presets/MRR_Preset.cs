@@ -17,33 +17,33 @@ namespace MUNityCore.Models.Simulation.Presets
             get
             {
                 yield return new SimulationRole("un", "Vorsitzende(r)", RoleTypes.Chairman);
-                yield return new SimulationRole("", "Argentinien", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Armenien", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Bangladesch", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Belgien", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Brasilien", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Dänemark", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Deutschland", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Fidschi", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Indien", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Indonesien", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Kiribati", RoleTypes.Delegate);
-                yield return new SimulationRole("", "DR Kongo", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Republik Korea", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Liberia", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Libyen", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Die Niederlande", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Sierra Leone", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Slowakei", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Somalia", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Togo", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Tschechische Republik", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Uruguay", RoleTypes.Delegate);
-                yield return new SimulationRole("", "Bolivarische Republik Venezuela", RoleTypes.Delegate);
+                yield return new SimulationRole("ar", "Argentinien", RoleTypes.Delegate);
+                yield return new SimulationRole("am", "Armenien", RoleTypes.Delegate);
+                yield return new SimulationRole("bd", "Bangladesch", RoleTypes.Delegate);
+                yield return new SimulationRole("be", "Belgien", RoleTypes.Delegate);
+                yield return new SimulationRole("br", "Brasilien", RoleTypes.Delegate);
+                yield return new SimulationRole("dk", "Dänemark", RoleTypes.Delegate);
+                yield return new SimulationRole("de", "Deutschland", RoleTypes.Delegate);
+                yield return new SimulationRole("fj", "Fidschi", RoleTypes.Delegate);
+                yield return new SimulationRole("in", "Indien", RoleTypes.Delegate);
+                yield return new SimulationRole("id", "Indonesien", RoleTypes.Delegate);
+                yield return new SimulationRole("ki", "Kiribati", RoleTypes.Delegate);
+                yield return new SimulationRole("cd", "DR Kongo", RoleTypes.Delegate);
+                yield return new SimulationRole("kr", "Republik Korea", RoleTypes.Delegate);
+                yield return new SimulationRole("lr", "Liberia", RoleTypes.Delegate);
+                yield return new SimulationRole("ly", "Libyen", RoleTypes.Delegate);
+                yield return new SimulationRole("nl", "Niederlande", RoleTypes.Delegate);
+                yield return new SimulationRole("sl", "Sierra Leone", RoleTypes.Delegate);
+                yield return new SimulationRole("sk", "Slowakei", RoleTypes.Delegate);
+                yield return new SimulationRole("so", "Somalia", RoleTypes.Delegate);
+                yield return new SimulationRole("tg", "Togo", RoleTypes.Delegate);
+                yield return new SimulationRole("cz", "Tschechische Republik", RoleTypes.Delegate);
+                yield return new SimulationRole("uy", "Uruguay", RoleTypes.Delegate);
+                yield return new SimulationRole("ve", "Bolivarische Republik Venezuela", RoleTypes.Delegate);
 
-                yield return new SimulationRole("", "Friends of the Earth", RoleTypes.Ngo);
-                yield return new SimulationRole("", "Human Rights Watch", RoleTypes.Ngo);
-                yield return new SimulationRole("", "MRR: BE BR KI VE", RoleTypes.Ngo);//TODO: ?!
+                yield return new SimulationRole("na-14", "Friends of the Earth", RoleTypes.Ngo);
+                yield return new SimulationRole("na-15", "Human Rights Watch", RoleTypes.Ngo);
+                // yield return new SimulationRole("", "MRR: BE BR KI VE", RoleTypes.Ngo);//TODO: ?!
             }
         }
     }
