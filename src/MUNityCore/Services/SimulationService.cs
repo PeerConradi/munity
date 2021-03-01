@@ -37,7 +37,6 @@ namespace MUNityCore.Services
                 yield return new Models.Simulation.Presets.KWT_Preset();
                 yield return new Models.Simulation.Presets.MRR_Preset();
                 yield return new Models.Simulation.Presets.SR_Preset();
-                yield return new Models.Simulation.Presets.WHO_Preset();
                 yield return new Models.Simulation.Presets.WiSo_Preset();
             }
         }
