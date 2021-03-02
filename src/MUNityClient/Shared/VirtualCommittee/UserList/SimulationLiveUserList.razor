@@ -16,7 +16,7 @@
         <div class="col-12"><h3>Delegierte</h3></div>
     </div>
     <div class="widget-list widget-list-rounded m-b-30">
-        @foreach (var user in SimulationContext?.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate).OrderBy(n => n.RoleName))
+        @foreach (var user in SimulationContext?.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate).OrderBy(n => !n.IsOnline).ThenBy(n => !(SimulationContext.SelectedAgendaItem?.Petitions.Any(p => p.PetitionUserId == n.SimulationUserId))).ThenBy(n => n.RoleName))
         {
             <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user"
                                                                                   ViewModel="@SimulationContext" />
@@ -27,7 +27,7 @@
         <div class="col-12"><h3>Nichtstaatliche Akteure</h3></div>
     </div>
     <div class="widget-list widget-list-rounded m-b-30">
-        @foreach (var user in SimulationContext?.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo).OrderBy(n => n.RoleName))
+        @foreach (var user in SimulationContext?.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo).OrderBy(n => !n.IsOnline).ThenBy(n => !(SimulationContext.SelectedAgendaItem?.Petitions.Any(p => p.PetitionUserId == n.SimulationUserId))).ThenBy(n => n.RoleName))
         {
             <MUNityClient.Shared.VirtualCommittee.UserList.SimulationUserListItem User="user"
                                                                                   ViewModel="@SimulationContext" />
@@ -58,6 +58,16 @@
 
 
 @code {
+
+    protected override void OnInitialized()
+    {
+	    if (SimulationContext != null)
+	    {
+		    SimulationContext.UserConnected += delegate { this.StateHasChanged(); };
+		    SimulationContext.UserDisconnected += delegate { this.StateHasChanged(); };
+	    }
+	    base.OnInitialized();
+    }
 
     [Parameter]
     public MUNityClient.ViewModels.SimulationViewModel SimulationContext { get; set; }
