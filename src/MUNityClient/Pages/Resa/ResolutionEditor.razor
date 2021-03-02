@@ -76,7 +76,7 @@
                             </h3>
                         </div>
                         <button class="col-1 m-0 btn btn-dark-green d-flex justify-content-center align-items-center" title="Paragraph hinzufügen"
-                                @onclick="() => this.ViewModel.Resolution.OperativeSection.CreateOperativeParagraph()">
+                                @onclick="() => this.ViewModel.Handler.AddOperativeParagraph()">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
@@ -114,7 +114,7 @@
                 <div class="card-body ammendment-body row p-0 m-0">
                     @foreach (var amendment in this.ViewModel.OrderedAmendments)
                     {
-                        <MUNityClient.Shared.Resa.AmendmentCard Amendment="amendment" Interaction="AmendmentInteracted" Resolution="this.ViewModel.Resolution" />
+                        <MUNityClient.Shared.Resa.AmendmentCard ViewModel="@ViewModel" Amendment="amendment" Interaction="AmendmentInteracted" Resolution="this.ViewModel.Resolution" />
                     }
                 </div>
             </div>
@@ -135,7 +135,7 @@
 
     <MUNityClient.Shared.Bootstrap.Modal Title="Neuer Änderungsantrag" @ref="AddAmendmentModal"
                                          OnSubmitCallback="NewAmendment">
-        <MUNityClient.Shared.Resa.NewAmendmentForm Resolution="this.ViewModel.Resolution" @ref="NewAmendmentForm">
+        <MUNityClient.Shared.Resa.NewAmendmentForm Resolution="this.ViewModel.Resolution" ViewModel="@this.ViewModel" @ref="NewAmendmentForm">
         </MUNityClient.Shared.Resa.NewAmendmentForm>
     </MUNityClient.Shared.Bootstrap.Modal>
 }

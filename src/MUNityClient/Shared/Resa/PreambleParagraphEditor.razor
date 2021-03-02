@@ -21,7 +21,7 @@
                 @* Input Field *@
                 <div class="col p-0 my-2">
                     <EditForm Model="Paragraph" class="h-100">
-                        <textarea @bind="@Text" @bind:event="oninput" disabled="@this.Paragraph.IsLocked"
+                        <textarea @bind="@Text" disabled="@this.Paragraph.IsLocked"
                             placeholder="Text..." class="form-control h-100 custom-input-field px-0 p-2"></textarea>
                     </EditForm>
 
@@ -60,7 +60,7 @@
             @* Status Footer *@
             <div class="row m-0 card-footer row col-12 d-flex justify-content-between">
                 <div class="col p-0">
-                    @if (!this.Paragraph.HasValidOperator())
+                    @*@if (!this.Paragraph.HasValidOperator())
                     {
                         <div class="text-warning">
                             <i class="fas fa-info-circle mr-2"></i>Der Paragraph enthält
@@ -68,7 +68,7 @@
                             gültigen
                             Operator.
                         </div>
-                    }
+                    }*@
                     @if (this.Paragraph.Corrected)
                     {
                         <span>Status</span>
@@ -85,7 +85,7 @@
         </div>
         @* Comment Panel *@
         <div class="m-0 col comments @(commentsExpanded ? "comments-expanded" : "comments-collapsed") p-0">
-            <textarea placeholder="Kommentare..." @bind="Comment" @bind:event="oninput"
+            <textarea placeholder="Kommentare..." @bind="Comment"
                 class="form-control h-100 custom-input-field px-0 p-2 no-scrollbar"></textarea>
         </div>
     </div>

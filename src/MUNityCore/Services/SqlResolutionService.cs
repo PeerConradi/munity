@@ -80,6 +80,32 @@ namespace MUNityCore.Services
             return true;
         }
 
+        internal void ActivateAmendment(string amendmentId)
+        {
+            // Deactivate all other amendments if needed:
+            //var resolutionId = _context.Amendments.FirstOrDefault(n => n.ResaAmendmentId == amendmentId).Resolution.ResaElementId;
+            //if (resolutionId == null) return;
+            //_context.Amendments.Where(n => n.Resolution.ResaElementId == resolutionId).ForEachAsync(n => n.Activated = false);
+            var amendment = _context.Amendments.FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
+            if (amendment != null)
+            {
+                if (amendment is ResaMoveAmendment)
+                {
+                    var ma = _context.MoveAmendments.Include(n => n.VirtualParagraph)
+                        .FirstOrDefault(n => n.ResaAmendmentId == amendment.ResaAmendmentId);
+                    ma.VirtualParagraph.Visible = true;
+                }
+                else if (amendment is ResaAddAmendment)
+                {
+                    var ad = _context.MoveAmendments.Include(n => n.VirtualParagraph)
+                        .FirstOrDefault(n => n.ResaAmendmentId == amendment.ResaAmendmentId);
+                    ad.VirtualParagraph.Visible = true;
+                }
+                amendment.Activated = true;
+                this._context.SaveChanges();
+            }
+        }
+
         public async Task<bool> SetSession(string resolutionId, string agendaItem)
         {
             var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
@@ -87,6 +113,28 @@ namespace MUNityCore.Services
             reso.Session = agendaItem;
             await this._context.SaveChangesAsync();
             return true;
+        }
+
+        internal void DeactivateAmendment(string amendmentId)
+        {
+            var amendment = _context.Amendments.FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
+            if (amendment != null)
+            {
+                amendment.Activated = false;
+                if (amendment is ResaMoveAmendment)
+                {
+                    var ma = _context.MoveAmendments.Include(n => n.VirtualParagraph)
+                        .FirstOrDefault(n => n.ResaAmendmentId == amendment.ResaAmendmentId);
+                    ma.VirtualParagraph.Visible = false;
+                }
+                else if (amendment is ResaAddAmendment)
+                {
+                    var ad = _context.MoveAmendments.Include(n => n.VirtualParagraph)
+                        .FirstOrDefault(n => n.ResaAmendmentId == amendment.ResaAmendmentId);
+                    ad.VirtualParagraph.Visible = false;
+                }
+                this._context.SaveChanges();
+            }
         }
 
         public async Task<bool> SetSubmitterNameAsync(string resolutionId, string newSubmitterName)
@@ -182,6 +230,32 @@ namespace MUNityCore.Services
             return true;
         }
 
+        public bool RemoveOperativeParagraph(string operativeParagraphId)
+        {
+            var deleteAmendments = this._context.DeleteAmendments.Where(n => n.TargetParagraph.ResaOperativeParagraphId == operativeParagraphId);
+            this._context.DeleteAmendments.RemoveRange(deleteAmendments);
+            var changeAmendments = this._context.ChangeAmendments.Where(n => n.TargetParagraph.ResaOperativeParagraphId == operativeParagraphId);
+            this._context.ChangeAmendments.RemoveRange(changeAmendments);
+            var moveAmendments = this._context.MoveAmendments.Where(n => n.SourceParagraph.ResaOperativeParagraphId == operativeParagraphId);
+            if (moveAmendments.Any())
+            {
+                moveAmendments.ForEachAsync(n =>
+                {
+                    var toRemove = this._context.OperativeParagraphs.FirstOrDefault(a => a.ResaOperativeParagraphId == n.VirtualParagraph.ResaOperativeParagraphId);
+                    this._context.OperativeParagraphs.Remove(toRemove);
+                });
+            }
+            this._context.MoveAmendments.RemoveRange(moveAmendments);
+            var paragraph = this._context.OperativeParagraphs.Find(operativeParagraphId);
+            if (paragraph != null)
+            {
+                this._context.Remove(paragraph);
+            }
+            this._context.SaveChanges();
+            return true;
+            
+        }
+
         public bool ReorderPreamble(string resolutionId, List<string> list)
         {
             var isCountMatching = this._context.PreambleParagraphs.Count(n => n.ResaElement.ResaElementId == resolutionId) == list.Count;
@@ -198,6 +272,25 @@ namespace MUNityCore.Services
                 {
                     errored = true;
                 }
+            }
+
+            if (!errored)
+                _context.SaveChanges();
+            return !errored;
+        }
+
+        public bool ReorderOperative(string resolutionId, List<string> list)
+        {
+            var isCountMatching = this._context.OperativeParagraphs.Count(n => n.Resolution.ResaElementId == resolutionId) == list.Count;
+            if (!isCountMatching) return false;
+            bool errored = false;
+            for (int i=0;i<list.Count;i++)
+            {
+                var element = this._context.OperativeParagraphs.Find(list[i]);
+                if (element != null)
+                    element.OrderIndex = i;
+                else
+                    errored = true;
             }
 
             if (!errored)
@@ -263,13 +356,15 @@ namespace MUNityCore.Services
 
         public ResaDeleteAmendment CreateDeleteAmendment(string resaOperativeParagraphId, string submitterName)
         {
-            var paragraph = this._context.OperativeParagraphs.Find(resaOperativeParagraphId);
+            var paragraph = this._context.OperativeParagraphs
+                .Include(n => n.Resolution).FirstOrDefault(n => n.ResaOperativeParagraphId == resaOperativeParagraphId);
             if (paragraph == null) return null;
             var amendment = new ResaDeleteAmendment()
             {
                 TargetParagraph = paragraph,
                 SubmitterName = submitterName,
-                Resolution = paragraph.Resolution
+                Resolution = this._context.OperativeParagraphs.Find(resaOperativeParagraphId).Resolution,
+                SubmitTime = DateTime.Now,
             };
             this._context.DeleteAmendments.Add(amendment);
             this._context.SaveChanges();
@@ -278,46 +373,64 @@ namespace MUNityCore.Services
 
         public ResaChangeAmendment CreateChangeAmendment(string resaOperativeParagraphId, string submitterName, string newText)
         {
-            var paragraph = this._context.OperativeParagraphs.Find(resaOperativeParagraphId);
+            var paragraph = this._context.OperativeParagraphs
+                .Include(n => n.Resolution).FirstOrDefault(n => n.ResaOperativeParagraphId == resaOperativeParagraphId);
             if (paragraph == null) return null;
             var amendment = new ResaChangeAmendment()
             {
                 TargetParagraph = paragraph,
                 SubmitterName = submitterName,
                 Resolution = paragraph.Resolution,
-                NewText = newText
+                NewText = newText,
+                SubmitTime = DateTime.Now
             };
             this._context.ChangeAmendments.Add(amendment);
             this._context.SaveChanges();
             return amendment;
         }
 
-        public ResaMoveAmendment CreateMoveAmendment(string resaOperativeParagraphId, int position)
+        public ResaMoveAmendment CreateMoveAmendment(string resaOperativeParagraphId, string submitterName, int position)
         {
-            var targetParagraph = this._context.OperativeParagraphs.Find(resaOperativeParagraphId);
+            
+            var targetParagraph = this._context.OperativeParagraphs
+                .Include(n => n.Resolution).FirstOrDefault(n => n.ResaOperativeParagraphId == resaOperativeParagraphId);
+
+            var allParagraphs = this._context.OperativeParagraphs
+                .Where(n => n.Resolution.ResaElementId == targetParagraph.Resolution.ResaElementId)
+                .OrderBy(n => n.OrderIndex).ToList(); ;
+            // Cleanup the order
+            int index = 0;
+            allParagraphs.ForEach(n =>
+            {
+                if (index < position)
+                {
+                    n.OrderIndex = index;
+                }
+                else if (index >= position)
+                {
+                    n.OrderIndex = index + 1;
+                }
+                index++;
+            });
+
             if (targetParagraph == null) return null;
             var virtualParagraph = new ResaOperativeParagraph()
             {
-                OrderIndex = position + 1,
+                OrderIndex = position,
                 IsVirtual = true,
                 IsLocked = true,
                 Parent = targetParagraph.Parent,
                 Text = targetParagraph.Text,
                 Resolution = targetParagraph.Resolution
             };
-            var addOrderIndexParagraphs = this._context.OperativeParagraphs.Where(n => n.OrderIndex > position
-            && n.Resolution.ResaElementId == targetParagraph.Resolution.ResaElementId &&
-            n.Parent == targetParagraph.Parent);
-            foreach(var p in addOrderIndexParagraphs)
-            {
-                p.OrderIndex = p.OrderIndex + 1;
-            }
 
             var amendment = new ResaMoveAmendment()
             {
                 SourceParagraph = targetParagraph,
                 VirtualParagraph = virtualParagraph,
-                Resolution = targetParagraph.Resolution
+                Resolution = targetParagraph.Resolution,
+                SubmitterName = submitterName,
+                SubmitTime = DateTime.Now
             };
             this._context.MoveAmendments.Add(amendment);
             this._context.SaveChanges();
@@ -349,7 +462,9 @@ namespace MUNityCore.Services
             {
                 Resolution = resolution,
                 SubmitterName = submitter,
-                VirtualParagraph = virtualParagraph
+                VirtualParagraph = virtualParagraph,
+                Activated = false,
+                SubmitTime = DateTime.Now
             };
 
             var addOrderIndexParagraphs = this._context.OperativeParagraphs.Where(n => n.OrderIndex >= index
@@ -413,8 +528,8 @@ namespace MUNityCore.Services
         {
             var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
             if (resolutionDb == null) return null;
-
-            var amendments = resolutionDb.Amendments.OfType<ResaAddAmendment>().Select(n => new AddAmendment()
+            var filtered = _context.AddAmendments.Where(n => n.Resolution.ResaElementId == resolutionId);
+            var amendments = filtered.Select(n => new AddAmendment()
             {
                 Name = "AddAmendment",
                 Activated = n.Activated,
@@ -432,7 +547,8 @@ namespace MUNityCore.Services
             var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
             if (resolutionDb == null) return null;
 
-            var amendments = resolutionDb.Amendments.OfType<ResaChangeAmendment>().Select(n => new ChangeAmendment()
+            var filtered = _context.ChangeAmendments.Where(n => n.Resolution.ResaElementId == resolutionId);
+            var amendments = filtered.Select(n => new ChangeAmendment()
             {
                 Activated = n.Activated,
                 Id = n.ResaAmendmentId,
@@ -451,7 +567,8 @@ namespace MUNityCore.Services
             var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
             if (resolutionDb == null) return null;
 
-            var amendments = resolutionDb.Amendments.OfType<ResaDeleteAmendment>().Select(n => new DeleteAmendment()
+            var filtered = _context.DeleteAmendments.Where(n => n.Resolution.ResaElementId == resolutionId);
+            var amendments = filtered.Select(n => new DeleteAmendment()
             {
                 Activated = n.Activated,
                 Id = n.ResaAmendmentId,
@@ -468,7 +585,9 @@ namespace MUNityCore.Services
         {
             var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
             if (resolutionDb == null) return null;
-            var amendments = resolutionDb.Amendments.OfType<ResaMoveAmendment>().Select(n => new MoveAmendment()
+
+            var filtered = _context.MoveAmendments.Where(n => n.Resolution.ResaElementId == resolutionId);
+            var amendments = filtered.Select(n => new MoveAmendment()
             {
                 Activated = n.Activated,
                 Id = n.ResaAmendmentId,
@@ -487,17 +606,19 @@ namespace MUNityCore.Services
             var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
             if (resolutionDb == null) return null;
 
-            var paragraphs = resolutionDb.OperativeParagraphs.Where(n => n.Parent == null).Select(n => new OperativeParagraph()
-            {
-                Comment = n.Comment,
-                Corrected = n.Corrected,
-                IsLocked = n.IsLocked,
-                IsVirtual = n.IsVirtual,
-                Name = n.Name,
-                OperativeParagraphId = n.ResaOperativeParagraphId,
-                Text = n.Text,
-                Visible = n.Visible,
-            }).ToList();
+            var paragraphs = await _context.OperativeParagraphs
+                .Where(n => n.Resolution.ResaElementId == resolutionId && n.Parent == null).OrderBy(n => n.OrderIndex).Select(n => 
+                new OperativeParagraph()
+                {
+                    Comment = n.Comment,
+                    Corrected = n.Corrected,
+                    IsLocked = n.IsLocked,
+                    IsVirtual = n.IsVirtual,
+                    Name = n.Name,
+                    OperativeParagraphId = n.ResaOperativeParagraphId,
+                    Text = n.Text,
+                    Visible = n.Visible,
+                }).ToListAsync();
             return paragraphs;
         }
 

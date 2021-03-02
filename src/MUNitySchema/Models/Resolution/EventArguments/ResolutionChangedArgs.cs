@@ -91,6 +91,11 @@ namespace MUNity.Models.Resolution.EventArguments
             this.ParagraphId = paragraphId;
             this.Text = text;
         }
+
+        public PreambleParagraphTextChangedEventArgs()
+        {
+
+        }
     }
 
     public class OperativeParagraphTextChangedEventArgs : ResolutionEventArgs
@@ -113,6 +118,17 @@ namespace MUNity.Models.Resolution.EventArguments
         public List<string> ParagraphOrder { get; set; }
 
         public PreambleParagraphAddedEventArgs(string resolutionId, PreambleParagraph paragraph)
+        {
+            this.ResolutionId = resolutionId;
+            this.Paragraph = paragraph;
+        }
+    }
+
+    public class OperativeParagraphAddedEventArgs : ResolutionEventArgs
+    {
+        public OperativeParagraph Paragraph { get; set; }
+
+        public OperativeParagraphAddedEventArgs(string resolutionId, OperativeParagraph paragraph)
         {
             this.ResolutionId = resolutionId;
             this.Paragraph = paragraph;
@@ -168,4 +184,23 @@ namespace MUNity.Models.Resolution.EventArguments
             this.Section = section;
         }
     }
+
+    public class AddAmendmentCreatedEventArgs : ResolutionEventArgs
+    {
+        public AddAmendment Amendment { get; set; }
+
+        public OperativeParagraph VirtualParagraph { get; set; }
+
+        public int VirtualParagraphIndex { get; set; }
+    }
+
+    public class MoveAmendmentCreatedEventArgs : ResolutionEventArgs
+    {
+        public MoveAmendment Amendment { get; set; }
+
+        public OperativeParagraph VirtualParagraph { get; set; }
+
+        public int VirtualParagraphIndex { get; set; }
+    }
+
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MUNity.Schema.Resolution
 {
-    public class ChangeOperativeParagraphTestRequest : ResolutionRequest
+    public class ChangeOperativeParagraphTextRequest : ResolutionRequest
     {
         public string OperativeParagraphId { get; set; }
 

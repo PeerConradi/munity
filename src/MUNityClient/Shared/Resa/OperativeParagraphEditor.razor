@@ -30,7 +30,7 @@
                 @* Input Field *@
                 <div class="col p-0 my-2">
                     <EditForm Model="Paragraph" class="h-100">
-                        <textarea @bind="@Paragraph.Text" @bind:event="oninput" disabled="@this.Paragraph.IsLocked"
+                        <textarea @bind="@Text" disabled="@this.Paragraph.IsLocked"
                             placeholder="Text..." class="form-control h-100 custom-input-field px-0 p-2"></textarea>
                     </EditForm>
 
@@ -69,7 +69,7 @@
             @* Status Footer *@
             <div class="row m-0 card-footer row col-12 d-flex justify-content-between">
                 <div class="col p-0">
-                    @if (!this.Paragraph.HasValidOperator())
+                    @*@if (!this.Paragraph.HasValidOperator())
                     {
                         <div class="text-warning">
                             <i class="fas fa-info-circle mr-2"></i>Der Paragraph enthält
@@ -77,8 +77,7 @@
                             gültigen
                             Operator.
                         </div>
-                    }
-                    Aktuelle Bearbeiter:
+                    }*@
                     @if (this.Paragraph.Corrected)
                     {
                         <span>Status:</span>
@@ -117,6 +116,18 @@
 
     public Boolean commentsExpanded = false;
 
+    public string Text
+    {
+        get => Paragraph.Text;
+        set
+        {
+            if (value != Paragraph.Text)
+            {
+                ResolutionViewModel.Handler.SetOperativeParagraphText(Paragraph.OperativeParagraphId, value);
+                Paragraph.Text = value;
+            }
+        }
+    }
 
     protected override void OnInitialized()
     {

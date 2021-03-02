@@ -32,6 +32,22 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         Task ReorderPreambleParagraphs(IEnumerable<string> paragraphIdsInOrder);
 
+        Task AddOperativeParagraph();
+
+        Task SetOperativeParagraphText(string paragraphId, string text);
+
+        Task CreateAddAmendment(string submitter, int index, string text);
+
+        Task CreateChangeAmendment(string submitter, string paragraphId, string newText);
+
+        Task CreateDeleteAmendment(string submitter, string paragraphId);
+
+        Task CreateMoveAmendment(string submitter, string paragraphId, int newIndex);
+
+        Task ActivateAmendment(string amendmentId);
+
+        Task DeactivateAmendment(string amendmentId);
+
         event EventHandler<HeaderStringPropChangedEventArgs> NameChanged;
         event EventHandler<HeaderStringPropChangedEventArgs> FullNameChanged;
         event EventHandler<HeaderStringPropChangedEventArgs> TopicChanged;

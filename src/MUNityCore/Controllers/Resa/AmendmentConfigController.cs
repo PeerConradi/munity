@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNity.Schema.Simulation;
+using MUNity.Schema.Resolution;
 
 namespace MUNityCore.Controllers.Resa
 {
@@ -37,6 +38,7 @@ namespace MUNityCore.Controllers.Resa
             if (!changed) return NotFound();
             return Ok();
         }
+
 
         public AmendmentConfigController(Services.IResolutionService resolutionService, Services.SimulationService simulationService)
         {

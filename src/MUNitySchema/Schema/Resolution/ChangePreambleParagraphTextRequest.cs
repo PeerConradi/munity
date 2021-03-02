@@ -10,9 +10,4 @@ namespace MUNity.Schema.Resolution
 
         public string NewText { get; set; }
     }
-
-    public class RemovePreambleParagraphRequest : ResolutionRequest
-    {
-        public string PreambleParagraphId { get; set; }
-    }
 }

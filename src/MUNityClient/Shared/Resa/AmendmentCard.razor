@@ -83,8 +83,6 @@
                 </div>
             }
 
-
-
 </div>
 }
 
@@ -99,9 +97,12 @@
     [Parameter]
     public EventCallback Interaction { get; set; }
 
+    [Parameter]
+    public ViewModels.ResolutionViewModel ViewModel { get; set; }
+
     public String Pathname = "Kein Pfad gefunden";
 
-	public Boolean DeleteMenuToggle = false;
+    public Boolean DeleteMenuToggle = false;
 
     private bool _activated;
     public bool Activated
@@ -121,7 +122,10 @@
                 var newParagraph = Resolution.OperativeSection.FindOperativeParagraph(addAmendment.TargetSectionId);
                 newParagraph.Visible = value;
             }
-            Interaction.InvokeAsync(this.Amendment);
+            if (value)
+                ViewModel?.Handler?.ActivateAmendment(this.Amendment.Id);
+            else
+                ViewModel?.Handler?.DeactivateAmendment(this.Amendment.Id);
         }
     }
 
@@ -157,7 +161,7 @@
         }
         base.OnInitialized();
 
-        Pathname = @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(Amendment.TargetSectionId);
+        Pathname = Resolution?.OperativeSection?.GetIndexNameOfOperativeParagraph(Amendment.TargetSectionId) ?? "Kein Pfad";
     }
 }
 

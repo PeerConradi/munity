@@ -72,5 +72,11 @@ namespace MUNity.Models.Resolution
             this.OperativeParagraphId = Guid.NewGuid().ToString();
             this.Children = new List<OperativeParagraph>();
         }
+
+        public OperativeParagraph()
+        {
+            this.OperativeParagraphId = Guid.NewGuid().ToString();
+            this.Children = new List<OperativeParagraph>();
+        }
     }
 }

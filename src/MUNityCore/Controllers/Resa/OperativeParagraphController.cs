@@ -8,10 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNity.Models.Resolution.EventArguments;
 
 namespace MUNityCore.Controllers.Resa
 {
-    [Route("api/Resa/Operative[controller]")]
+    [Route("api/Resa/Operative")]
     [ApiController]
     public class OperativeParagraphController : ControllerBase
     {
@@ -45,16 +46,67 @@ namespace MUNityCore.Controllers.Resa
                 Text = newParagraph.Text,
                 Visible = newParagraph.Visible
             };
+
+            GetHub(body)?.OperativeParagraphAdded(new OperativeParagraphAddedEventArgs(body.ResolutionId, mdl)).ConfigureAwait(false);
+
             return Ok(mdl);
         }
+        
 
-        [HttpPost]
+        [HttpPut]
         [Route("[action]")]
-        public IActionResult Text(ChangeOperativeParagraphTestRequest body)
+        public IActionResult Text(ChangeOperativeParagraphTextRequest body)
         {
             var success = this._resolutionService.SetOperativeParagraphText(body.OperativeParagraphId, body.NewText);
             if (!success)
                 return NotFound();
+
+            var args = new OperativeParagraphTextChangedEventArgs()
+            {
+                ParagraphId = body.OperativeParagraphId,
+                ResolutionId = body.ResolutionId,
+                Tan = "1234",
+                Text = body.NewText
+            };
+
+            GetHub(body)?.OperativeParagraphTextChanged(args).ConfigureAwait(false);
+
+            return Ok();
+        }
+
+        private MUNity.Hubs.ITypedResolutionHub GetHub(ResolutionRequest args)
+        {
+            return this._hubContext?.Clients?.Group(args.ResolutionId);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public IActionResult Comment([FromBody]ChangeOperativeParagraphCommentRequest body)
+        {
+            var success = this._resolutionService.SetOperativeParagraphComment(body.OperativeParagraphId, body.NewText);
+            if (!success)
+                return NotFound();
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public IActionResult Remove([FromBody]RemoveOperativeParagraphRequest body)
+        {
+            var success = this._resolutionService.RemoveOperativeParagraph(body.OperativeParagraphId);
+            if (!success)
+                return NotFound();
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public IActionResult Reorder([FromBody]ReorderOperativeParagraphsRequest body)
+        {
+            var success = this._resolutionService.ReorderOperative(body.ResolutionId, body.NewOrder);
+            if (!success) return NotFound();
 
             return Ok();
         }

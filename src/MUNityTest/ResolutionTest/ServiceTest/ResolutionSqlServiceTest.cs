@@ -300,7 +300,7 @@ namespace MUNityCoreTest.ResolutionTest.ServiceTest
             var resolution = this._context.Resolutions.Find(resolutionId);
             var paragraph = resolution.OperativeParagraphs.First();
             Assert.NotNull(paragraph);
-            ResaMoveAmendment moveAmendment = this._service.CreateMoveAmendment(paragraph.ResaOperativeParagraphId, 1);
+            ResaMoveAmendment moveAmendment = this._service.CreateMoveAmendment(paragraph.ResaOperativeParagraphId, "Peer", 1);
             Assert.NotNull(moveAmendment);
             Assert.AreEqual(4, resolution.OperativeParagraphs.Count);
             Assert.AreEqual(1, resolution.OperativeParagraphs.Count(n => n.IsVirtual));

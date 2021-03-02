@@ -34,11 +34,10 @@ namespace MUNityClient.Pages.Resa
 
         private MUNityClient.Shared.Resa.NewAmendmentForm NewAmendmentForm { get; set; }
 
-
         private void NewAmendment()
         {
-            var amendment = this.NewAmendmentForm.GetAmendment();
-            if (amendment == null)
+            var success = this.NewAmendmentForm.CreateAmendment();
+            if (!success)
             {
                 // TODO: Meldung zeigen Resolution konnte nicht erstellt werden!
             }
