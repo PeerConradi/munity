@@ -6,14 +6,7 @@
 @using MUNityClient.Shared.Resa;
 @inject MUNityClient.Services.IResolutionService resolutionService;
 
-    <div class="row">
-        <div class="col-12">
-            <div class="alert alert-warning">#Belastend - Der Resolutionseditor und die Leseansicht sind derzeit nicht verfügbar.</div>
-        </div>
-    </div>
-
-@* Deactivated! *@
-@if (this.ViewModel?.Resolution != null && false)
+@if (this.ViewModel?.Resolution != null)
 {
 
     @*var corruptionResult = MUNity.Troubleshooting.Resa.ResolutionTroubleshooting.IsResolutionCorrupted(this._viewModel.Resolution);
@@ -59,7 +52,7 @@
                                 <i class="fas fa-angle-down ml-2 expansionIcon"></i>
                             </h3>
                         </div>
-                        <button class="col-1 m-0 btn btn-dark-green d-flex justify-content-center align-items-center custom-plus-button" @onclick="() => this.ViewModel.AddPreambleParagraph()" title="Paragraph hinzufügen">
+                        <button class="col-1 m-0 btn btn-dark-green d-flex justify-content-center align-items-center custom-plus-button" @onclick="() => this.ViewModel.Handler.AddPreambleParagraph()" title="Paragraph hinzufügen">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>

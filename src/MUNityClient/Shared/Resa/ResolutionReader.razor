@@ -4,14 +4,7 @@
 
 @inject MUNityClient.Services.IResolutionService resolutionService;
 
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-warning">#Belastend - Der Resolutionseditor und die Leseansicht sind derzeit nicht verfügbar.</div>
-    </div>
-</div>
-
-@* Deactivated for rwork *@
-@if (ViewModel?.Resolution != null && false)
+@if (ViewModel?.Resolution != null)
 {
 
     <!-- Header -->
@@ -128,6 +121,7 @@ else
         {
             ViewModel.HeaderChangedFromExtern += delegate { this.StateHasChanged(); };
             ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
+            ViewModel.Handler.ChangedFromExtern += delegate { this.StateHasChanged(); };
         }
     }
 }

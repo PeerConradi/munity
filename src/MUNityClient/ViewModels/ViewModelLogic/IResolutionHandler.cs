@@ -22,6 +22,16 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         Task SetAgendaItem(string agendaItem);
 
+        Task AddPreambleParagraph();
+
+        Task SetPreambleParagraphText(string paragraphId, string text);
+
+        Task SetPreambleParagraphComment(string paragraphId, string comment);
+
+        Task DeletePreambleParagraph(string paragraphId);
+
+        Task ReorderPreambleParagraphs(IEnumerable<string> paragraphIdsInOrder);
+
         event EventHandler<HeaderStringPropChangedEventArgs> NameChanged;
         event EventHandler<HeaderStringPropChangedEventArgs> FullNameChanged;
         event EventHandler<HeaderStringPropChangedEventArgs> TopicChanged;
@@ -31,5 +41,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         event EventHandler<HeaderStringPropChangedEventArgs> CommitteeNameChanged;
 
         event EventHandler<string> ErrorOccured;
+
+        event EventHandler ChangedFromExtern;
     }
 }

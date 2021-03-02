@@ -137,11 +137,18 @@ namespace MUNityCore.Services
             var resolution = this._context.Resolutions.Find(resolutionId);
             if (resolution == null) return null;
 
+            int orderIndex = 0;
+            if (_context.PreambleParagraphs.Any(n => n.ResaElement.ResaElementId == resolutionId))
+            {
+                orderIndex = _context.PreambleParagraphs.Where(n => n.ResaElement.ResaElementId == resolutionId)
+                    .Max(n => n.OrderIndex) + 1;
+            }
+
             var newParagraph = new ResaPreambleParagraph()
             {
                 ResaElement = resolution,
                 Text = text,
-                OrderIndex = resolution.PreambleParagraphs?.Count ?? 0
+                OrderIndex = orderIndex
             };
             this._context.PreambleParagraphs.Add(newParagraph);
             this._context.SaveChanges();
@@ -202,10 +209,18 @@ namespace MUNityCore.Services
         {
             var resolution = this._context.Resolutions.Find(resolutionId);
             if (resolution == null) return null;
+
+            int orderIndex = 0;
+            if (_context.OperativeParagraphs.Any(n => n.Resolution.ResaElementId == resolutionId))
+            {
+                orderIndex = _context.OperativeParagraphs.Where(n => n.Resolution.ResaElementId == resolutionId)
+                    .Max(n => n.OrderIndex) + 1;
+            }
+
             var element = new ResaOperativeParagraph()
             {
                 Resolution = resolution,
-                OrderIndex = resolution.OperativeParagraphs?.Count ?? 0,
+                OrderIndex = orderIndex,
                 Text = text
             };
             _context.OperativeParagraphs.Add(element);
@@ -382,14 +397,14 @@ namespace MUNityCore.Services
             var preamble = new ResolutionPreamble()
             {
                 PreambleId = resolutionDb.ResaElementId + "_preamble",
-                Paragraphs = resolutionDb.PreambleParagraphs.OrderBy(n => n.OrderIndex).Select(n => new PreambleParagraph()
+                Paragraphs = await _context.PreambleParagraphs.Where(n => n.ResaElement.ResaElementId == resolutionId).OrderBy(n => n.OrderIndex).Select(n => new PreambleParagraph()
                 {
                     Comment = n.Comment,
                     Corrected = n.IsCorrected,
                     IsLocked = n.IsLocked,
                     PreambleParagraphId = n.ResaPreambleParagraphId,
                     Text = n.Text
-                }).ToList()
+                }).ToListAsync()
             };
             return preamble;
         }

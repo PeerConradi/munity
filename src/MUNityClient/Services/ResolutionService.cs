@@ -295,10 +295,11 @@ namespace MUNityClient.Services
 
         public async Task<ViewModels.ResolutionViewModel> Subscribe(Resolution resolution)
         {
-            var handler = await ViewModels.ResolutionViewModel.CreateViewModelOnline(resolution, this);
-            var connId = handler.HubConnection.ConnectionId;
-            await this._httpService.HttpClient.GetAsync($"/api/Resolution/SubscribeToResolution?resolutionid={resolution.ResolutionId}&connectionid={connId}");
-            return handler;
+            var viewModel = await ViewModels.ResolutionViewModel.CreateViewModelOnline(resolution, this);
+            var onlineHandler = viewModel.Handler as MUNityClient.ViewModels.ViewModelLogic.ResolutionOnlineHandler;
+            var connId = onlineHandler.HubConnection.ConnectionId;
+            await this._httpService.HttpClient.GetAsync($"/api/Resa/SubscribeToResolution?resolutionid={resolution.ResolutionId}&connectionid={connId}");
+            return viewModel;
         }
 
         #endregion

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Resa
 {
-    [Route("api/Resa/Preamble[controller]")]
+    [Route("api/Resa/Preamble")]
     [ApiController]
     public class PreambleController : ControllerBase
     {

@@ -66,9 +66,10 @@ namespace MUNityClient.Pages.Resa
                 if (onlineResolution != null)
                 {
                     this.ViewModel = await this.resolutionService.Subscribe(onlineResolution);
-                    this.ViewModel.SyncMode = ViewModels.ResolutionViewModel.SyncModes.OnlineButNotSyncing;
-                    this.ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
-                    this.ViewModel.OperativeSeciontChangedFromExtern += delegate { this.StateHasChanged(); };
+                    this.ViewModel.Handler.ChangedFromExtern += delegate { this.StateHasChanged(); };
+                    //this.ViewModel.SyncMode = ViewModels.ResolutionViewModel.SyncModes.OnlineButNotSyncing;
+                    //this.ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
+                    //this.ViewModel.OperativeSeciontChangedFromExtern += delegate { this.StateHasChanged(); };
                     
                 }
                 else
