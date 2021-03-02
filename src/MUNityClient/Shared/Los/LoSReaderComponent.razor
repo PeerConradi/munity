@@ -35,6 +35,10 @@
                     {
                         <p>Niemand auf der Redeliste</p>
                     }
+                    @if(ViewModel.SourceList.ListClosed)
+                    {
+                        <p class="text-danger">Liste geschlossen.</p>
+                    }
                 </div>
             </div>
         </div>
@@ -61,6 +65,10 @@
                     else
                     {
                         <p>Niemand auf der Warteliste</p>
+                    }
+                    @if(ViewModel.SourceList.ListClosed)
+                    {
+                        <p class="text-danger">Liste geschlossen.</p>
                     }
                 </div>
             </div>
