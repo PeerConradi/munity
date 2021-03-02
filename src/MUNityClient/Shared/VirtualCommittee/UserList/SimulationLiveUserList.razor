@@ -59,6 +59,16 @@
 
 @code {
 
+    protected override void OnInitialized()
+    {
+	    if (SimulationContext != null)
+	    {
+		    SimulationContext.UserConnected += delegate { this.StateHasChanged(); };
+		    SimulationContext.UserDisconnected += delegate { this.StateHasChanged(); };
+	    }
+	    base.OnInitialized();
+    }
+
     [Parameter]
     public MUNityClient.ViewModels.SimulationViewModel SimulationContext { get; set; }
 
