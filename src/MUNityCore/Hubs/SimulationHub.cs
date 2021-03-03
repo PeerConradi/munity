@@ -21,18 +21,13 @@ namespace MUNityCore.Hubs
             Console.WriteLine("This works just fine!");
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
-
-            var simulation = this._service.GetSimulationAndUserByConnectionId(this.Context.ConnectionId);
-            if (simulation == null) return null;
-            var disconnectedUser = simulation.Users.FirstOrDefault(n => n.HubConnections.Any(a => a.ConnectionId == this.Context.ConnectionId));
-            if (disconnectedUser.HubConnections.Any())
+            if (this.Context?.ConnectionId != null && this._service != null)
             {
-                this.Clients.Group($"sim_{simulation.SimulationId}")?.UserDisconnected(simulation.SimulationId, disconnectedUser.AsSimulationUserDefaultDto());
+                await this._service.RemoveConnectionKey(this.Context.ConnectionId);
             }
-            this._service.RemoveHubs(disconnectedUser.HubConnections);
-            return base.OnDisconnectedAsync(exception);
+            await base.OnDisconnectedAsync(exception);
         }
 
     }

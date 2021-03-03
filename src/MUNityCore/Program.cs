@@ -11,6 +11,8 @@ namespace MUNityCore
 {
     public class Program
     {
+        public static string MasterToken = "";
+
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();

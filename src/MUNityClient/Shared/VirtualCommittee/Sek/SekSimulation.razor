@@ -1,0 +1,103 @@
+﻿@inject Services.SimulationService simulationService;
+@inject Services.ListOfSpeakerService listOfSpeakerService;
+
+@if (SimulationViewModel != null)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    @SimulationViewModel.Simulation.Name
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            @if (SimulationViewModel.CurrentStatus != null)
+                            {
+                                <h3>Status: @SimulationViewModel.CurrentStatus.StatusText</h3>
+                                <small>Zuletzt geändert: @SimulationViewModel.CurrentStatus.StatusTime.ToLongTimeString()</small>
+                            }
+                        </div>
+
+                        <div class="col-4">
+                            @if (ListOfSpeakerViewModel != null)
+                            {
+                                <SpeakerlistBox ViewModel="@ListOfSpeakerViewModel" />
+                            }
+                            else
+                            {
+                                <p>Keine Redeliste gefunden!</p>
+                            }
+                        </div>
+
+                        <div class="col-4">
+                            <div class="row">
+                                <div class="col-12">
+                                    <button class="btn btn-block btn-primary" @onclick="() => SimulationViewModel.UpdateResolutions()">Resolutionen aktualisieren</button>
+                                </div>
+                                @if (SimulationViewModel.Resolutions != null)
+                                {
+                                    @foreach (var resolution in SimulationViewModel.Resolutions)
+                                    {
+                                        <div class="col-12">
+                                            <h5>@resolution.Name</h5>
+                                            <a href="/resa/edit/@resolution.ResolutionId">Bearbeiten</a>
+                                            <a href="/resa/read/@resolution.ResolutionId">Lesen</a>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>Keine Resolutionen!</p>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    
+
+                
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int SimulationId { get; set; }
+
+    [Parameter]
+    public string MasterToken { get; set; }
+
+    public ViewModels.SimulationViewModel SimulationViewModel { get; set; }
+
+    public ViewModels.ListOfSpeakerViewModel ListOfSpeakerViewModel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SimulationViewModel = await simulationService.Subscribe(SimulationId, MasterToken);
+        if (SimulationViewModel != null)
+        {
+            SimulationViewModel.AgendaItemAdded += delegate { this.StateHasChanged(); };
+            SimulationViewModel.LobbyModeChanged += delegate { this.StateHasChanged(); };
+            SimulationViewModel.StatusChanged += delegate { this.StateHasChanged(); };
+
+
+        }
+        await LoadListOfSpeakers();
+        this.StateHasChanged();
+        await base.OnInitializedAsync();
+    }
+
+    public async Task LoadListOfSpeakers()
+    {
+        string listOfSpeakerId = await this.simulationService.GetListOfSpeakerId(SimulationId);
+        if (listOfSpeakerId != null)
+        {
+            this.ListOfSpeakerViewModel = await MUNityClient.ViewModels.ListOfSpeakerViewModel.GetFromOnline(listOfSpeakerService, listOfSpeakerId);
+        }
+    }
+}

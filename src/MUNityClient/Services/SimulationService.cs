@@ -473,10 +473,15 @@ namespace MUNityClient.Services
         /// </summary>
         /// <param name="simulationId"></param>
         /// <returns></returns>
-        public async Task<MUNityClient.ViewModels.SimulationViewModel> Subscribe(int simulationId)
+        public async Task<MUNityClient.ViewModels.SimulationViewModel> Subscribe(int simulationId, string masterToken = null)
         {
-            var token = await GetSimulationToken(simulationId);
-            if (token == null) return null;
+            string accessToken = masterToken;
+            if (masterToken == null)
+            {
+                var token = await GetSimulationToken(simulationId);
+                accessToken = token.Token;
+                if (token == null) return null;
+            }
 
             var simulation = await this.GetSimulation(simulationId);
             if (simulation == null) return null;
@@ -487,7 +492,7 @@ namespace MUNityClient.Services
             {
                 SimulationId = simulation.SimulationId,
                 ConnectionId = connId,
-                Token = token.Token
+                Token = accessToken
             };
             var client = _httpService.HttpClient;
             var result = await client.PostAsync($"/api/Simulation/Subscribe", JsonContent.Create(subscribeBody));

@@ -1,0 +1,32 @@
+﻿@page "/sim/sek/{masterToken}"
+@inject Services.SimulationService simulationService;
+
+
+@if (_simulations == null)
+{
+    <p>Wird geladen</p>
+}
+else
+{
+    @foreach(var sim in _simulations)
+    {
+        <SekSimulation SimulationId="sim.SimulationId" MasterToken="@MasterToken" />
+    }
+}
+
+@code {
+    [Parameter]
+    public string MasterToken { get; set; }
+
+    private ICollection<MUNity.Schema.Simulation.SimulationListItemDto> _simulations
+    {
+        get;
+        set;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _simulations = await simulationService.GetSimulationList();
+        await base.OnInitializedAsync();
+    }
+}

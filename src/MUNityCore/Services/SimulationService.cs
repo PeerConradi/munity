@@ -134,6 +134,16 @@ namespace MUNityCore.Services
                     n.Users.Any(k => k.HubConnections.Any(a => a.ConnectionId == connectionId)));
         }
 
+        internal async Task RemoveConnectionKey(string connectionKey)
+        {
+            var keys = _context.SimulationHubConnections.Where(n => n.ConnectionId == connectionKey);
+            if (keys.Any())
+            {
+                _context.SimulationHubConnections.RemoveRange(keys);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public SimulationUser CreateModerator(Simulation simulation, string displayName)
         {
             var ownerUser = new SimulationUser()
@@ -190,6 +200,7 @@ namespace MUNityCore.Services
 
         internal async Task<bool> IsPetitionInteractionAllowed(PetitionInteractRequest body)
         {
+            if (!string.IsNullOrEmpty(Program.MasterToken) && body.Token == Program.MasterToken) return true;
             var petition = this._context.Petitions.Include(n => n.SimulationUser).FirstOrDefault(n => n.PetitionId == body.PetitionId);
             var isUsersPetition = petition.SimulationUser.Token == body.Token;
             if (isUsersPetition) return true;
@@ -392,9 +403,10 @@ namespace MUNityCore.Services
 
         #region Validation
 
-        public Task<bool> IsTokenValidAndUserAdmin(SimulationRequest requestSchema)
+        public async Task<bool> IsTokenValidAndUserAdmin(SimulationRequest requestSchema)
         {
-            return _context.SimulationUser.AnyAsync(n => 
+            if (!string.IsNullOrEmpty(Program.MasterToken) && requestSchema.Token == Program.MasterToken) return true;
+            return await _context.SimulationUser.AnyAsync(n => 
             n.Simulation.SimulationId == requestSchema.SimulationId && 
             n.Token == requestSchema.Token &&
             n.CanCreateRole);
@@ -402,56 +414,66 @@ namespace MUNityCore.Services
 
         public async Task<bool> IsTokenValidAndUserAdmin(int simulationId, string token)
         {
+            if (!string.IsNullOrEmpty(Program.MasterToken) && token == Program.MasterToken) return true;
             return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == simulationId &&
             n.Token == token &&
             n.CanCreateRole);
         }
 
-        internal Task<bool> IsTokenValid(SimulationRequest requestSchema)
+        internal async Task<bool> IsTokenValid(SimulationRequest requestSchema)
         {
-            return _context.SimulationUser.AnyAsync(n =>
+            if (!string.IsNullOrEmpty(Program.MasterToken) && requestSchema.Token == Program.MasterToken) return true;
+            return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == requestSchema.SimulationId &&
             n.Token == requestSchema.Token);
         }
 
-        public Task<bool> IsTokenValid(int simulationId, string token)
+        public async Task<bool> IsTokenValid(int simulationId, string token)
         {
-            return _context.SimulationUser.AnyAsync(n =>
+            if (!string.IsNullOrEmpty(Program.MasterToken) && token == Program.MasterToken) return true;
+            return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == simulationId &&
             n.Token == token);
         }
 
-        public Task<bool> IsTokenValidAndUserDelegate(SimulationRequest requestSchema)
+        public async Task<bool> IsTokenValidAndUserDelegate(SimulationRequest requestSchema)
         {
-            return _context.SimulationUser.AnyAsync(n =>
+            if (!string.IsNullOrEmpty(Program.MasterToken) && requestSchema.Token == Program.MasterToken) return true;
+            return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == requestSchema.SimulationId &&
             n.Token == requestSchema.Token &&
             n.Role != null &&
             n.Role.RoleType == RoleTypes.Delegate);
         }
 
-        public Task<bool> IsTokenValidAndUserChair(SimulationRequest requestSchema)
+        public async Task<bool> IsTokenValidAndUserChair(SimulationRequest requestSchema)
         {
-            return _context.SimulationUser.AnyAsync(n =>
+            if (!string.IsNullOrEmpty(Program.MasterToken) && requestSchema.Token == Program.MasterToken)
+                return true;
+            return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == requestSchema.SimulationId &&
             n.Token == requestSchema.Token &&
             n.Role != null &&
             n.Role.RoleType == RoleTypes.Chairman);
         }
 
-        public Task<bool> IsTokenValidAndUserChair(int simulationId, string token)
+        public async Task<bool> IsTokenValidAndUserChair(int simulationId, string token)
         {
-            return _context.SimulationUser.AnyAsync(n =>
+            if (!string.IsNullOrEmpty(Program.MasterToken) && token == Program.MasterToken)
+                return true;
+            return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == simulationId &&
             n.Token == token &&
             n.Role != null &&
             n.Role.RoleType == RoleTypes.Chairman);
         }
 
-        public Task<bool> IsTokenValidAndUserChairOrOwner(int simulationId, string token)
+        public async Task<bool> IsTokenValidAndUserChairOrOwner(int simulationId, string token)
         {
-            return _context.SimulationUser.AnyAsync(n =>
+            if (!string.IsNullOrEmpty(Program.MasterToken) && token == Program.MasterToken)
+                return true;
+            return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == simulationId &&
             n.Token == token &&
             (n.CanCreateRole ||
@@ -459,9 +481,11 @@ namespace MUNityCore.Services
             n.Role.RoleType == RoleTypes.Chairman));
         }
 
-        public Task<bool> IsTokenValidAndUserChairOrOwner(SimulationRequest request)
+        public async Task<bool> IsTokenValidAndUserChairOrOwner(SimulationRequest request)
         {
-            return IsTokenValidAndUserChairOrOwner(request.SimulationId, request.Token);
+            if (!string.IsNullOrEmpty(Program.MasterToken) && request.Token == Program.MasterToken)
+                return true;
+            return await IsTokenValidAndUserChairOrOwner(request.SimulationId, request.Token);
         }
 
         #endregion

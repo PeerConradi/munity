@@ -385,18 +385,28 @@ namespace MUNityCore.Controllers
         {
             if (string.IsNullOrEmpty(body.ConnectionId))
                 return BadRequest();
+            var allowed = await this._simulationService.IsTokenValid(body);
+            if (!allowed) 
+                return Forbid();
+
             var user = this._simulationService.GetSimulationUser(body.SimulationId, body.Token);
-            if (user == null) return Forbid();
             await this.HubContext.Groups.AddToGroupAsync(body.ConnectionId, $"sim_{body.SimulationId}");
-            var mdl = new SimulationHubConnection()
+
+            // You can also connect as only a listener on the simulation for
+            // example the Sek.
+            if (user != null)
             {
-                User = user,
-                ConnectionId = body.ConnectionId,
-                CreationDate = DateTime.Now
-            };
-            user.HubConnections.Add(mdl);
-            this._simulationService.SaveDbChanges();
-            await this.HubContext.Clients.Group($"sim_{body.SimulationId}").UserConnected(body.SimulationId, user.AsSimulationUserDefaultDto());
+                var mdl = new SimulationHubConnection()
+                {
+                    User = user,
+                    ConnectionId = body.ConnectionId,
+                    CreationDate = DateTime.Now
+                };
+                user.HubConnections.Add(mdl);
+                this._simulationService.SaveDbChanges();
+                await this.HubContext.Clients.Group($"sim_{body.SimulationId}").UserConnected(body.SimulationId, user.AsSimulationUserDefaultDto());
+            }
+            
             return Ok(true);
         }
 
