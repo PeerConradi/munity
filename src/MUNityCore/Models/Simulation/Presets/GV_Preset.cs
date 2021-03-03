@@ -70,6 +70,10 @@ namespace MUNityCore.Models.Simulation.Presets
                 yield return new SimulationRole("na-01", "Freedom House", RoleTypes.Ngo);
                 yield return new SimulationRole("na-02", "Greenpeace International", RoleTypes.Ngo);
                 yield return new SimulationRole("na-03", "UN Women", RoleTypes.Ngo);
+
+                yield return new SimulationRole("un", "Presse", RoleTypes.Spectator);
+                yield return new SimulationRole("un", "Zuschauer", RoleTypes.Spectator);
+                yield return new SimulationRole("un", "Ihre Exzellenz die Generalsekretärin", RoleTypes.Spectator);
             }
         }
     }

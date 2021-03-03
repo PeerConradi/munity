@@ -42,6 +42,10 @@ namespace MUNityCore.Models.Simulation.Presets
 
                 yield return new SimulationRole("na-12", "GNWP", RoleTypes.Ngo);
                 yield return new SimulationRole("na-13", "Intern. Komitee v. Rotem Kreuz", RoleTypes.Ngo);
+
+                yield return new SimulationRole("un", "Presse", RoleTypes.Spectator);
+                yield return new SimulationRole("un", "Zuschauer", RoleTypes.Spectator);
+                yield return new SimulationRole("un", "Ihre Exzellenz die Generalsekretärin", RoleTypes.Spectator);
             }
         }
     }

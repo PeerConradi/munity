@@ -48,7 +48,9 @@ namespace MUNityCore.Models.Simulation.Presets
                 yield return new SimulationRole("na-06", "Transparency International", RoleTypes.Ngo);
                 yield return new SimulationRole("na-07", "Weltbankgruppe", RoleTypes.Ngo);
 
-
+                yield return new SimulationRole("un", "Presse", RoleTypes.Spectator);
+                yield return new SimulationRole("un", "Zuschauer", RoleTypes.Spectator);
+                yield return new SimulationRole("un", "Ihre Exzellenz die Generalsekretärin", RoleTypes.Spectator);
             }
         }
     }
