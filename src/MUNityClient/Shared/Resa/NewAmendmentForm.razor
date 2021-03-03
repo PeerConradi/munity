@@ -49,7 +49,7 @@
                     @foreach (var item in Resolution.GetRealOperativeParagraphsInfo())
                             {
                         <option value="@item.id">Unter @item.path</option>
-                        <option value="sub_@item.id">Als Unterpunkt von @item.path</option>
+                        @*<option value="sub_@item.id">Als Unterpunkt von @item.path</option>*@
                             }
                     <option value="end">An das Ende</option>
                 </InputSelect>
@@ -80,6 +80,9 @@
             this.NewAmendmentModel = new NewAmendment(value);
         }
     }
+
+    [Parameter]
+    public ViewModels.ResolutionViewModel ViewModel { get; set; }
 
     private NewAmendment NewAmendmentModel { get; set; }
 
@@ -119,6 +122,47 @@
         {
             this._resolution = resolution;
         }
+    }
+
+    public bool CreateAmendment()
+    {
+        if (this.NewAmendmentModel == null || string.IsNullOrEmpty(this.NewAmendmentModel.AmendmentType))
+            return false;
+
+        if (this.NewAmendmentModel.AmendmentType == "add")
+        {
+            int index = IndexOfSelectedParagraph();
+
+            this.ViewModel.Handler.CreateAddAmendment(this.NewAmendmentModel.Submitter, index, this.NewAmendmentModel.NewText);
+            return true;
+        }
+        else if (this.NewAmendmentModel.AmendmentType == "change")
+        {
+            this.ViewModel.Handler.CreateChangeAmendment(this.NewAmendmentModel.Submitter, this.NewAmendmentModel.TargetSectionId, this.NewAmendmentModel.NewText);
+            return true;
+        }
+        else if (this.NewAmendmentModel.AmendmentType == "delete")
+        {
+            this.ViewModel.Handler.CreateDeleteAmendment(this.NewAmendmentModel.Submitter, this.NewAmendmentModel.TargetSectionId);
+        }
+        else if (this.NewAmendmentModel.AmendmentType == "move")
+        {
+            int index = IndexOfSelectedParagraph();
+            this.ViewModel.Handler.CreateMoveAmendment(this.NewAmendmentModel.Submitter, this.NewAmendmentModel.TargetSectionId, index);
+        }
+        return false;
+    }
+
+    private int IndexOfSelectedParagraph()
+    {
+        if (this.NewAmendmentModel.NewTargetPath == "start")
+            return 0;
+        else if (this.NewAmendmentModel.NewTargetPath == "end")
+            return this.ViewModel.Resolution.OperativeSection.Paragraphs.Count;
+
+        var paragraph = this.ViewModel.Resolution.OperativeSection.Paragraphs.Find(n => n.OperativeParagraphId == this.NewAmendmentModel.NewTargetPath);
+        if (paragraph == null) return 0;
+        return this.ViewModel.Resolution.OperativeSection.Paragraphs.IndexOf(paragraph);
     }
 
     public AbstractAmendment GetAmendment()

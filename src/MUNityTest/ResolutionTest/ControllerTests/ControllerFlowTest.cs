@@ -302,6 +302,8 @@ namespace MUNityCoreTest.ResolutionTest.ControllerTests
             Assert.AreEqual(1, resolution.OperativeSection.Paragraphs.Count);
         }
 
+        
+
         [Test]
         [Order(15)]
         public async Task ChangeOperativeParagraphText()
@@ -311,7 +313,7 @@ namespace MUNityCoreTest.ResolutionTest.ControllerTests
             Assert.NotNull(paragraph);
 
             var controller = new OperativeParagraphController(_mockHub.Object, _service);
-            var body = new ChangeOperativeParagraphTestRequest()
+            var body = new ChangeOperativeParagraphTextRequest()
             {
                 NewText = "New Paragraph Text",
                 OperativeParagraphId = paragraph.OperativeParagraphId,
@@ -321,7 +323,204 @@ namespace MUNityCoreTest.ResolutionTest.ControllerTests
             var response = controller.Text(body);
             Assert.NotNull(response);
             Assert.IsTrue(response is OkResult);
+
+            var reloadResolution = await GetTestResolution();
+            var reloadParagraph = reloadResolution.OperativeSection.Paragraphs.First();
+            Assert.AreEqual(paragraph.OperativeParagraphId, reloadParagraph.OperativeParagraphId, "The paragraph that is first is not the same as when the testcase was started!");
+            string textInDb = _context.OperativeParagraphs.FirstOrDefault(n => n.ResaOperativeParagraphId == paragraph.OperativeParagraphId)?.Text;
+            Assert.AreEqual("New Paragraph Text", textInDb, "Text was not even changed in the database");
+            Assert.AreEqual("New Paragraph Text", reloadParagraph.Text, "Text has been changed in the database but isnt changed when reloading the resolution");
         }
+
+        [Test]
+        [Order(16)]
+        public async Task ChangeOperativeParagraphComment()
+        {
+            var resolution = await GetTestResolution();
+            var paragraph = resolution.OperativeSection.Paragraphs.First();
+            Assert.NotNull(paragraph);
+
+            var controller = new OperativeParagraphController(_mockHub.Object, _service);
+            var body = new ChangeOperativeParagraphCommentRequest()
+            {
+                NewText = "New Comment Text",
+                OperativeParagraphId = paragraph.OperativeParagraphId,
+                ResolutionId = resolutionId
+            };
+            var response = controller.Comment(body);
+            Assert.IsTrue(response is OkResult);
+
+            var reloadResolution = await GetTestResolution();
+            var reloadParagraph = reloadResolution.OperativeSection.Paragraphs.First();
+            Assert.AreEqual("New Comment Text", reloadParagraph.Comment);
+        }
+
+        [Test]
+        [Order(17)]
+        public async Task DeleteOperativeParagraph()
+        {
+            
+            var resolution = await GetTestResolution();
+            var paragraph = resolution.OperativeSection.Paragraphs.First();
+            Assert.AreEqual(1, resolution.OperativeSection.Paragraphs.Count, "Test should start with only one operative paragraph!");
+            var controller = new OperativeParagraphController(_mockHub.Object, _service);
+            var body = new RemoveOperativeParagraphRequest()
+            {
+                OperativeParagraphId = paragraph.OperativeParagraphId,
+                ResolutionId = resolutionId
+            };
+            var response = controller.Remove(body);
+            Assert.IsTrue(response is OkResult);
+
+            var reloadResolution = await GetTestResolution();
+            Assert.AreEqual(0, reloadResolution.OperativeSection.Paragraphs.Count);
+        }
+
+        [Test]
+        [Order(18)]
+        public async Task ReorderOperativeParagraphs()
+        {
+            var controller = new OperativeParagraphController(_mockHub.Object, _service);
+            var paragraphOne = CreateAnOperativeParagraph();
+            controller.Text(new ChangeOperativeParagraphTextRequest() { NewText = "One", OperativeParagraphId = paragraphOne.OperativeParagraphId, ResolutionId = resolutionId });
+            var paragraphTwo = CreateAnOperativeParagraph();
+            controller.Text(new ChangeOperativeParagraphTextRequest() { NewText = "Two", OperativeParagraphId = paragraphTwo.OperativeParagraphId, ResolutionId = resolutionId });
+
+            var resolution = await GetTestResolution();
+            Assert.AreEqual("One", resolution.OperativeSection.Paragraphs[0].Text);
+            Assert.AreEqual("Two", resolution.OperativeSection.Paragraphs[1].Text);
+            var newOrder = new List<string>();
+            newOrder.Add(paragraphTwo.OperativeParagraphId);
+            newOrder.Add(paragraphOne.OperativeParagraphId);
+            var body = new ReorderOperativeParagraphsRequest()
+            {
+                ResolutionId = resolutionId,
+                NewOrder = newOrder
+            };
+            var response = controller.Reorder(body);
+            Assert.IsTrue(response is OkResult);
+
+            var reloadResolution = await GetTestResolution();
+            Assert.AreEqual("Two", reloadResolution.OperativeSection.Paragraphs[0].Text);
+            Assert.AreEqual("One", reloadResolution.OperativeSection.Paragraphs[1].Text);
+        }
+
+        [Test]
+        [Order(19)]
+        public async Task CreateAddAmendment()
+        {
+            var body = new CreateAddAmendmentRequest()
+            {
+                Index = 2,
+                Text = "New Paragraph by amendment",
+                ParentParagraphId = null,
+                ResolutionId = resolutionId,
+                SubmitterName = "Peer"
+            };
+            var controller = new AddAmendmentController(_mockHub.Object, _service);
+            var response = controller.Create(body);
+            var okObjectResult = response.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            var args = okObjectResult.Value as AddAmendmentCreatedEventArgs;
+            Assert.NotNull(args);
+            Assert.AreEqual(resolutionId, args.ResolutionId);
+            Assert.NotNull(args.Amendment);
+            Assert.IsFalse(args.Amendment.Activated);
+            Assert.NotNull(args.Amendment.Id);
+            Assert.AreEqual("Peer", args.Amendment.SubmitterName);
+            Assert.NotNull(args.VirtualParagraph);
+            Assert.AreEqual(args.VirtualParagraph.OperativeParagraphId, args.Amendment.TargetSectionId);
+            Assert.AreEqual("New Paragraph by amendment", args.VirtualParagraph.Text);
+
+            var getResolution = await GetTestResolution();
+            Assert.AreEqual(3, getResolution.OperativeSection.Paragraphs.Count);
+            Assert.AreEqual(args.VirtualParagraph.OperativeParagraphId, getResolution.OperativeSection.Paragraphs[2].OperativeParagraphId);
+            Assert.AreEqual("New Paragraph by amendment", getResolution.OperativeSection.Paragraphs[2].Text);
+            Assert.AreEqual(1, getResolution.OperativeSection.AddAmendments.Count);
+            Assert.IsTrue(getResolution.OperativeSection.AddAmendments.Any(n => n.Id == args.Amendment.Id));
+        }
+
+        [Test]
+        [Order(20)]
+        public async Task CreateChangeAmendment()
+        {
+            var resolution = await GetTestResolution();
+            var paragraph = resolution.OperativeSection.Paragraphs.First();
+
+            var body = new CreateChangeAmendmentRequest()
+            {
+                NewText = "New Text",
+                ParagraphId = paragraph.OperativeParagraphId,
+                ResolutionId = resolutionId,
+                SubmitterName = "Peer"
+            };
+
+            var controller = new ChangeAmendmentController(_mockHub.Object, _service);
+            var response = controller.Create(body);
+            var okObjectResult = response.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult, $"Expected an OkObjectResult but got {response.Result.GetType()}");
+            var dto = okObjectResult.Value as ChangeAmendment;
+            Assert.NotNull(dto, $"Expected the content to be a changeAmendment but got {okObjectResult.Value.GetType()}");
+            Assert.AreEqual("New Text", dto.NewText);
+            Assert.AreEqual(paragraph.OperativeParagraphId, dto.TargetSectionId);
+            Assert.AreEqual("Peer", dto.SubmitterName);
+
+            var reloadResolution = await GetTestResolution();
+            Assert.AreEqual(1, reloadResolution.OperativeSection.ChangeAmendments.Count);
+        }
+
+        [Test]
+        [Order(21)]
+        public async Task CreateDeleteAmendment()
+        {
+            var resolution = await GetTestResolution();
+            var paragraph = resolution.OperativeSection.Paragraphs.First();
+
+            var body = new CreateDeleteAmendmentRequest()
+            {
+                ParagraphId = paragraph.OperativeParagraphId,
+                ResolutionId = resolutionId,
+                SubmitterName = "Peer"
+            };
+            var controller = new DeleteAmendmentController(_mockHub.Object, _service);
+            var response = controller.Create(body);
+            var okObjectResult = response.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            var amendment = okObjectResult.Value as DeleteAmendment;
+            Assert.NotNull(amendment);
+
+            Assert.AreEqual("Peer", amendment.SubmitterName);
+            Assert.AreEqual(paragraph.OperativeParagraphId, amendment.TargetSectionId);
+
+            var reloadResolution = await GetTestResolution();
+            Assert.AreEqual(1, reloadResolution.OperativeSection.DeleteAmendments.Count);
+        }
+
+        [Test]
+        [Order(22)]
+        public async  Task CreateMoveAmendment()
+        {
+            var resolution = await GetTestResolution();
+            var paragraph = resolution.OperativeSection.Paragraphs.First();
+
+            var body = new CreateMoveAmendmentRequest()
+            {
+                NewIndex = 2,
+                SubmitterName = "Peer",
+                ParagraphId = paragraph.OperativeParagraphId,
+                ResolutionId = resolutionId
+            };
+
+            var controller = new MoveAmendmentController(_mockHub.Object, _service);
+            var response = controller.Create(body);
+            var okObjectResult = response.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            var dto = okObjectResult.Value as MoveAmendmentCreatedEventArgs;
+            Assert.NotNull(dto);
+
+            //Assert.AreEqual()
+        }
+
 
         private bool SetTestResolutionPreambleParagraphText(string paragraphId, string text)
         {
@@ -334,6 +533,21 @@ namespace MUNityCoreTest.ResolutionTest.ControllerTests
             };
             var result = preambleController.Text(body);
             return result is OkResult;
+        }
+
+        private OperativeParagraph CreateAnOperativeParagraph()
+        {
+            var controller = new OperativeParagraphController(_mockHub.Object, _service);
+            var body = new AddOperativeParagraphRequest()
+            {
+                ResolutionId = resolutionId
+            };
+            var response = controller.AddParagraph(body);
+            Assert.NotNull(response);
+            var okObjectResult = response.Result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+            var paragraph = okObjectResult.Value as OperativeParagraph;
+            return paragraph;
         }
 
         private PreambleParagraph CreateParagraph()

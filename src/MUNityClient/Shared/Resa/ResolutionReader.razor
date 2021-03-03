@@ -4,14 +4,7 @@
 
 @inject MUNityClient.Services.IResolutionService resolutionService;
 
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-warning">#Belastend - Der Resolutionseditor und die Leseansicht sind derzeit nicht verfügbar.</div>
-    </div>
-</div>
-
-@* Deactivated for rwork *@
-@if (ViewModel?.Resolution != null && false)
+@if (ViewModel?.Resolution != null)
 {
 
     <!-- Header -->
@@ -63,23 +56,6 @@
             }
             else
             {
-                @* Dieser Paragraph kann in Zukunft dazu kommen durch einen Änderungsantrag auf verschieben oder einen
-                    Änderungsantrag auf Hinzufügen.
-                    Um zu ermitteln wie dieser Absatz zustande kommt können diese Funktionen verwendet werden:
-                    bool durchVerschieben = Resolution.OperativeSection.MoveAmendments.Any(n => n.NewTargetSectionId ==
-                    op.OperativeParagraphId);
-                    bool durchHinzufuegen = Resolution.OPerativeSection.AddAmendments.Any(n => n.TargetSectionId ==
-                    op.OperativeParagraphId);
-
-                    Um bei einem Verschieben den Ausgangsabsatz zu bekommen:
-                    var aenderungsantrag = Resolution.OperativeSection.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId ==
-                    op.OperativeParagraphId);
-                    if (aenderungsantrag != null)
-                    {
-                    var quellParagraph = Resolution.FindOperativeParagraph(aenderungsantrag.TargetSectionId);
-                    }
-                *@
-
                 if (op.Visible)
                 {
                     <div class="col-12">
@@ -126,8 +102,7 @@ else
         base.OnInitialized();
         if (ViewModel != null)
         {
-            ViewModel.HeaderChangedFromExtern += delegate { this.StateHasChanged(); };
-            ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
+            ViewModel.Handler.ChangedFromExtern += delegate { this.StateHasChanged(); };
         }
     }
 }

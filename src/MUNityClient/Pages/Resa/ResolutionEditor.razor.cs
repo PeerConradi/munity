@@ -34,11 +34,10 @@ namespace MUNityClient.Pages.Resa
 
         private MUNityClient.Shared.Resa.NewAmendmentForm NewAmendmentForm { get; set; }
 
-
         private void NewAmendment()
         {
-            var amendment = this.NewAmendmentForm.GetAmendment();
-            if (amendment == null)
+            var success = this.NewAmendmentForm.CreateAmendment();
+            if (!success)
             {
                 // TODO: Meldung zeigen Resolution konnte nicht erstellt werden!
             }
@@ -66,9 +65,10 @@ namespace MUNityClient.Pages.Resa
                 if (onlineResolution != null)
                 {
                     this.ViewModel = await this.resolutionService.Subscribe(onlineResolution);
-                    this.ViewModel.SyncMode = ViewModels.ResolutionViewModel.SyncModes.OnlineButNotSyncing;
-                    this.ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
-                    this.ViewModel.OperativeSeciontChangedFromExtern += delegate { this.StateHasChanged(); };
+                    this.ViewModel.Handler.ChangedFromExtern += delegate { this.StateHasChanged(); };
+                    //this.ViewModel.SyncMode = ViewModels.ResolutionViewModel.SyncModes.OnlineButNotSyncing;
+                    //this.ViewModel.PreambleChangedFromExtern += delegate { this.StateHasChanged(); };
+                    //this.ViewModel.OperativeSeciontChangedFromExtern += delegate { this.StateHasChanged(); };
                     
                 }
                 else

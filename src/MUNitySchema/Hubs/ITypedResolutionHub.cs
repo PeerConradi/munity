@@ -37,57 +37,20 @@ namespace MUNity.Hubs
 
         Task PreambleParagraphAdded(PreambleParagraphAddedEventArgs args);
 
-        /// <summary>
-        /// The text of a preamble paragraph has changed.
-        /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="paragraphId"></param>
-        /// <param name="text"></param>
-        /// <param name="tan"></param>
-        /// <returns></returns>
         Task PreambleParagraphTextChanged(PreambleParagraphTextChangedEventArgs args);
 
         Task PreambleParagraphCommentTextChanged(PreambleParagraphCommentTextChangedEventArgs args);
 
         Task PreambleParagraphRemoved(PreambleParagraphRemovedEventArgs args);
 
-        /// <summary>
-        /// The Text of an operative paragraph has changed.
-        /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="paragraphId"></param>
-        /// <param name="text"></param>
-        /// <param name="tan"></param>
-        /// <returns></returns>
+        Task OperativeParagraphAdded(OperativeParagraphAddedEventArgs args);
+
         Task OperativeParagraphTextChanged(OperativeParagraphTextChangedEventArgs args);
 
-        /// <summary>
-        /// Something within the given PreambleParagraph has changed. This could be the Text or the Comments.
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        [Obsolete("Use the differenz change Methods instead")]
-        Task PreambleParagraphChanged(PreambleParagraphChangedArgs args);
-
-        /// <summary>
-        /// Something within the Operative Paragraph has changed this could be the text or the comments.
-        /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="para"></param>
-        /// <param name="tan"></param>
-        /// <returns></returns>
         Task OperativeParagraphChanged(OperativeParagraphChangedEventArgs args);
 
         Task OperativeSectionChanged(OperativeSectionChangedEventArgs args);
 
-        /// <summary>
-        /// The state if an amendment is activated or not activated has changed.
-        /// </summary>
-        /// <param name="resolutionId"></param>
-        /// <param name="amendmentId"></param>
-        /// <param name="value"></param>
-        /// <param name="tan"></param>
-        /// <returns></returns>
         Task AmendmentActivatedChanged(AmendmentActivatedChangedEventArgs args);
 
 

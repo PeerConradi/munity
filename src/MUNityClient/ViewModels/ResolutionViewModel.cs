@@ -45,6 +45,7 @@ namespace MUNityClient.ViewModels
 
         private MUNityClient.Services.IResolutionService _resolutionService;
 
+        [Obsolete("Remove this HubConnection its inside the OnlineHandler!")]
         public HubConnection HubConnection { get; set; }
 
         public List<string> IgnoreTransactions { get; set; }
@@ -161,21 +162,6 @@ namespace MUNityClient.ViewModels
             //  anlegen und lokal speichern
         }
 
-        public void AddPreambleParagraph()
-        {
-            if (!_isOnlineResolution)
-            {
-                var paragraph = this.Resolution.CreatePreambleParagraph();
-                this._resolutionService.SaveOfflineResolution(this.Resolution);
-            }
-            else
-            {
-                // TODO: Request creating Preamble Paragraph at the server
-                this.Resolution.CreatePreambleParagraph();
-            }
-            
-        }
-
         /// <summary>
         /// Use the Subsribe method from the ResolutionService if you want to get updates from other
         /// clients.
@@ -186,9 +172,9 @@ namespace MUNityClient.ViewModels
         public static async Task<ResolutionViewModel> CreateViewModelOnline(Resolution resolution, MUNityClient.Services.IResolutionService resolutionService)
         {
             var instance = new ResolutionViewModel(resolution, true, resolutionService);
-            instance.Handler = new ViewModelLogic.ResolutionOnlineHandler(resolution.ResolutionId);
-            
-            await instance.HubConnection.StartAsync();
+            var handler = new ViewModelLogic.ResolutionOnlineHandler(resolution);
+            await handler.HubConnection.StartAsync();
+            instance.Handler = handler;
             return instance;
         }
 

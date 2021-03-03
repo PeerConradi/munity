@@ -83,8 +83,7 @@
         base.OnInitialized();
         if (this.ResolutionViewModel != null)
         {
-            // Refresh view when the resolution has been changed by an extern source
-            this.ResolutionViewModel.HeaderChangedFromExtern += delegate { this.StateHasChanged(); };
+            this.ResolutionViewModel.Handler.ChangedFromExtern += delegate { this.StateHasChanged(); };
         }
     }
 }

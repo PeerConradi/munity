@@ -1,6 +1,8 @@
 ﻿@using MUNity.Models.Resolution;
 @using MUNity.Extensions.ResolutionExtensions;
 @using MUNity.Models.Resolution.EventArguments; 
+@using MUNityClient.Extensions;
+
 @inject MUNityClient.Services.IResolutionService resolutionService;
 
     <div class="row col-12 p-0 m-0">
@@ -9,17 +11,17 @@
                 @* Up/Down Buttons *@
                 <div class="col-3 col-sm-2 p-0">
                     <button disabled="@(Index == 0)" class="col-12 p-0 text-center p-3 custom-button h-50"
-                        @onclick="() => OnMoveEvent.InvokeAsync(true)" title="Nach oben verschieben" alt="put higher"><i
+                        @onclick="() => MoveUp()" title="Nach oben verschieben" alt="put higher"><i
                             class="fas fa-lg fa-caret-up"></i></button>
                     <button disabled="@(this.ResolutionViewModel?.Resolution != null && Index == this.ResolutionViewModel.Resolution.Preamble.Paragraphs.Count - 1)"
                         class="col-12 p-0 text-center p-3 custom-button h-50"
-                        @onclick="() => OnMoveEvent.InvokeAsync(false)" title="Nach unten verschieben" alt="put lower"><i
+                        @onclick="() => MoveDown()" title="Nach unten verschieben" alt="put lower"><i
                             class="fas fa-lg fa-caret-down"></i></button>
                 </div>
                 @* Input Field *@
                 <div class="col p-0 my-2">
                     <EditForm Model="Paragraph" class="h-100">
-                        <textarea @bind="@Paragraph.Text" @bind:event="oninput" disabled="@this.Paragraph.IsLocked"
+                        <textarea @bind="@Text" disabled="@this.Paragraph.IsLocked"
                             placeholder="Text..." class="form-control h-100 custom-input-field px-0 p-2"></textarea>
                     </EditForm>
 
@@ -51,14 +53,14 @@
                         }
                     </div>
                     <div role="button" type="button" class="col-12 p-0 text-center px-2 py-3 custom-button text-danger"
-                        alt="delete" title="Löschen" @onclick="() => this.ResolutionViewModel.Resolution.Preamble.Paragraphs.Remove(this.Paragraph)">
+                        alt="delete" title="Löschen" @onclick="() => this.ResolutionViewModel.Handler.DeletePreambleParagraph(this.Paragraph.PreambleParagraphId)">
                         <i class="fas fa-lg fa-trash"></i></div>
                 </div>
             </div>
             @* Status Footer *@
             <div class="row m-0 card-footer row col-12 d-flex justify-content-between">
                 <div class="col p-0">
-                    @if (!this.Paragraph.HasValidOperator())
+                    @*@if (!this.Paragraph.HasValidOperator())
                     {
                         <div class="text-warning">
                             <i class="fas fa-info-circle mr-2"></i>Der Paragraph enthält
@@ -66,7 +68,7 @@
                             gültigen
                             Operator.
                         </div>
-                    }
+                    }*@
                     @if (this.Paragraph.Corrected)
                     {
                         <span>Status</span>
@@ -83,7 +85,7 @@
         </div>
         @* Comment Panel *@
         <div class="m-0 col comments @(commentsExpanded ? "comments-expanded" : "comments-collapsed") p-0">
-            <textarea placeholder="Kommentare..." @bind="this.Paragraph.Comment" @bind:event="oninput"
+            <textarea placeholder="Kommentare..." @bind="Comment"
                 class="form-control h-100 custom-input-field px-0 p-2 no-scrollbar"></textarea>
         </div>
     </div>
@@ -95,12 +97,55 @@
     [Parameter]
     public MUNityClient.ViewModels.ResolutionViewModel ResolutionViewModel { get; set; }
 
-    [Parameter]
-    //Event called when the arrow up/down buttons are called. Returns true if direction is updwards, false if downwards
-    public EventCallback<Boolean> OnMoveEvent { get; set; }
+    private string Text
+    {
+        get => Paragraph.Text;
+        set
+        {
+            if (value != Paragraph.Text)
+            {
+                ResolutionViewModel.Handler.SetPreambleParagraphText(Paragraph.PreambleParagraphId, value);
+                Paragraph.Text = value;
+            }
+        }
+    }
 
-    [Parameter]
-    public EventCallback OnDeleteEvent { get; set; }
+    private string Comment
+    {
+        get => Paragraph.Comment;
+        set
+        {
+            if (value != Paragraph.Comment)
+            {
+                ResolutionViewModel.Handler.SetPreambleParagraphComment(Paragraph.PreambleParagraphId, value);
+                Paragraph.Comment = value;
+            }
+        }
+    }
+
+    private async Task MoveUp()
+    {
+        var myIndex = ResolutionViewModel.Resolution.Preamble.Paragraphs.IndexOf(this.Paragraph);
+        if (myIndex > 0)
+        {
+            ResolutionViewModel.Resolution.Preamble.Paragraphs.Swap(myIndex, myIndex - 1);
+            await this.ResolutionViewModel.Handler
+                .ReorderPreambleParagraphs(ResolutionViewModel.Resolution.Preamble.Paragraphs
+                .Select(n => n.PreambleParagraphId));
+        }
+    }
+
+    private async Task MoveDown()
+    {
+        var myIndex = ResolutionViewModel.Resolution.Preamble.Paragraphs.IndexOf(this.Paragraph);
+        if (myIndex < ResolutionViewModel.Resolution.Preamble.Paragraphs.Count - 1)
+        {
+            ResolutionViewModel.Resolution.Preamble.Paragraphs.Swap(myIndex, myIndex + 1);
+            await this.ResolutionViewModel.Handler
+                .ReorderPreambleParagraphs(ResolutionViewModel.Resolution.Preamble.Paragraphs
+                .Select(n => n.PreambleParagraphId));
+        }
+    }
 
     protected override void OnInitialized()
     {

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Resa
 {
-    [Route("api/Resa/Preamble[controller]")]
+    [Route("api/Resa/Preamble")]
     [ApiController]
     public class PreambleController : ControllerBase
     {
@@ -55,6 +55,15 @@ namespace MUNityCore.Controllers.Resa
             var success = this._resolutionService.SetPreambleParagraphText(body.PreambleParagraphId, body.NewText);
             if (!success) return NotFound();
 
+            var paragraphChanged = new PreambleParagraphTextChangedEventArgs()
+            {
+                ParagraphId = body.PreambleParagraphId,
+                ResolutionId = body.ResolutionId,
+                Tan = "12345",
+                Text = body.NewText
+            };
+            _ = GetHub(body)?.PreambleParagraphTextChanged(paragraphChanged).ConfigureAwait(false);
+
             return Ok();
         }
 
@@ -80,7 +89,7 @@ namespace MUNityCore.Controllers.Resa
 
         [HttpPut]
         [Route("[action]")]
-        public IActionResult Reorder(ReorderPreambleRequest body)
+        public IActionResult Reorder([FromBody]ReorderPreambleRequest body)
         {
             var success = this._resolutionService.ReorderPreamble(body.ResolutionId, body.NewOrder);
             if (!success) return NotFound();
