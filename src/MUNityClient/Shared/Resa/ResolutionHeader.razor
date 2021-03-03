@@ -1,4 +1,6 @@
-﻿<div class="row py-0 mx-0 my-2 col-12 d-flex justify-content-between">
+﻿@inject IJSRuntime JSRuntime
+
+<div class="row py-0 mx-0 my-2 col-12 d-flex justify-content-between">
     <div class="col p-0 mr-2">
         <input type="text" @bind="Topic" class="form-control" placeholder="Thema">
     </div>
@@ -17,10 +19,15 @@
 </div>
 <div class="row py-0 m-0 col-12">
     @*<InputCheckbox @bind-Value="allowAmendments" />*@
-    <label>Online Änderungsanträge erlaueb</label>
+    <label>Online Änderungsanträge erlaubt</label>
 </div>
+@* <div class="row py-0 mx-0 my-2 col-12 justify-content-center">
+    <div type="button" class="w-100" @onclick="CopyEditLinkToClipboard">
+        Bearbeitungslink kopieren <i class="fas fa-copy"></i>
+    </div>
+</div> *@
 <div class="row py-0 mx-0 my-2 col-12 justify-content-center">
-    <div class="w-100">
+    <div  class="w-100">
         @*<SendResolutionToSimulation></SendResolutionToSimulation>*@
     </div>
 </div>
@@ -28,6 +35,11 @@
 @code {
     [Parameter]
     public MUNityClient.ViewModels.ResolutionViewModel ResolutionViewModel { get; set; }
+
+    private async Task CopyEditLinkToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", "https://mun-hosting.web.app/resa/edit/" + ResolutionViewModel.Resolution.ResolutionId);
+    }
 
     private string Topic
     {

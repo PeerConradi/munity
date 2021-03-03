@@ -56,11 +56,11 @@ else
     {
         @if (this.ViewModel.CurrentStatus != null)
         {
-            <span class="col col-sm-3 pl-0 ml-3">@ViewModel.CurrentStatus.StatusText</span>
+            <span class="col col-sm-3 pl-0 ml-3 d-flex align-items-center">@ViewModel.CurrentStatus.StatusText</span>
         }
         else
         {
-            <span class="col col-sm-3 pl-0 ml-3 text-warning">Status unbekannt</span>
+            <span class="col col-sm-3 pl-0 ml-3 text-warning d-flex align-items-center">Status unbekannt</span>
         }
     }
 </nav>
