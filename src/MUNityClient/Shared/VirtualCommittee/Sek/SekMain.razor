@@ -8,6 +8,9 @@
 }
 else
 {
+    <div class="row">
+        Geladene Simulationen: @_simulations.Count
+    </div>
     @foreach(var sim in _simulations)
     {
         <SekSimulation SimulationId="sim.SimulationId" MasterToken="@MasterToken" />

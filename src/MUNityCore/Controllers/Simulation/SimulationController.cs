@@ -201,6 +201,17 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public ActionResult<SimulationAuthDto> GetSimulationAuth([FromHeader] string simsimtoken, int id)
         {
+            if (!string.IsNullOrEmpty(Program.MasterToken) && simsimtoken == Program.MasterToken)
+            {
+                return new SimulationAuthDto()
+                {
+                    SimulationUserId = -2,
+                    CanCreateRole = false,
+                    CanEditListOfSpeakers = false,
+                    CanEditResolution = false,
+                    CanSelectRole = false
+                };
+            }
             var user = this._simulationService.GetSimulationUser(id, simsimtoken);
             if (user == null) return NotFound();
             return Ok(user.ToSimulationAuthDto());

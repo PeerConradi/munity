@@ -94,10 +94,17 @@
 
     public async Task LoadListOfSpeakers()
     {
-        string listOfSpeakerId = await this.simulationService.GetListOfSpeakerId(SimulationId);
-        if (listOfSpeakerId != null)
+        var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("simsimtoken", MasterToken);
+        var response = await client.GetAsync(Program.API_URL + $"/api/Simulation/GetListOfSpeakersId?simulationId={SimulationId}");
+        if (response.IsSuccessStatusCode)
         {
-            this.ListOfSpeakerViewModel = await MUNityClient.ViewModels.ListOfSpeakerViewModel.GetFromOnline(listOfSpeakerService, listOfSpeakerId);
+            string listOfSpeakerId = await response.Content.ReadAsStringAsync();
+            if (!string.IsNullOrEmpty(listOfSpeakerId))
+            {
+                this.ListOfSpeakerViewModel = await MUNityClient.ViewModels.ListOfSpeakerViewModel.GetFromOnline(listOfSpeakerService, listOfSpeakerId);
+            }
         }
+
     }
 }

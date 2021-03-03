@@ -358,16 +358,22 @@ namespace MUNityClient.ViewModels
         /// <param name="simulation"></param>
         /// <param name="service"></param>
         /// <returns></returns>
-        public static async Task<SimulationViewModel> CreateViewModel(SimulationDto simulation, SimulationService service)
+        public static async Task<SimulationViewModel> CreateViewModel(SimulationDto simulation, SimulationService service, string masterToken = null)
         {
-            var token = await service.GetSimulationToken(simulation.SimulationId);
-            if (token == null) return null;
+            string accessToken = masterToken;
+            if (accessToken == null)
+            {
+                var token = await service.GetSimulationToken(simulation.SimulationId);
+                accessToken = token.Token;
+                if (token == null) return null;
+            }
+            
 
             var viewModel = new SimulationViewModel(simulation, service);
-            viewModel.Token = token.Token;
+            viewModel.Token = accessToken;
 
-            await LoadMe(viewModel, token.Token);
-            await LoadSlots(viewModel, token.Token);
+            await LoadMe(viewModel, accessToken);
+            await LoadSlots(viewModel, accessToken);
             await LoadStatus(viewModel);
 
             await viewModel.LoadDataAsync();

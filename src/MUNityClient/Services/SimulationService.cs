@@ -170,9 +170,14 @@ namespace MUNityClient.Services
             return await _httpService.HttpClient.PutAsync($"/api/Simulation/Petition/DeletePetition", JsonContent.Create(requestBody));
         }
 
-        public async Task<MUNity.Schema.Simulation.SimulationDto> GetSimulation(int id)
+        public async Task<MUNity.Schema.Simulation.SimulationDto> GetSimulation(int id, string token = null)
         {
-            var client = await GetSimulationClient(id);
+            HttpClient client;
+            if (token == null)
+                client = await GetSimulationClient(id);
+            else
+                client = GetSimulationClient(id, token);
+
             if (client == null) return null;
             return await client.GetFromJsonAsync<MUNity.Schema.Simulation.SimulationDto>($"/api/Simulation/Simulation?simulationId={id}");
         }
@@ -476,17 +481,18 @@ namespace MUNityClient.Services
         public async Task<MUNityClient.ViewModels.SimulationViewModel> Subscribe(int simulationId, string masterToken = null)
         {
             string accessToken = masterToken;
-            if (masterToken == null)
+            if (accessToken == null)
             {
                 var token = await GetSimulationToken(simulationId);
                 accessToken = token.Token;
                 if (token == null) return null;
             }
 
-            var simulation = await this.GetSimulation(simulationId);
+            var simulation = await this.GetSimulation(simulationId, accessToken);
             if (simulation == null) return null;
 
-            var viewModel = await MUNityClient.ViewModels.SimulationViewModel.CreateViewModel(simulation, this);
+            var viewModel = await MUNityClient.ViewModels.SimulationViewModel.CreateViewModel(simulation, this, accessToken);
+            viewModel.Token = accessToken;
             var connId = viewModel.HubConnection.ConnectionId;
             var subscribeBody = new MUNity.Schema.Simulation.SubscribeSimulation()
             {
