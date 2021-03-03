@@ -335,6 +335,42 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             var response = await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Add/DeactivateAmendment", body);
         }
 
+        public async Task SubmitAmendment(AbstractAmendment amendment)
+        {
+            var body = new AmendmentRequest()
+            {
+                AmendmentId = amendment.Id,
+                ResolutionId = resolutionId
+            };
+            var client = new HttpClient();
+            if (amendment is AddAmendment)
+                await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Add/Submit", body);
+            else if (amendment is ChangeAmendment)
+                await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Change/Submit", body);
+            else if (amendment is DeleteAmendment)
+                await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Delete/Submit", body);
+            else if (amendment is MoveAmendment)
+                await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Move/Submit", body);
+        }
+
+        public async Task RemoveAmendment(AbstractAmendment amendment)
+        {
+            var body = new AmendmentRequest()
+            {
+                AmendmentId = amendment.Id,
+                ResolutionId = resolutionId
+            };
+            var client = new HttpClient();
+            if (amendment is AddAmendment)
+                await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Add/Remove", body);
+            else if (amendment is ChangeAmendment)
+                await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Change/Remove", body);
+            else if (amendment is DeleteAmendment)
+                await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Delete/Remove", body);
+            else if (amendment is MoveAmendment)
+                await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Amendment/Move/Remove", body);
+        }
+
 
         public event EventHandler<string> ErrorOccured;
         public event EventHandler<HeaderStringPropChangedEventArgs> NameChanged;
@@ -356,6 +392,9 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         public event EventHandler<MoveAmendmentCreatedEventArgs> MoveAmendmentCreated;
 
         public event EventHandler<AmendmentActivatedChangedEventArgs> AmendmentActivatedChanged;
+
+        public event EventHandler<string> AmendmentRemoved;
+        public event EventHandler<string> AmendmentSubmitted;
 
         public event EventHandler ChangedFromExtern;
 
@@ -388,6 +427,8 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             MoveAmendmentCreated += ResolutionOnlineHandler_MoveAmendmentCreated;
 
             AmendmentActivatedChanged += ResolutionOnlineHandler_AmendmentActivatedChanged;
+            AmendmentSubmitted += ResolutionOnlineHandler_AmendmentSubmitted;
+            AmendmentRemoved += ResolutionOnlineHandler_AmendmentRemoved;
 
             HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderNameChanged), (args) => NameChanged?.Invoke(this, args));
             HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderFullNameChanged), (args) => FullNameChanged?.Invoke(this, args));
@@ -398,9 +439,35 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             HubConnection.On<OperativeParagraphAddedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphAdded), (args) => OperativeParagraphAdded?.Invoke(this, args));
             HubConnection.On<PreambleParagraphTextChangedEventArgs>(nameof(ITypedResolutionHub.PreambleParagraphTextChanged), (args) => PreambleParagraphTextChanged?.Invoke(this, args));
             HubConnection.On<OperativeParagraphTextChangedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphTextChanged), (args) => OperativeParagraphTextChanged?.Invoke(this, args));
+            HubConnection.On<AddAmendmentCreatedEventArgs>(nameof(ITypedResolutionHub.AddAmendmentCreated), (args) => this.AddAmendmentCreated?.Invoke(this, args));
+            HubConnection.On<ChangeAmendment>(nameof(ITypedResolutionHub.ChangeAmendmentCreated), (args) => ChangeAmendmentCreated?.Invoke(this, args));
+            HubConnection.On<DeleteAmendment>(nameof(ITypedResolutionHub.DeleteAmendmentCreated), (args) => DeleteAmendmentCreated?.Invoke(this, args));
+            HubConnection.On<MoveAmendmentCreatedEventArgs>(nameof(ITypedResolutionHub.MoveAmendmentCreated), (args) => MoveAmendmentCreated?.Invoke(this, args));
             HubConnection.On<AmendmentActivatedChangedEventArgs>(nameof(ITypedResolutionHub.AmendmentActivatedChanged), (args) => AmendmentActivatedChanged?.Invoke(this, args));
+            HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentRemoved), (id) => AmendmentRemoved?.Invoke(this, id));
+            HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentSubmitted), (id) => AmendmentSubmitted?.Invoke(this, id));
 
             this.resolution = resolution;
+        }
+
+        private void ResolutionOnlineHandler_AmendmentRemoved(object sender, string id)
+        {
+            var amendment = resolution.OperativeSection.GetAllAmendments().FirstOrDefault(n => n.Id == id);
+            if (amendment != null)
+            {
+                resolution.OperativeSection.RemoveAmendment(amendment);
+                ChangedFromExtern?.Invoke(this, new EventArgs());
+            }
+        }
+
+        private void ResolutionOnlineHandler_AmendmentSubmitted(object sender, string id)
+        {
+            var amendment = resolution.OperativeSection.GetAllAmendments().FirstOrDefault(n => n.Id == id);
+            if (amendment != null)
+            {
+                amendment.Apply(resolution.OperativeSection);
+                ChangedFromExtern?.Invoke(this, new EventArgs());
+            }
         }
 
         private void ResolutionOnlineHandler_AmendmentActivatedChanged(object sender, AmendmentActivatedChangedEventArgs e)
@@ -471,6 +538,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         private void ResolutionOnlineHandler_AddAmendmentCreated(object sender, AddAmendmentCreatedEventArgs e)
         {
+            Console.WriteLine("Amendment created!");
             // An dieser Stelle ist die Reihnfolge wichtig, erst der Virtuelle Absatz und dann der Änderungsantrag!
             if (resolution.OperativeSection.FirstOrDefault(n => n.OperativeParagraphId == e.VirtualParagraph.OperativeParagraphId) == null)
             {

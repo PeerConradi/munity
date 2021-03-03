@@ -8,4 +8,9 @@ namespace MUNity.Schema.Resolution
     {
         public string AmendmentId { get; set; }
     }
+
+    public class AmendmentRequest : ResolutionRequest
+    {
+        public string AmendmentId { get; set; }
+    }
 }

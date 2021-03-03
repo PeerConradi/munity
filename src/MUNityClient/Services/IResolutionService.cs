@@ -62,5 +62,7 @@ namespace MUNityClient.Services
         Task<bool> ResolutionExistsServerside(string id);
 
         string GenerateTan();
+
+        Task<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo> GetInfo(string id);
     }
 }

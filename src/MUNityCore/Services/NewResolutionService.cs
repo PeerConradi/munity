@@ -195,6 +195,11 @@ namespace MUNityCore.Services
             throw new NotImplementedException();
         }
 
+        public Task<ResolutionAuth> CreateSimulationResolution(int simulationId, string submitter)
+        {
+            throw new NotImplementedException();
+        }
+
         public NewResolutionService(MunityContext munityContext, IMunityMongoDatabaseSettings mongoSettings)
         {
             _munityContext = munityContext;

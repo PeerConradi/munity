@@ -112,6 +112,9 @@ else
     public OperativeParagraph Paragraph { get; set; }
 
     [Parameter]
+    public ViewModels.ResolutionViewModel ViewModel { get; set; }
+
+    [Parameter]
     public string Pathname { get; set; }
 
     [Parameter]
@@ -122,5 +125,14 @@ else
 
     [Parameter]
     public System.Collections.Generic.IEnumerable<MoveAmendment> MoveAmendments { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+        {
+            ViewModel.Handler.ChangedFromExtern += delegate { this.StateHasChanged(); };
+        }
+        base.OnInitialized();
+    }
 
 }

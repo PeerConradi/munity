@@ -64,6 +64,8 @@ namespace MUNityCore.Controllers.Resa
                 VirtualParagraphIndex = mdl.VirtualParagraph.OrderIndex
             };
 
+            GetHub(body)?.AddAmendmentCreated(args);
+
             return Ok(args);
         }
 
@@ -96,6 +98,32 @@ namespace MUNityCore.Controllers.Resa
                 Tan = "12345"
             };
             GetHub(body)?.AmendmentActivatedChanged(args);
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult Remove([FromBody]AmendmentRequest body)
+        {
+            bool success = this._resolutionService.RemoveAddAmendment(body.AmendmentId);
+            if (!success)
+                return NotFound();
+
+            GetHub(body)?.AmendmentRemoved(body.AmendmentId);
+
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public IActionResult Submit([FromBody]AmendmentRequest body)
+        {
+            bool success = this._resolutionService.SubmitAddAmendment(body.AmendmentId);
+            if (!success)
+                return NotFound();
+
+            GetHub(body).AmendmentSubmitted(body.AmendmentId);
+
             return Ok();
         }
 

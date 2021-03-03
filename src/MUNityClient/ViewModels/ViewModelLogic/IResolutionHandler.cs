@@ -1,4 +1,5 @@
-﻿using MUNity.Models.Resolution.EventArguments;
+﻿using MUNity.Models.Resolution;
+using MUNity.Models.Resolution.EventArguments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,10 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         Task ActivateAmendment(string amendmentId);
 
         Task DeactivateAmendment(string amendmentId);
+
+        Task SubmitAmendment(AbstractAmendment amendment);
+
+        Task RemoveAmendment(AbstractAmendment amendment);
 
         event EventHandler<HeaderStringPropChangedEventArgs> NameChanged;
         event EventHandler<HeaderStringPropChangedEventArgs> FullNameChanged;

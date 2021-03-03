@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNity.Models.Resolution;
+using MUNity.Schema.Simulation.Resolution;
+using MUNitySchema.Schema.Simulation.Resolution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,6 +75,72 @@ namespace MUNityCore.Controllers.Resa
             await _hubContext.Groups.AddToGroupAsync(connectionid, resolutionid);
 
             return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult<ResolutionSmallInfo> GetResolutionInfo(string resolutionId)
+        {
+            ResolutionSmallInfo info = this._resolutionService.GetResolutionInfo(resolutionId);
+            if (info == null)
+                return NotFound();
+            return Ok(info);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<IActionResult> EnableOnlineAmendments([FromServices]Services.SimulationService simulationService,
+            [FromBody]SimulationResolutionRequest body)
+        {
+            var allowed = await simulationService.IsTokenValidAndUserChairOrOwner(body);
+            if (!allowed)
+                return Forbid();
+
+            this._resolutionService.AllowOnlineAmendments(body.ResolutionId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<IActionResult> DisableOnlineAmendments([FromServices] Services.SimulationService simulationService,
+            [FromBody] SimulationResolutionRequest body)
+        {
+            var allowed = await simulationService.IsTokenValidAndUserChairOrOwner(body);
+            if (!allowed)
+                return Forbid();
+
+            this._resolutionService.DisableOnlineAmendments(body.ResolutionId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<IActionResult> EnablePublicEdit([FromServices] Services.SimulationService simulationService,
+            [FromBody] SimulationResolutionRequest body)
+        {
+            var allowed = await simulationService.IsTokenValidAndUserChairOrOwner(body);
+            if (!allowed)
+                return Forbid();
+
+            this._resolutionService.EnablePublicEdit(body.ResolutionId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<IActionResult> DisablePublicEdit([FromServices] Services.SimulationService simulationService,
+            [FromBody] SimulationResolutionRequest body)
+        {
+            var allowed = await simulationService.IsTokenValidAndUserChairOrOwner(body);
+            if (!allowed)
+                return Forbid();
+
+            this._resolutionService.DisablePublicEdit(body.ResolutionId);
+
+            return Ok();
         }
     }
 }

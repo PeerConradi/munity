@@ -46,7 +46,38 @@ namespace MUNityCore.Controllers.Resa
                 Type = mdl.ResaAmendmentType
             };
 
+            GetHub(body)?.ChangeAmendmentCreated(dto);
+
             return Ok(dto);
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public IActionResult Remove([FromBody]AmendmentRequest body)
+        {
+            bool success = this._resolutionService.RemoveChangeAmendment(body.AmendmentId);
+            if (!success)
+                return NotFound();
+
+            GetHub(body)?.AmendmentRemoved(body.AmendmentId);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public IActionResult Submit([FromBody]AmendmentRequest body)
+        {
+            bool success = this._resolutionService.SubmitChangeAmendment(body.AmendmentId);
+            if (!success)
+                return NotFound();
+
+            GetHub(body)?.AmendmentSubmitted(body.AmendmentId);
+            return Ok();
+        }
+
+        private MUNity.Hubs.ITypedResolutionHub GetHub(ResolutionRequest args)
+        {
+            return this._hubContext?.Clients?.Group(args.ResolutionId);
         }
     }
 }

@@ -44,19 +44,17 @@ namespace MUNity.Hubs
         Task PreambleParagraphRemoved(PreambleParagraphRemovedEventArgs args);
 
         Task OperativeParagraphAdded(OperativeParagraphAddedEventArgs args);
-
+        Task DeleteAmendmentCreated(DeleteAmendment dto);
         Task OperativeParagraphTextChanged(OperativeParagraphTextChangedEventArgs args);
-
+        Task ChangeAmendmentCreated(ChangeAmendment dto);
         Task OperativeParagraphChanged(OperativeParagraphChangedEventArgs args);
 
         Task OperativeSectionChanged(OperativeSectionChangedEventArgs args);
 
         Task AmendmentActivatedChanged(AmendmentActivatedChangedEventArgs args);
-
-
-
-        
-
-
+        Task AddAmendmentCreated(AddAmendmentCreatedEventArgs args);
+        Task AmendmentRemoved(string amendmentId);
+        Task MoveAmendmentCreated(MoveAmendmentCreatedEventArgs dto);
+        Task AmendmentSubmitted(string amendmentId);
     }
 }

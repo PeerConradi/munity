@@ -45,26 +45,9 @@
                 }
                 else
                 {
-                    <div class="row">
-                        <button class="btn btn-block btn-primary" @onclick="() => this.SimulationViewModelInstance.CurrentResolutionId = null">Zurück zur Übersicht</button>
-                    </div>
-                    if (this._layoutWrapper.ResolutionMode == Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Read)
-                    {
-                        @if (this.SimulationViewModelInstance.IsChair)
-                        {
-                            <div class="row">
-                                <button class="btn btn-block btn-secondary" @onclick="() => this._layoutWrapper.ResolutionMode = Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Write">Zur Schreibansicht wechseln</button>
-                            </div>
-                        }
-                        <MUNityClient.Pages.Resa.ResolutionPresentation Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
-                    }
-                    else
-                    {
-                        <div class="row">
-                            <button class="btn btn-block btn-secondary" @onclick="() => this._layoutWrapper.ResolutionMode = Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper.ResolutionModes.Read">Zur Leseansicht wechseln</button>
-                        </div>
-                        <MUNityClient.Pages.Resa.ResolutionEditor Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
-                    }
+                    <MUNityClient.Shared.VirtualCommittee.ActiveRoom.ResolutionView 
+                                                                                    SimulationViewModelInstance="@SimulationViewModelInstance"
+                                                                                    LayoutWrapper="_layoutWrapper"></MUNityClient.Shared.VirtualCommittee.ActiveRoom.ResolutionView>
                 }
 
             }

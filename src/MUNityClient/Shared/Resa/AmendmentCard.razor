@@ -138,18 +138,21 @@
     public void ApplyAmendment()
     {
         this.Amendment?.Apply(this.Resolution.OperativeSection);
+        this.ViewModel.Handler.SubmitAmendment(this.Amendment);
         Interaction.InvokeAsync(this.Amendment);
     }
 
     public void DenyAmendment()
     {
         this.Amendment?.Deny(this.Resolution.OperativeSection);
+        this.ViewModel.Handler.RemoveAmendment(Amendment);
         Interaction.InvokeAsync(this.Amendment);
     }
 
     private void DeleteMe()
     {
         this.Resolution.OperativeSection.RemoveAmendment(this.Amendment);
+        this.ViewModel.Handler.RemoveAmendment(Amendment);
         Interaction.InvokeAsync(this.Amendment);
     }
 

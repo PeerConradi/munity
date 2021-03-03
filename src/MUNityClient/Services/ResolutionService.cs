@@ -97,6 +97,13 @@ namespace MUNityClient.Services
             return this._httpService.HttpClient.PutAsync($"/api/Resolution/UpdateOperativeSection", JsonContent.Create(args));
         }
 
+        public async Task<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo> GetInfo(string id)
+        {
+            var client = new HttpClient();
+            var response = await client.GetFromJsonAsync<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo>(Program.API_URL + $"/api/Resa/GetResolutionInfo?resolutionId={id}");
+            return response;
+        }
+
         /// <summary>
         /// Checks if the Resolution Controller of the API is available.
         /// Will store the value for 30 Seconds and refresh when called 30 seconds after

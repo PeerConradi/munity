@@ -86,14 +86,9 @@ namespace MUNityClient.ViewModels
 
         public ObservableCollection<SimulationSlotDto> Slots { get; set; } = new ObservableCollection<SimulationSlotDto>();
 
-        public async Task CreateResolution()
+        public async Task CreateResolution(CreateSimulationResolutionRequest body)
         {
             var client = new HttpClient();
-            var body = new SimulationRequest()
-            {
-                SimulationId = this.Simulation.SimulationId,
-                Token = this.Token
-            };
             var result = await client.PostAsJsonAsync(Program.API_URL + "/api/Simulation/CreateResolution", body);
             if (result.IsSuccessStatusCode)
             {

@@ -7,6 +7,8 @@ using MUNityCore.Models.Resolution.V2;
 using MUNityCore.Models.Resolution.SqlResa;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Models.Resolution;
+using MUNity.Schema.Simulation;
+using MUNitySchema.Schema.Simulation.Resolution;
 
 namespace MUNityCore.Services
 {
@@ -62,6 +64,147 @@ namespace MUNityCore.Services
             return true;
         }
 
+        internal bool RemoveChangeAmendment(string amendmentId)
+        {
+            var amendment = _context.ChangeAmendments.Find(amendmentId);
+            if (amendment != null)
+            {
+                _context.ChangeAmendments.Remove(amendment);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        internal bool SubmitDeleteAmendment(string amendmentId)
+        {
+            var amendment = _context.DeleteAmendments.Include(n => n.TargetParagraph)
+                .FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
+            if (amendment?.TargetParagraph != null)
+            {
+                var moveAmendmentsToRemove = _context.MoveAmendments
+                    .Where(n => n.SourceParagraph.ResaOperativeParagraphId == amendment.TargetParagraph.ResaOperativeParagraphId);
+                moveAmendmentsToRemove.ForEachAsync(n => RemoveMoveAmendment(n.ResaAmendmentId));
+                
+                var deleteAmendmentsToRemove = _context.DeleteAmendments
+                    .Where(n => n.TargetParagraph.ResaOperativeParagraphId == amendment.TargetParagraph.ResaOperativeParagraphId);
+
+                _context.DeleteAmendments.RemoveRange(deleteAmendmentsToRemove);
+                var changeAmendmentsToRemove = _context.ChangeAmendments
+                    .Where(n => n.TargetParagraph.ResaOperativeParagraphId == amendment.TargetParagraph.ResaOperativeParagraphId);
+                _context.ChangeAmendments.RemoveRange(changeAmendmentsToRemove);
+
+                _context.OperativeParagraphs.Remove(amendment.TargetParagraph);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        internal void AllowOnlineAmendments(string resolutionId)
+        {
+            var auth = this._context.ResolutionAuths.FirstOrDefault(n => n.ResolutionId == resolutionId);
+            if (auth != null)
+            {
+                auth.AllowOnlineAmendments = true;
+                _context.SaveChanges();
+            }
+        }
+
+        internal void DisableOnlineAmendments(string resolutionId)
+        {
+            var auth = this._context.ResolutionAuths.FirstOrDefault(n => n.ResolutionId == resolutionId);
+            if (auth != null)
+            {
+                auth.AllowOnlineAmendments = false;
+                _context.SaveChanges();
+            }
+        }
+
+        internal void EnablePublicEdit(string resolutionId)
+        {
+            var auth = this._context.ResolutionAuths.FirstOrDefault(n => n.ResolutionId == resolutionId);
+            if (auth != null)
+            {
+                auth.AllowPublicEdit = true;
+                _context.SaveChanges();
+            }
+        }
+
+        internal void DisablePublicEdit(string resolutionId)
+        {
+            var auth = this._context.ResolutionAuths.FirstOrDefault(n => n.ResolutionId == resolutionId);
+            if (auth != null)
+            {
+                auth.AllowPublicEdit = false;
+                _context.SaveChanges();
+            }
+        }
+
+        internal ResolutionSmallInfo GetResolutionInfo(string resolutionId)
+        {
+            var resolutions = from auth in _context.ResolutionAuths
+                              join resa in _context.Resolutions on auth.ResolutionId equals resa.ResaElementId
+                              where resa.ResaElementId == resolutionId
+                              select new ResolutionSmallInfo()
+                              {
+                                  AllowAmendments = auth.AllowOnlineAmendments,
+                                  AllowPublicEdit = auth.AllowPublicEdit,
+                                  LastChangedTime = resa.CreatedDate,
+                                  Name = resa.Topic,
+                                  ResolutionId = resa.ResaElementId
+                              };
+            return resolutions.FirstOrDefault();
+        }
+
+        internal bool SubmitMoveAmendment(string amendmentId)
+        {
+            var amendment = _context.MoveAmendments
+                .Include(n => n.VirtualParagraph)
+                .Include(n => n.SourceParagraph)
+                .FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
+            if (amendment != null)
+            {
+                _context.MoveAmendments.Remove(amendment);
+                if (amendment.SourceParagraph != null)
+                    _context.OperativeParagraphs.Remove(amendment.SourceParagraph);
+                if (amendment.VirtualParagraph != null)
+                {
+                    amendment.VirtualParagraph.IsVirtual = false;
+                    amendment.VirtualParagraph.Visible = true;
+                    amendment.VirtualParagraph.IsLocked = false;
+                }
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        internal bool SubmitChangeAmendment(string amendmentId)
+        {
+            var amendment = _context.ChangeAmendments.Include(n => n.TargetParagraph)
+                .FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
+            if (amendment?.TargetParagraph != null)
+            {
+                amendment.TargetParagraph.Text = amendment.NewText;
+                _context.ChangeAmendments.Remove(amendment);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        internal bool RemoveDeleteAmendment(string amendmentId)
+        {
+            var amendment = _context.DeleteAmendments.Find(amendmentId);
+            if (amendment != null)
+            {
+                _context.DeleteAmendments.Remove(amendment);
+                _context.SaveChanges();
+            }
+            return true;
+        }
+
         public async Task<bool> SetTopicAsync(string resolutionId, string topic)
         {
             var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
@@ -69,6 +212,21 @@ namespace MUNityCore.Services
             reso.Topic = topic;
             await this._context.SaveChangesAsync();
             return true;
+        }
+
+        internal bool RemoveMoveAmendment(string amendmentId)
+        {
+            var amendment = _context.MoveAmendments.Include(n => n.VirtualParagraph)
+                .FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
+            if (amendment != null)
+            {
+                if (amendment.VirtualParagraph != null)
+                    _context.OperativeParagraphs.Remove(amendment.VirtualParagraph);
+                _context.MoveAmendments.Remove(amendment);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> SetAgendaItem(string resolutionId, string agendaItem)
@@ -97,13 +255,51 @@ namespace MUNityCore.Services
                 }
                 else if (amendment is ResaAddAmendment)
                 {
-                    var ad = _context.MoveAmendments.Include(n => n.VirtualParagraph)
+                    var ad = _context.AddAmendments.Include(n => n.VirtualParagraph)
                         .FirstOrDefault(n => n.ResaAmendmentId == amendment.ResaAmendmentId);
-                    ad.VirtualParagraph.Visible = true;
+                    if (ad != null)
+                    {
+                        ad.VirtualParagraph.Visible = true;
+                    }
                 }
                 amendment.Activated = true;
                 this._context.SaveChanges();
             }
+        }
+
+        internal bool SubmitAddAmendment(string amendmentId)
+        {
+            var amendment = _context.AddAmendments.Include(n => n.VirtualParagraph)
+                .FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
+            if (amendment != null)
+            {
+                if (amendment.VirtualParagraph != null)
+                {
+                    amendment.VirtualParagraph.IsVirtual = false;
+                    amendment.VirtualParagraph.Visible = false;
+                    amendment.VirtualParagraph.IsLocked = false;
+                    amendment.VirtualParagraph = null;
+                }
+                _context.AddAmendments.Remove(amendment);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        internal bool RemoveAddAmendment(string amendmentId)
+        {
+            var amendment = _context.AddAmendments.Include(n => n.VirtualParagraph)
+                .FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
+            if (amendment != null)
+            {
+                if (amendment.VirtualParagraph != null)
+                    _context.OperativeParagraphs.Remove(amendment.VirtualParagraph);
+                _context.AddAmendments.Remove(amendment);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> SetSession(string resolutionId, string agendaItem)
@@ -125,13 +321,20 @@ namespace MUNityCore.Services
                 {
                     var ma = _context.MoveAmendments.Include(n => n.VirtualParagraph)
                         .FirstOrDefault(n => n.ResaAmendmentId == amendment.ResaAmendmentId);
-                    ma.VirtualParagraph.Visible = false;
+                    if (ma != null)
+                    {
+                        ma.VirtualParagraph.Visible = false;
+                    }
                 }
                 else if (amendment is ResaAddAmendment)
                 {
-                    var ad = _context.MoveAmendments.Include(n => n.VirtualParagraph)
+                    var ad = _context.AddAmendments.Include(n => n.VirtualParagraph)
                         .FirstOrDefault(n => n.ResaAmendmentId == amendment.ResaAmendmentId);
-                    ad.VirtualParagraph.Visible = false;
+                    if (ad != null)
+                    {
+                        ad.VirtualParagraph.Visible = false;
+                    }
+                    
                 }
                 this._context.SaveChanges();
             }
@@ -169,6 +372,35 @@ namespace MUNityCore.Services
             await this._context.ResolutionSupporters.AddAsync(newSupporter);
             await this._context.SaveChangesAsync();
             return true;
+        }
+
+        internal ResolutionAuth CreateSimulationResolution(CreateSimulationResolutionRequest body, string submitter = "")
+        {
+            var resolution = new ResaElement()
+            {
+                Name = body.Titel,
+                FullName = body.Titel,
+                Topic = body.Titel,
+                SubmitterName = submitter
+            };
+
+            var simulation = _context.Simulations.Find(body.SimulationId);
+
+            var auth = new ResolutionAuth()
+            {
+                ResolutionId = resolution.ResaElementId,
+                AllowCommitteeRead = true,
+                AllowConferenceRead = true,
+                AllowOnlineAmendments = true,
+                AllowPublicEdit = true,
+                AllowPublicRead = true,
+                Simulation = simulation,
+                Name = body.Titel
+            };
+            _context.Resolutions.Add(resolution);
+            _context.ResolutionAuths.Add(auth);
+            _context.SaveChanges();
+            return auth;
         }
 
         public async Task<bool> RemoveSupporterAsync(string resaSupporterId)
@@ -456,6 +688,7 @@ namespace MUNityCore.Services
                 IsLocked = true,
                 Text = newText,
                 Resolution = resolution,
+                Visible = false
             };
 
             var amendment = new ResaAddAmendment()

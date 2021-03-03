@@ -1,0 +1,67 @@
+﻿@using MUNityClient.Shared.VirtualCommittee.ActiveRoom
+@inject MUNityClient.Services.IResolutionService resolutionService
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="btn-group w-100">
+                    <button type="button" class="btn btn-primary" @onclick="() => this.SimulationViewModelInstance.CurrentResolutionId = null">Zurück zur Übersicht</button>
+
+                    @if (this.ResolutionInfo != null)
+                    {
+                        @if (this.LayoutWrapper.ResolutionMode == ActiveRoomLayoutWrapper.ResolutionModes.Read
+                      && (SimulationViewModelInstance.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman
+                      || ResolutionInfo.AllowPublicEdit))
+                        {
+                            <button type="button" class="btn btn-primary" @onclick="() => this.LayoutWrapper.ResolutionMode = ActiveRoomLayoutWrapper.ResolutionModes.Write">Bearbeiten</button>
+                        }
+                        else if (this.LayoutWrapper.ResolutionMode == ActiveRoomLayoutWrapper.ResolutionModes.Write)
+                        {
+                            <button type="button" class="btn btn-primary" @onclick="() => this.LayoutWrapper.ResolutionMode = ActiveRoomLayoutWrapper.ResolutionModes.Read">Lesen</button>
+                        }
+                        @if (this.ResolutionInfo.AllowAmendments)
+                        {
+                            <button type="button" class="btn btn-primary">Änderungsantrag</button>
+                        }
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (this.LayoutWrapper.ResolutionMode == ActiveRoomLayoutWrapper.ResolutionModes.Read)
+{
+    <MUNityClient.Pages.Resa.ResolutionPresentation Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
+}
+else if (this.LayoutWrapper.ResolutionMode == ActiveRoomLayoutWrapper.ResolutionModes.Write)
+{
+    <MUNityClient.Pages.Resa.ResolutionEditor Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
+}
+
+@code {
+    [Parameter]
+    public ViewModels.SimulationViewModel SimulationViewModelInstance { get; set; }
+
+    [Parameter]
+    public MUNityClient.Shared.VirtualCommittee.ActiveRoom.ActiveRoomLayoutWrapper LayoutWrapper { get; set; }
+
+    public MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo ResolutionInfo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (this.SimulationViewModelInstance?.CurrentResolutionId != null)
+        {
+            this.ResolutionInfo = await resolutionService.GetInfo(this.SimulationViewModelInstance.CurrentResolutionId);
+            if (!this.ResolutionInfo.AllowPublicEdit && SimulationViewModelInstance.MySlot.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman)
+            {
+                this.LayoutWrapper.ResolutionMode = ActiveRoomLayoutWrapper.ResolutionModes.Read;
+            }
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

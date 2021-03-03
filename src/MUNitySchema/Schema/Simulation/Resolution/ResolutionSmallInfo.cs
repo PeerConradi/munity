@@ -12,5 +12,9 @@ namespace MUNitySchema.Schema.Simulation.Resolution
         public DateTime LastChangedTime {get; set; }
 
         public string Name { get; set; }
+
+        public bool AllowPublicEdit { get; set; }
+
+        public bool AllowAmendments { get; set; }
     }
 }

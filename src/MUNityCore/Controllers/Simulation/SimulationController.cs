@@ -285,17 +285,25 @@ namespace MUNityCore.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<ActionResult<ResolutionSmallInfo>> CreateResolution([FromServices]IResolutionService resaService, [FromBody]SimulationRequest body)
+        public ActionResult<ResolutionSmallInfo> CreateResolution([FromServices]SqlResolutionService resaService, [FromBody]CreateSimulationResolutionRequest body)
         {
-            var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
-            if (!isAllowed) return Forbid();
+            var user = _simulationService.GetSimulationUserWithRole(body.SimulationId, body.Token);
+            if (user == null) return Forbid();
+            //var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
+            //if (!isAllowed) return Forbid();
 
-            var resolution = await resaService.CreateSimulationResolution(body.SimulationId);
+            var submitter = "";
+            if (user.Role != null) submitter = user.Role.Name;
+            submitter = user.DisplayName;
+
+            var resolution = resaService.CreateSimulationResolution(body, submitter);
             var smallInfo = new ResolutionSmallInfo()
             {
                 LastChangedTime = resolution.LastChangeTime,
                 Name = resolution.Name,
-                ResolutionId = resolution.ResolutionId
+                ResolutionId = resolution.ResolutionId,
+                AllowAmendments = resolution.AllowOnlineAmendments,
+                AllowPublicEdit = resolution.AllowPublicEdit
             };
             return Ok(smallInfo);
         }
@@ -308,10 +316,19 @@ namespace MUNityCore.Controllers
             var context = _simulationService.GetDatabaseInstance();
             var validateToken = context.Simulations.Any(n => n.SimulationId == simulationId && n.Users.Any(a => a.Token == simsimtoken));
             if (!validateToken) return Forbid();
-            var resolutions = await context.ResolutionAuths
-                .Where(n => n.Simulation.SimulationId == simulationId)
-                .Select(n => new ResolutionSmallInfo() { ResolutionId = n.ResolutionId, LastChangedTime = n.LastChangeTime, Name = n.Name}).ToListAsync();
-            return Ok(resolutions);
+            var resolutions = from auth in context.ResolutionAuths
+                              where auth.Simulation.SimulationId == simulationId
+                              join resa in context.Resolutions on auth.ResolutionId equals resa.ResaElementId
+                              select new ResolutionSmallInfo()
+                              {
+                                  AllowAmendments = auth.AllowOnlineAmendments,
+                                  AllowPublicEdit = auth.AllowPublicEdit,
+                                  LastChangedTime = resa.CreatedDate,
+                                  Name = resa.Topic,
+                                  ResolutionId = resa.ResaElementId
+                              };
+            var result = await resolutions.ToListAsync();
+            return Ok(result);
         }
 
         [HttpPost]

@@ -31,7 +31,7 @@ namespace MUNityCore.Services
         Task<bool> ResolutionExists(string id);
         Task SetNameInDb(string resolutionId, string text);
 
-        Task<ResolutionAuth> CreateSimulationResolution(int simulationId);
+        Task<ResolutionAuth> CreateSimulationResolution(int simulationId, string submitter);
         bool SetOnlineAmendmentMode(SetResolutionOnlineAmendmentState state);
     }
 }
