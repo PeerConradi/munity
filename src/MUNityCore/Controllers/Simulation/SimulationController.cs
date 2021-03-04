@@ -325,8 +325,9 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<List<ResolutionSmallInfo>>> SimulationResolutions([FromHeader] string simsimtoken, int simulationId)
         {
             var context = _simulationService.GetDatabaseInstance();
-            var validateToken = context.Simulations.Any(n => n.SimulationId == simulationId && n.Users.Any(a => a.Token == simsimtoken));
-            if (!validateToken) return Forbid();
+            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+
+            if (!isAllowed) return Forbid();
             var resolutions = from auth in context.ResolutionAuths
                               where auth.Simulation.SimulationId == simulationId
                               join resa in context.Resolutions on auth.ResolutionId equals resa.ResaElementId
