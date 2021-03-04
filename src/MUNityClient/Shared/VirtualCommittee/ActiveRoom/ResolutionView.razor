@@ -22,10 +22,9 @@
                         }
                         @if (this.ResolutionInfo.AllowAmendments)
                         {
-                            <button type="button" class="btn btn-primary">Änderungsantrag</button>
+                            <button type="button" class="btn btn-primary" @onclick="() => { RefreshResolutionInfo(); NewAmendmentModal?.Open(); }">Änderungsantrag</button>
                         }
                     }
-
 
                 </div>
             </div>
@@ -35,12 +34,26 @@
 
 @if (this.LayoutWrapper.ResolutionMode == ActiveRoomLayoutWrapper.ResolutionModes.Read)
 {
-    <MUNityClient.Pages.Resa.ResolutionPresentation Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
+    <MUNityClient.Pages.Resa.ResolutionPresentation Id="@this.SimulationViewModelInstance.CurrentResolutionId" @ref="CurrentResolutionPresentation" />
 }
 else if (this.LayoutWrapper.ResolutionMode == ActiveRoomLayoutWrapper.ResolutionModes.Write)
 {
     <MUNityClient.Pages.Resa.ResolutionEditor Id="@this.SimulationViewModelInstance.CurrentResolutionId" />
 }
+
+<MUNityClient.Shared.Bootstrap.Modal Title="Neuer Änderungsantrag" @ref="NewAmendmentModal" OnSubmitCallback="NewAmendmentSubmitted">
+    @if (this.CurrentResolutionPresentation?.ResolutionViewModel != null)
+    {
+        <MUNityClient.Shared.Resa.NewAmendmentForm ViewModel="this.CurrentResolutionPresentation.ResolutionViewModel"
+                                                   Resolution="this.CurrentResolutionPresentation.ResolutionViewModel.Resolution"
+                                                   @ref="NewAmendmentForm"/>
+    }
+    else
+    {
+        <p>Es ist ein Fehler beim Tracking der Resolution aufgetreten.</p>
+    }
+
+</MUNityClient.Shared.Bootstrap.Modal>
 
 @code {
     [Parameter]
@@ -51,17 +64,38 @@ else if (this.LayoutWrapper.ResolutionMode == ActiveRoomLayoutWrapper.Resolution
 
     public MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo ResolutionInfo { get; set; }
 
+    private MUNityClient.Shared.Bootstrap.Modal NewAmendmentModal { get; set; }
+
+    private MUNityClient.Pages.Resa.ResolutionPresentation CurrentResolutionPresentation { get; set; }
+
+    private MUNityClient.Shared.Resa.NewAmendmentForm NewAmendmentForm { get; set; }
+
+    private void NewAmendmentSubmitted()
+    {
+        var success = this.NewAmendmentForm.CreateAmendment();
+        if (!success)
+        {
+            // TODO: Meldung zeigen Resolution konnte nicht erstellt werden!
+        }
+        this.NewAmendmentModal.Close();
+    }
+
     protected override async Task OnInitializedAsync()
     {
         if (this.SimulationViewModelInstance?.CurrentResolutionId != null)
         {
-            this.ResolutionInfo = await resolutionService.GetInfo(this.SimulationViewModelInstance.CurrentResolutionId);
-            if (!this.ResolutionInfo.AllowPublicEdit && SimulationViewModelInstance.MySlot.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman)
-            {
-                this.LayoutWrapper.ResolutionMode = ActiveRoomLayoutWrapper.ResolutionModes.Read;
-            }
+            await RefreshResolutionInfo();
         }
 
         await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshResolutionInfo()
+    {
+        this.ResolutionInfo = await resolutionService.GetInfo(this.SimulationViewModelInstance.CurrentResolutionId);
+        if (!this.ResolutionInfo.AllowPublicEdit && SimulationViewModelInstance.MySlot.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman)
+        {
+            this.LayoutWrapper.ResolutionMode = ActiveRoomLayoutWrapper.ResolutionModes.Read;
+        }
     }
 }

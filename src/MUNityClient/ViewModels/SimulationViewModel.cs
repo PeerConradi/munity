@@ -86,6 +86,8 @@ namespace MUNityClient.ViewModels
 
         public ObservableCollection<SimulationSlotDto> Slots { get; set; } = new ObservableCollection<SimulationSlotDto>();
 
+        public ResolutionViewModel CurrentResolution { get; set; }
+
         public async Task CreateResolution(CreateSimulationResolutionRequest body)
         {
             var client = new HttpClient();
@@ -212,6 +214,7 @@ namespace MUNityClient.ViewModels
             }
         }
 
+        [Obsolete("Use MySlot to get information about the current Role...")]
         public SimulationRoleDto MyRole
         {
             get
