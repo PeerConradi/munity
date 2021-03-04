@@ -339,10 +339,13 @@ namespace MUNityClient.Services
             return await client.GetFromJsonAsync<List<SimulationRolesPreset>>("/api/Simulation/GetPresets");
         }
 
-        public async Task<List<ResolutionSmallInfo>> GetSimulationResolutionInfos(int simulationId)
+        public async Task<List<ResolutionSmallInfo>> GetSimulationResolutionInfos(int simulationId, string token = null)
         {
-            var client = await GetSimulationClient(simulationId);
-            if (client == null) return null;
+            HttpClient client;
+            if (token == null)
+                client = await GetSimulationClient(simulationId);
+            else
+                client = GetSimulationClient(simulationId, token);
             return await client.GetFromJsonAsync<List<ResolutionSmallInfo>>($"/api/Simulation/SimulationResolutions?simulationId={simulationId}");
         }
 
