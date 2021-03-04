@@ -184,7 +184,7 @@ namespace MUNityClient.ViewModels
         public async Task UpdateResolutions()
         {
             this.Resolutions.Clear();
-            var resolutions = await _simulationService.GetSimulationResolutionInfos(this.Simulation.SimulationId);
+            var resolutions = await _simulationService.GetSimulationResolutionInfos(this.Simulation.SimulationId, this.Token);
             foreach(var item in resolutions)
             {
                 this.Resolutions.Add(item);
