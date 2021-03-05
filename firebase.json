@@ -6,7 +6,7 @@
       "**/.*"
     ],
     "headers": [{
-      "source" : "**",
+      "source" : "/**",
       "headers" : [{
         "key" : "Cache-Control",
         "value" : "no-cache, no-store, must-revalidate"
@@ -19,6 +19,16 @@
         "key" : "Expires",
         "value" : "0"
       }]
+    },
+    {
+      "source":
+        "**/*.@(jpg|jpeg|gif|png|svg|webp|css|eot|otf|ttf|ttc|woff|woff2|font.css)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "max-age=604800"
+        }
+      ]
     }],
     "rewrites": [
       {
