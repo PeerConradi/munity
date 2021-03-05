@@ -3,21 +3,28 @@
     "public": "dist/wwwroot",
     "ignore": [
       "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+      "**/.*"
     ],
     "headers": [{
       "source" : "**",
       "headers" : [{
         "key" : "Cache-Control",
-        "value" : "no-store"
+        "value" : "no-cache, no-store, must-revalidate"
+      },
+      {
+        "key" : "Pragma",
+        "value" : "no-cache"
+      },
+      {
+        "key" : "Expires",
+        "value" : "0"
       }]
-    }]
+    }],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }
