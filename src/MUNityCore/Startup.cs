@@ -51,7 +51,7 @@ namespace MUNityCore
                 o.AddPolicy("ProdAllOrigins", builder =>
                 {
                     builder
-                        //.SetIsOriginAllowed(_ => true)
+                        .SetIsOriginAllowed(_ => true)
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader();
@@ -62,7 +62,7 @@ namespace MUNityCore
                 o.AddPolicy("DevPolicy", builder =>
                 {
                     builder
-                        //.SetIsOriginAllowed(_ => true)
+                        .SetIsOriginAllowed(_ => true)
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader();
