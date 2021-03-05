@@ -52,10 +52,10 @@ namespace MUNityCore
                 {
                     builder
                         .SetIsOriginAllowed(_ => true)
-                        .AllowAnyOrigin()
+                        //.AllowAnyOrigin()
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
-                        //.AllowCredentials();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
 
                 });
 
@@ -63,10 +63,10 @@ namespace MUNityCore
                 {
                     builder
                         .SetIsOriginAllowed(_ => true)
-                        .AllowAnyOrigin()
+                        //.AllowAnyOrigin()
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
-                        //.AllowCredentials();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
 
