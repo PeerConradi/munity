@@ -125,7 +125,7 @@ namespace MUNityCore.Controllers
         public async Task<IActionResult> AddSpeaker([FromBody]AddSpeakerBody body)
         {
             if (this._speakerlistService.IsListClosed(body))
-                return Forbid("The list of speakers is currently closed!");
+                return Forbid();
 
             var result = await _speakerlistService.AddSpeaker(body);
             if (result == null)
@@ -140,7 +140,7 @@ namespace MUNityCore.Controllers
         public async Task<IActionResult> AddQuestion([FromBody]AddSpeakerBody body)
         {
             if (this._speakerlistService.IsQuestionsClosed(body))
-                return Forbid("The list of speakers is currently closed!");
+                return Forbid();
 
             var result = await _speakerlistService.AddQuestion(body);
             if (result == null)

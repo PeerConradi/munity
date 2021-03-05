@@ -112,7 +112,7 @@ namespace MUNityCore.Controllers
                 return Ok(userInfo);
             }
 
-            return Forbid("A user has no name.");
+            return Forbid();
         }
 
         /// <summary>

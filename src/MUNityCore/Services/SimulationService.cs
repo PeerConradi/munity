@@ -200,8 +200,16 @@ namespace MUNityCore.Services
 
         internal async Task<bool> IsPetitionInteractionAllowed(PetitionInteractRequest body)
         {
+            if (body == null || string.IsNullOrEmpty(body.PetitionId)) return false;
             if (!string.IsNullOrEmpty(Program.MasterToken) && body.Token == Program.MasterToken) return true;
+
+            var isAdminOrChair = await IsTokenValidAndUserChairOrOwner(body);
+            if (isAdminOrChair) return true;
             var petition = this._context.Petitions.Include(n => n.SimulationUser).FirstOrDefault(n => n.PetitionId == body.PetitionId);
+
+            if (petition == null || petition.SimulationUser == null)
+                return false;
+
             var isUsersPetition = petition.SimulationUser.Token == body.Token;
             if (isUsersPetition) return true;
             return await IsTokenValidAndUserChair(body);

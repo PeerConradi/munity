@@ -151,6 +151,9 @@ namespace MUNityCore.Controllers.Simulation
         [Route("[action]")]
         public async Task<ActionResult> DeletePetition([FromBody] PetitionInteractRequest body)
         {
+            if (body == null || string.IsNullOrEmpty(body.PetitionId))
+                return BadRequest();
+
             var isValid = await this._simulationService.IsPetitionInteractionAllowed(body);
             if (!isValid) return Forbid();
 

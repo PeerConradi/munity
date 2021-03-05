@@ -58,7 +58,7 @@ namespace MUNityCore.Controllers
         public ActionResult<UserInformation> CreateUser(string username, string forename, string lastname, string password, string mail, string birthday)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid("You are not allowed to do that!");
+                return Forbid();
 
             DateTime bd = DateTime.Parse(birthday);
             try
@@ -86,7 +86,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> DeleteUser(string username)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid("You are not allowed to do that!");
+                return Forbid();
 
             var user = await this._userService.GetUserByUsername(username);
             if (user == null) return NotFound("User with the given Username not found!");
@@ -107,7 +107,7 @@ namespace MUNityCore.Controllers
         public ActionResult<UserAuthSchema> CreateAuth(string name)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid("You are not allowed to do that!");
+                return Forbid();
 
             MunityUserAuth auth = this._authService.CreateAuth(name);
             return auth.AsAuthSchema();
@@ -126,7 +126,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> SetUserAuth(string username, int authid)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid("You are not allowed to do that!");
+                return Forbid();
 
             var user = await this._userService.GetUserByUsername(username);
             if (user == null) return NotFound("User not found!");
@@ -187,7 +187,7 @@ namespace MUNityCore.Controllers
         public ActionResult<IEnumerable<UserInformation>> GetUserBlock(int blockid)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid("You are not allowed to show that. You need to be Admin!");
+                return Forbid();
 
             return Ok(this._userService.GetUserBlock(blockid).Cast<UserInformation>());
         }

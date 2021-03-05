@@ -229,7 +229,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> SetConferenceName([FromBody]ChangeConferenceName body)
         {
             if (!CanUserEditConference(body.ConferenceId))
-                return Forbid("You are not allowed to change the conference settings");
+                return Forbid();
 
             var taken = await this._conferenceService.IsConferenceNameTaken(body.NewName);
             if (taken) return Conflict("The new conference name is already taken by another conference.");
@@ -253,7 +253,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> SetConferenceFullName([FromBody]ChangeConferenceFullName body)
         {
             if (!CanUserEditConference(body.ConferenceId))
-                return Forbid("You are not allowed to change the conference settings");
+                return Forbid();
 
             var taken = await this._conferenceService.IsConferenceFullNameTaken(body.NewFullName);
             if (taken) return Conflict("The new conference full name is already taken by another conference.");
@@ -277,7 +277,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> SetConferenceAbbreviation([FromBody]ChangeConferenceAbbreviation body)
         {
             if (!CanUserEditConference(body.ConferenceId))
-                return Forbid("You are not allowed to change the conference settings");
+                return Forbid();
 
             var res = await this._conferenceService.SetConferenceAbbreviation(body.ConferenceId, body.NewAbbreviation);
             return Ok(res);
@@ -302,7 +302,7 @@ namespace MUNityCore.Controllers
             if (body.StartDate > body.EndDate)
                 return BadRequest("The Start Date has to be before the End Date!");
             if (!CanUserEditConference(body.ConferenceId))
-                return Forbid("You are not allowed to change the conference settings");
+                return Forbid();
 
             var res = await this._conferenceService.SetConferenceDate(body.ConferenceId, body.StartDate, body.EndDate);
             return Ok(res);

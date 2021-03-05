@@ -70,7 +70,7 @@ namespace MUNityCore.Controllers
         {
             var user = _authService.GetUserOfClaimPrincipal(User);
             if (user == null)
-                return Forbid("You are not a valid user.");
+                return Forbid();
 
             var result = _organisationService.GetOrganisationsOfUser(user);
             return Ok(result);
