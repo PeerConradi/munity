@@ -1,4 +1,5 @@
 ﻿using MUNity.Schema.Simulation;
+using MUNity.Schema.Simulation.Voting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -116,7 +117,7 @@ namespace MUNity.Hubs
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        Task VoteCreated(CreatedVoteModel model);
+        Task VoteCreated(SimulationVotingDto model);
 
         /// <summary>
         /// Has someone voted in something.
@@ -127,7 +128,7 @@ namespace MUNity.Hubs
 
         Task AgendaItemAdded(AgendaItemDto agendaItem);
 
-        Task AgendaItemRemoved(AgendaItemDto agendaItem);
+        Task AgendaItemRemoved(int id);
 
         Task AgendaItemChanged(AgendaItemDto agendaItem);
 

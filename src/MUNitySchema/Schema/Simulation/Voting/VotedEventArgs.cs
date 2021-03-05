@@ -23,7 +23,7 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The index of the choice that this user has picked.
         /// </summary>
-        public int Choice { get; set; }
+        public EVoteStates Choice { get; set; }
 
         /// <summary>
         /// Creates a new Instance of this voting with all given arguments
@@ -31,7 +31,7 @@ namespace MUNity.Schema.Simulation
         /// <param name="voteId"></param>
         /// <param name="userId"></param>
         /// <param name="choice"></param>
-        public VotedEventArgs(string voteId, int userId, int choice)
+        public VotedEventArgs(string voteId, int userId, EVoteStates choice)
         {
             this.VoteId = voteId;
             this.UserId = userId;

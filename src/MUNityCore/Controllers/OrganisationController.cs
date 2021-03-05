@@ -40,7 +40,7 @@ namespace MUNityCore.Controllers
             // TODO: Needs to check of the user is allowed to create an organization
             var user = _authService.GetUserOfClaimPrincipal(User);
             if (user == null)
-                return Forbid();
+                return BadRequest();
 
             var organisation = _organisationService.CreateOrganisation(body.OrganizationName, body.Abbreviation);
 
@@ -70,7 +70,7 @@ namespace MUNityCore.Controllers
         {
             var user = _authService.GetUserOfClaimPrincipal(User);
             if (user == null)
-                return Forbid();
+                return BadRequest();
 
             var result = _organisationService.GetOrganisationsOfUser(user);
             return Ok(result);

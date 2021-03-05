@@ -1,35 +1,42 @@
 ﻿<MUNityClient.Shared.Bootstrap.Modal Title="Neuer Antrag" @ref="_modalRef" ShowSubmitButton="false">
     @if (ViewModel != null)
     {
-        <div class="row">
-            <div class="col-12">
-                <div class="btn-group w-100" role="group">
-                    @if (!Categories.Any())
+    <div class="row">
+        <div class="col-12">
+            <div class="btn-group w-100" role="group">
+                @if (!Categories.Any())
+                {
+                    <p>Es sind keine Antragsarten hinterlegt!</p>
+                }
+                else
+                {
+                    foreach (var category in Categories)
                     {
-                        <p>Es sind keine Antragsarten hinterlegt!</p>
+                        <button class="btn @((SelectedCategory == category) ? "btn-primary" : "btn-outline-primary")"
+                                @onclick="() => SelectedCategory = category">
+                            @category
+                        </button>
                     }
-                    else
-                    {
-                        foreach (var category in Categories)
-                        {
-                            <button class="btn @((SelectedCategory == category) ? "btn-primary" : "btn-outline-primary")"
-                                    @onclick="() => SelectedCategory = category">
-                                @category
-                            </button>
-                        }
-                    }
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="list-group scroll-list">
-                    @foreach (var petitionType in ViewModel.PetitionTypes.Where(n => n.Category == SelectedCategory))
-                    {
-                        <a class="list-group-item" @onclick="() => MakePetition(petitionType)">@petitionType.Name</a>
-                    }
-                </div>
-                    
+                }
             </div>
         </div>
+        <div class="col-12">
+            <div class="list-group scroll-list">
+                @foreach (var petitionType in ViewModel.PetitionTypes.Where(n => n.Category == SelectedCategory))
+                {
+                    <a class="list-group-item" @onclick="() => MakePetition(petitionType)">@petitionType.Name</a>
+                }
+            </div>
+
+        </div>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="col-12">
+                <p class="text-danger">@errorMessage</p>
+            </div>
+        }
+
+    </div>
     }
     else
     {
@@ -62,6 +69,8 @@
         }
     }
 
+    private string errorMessage = "";
+
     private MUNityClient.Shared.Bootstrap.Modal _modalRef;
 
     public IEnumerable<string> Categories => ViewModel.MyPetitionTypes?.Select(n => n.Category)?.Distinct() ?? new List<string>();
@@ -78,5 +87,7 @@
         var result = await this.ViewModel.MakePetition(type, ViewModel.SelectedAgendaItem.AgendaItemId);
         if (result.IsSuccessStatusCode)
             this.IsVisible = false;
+        else
+            this.errorMessage = "Fehler beim Erstellen des Antrags.";
     }
 }

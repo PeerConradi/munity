@@ -20,6 +20,12 @@
                 <h4>KEIN EINBRINGER</h4>
             }
 
+            <h4>Unterstützer</h4>
+            @if (!string.IsNullOrEmpty(this.ViewModel.Resolution.Header.SupporterNames))
+            {
+                <h5>@this.ViewModel.Resolution.Header.SupporterNames</h5>
+            }
+
             @if (!string.IsNullOrEmpty(this.ViewModel.Resolution.Header.CommitteeName))
             {
                 <h4>@ViewModel.Resolution.Header.CommitteeName.ToUpper(),</h4>

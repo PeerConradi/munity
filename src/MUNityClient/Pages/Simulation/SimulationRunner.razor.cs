@@ -36,11 +36,11 @@ namespace MUNityClient.Pages.Simulation
                     return "Redeliste fehlerhaft geladen";
                 if (ListOfSpeakersInstance.SourceList.ListClosed)
                     return "Redeliste ist geschlossen";
-                if (SimulationViewModelInstance.MyRole == null)
+                if (SimulationViewModelInstance.MySlot == null)
                     return "Diese funktion ist nur möglich, wenn eine entsprechende Rolle vorliegt.";
-                if (ListOfSpeakersInstance.SourceList.Speakers.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))
-                    return $"Es befindet sich bereits ein Eintrag {SimulationViewModelInstance.MyRole.Name} auf der Redeliste";
-                return $"Als {SimulationViewModelInstance.MyRole.Name} auf die Redeliste setzen.";
+                if (ListOfSpeakersInstance.SourceList.Speakers.Any(n => n.Name == SimulationViewModelInstance.MySlot.RoleName))
+                    return $"Es befindet sich bereits ein Eintrag {SimulationViewModelInstance.MySlot.RoleName} auf der Redeliste";
+                return $"Als {SimulationViewModelInstance.MySlot.RoleName} auf die Redeliste setzen.";
             }
         }
 
@@ -54,11 +54,11 @@ namespace MUNityClient.Pages.Simulation
                     return "Redeliste fehlerhaft geladen.";
                 if (ListOfSpeakersInstance.SourceList.QuestionsClosed)
                     return "Fragen und Kurzbemerkungen sind geschlossen.";
-                if (SimulationViewModelInstance.MyRole == null)
+                if (SimulationViewModelInstance.MySlot == null)
                     return "Diese funktion ist nur möglich, wenn eine entsprechende Rolle vorliegt.";
-                if (ListOfSpeakersInstance.SourceList.Questions.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))
-                    return $"Es befindet sich bereits ein Eintrag {SimulationViewModelInstance.MyRole.Name} auf den Fragen und Kurzbemerkungen.";
-                return $"Als {SimulationViewModelInstance.MyRole.Name} auf die Fragen und Kurzbemerkungen setzen.";
+                if (ListOfSpeakersInstance.SourceList.Questions.Any(n => n.Name == SimulationViewModelInstance.MySlot.RoleName))
+                    return $"Es befindet sich bereits ein Eintrag {SimulationViewModelInstance.MySlot.RoleName} auf den Fragen und Kurzbemerkungen.";
+                return $"Als {SimulationViewModelInstance.MySlot.RoleName} auf die Fragen und Kurzbemerkungen setzen.";
             }
         }
 
@@ -72,9 +72,9 @@ namespace MUNityClient.Pages.Simulation
                     return false;
                 if (ListOfSpeakersInstance.SourceList.ListClosed)
                     return false;
-                if (SimulationViewModelInstance.MyRole == null)
+                if (SimulationViewModelInstance.MySlot == null)
                     return false;
-                if (ListOfSpeakersInstance.SourceList.Speakers.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))
+                if (ListOfSpeakersInstance.SourceList.Speakers.Any(n => n.Name == SimulationViewModelInstance.MySlot.RoleName))
                     return false;
                 return true;
             }
@@ -90,9 +90,9 @@ namespace MUNityClient.Pages.Simulation
                     return false;
                 if (ListOfSpeakersInstance.SourceList.QuestionsClosed)
                     return false;
-                if (SimulationViewModelInstance.MyRole == null)
+                if (SimulationViewModelInstance.MySlot == null)
                     return false;
-                if (ListOfSpeakersInstance.SourceList.Questions.Any(n => n.Name == SimulationViewModelInstance.MyRole.Name))
+                if (ListOfSpeakersInstance.SourceList.Questions.Any(n => n.Name == SimulationViewModelInstance.MySlot.RoleName))
                     return false;
                 return true;
             }

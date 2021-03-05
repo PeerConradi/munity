@@ -30,7 +30,7 @@ namespace MUNityCore.Controllers.Resa
         public async Task<ActionResult> Name([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var succes = await _resolutionService.SetNameAsync(body.ResolutionId, body.Text);
             if (!succes)
@@ -45,7 +45,7 @@ namespace MUNityCore.Controllers.Resa
         public async Task<ActionResult> FullName([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var success = await _resolutionService.SetFullNameAsync(body.ResolutionId, body.Text);
             if (!success)
@@ -60,7 +60,7 @@ namespace MUNityCore.Controllers.Resa
         public async Task<ActionResult> Topic([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var success = await this._resolutionService.SetTopicAsync(body.ResolutionId, body.Text);
             if (!success)
@@ -75,7 +75,7 @@ namespace MUNityCore.Controllers.Resa
         public async Task<ActionResult> AgendaItem([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var success = await this._resolutionService.SetAgendaItem(body.ResolutionId, body.Text);
             if (!success)
@@ -90,7 +90,7 @@ namespace MUNityCore.Controllers.Resa
         public async Task<ActionResult> Session([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var success = await this._resolutionService.SetSession(body.ResolutionId, body.Text);
             if (!success)
@@ -105,7 +105,7 @@ namespace MUNityCore.Controllers.Resa
         public async Task<ActionResult> SubmitterName([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var success = await this._resolutionService.SetSubmitterNameAsync(body.ResolutionId, body.Text);
             if (!success)
@@ -120,13 +120,28 @@ namespace MUNityCore.Controllers.Resa
         public async Task<ActionResult> CommitteeName([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var success = await this._resolutionService.SetCommitteeNameAsync(body.ResolutionId, body.Text);
             if (!success)
                 return NotFound();
 
             _ = GetHub(body)?.HeaderCommitteeNameChanged(body).ConfigureAwait(false);
+            return Ok();
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        public async Task<ActionResult> Supporters([FromBody]HeaderStringPropChangedEventArgs body)
+        {
+            var success = await this._resolutionService.SetSupportersAsync(body.ResolutionId, body.Text);
+            if (!success)
+                return NotFound();
+
+            var args = new HeaderStringPropChangedEventArgs(body.ResolutionId, body.Text);
+
+            GetHub(body)?.HeaderSupportersChanged(args);
+
             return Ok();
         }
 

@@ -1,11 +1,13 @@
-﻿@if (this.ViewModel != null)
+﻿@using MUNityClient.Extensions.Simulation
+
+@if (this.ViewModel?.MySlot != null)
 {
     <div class="row">
         <div class="col-12 mt-1">
             <div class="card">
                 <div class="card-header">
                     Tagesordnungspunkte
-                    @if (this.ViewModel.IsChair || this.ViewModel.MyAuth != null && this.ViewModel.MyAuth.CanCreateRole)
+                    @if (this.ViewModel.MySlot.CanCreateRole || this.ViewModel.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
                     {
                         <button class="btn btn-success btn-sm" @onclick="() => _createAgendaItemRef.IsVisible = !_createAgendaItemRef.IsVisible">Neuer Tagesordnungspunkt</button>
                     }
@@ -19,8 +21,18 @@
                                 {
                                     @foreach (var agendaItem in this.ViewModel.AgendaItems)
                                     {
-                                        <a class="alert w-100 @((ViewModel.SelectedAgendaItem == agendaItem) ? "alert-primary" : "alert-dark") m-0"
-                                           @onclick="() => ViewModel.SelectedAgendaItem = agendaItem">@agendaItem.Name (@agendaItem.Petitions.Count @((agendaItem.Petitions.Count == 1) ? "Antrag" : "Anträge"))</a>
+                                        <div class="alert d-flex justify-content-between w-100 @((ViewModel.SelectedAgendaItem == agendaItem) ? "alert-primary" : "alert-dark") m-0"
+                                             @onclick="() => ViewModel.SelectedAgendaItem = agendaItem">
+                                            @agendaItem.Name (@agendaItem.Petitions.Count @((agendaItem.Petitions.Count == 1) ? "Antrag" : "Anträge"))
+
+                                                @if (ViewModel.MySlot.CanCreateRole || ViewModel.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+                                                {
+                                                    <a @onclick="() => ViewModel.RemoveAgendaItem(agendaItem)"><i class="fa fa-times"></i></a>
+                                                }
+                                    
+
+
+                                                </div>
                                     }
                                 }
                                 else
@@ -112,6 +124,4 @@
         }
         base.OnInitialized();
     }
-
-
 }

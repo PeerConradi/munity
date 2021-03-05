@@ -57,7 +57,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult<PetitionTypeDto>> CreatePetitionType([FromBody]CreatePetitionTypeRequest body)
         {
             var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(body);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
 
             Models.Simulation.PetitionType type = _simulationService.CreatePetitionType(body);
             if (type == null)
@@ -76,7 +76,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult> AddPetitionTypeToSimulation([FromBody] AddPetitionTypeRequestBody body)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserAdmin(body);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
 
             var success = await this._simulationService.AddPetitionTypeToSimulation(body);
             if (!success)
@@ -112,7 +112,7 @@ namespace MUNityCore.Controllers.Simulation
             try
             {
                 var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
-                if (user == null) return Forbid();
+                if (user == null) return BadRequest();
                 petition.PetitionUserId = user.SimulationUserId;
                 var createdPetition = this._simulationService.SubmitPetition(petition);
                 if (createdPetition != null)
@@ -137,7 +137,7 @@ namespace MUNityCore.Controllers.Simulation
         //public async Task<ActionResult> AcceptPetition([FromBody] PetitionDto petition)
         //{
         //    var user = this._simulationService.GetSimulationUser(petition.SimulationId, petition.Token);
-        //    if (!user.CanCreateRole) return Forbid();
+        //    if (!user.CanCreateRole) return BadRequest();
         //    await this._hubContext.Clients.Group($"sim_{petition.SimulationId}").UserPetitionAccepted(petition);
         //    return Ok();
         //}
@@ -155,7 +155,7 @@ namespace MUNityCore.Controllers.Simulation
                 return BadRequest();
 
             var isValid = await this._simulationService.IsPetitionInteractionAllowed(body);
-            if (!isValid) return Forbid();
+            if (!isValid) return BadRequest();
 
             var removed = this._simulationService.RemovePetition(body);
             if (removed)
@@ -180,7 +180,7 @@ namespace MUNityCore.Controllers.Simulation
         {
             var isChair = await this._simulationService.IsTokenValidAndUserChair(body);
             var isAdmin = await this._simulationService.IsTokenValidAndUserAdmin(body);
-            if (!isChair && !isAdmin) return Forbid();
+            if (!isChair && !isAdmin) return BadRequest();
 
             var path = AppContext.BaseDirectory + "assets/templates/petitions/" + body.Name + ".csv";
             if (!System.IO.File.Exists(path)) return NotFound("Templatefile not found!");
@@ -197,7 +197,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult<List<PetitionTypeSimulationDto>>> SimulationPetitionTypes([FromHeader] string simsimtoken, int simulationId)
         {
             var isallowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            if (!isallowed) return Forbid();
+            if (!isallowed) return BadRequest();
             var types = this._simulationService.GetPetitionTypesOfSimulation(simulationId);
             var list = types.Select(n => n.ToDto()).ToList();
             return Ok(list);

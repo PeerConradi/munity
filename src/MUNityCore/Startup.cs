@@ -46,34 +46,43 @@ namespace MUNityCore
 
             string munityCors = Environment.GetEnvironmentVariable("MUNITY_FRONTEND_IP");
 
-            services.AddCors(o =>
+            //services.AddCors(o =>
+            //{
+            //    o.AddPolicy("ProdAllOrigins", builder =>
+            //    {
+            //        builder
+            //            .SetIsOriginAllowed(_ => true)
+            //            //.AllowAnyOrigin()
+            //            .AllowAnyMethod()
+            //            .AllowAnyHeader()
+            //            .AllowCredentials();
+
+            //    });
+
+            //    o.AddPolicy("DevPolicy", builder =>
+            //    {
+            //        builder
+            //            .SetIsOriginAllowed(_ => true)
+            //            //.AllowAnyOrigin()
+            //            .AllowAnyMethod()
+            //            .AllowAnyHeader()
+            //            .AllowCredentials();
+            //    });
+            //});
+            services.AddCors(option =>
             {
-                o.AddPolicy("ProdAllOrigins", builder =>
+                option.AddPolicy("munity",builder =>
                 {
-                    builder
-                        .SetIsOriginAllowed(_ => true)
-                        //.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
-
-                });
-
-                o.AddPolicy("DevPolicy", builder =>
-                {
-                    builder
-                        .SetIsOriginAllowed(_ => true)
-                        //.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                    builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
                 });
             });
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
-            });
+            //services.Configure<ForwardedHeadersOptions>(options =>
+            //{
+            //    options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
+            //});
 
             // The App Settings contains information like the secret used to 
             // CreatePublic the baerer authentication.
@@ -83,23 +92,23 @@ namespace MUNityCore
             // JWT Authentication is done here!
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.UTF8.GetBytes(appSettings.Secret);
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //services.AddAuthentication(x =>
+            //{
+            //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-            }).AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
+            //}).AddJwtBearer(x =>
+            //{
+            //    x.RequireHttpsMetadata = false;
+            //    x.SaveToken = true;
+            //    x.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuerSigningKey = true,
+            //        IssuerSigningKey = new SymmetricSecurityKey(key),
+            //        ValidateIssuer = false,
+            //        ValidateAudience = false
+            //    };
+            //});
             // TODO: Add OAuth some day!
 
             // SignalR is for the WebSockets, they are mainly used in the live Editors for example
@@ -125,9 +134,9 @@ namespace MUNityCore
             });
 
             // Add MongoDb Database
-            services.Configure<MunityMongoDatabaseSettings>(Configuration.GetSection(nameof(MunityMongoDatabaseSettings)));
-            services.AddSingleton<IMunityMongoDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<MunityMongoDatabaseSettings>>().Value);
+            //services.Configure<MunityMongoDatabaseSettings>(Configuration.GetSection(nameof(MunityMongoDatabaseSettings)));
+            //services.AddSingleton<IMunityMongoDatabaseSettings>(sp =>
+            //    sp.GetRequiredService<IOptions<MunityMongoDatabaseSettings>>().Value);
 
             
             // All services that are used inside the controllers.
@@ -164,32 +173,32 @@ namespace MUNityCore
         {
             if (env.IsDevelopment())
             {
-                app.UseCors("DevPolicy");
+                //app.UseCors("DevPolicy");
                 app.UseDeveloperExceptionPage();
+                // Enable middleware to serve generated Swagger as a JSON endpoint.
+                app.UseSwagger();
+
+                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+                // specifying the Swagger JSON endpoint.
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
+                });
             }
             else
             {
-                app.UseCors("ProdAllOrigins");
+                //app.UseCors("ProdAllOrigins");
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+            app.UseCors("munity");
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
-            });
+            //app.UseForwardedHeaders(new ForwardedHeadersOptions
+            //{
+            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            //});
 
             app.UseHttpsRedirection();
 
@@ -201,8 +210,8 @@ namespace MUNityCore
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

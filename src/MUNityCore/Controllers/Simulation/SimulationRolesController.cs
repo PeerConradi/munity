@@ -31,7 +31,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult<SimulationRoleDto>> CreateRole([FromBody]CreateRoleRequest body)
         {
             var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(body);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
 
             Models.Simulation.SimulationRole role = _simulationService.CreateRole(body);
             var roles = await _simulationService.GetSimulationRoles(body.SimulationId);
@@ -44,7 +44,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult<List<SimulationRoleDto>>> GetSimulationRoles([FromHeader] string simsimtoken, int id)
         {
             var isAllowed = await this._simulationService.IsTokenValid(id, simsimtoken);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             var roles = await this._simulationService.GetSimulationRoles(id);
             var models = roles.Select(n => n.ToSimulationRoleDto()).ToList();
             return Ok(models);
@@ -55,7 +55,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<IActionResult> SetUserRole([FromBody]SetUserSimulationRole body)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
 
             bool success = this._simulationService.SetUserRole(body);
             if (!success) return NotFound("Role or user not found!");

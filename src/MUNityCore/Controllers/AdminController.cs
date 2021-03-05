@@ -58,7 +58,7 @@ namespace MUNityCore.Controllers
         public ActionResult<UserInformation> CreateUser(string username, string forename, string lastname, string password, string mail, string birthday)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             DateTime bd = DateTime.Parse(birthday);
             try
@@ -86,7 +86,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> DeleteUser(string username)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             var user = await this._userService.GetUserByUsername(username);
             if (user == null) return NotFound("User with the given Username not found!");
@@ -107,7 +107,7 @@ namespace MUNityCore.Controllers
         public ActionResult<UserAuthSchema> CreateAuth(string name)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             MunityUserAuth auth = this._authService.CreateAuth(name);
             return auth.AsAuthSchema();
@@ -126,7 +126,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> SetUserAuth(string username, int authid)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             var user = await this._userService.GetUserByUsername(username);
             if (user == null) return NotFound("User not found!");
@@ -148,7 +148,7 @@ namespace MUNityCore.Controllers
         public ActionResult<IEnumerable<UserInformation>> GetBannedUsers()
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             return Ok(this._userService.GetBannedUsers().Cast<UserInformation>());
         }
@@ -164,7 +164,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> BanUser(string username)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             var user = await this._userService.GetUserByUsername(username);
             if (user == null)
@@ -187,7 +187,7 @@ namespace MUNityCore.Controllers
         public ActionResult<IEnumerable<UserInformation>> GetUserBlock(int blockid)
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             return Ok(this._userService.GetUserBlock(blockid).Cast<UserInformation>());
         }
@@ -203,7 +203,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<int>> GetUserCount()
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             var res = await this._userService.GetUserCount();
             return Ok(res);
@@ -221,7 +221,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<int>> GetResolutionCount()
         {
             if (!this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             var result = await this._resolutionService.GetResolutionCount();
             return Ok(result);
@@ -237,7 +237,7 @@ namespace MUNityCore.Controllers
         public ActionResult<IEnumerable<UserInformation>> GetAdministrators()
         {
             if (this._authService.IsUserPrincipalAdmin(User))
-                return Forbid();
+                return BadRequest();
 
             IEnumerable<UserInformation> admins = this._userService.GetAdministrators().Cast<UserInformation>();
             return Ok(admins);

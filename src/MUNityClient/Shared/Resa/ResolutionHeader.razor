@@ -14,7 +14,7 @@
 <div class="row py-0 m-0 col-12 justify-content-center">
     <div class="w-100">
         @* //string list *@
-        <textarea class="md-textarea form-control my-2" rows="3" placeholder="Unterstützerstaaten"></textarea>
+        <textarea class="md-textarea form-control my-2" @bind="Supporters" rows="3" placeholder="Unterstützerstaaten"></textarea>
     </div>
 </div>
 <div class="row py-0 m-0 col-12">
@@ -76,6 +76,19 @@
             {
                 ResolutionViewModel.Handler.SetSubmitterName(value);
                 ResolutionViewModel.Resolution.Header.SubmitterName = value;
+            }
+        }
+    }
+
+    private string Supporters
+    {
+        get => ResolutionViewModel.Resolution.Header.SupporterNames;
+        set
+        {
+            if (ResolutionViewModel.Resolution.Header.SupporterNames != value)
+            {
+                ResolutionViewModel.Handler.SetSupporterNames(value);
+                ResolutionViewModel.Resolution.Header.SupporterNames = value;
             }
         }
     }

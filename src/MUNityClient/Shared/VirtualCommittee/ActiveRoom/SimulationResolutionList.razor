@@ -22,7 +22,8 @@ else
                             @if (this.SimulationViewModel.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
                             {
                                 <th>Änderungsanträge erlauben</th>
-                                <th>Alle drüfen schreiben</th>
+                                <th>Alle dürfen schreiben</th>
+                                <th>Löschen</th>
                             }
                         </tr>
                     </thead>
@@ -51,14 +52,18 @@ else
                                         <td>
                                             <button class="btn btn-block @((resolution.AllowAmendments) ? "btn-success" : "btn-outline-danger")"
                                                     @onclick="() => AllowAmendmentsChanged(resolution)">
-                                            @((resolution.AllowAmendments) ? "Deaktivieren" : "Aktivieren")</button>
+                                            <i class="fa @((resolution.AllowAmendments) ? "fa-check" : "fa-times")"></i>
+                                            </button>
                                         </td>
                                         <td>
                                             <button class="btn btn-block @((resolution.AllowPublicEdit) ? "btn-success" : "btn-outline-danger")"
                                                     @onclick="() => AllowPublicEditChanged(resolution)">
-                                                @((resolution.AllowAmendments) ? "Deaktivieren" : "Aktivieren")
+                                                <i class="fa @((resolution.AllowPublicEdit) ? "fa-check" : "fa-times")"></i>
                                             </button>
                                         </td>
+                                        <th class="text-center">
+                                            <a class="text-danger" @onclick="() => this.SimulationViewModel.UnlinkResolution(resolution)"><i class="fa fa-lg fa-trash"></i></a>
+                                        </th>
                                     }
                                 </tr>
                             }

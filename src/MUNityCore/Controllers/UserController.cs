@@ -112,7 +112,7 @@ namespace MUNityCore.Controllers
                 return Ok(userInfo);
             }
 
-            return Forbid();
+            return BadRequest();
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace MUNityCore.Controllers
             if (mode < 0 || mode > 3) return BadRequest("Only mode 0-3 are allowed!");
 
             var user = _authService.GetUserOfClaimPrincipal(User);
-            if (user == null) Forbid();
+            if (user == null) BadRequest();
             var privacySettings = _userService.GetUserPrivacySettings(user);
             if (privacySettings == null) privacySettings = _userService.InitUserPrivacySettings(user);
             privacySettings.PublicNameDisplayMode = (Models.User.UserPrivacySettings.ENameDisplayMode) mode;

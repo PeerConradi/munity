@@ -1,15 +1,21 @@
 ﻿@if (ViewModel != null)
 {
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-primary btn-block" @onclick="() => this.ViewModel.ReloadActiveVoting()">Neu laden</button>
+        </div>
+    </div>
+
     <SimulationVotingBanner ViewModel="@this.ViewModel" />
 
-    @if (ViewModel.CurrentVoting != null && ViewModel.CurrentVoting.AllowedUsers.Any(id => id == ViewModel.Me.SimulationUserId))
+    @if (ViewModel.ActiveVoting != null && ViewModel.ActiveVoting.Slots.Any(n => n.SimulationUserId == ViewModel.MySlot.SimulationUserId))
     {
         <SimulationMakeVote ViewModel="@this.ViewModel" />
     }
 
     @if (ViewModel.IsChair)
     {
-        <CreateVoteComponent SimulationId="ViewModel.Simulation.SimulationId" />
+        <CreateVoteComponent ViewModel="@ViewModel" SimulationId="ViewModel.Simulation.SimulationId" />
     }
 }
 else
@@ -27,6 +33,8 @@ else
         if (ViewModel != null)
         {
             ViewModel.VoteCreated += delegate { this.StateHasChanged(); };
+            ViewModel.UserVoted += delegate { this.StateHasChanged(); };
+            ViewModel.ActiveVotingChanged += delegate { this.StateHasChanged(); };
         }
         base.OnInitialized();
     }

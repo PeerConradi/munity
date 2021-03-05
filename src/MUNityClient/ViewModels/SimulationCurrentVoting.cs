@@ -5,46 +5,35 @@ using System.Threading.Tasks;
 
 namespace MUNityClient.ViewModels
 {
-    public class SimulationCurrentVoting : MUNity.Schema.Simulation.CreatedVoteModel
-    {
-        /// <summary>
-        /// Dictionary of given votes. The Key is the SimulationUserId and the Value is the vote
-        /// 0 = pro, 1 = contra, 2 = abstention
-        /// </summary>
-        public Dictionary<int, int> Choices { get; private set; }
+    public class SimulationCurrentVoting : MUNity.Schema.Simulation.Voting.SimulationVotingDto
+    { 
 
-        public int TotalVotes => Choices.Count;
+        public int TotalVotes => Slots.Count;
 
-        public int ValidVotes => Choices.Count(n => n.Value == 0 || n.Value == 1);
+        public int ValidVotes => Slots.Count(n => n.Choice == MUNity.Schema.Simulation.EVoteStates.Con || 
+        n.Choice == MUNity.Schema.Simulation.EVoteStates.Pro);
 
-        public int ProVotes => Choices.Count(n => n.Value == 0);
+        public int ProVotes => Slots.Count(n => n.Choice == MUNity.Schema.Simulation.EVoteStates.Pro);
 
-        public int ContraVotes => Choices.Count(n => n.Value == 1);
+        public int ContraVotes => Slots.Count(n => n.Choice == MUNity.Schema.Simulation.EVoteStates.Con);
 
-        public int AbstentionVotes => Choices.Count(n => n.Value == 2);
+        public int AbstentionVotes => Slots.Count(n => n.Choice == MUNity.Schema.Simulation.EVoteStates.Abstention);
 
-        public int PercentageMissing => (this.AllowedUsers.Count - Choices.Count) / this.AllowedUsers.Count * 100;
+        public int NotVoted => Slots.Count(n => n.Choice == MUNity.Schema.Simulation.EVoteStates.NotVoted);
+
+        public int PercentageMissing => (Slots.Count > 0) ? NotVoted * 100 / this.Slots.Count : 0;
 
         public int PercentagePro => (ProVotes + ContraVotes) > 0 ? (ProVotes * 100 / (ProVotes + ContraVotes)) : 0;
 
         public int PercentageContra => (ProVotes + ContraVotes) > 0 ? (ContraVotes * 100 / (ProVotes + ContraVotes)) : 0;
 
-        public int PercentageAbstention => Choices.Count > 0 ? (AbstentionVotes * 100 / Choices.Count) : 0;
+        public int PercentageAbstention => Slots.Count > 0 ? (AbstentionVotes * 100 / Slots.Count) : 0;
 
-        public void Vote(MUNity.Schema.Simulation.VotedEventArgs args)
+        public SimulationCurrentVoting(MUNity.Schema.Simulation.Voting.SimulationVotingDto created)
         {
-            if (args.VoteId != this.CreatedVoteModelId) return;
-            if (this.Choices.ContainsKey(args.UserId)) return;
-            this.Choices.Add(args.UserId, args.Choice);
-        }
-
-        public SimulationCurrentVoting(MUNity.Schema.Simulation.CreatedVoteModel created)
-        {
-            this.Choices = new Dictionary<int, int>();
             this.AllowAbstention = created.AllowAbstention;
-            this.AllowedUsers = created.AllowedUsers;
-            this.CreatedVoteModelId = created.CreatedVoteModelId;
-            this.Text = created.Text;
+            this.Slots = created.Slots;
+            this.Name = created.Name;
         }
     }
 }

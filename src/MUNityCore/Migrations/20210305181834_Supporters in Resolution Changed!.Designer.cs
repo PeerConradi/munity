@@ -3,14 +3,16 @@ using System;
 using MUNityCore.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityCore.Migrations
 {
     [DbContext(typeof(MunityContext))]
-    partial class MunityContextModelSnapshot : ModelSnapshot
+    [Migration("20210305181834_Supporters in Resolution Changed!")]
+    partial class SupportersinResolutionChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1221,60 +1223,6 @@ namespace MUNityCore.Migrations
                     b.ToTable("SimulationUser");
                 });
 
-            modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationVoting", b =>
-                {
-                    b.Property<string>("SimulationVotingId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
-
-                    b.Property<bool>("AllowAbstention")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<int?>("SimulationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SimulationVotingId");
-
-                    b.HasIndex("SimulationId");
-
-                    b.ToTable("SimulationVotings");
-                });
-
-            modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationVotingSlot", b =>
-                {
-                    b.Property<int>("SimulationVotingSlotId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("Choice")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserSimulationUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("VoteTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("VotingSimulationVotingId")
-                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
-
-                    b.HasKey("SimulationVotingSlotId");
-
-                    b.HasIndex("UserSimulationUserId");
-
-                    b.HasIndex("VotingSimulationVotingId");
-
-                    b.ToTable("VotingSlots");
-                });
-
             modelBuilder.Entity("MUNityCore.Models.User.MunityUser", b =>
                 {
                     b.Property<int>("MunityUserId")
@@ -1951,30 +1899,6 @@ namespace MUNityCore.Migrations
                     b.Navigation("Simulation");
                 });
 
-            modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationVoting", b =>
-                {
-                    b.HasOne("MUNityCore.Models.Simulation.Simulation", "Simulation")
-                        .WithMany()
-                        .HasForeignKey("SimulationId");
-
-                    b.Navigation("Simulation");
-                });
-
-            modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationVotingSlot", b =>
-                {
-                    b.HasOne("MUNityCore.Models.Simulation.SimulationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserSimulationUserId");
-
-                    b.HasOne("MUNityCore.Models.Simulation.SimulationVoting", "Voting")
-                        .WithMany("VoteSlots")
-                        .HasForeignKey("VotingSimulationVotingId");
-
-                    b.Navigation("User");
-
-                    b.Navigation("Voting");
-                });
-
             modelBuilder.Entity("MUNityCore.Models.User.MunityUser", b =>
                 {
                     b.HasOne("MUNityCore.Models.User.MunityUserAuth", "Auth")
@@ -2186,11 +2110,6 @@ namespace MUNityCore.Migrations
                     b.Navigation("HubConnections");
 
                     b.Navigation("Petitions");
-                });
-
-            modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationVoting", b =>
-                {
-                    b.Navigation("VoteSlots");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.User.MunityUser", b =>

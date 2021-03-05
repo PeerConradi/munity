@@ -30,11 +30,11 @@
                     <div class="form-group">
                         <label>Modus</label>
                         <InputSelect @bind-Value="@Request.Mode" class="form-control">
-                            <option value="@MUNity.Schema.Simulation.EVotingMode.Everyone">Jeder (inklusive Vorsitz)</option>
-                            <option value="@MUNity.Schema.Simulation.EVotingMode.AllParticipants">Alle Teilnehmenden</option>
+                            @*<option value="@MUNity.Schema.Simulation.EVotingMode.Everyone">Jeder (inklusive Vorsitz)</option>
+                            <option value="@MUNity.Schema.Simulation.EVotingMode.AllParticipants">Alle Teilnehmenden</option>*@
                             <option value="@MUNity.Schema.Simulation.EVotingMode.JustDelegates">Nur Delegierte</option>
-                            <option value="@MUNity.Schema.Simulation.EVotingMode.JustNgos">Nur Nichtstaatliche Akteure</option>
-                            <option value="@MUNity.Schema.Simulation.EVotingMode.JustGuests">Nur Gäste</option>
+                            @*<option value="@MUNity.Schema.Simulation.EVotingMode.JustNgos">Nur Nichtstaatliche Akteure</option>
+                            <option value="@MUNity.Schema.Simulation.EVotingMode.JustGuests">Nur Gäste</option>*@
                         </InputSelect>
                     </div>
                     <div class="form-group">
@@ -55,6 +55,9 @@
 @code {
     [Parameter]
     public int SimulationId { get; set; }
+
+    [Parameter]
+    public ViewModels.SimulationViewModel ViewModel { get; set; }
 
     private enum VoteSubmitStates
     {
@@ -77,14 +80,6 @@
 
     private async Task SubmitVote()
     {
-        var result = await _simulationService.CreateVote(Request);
-        if (result.IsSuccessStatusCode)
-        {
-            LastState = VoteSubmitStates.Success;
-        }
-        else
-        {
-            LastState = VoteSubmitStates.Error;
-        }
+        await this.ViewModel.CreateVoting(Request);
     }
 }

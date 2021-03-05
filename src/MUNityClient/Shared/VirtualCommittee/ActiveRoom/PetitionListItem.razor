@@ -16,7 +16,7 @@
         </div>
     }
 
-    @if (this.ViewModel.MyAuth.SimulationUserId == Petition.PetitionUserId)
+    @if (this.ViewModel.MySlot.SimulationUserId == Petition.PetitionUserId)
     {
         <div class="mb-1">
             <a class="badge badge-danger" @onclick="() => Delete()">Antrag zurückziehen</a>

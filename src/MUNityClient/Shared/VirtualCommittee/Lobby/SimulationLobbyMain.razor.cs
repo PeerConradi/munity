@@ -37,7 +37,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
 
         private int SelectedRole
         {
-            get => ViewModel.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == ViewModel.MyAuth.SimulationUserId).RoleId;
+            get => ViewModel.Simulation.Users.FirstOrDefault(n => n.SimulationUserId == ViewModel.MySlot.SimulationUserId).RoleId;
             set
             {
                 SelectRole(value).ConfigureAwait(false);

@@ -54,10 +54,8 @@ namespace MUNity.Models.Resolution
         /// </summary>
         public string CommitteeName { get; set; }
 
-        /// <summary>
-        /// List of the names of supporters for this document.
-        /// </summary>
-        public List<ResolutionSupporter> Supporters { get; set; }
+
+        public string SupporterNames { get; set; }
 
         /// <summary>
         /// Creates a new resolution Header.
@@ -65,7 +63,6 @@ namespace MUNity.Models.Resolution
         public ResolutionHeader()
         {
             this.ResolutionHeaderId = Guid.NewGuid().ToString();
-            Supporters = new List<ResolutionSupporter>();
         }
 
     }

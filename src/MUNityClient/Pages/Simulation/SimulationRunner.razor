@@ -18,7 +18,7 @@
 
 <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationTopNavbar ViewModel="@SimulationViewModelInstance" LayoutWrapper="@_layoutWrapper" />
 
-@if (SimulationViewModelInstance?.Simulation != null && SimulationViewModelInstance.MyAuth != null && _layoutWrapper != null)
+@if (SimulationViewModelInstance?.Simulation != null && SimulationViewModelInstance.MySlot != null && _layoutWrapper != null)
 {
 <div class="row m-0 p-0">
 
@@ -73,7 +73,7 @@
                 }
                 else if (string.IsNullOrEmpty(_listOfSpeakerId))
                 {
-                    if (SimulationViewModelInstance.MyAuth.CanCreateRole || SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+                    if (SimulationViewModelInstance.MySlot.CanCreateRole || SimulationViewModelInstance.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
                     {
                         <button class="btn btn-sm btn-success btn-block" @onclick="() => InitListOfSpeakers()">Redeliste anlegen</button>
                     }
@@ -84,9 +84,9 @@
                 }
                 else
                 {
-                    @if (this.SimulationViewModelInstance.MyRole != null &&
-                      (this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
-                      this.SimulationViewModelInstance.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo))
+                    @if (this.SimulationViewModelInstance.MySlot != null &&
+                      (this.SimulationViewModelInstance.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
+                      this.SimulationViewModelInstance.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo))
                     {
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-outline-success" 
@@ -125,7 +125,7 @@
 </div>
 
 
-    <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationNotifications />
+    <MUNityClient.Shared.VirtualCommittee.ActiveRoom.SimulationNotifications ViewModel="this.SimulationViewModelInstance" />
 }
 
 <style>

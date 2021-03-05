@@ -29,7 +29,9 @@ namespace MUNityCore.Models.Resolution.SqlResa
 
         public List<ResaOperativeParagraph> OperativeParagraphs { get; set; }
 
-        public List<ResaSupporter> Supporters { get; set; }
+        public string SupporterNames { get; set; }
+
+        //public List<ResaSupporter> Supporters { get; set; }
         public List<ResaAmendment> Amendments { get; set; }
 
         public ResaElement()
@@ -37,7 +39,7 @@ namespace MUNityCore.Models.Resolution.SqlResa
             this.ResaElementId = Guid.NewGuid().ToString();
             this.PreambleParagraphs = new List<ResaPreambleParagraph>();
             this.OperativeParagraphs = new List<ResaOperativeParagraph>();
-            this.Supporters = new List<ResaSupporter>();
+            //this.Supporters = new List<ResaSupporter>();
             this.Amendments = new List<ResaAmendment>();
         }
     }

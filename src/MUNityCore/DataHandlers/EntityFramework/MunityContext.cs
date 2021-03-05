@@ -104,6 +104,10 @@ namespace MUNityCore.DataHandlers.EntityFramework
         public DbSet<ResaMoveAmendment> MoveAmendments { get; set; }
         public DbSet<ResaAddAmendment> AddAmendments { get; set; }
 
+        public DbSet<SimulationVoting> SimulationVotings { get; set; }
+
+        public DbSet<SimulationVotingSlot> VotingSlots { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             

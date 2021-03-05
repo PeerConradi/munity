@@ -30,6 +30,15 @@ namespace MUNityClient.ViewModels.ViewModelLogic
                 ErrorOccured.Invoke(this, $"An error occured while trying to send an update to the server {response.ReasonPhrase}");
         }
 
+        public async Task SetSupporterNames(string supporterNames)
+        {
+            var body = DefaultChangeHeaderRequest(supporterNames);
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync(Program.API_URL + "/api/Resa/Header/Supporters", body);
+            if (!response.IsSuccessStatusCode)
+                ErrorOccured.Invoke(this, $"An error occured while trying to send an update to the server {response.ReasonPhrase}");
+        }
+
         public async Task SetFullName(string fullName)
         {
             var body = DefaultChangeHeaderRequest(fullName);
@@ -380,6 +389,8 @@ namespace MUNityClient.ViewModels.ViewModelLogic
         public event EventHandler<HeaderStringPropChangedEventArgs> SessionChanged;
         public event EventHandler<HeaderStringPropChangedEventArgs> SubmitterNameChanged;
         public event EventHandler<HeaderStringPropChangedEventArgs> CommitteeNameChanged;
+        public event EventHandler<HeaderStringPropChangedEventArgs> SupportersChanged;
+
         public event EventHandler<PreambleParagraphAddedEventArgs> PreambleParagraphAdded;
         public event EventHandler<PreambleParagraphTextChangedEventArgs> PreambleParagraphTextChanged;
 
@@ -417,6 +428,7 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             SubmitterNameChanged += ResolutionOnlineHandler_SubmitterNameChanged;
             PreambleParagraphAdded += ResolutionOnlineHandler_PreambleParagraphAdded;
             PreambleParagraphTextChanged += ResolutionOnlineHandler_PreambleParagraphTextChanged;
+            SupportersChanged += ResolutionOnlineHandler_SupportersChanged;
 
             OperativeParagraphAdded += ResolutionOnlineHandler_OperativeParagraphAdded;
             OperativeParagraphTextChanged += ResolutionOnlineHandler_OperativeParagraphTextChanged;
@@ -448,6 +460,15 @@ namespace MUNityClient.ViewModels.ViewModelLogic
             HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentSubmitted), (id) => AmendmentSubmitted?.Invoke(this, id));
 
             this.resolution = resolution;
+        }
+
+        private void ResolutionOnlineHandler_SupportersChanged(object sender, HeaderStringPropChangedEventArgs e)
+        {
+            if (resolution.Header.SupporterNames != e.Text)
+            {
+                resolution.Header.SupporterNames = e.Text;
+                ChangedFromExtern?.Invoke(this, new EventArgs());
+            }
         }
 
         private void ResolutionOnlineHandler_AmendmentRemoved(object sender, string id)

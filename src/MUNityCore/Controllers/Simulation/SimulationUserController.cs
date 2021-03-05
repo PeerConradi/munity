@@ -31,7 +31,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult<SimulationUserAdminDto>> CreateUser([FromBody]SimulationRequest body)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body.SimulationId, body.Token);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             var newUser = this._simulationService.CreateUser(body.SimulationId, "");
             if (newUser == null)
                 return NotFound();
@@ -43,7 +43,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult<string>> UserToken([FromBody]SimulationUserTokenRequest request)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(request);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             var db = _simulationService.GetDatabaseInstance();
             var token = db.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == request.SimulationId &&
             n.SimulationUserId == request.UserId).Token;
@@ -57,7 +57,7 @@ namespace MUNityCore.Controllers.Simulation
         public ActionResult<int> MyUserId([FromHeader]string simsimtoken, int simulationId)
         {
             int? userId = this._simulationService.GetSimulationUserId(simulationId, simsimtoken);
-            if (!userId.HasValue) return Forbid();
+            if (!userId.HasValue) return BadRequest();
             return Ok(userId.Value);
         }
     }

@@ -105,7 +105,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<SimulationDto>> Simulation([FromHeader] string simsimtoken, int simulationId)
         {
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
 
             var response = this._simulationService.GetSimulationResponse(simulationId);
             return Ok(response);
@@ -124,7 +124,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<string>> GetListOfSpeakersId([FromHeader] string simsimtoken, int simulationId)
         {
             var isValid = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            if (!isValid) return Forbid();
+            if (!isValid) return BadRequest();
             return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
         }
 
@@ -134,7 +134,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<string>> GetResolutionId([FromHeader] string simsimtoken, int simulationId)
         {
             var isValid = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            if (!isValid) return Forbid();
+            if (!isValid) return BadRequest();
             return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
         }
 
@@ -152,7 +152,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<MUNity.Models.ListOfSpeakers.ListOfSpeakers>> InitListOfSpeakers([FromHeader] string simsimtoken, int simulationId)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChair(simulationId, simsimtoken);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             // TODO: Send Socket information.
             return Ok(this._simulationService.InitListOfSpeakers(simulationId));
         }
@@ -163,7 +163,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<List<SimulationUserAdminDto>>> GetUsersAsAdmin([FromHeader] string simsimtoken, int id)
         {
             var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
                 .Include(n => n.HubConnections)
@@ -177,7 +177,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<bool>> IsUserOnline([FromHeader] string simsimtoken, int simulationId, int userId)
         {
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             return Ok(this._simulationService.UserOnline(simulationId, userId));
         }
 
@@ -187,7 +187,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<SimulationUserDefaultDto>> GetUsersDefault([FromHeader] string simsimtoken, int id)
         {
             var isAllowed = await this._simulationService.IsTokenValid(id, simsimtoken);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
                 .Include(n => n.HubConnections)
@@ -226,7 +226,7 @@ namespace MUNityCore.Controllers
             if (simulation == null) return NotFound();
             var user = simulation.Users.FirstOrDefault(n => n.Token == simsimtoken);
             if (user == null) return NotFound();
-            if (!user.CanSelectRole) return Forbid();
+            if (!user.CanSelectRole) return BadRequest();
             var role = simulation.Roles.FirstOrDefault(n => n.SimulationRoleId == roleId);
             if (role == null) return NotFound();
             this._simulationService.BecomeRole(simulation, user, role);
@@ -241,7 +241,7 @@ namespace MUNityCore.Controllers
         {
             var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
             if (simulation == null) return NotFound();
-            if (!simulation.Users.Any(n => n.Token == simsimtoken && n.CanCreateRole)) return Forbid();
+            if (!simulation.Users.Any(n => n.Token == simsimtoken && n.CanCreateRole)) return BadRequest();
             var preset = this._simulationService.Presets.FirstOrDefault(n => n.Id == presetId);
             if (preset == null) return NotFound();
             this._simulationService.ApplyPreset(simulation, preset);
@@ -256,7 +256,7 @@ namespace MUNityCore.Controllers
         {
             var simulation = await this._simulationService.GetSimulationWithUsersAndRoles(simulationId);
             if (simulation == null) return NotFound();
-            if (!simulation.Users.Any(n => n.Token == simsimtoken && n.CanCreateRole)) return Forbid();
+            if (!simulation.Users.Any(n => n.Token == simsimtoken && n.CanCreateRole)) return BadRequest();
             await this._simulationService.RemoveUser(simulationId, userId);
             //await this._hubContext.Clients.Group($"sim_{simulationId}").
             return Ok();
@@ -285,7 +285,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> SetPhase([FromBody] SetPhaseRequest body)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             var hasChanged = await this._simulationService.SetPhase(body.SimulationId, body.SimulationPhase);
             if (hasChanged)
             {
@@ -299,9 +299,9 @@ namespace MUNityCore.Controllers
         public ActionResult<ResolutionSmallInfo> CreateResolution([FromServices]SqlResolutionService resaService, [FromBody]CreateSimulationResolutionRequest body)
         {
             var user = _simulationService.GetSimulationUserWithRole(body.SimulationId, body.Token);
-            if (user == null) return Forbid();
+            if (user == null) return BadRequest();
             //var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
-            //if (!isAllowed) return Forbid();
+            //if (!isAllowed) return BadRequest();
 
             var submitter = "";
             if (user.Role != null) submitter = user.Role.Name;
@@ -319,6 +319,21 @@ namespace MUNityCore.Controllers
             return Ok(smallInfo);
         }
 
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<IActionResult> UnlinkResolution([FromBody]SimulationResolutionRequest body)
+        {
+            var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
+            if (!isAllowed)
+                return BadRequest();
+
+            var success = this._simulationService.UnlinkResolution(body.ResolutionId);
+            if (!success)
+                return NotFound();
+
+            return Ok();
+        }
+
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
@@ -327,7 +342,7 @@ namespace MUNityCore.Controllers
             var context = _simulationService.GetDatabaseInstance();
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
 
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             var resolutions = from auth in context.ResolutionAuths
                               where auth.Simulation.SimulationId == simulationId
                               join resa in context.Resolutions on auth.ResolutionId equals resa.ResaElementId
@@ -355,7 +370,7 @@ namespace MUNityCore.Controllers
             if (user == null) return NotFound();
             //if (simulation.Users.Any(n => n.DisplayName == request.DisplayName)) return BadRequest();
             if (user.Password != request.Password)
-                return Forbid();
+                return BadRequest();
 
             if (!string.IsNullOrEmpty(request.DisplayName))
             {
@@ -399,7 +414,7 @@ namespace MUNityCore.Controllers
                 return BadRequest();
             var allowed = await this._simulationService.IsTokenValid(body);
             if (!allowed) 
-                return Forbid();
+                return BadRequest();
 
             var user = this._simulationService.GetSimulationUser(body.SimulationId, body.Token);
             await this.HubContext.Groups.AddToGroupAsync(body.ConnectionId, $"sim_{body.SimulationId}");
@@ -422,58 +437,12 @@ namespace MUNityCore.Controllers
             return Ok(true);
         }
 
-        [HttpPost]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<ActionResult<CreatedVoteModel>> CreateVoting([FromBody]MUNity.Schema.Simulation.CreateSimulationVoting body)
-        {
-            var simulation = this._simulationService.GetSimulationWithHubsUsersAndRoles(body.SimulationId);
-            if (simulation == null) return NotFound("Simulation not found!");
-            var user = simulation.Users.FirstOrDefault(n => n.Token == body.Token);
-            if (user == null || user.Role == null || user.Role.RoleType != RoleTypes.Chairman) return Forbid();
-            var voting = new CreatedVoteModel()
-            {
-                CreatedVoteModelId = Guid.NewGuid().ToString(),
-                Text = body.Text,
-                AllowAbstention = body.AllowAbstention,
-            };
-            if (body.Mode == EVotingMode.Everyone)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any()).Select(n => n.SimulationUserId).ToList();
-            else if (body.Mode == EVotingMode.AllParticipants)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType != RoleTypes.Chairman)
-                    .Select(n => n.SimulationUserId).ToList();
-            else if (body.Mode == EVotingMode.JustDelegates)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == RoleTypes.Delegate)
-                    .Select(n => n.SimulationUserId).ToList();
-            else if (body.Mode == EVotingMode.JustGuests)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == RoleTypes.Spectator)
-                    .Select(n => n.SimulationUserId).ToList();
-            else if (body.Mode == EVotingMode.JustNgos)
-                voting.AllowedUsers = simulation.Users.Where(n => n.HubConnections.Any() && n.Role != null && n.Role.RoleType == RoleTypes.Ngo)
-                    .Select(n => n.SimulationUserId).ToList();
-
-            await this.HubContext.Clients.Group($"sim_{body.SimulationId}").VoteCreated(voting);
-            return Ok(voting);
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        [AllowAnonymous]
-        public async Task<ActionResult> Vote([FromHeader]string simsimtoken, int simulationId, string voteId, int choice)
-        {
-            var user = this._simulationService.GetSimulationUser(simulationId, simsimtoken);
-            if (user == null) return Forbid();
-            var args = new MUNity.Schema.Simulation.VotedEventArgs(voteId, user.SimulationUserId, choice);
-            await this.HubContext.Clients.Group($"sim_{simulationId}").Voted(args);
-            return Ok();
-        }
-
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<List<SimulationSlotDto>>> Slots([FromHeader]string simsimtoken, int simulationId)
         {
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            if (!isAllowed) Forbid();
+            if (!isAllowed) BadRequest();
 
             List<SimulationSlotDto> slots = this._simulationService.GetSlots(simulationId);
             return Ok(slots);
@@ -486,7 +455,7 @@ namespace MUNityCore.Controllers
             var isAllowed = await this._simulationService.IsTokenValidAndUserAdmin(request);
             if (!isAllowed)
                 isAllowed = await this._simulationService.IsTokenValidAndUserChair(request);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
 
             List<SimulationHubConnection> hubConnections = this._simulationService.GetHubConnections(request.SimulationId);
             foreach(var connection in hubConnections)

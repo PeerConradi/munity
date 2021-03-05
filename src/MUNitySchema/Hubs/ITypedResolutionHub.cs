@@ -56,5 +56,6 @@ namespace MUNity.Hubs
         Task AmendmentRemoved(string amendmentId);
         Task MoveAmendmentCreated(MoveAmendmentCreatedEventArgs dto);
         Task AmendmentSubmitted(string amendmentId);
+        Task HeaderSupportersChanged(HeaderStringPropChangedEventArgs args);
     }
 }

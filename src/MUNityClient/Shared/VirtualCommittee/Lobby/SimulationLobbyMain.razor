@@ -5,8 +5,7 @@
 @* Dies ist eine Teilnehmendenansicht an dieser Stelle werden den Nutzern Rollen zugewiesen bzw. können sich diese ihre Rollen auswählen. *@
 @if (ViewModel?.Simulation != null)
 {
-    @if (ViewModel.MyAuth != null && ViewModel.MyAuth.CanCreateRole || ViewModel.MyRole != null &&
-       ViewModel.MyRole.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+    @if (ViewModel.MySlot != null && (ViewModel.MySlot.CanCreateRole || ViewModel.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman))
     {
         <div class="row mx-0 p-0 mb-3">
             <div class="col-12 m-0 p-0 d-flex justify-content-between">
@@ -39,7 +38,7 @@
                         <a href="/sim/home" class="btn btn-danger btn-sm">Raum verlassen</a> @ViewModel.Simulation.Name
                     </div>
                     <div class="card-body p-0">
-                        @if (ViewModel.MyAuth.CanCreateRole)
+                        @if (ViewModel.MySlot.CanCreateRole)
                         {
                             <AdminUserList ViewModel="@ViewModel"></AdminUserList>
                         }

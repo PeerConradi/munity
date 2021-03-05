@@ -39,7 +39,7 @@ namespace MUNityCore.Controllers.Simulation
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChair(agendaItem);
             if (!isAllowed) isAllowed = await this._simulationService.IsTokenValidAndUserAdmin(agendaItem);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
 
             var item = await this._simulationService.CreateAgendaItem(agendaItem);
             if (item == null) return BadRequest();
@@ -61,7 +61,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<ActionResult<IEnumerable<AgendaItemDto>>> AgendaItems([FromHeader] string simsimtoken, int simulationId, bool withPetitions = false)
         {
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             if (withPetitions)
             {
                 var dto = await this._simulationService.GetAgendaItemsAndPetitionsDto(simulationId);
@@ -72,6 +72,20 @@ namespace MUNityCore.Controllers.Simulation
                 var agendaItems = await this._simulationService.GetAgendaItems(simulationId);
                 return Ok(agendaItems);
             }
+        }
+
+        [HttpPut]
+        [Route("[action]")]
+        public async Task<IActionResult> DeleteAgendaItem([FromBody]AgendaItemRequest body)
+        {
+            var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
+            if (!isAllowed) return BadRequest();
+
+            bool success = this._simulationService.DeleteAgendaItem(body.AgendaItemId);
+
+            _ = this.SocketGroup(body)?.AgendaItemRemoved(body.AgendaItemId).ConfigureAwait(false);
+
+            return Ok();
         }
     }
 }

@@ -67,7 +67,7 @@
     }
 
     <td>
-        @if (this.ViewModel.Me.SimulationUserId != User.SimulationUserId)
+        @if (this.ViewModel.MySlot.SimulationUserId != User.SimulationUserId)
         {
             <a @onclick="() => UserRemoveClicked.InvokeAsync(User.SimulationUserId)"><i class="fas fa-trash"></i></a>
         }

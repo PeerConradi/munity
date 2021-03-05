@@ -25,7 +25,7 @@ namespace MUNity.Schema.Simulation
         /// <summary>
         /// The Mode of the voting. Who is allowed to vote.
         /// </summary>
-        public EVotingMode Mode { get; set; }
+        public EVotingMode Mode { get; set; } = EVotingMode.JustDelegates;
 
         /// <summary>
         /// The time when the voting should be done. Set this to null if you want the voting to be

@@ -74,7 +74,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateHeaderName([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -92,7 +92,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateHeaderFullName([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -110,7 +110,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateHeaderTopic([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
 
@@ -130,7 +130,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateHeaderAgendaItem([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -148,7 +148,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateHeaderSession([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -166,7 +166,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateHeaderSubmitterName([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -184,7 +184,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateHeaderCommitteeName([FromBody] HeaderStringPropChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -209,7 +209,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<Resolution>> GetResolution([FromHeader]string password, string id)
         {
             if (!await CanUserReadResolution(id, password))
-                return Forbid();
+                return BadRequest();
             var resolution = await this._resolutionService.GetResolution(id);
             if (resolution == null) return NotFound();
 
@@ -245,7 +245,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> AddPreambleParagraph([FromBody]PreambleParagraphAddedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -268,7 +268,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> ChangePreambleParagraphText([FromBody]PreambleParagraphTextChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -287,7 +287,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> ChangePreambleParagraphCommentText([FromBody]PreambleParagraphCommentTextChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -311,7 +311,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> DeleteResolutionPreambleParagraph([FromBody]PreambleParagraphRemovedEventArgs args)
         {
             if (!await CanUserEditResolution(args.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(args.ResolutionId);
             if (resolution.ResolutionId == null) return NotFound();
@@ -333,7 +333,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateOperativeParagraph([FromBody]OperativeParagraphChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution == null) return NotFound("Resolution with the given id not found!");
@@ -357,7 +357,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult> UpdateOperativeSection([FromBody] OperativeSectionChangedEventArgs body)
         {
             if (!await CanUserEditResolution(body.ResolutionId))
-                return Forbid();
+                return BadRequest();
 
             var resolution = await this._resolutionService.GetResolution(body.ResolutionId);
             if (resolution == null) return NotFound("Resolution with the given id not found!");
@@ -414,7 +414,7 @@ namespace MUNityCore.Controllers
             var infoModel = await _resolutionService.GetResolutionAuth(resolutionid);
 
             var canRead = await CanUserReadResolution(resolutionid);
-            if (!canRead) return Forbid();
+            if (!canRead) return BadRequest();
 
             await _hubContext.Groups.AddToGroupAsync(connectionid, resolutionid);
 

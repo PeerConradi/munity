@@ -13,7 +13,7 @@
         <tbody>
             @foreach (var user in this.ViewModel.Slots)
             {
-            <tr class="@((ViewModel.Me.SimulationUserId == user.SimulationUserId) ? "bg-light" : "")">
+            <tr class="@((ViewModel.MySlot.SimulationUserId == user.SimulationUserId) ? "bg-light" : "")">
                 <td><i class="fa fa-circle ml-2 @(user.IsOnline ? "text-success" : "text-danger")" aria-hidden="true"></i></td>
                 <td>@user?.DisplayName</td>
                 <td>@user?.RoleName</td>

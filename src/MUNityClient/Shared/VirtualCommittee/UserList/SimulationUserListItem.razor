@@ -1,6 +1,6 @@
 ﻿@inject Services.SimulationService simulationService;
 
-<div class="widget-list-item w-100 border @((User.SimulationUserId == ViewModel.Me.SimulationUserId) ? "bg-light" : "")" style="border-width: 2px !important;" >
+<div class="widget-list-item w-100 border @((User.SimulationUserId == ViewModel.MySlot.SimulationUserId) ? "bg-light" : "")" style="border-width: 2px !important;" >
     <div class="widget-list-media ">
         @if (!string.IsNullOrEmpty(User.RoleIso))
         {
@@ -29,21 +29,6 @@
         </div>
     </div>
     <div class="widget-list-action">
-        @if (_lastVoteArgs != null)
-        {
-            if (_lastVoteArgs.Choice == 0)
-            {
-                <span class="badge badge-success">Dafür</span>
-            }
-            else if (_lastVoteArgs.Choice == 1)
-            {
-                <span class="badge badge-danger">Dagegen</span>
-            }
-            else if (_lastVoteArgs.Choice == 2)
-            {
-                <span class="badge badge-primary">Enthaltung</span>
-            }
-        }
 
         @if (Petitions.Any())
         {
@@ -167,25 +152,11 @@
     {
         if (ViewModel != null)
         {
-            ViewModel.UserVoted += UserVoted;
-            ViewModel.VoteCreated += VoteCreated;
             ViewModel.UserConnected += delegate { this.StateHasChanged(); };
             ViewModel.UserDisconnected += delegate { this.StateHasChanged(); };
         }
         base.OnInitialized();
     }
 
-    private void UserVoted(object sender, MUNity.Schema.Simulation.VotedEventArgs args)
-    {
-        if (args.UserId == this.User.SimulationUserId)
-        {
-            this._lastVoteArgs = args;
-            this.StateHasChanged();
-        }
-    }
 
-    private void VoteCreated(object sender, MUNity.Schema.Simulation.CreatedVoteModel args)
-    {
-        this._lastVoteArgs = null;
-    }
 }

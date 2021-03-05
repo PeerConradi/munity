@@ -9,6 +9,7 @@ using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Models.Simulation;
 using MUNity.Schema.Simulation;
+using MUNity.Schema.Simulation.Voting;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Models.Simulation;
@@ -39,6 +40,92 @@ namespace MUNityCore.Services
                 yield return new Models.Simulation.Presets.SR_Preset();
                 yield return new Models.Simulation.Presets.WiSo_Preset();
             }
+        }
+
+        internal SimulationVoting CreateVoting(CreateSimulationVoting body)
+        {
+            var activeVotings = this._context.SimulationVotings.Where(n => n.Simulation.SimulationId == body.SimulationId
+            && n.IsActive);
+            if (activeVotings.Any())
+                foreach(var v in activeVotings)
+                    v.IsActive = false;
+
+
+            var mdl = new SimulationVoting()
+            {
+                Description = "",
+                IsActive = true,
+                Name = body.Text,
+                Simulation = this._context.Simulations.FirstOrDefault(n => n.SimulationId == body.SimulationId),
+                AllowAbstention = body.AllowAbstention
+            };
+
+            if (body.Mode == EVotingMode.AllParticipants)
+            {
+                mdl.VoteSlots = _context.SimulationUser.Where(n => n.Simulation.SimulationId == body.SimulationId &&
+                n.Role != null && n.Role.RoleType != RoleTypes.Chairman)
+                    .Select(n => new SimulationVotingSlot()
+                    {
+                        Choice = EVoteStates.NotVoted,
+                        User = n,
+                        Voting = mdl
+                    }).ToList();
+            }
+            else if (body.Mode == EVotingMode.JustDelegates)
+            {
+                mdl.VoteSlots = _context.SimulationUser.Where(n => n.Simulation.SimulationId == body.SimulationId &&
+                n.Role != null && n.Role.RoleType == RoleTypes.Delegate)
+                    .Select(n => new SimulationVotingSlot()
+                    {
+                        Choice = EVoteStates.NotVoted,
+                        User = n,
+                        Voting = mdl
+                    }).ToList();
+            }
+
+
+            this._context.SimulationVotings.Add(mdl);
+            this._context.SaveChanges();
+            return mdl;
+        }
+
+        internal bool Vote(UserVoteRequest body)
+        {
+            var slot = this._context.VotingSlots
+                .FirstOrDefault(n => n.User.Token == body.Token &&
+                n.Voting.SimulationVotingId == body.VotingId);
+            if (slot == null)
+                return false;
+
+            slot.Choice = body.Choice;
+            this._context.SaveChanges();
+            return true;
+        }
+
+        internal SimulationVotingDto GetCurrentVoting(int simulationId)
+        {
+            var voting = _context.SimulationVotings
+                .Include(n => n.VoteSlots)
+                .ThenInclude(n => n.User)
+                .FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.IsActive);
+            if (voting == null)
+                return null;
+
+            var mdl = new SimulationVotingDto()
+            {
+                Description = voting.Description,
+                Name = voting.Name,
+                Slots = voting.VoteSlots.Select(n => new SimulationVoteSlotDto()
+                {
+                    Choice = n.Choice,
+                    SimulationUserId = n.User.SimulationUserId,
+                    SimulationVoteSlotId = n.SimulationVotingSlotId,
+                    VoteTime = n.VoteTime
+                }).ToList(),
+                VotingId = voting.SimulationVotingId,
+                AllowAbstention = voting.AllowAbstention
+            };
+            return mdl;
         }
 
         internal SimulationStatus SetStatus(SetSimulationStatusDto body)
@@ -94,6 +181,18 @@ namespace MUNityCore.Services
             _context.PetitionTypes.Add(newPetitionType);
             _context.SaveChanges();
             return newPetitionType;
+        }
+
+        internal bool DeleteAgendaItem(int agendaItemId)
+        {
+            var petitionsToRemove = this._context.Petitions.Where(n => n.AgendaItem.AgendaItemId == agendaItemId);
+            if (petitionsToRemove.Any())
+                this._context.Petitions.RemoveRange(petitionsToRemove);
+
+            var agendaItemToRemove = this._context.AgendaItems.Find(agendaItemId);
+            this._context.AgendaItems.Remove(agendaItemToRemove);
+            this._context.SaveChanges();
+            return true;
         }
 
         internal bool SetUserRole(SetUserSimulationRole body)
@@ -351,6 +450,15 @@ namespace MUNityCore.Services
             agendaItem.Petitions.Add(newItem);
             _context.SaveChanges();
             return newItem;
+        }
+
+        internal bool UnlinkResolution(string resolutionId)
+        {
+            var auth = this._context.ResolutionAuths.Include(n => n.Simulation).FirstOrDefault(n => n.ResolutionId == resolutionId);
+            if (auth == null) return false;
+            auth.Simulation = null;
+            this._context.SaveChanges();
+            return true;
         }
 
         public async Task<bool> SetPhase(int simulationId, GamePhases phase)

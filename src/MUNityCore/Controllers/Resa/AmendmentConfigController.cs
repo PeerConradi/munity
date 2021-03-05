@@ -32,7 +32,7 @@ namespace MUNityCore.Controllers.Resa
         public async Task<IActionResult> AllowAmendments([FromBody]SetResolutionOnlineAmendmentState state)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(state);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
 
             bool changed = this._resolutionService.SetOnlineAmendmentMode(state);
             if (!changed) return NotFound();

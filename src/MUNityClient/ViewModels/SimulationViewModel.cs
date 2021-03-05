@@ -13,6 +13,7 @@ using MUNityClient.Extensions.Simulation;
 using System.Net.Http.Json;
 using MUNitySchema.Schema.Simulation.Resolution;
 using Microsoft.AspNetCore.Components;
+using MUNity.Schema.Simulation.Voting;
 
 namespace MUNityClient.ViewModels
 {
@@ -43,6 +44,10 @@ namespace MUNityClient.ViewModels
             await client.PutAsJsonAsync(Program.API_URL + "/api/Simulation/Roles/SetUserRole", body);
         }
 
+        public MUNity.Schema.Simulation.Voting.SimulationVotingDto ActiveVoting { get; set; }
+
+
+
         public event OnRolesChanged RolesChanged;
 
         public event EventHandler<UserRoleChangedEventArgs> UserRoleChanged;
@@ -61,18 +66,17 @@ namespace MUNityClient.ViewModels
         public delegate void OnLobbyModeChanged(int sender, MUNity.Schema.Simulation.LobbyModes mode);
         public event OnLobbyModeChanged LobbyModeChanged;
 
-        public delegate void OnChatMessageRecieved(int simId, int userId, string msg);
-        public event OnChatMessageRecieved ChatMessageRevieved;
-
         public event EventHandler<MUNity.Schema.Simulation.VotedEventArgs> UserVoted;
 
-        public event EventHandler<MUNity.Schema.Simulation.CreatedVoteModel> VoteCreated;
+        public event EventHandler<SimulationVotingDto> VoteCreated;
+
+        public event EventHandler ActiveVotingChanged;
 
         public event EventHandler<string> CurrentResolutionChanged;
 
-        
-
         public event EventHandler<AgendaItemDto> AgendaItemAdded;
+
+        public event EventHandler<int> AgendaItemRemoved;
 
         public event EventHandler<PetitionDto> PetitionAdded;
 
@@ -107,6 +111,26 @@ namespace MUNityClient.ViewModels
             else
             {
                 this.ShowError("Fehler", $"Resolution wurde nicht erstellt {result.StatusCode}");
+            }
+        }
+
+        public async Task UnlinkResolution(ResolutionSmallInfo info)
+        {
+            var body = new SimulationResolutionRequest()
+            {
+                ResolutionId = info.ResolutionId,
+                SimulationId = Simulation.SimulationId,
+                Token = Token
+            };
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync(Program.API_URL + "/api/Simulation/UnlinkResolution", body);
+            if (response.IsSuccessStatusCode)
+            {
+                this.Resolutions.Remove(info);
+            }
+            else
+            {
+                this.ShowError("Fehler", "Die Resolution konnte nicht entfernt werden!" + response.ReasonPhrase);
             }
         }
 
@@ -158,8 +182,6 @@ namespace MUNityClient.ViewModels
 
         public ObservableCollection<SimulationUserAdminDto> AdminUsers { get; set; } = new ObservableCollection<SimulationUserAdminDto>();
 
-        public IUserItem Me => MyAuth != null ? Simulation.Users.FirstOrDefault(n => n.SimulationUserId == MyAuth.SimulationUserId) : null;
-
         public SimulationStatusDto CurrentStatus { get; set; }
 
         public MUNity.Schema.Simulation.AgendaItemDto SelectedAgendaItem { get; set; }
@@ -191,6 +213,7 @@ namespace MUNityClient.ViewModels
             }
         }
 
+        [Obsolete("Use the ActiveVoting")]
         public SimulationCurrentVoting CurrentVoting { get; private set; }
 
         /// <summary>
@@ -214,18 +237,6 @@ namespace MUNityClient.ViewModels
             }
         }
 
-        [Obsolete("Use MySlot to get information about the current Role...")]
-        public SimulationRoleDto MyRole
-        {
-            get
-            {
-                if (Me == null) return null;
-                return Simulation?.Roles?.FirstOrDefault(n => n.SimulationRoleId == Me.RoleId);
-            }
-        }
-
-        public SimulationAuthDto MyAuth { get; set; }
-
         private SimulationViewModel(SimulationDto simulation, SimulationService service)
         {
             this.Simulation = simulation;
@@ -239,14 +250,15 @@ namespace MUNityClient.ViewModels
             HubConnection.On<int, GamePhases>("PhaseChanged", (id, phase) => PhaseChanged?.Invoke(id, phase));
             HubConnection.On<SimulationStatusDto>(nameof(ITypedSimulationHub.StatusChanged), (body) => StatusChanged?.Invoke(this, body));
             HubConnection.On<int, LobbyModes>("LobbyModeChanged", (id, mode) => LobbyModeChanged?.Invoke(id, mode));
-            HubConnection.On<int, int, string>("ChatMessageRecieved", (simId, usrId, msg) => ChatMessageRevieved?.Invoke(simId, usrId, msg));
-            HubConnection.On<VotedEventArgs>("Voted", (args) => UserVoted?.Invoke(this, args));
-            HubConnection.On<CreatedVoteModel>("VoteCreated", (args) => VoteCreated?.Invoke(this, args));
+            HubConnection.On<VotedEventArgs>(nameof(ITypedSimulationHub.Voted), (args) => UserVoted?.Invoke(this, args));
+            HubConnection.On<SimulationVotingDto>(nameof(ITypedSimulationHub.VoteCreated), (args) => VoteCreated?.Invoke(this, args));
             HubConnection.On<AgendaItemDto>(nameof(ITypedSimulationHub.AgendaItemAdded), (args) => this.AgendaItemAdded?.Invoke(this, args));
             HubConnection.On<PetitionDto>(nameof(ITypedSimulationHub.PetitionAdded), (args) => this.PetitionAdded?.Invoke(this, args));
             HubConnection.On<PetitionInteractedDto>(nameof(ITypedSimulationHub.PetitionDeleted), (args) => this.PetitionDeleted?.Invoke(this, args));
+            HubConnection.On<int>(nameof(ITypedSimulationHub.AgendaItemRemoved), (id) => this.AgendaItemRemoved?.Invoke(this, id));
 
             this.AgendaItemAdded += SimulationViewModel_AgendaItemAdded;
+            this.AgendaItemRemoved += SimulationViewModel_AgendaItemRemoved;
             this.PetitionAdded += SimulationViewModel_PetitionAdded;
             this.PetitionDeleted += SimulationViewModel_PetitionDeleted;
 
@@ -261,21 +273,38 @@ namespace MUNityClient.ViewModels
             this.StatusChanged += SimulationViewModel_StatusChanged;
         }
 
+        private void SimulationViewModel_AgendaItemRemoved(object sender, int e)
+        {
+            var agendaItem = this.AgendaItems.FirstOrDefault(n => n.AgendaItemId == e);
+            if (agendaItem != null)
+            {
+                this.SelectedAgendaItem = null;
+                this.AgendaItems.Remove(agendaItem);
+            }
+        }
+
         private void SimulationViewModel_StatusChanged(object sender, SimulationStatusDto e)
         {
-            Console.WriteLine("Status has changed!");
             this.CurrentStatus = e;
         }
 
         private void SimulationViewModel_UserVoted(object sender, VotedEventArgs e)
         {
-            if (this.CurrentVoting != null)
-                this.CurrentVoting.Vote(e);
+            if (this.ActiveVoting == null) return;
+
+            if (e.VoteId == this.ActiveVoting.VotingId)
+            {
+                var inVoting = this.ActiveVoting.Slots.FirstOrDefault(n => n.SimulationUserId == e.UserId);
+                if (inVoting != null)
+                {
+                    inVoting.Choice = e.Choice;
+                }
+            }
         }
 
-        private void SimulationViewModel_VoteCreated(object sender, CreatedVoteModel e)
+        private void SimulationViewModel_VoteCreated(object sender, SimulationVotingDto e)
         {
-            this.CurrentVoting = new SimulationCurrentVoting(e);
+            this.ActiveVoting = e;
         }
 
         private void SimulationViewModel_PetitionDeleted(object sender, PetitionInteractedDto e)
@@ -317,8 +346,6 @@ namespace MUNityClient.ViewModels
             return this._simulationService.DeletePetition(this.Simulation.SimulationId, petition);
         }
 
-        
-
         private void SimulationViewModel_UserConnected(int sender, SimulationUserDefaultDto user)
         {
             var userInSim = this.Slots.FirstOrDefault(n => n.SimulationUserId == user.SimulationUserId);
@@ -343,6 +370,29 @@ namespace MUNityClient.ViewModels
         public void NotifyRolesChanged()
         {
             this.RolesChanged?.Invoke(0, this.Simulation.Roles);
+        }
+
+        public async Task RemoveAgendaItem(AgendaItemDto agendaItem)
+        {
+            var client = new HttpClient();
+            var body = new MUNity.Schema.Simulation.AgendaItemRequest()
+            {
+                AgendaItemId = agendaItem.AgendaItemId,
+                SimulationId = this.Simulation.SimulationId,
+                Token = this.Token
+            };
+            var response = await client.PutAsJsonAsync(Program.API_URL + "/api/Simulation/AgendaItem/DeleteAgendaItem", body);
+            if (response.IsSuccessStatusCode)
+            {
+                if (SelectedAgendaItem == agendaItem)
+                    this.SelectedAgendaItem = null;
+
+                this.AgendaItems.Remove(agendaItem);
+            }
+            else
+            {
+                this.ShowError("Fehler", "Tagesordnungspunkt konnte nicht gelöscht werden.");
+            }
         }
 
         private void SimulationViewModel_AgendaItemAdded(object sender, AgendaItemDto e)
@@ -470,15 +520,15 @@ namespace MUNityClient.ViewModels
             {
                 if (this.PetitionTypes == null || !this.PetitionTypes.Any()) return false;
 
-                if (this.MyRole == null) return false;
+                if (this.MySlot == null) return false;
 
-                if (MyRole.RoleType == RoleTypes.Chairman)
+                if (MySlot.RoleType == RoleTypes.Chairman)
                     return this.PetitionTypes.Any(n => n.AllowChairs);
-                else if (MyRole.RoleType == RoleTypes.Delegate)
+                else if (MySlot.RoleType == RoleTypes.Delegate)
                     return this.PetitionTypes.Any(n => n.AllowDelegates);
-                else if (MyRole.RoleType == RoleTypes.Ngo)
+                else if (MySlot.RoleType == RoleTypes.Ngo)
                     return this.PetitionTypes.Any(n => n.AllowNgo);
-                else if (MyRole.RoleType == RoleTypes.Spectator)
+                else if (MySlot.RoleType == RoleTypes.Spectator)
                     return this.PetitionTypes.Any(n => n.AllowSpectator);
                 return false;
             }
@@ -486,12 +536,8 @@ namespace MUNityClient.ViewModels
 
         public async Task<HttpResponseMessage> MakePetition(PetitionTypeSimulationDto type, int agendaItemId)
         {
-            if (type == null)
-            {
-                throw new ArgumentException("No type argument given!");
-            }
 
-            if (MyAuth == null)
+            if (MySlot == null)
             {
                 Console.WriteLine("Not authenticated to make petitions!");
                 return null;
@@ -500,7 +546,7 @@ namespace MUNityClient.ViewModels
             {
                 PetitionDate = DateTime.Now,
                 PetitionTypeId = type.PetitionTypeId,
-                PetitionUserId = MyAuth.SimulationUserId,
+                PetitionUserId = MySlot.SimulationUserId,
                 TargetAgendaItemId = agendaItemId,
                 Text = "",
                 SimulationId = Simulation.SimulationId
@@ -512,16 +558,16 @@ namespace MUNityClient.ViewModels
         {
             get
             {
-                if (this.PetitionTypes == null || !this.PetitionTypes.Any() || this.MyRole == null) 
+                if (this.PetitionTypes == null || !this.PetitionTypes.Any() || this.MySlot == null) 
                     return null;
 
-                if (MyRole.RoleType == RoleTypes.Chairman)
+                if (MySlot.RoleType == RoleTypes.Chairman)
                     return this.PetitionTypes.Where(n => n.AllowChairs);
-                else if (MyRole.RoleType == RoleTypes.Delegate)
+                else if (MySlot.RoleType == RoleTypes.Delegate)
                     return this.PetitionTypes.Where(n => n.AllowDelegates);
-                else if (MyRole.RoleType == RoleTypes.Ngo)
+                else if (MySlot.RoleType == RoleTypes.Ngo)
                     return this.PetitionTypes.Where(n => n.AllowNgo);
-                else if (MyRole.RoleType == RoleTypes.Spectator)
+                else if (MySlot.RoleType == RoleTypes.Spectator)
                     return this.PetitionTypes.Where(n => n.AllowSpectator);
                 return null;
             }
@@ -546,9 +592,9 @@ namespace MUNityClient.ViewModels
             {
 
                 var loadRoles = this._simulationService.SecureGetRoles(this);
-                var loadAuth = this._simulationService.SecureGetMyAuth(this);
+                //var loadAuth = this._simulationService.SecureGetMyAuth(this);
 
-                await Task.WhenAll(loadRoles, loadAuth);
+                await Task.WhenAll(loadRoles);
 
                 _ = LoadUsersDependingAuth().ConfigureAwait(false);
 
@@ -573,10 +619,22 @@ namespace MUNityClient.ViewModels
                 this.Simulation.Users.Clear();
                 this.Simulation.Users.AddRange(users);
             }
+        }
 
-            if (Me != null)
+        public async Task ReloadActiveVoting()
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("simsimtoken", this.Token);
+            var response = await client.GetAsync(Program.API_URL + $"/api/Sim/Voting/GetActiveVote?simulationId={this.Simulation.SimulationId}");
+            if (response.IsSuccessStatusCode)
             {
-                Me.IsOnline = true;
+                Console.WriteLine("Abstimmung aktualisiert!");
+                this.ActiveVoting = await response.Content.ReadFromJsonAsync<MUNity.Schema.Simulation.Voting.SimulationVotingDto>();
+                this.ActiveVotingChanged?.Invoke(this, new EventArgs());
+            }
+            else
+            {
+                this.ActiveVoting = null;
             }
         }
 
@@ -615,6 +673,39 @@ namespace MUNityClient.ViewModels
                     this.Slots.Add(slot);
                     //AdminUsers.Add(newUser);
                 }
+            }
+        }
+
+        public async Task CreateVoting(CreateSimulationVoting request)
+        {
+            request.Token = this.Token;
+            request.SimulationId = this.Simulation.SimulationId;
+            var client = new HttpClient();
+            var response = await client.PostAsJsonAsync(Program.API_URL + "/api/Sim/Voting/Create", request);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Abstimmung erstellt!");
+            }
+            else
+            {
+                this.ShowError("Fehler", "Die Abstimmung konnte nicht erstellt werden!" + response.ReasonPhrase);
+            }
+        }
+
+        public async Task VoteInActiveVoting(MUNity.Schema.Simulation.EVoteStates choice)
+        {
+            var body = new MUNity.Schema.Simulation.Voting.UserVoteRequest()
+            {
+                Choice = choice,
+                SimulationId = this.Simulation.SimulationId,
+                Token = this.Token,
+                VotingId = this.ActiveVoting.VotingId
+            };
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync(Program.API_URL + "/api/Sim/Voting/Vote", body);
+            if (!response.IsSuccessStatusCode)
+            {
+                this.ShowError("Fehler", "Simme konnte nicht abgegeben werden!");
             }
         }
     }

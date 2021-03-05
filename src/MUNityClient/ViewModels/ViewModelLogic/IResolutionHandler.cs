@@ -17,6 +17,8 @@ namespace MUNityClient.ViewModels.ViewModelLogic
 
         Task SetSubmitterName(string submitterName);
 
+        Task SetSupporterNames(string supporters);
+
         Task SetCommitteeName(string committeeName);
 
         Task SetSession(string session);

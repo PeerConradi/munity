@@ -289,19 +289,19 @@ namespace MUNityClient.Services
             return await client.GetFromJsonAsync<ICollection<MUNity.Schema.Simulation.SimulationUserDefaultDto>>($"/api/Simulation/GetUsersDefault?id={simulationId}");
         }
 
-        public async Task SecureGetMyAuth(SimulationViewModel viewModel)
-        {
-            var client = GetSimulationClient(viewModel);
-            var response = await client.GetAsync($"/api/Simulation/GetSimulationAuth?id={viewModel.Simulation.SimulationId}");
-            if (response.IsSuccessStatusCode)
-            {
-                viewModel.MyAuth = await response.Content.ReadFromJsonAsync<SimulationAuthDto>();
-            }
-            else
-            {
-                viewModel.ShowError("Unable to get Authentication", $"Problem when loading your authentication for the simulation. Error code: {response.StatusCode}");
-            }
-        }
+        //public async Task SecureGetMyAuth(SimulationViewModel viewModel)
+        //{
+        //    var client = GetSimulationClient(viewModel);
+        //    var response = await client.GetAsync($"/api/Simulation/GetSimulationAuth?id={viewModel.Simulation.SimulationId}");
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        viewModel.MyAuth = await response.Content.ReadFromJsonAsync<SimulationAuthDto>();
+        //    }
+        //    else
+        //    {
+        //        viewModel.ShowError("Unable to get Authentication", $"Problem when loading your authentication for the simulation. Error code: {response.StatusCode}");
+        //    }
+        //}
 
         public async Task<string> GetListOfSpeakerId(int simulationId)
         {

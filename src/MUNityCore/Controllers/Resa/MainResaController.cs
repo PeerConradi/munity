@@ -70,7 +70,7 @@ namespace MUNityCore.Controllers.Resa
             //var infoModel = await _resolutionService.GetResolutionAuth(resolutionid);
 
             //var canRead = await CanUserReadResolution(resolutionid);
-            //if (!canRead) return Forbid();
+            //if (!canRead) return BadRequest();
 
             await _hubContext.Groups.AddToGroupAsync(connectionid, resolutionid);
 
@@ -94,7 +94,7 @@ namespace MUNityCore.Controllers.Resa
         {
             var allowed = await simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!allowed)
-                return Forbid();
+                return BadRequest();
 
             this._resolutionService.AllowOnlineAmendments(body.ResolutionId);
 
@@ -108,7 +108,7 @@ namespace MUNityCore.Controllers.Resa
         {
             var allowed = await simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!allowed)
-                return Forbid();
+                return BadRequest();
 
             this._resolutionService.DisableOnlineAmendments(body.ResolutionId);
 
@@ -122,7 +122,7 @@ namespace MUNityCore.Controllers.Resa
         {
             var allowed = await simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!allowed)
-                return Forbid();
+                return BadRequest();
 
             this._resolutionService.EnablePublicEdit(body.ResolutionId);
 
@@ -136,7 +136,7 @@ namespace MUNityCore.Controllers.Resa
         {
             var allowed = await simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!allowed)
-                return Forbid();
+                return BadRequest();
 
             this._resolutionService.DisablePublicEdit(body.ResolutionId);
 

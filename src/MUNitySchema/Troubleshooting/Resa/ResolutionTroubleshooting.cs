@@ -53,7 +53,6 @@ namespace MUNity.Troubleshooting.Resa
                     { "Name", resolution.Header?.Name },
                     { "Session", resolution.Header?.Session },
                     { "SubmitterName", resolution.Header?.SubmitterName },
-                    { "Supporters", resolution.Header?.Supporters },
                     { "Topic", resolution.Header?.Topic }
                 };
 
@@ -78,7 +77,6 @@ namespace MUNity.Troubleshooting.Resa
                 if (resolution.Header.Name == null) resolution.Header.Name = string.Empty;
                 if (resolution.Header.Session == null) resolution.Header.Session = string.Empty;
                 if (resolution.Header.SubmitterName == null) resolution.Header.SubmitterName = string.Empty;
-                if (resolution.Header.Supporters == null) resolution.Header.Supporters = new List<ResolutionSupporter>();
                 if (resolution.Header.Topic == null) resolution.Header.Topic = string.Empty;
                 return true;
             }

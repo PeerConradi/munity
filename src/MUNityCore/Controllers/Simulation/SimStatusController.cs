@@ -34,7 +34,7 @@ namespace MUNityCore.Controllers.Simulation
         public async Task<IActionResult> CurrentStatus([FromBody]SetSimulationStatusDto body)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChair(body);
-            if (!isAllowed) return Forbid();
+            if (!isAllowed) return BadRequest();
             var createdStatus = this._simulationService.SetStatus(body);
 
             var newStatusSocketMessage = new SimulationStatusDto()

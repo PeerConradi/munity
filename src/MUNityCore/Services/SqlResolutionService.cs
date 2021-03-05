@@ -131,6 +131,17 @@ namespace MUNityCore.Services
             }
         }
 
+        internal async Task<bool> SetSupportersAsync(string resolutionId, string text)
+        {
+            var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
+            if (reso == null)
+                return false;
+
+            reso.SupporterNames = text;
+            await this._context.SaveChangesAsync();
+            return true;
+        }
+
         internal void DisablePublicEdit(string resolutionId)
         {
             var auth = this._context.ResolutionAuths.FirstOrDefault(n => n.ResolutionId == resolutionId);
@@ -728,11 +739,7 @@ namespace MUNityCore.Services
                 Session = resolutionElement.Session,
                 SubmitterName = resolutionElement.SubmitterName,
                 Topic = resolutionElement.Topic,
-                Supporters = resolutionElement.Supporters.Select(n => new ResolutionSupporter()
-                {
-                    Name = n.Name,
-                    ResolutionSupporterId = n.ResaSupporterId
-                }).ToList()
+                SupporterNames = resolutionElement.SupporterNames
             };
             return header;
         }

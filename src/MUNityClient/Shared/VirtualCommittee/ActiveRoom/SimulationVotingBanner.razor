@@ -1,61 +1,105 @@
-﻿@if (ViewModel.CurrentVoting != null)
+﻿@if (this.CurrentVoting != null)
 {
-<div class="">
-    <h3>@ViewModel.CurrentVoting.Text</h3>
+    <h3>@this.CurrentVoting.Name</h3>
     <br />
     <b>Abgegebene Stimmen: </b>
     <div class="progress mb-3">
         <div class="progress-bar"
              role="progressbar"
-             style="width: @(ViewModel.CurrentVoting.TotalVotes * 100 / ViewModel.CurrentVoting.AllowedUsers.Count)%"
-             aria-valuenow="@(ViewModel.CurrentVoting.TotalVotes * 100 / ViewModel.CurrentVoting.AllowedUsers.Count)"
+             style="width: @(this.CurrentVoting.ValidVotes * 100 / this.CurrentVoting.Slots.Count)%"
+             aria-valuenow="@(this.CurrentVoting.ValidVotes * 100 / this.CurrentVoting.Slots.Count)"
              aria-valuemin="0"
              aria-valuemax="100">
-            @ViewModel.CurrentVoting.TotalVotes/@ViewModel.CurrentVoting.AllowedUsers.Count (@(ViewModel.CurrentVoting.TotalVotes * 100 / ViewModel.CurrentVoting.AllowedUsers.Count)%)
+            @this.CurrentVoting.ValidVotes/@this.CurrentVoting.TotalVotes (@(this.CurrentVoting.ValidVotes * 100 / this.CurrentVoting.Slots.Count)%)
         </div>
     </div>
-    <span>@ViewModel.CurrentVoting.TotalVotes / @ViewModel.CurrentVoting.AllowedUsers.Count</span>
+    <span>@this.CurrentVoting.TotalVotes / @this.CurrentVoting.Slots.Count</span>
     <b>Stimmverhältis:</b>
     <div class="progress d-flex">
-        @if (ViewModel.CurrentVoting.ProVotes + ViewModel.CurrentVoting.ContraVotes > 0)
+        @if (this.CurrentVoting.ProVotes + this.CurrentVoting.ContraVotes > 0)
         {
             <div class="progress-bar bg-success" role="progressbar" 
-                 style="width: @ViewModel.CurrentVoting.PercentagePro%" 
-                 aria-valuenow="@ViewModel.CurrentVoting.PercentagePro" 
+                 style="width: @this.CurrentVoting.PercentagePro%" 
+                 aria-valuenow="@this.CurrentVoting.PercentagePro" 
                  aria-valuemin="0" aria-valuemax="100">
-        <span class="textInBar">@ViewModel.CurrentVoting.ProVotes/@ViewModel.CurrentVoting.Choices.Count (@ViewModel.CurrentVoting.PercentagePro %)</span></div>
+        <span class="textInBar">@this.CurrentVoting.ProVotes/@this.CurrentVoting.Slots.Count (@this.CurrentVoting.PercentagePro %)</span></div>
         }
 
-        @if (ViewModel.CurrentVoting.AllowAbstention && ViewModel.CurrentVoting.TotalVotes > 0)
+        @if (this.CurrentVoting.AllowAbstention && this.CurrentVoting.TotalVotes > 0)
         {
-            <div class="progress-bar bg-primary" role="progressbar" style="width: @ViewModel.CurrentVoting.PercentageAbstention%" 
-                 aria-valuenow="@ViewModel.CurrentVoting.PercentageAbstention" aria-valuemin="0" aria-valuemax="100">
-                <span class="textInBar">@ViewModel.CurrentVoting.AbstentionVotes/@ViewModel.CurrentVoting.TotalVotes 
-                (@ViewModel.CurrentVoting.PercentageAbstention%)</span></div>
+            <div class="progress-bar bg-primary" role="progressbar" style="width: @this.CurrentVoting.PercentageAbstention%" 
+                 aria-valuenow="@this.CurrentVoting.PercentageAbstention" aria-valuemin="0" aria-valuemax="100">
+                <span class="textInBar">@this.CurrentVoting.AbstentionVotes/@this.CurrentVoting.TotalVotes 
+                (@this.CurrentVoting.PercentageAbstention%)</span></div>
         }
 
-        @if (ViewModel.CurrentVoting.AllowedUsers.Count - ViewModel.CurrentVoting.TotalVotes > 0)
+        @if (this.CurrentVoting.Slots.Count - this.CurrentVoting.TotalVotes > 0)
         {
-            <div class="progress-bar bg-dark" role="progressbar" style="width: @ViewModel.CurrentVoting.PercentageMissing%" 
+            <div class="progress-bar bg-dark" role="progressbar" style="width: @this.CurrentVoting.PercentageMissing%" 
                  aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-        <span class="textInBar">@(ViewModel.CurrentVoting.AllowedUsers.Count - ViewModel.CurrentVoting.TotalVotes)</span></div>
+        <span class="textInBar">@(this.CurrentVoting.Slots.Count - this.CurrentVoting.TotalVotes)</span></div>
         }
 
-        @if (ViewModel.CurrentVoting.ValidVotes > 0)
+        @if (this.CurrentVoting.ValidVotes > 0)
         {
             <div class="progress-bar bg-danger" role="progressbar" 
-                 style="width: @ViewModel.CurrentVoting.PercentageContra%" 
-                 aria-valuenow="@ViewModel.CurrentVoting.PercentageContra" 
+                 style="width: @this.CurrentVoting.PercentageContra%" 
+                 aria-valuenow="@this.CurrentVoting.PercentageContra" 
                  aria-valuemin="0" aria-valuemax="100">
-        <span class="textInBar">@ViewModel.CurrentVoting.ContraVotes/@ViewModel.CurrentVoting.TotalVotes (@ViewModel.CurrentVoting.PercentageContra %)</span></div>
+        <span class="textInBar">@this.CurrentVoting.ContraVotes/@this.CurrentVoting.TotalVotes (@this.CurrentVoting.PercentageContra %)</span></div>
         }
 
     </div>
     <div class="row p-0 m-0 mb-3">
-        <span class="text-success col-6 p-0 d-flex justify-content-start">Dafür @ViewModel.CurrentVoting.PercentagePro %</span>
-        <span class="text-danger col-6 p-0 d-flex justify-content-end">Dagegen @ViewModel.CurrentVoting.PercentageContra %</span>
+        <span class="text-success col-6 p-0 d-flex justify-content-start">Dafür @this.CurrentVoting.PercentagePro %</span>
+        <span class="text-danger col-6 p-0 d-flex justify-content-end">Dagegen @this.CurrentVoting.PercentageContra %</span>
     </div>
-</div>
+
+    
+    <div class="row p-0 m-0 mb-3">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Ergebnis</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var vote in this.CurrentVoting.Slots)
+                {
+                    <tr>
+                        <td>@ViewModel.Slots.FirstOrDefault(n => n.SimulationUserId == vote.SimulationUserId)?.RoleName</td>
+                        <td>
+                            @if (vote.Choice == MUNity.Schema.Simulation.EVoteStates.Pro)
+                            {
+                                <span class="badge badge-success">Dafür</span>
+                            }
+                            else if (vote.Choice == MUNity.Schema.Simulation.EVoteStates.Con)
+                            {
+                                <span class="badge badge-danger">Dagegen</span>
+                            }
+                            else if (vote.Choice == MUNity.Schema.Simulation.EVoteStates.Abstention)
+                            {
+                                <span class="badge badge-primary">Enthaltung</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>Keine Abstimmung gefunden</p>
+    @if (this.ViewModel.ActiveVoting == null)
+    {
+        <p>Kein Aktive voting</p>
+    }
+    else
+    {
+        <p>Es gibt ein ActiveVoting</p>
+    }
 }
 
 
@@ -63,13 +107,27 @@
     [Parameter]
     public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
+    private MUNityClient.ViewModels.SimulationCurrentVoting CurrentVoting { get; set; }
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
         if (ViewModel != null)
         {
+
             ViewModel.VoteCreated += delegate { this.StateHasChanged(); };
             ViewModel.UserVoted += delegate { this.StateHasChanged(); };
+            ViewModel.ActiveVotingChanged += delegate { ReloadActiveVotingModel(); };
         }
+    }
+
+    private void ReloadActiveVotingModel()
+    {
+        if (ViewModel.ActiveVoting != null)
+        {
+            CurrentVoting = new ViewModels.SimulationCurrentVoting(ViewModel.ActiveVoting);
+            this.StateHasChanged();
+        }
+        
     }
 }

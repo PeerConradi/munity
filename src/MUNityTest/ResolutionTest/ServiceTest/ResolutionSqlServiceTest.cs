@@ -75,42 +75,6 @@ namespace MUNityCoreTest.ResolutionTest.ServiceTest
         }
 
         [Test]
-        [Order(4)]
-        public async Task AddSupporterOne()
-        {
-            bool success = await _service.AddSupporterAsync(resolutionId, "Supporter One");
-            Assert.IsTrue(success);
-            var resolution = this._context.Resolutions.Find(resolutionId);
-            Assert.NotNull(resolution);
-            Assert.IsTrue(resolution.Supporters.Any(n => n.Name == "Supporter One"));
-            Assert.NotNull(resolution.Supporters[0]);
-            Assert.NotNull(resolution.Supporters[0].ResaSupporterId);
-            Assert.Greater(resolution.Supporters[0].ResaSupporterId.Length, 0);
-        }
-
-        [Test]
-        [Order(5)]
-        public async Task AddSupporterTwo()
-        {
-            bool success = await _service.AddSupporterAsync(resolutionId, "Supporter Two");
-            Assert.IsTrue(success);
-            var resolution = this._context.Resolutions.Find(resolutionId);
-            Assert.AreEqual(2, resolution.Supporters.Count);
-        }
-
-        [Test]
-        [Order(6)]
-        public async Task RemoveSupporterTwo()
-        {
-            var supporter = this._context.ResolutionSupporters.FirstOrDefault(n => n.Name == "Supporter Two");
-            Assert.NotNull(supporter);
-            bool success = await _service.RemoveSupporterAsync(supporter.ResaSupporterId);
-            Assert.IsTrue(success);
-            var resolution = this._context.Resolutions.Find(resolutionId);
-            Assert.AreEqual(1, resolution.Supporters.Count);
-        }
-
-        [Test]
         [Order(7)]
         public void AddPreambleParagraph()
         {
@@ -339,7 +303,6 @@ namespace MUNityCoreTest.ResolutionTest.ServiceTest
             Assert.NotNull(resolution);
             Assert.AreEqual(resolutionDb.Topic, resolution.Header.Topic);
             Assert.AreEqual(resolutionDb.SubmitterName, resolution.Header.SubmitterName);
-            Assert.AreEqual(resolutionDb.Supporters.Count, resolution.Header.Supporters.Count);
 
             Assert.NotNull(resolution.Preamble);
             Assert.AreEqual(2, resolution.Preamble.Paragraphs.Count);
