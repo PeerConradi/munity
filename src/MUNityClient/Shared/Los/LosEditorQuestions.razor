@@ -50,7 +50,10 @@
 
     </div>
     <div class="col-12 mx-0 px-0">
-        <h5>Fragen und Kurzbemerkungen</h5>
+        <div class="row my-3 col-4 d-flex align-items-center">
+            <h5 class="m-0 p-0">Fragen und Kurzbemerkungen</h5>
+            <i type="button" class="fas fa-trash text-danger ml-2" @onclick="ClearFuKlist" title="Liste komplett leeren"></i>
+        </div>
         @foreach (var question in ViewModel.SourceList.Questions)
         {
             <div @onclick="() => RemoveSpeaker(question)" class="border mx-0 p-2" title="Aus Liste entfernen">
@@ -99,6 +102,7 @@
 
     private Models.ListOfSpeaker.SpeakerToAdd NewCommentator = new Models.ListOfSpeaker.SpeakerToAdd();
 
+    
     private EventCallback AddToQuestions()
     {
         if (NewCommentator.Name != null && NewCommentator.Name.Length > 2)
@@ -152,5 +156,12 @@
     private void RemoveSpeaker(MUNity.Models.ListOfSpeakers.Speaker speaker)
     {
         this.ViewModel.Handler.Remove(speaker);
+    }
+
+    private void ClearFuKlist()
+    {
+        foreach(var question in this.ViewModel.SourceList.Questions){
+            this.ViewModel.Handler.Remove(question);
+        }
     }
 }

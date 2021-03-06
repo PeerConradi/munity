@@ -62,7 +62,10 @@
     </div>
 
     <div>
-        <h5>Warteliste</h5>
+        <div class="row my-3 col-4 d-flex align-items-center">
+            <h5 class="m-0 p-0">Warteliste</h5>
+            <i type="button" class="fas fa-trash text-danger ml-2" @onclick="ClearSpeakerlist" title="Liste komplett leeren"></i>
+        </div>
         @foreach (var speaker in ViewModel.SourceList.Speakers)
         {
             <div @onclick="() => RemoveSpeaker(speaker)" class="border mx-0 p-2" title="Aus Liste entfernen">
@@ -114,6 +117,13 @@
     private void RemoveSpeaker(MUNity.Models.ListOfSpeakers.Speaker speaker)
     {
         this.ViewModel.Handler.Remove(speaker);
+    }
+
+    private void ClearSpeakerlist()
+    {
+        foreach(var speaker in this.ViewModel.SourceList.Speakers){
+            this.ViewModel.Handler.Remove(speaker);
+        }
     }
 
     private EventCallback AddToSpeakers()
