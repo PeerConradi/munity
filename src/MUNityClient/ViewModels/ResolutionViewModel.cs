@@ -90,13 +90,6 @@ namespace MUNityClient.ViewModels
             _isOnlineResolution = isOnline;
             this._resolutionService = resolutionService;
             Resolution = resolution;
-            if (isOnline)
-            {
-                IgnoreTransactions = new List<string>();
-                HubConnection = new HubConnectionBuilder().WithUrl($"{Program.API_URL}/resasocket").Build();
-
-                var manipulator = new ViewModelLogic.ResolutionSocketViewModelManipulator(this);
-            }
         }
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
             {
                 if (_roleId != value)
                 {
-                    this.ViewModel.SetUserRole(this.User.SimulationUserId, value);
+                    _ = this.ViewModel.SetUserRole(this.User.SimulationUserId, value);
                     _roleId = value;
                 }
             }

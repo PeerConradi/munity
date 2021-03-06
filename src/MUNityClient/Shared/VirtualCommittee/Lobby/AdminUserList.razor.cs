@@ -20,14 +20,14 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
         [Parameter]
         public MUNityClient.ViewModels.SimulationViewModel ViewModel { get; set; }
 
-        private Boolean showPasswords = false;
+
         public List<MUNity.Schema.Simulation.SimulationUserAdminDto> Users
         {
             get;
             set;
         }
 
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
             if (ViewModel != null)
             {
@@ -37,6 +37,7 @@ namespace MUNityClient.Shared.VirtualCommittee.Lobby
                 ViewModel.UserRoleChanged += delegate { this.StateHasChanged(); };
                 ViewModel.AdminUsers.CollectionChanged += delegate { this.StateHasChanged(); };
             }
+            return base.OnInitializedAsync();
         }
 
         private async Task<EventCallback> OnUserRemoved(int userId)

@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using Microsoft.JSInterop;
 using MUNityClient;
 using MUNityClient.Shared;
-using System.Net.Http.Json;
 
 namespace MUNityClient.Pages.LoS
 {

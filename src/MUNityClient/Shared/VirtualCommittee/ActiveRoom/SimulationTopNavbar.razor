@@ -209,7 +209,7 @@ else
         {
             if (_statusText == value) return;
             _statusText = value;
-            this.ViewModel.SetStatus(value);
+            _ = this.ViewModel.SetStatus(value).ConfigureAwait(false);
         }
     }
 

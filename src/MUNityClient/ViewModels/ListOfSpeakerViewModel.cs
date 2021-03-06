@@ -75,7 +75,7 @@ namespace MUNityClient.ViewModels
         {
             var list = await service.GetListOfSpeakersOffline(listId);
             var mdl = new ListOfSpeakerViewModel(list, service);
-            mdl.Handler = new ViewModelLogic.ListOfSpeakerOfflineHandler();
+            //mdl.Handler = new ViewModelLogic.ListOfSpeakerOfflineHandler();
             return mdl;
         }
 

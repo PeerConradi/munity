@@ -22,7 +22,7 @@
                         }
                         @if (this.ResolutionInfo.AllowAmendments)
                         {
-                            <button type="button" class="btn btn-primary" @onclick="() => { RefreshResolutionInfo(); NewAmendmentModal?.Open(); }">Änderungsantrag</button>
+                            <button type="button" class="btn btn-primary" @onclick="async () => { await RefreshResolutionInfo(); NewAmendmentModal?.Open(); }">Änderungsantrag</button>
                         }
                     }
 
@@ -92,10 +92,18 @@ else if (this.LayoutWrapper.ResolutionMode == ActiveRoomLayoutWrapper.Resolution
 
     private async Task RefreshResolutionInfo()
     {
-        this.ResolutionInfo = await resolutionService.GetInfo(this.SimulationViewModelInstance.CurrentResolutionId);
-        if (!this.ResolutionInfo.AllowPublicEdit && SimulationViewModelInstance.MySlot.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman)
+        try
         {
-            this.LayoutWrapper.ResolutionMode = ActiveRoomLayoutWrapper.ResolutionModes.Read;
+            this.ResolutionInfo = await resolutionService.GetInfo(this.SimulationViewModelInstance.CurrentResolutionId);
+            if (!this.ResolutionInfo.AllowPublicEdit && SimulationViewModelInstance.MySlot.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman)
+            {
+                this.LayoutWrapper.ResolutionMode = ActiveRoomLayoutWrapper.ResolutionModes.Read;
+            }
         }
+        catch
+        {
+            Console.WriteLine("Es kam zu einem unerwarteten Fehler");
+        }
+        
     }
 }
