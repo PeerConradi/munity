@@ -7,9 +7,4 @@ namespace MUNity.Schema.Simulation
         [Required]
         public string Titel { get; set; }
     }
-
-    public class SimulationResolutionRequest : SimulationRequest
-    {
-        public string ResolutionId { get; set; }
-    }
 }

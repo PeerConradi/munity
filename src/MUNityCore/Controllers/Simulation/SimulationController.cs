@@ -323,7 +323,7 @@ namespace MUNityCore.Controllers
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<IActionResult> UnlinkResolution([FromBody]SimulationResolutionRequest body)
+        public async Task<IActionResult> UnlinkResolution([FromBody] MUNity.Schema.Simulation.Resolution.SimulationResolutionRequest body)
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!isAllowed)

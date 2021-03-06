@@ -114,7 +114,7 @@ namespace MUNityClient.ViewModels
 
         public async Task UnlinkResolution(ResolutionSmallInfo info)
         {
-            var body = new SimulationResolutionRequest()
+            var body = new MUNity.Schema.Simulation.Resolution.SimulationResolutionRequest()
             {
                 ResolutionId = info.ResolutionId,
                 SimulationId = Simulation.SimulationId,
