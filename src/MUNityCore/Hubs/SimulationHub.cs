@@ -23,7 +23,8 @@ namespace MUNityCore.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            ConnectionUsers.ConnectionIds.Remove(Context.ConnectionId);
+            bool outVal = true;
+            ConnectionUsers.ConnectionIds.TryRemove(Context.ConnectionId, out outVal);
             if (this.Context?.ConnectionId != null && this._service != null)
             {
                 await this._service.RemoveConnectionKey(this.Context.ConnectionId);
@@ -33,7 +34,7 @@ namespace MUNityCore.Hubs
 
         public override Task OnConnectedAsync()
         {
-            ConnectionUsers.ConnectionIds.Add(Context.ConnectionId);
+            ConnectionUsers.ConnectionIds.TryAdd(Context.ConnectionId, true);
             return base.OnConnectedAsync();
         }
 
@@ -41,6 +42,7 @@ namespace MUNityCore.Hubs
 
     public static class ConnectionUsers
     {
-        public static List<string> ConnectionIds { get; set; } = new List<string>();
+
+        public static System.Collections.Concurrent.ConcurrentDictionary<string, bool> ConnectionIds { get; set; }
     }
 }
