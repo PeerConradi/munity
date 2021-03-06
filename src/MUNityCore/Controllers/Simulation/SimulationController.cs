@@ -419,9 +419,14 @@ namespace MUNityCore.Controllers
 
             var user = this._simulationService.GetSimulationUser(body.SimulationId, body.Token);
             await this.HubContext.Groups.AddToGroupAsync(body.ConnectionId, $"sim_{body.SimulationId}");
-            await this._simulationService.AddUserSubscribtion(user, body.ConnectionId);
+            
 
-            await this.HubContext.Clients.Group($"sim_{body.SimulationId}").UserConnected(body.SimulationId, user.AsSimulationUserDefaultDto());
+            if (user != null)
+            {
+                await this._simulationService.AddUserSubscribtion(user, body.ConnectionId);
+                await this.HubContext.Clients.Group($"sim_{body.SimulationId}").UserConnected(body.SimulationId, user.AsSimulationUserDefaultDto());
+            }
+            
             return Ok(true);
         }
 
@@ -434,14 +439,18 @@ namespace MUNityCore.Controllers
 
             List<SimulationSlotDto> slots = this._simulationService.GetSlots(simulationId);
             var offlineSlots = slots.Where(n => n.IsOnline == false);
-            foreach(var offline in offlineSlots)
+            if (offlineSlots != null && offlineSlots.Any())
             {
-                var userInDb = this._simulationService.GetSimulationUser(offline.SimulationUserId);
-                if (userInDb != null)
+                foreach (var offline in offlineSlots)
                 {
-                    offline.IsOnline = Hubs.ConnectionUsers.ConnectionIds.Any(n => n == userInDb.LastKnownConnectionId);
+                    var userInDb = this._simulationService.GetSimulationUser(offline.SimulationUserId);
+                    if (userInDb != null)
+                    {
+                        offline.IsOnline = Hubs.ConnectionUsers.ConnectionIds.Any(n => n == userInDb.LastKnownConnectionId);
+                    }
                 }
             }
+            
             return Ok(slots);
         }
 
