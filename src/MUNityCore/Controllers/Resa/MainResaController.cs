@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNity.Models.Resolution;
@@ -13,6 +14,7 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa")]
     [ApiController]
+    [EnableCors("munity")]
     public class MainResaController : ControllerBase
     {
         Services.SqlResolutionService _resolutionService;

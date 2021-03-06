@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNity.Hubs;
@@ -13,6 +14,7 @@ namespace MUNityCore.Controllers.Simulation
 {
     [Route("api/Simulation/Status")]
     [ApiController]
+    [EnableCors("munity")]
     public class SimStatusController : ControllerBase, ISimulationController
     {
         private Services.SimulationService _simulationService;

@@ -6,11 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNity.Schema.Simulation;
 using MUNity.Schema.Resolution;
+using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resolution/[controller]")]
     [ApiController]
+    [EnableCors("munity")]
     public class AmendmentConfigController : ControllerBase
     {
         private Services.IResolutionService _resolutionService;

@@ -8,6 +8,7 @@ using MUNityCore.Models.User;
 using MUNityCore.Services;
 using MUNity.Schema.User;
 using MUNityCore.Extensions.CastExtensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers
 {
@@ -19,6 +20,7 @@ namespace MUNityCore.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("munity")]
     public class AdminController : ControllerBase
     {
         private readonly IAuthService _authService;

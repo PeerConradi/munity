@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MUNityCore.Models;
@@ -12,6 +13,7 @@ namespace MUNityCore.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("munity")]
     public class PresenceController : Controller
     {
         //[Route("[action]")]

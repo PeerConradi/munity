@@ -9,11 +9,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNity.Models.Resolution.EventArguments;
+using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Operative")]
     [ApiController]
+    [EnableCors("munity")]
     public class OperativeParagraphController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

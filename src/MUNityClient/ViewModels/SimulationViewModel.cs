@@ -90,8 +90,6 @@ namespace MUNityClient.ViewModels
 
         public ObservableCollection<SimulationSlotDto> Slots { get; set; } = new ObservableCollection<SimulationSlotDto>();
 
-        public ResolutionViewModel CurrentResolution { get; set; }
-
         public async Task CreateResolution(CreateSimulationResolutionRequest body)
         {
             var client = new HttpClient();
@@ -420,7 +418,6 @@ namespace MUNityClient.ViewModels
                 accessToken = token.Token;
                 if (token == null) return null;
             }
-            
 
             var viewModel = new SimulationViewModel(simulation, service);
             viewModel.Token = accessToken;
@@ -434,44 +431,102 @@ namespace MUNityClient.ViewModels
             return viewModel;
         }
 
+        private static int loadSlotsRetries = 0;
+
         private static async Task LoadSlots(SimulationViewModel viewModel, string token)
         {
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("simsimtoken", token);
-            var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/Slots?simulationId={viewModel.Simulation.SimulationId}");
-            if (result.IsSuccessStatusCode)
+            try
             {
-                var slots = await result.Content.ReadFromJsonAsync<List<SimulationSlotDto>>();
-                if (slots != null && slots.Any())
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("simsimtoken", token);
+                var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/Slots?simulationId={viewModel.Simulation.SimulationId}");
+                if (result.IsSuccessStatusCode)
                 {
-                    slots.ForEach(n => viewModel.Slots.Add(n));
+                    var slots = await result.Content.ReadFromJsonAsync<List<SimulationSlotDto>>();
+                    if (slots != null && slots.Any())
+                    {
+                        slots.ForEach(n => viewModel.Slots.Add(n));
+                    }
                 }
             }
+            catch (Exception)
+            {
+                loadSlotsRetries++;
+                if (loadSlotsRetries < 5)
+                {
+                    await Task.Delay(500);
+                    await LoadSlots(viewModel, token);
+                }
+                    
+                else
+                {
+                    viewModel.ShowError("Fehler", "Es ist ein Fehler beim Laden der Slots aufgetreten.");
+                }
+            }
+            
         }
 
+        private static int loadMeRetries = 0;
         private static async Task LoadMe(SimulationViewModel viewModel, string token)
         {
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("simsimtoken", token);
-            var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/User/MyUserId?simulationId={viewModel.Simulation.SimulationId}");
-            if (result.IsSuccessStatusCode)
+            try
             {
-                var userId = await result.Content.ReadAsStringAsync();
-                if (!string.IsNullOrEmpty(userId))
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("simsimtoken", token);
+                var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/User/MyUserId?simulationId={viewModel.Simulation.SimulationId}");
+                if (result.IsSuccessStatusCode)
                 {
-                    viewModel.MyUserId = int.Parse(userId);
+                    var userId = await result.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        viewModel.MyUserId = int.Parse(userId);
+                    }
                 }
             }
+            catch
+            {
+                loadMeRetries++;
+                if (loadMeRetries < 5)
+                {
+                    await Task.Delay(500);
+                    await LoadMe(viewModel, token);
+                }
+                else
+                {
+                    viewModel.ShowError("Fehler", "Der Benutzer konnte nicht zugeordnet werden...");
+                }
+            }
+
+            
         }
+
+        private static int loadStatusRetries = 0;
 
         private static async Task LoadStatus(SimulationViewModel viewModel)
         {
-            var httpClient = new HttpClient();
-            var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/Status/Current?simulationId={viewModel.Simulation.SimulationId}");
-            if (result.IsSuccessStatusCode)
+            try
             {
-                viewModel.CurrentStatus = await result.Content.ReadFromJsonAsync<SimulationStatusDto>();
+                var httpClient = new HttpClient();
+                var result = await httpClient.GetAsync(Program.API_URL + $"/api/Simulation/Status/Current?simulationId={viewModel.Simulation.SimulationId}");
+                if (result.IsSuccessStatusCode)
+                {
+                    viewModel.CurrentStatus = await result.Content.ReadFromJsonAsync<SimulationStatusDto>();
+                }
             }
+            catch
+            {
+                loadStatusRetries++;
+                if (loadStatusRetries < 5)
+                {
+                    await Task.Delay(500);
+                    await LoadStatus(viewModel);
+                }
+                else
+                {
+                    viewModel.ShowError("Fehler", "Der aktuelle Status konnte nicht geladen werden!");
+                }
+            }
+            
         }
 
         public async Task StartSimulation()
@@ -585,57 +640,103 @@ namespace MUNityClient.ViewModels
             model.SimulationId = this.Simulation.SimulationId;
             return this._simulationService.CreateAgendaItem(model);
         }
-    
+
+        private int loadAgendaRetires = 0;
+
         public async Task LoadDataAsync()
         {
-            if (this.Simulation != null)
+            try
             {
+                if (this.Simulation != null)
+                {
 
-                var loadRoles = this._simulationService.SecureGetRoles(this);
-                //var loadAuth = this._simulationService.SecureGetMyAuth(this);
+                    var loadRoles = this._simulationService.SecureGetRoles(this);
+                    //var loadAuth = this._simulationService.SecureGetMyAuth(this);
 
-                await Task.WhenAll(loadRoles);
+                    await Task.WhenAll(loadRoles);
 
-                _ = LoadUsersDependingAuth().ConfigureAwait(false);
+                    _ = LoadUsersDependingAuth().ConfigureAwait(false);
 
-                var petitionTypesTask = this._simulationService.SecurePetitionTypes(this);
-                var agendaItemsTask = this._simulationService.SecureAgendaItems(this);
+                    var petitionTypesTask = this._simulationService.SecurePetitionTypes(this);
+                    var agendaItemsTask = this._simulationService.SecureAgendaItems(this);
 
-                await Task.WhenAll(petitionTypesTask, agendaItemsTask);
+                    await Task.WhenAll(petitionTypesTask, agendaItemsTask);
+                }
             }
+            catch
+            {
+                loadAgendaRetires++;
+                if (loadAgendaRetires < 5)
+                {
+                    await Task.Delay(500);
+                    await this.LoadDataAsync();
+                }
+                else
+                {
+                    this.ShowError("Fehler", "Die Tagesordnung konnte nicht korrekt geladen werden.");
+                }
+            }
+            
         }
+
+        private int loadUsersRetries = 0;
 
         private async Task LoadUsersDependingAuth()
         {
-            if (IsChair || IsAdmin)
+            try
             {
-                var users = await this._simulationService.GetUserSetups(this.Simulation.SimulationId);
-                this.Simulation.Users.Clear();
-                this.Simulation.Users.AddRange(users);
+                if (IsChair || IsAdmin)
+                {
+                    var users = await this._simulationService.GetUserSetups(this.Simulation.SimulationId);
+                    this.Simulation.Users.Clear();
+                    this.Simulation.Users.AddRange(users);
+                }
+                else
+                {
+                    var users = await this._simulationService.GetUsers(this.Simulation.SimulationId);
+                    this.Simulation.Users.Clear();
+                    this.Simulation.Users.AddRange(users);
+                }
             }
-            else
+            catch (Exception)
             {
-                var users = await this._simulationService.GetUsers(this.Simulation.SimulationId);
-                this.Simulation.Users.Clear();
-                this.Simulation.Users.AddRange(users);
+                loadUsersRetries++;
+                if (loadUsersRetries < 5)
+                {
+                    await Task.Delay(500);
+                    await LoadUsersDependingAuth();
+                }
+                else
+                {
+                    this.ShowError("Fehler", "Die Benutzer konnten nicht korrekt geladen werden!");
+                }
             }
+            
         }
 
         public async Task ReloadActiveVoting()
         {
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("simsimtoken", this.Token);
-            var response = await client.GetAsync(Program.API_URL + $"/api/Sim/Voting/GetActiveVote?simulationId={this.Simulation.SimulationId}");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                Console.WriteLine("Abstimmung aktualisiert!");
-                this.ActiveVoting = await response.Content.ReadFromJsonAsync<MUNity.Schema.Simulation.Voting.SimulationVotingDto>();
-                this.ActiveVotingChanged?.Invoke(this, new EventArgs());
+                var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("simsimtoken", this.Token);
+                var response = await client.GetAsync(Program.API_URL + $"/api/Sim/Voting/GetActiveVote?simulationId={this.Simulation.SimulationId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Abstimmung aktualisiert!");
+                    this.ActiveVoting = await response.Content.ReadFromJsonAsync<MUNity.Schema.Simulation.Voting.SimulationVotingDto>();
+                    this.ActiveVotingChanged?.Invoke(this, new EventArgs());
+                }
+                else
+                {
+                    this.ActiveVoting = null;
+                }
             }
-            else
+            catch
             {
-                this.ActiveVoting = null;
+                this.ShowError("Fehler", "Abstimmung konnte nicht geladen werden. Bitte versuchen Sie es erneut oder kontaktieren sie den Support.");
             }
+            
         }
 
         public async Task CreateUser()

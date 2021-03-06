@@ -44,8 +44,6 @@ namespace MUNityCore
             //    configuration.RootPath = "ClientApp/dist";
             //});
 
-            string munityCors = Environment.GetEnvironmentVariable("MUNITY_FRONTEND_IP");
-
             //services.AddCors(o =>
             //{
             //    o.AddPolicy("ProdAllOrigins", builder =>
@@ -132,12 +130,6 @@ namespace MUNityCore
                     builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 });
             });
-
-            // Add MongoDb Database
-            //services.Configure<MunityMongoDatabaseSettings>(Configuration.GetSection(nameof(MunityMongoDatabaseSettings)));
-            //services.AddSingleton<IMunityMongoDatabaseSettings>(sp =>
-            //    sp.GetRequiredService<IOptions<MunityMongoDatabaseSettings>>().Value);
-
             
             // All services that are used inside the controllers.
             //services.AddScoped<Services.InstallationService>();
@@ -176,7 +168,7 @@ namespace MUNityCore
                 //app.UseCors("DevPolicy");
                 app.UseDeveloperExceptionPage();
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
-                app.UseSwagger();
+                
 
                 // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
                 // specifying the Swagger JSON endpoint.
@@ -195,12 +187,14 @@ namespace MUNityCore
 
             app.UseCors("munity");
 
+            app.UseSwagger();
+
             //app.UseForwardedHeaders(new ForwardedHeadersOptions
             //{
             //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             //});
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             //app.UseStaticFiles();
             //if (!env.IsDevelopment())

@@ -1,7 +1,7 @@
 ﻿@inject Services.SimulationService simulationService;
 @inject Services.ListOfSpeakerService listOfSpeakerService;
 
-@if (SimulationViewModel != null)
+@if (SimulationViewModel != null && !loadingErrored)
 {
     <div class="row">
         <div class="col-12">
@@ -20,13 +20,13 @@
                         </div>
 
                         <div class="col-4">
-                            @if (ListOfSpeakerViewModel != null)
+                            @if (ListOfSpeakerViewModel != null && speakerlistErrored == false)
                             {
                                 <SpeakerlistBox ViewModel="@ListOfSpeakerViewModel" />
                             }
-                            else
+                            else if (speakerlistErrored == true)
                             {
-                                <p>Keine Redeliste gefunden!</p>
+                                <p>Es gab einen Fehler beim Laden der Redeliste</p>
                             }
                         </div>
 
@@ -64,6 +64,14 @@
         </div>
     </div>
 }
+else if (loadingErrored)
+{
+    <div class="row">
+        <div class="col-12">
+            <p>Es kam zu einem Fehler beim Laden dieser Simulation</p>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -76,35 +84,55 @@
 
     public ViewModels.ListOfSpeakerViewModel ListOfSpeakerViewModel { get; set; }
 
+    private bool speakerlistErrored = false;
+
+    private bool loadingErrored = false;
+
     protected override async Task OnInitializedAsync()
     {
-        SimulationViewModel = await simulationService.Subscribe(SimulationId, MasterToken);
-        if (SimulationViewModel != null)
+        try
         {
-            SimulationViewModel.AgendaItemAdded += delegate { this.StateHasChanged(); };
-            SimulationViewModel.LobbyModeChanged += delegate { this.StateHasChanged(); };
-            SimulationViewModel.StatusChanged += delegate { this.StateHasChanged(); };
+            SimulationViewModel = await simulationService.Subscribe(SimulationId, MasterToken);
+            if (SimulationViewModel != null)
+            {
+                SimulationViewModel.AgendaItemAdded += delegate { this.StateHasChanged(); };
+                SimulationViewModel.LobbyModeChanged += delegate { this.StateHasChanged(); };
+                SimulationViewModel.StatusChanged += delegate { this.StateHasChanged(); };
 
 
+            }
+            await LoadListOfSpeakers();
+            this.StateHasChanged();
+            await base.OnInitializedAsync();
         }
-        await LoadListOfSpeakers();
-        this.StateHasChanged();
-        await base.OnInitializedAsync();
+        catch
+        {
+            loadingErrored = true;
+        }
+        
     }
 
     public async Task LoadListOfSpeakers()
     {
-        var client = new HttpClient();
-        client.DefaultRequestHeaders.Add("simsimtoken", MasterToken);
-        var response = await client.GetAsync(Program.API_URL + $"/api/Simulation/GetListOfSpeakersId?simulationId={SimulationId}");
-        if (response.IsSuccessStatusCode)
+        try
         {
-            string listOfSpeakerId = await response.Content.ReadAsStringAsync();
-            if (!string.IsNullOrEmpty(listOfSpeakerId))
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("simsimtoken", MasterToken);
+            var response = await client.GetAsync(Program.API_URL + $"/api/Simulation/GetListOfSpeakersId?simulationId={SimulationId}");
+            if (response.IsSuccessStatusCode)
             {
-                this.ListOfSpeakerViewModel = await MUNityClient.ViewModels.ListOfSpeakerViewModel.GetFromOnline(listOfSpeakerService, listOfSpeakerId);
+                string listOfSpeakerId = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(listOfSpeakerId))
+                {
+                    this.ListOfSpeakerViewModel = await MUNityClient.ViewModels.ListOfSpeakerViewModel.GetFromOnline(listOfSpeakerService, listOfSpeakerId);
+                }
             }
         }
+        catch
+        {
+            speakerlistErrored = true;
+        }
+        
 
     }
 }

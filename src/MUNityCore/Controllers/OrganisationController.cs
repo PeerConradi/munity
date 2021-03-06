@@ -7,8 +7,8 @@ using MUNity.Schema.Organization;
 
 namespace MUNityCore.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    //[Route("api/[controller]")]
+    //[ApiController]
     public class OrganisationController : ControllerBase
     {
         private readonly IAuthService _authService;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNity.Hubs;
@@ -14,6 +15,7 @@ namespace MUNityCore.Controllers.Simulation
 {
     [Route("api/Sim/Voting")]
     [ApiController]
+    [EnableCors("munity")]
     public class SimulationVoteController : ControllerBase
     {
 

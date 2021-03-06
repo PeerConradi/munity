@@ -15,6 +15,7 @@ using MUNityCore.Models.Conference;
 using MUNityCore.Services;
 using MUNity.Schema.Conference;
 using MUNity.Schema.Project;
+using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers
 {
@@ -22,8 +23,9 @@ namespace MUNityCore.Controllers
     /// <summary>
     /// The Conference Controller needs a complete rework!
     /// </summary>
-    [Route("api/[controller]")]
-    [ApiController]
+    //[Route("api/[controller]")]
+    //[ApiController]
+    //[EnableCors("munity")]
     public class ConferenceController : ControllerBase
     {
 

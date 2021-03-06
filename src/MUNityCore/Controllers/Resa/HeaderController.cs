@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNity.Models.Resolution.EventArguments;
@@ -12,6 +13,7 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Header")]
     [ApiController]
+    [EnableCors("munity")]
     public class HeaderController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

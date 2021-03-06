@@ -9,11 +9,13 @@ using MUNityCore.Models.User;
 using MUNityCore.Services;
 using MUNity.Schema.User;
 using MUNity.Schema.Authentication;
+using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("munity")]
     public class UserController : ControllerBase
     {
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNity.Models.Resolution;
@@ -14,6 +15,7 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Amendment/Add")]
     [ApiController]
+    [EnableCors("munity")]
     public class AddAmendmentController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

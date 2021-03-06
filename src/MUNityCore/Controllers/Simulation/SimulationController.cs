@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using MUNitySchema.Schema.Simulation.Resolution;
 using MUNity.Schema.Simulation.Managment;
 using MUNityCore.Extensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers
 {
@@ -22,6 +23,7 @@ namespace MUNityCore.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("munity")]
     public class SimulationController : ControllerBase, Simulation.ISimulationController
     {
 

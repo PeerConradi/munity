@@ -8,12 +8,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNity.Schema.Simulation;
 using MUNityCore.Extensions.CastExtensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers.Simulation
 {
 
     [ApiController]
     [Route("api/Simulation/Roles")]
+    [EnableCors("munity")]
     public class SimulationRolesController : ControllerBase, ISimulationController
     {
         public IHubContext<SimulationHub, ITypedSimulationHub> HubContext { get; set; }
