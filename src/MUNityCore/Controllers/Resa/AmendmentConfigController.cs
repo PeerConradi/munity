@@ -12,7 +12,6 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resolution/[controller]")]
     [ApiController]
-    [EnableCors("munity")]
     public class AmendmentConfigController : ControllerBase
     {
         private Services.IResolutionService _resolutionService;

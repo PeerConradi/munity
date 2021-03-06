@@ -15,7 +15,6 @@ namespace MUNityCore.Controllers.Simulation
 {
     [Route("api/Sim/Voting")]
     [ApiController]
-    [EnableCors("munity")]
     public class SimulationVoteController : ControllerBase
     {
 

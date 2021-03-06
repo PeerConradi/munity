@@ -15,7 +15,6 @@ namespace MUNityCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors("munity")]
     public class UserController : ControllerBase
     {
 

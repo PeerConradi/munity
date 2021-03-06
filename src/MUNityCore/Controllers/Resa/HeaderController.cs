@@ -13,7 +13,6 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Header")]
     [ApiController]
-    [EnableCors("munity")]
     public class HeaderController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

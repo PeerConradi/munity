@@ -23,7 +23,6 @@ namespace MUNityCore.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors("munity")]
     public class SimulationController : ControllerBase, Simulation.ISimulationController
     {
 

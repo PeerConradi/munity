@@ -14,7 +14,6 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Amendment/Delete")]
     [ApiController]
-    [EnableCors("munity")]
     public class DeleteAmendmentController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

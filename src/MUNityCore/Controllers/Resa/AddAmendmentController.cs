@@ -15,7 +15,6 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Amendment/Add")]
     [ApiController]
-    [EnableCors("munity")]
     public class AddAmendmentController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

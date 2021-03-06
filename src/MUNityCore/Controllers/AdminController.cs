@@ -20,7 +20,6 @@ namespace MUNityCore.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors("munity")]
     public class AdminController : ControllerBase
     {
         private readonly IAuthService _authService;

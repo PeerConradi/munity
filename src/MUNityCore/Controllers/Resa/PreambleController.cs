@@ -15,7 +15,6 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Preamble")]
     [ApiController]
-    [EnableCors("munity")]
     public class PreambleController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

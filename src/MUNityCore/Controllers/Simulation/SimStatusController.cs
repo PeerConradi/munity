@@ -14,7 +14,6 @@ namespace MUNityCore.Controllers.Simulation
 {
     [Route("api/Simulation/Status")]
     [ApiController]
-    [EnableCors("munity")]
     public class SimStatusController : ControllerBase, ISimulationController
     {
         private Services.SimulationService _simulationService;

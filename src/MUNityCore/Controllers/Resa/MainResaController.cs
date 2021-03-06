@@ -14,7 +14,6 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa")]
     [ApiController]
-    [EnableCors("munity")]
     public class MainResaController : ControllerBase
     {
         Services.SqlResolutionService _resolutionService;

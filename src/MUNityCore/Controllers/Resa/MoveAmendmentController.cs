@@ -15,7 +15,6 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Amendment/Move")]
     [ApiController]
-    [EnableCors("munity")]
     public class MoveAmendmentController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

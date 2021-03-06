@@ -17,7 +17,6 @@ namespace MUNityCore.Controllers.Simulation
 {
     [Route("api/Simulation/[controller]")]
     [ApiController]
-    [EnableCors("munity")]
     public class PetitionController : ControllerBase, ISimulationController
     {
         public IHubContext<Hubs.SimulationHub, MUNity.Hubs.ITypedSimulationHub> HubContext { get; set; }

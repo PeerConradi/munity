@@ -15,7 +15,6 @@ namespace MUNityCore.Controllers.Resa
 {
     [Route("api/Resa/Operative")]
     [ApiController]
-    [EnableCors("munity")]
     public class OperativeParagraphController : ControllerBase
     {
         readonly IHubContext<Hubs.ResolutionHub, MUNity.Hubs.ITypedResolutionHub> _hubContext;

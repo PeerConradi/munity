@@ -15,7 +15,6 @@ namespace MUNityCore.Controllers.Simulation
 
     [ApiController]
     [Route("api/Simulation/Roles")]
-    [EnableCors("munity")]
     public class SimulationRolesController : ControllerBase, ISimulationController
     {
         public IHubContext<SimulationHub, ITypedSimulationHub> HubContext { get; set; }
