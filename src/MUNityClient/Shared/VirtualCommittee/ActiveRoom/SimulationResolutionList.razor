@@ -19,7 +19,7 @@ else
                             <th>Name</th>
                             <th>Bearbeiten</th>
                             <th>Lesen</th>
-                            @if (this.SimulationViewModel.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+                            @if (this.SimulationViewModel?.MySlot != null && this.SimulationViewModel.MySlot.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
                             {
                                 <th>Änderungsanträge erlauben</th>
                                 <th>Alle dürfen schreiben</th>
@@ -28,7 +28,7 @@ else
                         </tr>
                     </thead>
                     <tbody>
-                        @if (!SimulationViewModel.Resolutions.Any())
+                        @if (SimulationViewModel.Resolutions == null || !SimulationViewModel.Resolutions.Any())
                         {
                             <tr>
                                 <td rowspan="3">Keine Resolutionen gefunden</td>

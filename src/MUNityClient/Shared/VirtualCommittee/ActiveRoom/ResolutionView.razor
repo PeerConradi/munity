@@ -6,7 +6,11 @@
         <div class="card">
             <div class="card-header">
                 <div class="btn-group w-100">
-                    <button type="button" class="btn btn-primary" @onclick="() => this.SimulationViewModelInstance.CurrentResolutionId = null">Zurück zur Übersicht</button>
+                    @if (this.SimulationViewModelInstance != null)
+                    {
+                        <button type="button" class="btn btn-primary" @onclick="() => this.SimulationViewModelInstance.CurrentResolutionId = null">Zurück zur Übersicht</button>
+                    }
+                    
 
                     @if (this.ResolutionInfo != null)
                     {

@@ -8,9 +8,9 @@
             <div class="card-body">
 
                 <h4> Absatz @Pathname</h4> 
-                @if (DeleteAmendments.Where(n => n.Activated).Count() < 1 &&
-                ChangeAmendments.Where(n => n.Activated).Count() < 1 &&
-                MoveAmendments.Where(n => n.Activated).Count() < 1)
+                @if (!DeleteAmendments.Where(n => n.Activated).Any() &&
+                !ChangeAmendments.Where(n => n.Activated).Any() &&
+                !MoveAmendments.Where(n => n.Activated).Any())
                 {
                     <div class="row mx-0 mt-0 ">
                         <MUNityClient.Shared.General.MarkdownView Content="@Paragraph.Text">
@@ -73,20 +73,20 @@
 
 
                 <div class="row mx-0 mb-0 mt-4">
-                    @if (@DeleteAmendments.Count() > 0)
+                    @if (@DeleteAmendments.Any())
                     {
-                        <div class="badge badge-danger">@DeleteAmendments.Count() @(DeleteAmendments.Count() > 1 ? "Anträge" :
-                                    "Antrag") auf Streichung</div>
+                        <a class="badge badge-danger" @onclick="() => amendmentModal.Open()">@DeleteAmendments.Count() @(DeleteAmendments.Count() > 1 ? "Anträge" :
+                                    "Antrag") auf Streichung</a>
                     }
-                    @if (@ChangeAmendments.Count() > 0)
+                    @if (@ChangeAmendments.Any())
                     {
-                        <div class="badge badge-info">@ChangeAmendments.Count() @(ChangeAmendments.Count() > 1 ? "Anträge" :
-                                    "Antrag") auf Änderung</div>
+                        <a class="badge badge-info" @onclick="() => amendmentModal.Open()">@ChangeAmendments.Count() @(ChangeAmendments.Count() > 1 ? "Anträge" :
+                                    "Antrag") auf Änderung</a>
                     }
-                    @if (@MoveAmendments.Count() > 0)
+                    @if (@MoveAmendments.Any())
                     {
-                        <div class="badge badge-dark">@MoveAmendments.Count() @(MoveAmendments.Count() > 1 ? "Anträge" :
-                                    "Antrag") auf Verschiebung</div>
+                        <a class="badge badge-dark" @onclick="() => amendmentModal.Open()">@MoveAmendments.Count() @(MoveAmendments.Count() > 1 ? "Anträge" :
+                                    "Antrag") auf Verschiebung</a>
                     }
                 </div>
             </div>
@@ -105,9 +105,94 @@ else
     </div>
 }
 
+<MUNityClient.Shared.Bootstrap.Modal Title="Antragsliste" @ref="amendmentModal" ShowSubmitButton="false">
+    <div class="row">
+        @if (DeleteAmendments.Any())
+        {
+            <div class="col-12">
+                <h3>Anträge auf Streichung</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Eingereicht durch</th>
+                            <th>Um</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        @foreach(var amendment in DeleteAmendments)
+                        {
+                            <tr>
+                                <td>@amendment.SubmitterName</td>
+                                <td>@amendment.SubmitTime.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+        
+        @if (ChangeAmendments.Any())
+        {
+            <div class="col-12" style="overflow-y: scroll; max-height: 400px;">
+                <h3>Anträge auf Textänderung</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Eingereicht durch</th>
+                            <th>Neuer Text</th>
+                            <th>Um</th>
+                        </tr>
+
+                    </thead>
+                    <tbody >
+                        @foreach(var amendment in ChangeAmendments)
+                        {
+                            <tr>
+                                <td>@amendment.SubmitterName</td>
+                                <td>@amendment.NewText</td>
+                                <td>@amendment.SubmitTime.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+
+        @if (MoveAmendments.Any())
+        {
+            <div class="col-12">
+                <h3>Anträge auf Verschieben</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Eingereicht durch</th>
+                            <th>Neuee Position</th>
+                            <th>Um</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        @foreach(var amendment in MoveAmendments)
+                        {
+                            <tr>
+                                <td>@amendment.SubmitterName</td>
+                                <td>Pfad kann derzeit nicht aufgelöst werden</td>
+                                <td>@amendment.SubmitTime.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+    </div>
+</MUNityClient.Shared.Bootstrap.Modal>
+
 
 @code {
-
     [Parameter]
     public OperativeParagraph Paragraph { get; set; }
 
@@ -125,6 +210,8 @@ else
 
     [Parameter]
     public System.Collections.Generic.IEnumerable<MoveAmendment> MoveAmendments { get; set; }
+
+        private MUNityClient.Shared.Bootstrap.Modal amendmentModal;
 
     protected override void OnInitialized()
     {

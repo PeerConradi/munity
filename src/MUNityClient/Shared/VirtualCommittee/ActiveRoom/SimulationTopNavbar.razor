@@ -11,7 +11,7 @@ else
 <nav class="row p-0 m-0 d-flex justify-content-start justify-content-sm-between bg-primary mb-3">
     <a class="navbar-brand d-sm-none ml-2" @onclick="() => _showSmallSideMenu = !_showSmallSideMenu"><i class="fa fa-bars"></i></a>
     <div class="col col-sm-3 p-0 ml-2 d-flex align-items-center">
-        <div class="navbar-brand mr-2">@ViewModel.Simulation.Name</div>
+        <div class="navbar-brand mr-2">@ViewModel.Simulation?.Name</div>
         <ConnectionStateBadge ViewModel="@ViewModel" />
     </div>
     <div class="row p-0 col-4 col-md ml-4 d-none d-sm-flex">

@@ -83,6 +83,7 @@ namespace MUNityClient.ViewModels
         {
             Console.WriteLine("Try to init list of speakers from server!");
             var list = await service.GetFromApi(listId);
+            if (list == null) return null;
             var mdl = new ListOfSpeakerViewModel(list, service);
             var onlineHandler = new ViewModelLogic.ListOfSpeakerOnlineHandler();
             mdl.Handler = onlineHandler;

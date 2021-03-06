@@ -1,5 +1,5 @@
 ﻿<MUNityClient.Shared.Bootstrap.Modal Title="Neuer Antrag" @ref="_modalRef" ShowSubmitButton="false">
-    @if (ViewModel != null)
+    @if (ViewModel?.PetitionTypes != null && ViewModel.MyPetitionTypes.Any())
     {
     <div class="row">
         <div class="col-12">
