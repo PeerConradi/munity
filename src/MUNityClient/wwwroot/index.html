@@ -21,21 +21,6 @@
 </head>
 
 <body>
-    <!-- <script>//auto force reload attempt
-        call = async () => {
-            const currentTimestamp = Date.now()
-            const lastTimestamp = parseInt(await localStorage.getItem('lastTimestamp'));
-            const delay = 1000//ms
-            if(lastTimestamp == undefined || lastTimestamp + delay < currentTimestamp){
-                localStorage.setItem('lastTimestamp', currentTimestamp);
-                // window.location.href = window.location.href
-                // location.reload(true);
-                // window.history.forward(1);
-                window.location.href = window.location.href.replace(/#.*$/, '');
-            }
-        }
-        call()
-    </script> -->
     <app>
         <div class="row d-flex w-100 justify-content-center mt-5">
             <div class="d-flex w-100 justify-content-center">
