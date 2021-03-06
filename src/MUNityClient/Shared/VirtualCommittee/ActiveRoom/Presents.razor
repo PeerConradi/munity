@@ -1,0 +1,108 @@
+﻿@if (ViewModel.Slots != null)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="btn-group">
+                <button class="btn btn-primary btn-block" @onclick="() => NewDelegatePresentCheck()">Für Delegierte</button>
+                <button class="btn btn-primary btn-block" @onclick="() => NewDelegatesAndNgoPresentCheck()">Delegierte und NAs</button>
+            </div>
+        </div>
+    </div>
+    @if (PresentsCheck != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <p>Anwesend: @PresentsCheck.Count(n => n.PresentState == PresentObject.PresentStates.Present)</p>
+                <p>Abwesend: @PresentsCheck.Count(n => n.PresentState == PresentObject.PresentStates.Absent)</p>
+                <p>Ausstehend: @PresentsCheck.Count(n => n.PresentState == PresentObject.PresentStates.NotChecked)</p>
+                <p>Insgesamt: @PresentsCheck.Count</p>
+            </div>
+
+            <div class="col-12">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Anwesend</th>
+                            <th>Abwesend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var usr in PresentsCheck)
+                    {
+                        <tr>
+                            <td>@usr.Name</td>
+                            <td>
+                                @if (usr.PresentState == PresentObject.PresentStates.NotChecked || usr.PresentState == PresentObject.PresentStates.Absent)
+                                {
+                                    <button class="btn btn-outline-success btn-block" @onclick="() => usr.PresentState = PresentObject.PresentStates.Present">Als Anwesend eintragen</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-success btn-block" @onclick="() => usr.PresentState = PresentObject.PresentStates.NotChecked">Als unbekannt setzen</button>
+                                }
+                            </td>
+                            <td>
+                                @if (usr.PresentState == PresentObject.PresentStates.NotChecked || usr.PresentState == PresentObject.PresentStates.Present)
+                                {
+                                    <button class="btn btn-outline-danger btn-block" @onclick="() => usr.PresentState = PresentObject.PresentStates.Absent">Als Abwesend eintragen</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-danger btn-block" @onclick="() => usr.PresentState = PresentObject.PresentStates.NotChecked">Als unbekannt setzen</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public ViewModels.SimulationViewModel ViewModel { get; set; }
+
+    public List<PresentObject> PresentsCheck { get; set; }
+
+    public class PresentObject
+    {
+        public enum PresentStates
+        {
+            NotChecked,
+            Present,
+            Absent
+        }
+
+        public string Name { get; set; }
+
+        public PresentStates PresentState { get; set; }
+
+    }
+
+    private void NewDelegatePresentCheck()
+    {
+        if (ViewModel?.Slots == null)
+            return;
+
+        PresentsCheck = new List<PresentObject>();
+        foreach(var mdl in ViewModel.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate).OrderBy(n => n.RoleName))
+        {
+            PresentsCheck.Add(new PresentObject() { Name = mdl.RoleName });
+        }
+    }
+
+    private void NewDelegatesAndNgoPresentCheck()
+    {
+        if (ViewModel?.Slots == null)
+            return;
+
+        PresentsCheck = new List<PresentObject>();
+        foreach (var mdl in ViewModel.Slots.Where(n => n.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || n.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo).OrderBy(n => n.RoleName))
+        {
+            PresentsCheck.Add(new PresentObject() { Name = mdl.RoleName });
+        }
+    }
+}

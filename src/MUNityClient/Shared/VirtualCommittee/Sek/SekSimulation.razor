@@ -1,5 +1,6 @@
 ﻿@inject Services.SimulationService simulationService;
 @inject Services.ListOfSpeakerService listOfSpeakerService;
+@inject NavigationManager navigationManager
 
 @if (SimulationViewModel != null && !loadingErrored)
 {
@@ -48,11 +49,11 @@
                                             </div>
                                         }
                                     }
-                                    else 
+                                    else
                                     {
                                         <p>Keine Resolutionen vorhanden.</p>
                                     }
-                                    
+
                                 }
                                 else
                                 {
@@ -62,20 +63,20 @@
                             </div>
                         </div>
                     </div>
-                    
+
 
                     <div class="row">
                         @if (SimulationViewModel.Slots != null)
                         {
                             @if (SimulationViewModel.Slots.Any())
                             {
-                                foreach(var slot in SimulationViewModel.Slots)
+                                foreach (var slot in SimulationViewModel.Slots)
                                 {
-                                    <div class="badge m-1 @((slot.IsOnline) ? "badge-success" : "badge-danger")">@slot.RoleName</div>
+                                    <a class="badge m-1 @((slot.IsOnline) ? "badge-success" : "badge-danger")" @onclick="() => JoinIntoRole(slot.SimulationUserId)">@slot.RoleName</a>
                                 }
                             }
                         }
-                        else 
+                        else
                         {
                             <p>Slots wurde nicht geladen</p>
                         }
@@ -86,10 +87,10 @@
                         {
                             if (SimulationViewModel.AgendaItems.Any())
                             {
-                                foreach(var agendaItem in SimulationViewModel.AgendaItems)
-                        {
-                            <div class="badge m-1 badge-info">@agendaItem.Name</div>
-                        }
+                                foreach (var agendaItem in SimulationViewModel.AgendaItems)
+                                {
+                                    <div class="badge m-1 badge-info">@agendaItem.Name</div>
+                                }
                             }
                         }
                         else
@@ -97,7 +98,7 @@
                             <p>Es wurden keine TOPs geladen</p>
                         }
                     </div>
-                
+
                 </div>
             </div>
         </div>
@@ -148,7 +149,7 @@ else if (loadingErrored)
         {
             loadingErrored = true;
         }
-        
+
     }
 
     public async Task LoadListOfSpeakers()
@@ -171,7 +172,13 @@ else if (loadingErrored)
         {
             speakerlistErrored = true;
         }
-        
 
+
+    }
+
+    public async Task JoinIntoRole(int userId)
+    {
+        var id = await this.SimulationViewModel.GetDirectJoinLink(userId);
+        navigationManager.NavigateTo(navigationManager.BaseUri + id);
     }
 }
