@@ -2,11 +2,11 @@
 @inject Services.SimulationService simulationService;
 
 
-@if (_simulations == null)
+@if (_simulations == null && !hasErrored)
 {
     <p>Wird geladen</p>
 }
-else
+else if (_simulations != null && !hasErrored)
 {
     <div class="row">
         Geladene Simulationen: @_simulations.Count
@@ -16,10 +16,16 @@ else
         <SekSimulation SimulationId="sim.SimulationId" MasterToken="@MasterToken" />
     }
 }
+else if (_simulations == null && hasErrored)
+{
+    <p>Es gab einen Fehler, bitte versuche neu zu laden.</p>
+}
 
 @code {
     [Parameter]
     public string MasterToken { get; set; }
+
+    private bool hasErrored = false;
 
     private ICollection<MUNity.Schema.Simulation.SimulationListItemDto> _simulations
     {
@@ -29,7 +35,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _simulations = await simulationService.GetSimulationList();
+        try
+        {
+            _simulations = await simulationService.GetSimulationList();
+        }
+        catch
+        {
+            hasErrored = true;
+        }
         await base.OnInitializedAsync();
     }
 }

@@ -204,11 +204,22 @@ namespace MUNityClient.ViewModels
         public async Task UpdateResolutions()
         {
             this.Resolutions.Clear();
-            var resolutions = await _simulationService.GetSimulationResolutionInfos(this.Simulation.SimulationId, this.Token);
-            foreach(var item in resolutions)
+            try
             {
-                this.Resolutions.Add(item);
+                var resolutions = await _simulationService.GetSimulationResolutionInfos(this.Simulation.SimulationId, this.Token);
+                if (resolutions.Any())
+                {
+                    foreach (var item in resolutions)
+                    {
+                        this.Resolutions.Add(item);
+                    }
+                }
             }
+            catch
+            {
+                this.ShowError("Fehler", "Die Resolutionen konnten nicht geladen werden!");
+            }
+            
         }
 
         [Obsolete("Use the ActiveVoting")]

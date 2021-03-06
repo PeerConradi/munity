@@ -419,22 +419,9 @@ namespace MUNityCore.Controllers
 
             var user = this._simulationService.GetSimulationUser(body.SimulationId, body.Token);
             await this.HubContext.Groups.AddToGroupAsync(body.ConnectionId, $"sim_{body.SimulationId}");
+            await this._simulationService.AddUserSubscribtion(user, body.ConnectionId);
 
-            // You can also connect as only a listener on the simulation for
-            // example the Sek.
-            if (user != null)
-            {
-                var mdl = new SimulationHubConnection()
-                {
-                    User = user,
-                    ConnectionId = body.ConnectionId,
-                    CreationDate = DateTime.Now
-                };
-                user.HubConnections.Add(mdl);
-                this._simulationService.SaveDbChanges();
-                await this.HubContext.Clients.Group($"sim_{body.SimulationId}").UserConnected(body.SimulationId, user.AsSimulationUserDefaultDto());
-            }
-            
+            await this.HubContext.Clients.Group($"sim_{body.SimulationId}").UserConnected(body.SimulationId, user.AsSimulationUserDefaultDto());
             return Ok(true);
         }
 
@@ -446,6 +433,15 @@ namespace MUNityCore.Controllers
             if (!isAllowed) BadRequest();
 
             List<SimulationSlotDto> slots = this._simulationService.GetSlots(simulationId);
+            var offlineSlots = slots.Where(n => n.IsOnline == false);
+            foreach(var offline in offlineSlots)
+            {
+                var userInDb = this._simulationService.GetSimulationUser(offline.SimulationUserId);
+                if (userInDb != null)
+                {
+                    offline.IsOnline = Hubs.ConnectionUsers.ConnectionIds.Any(n => n == userInDb.LastKnownConnectionId);
+                }
+            }
             return Ok(slots);
         }
 

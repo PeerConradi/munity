@@ -37,14 +37,22 @@
                                 </div>
                                 @if (SimulationViewModel.Resolutions != null)
                                 {
-                                    @foreach (var resolution in SimulationViewModel.Resolutions)
+                                    @if (SimulationViewModel.Resolutions.Any())
                                     {
-                                        <div class="col-12">
-                                            <h5>@resolution.Name</h5>
-                                            <a href="/resa/edit/@resolution.ResolutionId">Bearbeiten</a>
-                                            <a href="/resa/read/@resolution.ResolutionId">Lesen</a>
-                                        </div>
+                                        @foreach (var resolution in SimulationViewModel.Resolutions)
+                                        {
+                                            <div class="col-12">
+                                                <h5>@resolution.Name</h5>
+                                                <a href="/resa/edit/@resolution.ResolutionId">Bearbeiten</a>
+                                                <a href="/resa/read/@resolution.ResolutionId">Lesen</a>
+                                            </div>
+                                        }
                                     }
+                                    else 
+                                    {
+                                        <p>Keine Resolutionen vorhanden.</p>
+                                    }
+                                    
                                 }
                                 else
                                 {
@@ -56,8 +64,39 @@
                     </div>
                     
 
-                    
+                    <div class="row">
+                        @if (SimulationViewModel.Slots != null)
+                        {
+                            @if (SimulationViewModel.Slots.Any())
+                            {
+                                foreach(var slot in SimulationViewModel.Slots)
+                                {
+                                    <div class="badge m-1 @((slot.IsOnline) ? "badge-success" : "badge-danger")">@slot.RoleName</div>
+                                }
+                            }
+                        }
+                        else 
+                        {
+                            <p>Slots wurde nicht geladen</p>
+                        }
+                    </div>
 
+                    <div class="row">
+                        @if (SimulationViewModel.AgendaItems != null)
+                        {
+                            if (SimulationViewModel.AgendaItems.Any())
+                            {
+                                foreach(var agendaItem in SimulationViewModel.AgendaItems)
+                        {
+                            <div class="badge m-1 badge-info">@agendaItem.Name</div>
+                        }
+                            }
+                        }
+                        else
+                        {
+                            <p>Es wurden keine TOPs geladen</p>
+                        }
+                    </div>
                 
                 </div>
             </div>

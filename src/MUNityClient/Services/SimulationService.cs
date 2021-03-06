@@ -15,7 +15,7 @@ namespace MUNityClient.Services
 {
     public class SimulationService
     {
-        private readonly HttpService _httpService;
+        private readonly HttpClient _httpClient;
 
         private readonly ILocalStorageService _localStorage;
 
@@ -23,7 +23,7 @@ namespace MUNityClient.Services
         {
             try
             {
-                var result = await this._httpService.HttpClient.GetAsync($"/api/Simulation/IsOnline");
+                var result = await this._httpClient.GetAsync($"/api/Simulation/IsOnline");
                 if (result.IsSuccessStatusCode)
                     return true;
                 return false;
@@ -36,8 +36,7 @@ namespace MUNityClient.Services
 
         public async Task<HttpResponseMessage> GetSimulationInfo(int simulationId)
         {
-            var client = new HttpClient();
-            return await client.GetAsync(Program.API_URL + $"/api/Simulation/Info?simulationId={simulationId}");
+            return await _httpClient.GetAsync(Program.API_URL + $"/api/Simulation/Info?simulationId={simulationId}");
         }
 
         /// <summary>
@@ -49,7 +48,7 @@ namespace MUNityClient.Services
         public async Task<MUNity.Schema.Simulation.CreateSimulationResponse> CreateSimulation(MUNity.Schema.Simulation.CreateSimulationRequest schema)
         {
             var content = JsonContent.Create(schema);
-            var result = await this._httpService.HttpClient.PostAsync($"/api/Simulation/CreateSimulation", content);
+            var result = await _httpClient.PostAsync($"/api/Simulation/CreateSimulation", content);
             if (result.IsSuccessStatusCode)
             {
                 var sim = await result.Content.ReadFromJsonAsync<MUNity.Schema.Simulation.CreateSimulationResponse>();
@@ -74,7 +73,7 @@ namespace MUNityClient.Services
 
         public async Task<List<string>> GetPetitionPresetNames()
         {
-            return await this._httpService.HttpClient.GetFromJsonAsync<List<string>>("/api/Simulation/Petition/PetitionTemplateNames");
+            return await _httpClient.GetFromJsonAsync<List<string>>("/api/Simulation/Petition/PetitionTemplateNames");
         }
 
         public async Task RemoveToken(int id)
@@ -88,7 +87,7 @@ namespace MUNityClient.Services
 
         public async Task<ICollection<MUNity.Schema.Simulation.SimulationListItemDto>> GetSimulationList()
         {
-            return await this._httpService.HttpClient.GetFromJsonAsync<ICollection<MUNity.Schema.Simulation.SimulationListItemDto>>("/api/Simulation/GetListOfSimulations");
+            return await _httpClient.GetFromJsonAsync<ICollection<MUNity.Schema.Simulation.SimulationListItemDto>>("/api/Simulation/GetListOfSimulations");
         }
 
         public async Task<MUNity.Schema.Simulation.SimulationTokenResponse> GetSimulationToken(int id)
@@ -102,7 +101,7 @@ namespace MUNityClient.Services
         public async Task<MUNity.Schema.Simulation.SimulationTokenResponse> JoinSimulation(MUNity.Schema.Simulation.JoinAuthenticate body)
         {
             var content = JsonContent.Create(body);
-            var result = await this._httpService.HttpClient.PostAsync($"/api/Simulation/JoinSimulation", content);
+            var result = await _httpClient.PostAsync($"/api/Simulation/JoinSimulation", content);
             if (result.IsSuccessStatusCode)
             {
                 var token = await result.Content.ReadFromJsonAsync<MUNity.Schema.Simulation.SimulationTokenResponse>();
@@ -146,13 +145,13 @@ namespace MUNityClient.Services
                 return null;
             }
             petition.Token = tokenObject.Token;
-            return await _httpService.HttpClient.PutAsync($"/api/Simulation/Petition/MakePetition", JsonContent.Create(petition));
+            return await _httpClient.PutAsync($"/api/Simulation/Petition/MakePetition", JsonContent.Create(petition));
         }
 
         public async Task<HttpResponseMessage> AcceptPetition(MUNity.Schema.Simulation.CreatePetitionRequest petition)
         {
             petition.Token = (await GetSimulationToken(petition.SimulationId)).Token;
-            return await _httpService.HttpClient.PutAsync($"/api/Simulation/Petition/AcceptPetition", JsonContent.Create(petition));
+            return await _httpClient.PutAsync($"/api/Simulation/Petition/AcceptPetition", JsonContent.Create(petition));
         }
 
         public async Task<HttpResponseMessage> DeletePetition(int simulationId, MUNity.Schema.Simulation.PetitionDto petition)
@@ -167,7 +166,7 @@ namespace MUNityClient.Services
                 SimulationId = simulationId,
                 Token = token.Token
             };
-            return await _httpService.HttpClient.PutAsync($"/api/Simulation/Petition/DeletePetition", JsonContent.Create(requestBody));
+            return await _httpClient.PutAsync($"/api/Simulation/Petition/DeletePetition", JsonContent.Create(requestBody));
         }
 
         public async Task<MUNity.Schema.Simulation.SimulationDto> GetSimulation(int id, string token = null)
@@ -191,7 +190,7 @@ namespace MUNityClient.Services
                 SimulationId = simulationId,
                 Token = token.Token
             };
-            return await this._httpService.HttpClient.PutAsJsonAsync($"/api/Simulation/CloseAllConnections", body);
+            return await this._httpClient.PutAsJsonAsync($"/api/Simulation/CloseAllConnections", body);
         }
 
         public async Task<HttpResponseMessage> CreateAgendaItem(CreateAgendaItemDto dto)
@@ -199,7 +198,7 @@ namespace MUNityClient.Services
             var token = await GetSimulationToken(dto.SimulationId);
             if (token == null) return null;
             dto.Token = token.Token;
-            return await _httpService.HttpClient.PostAsJsonAsync("/api/Simulation/AgendaItem/CreateAgendaItem", dto);
+            return await _httpClient.PostAsJsonAsync("/api/Simulation/AgendaItem/CreateAgendaItem", dto);
         }
 
         public async Task SecureAgendaItems(SimulationViewModel viewModel)
@@ -245,14 +244,13 @@ namespace MUNityClient.Services
 
         public async Task<HttpResponseMessage> ApplyPetitionTemplate(int simulationId, string name)
         {
-            var client = this._httpService.HttpClient;
             var template = new ApplyPetitionTemplate()
             {
                 Name = name,
                 SimulationId = simulationId,
                 Token = (await GetSimulationToken(simulationId)).Token
             };
-            return await client.PutAsJsonAsync<ApplyPetitionTemplate>("/api/Simulation/Petition/ApplyPetitionPreset", template);
+            return await this._httpClient.PutAsJsonAsync<ApplyPetitionTemplate>("/api/Simulation/Petition/ApplyPetitionPreset", template);
         }
 
         public async Task SecurePetitionTypes(SimulationViewModel viewModel)
@@ -335,8 +333,7 @@ namespace MUNityClient.Services
 
         public async Task<List<SimulationRolesPreset>> GetPresets()
         {
-            var client = this._httpService.HttpClient;
-            return await client.GetFromJsonAsync<List<SimulationRolesPreset>>("/api/Simulation/GetPresets");
+            return await _httpClient.GetFromJsonAsync<List<SimulationRolesPreset>>("/api/Simulation/GetPresets");
         }
 
         public async Task<List<ResolutionSmallInfo>> GetSimulationResolutionInfos(int simulationId, string token = null)
@@ -393,12 +390,11 @@ namespace MUNityClient.Services
 
         public async Task<HttpResponseMessage> CreateVote(MUNity.Schema.Simulation.CreateSimulationVoting model)
         {
-            var client = _httpService.HttpClient;
             model.Token = (await GetSimulationToken(model.SimulationId))?.Token ?? "";
             Console.WriteLine(model.Token);
             Console.WriteLine(model);
             Console.WriteLine(model.SimulationId);
-            return await client.PostAsJsonAsync<MUNity.Schema.Simulation.CreateSimulationVoting>($"/api/Simulation/CreateVoting", model);
+            return await _httpClient.PostAsJsonAsync<MUNity.Schema.Simulation.CreateSimulationVoting>($"/api/Simulation/CreateVoting", model);
         }
 
         public async Task<HttpResponseMessage> Vote(int simulationId, string voteId, int choice)
@@ -412,13 +408,10 @@ namespace MUNityClient.Services
         {
             var token = await GetSimulationToken(id);
             if (token == null) return null;
-            var client = this._httpService.HttpClient;
+            var client = this._httpClient;
             
             if (client.DefaultRequestHeaders.Contains("simsimtoken"))
             {
-                
-                // Its easier to just remove this header element and create a newone than
-                // it is to search of there is more than one value behind it.
                 client.DefaultRequestHeaders.Remove("simsimtoken");
             }
 
@@ -428,7 +421,7 @@ namespace MUNityClient.Services
 
         private HttpClient GetSimulationClient(SimulationViewModel viewModel)
         {
-            var client = this._httpService.HttpClient;
+            var client = this._httpClient;
             if (client.DefaultRequestHeaders.Contains("simsimtoken"))
             {
                 client.DefaultRequestHeaders.Remove("simsimtoken");
@@ -440,7 +433,7 @@ namespace MUNityClient.Services
 
         private HttpClient GetSimulationClient(int simulationId, string token)
         {
-            var client = this._httpService.HttpClient;
+            var client = this._httpClient;
             if (client.DefaultRequestHeaders.Contains("simsimtoken"))
             {
 
@@ -503,8 +496,8 @@ namespace MUNityClient.Services
                 ConnectionId = connId,
                 Token = accessToken
             };
-            var client = _httpService.HttpClient;
-            var result = await client.PostAsync($"/api/Simulation/Subscribe", JsonContent.Create(subscribeBody));
+
+            var result = await _httpClient.PostAsync($"/api/Simulation/Subscribe", JsonContent.Create(subscribeBody));
             if (result.IsSuccessStatusCode)
                 return viewModel;
             return null;
@@ -517,9 +510,9 @@ namespace MUNityClient.Services
             return await client.GetFromJsonAsync<bool>($"/api/Simulation/IsUserOnline?simulationId={simulationId}&userId={userId}");
         }
 
-        public SimulationService(HttpService httpService, ILocalStorageService localStorage)
+        public SimulationService(HttpClient httpClient, ILocalStorageService localStorage)
         {
-            this._httpService = httpService;
+            this._httpClient = httpClient;
             this._localStorage = localStorage;
         }
     }

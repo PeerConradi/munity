@@ -23,6 +23,7 @@ namespace MUNityCore.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            ConnectionUsers.ConnectionIds.Remove(Context.ConnectionId);
             if (this.Context?.ConnectionId != null && this._service != null)
             {
                 await this._service.RemoveConnectionKey(this.Context.ConnectionId);
@@ -30,5 +31,16 @@ namespace MUNityCore.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
+        public override Task OnConnectedAsync()
+        {
+            ConnectionUsers.ConnectionIds.Add(Context.ConnectionId);
+            return base.OnConnectedAsync();
+        }
+
+    }
+
+    public static class ConnectionUsers
+    {
+        public static List<string> ConnectionIds { get; set; } = new List<string>();
     }
 }

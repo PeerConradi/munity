@@ -32,6 +32,7 @@ namespace MUNityCore.Models.Simulation
 
         public bool CanEditListOfSpeakers { get; set; } = false;
 
+        public string LastKnownConnectionId { get; set; }
         
 
         public List<SimulationHubConnection> HubConnections { get; set; }

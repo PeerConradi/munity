@@ -470,6 +470,24 @@ namespace MUNityCore.Services
             return true;
         }
 
+        internal async Task AddUserSubscribtion(SimulationUser user, string connectionId)
+        {
+            // You can also connect as only a listener on the simulation for
+            // example the Sek.
+            if (user != null)
+            {
+                var mdl = new SimulationHubConnection()
+                {
+                    User = user,
+                    ConnectionId = connectionId,
+                    CreationDate = DateTime.Now,
+                };
+                user.LastKnownConnectionId = connectionId;
+                user.HubConnections.Add(mdl);
+                await this._context.SaveChangesAsync();
+            }
+        }
+
         public SimulationRole AddDelegateRole(int simulationId, string name, string iso)
         {
             var simulation = this._context.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
@@ -484,6 +502,11 @@ namespace MUNityCore.Services
             _context.SimulationRoles.Add(role);
             this._context.SaveChanges();
             return role;
+        }
+
+        internal SimulationUser GetSimulationUser(int simulationUserId)
+        {
+            return _context.SimulationUser.FirstOrDefault(n => n.SimulationUserId == simulationUserId);
         }
 
         public bool BecomeRole(Simulation simulation, SimulationUser user, SimulationRole role)
