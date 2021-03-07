@@ -14,6 +14,7 @@ using System.Net.Http.Json;
 using MUNitySchema.Schema.Simulation.Resolution;
 using Microsoft.AspNetCore.Components;
 using MUNity.Schema.Simulation.Voting;
+using System.ComponentModel;
 
 namespace MUNityClient.ViewModels
 {
@@ -280,6 +281,7 @@ namespace MUNityClient.ViewModels
             this.UserVoted += SimulationViewModel_UserVoted;
 
             this.StatusChanged += SimulationViewModel_StatusChanged;
+
         }
 
         private void SimulationViewModel_AgendaItemRemoved(object sender, int e)

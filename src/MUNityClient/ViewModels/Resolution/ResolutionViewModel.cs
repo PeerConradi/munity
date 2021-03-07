@@ -45,9 +45,6 @@ namespace MUNityClient.ViewModels
 
         private MUNityClient.Services.IResolutionService _resolutionService;
 
-        [Obsolete("Remove this HubConnection its inside the OnlineHandler!")]
-        public HubConnection HubConnection { get; set; }
-
         public List<string> IgnoreTransactions { get; set; }
 
         public event EventHandler<ResolutionChangedArgs> ResolutionChanged;

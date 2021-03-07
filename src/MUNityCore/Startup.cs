@@ -37,45 +37,7 @@ namespace MUNityCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-            // In production, the Angular files will be served from this directory
-            //services.AddSpaStaticFiles(configuration =>
-            //{
-            //    configuration.RootPath = "ClientApp/dist";
-            //});
-
-            //services.AddCors(o =>
-            //{
-            //    o.AddPolicy("ProdAllOrigins", builder =>
-            //    {
-            //        builder
-            //            .SetIsOriginAllowed(_ => true)
-            //            //.AllowAnyOrigin()
-            //            .AllowAnyMethod()
-            //            .AllowAnyHeader()
-            //            .AllowCredentials();
-
-            //    });
-
-            //    o.AddPolicy("DevPolicy", builder =>
-            //    {
-            //        builder
-            //            .SetIsOriginAllowed(_ => true)
-            //            //.AllowAnyOrigin()
-            //            .AllowAnyMethod()
-            //            .AllowAnyHeader()
-            //            .AllowCredentials();
-            //    });
-            //});
-            services.AddCors(option =>
-            {
-                option.AddPolicy("munity",builder =>
-                {
-                    builder.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-                });
-            });
+            services.AddControllers();
 
             //services.Configure<ForwardedHeadersOptions>(options =>
             //{
@@ -83,30 +45,29 @@ namespace MUNityCore
             //});
 
             // The App Settings contains information like the secret used to 
-            // CreatePublic the baerer authentication.
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
             // JWT Authentication is done here!
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.UTF8.GetBytes(appSettings.Secret);
-            //services.AddAuthentication(x =>
-            //{
-            //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-            //}).AddJwtBearer(x =>
-            //{
-            //    x.RequireHttpsMetadata = false;
-            //    x.SaveToken = true;
-            //    x.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuerSigningKey = true,
-            //        IssuerSigningKey = new SymmetricSecurityKey(key),
-            //        ValidateIssuer = false,
-            //        ValidateAudience = false
-            //    };
-            //});
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
             // TODO: Add OAuth some day!
 
             // SignalR is for the WebSockets, they are mainly used in the live Editors for example
@@ -115,6 +76,7 @@ namespace MUNityCore
             {
                 options.MaximumReceiveMessageSize = 68000;
                 options.ClientTimeoutInterval = new System.TimeSpan(2,0,0);
+                options.KeepAliveInterval = new TimeSpan(0, 0, 30);
             });
 
             
@@ -168,14 +130,6 @@ namespace MUNityCore
                 //app.UseCors("DevPolicy");
                 app.UseDeveloperExceptionPage();
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
-                
-
-                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-                // specifying the Swagger JSON endpoint.
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
-                });
             }
             else
             {
@@ -185,7 +139,19 @@ namespace MUNityCore
                 app.UseHsts();
             }
 
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
+            });
+
             app.UseCors("munity");
+            app.UseCors(opt =>
+            {
+                opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "https://localhost")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+            });
 
             app.UseSwagger();
 
@@ -194,7 +160,7 @@ namespace MUNityCore
             //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             //});
 
-            //app.UseHttpsRedirection();
+           app.UseHttpsRedirection();
 
             //app.UseStaticFiles();
             //if (!env.IsDevelopment())
@@ -204,8 +170,8 @@ namespace MUNityCore
 
             app.UseRouting();
 
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
