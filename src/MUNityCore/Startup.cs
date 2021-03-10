@@ -162,10 +162,10 @@ namespace MUNityCore
            app.UseHttpsRedirection();
 
             app.UseStaticFiles();
-            if (!env.IsDevelopment())
-            {
-                app.UseSpaStaticFiles();
-            }
+            //if (!env.IsDevelopment())
+            //{
+            //    app.UseSpaStaticFiles();
+            //}
 
             app.UseRouting();
 
