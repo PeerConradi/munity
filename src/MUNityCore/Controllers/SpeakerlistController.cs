@@ -37,6 +37,10 @@ namespace MUNityCore.Controllers
             this._speakerlistService = speakerlistService;
         }
 
+        /// <summary>
+        /// Creates a new list of speaker.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public ActionResult<CreatedResponse> CreateListOfSpeaker()
@@ -100,7 +104,8 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
-        /// Subscribes to a List of speakers
+        /// Subscribes to a List of speakers so anyone that is listening to the listofspeaker socket with the given connectionId
+        /// to lossocket will be informed if the list of speaker has changed.
         /// </summary>
         /// <param name="listId"></param>
         /// <param name="connectionid"></param>
@@ -135,6 +140,11 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Adds someone to the question list of the list of speakers.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPost]
         public async Task<IActionResult> AddQuestion([FromBody]AddSpeakerBody body)
@@ -194,6 +204,13 @@ namespace MUNityCore.Controllers
             return NotFound("List of speakers or speaker not found!");
         }
 
+        /// <summary>
+        /// Will take the first user from the list of question and set him/her as the next question
+        /// (net to ask a question). If there is noone in the queue it will just empty the current question and
+        /// stop the list.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public async Task<IActionResult> NextQuestion([FromBody]ListOfSpeakersRequest body)
@@ -207,6 +224,11 @@ namespace MUNityCore.Controllers
             return NotFound("List of speakers or speaker not found!");
         }
 
+        /// <summary>
+        /// Adds a user to the list of questions/comments.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult AddQuestionSeconds([FromBody]AddSpeakerSeconds body)
@@ -220,6 +242,11 @@ namespace MUNityCore.Controllers
             return NotFound("List of speaker not found!");
         }
 
+        /// <summary>
+        /// Gives the speaker some extra seconds or removes seconds from the speaker of you pass over a negativ value.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult AddSpeakerSeconds([FromBody] AddSpeakerSeconds body)
@@ -249,6 +276,11 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Starts the timer for questions
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult StartQuestion([FromBody]ListOfSpeakersRequest body)
@@ -260,6 +292,12 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Starts the timer for answers. This will give the speaker the time someone asking a question
+        /// normaly has.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult StartAnswer([FromBody]ListOfSpeakersRequest body)
@@ -270,6 +308,11 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Sets the times that are allowed to speak or ask questions.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult SetSettings([FromBody]SetListSettingsBody body)
@@ -283,6 +326,12 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Closes the list of speakers. This should forbid anyone from a simulation etc. to put him-/herself on the
+        /// list of speaker.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult CloseList([FromBody]ListOfSpeakersRequest body)
@@ -294,6 +343,11 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Repons the list of speakers
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult OpenList([FromBody] ListOfSpeakersRequest body)
@@ -305,6 +359,11 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// closes the list of questions
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult CloseQuestions([FromBody] ListOfSpeakersRequest body)
@@ -316,6 +375,11 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// reopens the list of questions.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult OpenQuestions([FromBody] ListOfSpeakersRequest body)
@@ -360,6 +424,11 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Pauses the speaker or question depending on the context of whos speaking.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult Pause([FromBody]ListOfSpeakersRequest body)

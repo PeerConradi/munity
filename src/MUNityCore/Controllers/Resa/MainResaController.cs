@@ -26,6 +26,10 @@ namespace MUNityCore.Controllers.Resa
             this._resolutionService = resolutionService;
         }
 
+        /// <summary>
+        /// Creates a new Public Resolution that can be edited by anyone that knows the ID.
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public async Task<ActionResult<string>> Public()
@@ -36,6 +40,10 @@ namespace MUNityCore.Controllers.Resa
             return Ok(resolutionId);
         }
 
+        /// <summary>
+        /// Will return a status 200 OK when the resolution controller is reachable.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public IActionResult IsUp()
@@ -43,6 +51,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Returns a public resolution with the given id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<Resolution>> Public(string id)
@@ -52,15 +65,13 @@ namespace MUNityCore.Controllers.Resa
             return Ok(resolution);
         }
 
-        ///// <summary>
-        ///// Puts the user into the signalR Group for this document/resolution.
-        ///// </summary>
-        ///// <param name="auth"></param>
-        ///// <param name="id"></param>
-        ///// <param name="connectionid"></param>
-        ///// <param name="resolutionService"></param>
-        ///// <param name="authService"></param>
-        ///// <returns></returns>
+        /// <summary>
+        /// Puts the user into the signalR Group for this document/resolution.
+        /// The groupid is just the id of the resolution
+        /// </summary>
+        /// <param name="resolutionid">The id (normaly a guid) of the resolution.</param>
+        /// <param name="connectionid">The connectionid given by SignalR</param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         public async Task<IActionResult> SubscribeToResolution(string resolutionid, string connectionid)
@@ -78,6 +89,11 @@ namespace MUNityCore.Controllers.Resa
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Returns an info element of the given resolutionid.
+        /// </summary>
+        /// <param name="resolutionId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public ActionResult<ResolutionSmallInfo> GetResolutionInfo(string resolutionId)
@@ -88,6 +104,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok(info);
         }
 
+        /// <summary>
+        /// Allows any user to create amendments for this resolution.
+        /// </summary>
+        /// <param name="simulationService"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> EnableOnlineAmendments([FromServices]Services.SimulationService simulationService,
@@ -102,6 +124,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Disables amendments for other users that know the id of the resolution.
+        /// </summary>
+        /// <param name="simulationService"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> DisableOnlineAmendments([FromServices] Services.SimulationService simulationService,
@@ -116,6 +144,14 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Allows anyone to edit the resolution with the given id. If the simulation 
+        /// is linked to a simulation this will allow anyone inside this simulation to change
+        /// the resolution.
+        /// </summary>
+        /// <param name="simulationService"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> EnablePublicEdit([FromServices] Services.SimulationService simulationService,
@@ -130,6 +166,14 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Deactivates the public edit mode. If the resolution is linked to a simulation this 
+        /// will only allow people with the role of Chairman or the owner to make changes to the
+        /// resolution.
+        /// </summary>
+        /// <param name="simulationService"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> DisablePublicEdit([FromServices] Services.SimulationService simulationService,

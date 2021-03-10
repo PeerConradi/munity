@@ -20,6 +20,7 @@ namespace MUNityCore.Controllers
 
     /// <summary>
     /// The Controller for Simulations (online committees) etc.
+    /// Note that some of this methods may be deprecated
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -49,6 +50,10 @@ namespace MUNityCore.Controllers
             return Ok("beta-0.0.6");
         }
 
+        /// <summary>
+        /// Checks if new Simulations can be created.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public bool CanCreateSimulation()
@@ -56,6 +61,11 @@ namespace MUNityCore.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Returns an info Element for the simulation with the given id.
+        /// </summary>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public ActionResult<SimulationListItemDto> Info(int simulationId)
@@ -129,6 +139,12 @@ namespace MUNityCore.Controllers
             return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
         }
 
+        /// <summary>
+        /// Returns an id for the resolution that is currently worked on inside the simulation.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -158,6 +174,12 @@ namespace MUNityCore.Controllers
             return Ok(this._simulationService.InitListOfSpeakers(simulationId));
         }
 
+        /// <summary>
+        /// Returns the list of users/slots with the Admin Informations (id and access-codes)
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -173,6 +195,13 @@ namespace MUNityCore.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Checks if a user is online (someone is taking this slot and has an active connection to the WebSocket)
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<bool>> IsUserOnline([FromHeader] string simsimtoken, int simulationId, int userId)
@@ -182,6 +211,13 @@ namespace MUNityCore.Controllers
             return Ok(this._simulationService.UserOnline(simulationId, userId));
         }
 
+        /// <summary>
+        /// Gets the list of users. You should think about using the Slot <see cref="Slots(string, int)"/> method instead
+        /// since it will give you more information.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -197,6 +233,13 @@ namespace MUNityCore.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Gets the auth of the simsimtoken you pass to this method inside the request header inside the
+        /// simulation with the given id.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -218,6 +261,14 @@ namespace MUNityCore.Controllers
             return Ok(user.ToSimulationAuthDto());
         }
 
+        /// <summary>
+        /// Lets the user pick a role for his/her slot. This will only work if the user is allowed
+        /// to change the role.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -235,6 +286,13 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Applies a preset for simulation roles.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <param name="presetId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -250,6 +308,13 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Removes a Slot from the simulation.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
@@ -281,6 +346,11 @@ namespace MUNityCore.Controllers
             return Ok(this._simulationService.Presets);
         }
 
+        /// <summary>
+        /// Changes the phase of the simulation
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<ActionResult> SetPhase([FromBody] SetPhaseRequest body)
@@ -295,6 +365,12 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Creates a new resolution and links this created resolution to the simulation.
+        /// </summary>
+        /// <param name="resaService"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public ActionResult<ResolutionSmallInfo> CreateResolution([FromServices]SqlResolutionService resaService, [FromBody]CreateSimulationResolutionRequest body)
@@ -320,6 +396,12 @@ namespace MUNityCore.Controllers
             return Ok(smallInfo);
         }
 
+        /// <summary>
+        /// unlinks a resolution from the simulation. This will change the resolution back to public or any other mode
+        /// that was applied to it before.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> UnlinkResolution([FromBody] MUNity.Schema.Simulation.Resolution.SimulationResolutionRequest body)
@@ -335,6 +417,13 @@ namespace MUNityCore.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Returns a list of information of resolutions that are linked to the given simulation.
+        /// You need to pass the token of the user inside the simsimtoken header.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpGet]
         [AllowAnonymous]
@@ -359,6 +448,12 @@ namespace MUNityCore.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lets a user with given id, password and a display name join into the slot that
+        /// is matching the given id/password criteria.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
@@ -387,6 +482,12 @@ namespace MUNityCore.Controllers
             return Ok(user.ToTokenResponse());
         }
 
+        /// <summary>
+        /// Creates a new simulation room and creates the first slot inside this simulation and will return
+        /// the needed access codes for this first slot.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
@@ -406,6 +507,13 @@ namespace MUNityCore.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Subscribes the given connectionId to the simulationSocket. Everytime something
+        /// inside the simulation changes the user will be informed via the socket. 
+        /// Note that the socket is interrupted/reconnected you may need to resubscribe.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
@@ -430,6 +538,13 @@ namespace MUNityCore.Controllers
             return Ok(true);
         }
 
+        /// <summary>
+        /// Returns the slots of the simulation. This will return every slot with the current user that is inside the slot
+        /// and the role that is applied to the slot.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<List<SimulationSlotDto>>> Slots([FromHeader]string simsimtoken, int simulationId)
@@ -454,6 +569,11 @@ namespace MUNityCore.Controllers
             return Ok(slots);
         }
 
+        /// <summary>
+        /// Removes all Connections from the simulation socket.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<ActionResult> CloseAllConnections([FromBody]SimulationRequest request)

@@ -27,6 +27,12 @@ namespace MUNityCore.Controllers.Resa
             _resolutionService = resolutionService;
         }
 
+
+        /// <summary>
+        /// Creates a new amendment to change the text inside an operative paragraph.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public ActionResult<ChangeAmendment> Create([FromBody]CreateChangeAmendmentRequest body)
@@ -52,6 +58,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok(dto);
         }
 
+        /// <summary>
+        /// Removes an amendment from the list of changeAmendments.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Remove([FromBody]AmendmentRequest body)
@@ -64,6 +75,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Applies/Submits a change amendment. The Text of the Operative Paragraph will become
+        /// the text that is inside the ChangeAmendment.Text-Field.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Submit([FromBody]AmendmentRequest body)

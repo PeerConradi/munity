@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Simulation
 {
+    /// <summary>
+    /// Controller to handle request to the agenda of a simulation.
+    /// </summary>
     [Route("api/Simulation/[controller]")]
     [ApiController]
     public class AgendaItemController : ControllerBase, ISimulationController
@@ -75,6 +78,11 @@ namespace MUNityCore.Controllers.Simulation
             }
         }
 
+        /// <summary>
+        /// Removes the agenda item and all petitions that are on this agenda item.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> DeleteAgendaItem([FromBody]AgendaItemRequest body)

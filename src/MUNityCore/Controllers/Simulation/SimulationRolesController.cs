@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers.Simulation
 {
-
+    /// <summary>
+    /// Controller to handle roles of a simulation.
+    /// </summary>
     [ApiController]
     [Route("api/Simulation/Roles")]
     public class SimulationRolesController : ControllerBase, ISimulationController
@@ -27,6 +29,11 @@ namespace MUNityCore.Controllers.Simulation
             this._simulationService = simulationService;
         }
 
+        /// <summary>
+        /// Creates a new role for a simulation.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public async Task<ActionResult<SimulationRoleDto>> CreateRole([FromBody]CreateRoleRequest body)
@@ -40,6 +47,12 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(role.ToSimulationRoleItem());
         }
 
+        /// <summary>
+        /// Returns all the roles of a simulation.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<List<SimulationRoleDto>>> GetSimulationRoles([FromHeader] string simsimtoken, int id)
@@ -51,6 +64,12 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(models);
         }
 
+        /// <summary>
+        /// Changes the role of a user. Note that only the owner (first user of the simulation) or users
+        /// that have a role with the type Chairman are allowed to perform this action.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> SetUserRole([FromBody]SetUserSimulationRole body)

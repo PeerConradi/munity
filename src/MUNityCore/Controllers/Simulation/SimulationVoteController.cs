@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Simulation
 {
+    /// <summary>
+    /// Controller to handle votings inside a simulation.
+    /// </summary>
     [Route("api/Sim/Voting")]
     [ApiController]
     public class SimulationVoteController : ControllerBase
@@ -28,6 +31,11 @@ namespace MUNityCore.Controllers.Simulation
             this._simulationService = simulationService;
         }
 
+        /// <summary>
+        /// Creates a new voting inside the simulation
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> Create([FromBody] CreateSimulationVoting body)
@@ -46,6 +54,12 @@ namespace MUNityCore.Controllers.Simulation
             return Ok();
         }
 
+        /// <summary>
+        /// Returns information about the currently ongoing voting
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<CreatedVoteModel>> GetActiveVote([FromHeader]string simsimtoken, int simulationId)
@@ -61,6 +75,11 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(voting);
         }
 
+        /// <summary>
+        /// votes for a choice inside an ongoing voting.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> Vote(UserVoteRequest body)

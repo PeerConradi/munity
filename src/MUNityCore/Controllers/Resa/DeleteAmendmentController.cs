@@ -27,6 +27,11 @@ namespace MUNityCore.Controllers.Resa
             _resolutionService = resolutionService;
         }
 
+        /// <summary>
+        /// Creates a new amendment to remove an operative paragraph from the operative section.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public ActionResult<DeleteAmendment> Create([FromBody] CreateDeleteAmendmentRequest body)
@@ -51,6 +56,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok(dto);
         }
 
+        /// <summary>
+        /// Removes a delete-amendment from the operative section. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Remove([FromBody]AmendmentRequest body)
@@ -64,6 +74,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Submits/appiles the delete amendment. This will remove the operative paragraph with all sub paragraphs and
+        /// other amendments that may link to this paragaph or any of its children.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Submit([FromBody]AmendmentRequest body)

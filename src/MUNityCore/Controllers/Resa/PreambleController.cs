@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Resa
 {
+    /// <summary>
+    /// A controller to change the preamble of a resolution.
+    /// </summary>
     [Route("api/Resa/Preamble")]
     [ApiController]
     public class PreambleController : ControllerBase
@@ -28,6 +31,15 @@ namespace MUNityCore.Controllers.Resa
             _resolutionService = resolutionService;
         }
 
+
+        /// <summary>
+        /// Adds a new preamble paragraph to the end of the preamble.
+        /// will notify listeners inside the resasocket via "PreambleParagraphAdded".
+        /// <see cref="MUNity.Hubs.ITypedResolutionHub.PreambleParagraphAdded(PreambleParagraphAddedEventArgs)"/>
+        /// <seealso cref="PreambleParagraph"/>
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public ActionResult<PreambleParagraph> AddParagraph([FromBody]AddPreambleParagraphRequest body)
@@ -49,6 +61,11 @@ namespace MUNityCore.Controllers.Resa
             return (Ok(returnElement));
         }
 
+        /// <summary>
+        /// Will change the thext of a preamble paragraph and notify anyone listening via the socket.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Text([FromBody]ChangePreambleParagraphTextRequest body)
@@ -68,6 +85,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Will change the comment. This will not notify anyone via the socket at the moment!
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Comment([FromBody] ChangePreambleParagraphTextRequest body)
@@ -78,6 +100,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// This will remove a preamble paragraph but not notify anyone inside the socket.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Remove([FromBody]RemovePreambleParagraphRequest body)
@@ -88,6 +115,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// This will reorder the preamble paragraphs with the order that is given.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Reorder([FromBody]ReorderPreambleRequest body)

@@ -28,6 +28,15 @@ namespace MUNityCore.Controllers.Resa
             _resolutionService = resolutionService;
         }
 
+        /// <summary>
+        /// Creates a new amendment to move a given operative paragraph to a new position.
+        /// This will generate a new virtual operative paragraph that represents the position where
+        /// the operative paragraph will be moved to. It will inform anyone listening to the
+        /// resasocket that is subscribed to the group (see Resa/SubscribeToResolution) <see cref="MainResaController.SubscribeToResolution(string, string)"/>
+        /// about the changes.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public ActionResult<MoveAmendmentCreatedEventArgs> Create([FromBody]CreateMoveAmendmentRequest body)
@@ -71,6 +80,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok(dto);
         }
 
+        /// <summary>
+        /// Removes the amendment and the virtual paragraph that has been created for this amendment.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Remove([FromBody]AmendmentRequest body)
@@ -83,6 +97,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Submits the amendment. This will remove the original operative paragraph and turn the virtual paragraph
+        /// into a normal paragraph.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Submit([FromBody]AmendmentRequest body)

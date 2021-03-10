@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Cors;
 
 namespace MUNityCore.Controllers.Resa
 {
+    /// <summary>
+    /// Controller to create, modify or remove operative paragraphs.
+    /// </summary>
     [Route("api/Resa/Operative")]
     [ApiController]
     public class OperativeParagraphController : ControllerBase
@@ -28,6 +31,14 @@ namespace MUNityCore.Controllers.Resa
             _resolutionService = resolutionService;
         }
 
+        /// <summary>
+        /// Creates a new operative paragrap at the end of the operative section.
+        /// This will also notify anyone that is inside the group of the resolution inside the resasocket
+        /// that a new paragraph has been added via (OperativeParagraphAdded) with the an OperativeParagraphAddedEventArgs.
+        /// <see cref="OperativeParagraphAddedEventArgs"/> and will return an OperativeParagraph object <see cref="OperativeParagraph"/>
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public ActionResult<OperativeParagraph> AddParagraph([FromBody]AddOperativeParagraphRequest body)
@@ -53,7 +64,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok(mdl);
         }
         
-
+        /// <summary>
+        /// Will change the text of the operative paragraph and informs anyone listenning via
+        /// OperativeParagraphTextChanged.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Text(ChangeOperativeParagraphTextRequest body)
@@ -80,6 +96,11 @@ namespace MUNityCore.Controllers.Resa
             return this._hubContext?.Clients?.Group(args.ResolutionId);
         }
 
+        /// <summary>
+        /// Changes the comment of an operative Paragraph. Does not fire any changed event inside the socket!
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Comment([FromBody]ChangeOperativeParagraphCommentRequest body)
@@ -91,6 +112,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Removes an operative paragraph from the resolution but will not fire anything inside the socket at the moment.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Remove([FromBody]RemoveOperativeParagraphRequest body)
@@ -102,6 +128,11 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// reorders the operative paragraphs with the given order, but will not notify anyone via the websocket.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public IActionResult Reorder([FromBody]ReorderOperativeParagraphsRequest body)

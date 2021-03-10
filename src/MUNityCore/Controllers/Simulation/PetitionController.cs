@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Simulation
 {
+    /// <summary>
+    /// Controller to handle petitions that are linked to an agenda Item.
+    /// </summary>
     [Route("api/Simulation/[controller]")]
     [ApiController]
     public class PetitionController : ControllerBase, ISimulationController
@@ -53,6 +56,11 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(files.Select(n => n.Name.Substring(0, n.Name.Length - 4)).ToList());
         }
 
+        /// <summary>
+        /// Creates a new type petition type. This petitiontype can be used by any other simulation.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public async Task<ActionResult<PetitionTypeDto>> CreatePetitionType([FromBody]CreatePetitionTypeRequest body)
@@ -68,7 +76,8 @@ namespace MUNityCore.Controllers.Simulation
         }
 
         /// <summary>
-        /// Not implemented yet!
+        /// Adds a given petition type to the simulation. There is a list of possible petitiontype that can
+        /// be shared by different simulations.
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
@@ -144,7 +153,7 @@ namespace MUNityCore.Controllers.Simulation
         //}
 
         /// <summary>
-        /// Removes a petition from an agenda item of a conference.
+        /// Removes a petition from an agenda item of a simulation.
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
@@ -175,6 +184,13 @@ namespace MUNityCore.Controllers.Simulation
             }
         }
 
+        /// <summary>
+        /// Applies a preset petitiontype file to a simulation. This will at first create the needed petition types
+        /// and the adds this petitionTypes to the given Simulation. If the PetitionTypes already exists it will just links
+        /// the matchin petition types to the simulation.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<ActionResult> ApplyPetitionPreset([FromBody] ApplyPetitionTemplate body)
@@ -193,6 +209,12 @@ namespace MUNityCore.Controllers.Simulation
             return Ok();
         }
 
+        /// <summary>
+        /// Returns a list of possible petition types that you can use for your simulation.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<List<PetitionTypeSimulationDto>>> SimulationPetitionTypes([FromHeader] string simsimtoken, int simulationId)

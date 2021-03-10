@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Simulation
 {
+    /// <summary>
+    /// Handles users that are inside a slot, or slots itself
+    /// </summary>
     [Route("api/Simulation/User")]
     [ApiController]
     public class SimulationUserController : ControllerBase
@@ -27,6 +30,11 @@ namespace MUNityCore.Controllers.Simulation
             this._simulationService = simulationService;
         }
 
+        /// <summary>
+        /// Will create a new Slot for a user to join a simulation.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public async Task<ActionResult<SimulationUserAdminDto>> CreateUser([FromBody]SimulationRequest body)
@@ -39,6 +47,13 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(newUser.ToSimulationUserAdminDto());
         }
 
+        /// <summary>
+        /// Will return a token for the given simulation. The owner (first user/creator) of the simulation
+        /// aswell as anyone with the role of type chairman is allowed to call this method.
+        /// You can use this method to generate invite links.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<ActionResult<string>> UserToken([FromBody]SimulationUserTokenRequest request)
@@ -53,6 +68,12 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(token);
         }
 
+        /// <summary>
+        /// Returns the user/slotId by the given token.
+        /// </summary>
+        /// <param name="simsimtoken"></param>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public ActionResult<int> MyUserId([FromHeader]string simsimtoken, int simulationId)

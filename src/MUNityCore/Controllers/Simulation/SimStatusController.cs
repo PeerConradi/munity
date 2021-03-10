@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Simulation
 {
+    /// <summary>
+    /// Controller to handle the status of a simulation.
+    /// </summary>
     [Route("api/Simulation/Status")]
     [ApiController]
     public class SimStatusController : ControllerBase, ISimulationController
@@ -20,6 +23,11 @@ namespace MUNityCore.Controllers.Simulation
 
         public IHubContext<SimulationHub, ITypedSimulationHub> HubContext { get; set; }
 
+        /// <summary>
+        /// Returns the current status of the simulation with the given id.
+        /// </summary>
+        /// <param name="simulationId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
         public ActionResult<SimulationStatusDto> Current(int simulationId)
@@ -30,6 +38,12 @@ namespace MUNityCore.Controllers.Simulation
             return Ok(current);
         }
 
+        /// <summary>
+        /// Sets the current Status of the simulation and notifies the socket with "StatusChanged".
+        /// <see cref="SimulationStatusDto"/>
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[action]")]
         public async Task<IActionResult> CurrentStatus([FromBody]SetSimulationStatusDto body)

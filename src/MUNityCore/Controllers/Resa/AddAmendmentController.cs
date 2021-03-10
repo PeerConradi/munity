@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Controllers.Resa
 {
+    /// <summary>
+    /// Controller to handle amendments to add a new operative paragraph.
+    /// </summary>
     [Route("api/Resa/Amendment/Add")]
     [ApiController]
     public class AddAmendmentController : ControllerBase
@@ -28,6 +31,13 @@ namespace MUNityCore.Controllers.Resa
             _resolutionService = resolutionService;
         }
 
+        /// <summary>
+        /// Creates a new AddAmendment. This type of amendment is to add a new operative paragraph to a given position.
+        /// It will return an object that is containing the AddAmendment object that has been created and the virtual paragraph
+        /// that has to be added into the operative section. To know where to place the Paragraph use the VirtualParagraphIndex.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         public ActionResult<AddAmendmentCreatedEventArgs> Create([FromBody]CreateAddAmendmentRequest body)
@@ -70,6 +80,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok(args);
         }
 
+        /// <summary>
+        /// Activates the amendment with the given id to display it differently in the given editors.
+        /// This will also turn any virtual paragraph that is linked to this amendment to visible.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult ActivateAmendment([FromBody] ActivateAmendmentRequest body)
@@ -86,6 +102,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Deactivates the given amendment inside any view. This means it should not be highlighted inside any views
+        /// and also the operative paragraphs that are linked to this amendment should not be visible.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult DeactivateAmendment([FromBody] ActivateAmendmentRequest body)
@@ -102,6 +124,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Removes the amendment with the given id. This will also remove the virtual paragraph.
+        /// This function will only return an empty ok Result. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult Remove([FromBody]AmendmentRequest body)
@@ -115,6 +143,12 @@ namespace MUNityCore.Controllers.Resa
             return Ok();
         }
 
+        /// <summary>
+        /// Applies/Submits the given AddAMendment. It will set the VirtualParagraph that has been
+        /// created for this amendment to a normal paragraph and remove the amendment.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
         public IActionResult Submit([FromBody]AmendmentRequest body)
