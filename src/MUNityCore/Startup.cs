@@ -144,7 +144,6 @@ namespace MUNityCore
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
             });
 
-            app.UseCors("munity");
             app.UseCors(opt =>
             {
                 opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "https://localhost")
@@ -162,11 +161,11 @@ namespace MUNityCore
 
            app.UseHttpsRedirection();
 
-            //app.UseStaticFiles();
-            //if (!env.IsDevelopment())
-            //{
-            //    app.UseSpaStaticFiles();
-            //}
+            app.UseStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
 
             app.UseRouting();
 
