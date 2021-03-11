@@ -1,5 +1,5 @@
 # munity
-Model United Nations REST API
+Model United Nations REST API and Blazor Client
 
 ## About
 MUNity is a work in progress to create and manage Model United Nations Conferences. It also contains a lot of software solutions for documents like resolutions, aswell as a solution to create speakerlists.
@@ -11,9 +11,9 @@ MUNity is a work in progress to create and manage Model United Nations Conferenc
 ## General structure
 
 There are 6 different projects in this project solution. 
-* The Backend, a WebAPI 2.0
-* The Frontend, a Blazor Web-Assembly Project
-* The MunitySchema, a shared code containing structures and logic that is shared between the FrontEnd and Backend. You can also find this one on nuget.
+* The Backend, a WebAPI 2.0 (with a Test Project)
+* The Frontend, a Blazor Web-Assembly Project (with a Test Project)
+* The MunitySchema, a shared code containing structures and logic that is shared between the FrontEnd and Backend. You can also find this one on nuget. (also with a Test Project)
 
 ## Status
 This application is under development and cannot be used at the moment. Please check later to see some progress.
@@ -53,9 +53,9 @@ The project uses swagger. Go to localhost:[port]/swagger to see the auto generat
 
 ## Demo
 
-__You can Take a look at a Demo [here](https://mun-hosting.web.app).__
+__You can Take a look at a Demo (Client) [here](https://mun-hosting.web.app).__
 
-__Api References: https://mun-tools.com/swagger/index.html__
+__Api References: https://mun-tools.com:5000/swagger/index.html__
 
 _The Live Version may not match the current GitHub Version_
 
