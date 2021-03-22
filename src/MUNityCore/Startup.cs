@@ -68,6 +68,7 @@ namespace MUNityCore
                     ValidateAudience = false
                 };
             });
+
             // TODO: Add OAuth some day!
 
             // SignalR is for the WebSockets, they are mainly used in the live Editors for example
