@@ -26,7 +26,8 @@ namespace MUNitySchema.Models.Simulation
         /// </summary>
         LowPrio,
         /// <summary>
-        /// is currently in review for example the chairs are taking a look at it.
+        /// is currently in review for example the chairs are taking a look at it, before adding it 
+        /// to the offical list of petitions that are waiting.
         /// </summary>
         InReview
     }

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,11 +16,12 @@ using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using MongoDB.Driver;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.SpaServices;
 using Microsoft.IdentityModel.Tokens;
 using MUNityCore.DataHandlers;
 using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MUNityCore
 {
@@ -39,10 +39,10 @@ namespace MUNityCore
         {
             services.AddControllers();
 
-            //services.Configure<ForwardedHeadersOptions>(options =>
-            //{
-            //    options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
-            //});
+
+            // Adding a Blazor FrontEnd for configuration and stuff
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
 
             // The App Settings contains information like the secret used to 
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -117,7 +117,12 @@ namespace MUNityCore
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
-            });
+
+                c.CustomOperationIds(apiDescription =>
+                {
+                    return apiDescription.TryGetMethodInfo(out MethodInfo method) ? method.Name : null;
+                });
+            }).AddSwaggerGenNewtonsoftSupport();
 
 
         }
@@ -142,6 +147,7 @@ namespace MUNityCore
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
+                c.DisplayOperationId();
             });
 
             app.UseCors(opt =>
@@ -162,10 +168,6 @@ namespace MUNityCore
            app.UseHttpsRedirection();
 
             app.UseStaticFiles();
-            //if (!env.IsDevelopment())
-            //{
-            //    app.UseSpaStaticFiles();
-            //}
 
             app.UseRouting();
 
@@ -181,6 +183,8 @@ namespace MUNityCore
                 endpoints.MapHub<Hubs.SpeakerListHub>("/slsocket");
                 endpoints.MapHub<Hubs.SimulationHub>("/simsocket");
 
+                endpoints.MapBlazorHub();
+                endpoints.MapFallbackToPage("/_Host");
             });
 
             try

@@ -6,9 +6,20 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.Simulation
 {
+
+    /// <summary>
+    /// A Simulation (virtual Committee) can have multiple AgendaItems. Each AgendaItem can have multiple petitions.
+    /// </summary>
     public class AgendaItem
     {
+        /// <summary>
+        /// The index to identify the agenda item at the backend.
+        /// </summary>
         public int AgendaItemId { get; set; }
+
+        /// <summary>
+        /// A displayname of the agenda Item.
+        /// </summary>
         public string Name { get; set; }
         public string Description { get; set; }
         public EAgendaItemStatuses Status { get; set; }
