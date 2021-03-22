@@ -561,7 +561,11 @@ namespace MUNityCore.Controllers
                     var userInDb = this._simulationService.GetSimulationUser(offline.SimulationUserId);
                     if (userInDb != null)
                     {
-                        offline.IsOnline = Hubs.ConnectionUsers.ConnectionIds.Any(n => n.Key == userInDb.LastKnownConnectionId && !string.IsNullOrEmpty(userInDb.LastKnownConnectionId));
+                        if (Hubs.ConnectionUsers.ConnectionIds != null)
+                        {
+                            offline.IsOnline = Hubs.ConnectionUsers.ConnectionIds.Any(n => n.Key == userInDb.LastKnownConnectionId && !string.IsNullOrEmpty(userInDb.LastKnownConnectionId));
+                        }
+                        
                     }
                 }
             }

@@ -693,7 +693,7 @@ namespace MUNityCore.Services
 
         internal List<SimulationSlotDto> GetSlots(int simulationId)
         {
-            var t = from user in _context.SimulationUser
+            var t = from user in _context.SimulationUser.Include(n => n.HubConnections)
                     where user.Simulation.SimulationId == simulationId
                     select new SimulationSlotDto()
                     {
