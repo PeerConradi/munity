@@ -3,14 +3,16 @@ using System;
 using MUNityCore.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityCore.Migrations
 {
     [DbContext(typeof(MunityContext))]
-    partial class MunityContextModelSnapshot : ModelSnapshot
+    [Migration("20210329181214_New Migration")]
+    partial class NewMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

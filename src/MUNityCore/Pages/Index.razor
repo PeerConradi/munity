@@ -1,9 +1,54 @@
 ﻿@page "/"
+@inject NavigationManager navManager;
 
-<h3>Willkommen bei MUNity</h3>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Jumbotron Background="Background.Light" Margin="Margin.Is0">
+            <JumbotronTitle Size="JumbotronTitleSize.Is4">MUNity</JumbotronTitle>
+            <Blazorise.JumbotronSubtitle>
+                Kostenfgreie Plattform für Model United Nations Konferenzen.
+            </Blazorise.JumbotronSubtitle>
+            <Divider />
+            <Paragraph>
+                Wir stellen viele kostenlose Tools zum Arbeiten bei Model United Nations Konferenzen zur Verfügung und nun auch
+                die Funktion um eine virtuelle Konferenz durchführen zu können.
+            </Paragraph>
+        </Jumbotron>
+    </Column>
+</Row>
 
-<p>Dies ist nur der Core.</p>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <CardDeck>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Simulationen</CardTitle>
+                </CardHeader>
+                <CardBody>
+                    <CardText Alignment="TextAlignment.Center">Die virtuellen Gremien erlauben von überall aus eine Model United Nations Konferenz durchführen zu können. Dafür wird nicht mehr als ein Browser und eine Internetverbindung gebraucht.</CardText>
+                    <Button Block="true" Color="Color.Primary" Clicked="NavigateToSimulations">Zu den Simulationen</Button>
+                </CardBody>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Resolutioneditor</CardTitle>
+                </CardHeader>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Redelisten</CardTitle>
+                </CardHeader>
+            </Card>
+        </CardDeck>
+    </Column>
+    
+</Row>
 
 @code {
-
+    private void NavigateToSimulations()
+    {
+        navManager.NavigateTo("/simulations");
+    }
 }

@@ -319,9 +319,6 @@ namespace MUNityCore.Services
             return this._context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == id);
         }
 
-        
-
-        
 
         public Simulation GetSimulationWithHubsUsersAndRoles(int id)
         {

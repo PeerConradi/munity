@@ -14,7 +14,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using MongoDB.Driver;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MUNityCore.DataHandlers;
@@ -22,6 +21,10 @@ using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Blazorise.Extensions;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 
 namespace MUNityCore
 {
@@ -43,6 +46,11 @@ namespace MUNityCore
             // Adding a Blazor FrontEnd for configuration and stuff
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddBlazorise(options =>
+            {
+                options.ChangeTextOnKeyPress = true; // optional
+            }).AddBootstrapProviders()
+              .AddFontAwesomeIcons();
 
             // The App Settings contains information like the secret used to 
             var appSettingsSection = Configuration.GetSection("AppSettings");

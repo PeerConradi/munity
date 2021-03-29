@@ -1,0 +1,68 @@
+﻿@using Microsoft.EntityFrameworkCore;
+@page "/simulation/{id}"
+@inject Services.SimulationService simulationService
+@inject DataHandlers.EntityFramework.MunityContext context;
+
+<h3>Simulation</h3>
+
+@if (simulation == null)
+{
+    <p>Simulation nicht gefunden!</p>
+}
+else
+{
+    <p>@simulation.Name</p>
+    <p>Rollen: </p>
+    @if (roles != null)
+    {
+        @foreach (var role in roles)
+        {
+            <p>@role.Name</p>
+        }
+    }
+    else
+    {
+        <p>Rollen werden geladen!</p>
+    }
+
+    <p>Benutzer</p>
+    @if (users != null)
+    {
+        @foreach (var user in users)
+        {
+            <p>@user.DisplayName</p>
+        }
+    }
+    else
+    {
+        <p>Benutzer werden geladen!</p>
+    }
+
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    Models.Simulation.Simulation simulation;
+
+    List<Models.Simulation.SimulationRole> roles;
+
+    List<Models.Simulation.SimulationUser> users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        int id = 0;
+        if (int.TryParse(Id, out id))
+        {
+            simulation = await context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == id);
+            if (simulation != null)
+            {
+                roles = await context.SimulationRoles.Where(n => n.Simulation.SimulationId == id).ToListAsync();
+                users = await context.SimulationUser.Where(n => n.Simulation.SimulationId == id).ToListAsync();
+            }
+        }
+
+        await base.OnInitializedAsync();
+    }
+}
