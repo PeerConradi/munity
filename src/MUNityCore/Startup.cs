@@ -159,10 +159,10 @@ namespace MUNityCore
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
                 c.DisplayOperationId();
             });
-
+            //opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "http://localhost", "https://localhost", "localhost", "127.0.0.1", "*.localhost")
             app.UseCors(opt =>
             {
-                opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "http://localhost", "https://localhost", "localhost", "127.0.0.1", "*.localhost")
+                opt.SetIsOriginAllowed(origin => true)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
