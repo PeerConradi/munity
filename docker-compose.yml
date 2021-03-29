@@ -10,37 +10,12 @@ services:
     ports:
       - 3306:3306
 
-  mongodb:
-    image: mongo
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
-    ports:
-      - 27017:27017
-
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - 8082:8081
-    environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=example
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-
   munity-backend:
 #    image: munity-backend
     build:
       context: .
     ports:
-      - 5001:5000
+      - 5001:80
     environment:
       - MUNITY_FRONTEND_IP=DOMAIN
-      
-  munity-frontend:
-     image: munity-frontend
-     ports:
-       - 80:80
-     environment:
-       - API_ENDPOINT=http://DOMAIN:5000/
-     
+
