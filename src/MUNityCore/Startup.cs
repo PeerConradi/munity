@@ -162,7 +162,7 @@ namespace MUNityCore
 
             app.UseCors(opt =>
             {
-                opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "https://localhost", "localhost", "127.0.0.1", "*.localhost")
+                opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "http://localhost", "https://localhost", "localhost", "127.0.0.1", "*.localhost")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
