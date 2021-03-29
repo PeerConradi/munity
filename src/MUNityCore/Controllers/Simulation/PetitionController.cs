@@ -104,8 +104,9 @@ namespace MUNityCore.Controllers.Simulation
         [HttpGet]
         public async Task<ActionResult<List<Models.Simulation.PetitionType>>> AllPetitionTypes()
         {
-            var context = _simulationService.GetDatabaseInstance();
-            var petitionTypes = context.PetitionTypes.Select(n => n.ToPetitionTypeDto()).ToList();
+
+            var petitionTypesDb = await this._simulationService.GetPetitionTypes();
+            var petitionTypes = petitionTypesDb.Select(n => n.ToPetitionTypeDto()).ToList();
             return Ok(petitionTypes);
         }
 

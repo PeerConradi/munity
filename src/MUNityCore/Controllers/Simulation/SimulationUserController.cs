@@ -60,9 +60,7 @@ namespace MUNityCore.Controllers.Simulation
         {
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(request);
             if (!isAllowed) return BadRequest();
-            var db = _simulationService.GetDatabaseInstance();
-            var token = db.SimulationUser.FirstOrDefault(n => n.Simulation.SimulationId == request.SimulationId &&
-            n.SimulationUserId == request.UserId).Token;
+            string token = await _simulationService.GetUserToken(request.UserId);
             if (token == null)
                 return NotFound();
             return Ok(token);

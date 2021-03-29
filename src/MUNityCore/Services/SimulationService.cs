@@ -14,6 +14,7 @@ using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.Simulation.Presets;
+using MUNitySchema.Schema.Simulation.Resolution;
 
 namespace MUNityCore.Services
 {
@@ -87,6 +88,27 @@ namespace MUNityCore.Services
             this._context.SimulationVotings.Add(mdl);
             this._context.SaveChanges();
             return mdl;
+        }
+
+        internal async Task<SimulationListItemDto> GetInfo(int simulationId)
+        {
+            var simulation = await _context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == simulationId);
+            if (simulation == null)
+                return null;
+            var mdl = new SimulationListItemDto()
+            {
+                Name = simulation.Name,
+                Phase = simulation.Phase,
+                SimulationId = simulation.SimulationId,
+                UsingPassword = false
+            };
+            return mdl;
+        }
+
+        internal async Task<string> GetUserToken(int userId)
+        {
+            var user = await _context.SimulationUser.FirstOrDefaultAsync(n => n.SimulationUserId == userId);
+            return user?.Token ?? null;
         }
 
         internal bool Vote(UserVoteRequest body)
@@ -499,6 +521,22 @@ namespace MUNityCore.Services
             _context.SimulationRoles.Add(role);
             this._context.SaveChanges();
             return role;
+        }
+
+        internal Task<List<ResolutionSmallInfo>> GetResolutions(int simulationId)
+        {
+            var resolutions = from auth in _context.ResolutionAuths
+                              where auth.Simulation.SimulationId == simulationId
+                              join resa in _context.Resolutions on auth.ResolutionId equals resa.ResaElementId
+                              select new ResolutionSmallInfo()
+                              {
+                                  AllowAmendments = auth.AllowOnlineAmendments,
+                                  AllowPublicEdit = auth.AllowPublicEdit,
+                                  LastChangedTime = resa.CreatedDate,
+                                  Name = resa.Topic,
+                                  ResolutionId = resa.ResaElementId
+                              };
+            return resolutions.ToListAsync();
         }
 
         internal SimulationUser GetSimulationUser(int simulationUserId)

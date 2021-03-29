@@ -12,8 +12,6 @@ namespace MUNityCore.Models.Resolution.SqlResa
 
         public ResaOperativeParagraph TargetParagraph { get; set; }
 
-        public DateTime SubmitTime { get; set; }
-
         public ResaDeleteAmendment()
         {
             this.ResaAmendmentId = Guid.NewGuid().ToString();

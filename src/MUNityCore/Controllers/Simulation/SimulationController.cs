@@ -68,20 +68,13 @@ namespace MUNityCore.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public ActionResult<SimulationListItemDto> Info(int simulationId)
+        public async Task<ActionResult<SimulationListItemDto>> Info(int simulationId)
         {
-            var instance = this._simulationService.GetDatabaseInstance();
-            var sim = instance.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
-            if (sim == null)
+            SimulationListItemDto simulationInfo = await _simulationService.GetInfo(simulationId);
+            if (simulationInfo == null)
                 return NotFound();
-            var mdl = new SimulationListItemDto()
-            {
-                Name = sim.Name,
-                Phase = sim.Phase,
-                SimulationId = sim.SimulationId,
-                UsingPassword = false
-            };
-            return Ok(mdl);
+            
+            return Ok(simulationInfo);
         }
 
         /// <summary>
@@ -429,23 +422,11 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<ResolutionSmallInfo>>> SimulationResolutions([FromHeader] string simsimtoken, int simulationId)
         {
-            var context = _simulationService.GetDatabaseInstance();
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-
             if (!isAllowed) return BadRequest();
-            var resolutions = from auth in context.ResolutionAuths
-                              where auth.Simulation.SimulationId == simulationId
-                              join resa in context.Resolutions on auth.ResolutionId equals resa.ResaElementId
-                              select new ResolutionSmallInfo()
-                              {
-                                  AllowAmendments = auth.AllowOnlineAmendments,
-                                  AllowPublicEdit = auth.AllowPublicEdit,
-                                  LastChangedTime = resa.CreatedDate,
-                                  Name = resa.Topic,
-                                  ResolutionId = resa.ResaElementId
-                              };
-            var result = await resolutions.ToListAsync();
-            return Ok(result);
+            
+            List<ResolutionSmallInfo> resolutions = await _simulationService.GetResolutions(simulationId);
+            return Ok(resolutions);
         }
 
         /// <summary>

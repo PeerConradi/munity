@@ -1,4 +1,7 @@
 ﻿@page "/simulations"
+@using Microsoft.EntityFrameworkCore;
+@inject DataHandlers.EntityFramework.MunityContext munityContext;
+
 <Row>
     <Column ColumnSize="ColumnSize.Is12">
         <Title Size="3">Simulationen</Title>
@@ -27,5 +30,11 @@
 </Row>
 
 @code {
-    
+    List<Models.Simulation.Simulation> simulations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        simulations = await munityContext.Simulations.ToListAsync();
+        await base.OnInitializedAsync();
+    }
 }

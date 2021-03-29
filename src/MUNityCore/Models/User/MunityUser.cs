@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MongoDB.Bson.Serialization.Attributes;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
 

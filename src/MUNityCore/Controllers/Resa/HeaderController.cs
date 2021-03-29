@@ -198,7 +198,7 @@ namespace MUNityCore.Controllers.Resa
 
         private async Task<bool> CanUserEditResolution(string id, string password = null)
         {
-            return true;    // TODO Remove this when done with testing
+            return await Task.FromResult(true);    // TODO Remove this when done with testing
         }
 
         private MUNity.Hubs.ITypedResolutionHub GetHub(HeaderStringPropChangedEventArgs args)
