@@ -190,7 +190,7 @@ namespace MUNityCore.Controllers
             if (user == null)
                 return BadRequest();
 
-            if (!this._organisationService.CanUserCreateProject(user.Username, organisation.OrganizationId))
+            if (!this._organisationService.CanUserCreateProject(user.UserName, organisation.OrganizationId))
                 return BadRequest();
 
             var conference = _conferenceService.CreateConference(body.Name, body.FullName, body.ConferenceShort, project);
@@ -320,7 +320,7 @@ namespace MUNityCore.Controllers
         private bool CanUserEditConference(string conferenceid)
         {
             var user = this._authService.GetUserOfClaimPrincipal(User);
-            var roles = this._conferenceService.GetUserRolesOnConference(user.Username, conferenceid)
+            var roles = this._conferenceService.GetUserRolesOnConference(user.UserName, conferenceid)
                 .Include(n => n.RoleAuth);
             if (!roles.Any(n => n.RoleAuth.CanEditConferenceSettings)) return true;
 

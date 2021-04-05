@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
 
@@ -17,28 +18,13 @@ namespace MUNityCore.Models.User
     /// inside any of the controllers unless you use it to validate something.
     /// When sending out information, always use the UserSchema
     /// </summary>
-    public class MunityUser
+    public class MunityUser : IdentityUser<string>
     {
         public enum EUserState
         {
             OK,
             BANNED
         }
-
-        public int MunityUserId { get; set; }
-
-        [MaxLength(40)]
-        public string Username { get; set; }
-
-
-        [MaxLength(250)]
-        public string Password { get; set; }
-
-        [MaxLength(250)]
-        public string Mail { get; set; }
-
-        [MaxLength(250)]
-        public string Salt { get; set; }
 
         [MaxLength(100)]
         public string Title { get; set; }
@@ -88,5 +74,15 @@ namespace MUNityCore.Models.User
 
         [Timestamp]
         public byte[] UserTimestamp { get; set; }
+
+        public MunityUser()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
+
+        public MunityUser(string id)
+        {
+            this.Id = id ?? Guid.NewGuid().ToString();
+        }
     }
 }

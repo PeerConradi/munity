@@ -12,7 +12,7 @@ namespace MUNityCore.Extensions.CastExtensions
         public static UserInformation AsInformation(this MunityUser user)
         {
             var mdl = new UserInformation();
-            mdl.Username = user.Username;
+            mdl.Username = user.UserName;
             mdl.LastOnline = user.LastOnline;
             switch (user.PrivacySettings.PublicNameDisplayMode)
             {

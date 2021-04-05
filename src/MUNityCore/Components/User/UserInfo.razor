@@ -1,0 +1,19 @@
+﻿@page "/user"
+
+<AuthorizeView>
+    <Authorized>
+        <a href="Identity/Account/Manager">Verwaltung @context.User.Identity.Name</a>
+
+        <form method="post" action="Identity/Account/LogOut">
+            <button class="btn btn-danger" type="submit">Logout</button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <a href="Identity/Account/Register">Registrieren</a>
+        <a href="Identity/Account/Login">Login</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

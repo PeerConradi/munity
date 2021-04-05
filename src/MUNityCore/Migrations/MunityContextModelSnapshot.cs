@@ -245,8 +245,8 @@ namespace MUNityCore.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("CreationUserMunityUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("CreationUserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime(6)");
@@ -269,7 +269,7 @@ namespace MUNityCore.Migrations
 
                     b.HasIndex("ConferenceProjectProjectId");
 
-                    b.HasIndex("CreationUserMunityUserId");
+                    b.HasIndex("CreationUserId");
 
                     b.ToTable("Conferences");
                 });
@@ -416,14 +416,14 @@ namespace MUNityCore.Migrations
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserMunityUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.HasKey("ParticipationId");
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("UserMunityUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Participations");
                 });
@@ -482,8 +482,8 @@ namespace MUNityCore.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200) CHARACTER SET utf8mb4");
 
-                    b.Property<int?>("UserMunityUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.HasKey("RoleApplicationId");
 
@@ -491,7 +491,7 @@ namespace MUNityCore.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("UserMunityUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("RoleApplications");
                 });
@@ -573,15 +573,15 @@ namespace MUNityCore.Migrations
                     b.Property<DateTime>("ChangeDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("SetByMunityUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("SetById")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<string>("SettingValue")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("SetttingName");
 
-                    b.HasIndex("SetByMunityUserId");
+                    b.HasIndex("SetById");
 
                     b.ToTable("Settings");
                 });
@@ -629,8 +629,8 @@ namespace MUNityCore.Migrations
                     b.Property<int?>("RoleOrganizationRoleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserMunityUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.HasKey("OrganizationMemberId");
 
@@ -638,7 +638,7 @@ namespace MUNityCore.Migrations
 
                     b.HasIndex("RoleOrganizationRoleId");
 
-                    b.HasIndex("UserMunityUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("OrganizationMember");
                 });
@@ -851,8 +851,8 @@ namespace MUNityCore.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("CreationUserMunityUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("CreationUserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<string>("EditPassword")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -876,7 +876,7 @@ namespace MUNityCore.Migrations
 
                     b.HasIndex("CommitteeId");
 
-                    b.HasIndex("CreationUserMunityUserId");
+                    b.HasIndex("CreationUserId");
 
                     b.HasIndex("SimulationId");
 
@@ -901,14 +901,14 @@ namespace MUNityCore.Migrations
                     b.Property<bool>("CanWrite")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("UserMunityUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.HasKey("ResolutionUserId");
 
                     b.HasIndex("AuthResolutionId");
 
-                    b.HasIndex("UserMunityUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("ResolutionUsers");
                 });
@@ -1280,8 +1280,10 @@ namespace MUNityCore.Migrations
 
             modelBuilder.Entity("MUNityCore.Models.User.MunityUser", b =>
                 {
-                    b.Property<int>("MunityUserId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
                     b.Property<int?>("AuthMunityUserAuthId")
@@ -1294,9 +1296,20 @@ namespace MUNityCore.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300) CHARACTER SET utf8mb4");
 
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<string>("Country")
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Forename")
                         .HasMaxLength(250)
@@ -1320,16 +1333,31 @@ namespace MUNityCore.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("Mail")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("MunityUserId1")
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Password")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
+                    b.Property<string>("MunityUserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ProfileImageName")
                         .HasMaxLength(250)
@@ -1338,9 +1366,8 @@ namespace MUNityCore.Migrations
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Salt")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Street")
                         .HasMaxLength(300)
@@ -1350,6 +1377,13 @@ namespace MUNityCore.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
 
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
+
                     b.Property<int>("UserState")
                         .HasColumnType("int");
 
@@ -1358,23 +1392,26 @@ namespace MUNityCore.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
-                    b.Property<string>("Username")
-                        .HasMaxLength(40)
-                        .HasColumnType("varchar(40) CHARACTER SET utf8mb4");
-
                     b.Property<string>("Zipcode")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50) CHARACTER SET utf8mb4");
 
-                    b.HasKey("MunityUserId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AuthMunityUserAuthId");
 
                     b.HasIndex("GroupApplicationId");
 
-                    b.HasIndex("MunityUserId1");
+                    b.HasIndex("MunityUserId");
 
-                    b.ToTable("Users");
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.User.MunityUserAuth", b =>
@@ -1425,8 +1462,8 @@ namespace MUNityCore.Migrations
                     b.Property<int>("PublicNameDisplayMode")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserRef")
-                        .HasColumnType("int");
+                    b.Property<string>("UserRef")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.HasKey("UserPrivacySettingsId");
 
@@ -1434,6 +1471,134 @@ namespace MUNityCore.Migrations
                         .IsUnique();
 
                     b.ToTable("UserPrivacySettings");
+                });
+
+            modelBuilder.Entity("MUNityCore.Models.User.UserRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Conference.Roles.DelegateRole", b =>
@@ -1649,7 +1814,7 @@ namespace MUNityCore.Migrations
 
                     b.HasOne("MUNityCore.Models.User.MunityUser", "CreationUser")
                         .WithMany()
-                        .HasForeignKey("CreationUserMunityUserId");
+                        .HasForeignKey("CreationUserId");
 
                     b.Navigation("ConferenceProject");
 
@@ -1688,7 +1853,7 @@ namespace MUNityCore.Migrations
 
                     b.HasOne("MUNityCore.Models.User.MunityUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserMunityUserId");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Role");
 
@@ -1716,7 +1881,7 @@ namespace MUNityCore.Migrations
 
                     b.HasOne("MUNityCore.Models.User.MunityUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserMunityUserId");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Role");
 
@@ -1736,7 +1901,7 @@ namespace MUNityCore.Migrations
                 {
                     b.HasOne("MUNityCore.Models.User.MunityUser", "SetBy")
                         .WithMany()
-                        .HasForeignKey("SetByMunityUserId");
+                        .HasForeignKey("SetById");
 
                     b.Navigation("SetBy");
                 });
@@ -1753,7 +1918,7 @@ namespace MUNityCore.Migrations
 
                     b.HasOne("MUNityCore.Models.User.MunityUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserMunityUserId");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Organization");
 
@@ -1821,7 +1986,7 @@ namespace MUNityCore.Migrations
 
                     b.HasOne("MUNityCore.Models.User.MunityUser", "CreationUser")
                         .WithMany("CreatedResolutions")
-                        .HasForeignKey("CreationUserMunityUserId");
+                        .HasForeignKey("CreationUserId");
 
                     b.HasOne("MUNityCore.Models.Simulation.Simulation", "Simulation")
                         .WithMany("Resolutions")
@@ -1842,7 +2007,7 @@ namespace MUNityCore.Migrations
 
                     b.HasOne("MUNityCore.Models.User.MunityUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserMunityUserId");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Auth");
 
@@ -1990,7 +2155,7 @@ namespace MUNityCore.Migrations
 
                     b.HasOne("MUNityCore.Models.User.MunityUser", null)
                         .WithMany("Friends")
-                        .HasForeignKey("MunityUserId1");
+                        .HasForeignKey("MunityUserId");
 
                     b.Navigation("Auth");
                 });
@@ -1999,11 +2164,60 @@ namespace MUNityCore.Migrations
                 {
                     b.HasOne("MUNityCore.Models.User.MunityUser", "User")
                         .WithOne("PrivacySettings")
-                        .HasForeignKey("MUNityCore.Models.User.UserPrivacySettings", "UserRef")
+                        .HasForeignKey("MUNityCore.Models.User.UserPrivacySettings", "UserRef");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("MUNityCore.Models.User.UserRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("MUNityCore.Models.User.MunityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("MUNityCore.Models.User.MunityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("MUNityCore.Models.User.UserRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("MUNityCore.Models.User.MunityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("MUNityCore.Models.User.MunityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Conference.Roles.DelegateRole", b =>

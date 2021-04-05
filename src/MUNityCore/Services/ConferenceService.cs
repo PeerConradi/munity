@@ -323,7 +323,7 @@ namespace MUNityCore.Services
         public IQueryable<AbstractRole> GetUserRolesOnConference(string username, string conferenceid)
         {
             return this._context.Participations.Where(n =>
-                n.Role.Conference.ConferenceId == conferenceid && n.User.Username == username).Select(n => n.Role);
+                n.Role.Conference.ConferenceId == conferenceid && n.User.UserName == username).Select(n => n.Role);
         }
 
         public async Task<bool> SetConferenceName(string conferenceid, string newname)

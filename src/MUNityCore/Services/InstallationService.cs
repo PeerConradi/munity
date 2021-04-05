@@ -11,32 +11,6 @@ namespace MUNityCore.Services
     {
         private readonly MunityContext _context;
 
-        public MunityUser CreateAdmin(string username, string password, DateTime birthdate, string mail)
-        {
-            var auth = new MunityUserAuth()
-            {
-                UserAuthName = "Admin",
-                AuthLevel = MUNity.Schema.User.EAuthLevel.Headadmin,
-                CanCreateOrganization = true,
-            };
-
-            var pass = Util.Hashing.PasswordHashing.InitHashing(password);
-
-            var admin = new MunityUser()
-            {
-                Auth = auth,
-                Birthday = birthdate,
-                Username = username,
-                Password = pass.Key,
-                Salt = pass.Salt
-            };
-
-            this._context.UserAuths.Add(auth);
-            this._context.Users.Add(admin);
-            this._context.SaveChanges();
-            return admin;
-        }
-
         public InstallationService(MunityContext context)
         {
             this._context = context;

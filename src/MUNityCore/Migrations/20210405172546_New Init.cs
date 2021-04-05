@@ -4,10 +4,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MUNityCore.Migrations
 {
-    public partial class NewDbInit : Migration
+    public partial class NewInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Name = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Countries",
                 columns: table => new
@@ -107,7 +121,8 @@ namespace MUNityCore.Migrations
                     Session = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     SubmitterName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     CommitteeName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    SupporterNames = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -145,6 +160,27 @@ namespace MUNityCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserAuths", x => x.MunityUserAuthId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    RoleId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    ClaimType = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ClaimValue = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -413,6 +449,28 @@ namespace MUNityCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SimulationVotings",
+                columns: table => new
+                {
+                    SimulationVotingId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    SimulationId = table.Column<int>(type: "int", nullable: true),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AllowAbstention = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SimulationVotings", x => x.SimulationVotingId);
+                    table.ForeignKey(
+                        name: "FK_SimulationVotings_Simulations_SimulationId",
+                        column: x => x.SimulationId,
+                        principalTable: "Simulations",
+                        principalColumn: "SimulationId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Amendments",
                 columns: table => new
                 {
@@ -486,6 +544,7 @@ namespace MUNityCore.Migrations
                     CanSelectRole = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CanEditResolution = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CanEditListOfSpeakers = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    LastKnownConnectionId = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     SimulationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -562,6 +621,34 @@ namespace MUNityCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VotingSlots",
+                columns: table => new
+                {
+                    SimulationVotingSlotId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    VotingSimulationVotingId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    UserSimulationUserId = table.Column<int>(type: "int", nullable: true),
+                    Choice = table.Column<int>(type: "int", nullable: false),
+                    VoteTime = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VotingSlots", x => x.SimulationVotingSlotId);
+                    table.ForeignKey(
+                        name: "FK_VotingSlots_SimulationUser_UserSimulationUserId",
+                        column: x => x.UserSimulationUserId,
+                        principalTable: "SimulationUser",
+                        principalColumn: "SimulationUserId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_VotingSlots_SimulationVotings_VotingSimulationVotingId",
+                        column: x => x.VotingSimulationVotingId,
+                        principalTable: "SimulationVotings",
+                        principalColumn: "SimulationVotingId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GroupApplications",
                 columns: table => new
                 {
@@ -581,15 +668,10 @@ namespace MUNityCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "AspNetUsers",
                 columns: table => new
                 {
-                    MunityUserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Username = table.Column<string>(type: "varchar(40) CHARACTER SET utf8mb4", maxLength: 40, nullable: true),
-                    Password = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
-                    Mail = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
-                    Salt = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
+                    Id = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
                     Title = table.Column<string>(type: "varchar(100) CHARACTER SET utf8mb4", maxLength: 100, nullable: true),
                     Forename = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
                     Lastname = table.Column<string>(type: "varchar(250) CHARACTER SET utf8mb4", maxLength: 250, nullable: true),
@@ -608,29 +690,128 @@ namespace MUNityCore.Migrations
                     UserTimestamp = table.Column<DateTime>(type: "timestamp(6)", rowVersion: true, nullable: true)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     GroupApplicationId = table.Column<int>(type: "int", nullable: true),
-                    MunityUserId1 = table.Column<int>(type: "int", nullable: true)
+                    MunityUserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
+                    UserName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.MunityUserId);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_GroupApplications_GroupApplicationId",
+                        name: "FK_AspNetUsers_AspNetUsers_MunityUserId",
+                        column: x => x.MunityUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_GroupApplications_GroupApplicationId",
                         column: x => x.GroupApplicationId,
                         principalTable: "GroupApplications",
                         principalColumn: "GroupApplicationId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Users_UserAuths_AuthMunityUserAuthId",
+                        name: "FK_AspNetUsers_UserAuths_AuthMunityUserAuthId",
                         column: x => x.AuthMunityUserAuthId,
                         principalTable: "UserAuths",
                         principalColumn: "MunityUserAuthId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    ClaimType = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ClaimValue = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Users_MunityUserId1",
-                        column: x => x.MunityUserId1,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    ProviderKey = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    RoleId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    LoginProvider = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Name = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
+                    Value = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -644,7 +825,7 @@ namespace MUNityCore.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    CreationUserMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    CreationUserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     ConferenceProjectProjectId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     Visibility = table.Column<int>(type: "int", nullable: false),
                     ConferenceTimestamp = table.Column<DateTime>(type: "timestamp(6)", rowVersion: true, nullable: true)
@@ -654,16 +835,16 @@ namespace MUNityCore.Migrations
                 {
                     table.PrimaryKey("PK_Conferences", x => x.ConferenceId);
                     table.ForeignKey(
+                        name: "FK_Conferences_AspNetUsers_CreationUserId",
+                        column: x => x.CreationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Conferences_Projects_ConferenceProjectProjectId",
                         column: x => x.ConferenceProjectProjectId,
                         principalTable: "Projects",
                         principalColumn: "ProjectId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Conferences_Users_CreationUserMunityUserId",
-                        column: x => x.CreationUserMunityUserId,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -673,7 +854,7 @@ namespace MUNityCore.Migrations
                 {
                     OrganizationMemberId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     OrganizationId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     RoleOrganizationRoleId = table.Column<int>(type: "int", nullable: true),
                     JoinedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -683,6 +864,12 @@ namespace MUNityCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrganizationMember", x => x.OrganizationMemberId);
+                    table.ForeignKey(
+                        name: "FK_OrganizationMember_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrganizationMember_OrganizationRoles_RoleOrganizationRoleId",
                         column: x => x.RoleOrganizationRoleId,
@@ -695,12 +882,6 @@ namespace MUNityCore.Migrations
                         principalTable: "Organizations",
                         principalColumn: "OrganizationId",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_OrganizationMember_Users_UserMunityUserId",
-                        column: x => x.UserMunityUserId,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -709,17 +890,17 @@ namespace MUNityCore.Migrations
                 {
                     SetttingName = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
                     SettingValue = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    SetByMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    SetById = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     ChangeDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Settings", x => x.SetttingName);
                     table.ForeignKey(
-                        name: "FK_Settings_Users_SetByMunityUserId",
-                        column: x => x.SetByMunityUserId,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
+                        name: "FK_Settings_AspNetUsers_SetById",
+                        column: x => x.SetById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -729,7 +910,7 @@ namespace MUNityCore.Migrations
                 {
                     UserPrivacySettingsId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserRef = table.Column<int>(type: "int", nullable: false),
+                    UserRef = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     PublicNameDisplayMode = table.Column<int>(type: "int", nullable: false),
                     InternalNameDisplayMode = table.Column<int>(type: "int", nullable: false),
                     ConferenceNameDisplayMode = table.Column<int>(type: "int", nullable: false),
@@ -742,11 +923,11 @@ namespace MUNityCore.Migrations
                 {
                     table.PrimaryKey("PK_UserPrivacySettings", x => x.UserPrivacySettingsId);
                     table.ForeignKey(
-                        name: "FK_UserPrivacySettings_Users_UserRef",
+                        name: "FK_UserPrivacySettings_AspNetUsers_UserRef",
                         column: x => x.UserRef,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -878,7 +1059,7 @@ namespace MUNityCore.Migrations
                 {
                     ResolutionId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: false),
                     Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    CreationUserMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    CreationUserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastChangeTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     AllowPublicRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -896,6 +1077,12 @@ namespace MUNityCore.Migrations
                 {
                     table.PrimaryKey("PK_ResolutionAuths", x => x.ResolutionId);
                     table.ForeignKey(
+                        name: "FK_ResolutionAuths_AspNetUsers_CreationUserId",
+                        column: x => x.CreationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_ResolutionAuths_Committees_CommitteeId",
                         column: x => x.CommitteeId,
                         principalTable: "Committees",
@@ -906,12 +1093,6 @@ namespace MUNityCore.Migrations
                         column: x => x.SimulationId,
                         principalTable: "Simulations",
                         principalColumn: "SimulationId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ResolutionAuths_Users_CreationUserMunityUserId",
-                        column: x => x.CreationUserMunityUserId,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -1001,7 +1182,7 @@ namespace MUNityCore.Migrations
                 {
                     ResolutionUserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     CanRead = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CanWrite = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CanAddUsers = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -1011,16 +1192,16 @@ namespace MUNityCore.Migrations
                 {
                     table.PrimaryKey("PK_ResolutionUsers", x => x.ResolutionUserId);
                     table.ForeignKey(
+                        name: "FK_ResolutionUsers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_ResolutionUsers_ResolutionAuths_AuthResolutionId",
                         column: x => x.AuthResolutionId,
                         principalTable: "ResolutionAuths",
                         principalColumn: "ResolutionId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ResolutionUsers_Users_UserMunityUserId",
-                        column: x => x.UserMunityUserId,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -1031,7 +1212,7 @@ namespace MUNityCore.Migrations
                     ParticipationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     RoleId = table.Column<int>(type: "int", nullable: true),
-                    UserMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     IsMainRole = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Cost = table.Column<double>(type: "double", nullable: false),
                     Paid = table.Column<double>(type: "double", nullable: false),
@@ -1049,10 +1230,10 @@ namespace MUNityCore.Migrations
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Participations_Users_UserMunityUserId",
-                        column: x => x.UserMunityUserId,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
+                        name: "FK_Participations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -1062,7 +1243,7 @@ namespace MUNityCore.Migrations
                 {
                     RoleApplicationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserMunityUserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(95) CHARACTER SET utf8mb4", nullable: true),
                     RoleId = table.Column<int>(type: "int", nullable: true),
                     ApplyDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Title = table.Column<string>(type: "varchar(200) CHARACTER SET utf8mb4", maxLength: 200, nullable: false),
@@ -1081,16 +1262,16 @@ namespace MUNityCore.Migrations
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_RoleApplications_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_RoleApplications_GroupedRoleApplications_GroupedRoleApplicat~",
                         column: x => x.GroupedRoleApplicationId,
                         principalTable: "GroupedRoleApplications",
                         principalColumn: "GroupedRoleApplicationId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RoleApplications_Users_UserMunityUserId",
-                        column: x => x.UserMunityUserId,
-                        principalTable: "Users",
-                        principalColumn: "MunityUserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -1165,6 +1346,58 @@ namespace MUNityCore.Migrations
                 column: "VirtualParagraphResaOperativeParagraphId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_AuthMunityUserAuthId",
+                table: "AspNetUsers",
+                column: "AuthMunityUserAuthId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_GroupApplicationId",
+                table: "AspNetUsers",
+                column: "GroupApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_MunityUserId",
+                table: "AspNetUsers",
+                column: "MunityUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Committees_ConferenceId",
                 table: "Committees",
                 column: "ConferenceId");
@@ -1190,9 +1423,9 @@ namespace MUNityCore.Migrations
                 column: "ConferenceProjectProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Conferences_CreationUserMunityUserId",
+                name: "IX_Conferences_CreationUserId",
                 table: "Conferences",
-                column: "CreationUserMunityUserId");
+                column: "CreationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Delegation_ConferenceId",
@@ -1230,9 +1463,9 @@ namespace MUNityCore.Migrations
                 column: "RoleOrganizationRoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrganizationMember_UserMunityUserId",
+                name: "IX_OrganizationMember_UserId",
                 table: "OrganizationMember",
-                column: "UserMunityUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganizationRoles_OrganizationId",
@@ -1245,9 +1478,9 @@ namespace MUNityCore.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Participations_UserMunityUserId",
+                name: "IX_Participations_UserId",
                 table: "Participations",
-                column: "UserMunityUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Petitions_AgendaItemId",
@@ -1280,9 +1513,9 @@ namespace MUNityCore.Migrations
                 column: "CommitteeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ResolutionAuths_CreationUserMunityUserId",
+                name: "IX_ResolutionAuths_CreationUserId",
                 table: "ResolutionAuths",
-                column: "CreationUserMunityUserId");
+                column: "CreationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResolutionAuths_SimulationId",
@@ -1300,9 +1533,9 @@ namespace MUNityCore.Migrations
                 column: "AuthResolutionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ResolutionUsers_UserMunityUserId",
+                name: "IX_ResolutionUsers_UserId",
                 table: "ResolutionUsers",
-                column: "UserMunityUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleApplications_GroupedRoleApplicationId",
@@ -1315,9 +1548,9 @@ namespace MUNityCore.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleApplications_UserMunityUserId",
+                name: "IX_RoleApplications_UserId",
                 table: "RoleApplications",
-                column: "UserMunityUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleAuths_ConferenceId",
@@ -1325,9 +1558,9 @@ namespace MUNityCore.Migrations
                 column: "ConferenceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Settings_SetByMunityUserId",
+                name: "IX_Settings_SetById",
                 table: "Settings",
-                column: "SetByMunityUserId");
+                column: "SetById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SimulationHubConnections_UserSimulationUserId",
@@ -1370,6 +1603,11 @@ namespace MUNityCore.Migrations
                 column: "SimulationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SimulationVotings_SimulationId",
+                table: "SimulationVotings",
+                column: "SimulationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Speakers_ListOfSpeakersId",
                 table: "Speakers",
                 column: "ListOfSpeakersId");
@@ -1381,19 +1619,14 @@ namespace MUNityCore.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_AuthMunityUserAuthId",
-                table: "Users",
-                column: "AuthMunityUserAuthId");
+                name: "IX_VotingSlots_UserSimulationUserId",
+                table: "VotingSlots",
+                column: "UserSimulationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_GroupApplicationId",
-                table: "Users",
-                column: "GroupApplicationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_MunityUserId1",
-                table: "Users",
-                column: "MunityUserId1");
+                name: "IX_VotingSlots_VotingSimulationVotingId",
+                table: "VotingSlots",
+                column: "VotingSimulationVotingId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_GroupApplications_AbstractRole_RoleId",
@@ -1432,6 +1665,21 @@ namespace MUNityCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "Amendments");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
                 name: "CommitteeSession");
@@ -1479,7 +1727,13 @@ namespace MUNityCore.Migrations
                 name: "UserPrivacySettings");
 
             migrationBuilder.DropTable(
+                name: "VotingSlots");
+
+            migrationBuilder.DropTable(
                 name: "OperativeParagraphs");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "OrganizationRoles");
@@ -1494,10 +1748,13 @@ namespace MUNityCore.Migrations
                 name: "GroupedRoleApplications");
 
             migrationBuilder.DropTable(
+                name: "PetitionTypes");
+
+            migrationBuilder.DropTable(
                 name: "SimulationUser");
 
             migrationBuilder.DropTable(
-                name: "PetitionTypes");
+                name: "SimulationVotings");
 
             migrationBuilder.DropTable(
                 name: "Resolutions");
@@ -1518,19 +1775,19 @@ namespace MUNityCore.Migrations
                 name: "Conferences");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "Projects");
-
-            migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Organizations");
 
             migrationBuilder.DropTable(
                 name: "GroupApplications");
 
             migrationBuilder.DropTable(
                 name: "UserAuths");
+
+            migrationBuilder.DropTable(
+                name: "Organizations");
 
             migrationBuilder.DropTable(
                 name: "AbstractRole");

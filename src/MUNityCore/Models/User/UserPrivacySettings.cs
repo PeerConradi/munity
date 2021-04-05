@@ -64,7 +64,7 @@ namespace MUNityCore.Models.User
         
         public int UserPrivacySettingsId { get; set; }
 
-        public int UserRef { get; set; }
+        public string UserRef { get; set; }
 
         public MunityUser User { get; set; }
 
@@ -104,7 +104,7 @@ namespace MUNityCore.Models.User
         public EDisplayAuthMode Pinboard { get; set; } = EDisplayAuthMode.Friends;
 
         /// <summary>
-        /// The age of this user.
+        /// The age of this user
         /// </summary>
         public EDisplayAuthMode Age { get; set; } = EDisplayAuthMode.JustMe;
     }

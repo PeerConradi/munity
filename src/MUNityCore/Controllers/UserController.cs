@@ -109,7 +109,7 @@ namespace MUNityCore.Controllers
             var result = _authService.GetUserOfClaimPrincipal(User);
             if (result != null)
             {
-                var userInfo = this._userService.GetUserInformation(result.Username);
+                var userInfo = this._userService.GetUserInformation(result.UserName);
                 return Ok(userInfo);
             }
 

@@ -25,6 +25,9 @@ using Blazorise.Extensions;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 
 namespace MUNityCore
 {
@@ -77,6 +80,11 @@ namespace MUNityCore
                 };
             });
 
+            services.AddIdentity<MUNityCore.Models.User.MunityUser, MUNityCore.Models.User.UserRole>()
+                .AddEntityFrameworkStores<MunityContext>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
+
             // TODO: Add OAuth some day!
 
             // SignalR is for the WebSockets, they are mainly used in the live Editors for example
@@ -111,6 +119,7 @@ namespace MUNityCore
             services.AddScoped<Services.SqlResolutionService>();
             services.AddScoped<Services.SpeakerlistService>();
             services.AddScoped<Services.SimulationService>();
+            services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>
@@ -159,6 +168,9 @@ namespace MUNityCore
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
                 c.DisplayOperationId();
             });
+
+            app.UseSwagger();
+
             //opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "http://localhost", "https://localhost", "localhost", "127.0.0.1", "*.localhost")
             app.UseCors(opt =>
             {
@@ -168,7 +180,7 @@ namespace MUNityCore
                 .AllowCredentials();
             });
 
-            app.UseSwagger();
+            
 
             //app.UseForwardedHeaders(new ForwardedHeadersOptions
             //{
@@ -186,6 +198,7 @@ namespace MUNityCore
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=index}/{id?}");
@@ -204,7 +217,6 @@ namespace MUNityCore
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                Console.WriteLine("Database-Service not found. Make sure that the MariaDB service is started and the app can access it.");
             }
             
         }

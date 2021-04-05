@@ -20,7 +20,7 @@ namespace MUNityCore.Services
             if (!Util.Tools.InputCheck.IsOnlyCharsAndNumbers(username))
                 throw new ArgumentException("The username is not valid, you are only allowed to use a-z A-Z 0-9");
 
-            if (_context.Users.Any(n => n.Username.ToLower() == username.ToLower()))
+            if (_context.Users.Any(n => n.UserName.ToLower() == username.ToLower()))
                 throw new ArgumentException("The username is already taken!");
 
             // Save today's date.
@@ -38,12 +38,11 @@ namespace MUNityCore.Services
             var pass = Util.Hashing.PasswordHashing.InitHashing(password);
             var user = new MunityUser
             {
-                Username = username,
-                Mail = mail,
+                UserName = username,
+                Email = mail,
                 Forename = forename,
                 Lastname = lastname,
-                Password = pass.Key,
-                Salt = pass.Salt,
+                PasswordHash = pass.Key,
                 Birthday = birthday
             };
 
@@ -55,7 +54,7 @@ namespace MUNityCore.Services
 
         public Task<MunityUser> GetUserByUsername(string username)
         {
-            return _context.Users.FirstOrDefaultAsync(n => n.Username.ToLower() == username.ToLower());
+            return _context.Users.FirstOrDefaultAsync(n => n.UserName.ToLower() == username.ToLower());
         }
 
         public async Task<int> UpdateUser(MunityUser user)
@@ -66,12 +65,12 @@ namespace MUNityCore.Services
 
         public async Task<bool> CheckUsername(string username)
         {
-            return await _context.Users.AnyAsync(n => n.Username.ToLower() == username);
+            return await _context.Users.AnyAsync(n => n.UserName.ToLower() == username);
         }
 
         public async Task<bool> CheckMail(string mail)
         {
-            return await _context.Users.AnyAsync(n => n.Mail == mail);
+            return await _context.Users.AnyAsync(n => n.Email == mail);
         }
 
         public IEnumerable<MunityUser> GetBannedUsers()
@@ -93,7 +92,7 @@ namespace MUNityCore.Services
         {
             if (user == null) return null;
             return this._context.Users.Include(n => n.PrivacySettings)
-                .FirstOrDefault(n => n.MunityUserId == user.MunityUserId)
+                .FirstOrDefault(n => n.Id == user.Id)
                 ?.PrivacySettings;
         }
 
@@ -136,7 +135,7 @@ namespace MUNityCore.Services
         public async Task<UserInformation> GetUserInformation(string username)
         {
             var user = await _context.Users.Include(n => n.PrivacySettings).FirstOrDefaultAsync(n =>
-                n.Username == username);
+                n.UserName == username);
             if (user == null) return null;
             return user.AsInformation();
             

@@ -52,11 +52,11 @@ namespace MUNityCore.Services
         public AuthenticationResponse Authenticate(MUNity.Schema.Authentication.AuthenticateRequest model)
         {
             // that user does not exists go away!
-            MunityUser user = _context.Users.FirstOrDefault(n => n.Username == model.Username);
+            MunityUser user = _context.Users.FirstOrDefault(n => n.UserName == model.Username);
             if (user == null)
                 return null;
 
-            var passwordCheck = Util.Hashing.PasswordHashing.CheckPassword(model.Password, user.Salt, user.Password);
+            var passwordCheck = Util.Hashing.PasswordHashing.CheckPassword(model.Password, "", user.PasswordHash);
 
             // Password is not correct fuck off
             if (!passwordCheck)
@@ -65,7 +65,7 @@ namespace MUNityCore.Services
             // authentication successful so generate jwt token
             var token = GenerateToken(user);
             
-            return new AuthenticationResponse() { FirstName = user.Forename, LastName = user.Lastname, Username = user.Username, Token = token};
+            return new AuthenticationResponse() { FirstName = user.Forename, LastName = user.Lastname, Username = user.UserName, Token = token};
         }
 
         public string GenerateToken(MunityUser user)
@@ -77,7 +77,7 @@ namespace MUNityCore.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Username)
+                    new Claim(ClaimTypes.Name, user.UserName)
                 }),
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secureKey), SecurityAlgorithms.HmacSha256Signature)
@@ -95,7 +95,7 @@ namespace MUNityCore.Services
                 return null;
 
             var username = claimUsername.Value;
-            var user = _context.Users.FirstOrDefault(n => n.Username == username);
+            var user = _context.Users.FirstOrDefault(n => n.UserName == username);
             return user;
         }
 
@@ -122,7 +122,7 @@ namespace MUNityCore.Services
                 return null;
 
             var username = claimUsername.Value;
-            var user = _context.Users.Include(n => n.Auth).FirstOrDefault(n => n.Username == username);
+            var user = _context.Users.Include(n => n.Auth).FirstOrDefault(n => n.UserName == username);
             return user;
         }
 
@@ -132,7 +132,7 @@ namespace MUNityCore.Services
             if (claimUsername == null) return false;
 
             var username = claimUsername.Value;
-            var user = _context.Users.Include(n => n.Auth).FirstOrDefault(n => n.Username == username);
+            var user = _context.Users.Include(n => n.Auth).FirstOrDefault(n => n.UserName == username);
 
             if (user.Auth == null) return false;
 

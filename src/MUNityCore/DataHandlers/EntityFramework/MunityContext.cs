@@ -12,12 +12,13 @@ using MUNityCore.Models.User;
 using MUNityCore.Models;
 using MUNity.Models.ListOfSpeakers;
 using MUNityCore.Models.Resolution.SqlResa;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {
-    public class MunityContext : DbContext
+    public class MunityContext : IdentityDbContext<MunityUser, UserRole, string>
     {
-        public DbSet<MunityUser> Users { get; set; }
 
         public DbSet<Country> Countries { get; set; }
 
@@ -110,7 +111,13 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.Entity<MunityUser>().HasKey(n => n.Id);
+
+            //modelBuilder.Entity<IdentityUserLogin<string>>().HasKey(n => n.UserId);
+
+            //modelBuilder.Entity<IdentityUserRole<string>>().HasKey(n => n.UserId);
+
+            //modelBuilder.Entity<IdentityUserToken<string>>().HasKey(n => n.UserId);
 
             modelBuilder.Entity<Committee>().HasOne(n => n.Conference)
                 .WithMany(a => a.Committees).OnDelete(DeleteBehavior.Cascade);
@@ -200,6 +207,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
             modelBuilder.Entity<ResaOperativeParagraph>().HasMany(n => n.MoveAmendments).WithOne(n => n.SourceParagraph);
 
             modelBuilder.Entity<ResaElement>().HasMany(n => n.Amendments).WithOne(n => n.Resolution);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)

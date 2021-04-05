@@ -55,7 +55,7 @@ namespace MUNityCore.Services
 
         public bool CanUserCreateProject(string username, string organisationId)
         {
-            var result = _context.OrganizationMember.Any(n => n.User.Username == username &&
+            var result = _context.OrganizationMember.Any(n => n.User.UserName == username &&
                                                  n.Organization.OrganizationId == organisationId &&
                                                  n.Role.CanCreateProject == true);
             return result;
@@ -101,7 +101,7 @@ namespace MUNityCore.Services
         public IEnumerable<Organization> GetOrganisationsOfUser(MunityUser user)
         {
             var organisations = from membership in _context.OrganizationMember
-                where membership.User.MunityUserId == user.MunityUserId
+                where membership.User.Id == user.Id
                 join role in _context.OrganizationRoles on membership.Role equals role
                 join organisation in _context.Organizations on role.Organization equals organisation
                 select organisation;

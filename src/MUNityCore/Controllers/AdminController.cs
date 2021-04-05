@@ -65,7 +65,7 @@ namespace MUNityCore.Controllers
             try
             {
                 var user = this._userService.CreateUser(username, forename, lastname, password, mail, bd);
-                var userInfo = this._userService.GetUserInformation(user.Username);
+                var userInfo = this._userService.GetUserInformation(user.UserName);
                 return Ok(userInfo);
             }
             catch (Exception e)
