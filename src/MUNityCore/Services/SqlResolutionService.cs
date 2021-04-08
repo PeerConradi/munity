@@ -890,5 +890,10 @@ namespace MUNityCore.Services
             };
             return dto;
         }
+
+        public int ResolutionCount()
+        {
+            return this._context.Resolutions.Count();
+        }
     }
 }

@@ -34,6 +34,8 @@ namespace MUNityCore.Hubs
 
         public override Task OnConnectedAsync()
         {
+            if (ConnectionUsers.ConnectionIds == null)
+                ConnectionUsers.ConnectionIds = new System.Collections.Concurrent.ConcurrentDictionary<string, bool>();
             ConnectionUsers.ConnectionIds.TryAdd(Context.ConnectionId, true);
             return base.OnConnectedAsync();
         }

@@ -1,0 +1,63 @@
+﻿@page "/admin/simulations"
+@inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
+
+<AuthorizeView>
+    <Authorized>
+        @if (simulations != null)
+        {
+        <Table>
+            <TableHeader>
+                    <TableHeaderCell>Id</TableHeaderCell>
+                    <TableHeaderCell>Name</TableHeaderCell>
+                    <TableHeaderCell>Anzahl Benutzer</TableHeaderCell>
+                    <TableHeaderCell>Anzahl Rollen</TableHeaderCell>
+            </TableHeader>
+            <TableBody>
+                @foreach (var simulation in simulations)
+                {
+                    <TableRow>
+                        <TableRowCell>@simulation.Id</TableRowCell>
+                        <TableRowCell><a href="/admin/simulation/@simulation.Id">@simulation.Name</a></TableRowCell>
+                        <TableRowCell>@simulation.AnzahlBenutzer</TableRowCell>
+                        <TableRowCell>@simulation.AnzahlRollen</TableRowCell>
+                    </TableRow>
+                }
+            </TableBody>
+        </Table>
+        }
+        else
+        {
+            <Paragraph>Simulationen werden geladen</Paragraph>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <Paragraph>Du darfst nicht hier sein!</Paragraph>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private class SimInfo
+    {
+        public int Id { get; set; }
+
+        public string Name {get; set;}
+
+        public int AnzahlBenutzer { get; set; }
+
+        public int AnzahlRollen { get; set; } 
+    }
+
+    private List<SimInfo> simulations = null;
+
+    protected override void OnInitialized()
+    {
+        this.simulations = munityContext.Simulations.Select(n => new SimInfo()
+        {
+            AnzahlBenutzer = n.Users.Count,
+            AnzahlRollen = n.Roles.Count,
+            Id = n.SimulationId,
+            Name = n.Name
+        }).ToList();
+    }
+}

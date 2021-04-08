@@ -1,0 +1,36 @@
+﻿<Card ColumnSize="ColumnSize.Is12">
+    <CardHeader>
+        <CardTitle>
+            Rollen
+        </CardTitle>
+    </CardHeader>
+
+    <CardBody>
+        <Table>
+            <TableHeader>
+                <TableHeaderCell>Id</TableHeaderCell>
+                <TableHeaderCell>Art</TableHeaderCell>
+                <TableHeaderCell>Iso</TableHeaderCell>
+                <TableHeaderCell>Name</TableHeaderCell>
+                <TableHeaderCell>Benutzer</TableHeaderCell>
+            </TableHeader>
+            <TableBody>
+                @foreach(var role in Simulation.Roles.OrderBy(n => n.RoleType).ThenBy(n => n.Name))
+                {
+                    <TableRow>
+                        <TableRowCell>@role.SimulationRoleId</TableRowCell>
+                        <TableRowCell>@role.RoleType.ToString()</TableRowCell>
+                        <TableRowCell>@role.Iso</TableRowCell>
+                        <TableRowCell>@role.Name</TableRowCell>
+                        <TableRowCell>@string.Join(", ", @Simulation.Users.Where(n => n.Role.SimulationRoleId == role.SimulationRoleId).Select(n => $"{n.DisplayName} ({n.SimulationUserId})"))</TableRowCell>
+                    </TableRow>
+                }
+            </TableBody>
+        </Table>
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter]
+    public MUNityCore.Models.Simulation.Simulation Simulation { get; set; }
+}

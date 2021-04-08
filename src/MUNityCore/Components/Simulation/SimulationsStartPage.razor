@@ -1,40 +1,62 @@
-﻿@page "/simulations"
-@using Microsoft.EntityFrameworkCore;
-@inject DataHandlers.EntityFramework.MunityContext munityContext;
+﻿@page "/simulations";
+@inject Services.SimulationService simulationService;
+@inject Services.FrontendSimulationService frontendSimulationService;
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService;
+@inject NavigationManager navManager;
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Title Size="3">Simulationen</Title>
-    </Column>
-</Row>
-
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader>
-                <CardTitle>Neue Simulation</CardTitle>
-            </CardHeader>
-            <CardBody>
-                <Form>
-                    <Label>Name</Label>
-                    <TextEdit></TextEdit>
-                    <Button Block="true" style="margin-top: 20px" Color="Color.Success">Erstellen</Button>
-                </Form>
-            </CardBody>
-        </Card>
-    </Column>
-
-    <Column ColumnSize="ColumnSize.Is12">
-
-    </Column>
-</Row>
+@if (simulations != null)
+{
+    foreach(var simulation in simulations)
+    {
+        <div class="card bg-dark border-0 text-white">
+            <div class="card-body">
+                <h4 class="card-title">@simulation.Name</h4>
+                <p class="card-text">Rollen: @simulation.RoleNames</p>
+                <p class="card-text">Slots: @simulation.SlotCount</p>
+                @if (this.knownSimulations != null)
+                {
+                    if (this.knownSimulations.Any(n => n.SimulationId == simulation.Id))
+                    {
+                        <a @onclick="() => JoinSimulation(simulation.Id)" class="btn btn-sm btn-warning">Beitreten</a>
+                    }
+                    else 
+                    {
+                        <a>Anmelden</a>
+                    }
+                }
+            </div>
+        </div>
+    }
+}
 
 @code {
-    List<Models.Simulation.Simulation> simulations;
+    List<MUNityCore.Dtos.Simulations.HomeScreenInfo> simulations;
 
-    protected override async Task OnInitializedAsync()
+    List<MUNity.Schema.Simulation.SimulationTokenResponse> knownSimulations;
+
+    protected override void OnInitialized()
     {
-        simulations = await munityContext.Simulations.ToListAsync();
-        await base.OnInitializedAsync();
+        simulations = simulationService.GetHomeScreenInfos();
+    }
+
+    private void JoinSimulation(int id)
+    {
+        var token = this.knownSimulations.FirstOrDefault(n => n.SimulationId == id);
+        if (token != null)
+        {
+            this.frontendSimulationService.CurrentUserToken = token.Token;
+            this.frontendSimulationService.CurrentSimulationId = id;
+            navManager.NavigateTo("/simulation/" + id);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (this.knownSimulations == null)
+        {
+            this.knownSimulations = await this.localStorageService.GetItemAsync<List<MUNity.Schema.Simulation.SimulationTokenResponse>>("munity_simsims");
+                this.StateHasChanged();
+        }
+        
     }
 }

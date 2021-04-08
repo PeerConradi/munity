@@ -1,0 +1,26 @@
+﻿<AuthorizeView>
+	<Authorized>
+	 <li class="dropdown navbar-user">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<span class="d-none d-md-inline">Hi, @context.User.Identity.Name</span>
+			<img src="/img/cage.png" alt=""> 
+		</a>
+		<div class="dropdown-menu dropdown-menu-right">
+			<a href="Identity/Account/Manage" class="dropdown-item">Edit Profile</a>
+			@*<a href="javascript:;" class="dropdown-item"><span class="badge badge-danger pull-right">2</span> Inbox</a>
+			<a href="javascript:;" class="dropdown-item">Calendar</a>
+			<a href="javascript:;" class="dropdown-item">Setting</a>*@
+			<div class="dropdown-divider"></div>
+			<a href="Identity/Account/LogOut" class="dropdown-item">Log Out</a>
+		</div>
+	</li>
+ </Authorized>
+</AuthorizeView>
+
+
+@code {
+	protected override void OnInitialized()
+	{
+		
+	}
+}

@@ -1,0 +1,93 @@
+﻿@using Microsoft.EntityFrameworkCore;
+@page "/simulation/{id}"
+@inject Services.SimulationService simulationService
+@inject Services.FrontendSimulationService frontendSimulationService;
+@inject DataHandlers.EntityFramework.MunityContext context;
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService;
+
+<h3>Simulation</h3>
+@if (loadingState == LoadingStates.Loading)
+{
+    <Paragraph>Wird geladen</Paragraph>
+}
+else if (loadingState == LoadingStates.Forbid)
+{
+    <Paragraph>Du bist nicht berechtigt an dieser Simulation teilzunehmen.</Paragraph>
+}
+else 
+{
+    if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
+    {
+        <Paragraph>Übersicht</Paragraph>
+    }
+    else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
+    {
+        <Paragraph>Tagesordnung</Paragraph>
+    }
+    else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Voting)
+    {
+        <Paragraph>Abstimmung</Paragraph>
+    }
+    
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private enum LoadingStates {
+        Loading,
+        Success,
+        Forbid
+    }
+
+    private LoadingStates loadingState = LoadingStates.Loading;
+
+    private int simulationId = -1;
+
+    MUNity.Schema.Simulation.GamePhases currentPhase { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (int.TryParse(Id, out simulationId))
+        {
+            frontendSimulationService.TabChanged += delegate { this.StateHasChanged(); };
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var knownSimulations = await this.localStorageService.GetItemAsync<List<MUNity.Schema.Simulation.SimulationTokenResponse>>("munity_simsims");
+        var token = knownSimulations.FirstOrDefault(n => n.SimulationId == simulationId);
+        if (token != null)
+        {
+            if (this.frontendSimulationService.CurrentSimulationId != simulationId)
+            {
+                this.frontendSimulationService.CurrentSimulationId = simulationId;
+                this.frontendSimulationService.CurrentUserToken = token.Token;
+                loadingState = LoadingStates.Success;
+                this.StateHasChanged();
+            }
+            else 
+            {
+                if (this.frontendSimulationService.CurrentUserToken == token.Token)
+                {
+                    this.loadingState = LoadingStates.Success;
+                    this.StateHasChanged();
+                }
+                else 
+                {
+                    loadingState = LoadingStates.Forbid;
+                    this.StateHasChanged();
+                }
+            }
+        }
+        else
+        {
+            loadingState = LoadingStates.Forbid;
+            this.StateHasChanged();
+        }
+    }
+}

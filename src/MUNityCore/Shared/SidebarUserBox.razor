@@ -1,0 +1,44 @@
+<AuthorizeView>
+    <Authorized>
+        <ul class="nav">
+            <li class="nav-profile @activeClass">
+                <a @onclick="ToggleExpand">
+                    <div class="cover with-shadow"></div>
+                    <div class="image">
+                        <img src="/img/cage.png" alt="">
+                    </div>
+                    <div class="info">
+                        <b class="caret pull-right"></b>Hallo
+                        <small>@context.User.Identity.Name</small>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <ul class="nav nav-profile @expandedClass" style="@expandedStyle">
+                    <li><a href="/Account/Manager"><i class="fa fa-cog"></i> Einstellungen</a></li>
+                    <li><a href="javascript:;"><i class="fa fa-pencil-alt"></i> Send Feedback</a></li>
+                    <li><a href="javascript:;"><i class="fa fa-question-circle"></i> Helps</a></li>
+                </ul>
+            </li>
+        </ul>
+    </Authorized>
+    <NotAuthorized>
+        <Paragraph>Nicht angemeldet!</Paragraph>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code 
+{
+    private bool isExpanded = false;
+
+    private string expandedClass => isExpanded ? "expand" : null;
+
+    private string activeClass => isExpanded ? "active" : null;
+
+    private string expandedStyle => isExpanded ? "display: block;" : null;
+
+    private void ToggleExpand()
+    {
+        this.isExpanded = !this.isExpanded;
+    }
+}

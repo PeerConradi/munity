@@ -1,0 +1,24 @@
+<AuthorizeView>
+    <Authorized>
+        <li class="has-sub @subClass">
+            <a @onclick="() => isExpanded = !isExpanded">
+                <b class="caret"></b>
+                <i class="fa fa-th-large"></i>
+                <span>Administration</span>
+            </a>
+            <ul class="sub-menu" style="@expandedStyle">
+                <li><a href="/admin/resolutions">Resolutionen</a></li>
+                <li><a href="/admin/simulations">Simulationen</a></li>
+            </ul>
+        </li>
+    </Authorized>
+</AuthorizeView>
+
+@code 
+{
+    private bool isExpanded = false;
+
+    private string expandedStyle => isExpanded ? "display: block;" : null;
+
+    private string subClass => isExpanded ? "expand" : "closed";
+}

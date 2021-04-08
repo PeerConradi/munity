@@ -1,0 +1,132 @@
+﻿@page "/admin/simulation/{id}"
+@using Microsoft.EntityFrameworkCore;
+@inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
+
+<AuthorizeView>
+    <Authorized>
+        @if (loadingState == LoadingStates.Loading)
+        {
+            <Paragraph>Wird geladen</Paragraph>
+        }
+        else if (loadingState == LoadingStates.InvalidInput)
+        {
+            <Paragraph>Ungültige Id</Paragraph>
+        }
+        else if (loadingState == LoadingStates.NotFound)
+        {
+            <Paragraph>Simulation nicht gefunden!</Paragraph>
+        }
+        else if (loadingState == LoadingStates.Success)
+        {
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Breadcrumb>Simulationen/@simulation.Name</Breadcrumb>
+                </Column>
+            </Row>
+
+            <Row>
+                <Column ColumnSize="ColumnSize.Is4">
+                    <div class="widget widget-stats bg-teal">
+						<div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>
+						<div class="stats-content">
+							<div class="stats-title">Benutzer/Slots</div>
+							<div class="stats-number">@simulation.Users.Count</div>
+                            <div class="stats-progress progress">
+								<div class="progress-bar" style="width: 100%;"></div>
+							</div>
+							<div class="stats-desc">@simulation.Users.Count(n => string.IsNullOrEmpty(n.DisplayName)) freie Slots</div>
+						</div>
+					</div>
+                </Column>
+ 
+                <Column ColumnSize="ColumnSize.Is4">
+                    <div class="widget widget-stats bg-blue">
+						<div class="stats-icon stats-icon-lg"><i class="fa fa-dollar-sign fa-fw"></i></div>
+						<div class="stats-content">
+							<div class="stats-title">Rollen</div>
+							<div class="stats-number">@simulation.Roles.Count</div>
+							<div class="stats-progress progress">
+								<div class="progress-bar" style="width: 100%;"></div>
+							</div>
+							<div class="stats-desc">@simulation.Roles.Count(n => simulation.Users.All(a => a.Role != n)) Rollen nicht vergeben</div>
+						</div>
+					</div>
+                </Column>
+
+                <Column ColumnSize="ColumnSize.Is4">
+                    <div class="widget widget-stats bg-indigo">
+						<div class="stats-icon stats-icon-lg"><i class="fa fa-archive fa-fw"></i></div>
+						<div class="stats-content">
+							<div class="stats-title">Tagesordnungspunkte</div>
+							<div class="stats-number">@simulation.AgendaItems.Count</div>
+							<div class="stats-progress progress">
+								<div class="progress-bar" style="width: 100%;"></div>
+							</div>
+							<div class="stats-desc">Keine weiteren Informationen</div>
+						</div>
+					</div>
+                </Column>
+                
+            </Row>
+
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Heading>@simulation.Name</Heading>
+                </Column>
+                
+
+                <UsersCard Sim="@simulation" />
+
+                <RolesCard Simulation="@simulation" />
+
+            </Row>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Paragraph>Du darfst nicht hier sein</Paragraph>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private MUNityCore.Models.Simulation.Simulation simulation;
+
+    private enum LoadingStates
+    {
+        Loading,
+        InvalidInput,
+        NotFound,
+        Success
+    }
+
+    private LoadingStates loadingState = LoadingStates.Loading;
+
+    protected override void OnInitialized()
+    {
+        int id = 0;
+        if (int.TryParse(Id, out id))
+        {
+            simulation = munityContext.Simulations
+            .Include(n => n.Users)
+            .Include(n => n.Roles)
+            .Include(n => n.AgendaItems)
+            .ThenInclude(n => n.Petitions)
+            .FirstOrDefault(n => n.SimulationId == id);
+            if (simulation == null)
+            {
+                loadingState = LoadingStates.NotFound;
+            }
+            else 
+            {
+                loadingState = LoadingStates.Success;
+            }
+        }
+        else
+        {
+            loadingState = LoadingStates.InvalidInput;
+        }
+    }
+}

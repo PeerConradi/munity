@@ -1,0 +1,37 @@
+﻿@if (Sim != null)
+{
+    <Card ColumnSize="ColumnSize.Is12">
+    <CardHeader>
+        <CardTitle>Benutzer</CardTitle>
+    </CardHeader>
+    <CardBody>
+        <Table>
+            <TableHeader>
+                <TableHeaderCell>Id</TableHeaderCell>
+                <TableHeaderCell>Anzeigename</TableHeaderCell>
+                <TableHeaderCell>Rolle</TableHeaderCell>
+                <TableHeaderCell>Login-Id</TableHeaderCell>
+                <TableHeaderCell>Login-Pass</TableHeaderCell>
+            </TableHeader>
+            <TableBody>
+                @foreach(var user in Sim.Users)
+                {
+                    <TableRow>
+                        <TableRowCell>@user.SimulationUserId</TableRowCell>
+                        <TableRowCell>@user.DisplayName</TableRowCell>
+                        <TableRowCell>@user.Role.Name</TableRowCell>
+                        <TableRowCell>@user.PublicUserId</TableRowCell>
+                        <TableRowCell>@user.Password</TableRowCell>
+                    </TableRow>
+                }
+            </TableBody>      
+        </Table>
+    </CardBody>
+</Card>
+}
+
+
+@code {
+    [Parameter]
+    public MUNityCore.Models.Simulation.Simulation Sim { get; set; }
+}

@@ -28,6 +28,7 @@ using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
+using Blazored.LocalStorage;
 
 namespace MUNityCore
 {
@@ -112,6 +113,7 @@ namespace MUNityCore
             
             // All services that are used inside the controllers.
             //services.AddScoped<Services.InstallationService>();
+            services.AddBlazoredLocalStorage();
             services.AddScoped<Services.IAuthService, Services.AuthService>();
             services.AddScoped<Services.IUserService, Services.UserService>();
             services.AddScoped<Services.IOrganisationService, Services.OrganisationService>();
@@ -120,6 +122,7 @@ namespace MUNityCore
             services.AddScoped<Services.SpeakerlistService>();
             services.AddScoped<Services.SimulationService>();
             services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+            services.AddScoped<Services.FrontendSimulationService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>
@@ -163,13 +166,13 @@ namespace MUNityCore
                 app.UseHsts();
             }
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
-                c.DisplayOperationId();
-            });
+            // app.UseSwaggerUI(c =>
+            // {
+            //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
+            //     c.DisplayOperationId();
+            // });
 
-            app.UseSwagger();
+            // app.UseSwagger();
 
             //opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "http://localhost", "https://localhost", "localhost", "127.0.0.1", "*.localhost")
             app.UseCors(opt =>

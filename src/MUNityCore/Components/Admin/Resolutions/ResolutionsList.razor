@@ -1,0 +1,17 @@
+﻿@page "/admin/resolutions"
+@inject Services.SqlResolutionService resolutionService;
+
+<AuthorizeView>
+    <Authorized>
+    <Heading>Hallo @context.User.Identity.Name</Heading>
+        <Paragraph>Es sind @resolutionService.ResolutionCount() Resoutionen hinterlegt.</Paragraph>
+    </Authorized>
+    <NotAuthorized>
+        <Paragraph>Kein Zugang ohne Login!</Paragraph>
+    </NotAuthorized>
+    
+</AuthorizeView>
+
+@code {
+
+}

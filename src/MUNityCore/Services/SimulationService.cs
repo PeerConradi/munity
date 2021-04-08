@@ -40,6 +40,8 @@ namespace MUNityCore.Services
                 yield return new Models.Simulation.Presets.MRR_Preset();
                 yield return new Models.Simulation.Presets.SR_Preset();
                 yield return new Models.Simulation.Presets.WiSo_Preset();
+                yield return new Models.Simulation.Presets.BW_TVT_EGO();
+                yield return new Models.Simulation.Presets.BW_TVT_Sim_Preset();
             }
         }
 
@@ -932,6 +934,16 @@ namespace MUNityCore.Services
             return _context.SimulationStatuses
                 .OrderByDescending(n => n.StatusTime)
                 .FirstOrDefault(n => n.Simulation.SimulationId == simulationId);
+        }
+
+        internal List<MUNityCore.Dtos.Simulations.HomeScreenInfo> GetHomeScreenInfos() 
+        {
+            return _context.Simulations.AsNoTracking().Select(n => new MUNityCore.Dtos.Simulations.HomeScreenInfo() {
+                Id = n.SimulationId,
+                Name = n.Name,
+                RoleNames = string.Join(", ", n.Roles.Select(a => a.Name)),
+                SlotCount = n.Users.Count
+            }).ToList();
         }
     }
 }

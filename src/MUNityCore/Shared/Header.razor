@@ -1,0 +1,90 @@
+﻿@inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
+
+<div id="header" class="header navbar-default">
+	<!-- begin navbar-header -->
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle collapsed navbar-toggle-left" data-click="sidebar-minify">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<button type="button" class="navbar-toggle" data-click="sidebar-toggled">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<a href="/" class="navbar-brand">
+			MUNity
+		</a>
+	</div>
+
+	@if (frontendSimulationService.CurrentSimulationId != -1)
+	{
+		<ul class="navbar-nav navbar-center">
+			<li>
+				<a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Overview">
+					Start
+				</a>
+			</li>
+
+			<li>
+				<a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Agenda">
+					Tagesordnung
+				</a>
+			</li>
+
+			<li>
+				<a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Voting">
+					Abstimmung
+				</a>
+			</li>
+
+			<li>
+				<a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Resolutions">
+					Resolutionen
+				</a>
+			</li>
+		</ul>
+	}
+	
+
+	<!-- end navbar-header --><!-- begin header-nav -->
+	<ul class="navbar-nav navbar-right">
+@*				<li>
+			<a href="#" data-toggle="navbar-search" class="icon">
+				<i class="oi oi-document"></i>
+			</a>
+		</li>*@
+
+
+		<AuthorizeView>
+			<Authorized>
+				@*<HeaderNotifications />*@
+				<HeaderUserBox />
+			</Authorized>
+			<NotAuthorized>
+				<li>
+					<a href="/Identity/Account/Login" data-toggle="navbar-search" class="icon">
+						Login
+					</a>
+				</li>
+			</NotAuthorized>
+		</AuthorizeView>
+
+		
+		
+	</ul>
+	<!-- end header navigation right -->
+</div>
+
+@code 
+{
+
+	protected override void OnInitialized()
+	{
+		if (this.frontendSimulationService != null)
+		{
+			this.frontendSimulationService.CurrentSimulationIdChanged += delegate { this.StateHasChanged(); };
+		}
+	}
+}

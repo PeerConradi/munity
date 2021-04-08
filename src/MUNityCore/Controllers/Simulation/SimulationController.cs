@@ -109,7 +109,7 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<SimulationDto>> Simulation([FromHeader] string simsimtoken, int simulationId)
         {
             var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
-            if (!isAllowed) return BadRequest();
+            if (!isAllowed) return BadRequest("The given Token is not allowed to access the simulation");
 
             var response = this._simulationService.GetSimulationResponse(simulationId);
             return Ok(response);

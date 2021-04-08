@@ -98,6 +98,7 @@
 
   <ItemGroup>
     <Folder Include="Components\Resolution\" />
+    <Folder Include="wwwroot\material\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
