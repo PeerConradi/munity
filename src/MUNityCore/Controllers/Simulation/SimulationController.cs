@@ -78,7 +78,7 @@ namespace MUNityCore.Controllers
         }
 
         /// <summary>
-        /// Returns a list of Simulations. Depricated
+        /// Returns a list of Simulations.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
