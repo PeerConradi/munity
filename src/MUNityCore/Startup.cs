@@ -109,6 +109,7 @@ namespace MUNityCore
                 {
                     builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 });
+                
             });
             
             // All services that are used inside the controllers.

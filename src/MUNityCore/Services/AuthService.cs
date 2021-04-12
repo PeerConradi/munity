@@ -147,6 +147,25 @@ namespace MUNityCore.Services
             return auth;
         }
 
+        public List<MUNityCore.Models.User.UserRole> Roles()
+        {
+            return this._context.Roles.ToList();
+        }
+
+        public bool CreateAdminRole()
+        {
+            var role = new MUNityCore.Models.User.UserRole();
+            role.Name = "Admin";
+            role.NormalizedName = "ADMIN";
+            this._context.Roles.Add(role);
+            return this._context.SaveChanges() == 1;
+        }
+
+        public MunityUser GetUser(string mail)
+        {
+            return this._context.Users.FirstOrDefault(n => n.NormalizedEmail == mail.ToUpper());
+        }
+
         public AuthService(MunityContext context, IOptions<AppSettings> appSettings)
         {
             _settings = appSettings.Value;

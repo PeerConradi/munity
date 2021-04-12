@@ -2,7 +2,7 @@
 @using Microsoft.EntityFrameworkCore;
 @inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
 
-<AuthorizeView>
+<AuthorizeView Roles="Admin">
     <Authorized>
         @if (loadingState == LoadingStates.Loading)
         {

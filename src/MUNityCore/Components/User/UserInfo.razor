@@ -1,9 +1,33 @@
 ﻿@page "/user"
+@using Microsoft.AspNetCore.Identity;
+@inject Services.IAuthService authService;
+@inject RoleManager<MUNityCore.Models.User.UserRole> roleManager;
+@inject UserManager<MUNityCore.Models.User.MunityUser> userManager;
+@inject SignInManager<MUNityCore.Models.User.MunityUser> signInManager;
 
 <AuthorizeView>
     <Authorized>
         <a href="Identity/Account/Manager">Verwaltung @context.User.Identity.Name</a>
 
+        @if (roles != null)
+        {
+            <p>@roles.Count</p>
+            @if (roles.Count == 0)
+            {
+                <p>Derzeit ist noch keine Admin Rolle erstellt. Drücke den Knopf "Admin Rolle Erstellen" um die entsprechende Rolle zu erstellen. Der aktuelle Benutzer wird dann automatisch dieser Rolle hinzugefügt!</p>
+                <button @onclick="() => CreateAdminRole()" class="btn btn-primary">Admin Rolle erstellen!</button>
+            }
+            
+            @foreach(var role in roles)
+            {
+                <p>@role.Name | hat diese Rolle @context.User.IsInRole(role.Name), @context.User.IsInRole(role.NormalizedName)</p>
+            }
+        }
+        else 
+        {
+            <p>Rollen werden geladen</p>
+        }
+        
         <form method="post" action="Identity/Account/LogOut">
             <button class="btn btn-danger" type="submit">Logout</button>
         </form>
@@ -15,5 +39,23 @@
 </AuthorizeView>
 
 @code {
+    private List<MUNityCore.Models.User.UserRole> roles;
 
+    private async Task CreateAdminRole()
+    {
+        await this.roleManager.CreateAsync(new MUNityCore.Models.User.UserRole() {Name  = "Admin"});
+        var user = this.signInManager.Context.User;
+        var realUser = this.authService.GetUser(user.Identity.Name);
+        if (realUser != null)
+        {
+            await this.userManager.AddToRoleAsync(realUser, "Admin");
+        }
+        this.roles = authService.Roles();
+        this.StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+	{
+        this.roles = authService.Roles();
+    }
 }

@@ -34,5 +34,11 @@ namespace MUNityCore.Services
         string GenerateToken(MunityUser user);
 
         bool CanUserEditConference(MunityUser user, Conference conference);
+
+        List<MUNityCore.Models.User.UserRole> Roles();
+
+        bool CreateAdminRole();
+
+        MunityUser GetUser(string mail);
     }
 }

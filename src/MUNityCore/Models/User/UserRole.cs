@@ -8,5 +8,9 @@ namespace MUNityCore.Models.User
 {
     public class UserRole : IdentityRole<string>
     {
+        public UserRole()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
     }
 }
