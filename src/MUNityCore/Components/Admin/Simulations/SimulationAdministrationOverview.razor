@@ -1,34 +1,62 @@
 ﻿@page "/admin/simulations"
 @inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
+@inject MUNityCore.Services.SimulationService simulationService;
 
-<AuthorizeView>
+<AuthorizeView Roles="Admin">
     <Authorized>
-        @if (simulations != null)
-        {
-        <Table>
-            <TableHeader>
-                    <TableHeaderCell>Id</TableHeaderCell>
-                    <TableHeaderCell>Name</TableHeaderCell>
-                    <TableHeaderCell>Anzahl Benutzer</TableHeaderCell>
-                    <TableHeaderCell>Anzahl Rollen</TableHeaderCell>
-            </TableHeader>
-            <TableBody>
-                @foreach (var simulation in simulations)
-                {
-                    <TableRow>
-                        <TableRowCell>@simulation.Id</TableRowCell>
-                        <TableRowCell><a href="/admin/simulation/@simulation.Id">@simulation.Name</a></TableRowCell>
-                        <TableRowCell>@simulation.AnzahlBenutzer</TableRowCell>
-                        <TableRowCell>@simulation.AnzahlRollen</TableRowCell>
-                    </TableRow>
-                }
-            </TableBody>
-        </Table>
-        }
-        else
-        {
-            <Paragraph>Simulationen werden geladen</Paragraph>
-        }
+        <Row>
+            <Column ColumnSize="ColumnSize.Is12">
+                <div class="panel panel-inverse" data-sortable-id="ui-widget-1">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Neue Simulation erstellen</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group row m-b-15">
+                            <label class="col-form-label col-md-3">Raumname</label>
+                            <div class="col-md-9">
+                                <input type="email" class="form-control m-b-5" placeholder="Name" @bind="newRoomName">
+                                <small class="f-s-12 text-grey-darker">Anzeigename des Raums</small>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-success" @onclick="() => CreateRoom()">Raum erstellen</button>
+                    </div>
+                </div>
+
+                
+            </Column>
+
+        </Row>
+
+        <Row>
+            @if (simulations != null)
+            {
+                <Table>
+                    <TableHeader>
+                        <TableHeaderCell>Id</TableHeaderCell>
+                        <TableHeaderCell>Name</TableHeaderCell>
+                        <TableHeaderCell>Anzahl Benutzer</TableHeaderCell>
+                        <TableHeaderCell>Anzahl Rollen</TableHeaderCell>
+                    </TableHeader>
+                    <TableBody>
+                        @foreach (var simulation in simulations)
+                        {
+                            <TableRow>
+                                <TableRowCell>@simulation.Id</TableRowCell>
+                                <TableRowCell><a href="/admin/simulation/@simulation.Id">@simulation.Name</a></TableRowCell>
+                                <TableRowCell>@simulation.AnzahlBenutzer</TableRowCell>
+                                <TableRowCell>@simulation.AnzahlRollen</TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+            }
+            else
+            {
+                <Paragraph>Simulationen werden geladen</Paragraph>
+            }
+        </Row>
+        
     </Authorized>
 
     <NotAuthorized>
@@ -37,6 +65,9 @@
 </AuthorizeView>
 
 @code {
+
+    private string newRoomName;
+
     private class SimInfo
     {
         public int Id { get; set; }
@@ -45,7 +76,7 @@
 
         public int AnzahlBenutzer { get; set; }
 
-        public int AnzahlRollen { get; set; } 
+        public int AnzahlRollen { get; set; }
     }
 
     private List<SimInfo> simulations = null;
@@ -59,5 +90,26 @@
             Id = n.SimulationId,
             Name = n.Name
         }).ToList();
+    }
+
+    private void CreateRoom()
+    {
+        if (!string.IsNullOrEmpty(newRoomName))
+        {
+            var newRoom = simulationService.CreateSimulation(newRoomName, "");
+            if (newRoom != null)
+            {
+                var info = new SimInfo()
+                {
+                    AnzahlBenutzer = 0,
+                    AnzahlRollen = 0,
+                    Id = newRoom.SimulationId,
+                    Name = newRoom.Name
+                };
+                this.simulations.Add(info);
+                this.StateHasChanged();
+            }
+        }
+
     }
 }

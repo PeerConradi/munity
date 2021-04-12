@@ -1,4 +1,6 @@
-﻿@inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
+﻿@using Services;
+@inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
+
 
 <div id="header" class="header navbar-default">
 	<!-- begin navbar-header -->
@@ -20,31 +22,7 @@
 
 	@if (frontendSimulationService.CurrentSimulationId != -1)
 	{
-		<ul class="navbar-nav navbar-center">
-			<li>
-				<a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Overview">
-					Start
-				</a>
-			</li>
-
-			<li>
-				<a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Agenda">
-					Tagesordnung
-				</a>
-			</li>
-
-			<li>
-				<a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Voting">
-					Abstimmung
-				</a>
-			</li>
-
-			<li>
-				<a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Resolutions">
-					Resolutionen
-				</a>
-			</li>
-		</ul>
+		<MUNityCore.Shared.HeaderPartial.HeaderSimulation />
 	}
 	
 

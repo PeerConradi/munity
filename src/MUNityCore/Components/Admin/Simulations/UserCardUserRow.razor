@@ -1,0 +1,42 @@
+﻿@inject Services.SimulationService simulationService;
+
+<TableRow>
+    <TableRowCell>@User.SimulationUserId</TableRowCell>
+    <TableRowCell>@User.DisplayName</TableRowCell>
+    <TableRowCell>
+        <Select @bind-SelectedValue="@roleId">
+            <option value="-2">Keine Rolle</option>
+            @foreach (var role in Roles)
+            {
+                <option value="@role.SimulationRoleId">@role.Name</option>
+            }
+        </Select>
+    </TableRowCell>
+    <TableRowCell>@User.PublicUserId</TableRowCell>
+    <TableRowCell>@User.Password</TableRowCell>
+</TableRow>
+
+@code {
+    [Parameter]
+    public MUNityCore.Models.Simulation.SimulationUser User { get; set; }
+
+    [Parameter]
+    public List<MUNityCore.Models.Simulation.SimulationRole> Roles { get; set; }
+
+    private int _roleId;
+    private int roleId
+    {
+        get => _roleId;
+        set
+        {
+            simulationService.SetUserRole(User.SimulationUserId, value);
+            _roleId = value;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        this._roleId = User.Role?.SimulationRoleId ?? -2;
+        base.OnInitialized();
+    }
+}

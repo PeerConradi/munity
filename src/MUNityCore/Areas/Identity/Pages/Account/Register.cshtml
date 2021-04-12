@@ -4,63 +4,82 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<div class="row">
-    <div class="col-md-4">
-        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h4>Create a new account.</h4>
-            <hr />
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Input.Email"></label>
-                <input asp-for="Input.Email" class="form-control" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Password"></label>
-                <input asp-for="Input.Password" class="form-control" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.ConfirmPassword"></label>
-                <input asp-for="Input.ConfirmPassword" class="form-control" />
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+<!-- begin register -->
+<div class="register register-with-news-feed">
+    <!-- begin news-feed -->
+    <div class="news-feed">
+        <div class="news-image" style="background-image: url(/img/login-bg/login-bg-15.jpg)"></div>
+        <div class="news-caption">
+            <h4 class="caption-title"><b>MUNity</b> Registrierung</h4>
+            <p>
+                Das Konto bei MUNity ermöglicht weitere Funktionen, wie dem anlegen von neuen Benutzeraccounts.
+            </p>
+        </div>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h4>Use another service to register.</h4>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                            for details on setting up this ASP.NET application to support logging in via external services.
-                        </p>
+    <!-- end news-feed -->
+    <!-- begin right-content -->
+    <div class="right-content">
+        <!-- begin register-header -->
+        <h1 class="register-header">
+            Regsitrierung
+            <small>Kostenlos ein Konto erstellen.</small>
+        </h1>
+        <!-- end register-header -->
+        <!-- begin register-content -->
+        <div class="register-content">
+            <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="margin-bottom-0">
+                @*<label class="control-label">Name <span class="text-danger">*</span></label>
+        <div class="row row-space-10">
+            <div class="col-md-6 m-b-15">
+                <input type="text" class="form-control" placeholder="First name" required />
+            </div>
+            <div class="col-md-6 m-b-15">
+                <input type="text" class="form-control" placeholder="Last name" required />
+            </div>
+        </div>*@
+                <label class="control-label">Email <span class="text-danger">*</span></label>
+                <div class="row m-b-15">
+                    <div class="col-md-12">
+                        <input class="form-control" asp-for="Input.Email" placeholder="Email address" required />
                     </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
+                </div>
+                <label class="control-label">Password <span class="text-danger">*</span></label>
+                <div class="row m-b-15">
+                    <div class="col-md-12">
+                        <input asp-for="Input.Password" class="form-control" placeholder="Password" required />
+                    </div>
+                </div>
+                <label class="control-label">Password wiederholen<span class="text-danger">*</span></label>
+                <div class="row m-b-15">
+                    <div class="col-md-12">
+                        <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Password" required />
+                    </div>
+                </div>
+                <div class="checkbox checkbox-css m-b-30">
+                    <div class="checkbox checkbox-css m-b-30">
+                        <input type="checkbox" id="agreement_checkbox" value="">
+                        <label for="agreement_checkbox">
+                            Mit dem Erstellen eines Kontos stimmen Sie den <a href="javascript:;">Allgemeinden Geschäftsbedingungen</a>, sowie den <a href="javascript:;">Datenschutzbestimmungen</a> und der verwendung von <a href="javascript:;">Cookies</a> zu.
+                        </label>
+                    </div>
+                </div>
+                <div class="register-buttons">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Konto erstellen</button>
+                </div>
+                <div class="m-t-30 m-b-30 p-b-30">
+                    Bereits einen Account? <a href="/Identity/Account/Login">hier</a> anmelden.
+                </div>
+                <hr />
+                <p class="text-center mb-0">
+                    &copy; MUNity All Right Reserved 2021
+                </p>
+            </form>
+        </div>
+        <!-- end register-content -->
     </div>
+    <!-- end right-content -->
 </div>
+<!-- end register -->
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

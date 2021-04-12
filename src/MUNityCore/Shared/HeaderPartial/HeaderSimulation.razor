@@ -1,0 +1,46 @@
+﻿@using Services;
+@inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
+
+<ul class="navbar-nav">
+    <li>
+        <a @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Overview"
+           class="btn @overViewClass">
+            Start
+        </a>
+    </li>
+
+    <li>
+        <a @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda"
+           class="btn @agendaClass">
+            Tagesordnung
+        </a>
+    </li>
+
+    <li>
+        <a @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Voting"
+           class="btn @votingClass">
+            Abstimmung
+        </a>
+    </li>
+
+    <li>
+        <a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Resolutions"
+           class="btn @resolutionClass">
+            Resolutionen
+        </a>
+    </li>
+</ul>
+
+@code {
+    private string overViewClass => 
+        (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Overview) ? "btn-primary text-white" : "btn-default";
+
+    private string agendaClass =>
+        (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Agenda) ? "btn-primary text-white" : "btn-default";
+
+    private string votingClass =>
+        (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Voting) ? "btn-primary text-white" : "btn-default";
+
+    private string resolutionClass =>
+        (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Resolutions) ? "btn-primary text-white" : "btn-default";
+}

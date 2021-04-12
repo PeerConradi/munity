@@ -5,7 +5,6 @@
 @inject DataHandlers.EntityFramework.MunityContext context;
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService;
 
-<h3>Simulation</h3>
 @if (loadingState == LoadingStates.Loading)
 {
     <Paragraph>Wird geladen</Paragraph>
@@ -22,7 +21,7 @@ else
     }
     else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
     {
-        <Paragraph>Tagesordnung</Paragraph>
+        <SimulationAgenda SimulationId="@frontendSimulationService.CurrentSimulationId" Token="@frontendSimulationService.CurrentUserToken" />
     }
     else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Voting)
     {

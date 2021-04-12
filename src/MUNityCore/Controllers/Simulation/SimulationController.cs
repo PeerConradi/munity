@@ -440,6 +440,7 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<SimulationTokenResponse>> JoinSimulation([FromBody]JoinAuthenticate request)
         {
+
             if (string.IsNullOrWhiteSpace(request.DisplayName)) return BadRequest();
             var simulation = await this._simulationService.GetSimulation(request.SimulationId);
             if (simulation == null) return NotFound();

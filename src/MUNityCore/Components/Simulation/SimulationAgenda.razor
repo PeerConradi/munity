@@ -1,0 +1,280 @@
+﻿@using Microsoft.EntityFrameworkCore;
+@inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
+@inject MUNityCore.Services.SimulationService simulationService; 
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <h1>Tagesordnung</h1>
+    </Column>
+</Row>
+
+<Row>
+    <div class="col-lg-4 col-md-12">
+        <div class="card border-0 mb-3 bg-dark text-white">
+            <!-- begin card-body -->
+            <div class="card-body">
+                <!-- begin title -->
+                <div class="mb-3 text-grey">
+                    <b>Alle Tagesordnungspunkte</b>
+                    @if (isChair)
+                    {
+                        <button class="ml-2 btn btn-xs btn-success" @onclick="() => ShowModal()">Neuer TOP</button>
+                    }
+                </div>
+                <!-- end title -->
+                @if (this.AgendaItems == null || this.AgendaItems.Count == 0)
+                {
+                    <Paragraph>Keine Tagesordnungspunkte vorhanden.</Paragraph>
+                }
+                else
+                {
+                    <a href="" class="widget-list widget-list-rounded inverse-mode">
+
+                        @foreach (var top in AgendaItems)
+                        {
+                            <a class="widget-list-item rounded-0 p-t-3 @((this.selectedAgendaItem == top) ? "bg-primary" : null)">
+                                <div class="widget-list-content">
+                                    <div class="widget-list-title font-weight-bold">@top.Name</div>
+                                </div>
+                                <div class="widget-list-action text-nowrap text-grey">
+                                    <i class="fa fa-trash text-danger" @onclick="() => { deleteAgendaItem = top; this.deleteAgendaItemModal.Show(); }"></i>
+                                </div>
+                            </a>
+                        }
+                    
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8 col-md-12">
+        <div class="card border-0 mb-3 bg-dark-darker text-white">
+            <!-- begin card-body -->
+            <div class="card-body" style="background: no-repeat bottom right; background-image: url(../assets/img/svg/img-4.svg); background-size: auto 60%;">
+                <!-- begin title -->
+                @if (selectedAgendaItem != null)
+                {
+
+                    <div class="mb-3 text-grey">
+                        <b>@selectedAgendaItem.Name</b>
+                        <button class="ml-2 btn btn-xs btn-success" @onclick="() => newPetitionModal.Show()">Neuer Antrag</button>
+                    </div>
+                    @if (this.selectedAgendaItem.Petitions.Count > 0)
+                    {
+                        var currentPetition = this.selectedAgendaItem.Petitions.FirstOrDefault(n => n.Status == MUNitySchema.Models.Simulation.EPetitionStates.Active);
+                        if (currentPetition != null)
+                        {
+                            <h3 class="m-b-10">@currentPetition.PetitionType.Name</h3>
+                            <div class="text-grey m-b-1"><i class="fa fa-flag"></i> @currentPetition.SimulationUser?.Role?.Name @currentPetition.SimulationUser?.DisplayName</div>
+                        }
+                    }
+                    else
+                    {
+                        <Paragraph>Es liegt aktuell kein Antrag vor.</Paragraph>
+                    }
+
+
+            <div class="widget-list widget-list-rounded inverse-mode">
+                <!-- begin widget-list-item -->
+                @if (selectedAgendaItem != null && selectedAgendaItem.Petitions != null && selectedAgendaItem.Petitions.Where(n => n.Status != MUNitySchema.Models.Simulation.EPetitionStates.Active).Any())
+                {
+                    @foreach (var petition in selectedAgendaItem.Petitions.Where(n => n.Status != MUNitySchema.Models.Simulation.EPetitionStates.Active))
+                    {
+                        <a @onclick="() => petition.Status = MUNitySchema.Models.Simulation.EPetitionStates.Active" class="widget-list-item rounded-0 p-t-3">
+                            <div class="widget-list-media icon">
+                                <i class="fab fa-comment bg-indigo text-white"></i>
+                            </div>
+                            <div class="widget-list-content">
+                                <div class="widget-list-title">@petition.PetitionType?.Name</div>
+                            </div>
+                            <div class="widget-list-action text-nowrap text-grey">
+                                <span>@petition.SimulationUser?.Role?.Name @petition.SimulationUser?.DisplayName</span>
+                            </div>
+                        </a>
+                    }
+
+                }
+                else
+                {
+                    <Paragraph>Es befindet sich kein Antrag in der Warteschlange.</Paragraph>
+                }
+
+            </div>
+                }
+                else
+                {
+                    <div class="mb-3 text-grey">
+                        <b>Es ist kein Tagesordnungspunkt ausgewählt</b>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</Row>
+
+<Modal @ref="createAgendaItemModal">
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>Neuer Tagesordnungspunkt</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <FieldLabel>Name</FieldLabel>
+                <TextEdit Placeholder="Name des TOPs" @bind-Text="newAgendaItem.Name" />
+            </Field>
+            <Field>
+                <FieldLabel>Beschreibung</FieldLabel>
+                <TextEdit Placeholder="Eine Beschreibung des TOPs" @bind-Text="newAgendaItem.Description" />
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Clicked="() => CreateAgendaItem()">erstellen</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="deleteAgendaItemModal">
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>Tagesordnungspunkt löschen</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Paragraph>Bist du sicher, dass du den Tagesordnungspunkt @deleteAgendaItem?.Name löschen möchtest?</Paragraph>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="() => this.deleteAgendaItemModal.Hide()">Abbrechen</Button>
+            <Button Color="Color.Danger" Clicked="() => DeleteAgendaItem()">Löschen</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="newPetitionModal">
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>Antrag stellen</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <div class="btn-group">
+                @foreach (var category in petitionTypes.Select(n => n.PetitionType.Category).Distinct())
+                {
+                    <button class="btn btn-white @((activePetitionCategory == category) ? "active" : null)"
+                            @onclick="() => activePetitionCategory = category">@category</button>
+                }
+            </div>
+
+            <div class="widget-list widget-list-rounded m-b-30" data-id="widget">
+
+                @foreach (var petitionType in petitionTypes.Where(n => n.PetitionType.Category == activePetitionCategory))
+                {
+                    <a @onclick="() => MakePetition(petitionType.PetitionType.PetitionTypeId)" class="widget-list-item">
+                        <div class="widget-list-media icon">
+                            <i class="fa fa-comment bg-inverse text-white"></i>
+                        </div>
+                        <div class="widget-list-content">
+                            <h4 class="widget-list-title">@petitionType.PetitionType?.Name</h4>
+                        </div>
+                        <div class="widget-list-action text-right">
+                            <i class="fa fa-angle-right fa-lg text-muted"></i>
+                        </div>
+                    </a>
+                }
+            </div>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Abbrechen</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public int SimulationId { get; set; }
+
+    [Parameter]
+    public string Token { get; set; }
+
+    private Modal createAgendaItemModal;
+
+    private Modal deleteAgendaItemModal;
+
+    private Modal newPetitionModal;
+
+    private MUNityCore.Models.Simulation.AgendaItem selectedAgendaItem;
+
+    private MUNityCore.Models.Simulation.AgendaItem deleteAgendaItem;
+
+    private List<MUNityCore.Models.Simulation.AgendaItem> AgendaItems { get; set; }
+
+    private List<MUNityCore.Models.Simulation.PetitionTypeSimulation> petitionTypes;
+
+    private bool isChair;
+
+    private string activePetitionCategory;
+
+    private class NewAgendaItemInput
+    {
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+    }
+
+    private NewAgendaItemInput newAgendaItem = new NewAgendaItemInput();
+
+    private void ShowModal()
+    {
+        createAgendaItemModal.Show();
+    }
+
+    private void HideModal()
+    {
+        createAgendaItemModal.Hide();
+    }
+
+    private void CreateAgendaItem()
+    {
+        var newItem = this.simulationService.CreateAgendaItem(SimulationId, newAgendaItem.Name, newAgendaItem.Description);
+        if (newItem != null)
+        {
+            this.AgendaItems.Add(newItem);
+            this.HideModal();
+        }
+    }
+
+    private void DeleteAgendaItem()
+    {
+        this.simulationService.DeleteAgendaItem(deleteAgendaItem.AgendaItemId);
+        this.AgendaItems.Remove(deleteAgendaItem);
+        this.deleteAgendaItemModal.Hide();
+    }
+
+    private void MakePetition(int typeId)
+    {
+        var userId = this.simulationService.GetSimulationUserId(SimulationId, Token);
+        if (userId.HasValue)
+        {
+            var petition = this.simulationService.SubmitPetition(selectedAgendaItem.AgendaItemId, typeId, userId.Value);
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.AgendaItems = this.munityContext.AgendaItems
+            .Include(n => n.Petitions)
+            .ThenInclude(n => n.SimulationUser)
+            .Where(n => n.Simulation.SimulationId == SimulationId).ToList();
+        if (this.AgendaItems.Count > 0)
+        {
+            this.selectedAgendaItem = this.AgendaItems.First();
+        }
+        this.petitionTypes = simulationService.GetPetitionTypesOfSimulation(SimulationId);
+        this.isChair = await this.simulationService.IsTokenValidAndUserChair(SimulationId, Token);
+        //base.OnInitialized();
+    }
+}

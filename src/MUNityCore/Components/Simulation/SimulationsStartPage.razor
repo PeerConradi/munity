@@ -6,11 +6,11 @@
 
 @if (simulations != null)
 {
-    foreach(var simulation in simulations)
+    foreach (var simulation in simulations)
     {
         <div class="card bg-dark border-0 text-white">
             <div class="card-body">
-                <h4 class="card-title">@simulation.Name</h4>
+                <h4 class="card-title">@simulation.Id @simulation.Name</h4>
                 <p class="card-text">Rollen: @simulation.RoleNames</p>
                 <p class="card-text">Slots: @simulation.SlotCount</p>
                 @if (this.knownSimulations != null)
@@ -19,20 +19,83 @@
                     {
                         <a @onclick="() => JoinSimulation(simulation.Id)" class="btn btn-sm btn-warning">Beitreten</a>
                     }
-                    else 
+                    else
                     {
-                        <a>Anmelden</a>
+                        <a class="btn btn-sm btn-success" @onclick="() => { selectedSimulation = simulation; ShowModal(); }">Anmelden</a>
                     }
                 }
             </div>
         </div>
     }
+
+    <Modal @ref="modalRef">
+        <ModalContent IsCentered="true">
+            <ModalHeader>
+                <ModalTitle>In Simulation anmelden</ModalTitle>
+                <CloseButton />
+            </ModalHeader>
+            <ModalBody>
+                <Field>
+                    <FieldLabel>Anzeigename</FieldLabel>
+                    <TextEdit Placeholder="Dein Anzeigename" @bind-Text="displayName" />
+                </Field>
+                <Field>
+                    <FieldLabel>Id/Kennung</FieldLabel>
+                    <TextEdit Placeholder="Kennung" @bind-Text="userId" />
+                </Field>
+                <Field>
+                    <FieldLabel>Passwort</FieldLabel>
+                    <TextEdit Role="TextRole.Password" Placeholder="********" @bind-Text="userPass" />
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+                <Button Color="Color.Primary" Clicked="() => LoginToSimulation()">Save Changes</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
 }
 
 @code {
     List<MUNityCore.Dtos.Simulations.HomeScreenInfo> simulations;
 
     List<MUNity.Schema.Simulation.SimulationTokenResponse> knownSimulations;
+
+    MUNityCore.Dtos.Simulations.HomeScreenInfo selectedSimulation;
+
+    private Modal modalRef;
+
+    private MUNity.Schema.Simulation.JoinAuthenticate joinAuthenticate;
+
+    private string displayName;
+
+    private string userId;
+
+    private string userPass;
+
+    private void ShowModal()
+    {
+        modalRef.Show();
+    }
+
+    private async Task LoginToSimulation()
+    {
+        if (this.selectedSimulation != null)
+        {
+            var simulationResponse = this.simulationService.JoinSimulation(selectedSimulation.Id, userId, userPass, displayName);
+            if (simulationResponse != null)
+            {
+                this.knownSimulations.Add(simulationResponse);
+                await this.localStorageService.SetItemAsync("munity_simsims", this.knownSimulations);
+                this.HideModal();
+            }
+        }
+    }
+
+    private void HideModal()
+    {
+        modalRef.Hide();
+    }
 
     protected override void OnInitialized()
     {
@@ -55,8 +118,35 @@
         if (this.knownSimulations == null)
         {
             this.knownSimulations = await this.localStorageService.GetItemAsync<List<MUNity.Schema.Simulation.SimulationTokenResponse>>("munity_simsims");
-                this.StateHasChanged();
+            if (this.knownSimulations != null && this.knownSimulations.Count > 0)
+            {
+                var simsToDelete = new List<MUNity.Schema.Simulation.SimulationTokenResponse>();
+
+                foreach (var knownSimulation in knownSimulations)
+                {
+                    var isValid = await this.simulationService.IsTokenValid(knownSimulation.SimulationId, knownSimulation.Token);
+                    if (!isValid)
+                    {
+                        simsToDelete.Add(knownSimulation);
+                    }
+                }
+
+                if (simsToDelete.Count > 0)
+                {
+                    foreach (var tr in simsToDelete)
+                    {
+                        knownSimulations.Remove(tr);
+                    }
+                    await this.localStorageService.SetItemAsync("munity_simsims", this.knownSimulations);
+                    Console.WriteLine($"{simsToDelete.Count} Simulationen sind nicht mehr gültig!");
+                }
+            }
+            else
+            {
+                this.knownSimulations = new List<MUNity.Schema.Simulation.SimulationTokenResponse>();
+            }
+            this.StateHasChanged();
         }
-        
+
     }
 }

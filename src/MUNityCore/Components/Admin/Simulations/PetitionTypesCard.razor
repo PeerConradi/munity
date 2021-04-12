@@ -1,0 +1,72 @@
+﻿@inject Services.SimulationService simulationService;
+
+<div class="panel panel-inverse" data-sortable-id="ui-widget-1">
+    <div class="panel-heading">
+        <h4 class="panel-title">Antragsarten (@((Simulation.PetitionTypes != null) ? Simulation.PetitionTypes.Count : "keine geladen!"))</h4>
+    </div>
+    <div class="panel-body">
+        <Table>
+            <TableHeader>
+                <TableHeaderCell>Id</TableHeaderCell>
+                <TableHeaderCell>Anzeigename</TableHeaderCell>
+                <TableHeaderCell>Rolle</TableHeaderCell>
+                <TableHeaderCell>Login-Id</TableHeaderCell>
+                <TableHeaderCell>Login-Pass</TableHeaderCell>
+            </TableHeader>
+            <TableBody>
+                @if (Simulation?.PetitionTypes != null)
+                {
+                    foreach (var petitionType in Simulation.PetitionTypes.OrderBy(n => n.OrderIndex))
+                    {
+                        <TableRow>
+                            <TableRowCell>@petitionType.PetitionTypeSimulationId</TableRowCell>
+                            <TableRowCell>@petitionType.PetitionType.Name</TableRowCell>
+                        </TableRow>
+                    }
+                }
+                else
+                {
+                    <Paragraph>Es sind keine Antragsarten hinterlegt!</Paragraph>
+                }
+
+
+            </TableBody>
+        </Table>
+
+        <form class="form-inline">
+            <div class="form-group m-r-10">
+                <Select @bind-SelectedValue="@selectedPresetName">
+                    @foreach (var presetName in presetNames)
+                    {
+                        <option>@presetName</option>
+                    }
+                </Select>
+            </div>
+            <button class="btn btn-sm btn-primary m-r-5" @onclick="() => ActivatePetitionTypePreset()">Vorlage anwenden</button>
+        </form>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public MUNityCore.Models.Simulation.Simulation Simulation { get; set; }
+
+    private List<string> presetNames;
+
+    private string selectedPresetName;
+
+    private void ActivatePetitionTypePreset()
+    {
+        this.simulationService.ApplyPetitionTemplateToSimulation(selectedPresetName, Simulation.SimulationId);
+    }
+
+    protected override void OnInitialized()
+    {
+        this.presetNames = simulationService.GetPetitionPresetNames();
+        if (Simulation.PetitionTypes == null)
+        {
+            Simulation.PetitionTypes = simulationService.GetPetitionTypesOfSimulation(Simulation.SimulationId);
+        }
+        base.OnInitialized();
+    }
+}

@@ -1,37 +1,44 @@
-﻿@if (Sim != null)
+﻿@inject Services.SimulationService simulationService;
+
+@if (Sim != null)
 {
-    <Card ColumnSize="ColumnSize.Is12">
-    <CardHeader>
-        <CardTitle>Benutzer</CardTitle>
-    </CardHeader>
-    <CardBody>
-        <Table>
-            <TableHeader>
-                <TableHeaderCell>Id</TableHeaderCell>
-                <TableHeaderCell>Anzeigename</TableHeaderCell>
-                <TableHeaderCell>Rolle</TableHeaderCell>
-                <TableHeaderCell>Login-Id</TableHeaderCell>
-                <TableHeaderCell>Login-Pass</TableHeaderCell>
-            </TableHeader>
-            <TableBody>
-                @foreach(var user in Sim.Users)
-                {
-                    <TableRow>
-                        <TableRowCell>@user.SimulationUserId</TableRowCell>
-                        <TableRowCell>@user.DisplayName</TableRowCell>
-                        <TableRowCell>@user.Role.Name</TableRowCell>
-                        <TableRowCell>@user.PublicUserId</TableRowCell>
-                        <TableRowCell>@user.Password</TableRowCell>
-                    </TableRow>
-                }
-            </TableBody>      
-        </Table>
-    </CardBody>
-</Card>
+    <div class="panel panel-inverse" data-sortable-id="ui-widget-1">
+        <div class="panel-heading">
+            <h4 class="panel-title">Benutzer (@Sim.Users.Count)</h4>
+            <div class="panel-heading-btn">
+                <input class="form-control form-control-sm" type="text" placeholder="Anzeigename" @bind="newUserDisplayName" />
+                <button class="btn btn-success btn-xs" @onclick="() => CreateNewUser()">Neuer Benutzer</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <Table>
+                <TableHeader>
+                    <TableHeaderCell>Id</TableHeaderCell>
+                    <TableHeaderCell>Anzeigename</TableHeaderCell>
+                    <TableHeaderCell>Rolle</TableHeaderCell>
+                    <TableHeaderCell>Login-Id</TableHeaderCell>
+                    <TableHeaderCell>Login-Pass</TableHeaderCell>
+                </TableHeader>
+                <TableBody>
+                    @foreach (var user in Sim.Users)
+                    {
+                        <UserCardUserRow User="@user" Roles="@Sim.Roles" />
+                    }
+                </TableBody>
+            </Table>
+        </div>
+    </div>
 }
 
 
 @code {
     [Parameter]
     public MUNityCore.Models.Simulation.Simulation Sim { get; set; }
+
+    private string newUserDisplayName;
+
+    private void CreateNewUser()
+    {
+        var user = simulationService.CreateUser(Sim.SimulationId, newUserDisplayName);
+    }
 }

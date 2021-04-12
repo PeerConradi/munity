@@ -74,11 +74,17 @@
                     <Heading>@simulation.Name</Heading>
                 </Column>
                 
+                <Column ColumnSize="ColumnSize.Is12">
+                    <UsersCard Sim="@simulation" />
+                </Column>
+                
+                <Column ColumnSize="ColumnSize.Is12">
+                    <RolesCard Simulation="@simulation" />
+                </Column>
 
-                <UsersCard Sim="@simulation" />
-
-                <RolesCard Simulation="@simulation" />
-
+                <Column ColumnSize="ColumnSize.Is12">
+                    <PetitionTypesCard Simulation="@simulation" />
+                </Column>
             </Row>
         }
     </Authorized>
@@ -113,7 +119,6 @@
             .Include(n => n.Users)
             .Include(n => n.Roles)
             .Include(n => n.AgendaItems)
-            .ThenInclude(n => n.Petitions)
             .FirstOrDefault(n => n.SimulationId == id);
             if (simulation == null)
             {
