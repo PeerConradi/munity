@@ -55,10 +55,9 @@
                 <!-- begin title -->
                 @if (selectedAgendaItem != null)
                 {
-
                     <div class="mb-3 text-grey">
                         <b>@selectedAgendaItem.Name</b>
-                        <button class="ml-2 btn btn-xs btn-success" @onclick="() => newPetitionModal.Show()">Neuer Antrag</button>
+                        <button class="ml-2 btn btn-xs btn-success" @onclick="() => newPetitionModal.Show()">Einen Antrag stellen</button>
                     </div>
                     @if (this.selectedAgendaItem.Petitions.Count > 0)
                     {
@@ -75,23 +74,29 @@
                     }
 
 
-            <div class="widget-list widget-list-rounded inverse-mode">
-                <!-- begin widget-list-item -->
-                @if (selectedAgendaItem != null && selectedAgendaItem.Petitions != null && selectedAgendaItem.Petitions.Where(n => n.Status != MUNitySchema.Models.Simulation.EPetitionStates.Active).Any())
+            <div class="widget-list widget-list-rounded inverse-mode m-t-5">
+                @if (selectedAgendaItem != null && petitionsOfAgendaItem != null && petitionsOfAgendaItem.Count > 0)
                 {
-                    @foreach (var petition in selectedAgendaItem.Petitions.Where(n => n.Status != MUNitySchema.Models.Simulation.EPetitionStates.Active))
+                    @foreach (var petition in petitionsOfAgendaItem)
                     {
-                        <a @onclick="() => petition.Status = MUNitySchema.Models.Simulation.EPetitionStates.Active" class="widget-list-item rounded-0 p-t-3">
-                            <div class="widget-list-media icon">
-                                <i class="fab fa-comment bg-indigo text-white"></i>
-                            </div>
-                            <div class="widget-list-content">
-                                <div class="widget-list-title">@petition.PetitionType?.Name</div>
-                            </div>
-                            <div class="widget-list-action text-nowrap text-grey">
-                                <span>@petition.SimulationUser?.Role?.Name @petition.SimulationUser?.DisplayName</span>
-                            </div>
-                        </a>
+
+                <div class="d-flex align-items-center m-b-15">
+                    <div class="widget-img rounded-lg m-r-10 bg-white p-1" style="width:60px;">
+                        <div class="h-100" style="background: url(/img/flags/medium/@(petition.RoleIso).png) center no-repeat; background-size: auto 100%;"></div>
+                    </div>
+                    <div class="text-truncate">
+                        <div><span class="text-gray">[@petition.CategoryName]</span> @petition.TypeName</div>
+                        <div class="text-grey">@petition.SubmitTime.ToString("dd.MM HH:mm") durch @petition.SubmitterDisplayName - @petition.SubmitterRoleName</div>
+                    </div>
+                    @if (isChair)
+                    {
+                        <div class="ml-auto text-center">
+                            <button class="btn btn-xs btn-primary" @onclick="() => MakePetitionActive(petition.PetitionId)">Aktiv setzen</button>
+                            <button class="btn btn-xs btn-danger" @onclick="() => RemovePetition(petition.PetitionId)">Löschen</button>
+                        </div>
+                    }
+
+                </div>
                     }
 
                 }
@@ -172,7 +177,8 @@
 
                 @foreach (var petitionType in petitionTypes.Where(n => n.PetitionType.Category == activePetitionCategory))
                 {
-                    <a @onclick="() => MakePetition(petitionType.PetitionType.PetitionTypeId)" class="widget-list-item">
+                    <a @onclick="() => MakePetition(petitionType.PetitionType.PetitionTypeId)" class="widget-list-item"
+                       style="cursor: pointer;">
                         <div class="widget-list-media icon">
                             <i class="fa fa-comment bg-inverse text-white"></i>
                         </div>
@@ -205,11 +211,22 @@
 
     private Modal newPetitionModal;
 
-    private MUNityCore.Models.Simulation.AgendaItem selectedAgendaItem;
+    private MUNityCore.Models.Simulation.AgendaItem _selectedAgendaItem;
+    private MUNityCore.Models.Simulation.AgendaItem selectedAgendaItem
+    {
+        get => _selectedAgendaItem;
+        set
+        {
+            _selectedAgendaItem = value;
+            this.petitionsOfAgendaItem = simulationService.GetPetitionsOfAgendaItem(_selectedAgendaItem.AgendaItemId);
+        }
+    }
 
     private MUNityCore.Models.Simulation.AgendaItem deleteAgendaItem;
 
     private List<MUNityCore.Models.Simulation.AgendaItem> AgendaItems { get; set; }
+
+    private List<MUNityCore.Dtos.Simulations.PetitionInfoDto> petitionsOfAgendaItem { get; set; }
 
     private List<MUNityCore.Models.Simulation.PetitionTypeSimulation> petitionTypes;
 
@@ -259,16 +276,28 @@
         if (userId.HasValue)
         {
             var petition = this.simulationService.SubmitPetition(selectedAgendaItem.AgendaItemId, typeId, userId.Value);
+            if (petition != null)
+            {
+                this.petitionsOfAgendaItem = simulationService.GetPetitionsOfAgendaItem(selectedAgendaItem.AgendaItemId);
+                this.newPetitionModal.Hide();
+            }
         }
+    }
 
+    private void MakePetitionActive(string petitionId)
+    {
+        
+    }
+
+    private void RemovePetition(string petitionId)
+    {
+        simulationService.RemovePetition(petitionId);
+        petitionsOfAgendaItem.Remove(petitionsOfAgendaItem.FirstOrDefault(n => n.PetitionId == petitionId));
     }
 
     protected override async Task OnInitializedAsync()
     {
-        this.AgendaItems = this.munityContext.AgendaItems
-            .Include(n => n.Petitions)
-            .ThenInclude(n => n.SimulationUser)
-            .Where(n => n.Simulation.SimulationId == SimulationId).ToList();
+        this.AgendaItems = this.munityContext.AgendaItems.Where(n => n.Simulation.SimulationId == SimulationId).ToList();
         if (this.AgendaItems.Count > 0)
         {
             this.selectedAgendaItem = this.AgendaItems.First();

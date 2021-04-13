@@ -17,7 +17,7 @@ else
 {
     if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
     {
-        <Paragraph>Übersicht</Paragraph>
+        <SimulationUsers SimulationId="@simulationId" />
     }
     else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
     {
@@ -25,7 +25,7 @@ else
     }
     else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Voting)
     {
-        <Paragraph>Abstimmung</Paragraph>
+        <SimulationVoting SimulationId="@simulationId" Token="@frontendSimulationService.CurrentUserToken" />
     }
     
 }

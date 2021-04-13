@@ -11,6 +11,7 @@ using MUNity.Models.Simulation;
 using MUNity.Schema.Simulation;
 using MUNity.Schema.Simulation.Voting;
 using MUNityCore.DataHandlers.EntityFramework;
+using MUNityCore.Dtos.Simulations;
 using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.Simulation.Presets;
@@ -86,6 +87,38 @@ namespace MUNityCore.Services
                     }).ToList();
             }
 
+
+            this._context.SimulationVotings.Add(mdl);
+            this._context.SaveChanges();
+            return mdl;
+        }
+
+        internal SimulationVoting CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions)
+        {
+            var activeVotings = this._context.SimulationVotings.Where(n => n.Simulation.SimulationId == simulationId
+            && n.IsActive);
+            if (activeVotings.Any())
+                foreach (var v in activeVotings)
+                    v.IsActive = false;
+
+
+            var mdl = new SimulationVoting()
+            {
+                Description = "",
+                IsActive = true,
+                Name = text,
+                Simulation = this._context.Simulations.FirstOrDefault(n => n.SimulationId == simulationId),
+                AllowAbstention = allowAbstentions
+            };
+
+            mdl.VoteSlots = _context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId &&
+                n.Role != null && n.Role.RoleType == RoleTypes.Delegate)
+                    .Select(n => new SimulationVotingSlot()
+                    {
+                        Choice = EVoteStates.NotVoted,
+                        User = n,
+                        Voting = mdl
+                    }).ToList();
 
             this._context.SimulationVotings.Add(mdl);
             this._context.SaveChanges();
@@ -344,6 +377,31 @@ namespace MUNityCore.Services
             return changes == 1;
         }
 
+        internal void RemovePetition(string petitionId)
+        {
+            var petition = _context.Petitions.FirstOrDefault(n => n.PetitionId == petitionId);
+            _context.Petitions.Remove(petition);
+            _context.SaveChanges();
+        }
+
+        internal List<PetitionInfoDto> GetPetitionsOfAgendaItem(int agendaItemId)
+        {
+            return _context.Petitions.Where(n => n.AgendaItem.AgendaItemId == agendaItemId)
+                .Select(n => new PetitionInfoDto()
+                {
+                    OrderIndex = n.AgendaItem.Simulation.PetitionTypes.FirstOrDefault(a =>
+                    a.PetitionType.PetitionTypeId == n.PetitionType.PetitionTypeId).OrderIndex,
+                    PetitionId = n.PetitionId,
+                    SubmitterDisplayName = n.SimulationUser.DisplayName,
+                    SubmitterRoleName = n.SimulationUser.Role.Name,
+                    SubmitTime = n.PetitionDate,
+                    TypeName = n.PetitionType.Name,
+                    Status = n.Status,
+                    CategoryName = n.PetitionType.Category,
+                    RoleIso = n.SimulationUser.Role.Iso
+                }).OrderBy(n => n.OrderIndex).ThenBy(n => n.SubmitTime).ToList();
+        }
+
         internal async Task<bool> IsPetitionInteractionAllowed(PetitionInteractRequest body)
         {
             if (body == null || string.IsNullOrEmpty(body.PetitionId)) return false;
@@ -392,6 +450,19 @@ namespace MUNityCore.Services
         public IQueryable<SimulationUser> GetSimulationUsers(int simulationId)
         {
             return this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId);
+        }
+
+        public List<SimulationUserInfoDto> GetSimulationUserInfos(int simulationId)
+        {
+            return this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId)
+                .Select(n => new SimulationUserInfoDto()
+                {
+                    SimulationUserId = n.SimulationUserId,
+                    DisplayName = n.DisplayName,
+                    RoleName = (n.Role != null) ? n.Role.Name : "",
+                    RoleType = (n.Role != null) ? n.Role.RoleType : RoleTypes.None
+                    
+                }).ToList();
         }
 
         public SimulationUser GetSimulationUserByPublicId(int simulationId, string publicId)

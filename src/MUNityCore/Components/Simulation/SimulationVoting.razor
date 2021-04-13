@@ -1,0 +1,127 @@
+﻿@inject Services.SimulationService simulationService;
+
+@if (isChair)
+{
+<Row>
+    <div class="col-12">
+        <div class="panel panel-inverse panel-success" data-sortable-id="ui-widget-1" style="">
+            <div class="panel-heading ui-sortable-handle">
+                <h4 class="panel-title">Neue Abstimmung erstellen</h4>
+                <div class="panel-heading-btn">
+                    <a class="btn btn-xs btn-icon btn-circle btn-success"><i class="fa fa-redo"></i></a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <h3>Abstimmung erstellen</h3>
+                <EditForm Model="@NewVoting" OnValidSubmit="@CreateVoting">
+                    <div class="form-group row m-b-15">
+                        <label class="col-form-label col-md-3">Anzeigetext</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control m-b-5" @bind-value="NewVoting.DisplayName" placeholder="Anzeigetext">
+                            <small class="f-s-12 text-grey-darker">Dieser Text wird allen als Thema der Abstimmung angezeigt.</small>
+                        </div>
+                    </div>
+                    <div class="form-group row m-b-10">
+                        <label class="col-md-3 col-form-label">Enthaltungen erlauben</label>
+                        <div class="col-md-9 p-t-3">
+                            <div class="switcher">
+                                <input type="checkbox" name="switcher_checkbox_1" @bind-value="@NewVoting.AllowAbstention" id="switcher_checkbox_1" checked="">
+                                <label for="switcher_checkbox_1"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" type="submit">Abstimmung erstellen!</button>
+                </EditForm>
+                
+            </div>
+        </div>
+    </div>
+</Row>
+}
+
+
+<Row>
+    <div class="col-lg-8">
+        <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
+            <div class="panel-heading ui-sortable-handle">
+                <h4 class="panel-title">Aktuelle Abstimmung</h4>
+                <div class="panel-heading-btn">
+                    <a class="btn btn-xs btn-icon btn-circle btn-success"><i class="fa fa-redo" @onclick="() => ReloadCurrentVoting()"></i></a>
+                </div>
+            </div>
+            <div class="panel-body">
+                @if (currentVoting != null)
+                {
+                    <h3>@currentVoting.Name</h3>
+                    <div class="progress rounded-corner m-b-15">
+                        <div class="progress-bar bg-success" style="width: 25%">Dafür</div>
+                        <div class="progress-bar bg-danger" style="width: 25%">Gegenstimmen</div>
+                        <div class="progress-bar bg-primary" style="width: 25%">Enthaltungen</div>
+                    </div>
+                }
+                else
+                {
+                    <p>Derzeit liegt keine Abstimmung vor. Drücke oben auf aktualisieren um die aktuelle Abstimmung neu zu laden.</p>
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
+            <div class="panel-heading ui-sortable-handle">
+                <h4 class="panel-title">Vergangene Abstimmungen</h4>
+                <div class="panel-heading-btn">
+                    <a class="btn btn-xs btn-icon btn-circle btn-success"><i class="fa fa-redo"></i></a>
+                </div>
+            </div>
+            <div class="panel-body">
+                
+            </div>
+        </div>
+    </div>
+</Row>
+
+@code {
+    [Parameter]
+    public int SimulationId { get; set; }
+
+    [Parameter]
+    public string Token { get; set; }
+
+    private bool isChair = false;
+
+    private class CreateNewVotingModel
+    {
+        public string DisplayName { get; set; }
+
+        public bool AllowAbstention { get; set; } = true;
+    }
+
+    private CreateNewVotingModel NewVoting = new CreateNewVotingModel();
+
+    MUNity.Schema.Simulation.Voting.SimulationVotingDto currentVoting;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.isChair = await simulationService.IsTokenValidAndUserChair(SimulationId, Token);
+        ReloadCurrentVoting();
+        //base.OnInitialized();
+    }
+
+    private void ReloadCurrentVoting()
+    {
+        currentVoting = simulationService.GetCurrentVoting(SimulationId);
+    }
+
+    private void CreateVoting()
+    {
+        var voting = this.simulationService.CreateVotingForDelegates(SimulationId, NewVoting.DisplayName, NewVoting.AllowAbstention);
+        if (voting != null)
+        {
+            NewVoting.DisplayName = "";
+            ReloadCurrentVoting();
+        }
+    }
+}
