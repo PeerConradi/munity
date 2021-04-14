@@ -54,10 +54,76 @@
                 {
                     <h3>@currentVoting.Name</h3>
                     <div class="progress rounded-corner m-b-15">
-                        <div class="progress-bar bg-success" style="width: 25%">Dafür</div>
-                        <div class="progress-bar bg-danger" style="width: 25%">Gegenstimmen</div>
-                        <div class="progress-bar bg-primary" style="width: 25%">Enthaltungen</div>
+                        <div class="progress-bar bg-success" style="width: @(this.currentVoting.ProPercentageOverall)%">Dafür</div>
+                        <div class="progress-bar bg-danger" style="width: @(this.currentVoting.ConPercentageOverall)%">Gegenstimmen</div>
+                        <div class="progress-bar bg-primary" style="width: @(this.currentVoting.AbstentionPercentageOverall)%">Enthaltungen</div>
                     </div>
+
+                    <p>
+                        Stimmberechtigt: @this.currentVoting.Slots.Count <br />
+                        Abgegebene Stimmen: @this.currentVoting.TotalGivenVotes <br />
+                        Davon gezählte stimmen: @this.currentVoting.TotalValidVotes <br />
+                        <span class="text-success">@this.currentVoting.ProVotes (@this.currentVoting.ProPercentage %) dafür</span>
+                        <span class="text-gray">(@this.currentVoting.ProPercentageOverall % aller Stimmen inkl. Enthaltungen und nicht abgegebene Stimmen) </span>
+                        <br />
+                        <span class="text-danger">@this.currentVoting.ConVotes (@this.currentVoting.ConPercentage %) dagegen</span>
+                        <span class="text-gray">(@this.currentVoting.ConPercentageOverall % aller Stimmen inkl. Enthaltungen und nicht abgegebene Stimmen) </span>
+                        <br />
+                        <span class="text-primary-darker">@this.currentVoting.AbstentionVotes Enthaltungen</span>
+                        <span class="text-gray">(@this.currentVoting.AbstentionPercentageOverall % aller Stimmen inkl. Enthaltungen und nicht abgegebene Stimmen) </span>
+                    </p>
+
+                    @if (currentVoting.Slots.Any(n => n.SimulationUserId == myUserId && n.Choice == MUNity.Schema.Simulation.EVoteStates.NotVoted))
+                    {
+                        <div class="btn-group-lg">
+                            <button class="btn btn-success m-1" @onclick="() => VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates.Pro)">Dafür stimmen</button>
+                            <button class="btn btn-danger m-1" @onclick="() => VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates.Con)">Dagegen stimmen</button>
+                            @if (currentVoting.AllowAbstention)
+                        {
+                            <button class="btn btn-primary m-1" @onclick="() => VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates.Abstention)">Enthaltung</button>
+                        }
+                        </div>
+                    }
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Entscheidung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var slot in currentVoting.Slots)
+                    {
+                        <tr>
+
+                            <td>@slot.RoleName (@slot.DisplayName)</td>
+                            <td>
+                                <h3>
+                                    @if (slot.Choice == MUNity.Schema.Simulation.EVoteStates.Abstention)
+                                    {
+                                        <span class="badge badge-primary">Enthaltung</span>
+                                    }
+                                    else if (slot.Choice == MUNity.Schema.Simulation.EVoteStates.Con)
+                                    {
+                                        <span class="badge badge-danger">Dagegen</span>
+                                    }
+                                    else if (slot.Choice == MUNity.Schema.Simulation.EVoteStates.NotVoted)
+                                    {
+                                        <span class="badge badge-gray">Nicht abgestimmt</span>
+                                    }
+                                    else if (slot.Choice == MUNity.Schema.Simulation.EVoteStates.Pro)
+                                    {
+                                        <span class="badge badge-success">Dafür</span>
+
+                                    }
+                                </h3>
+                            </td>
+                        </tr>
+                    }
+                        </tbody>
+                    </table>
+
                 }
                 else
                 {
@@ -92,6 +158,8 @@
 
     private bool isChair = false;
 
+    private int myUserId;
+
     private class CreateNewVotingModel
     {
         public string DisplayName { get; set; }
@@ -106,6 +174,7 @@
     protected override async Task OnInitializedAsync()
     {
         this.isChair = await simulationService.IsTokenValidAndUserChair(SimulationId, Token);
+        this.myUserId = simulationService.GetSimulationUserId(SimulationId, Token) ?? -1;
         ReloadCurrentVoting();
         //base.OnInitialized();
     }
@@ -113,6 +182,18 @@
     private void ReloadCurrentVoting()
     {
         currentVoting = simulationService.GetCurrentVoting(SimulationId);
+    }
+
+    private void VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates choice)
+    {
+        if (this.simulationService.Vote(currentVoting.VotingId, Token, choice))
+        {
+            var slot = currentVoting.Slots.FirstOrDefault(n => n.SimulationUserId == myUserId);
+            if (slot != null)
+            {
+                slot.Choice = choice;
+            }
+        }
     }
 
     private void CreateVoting()

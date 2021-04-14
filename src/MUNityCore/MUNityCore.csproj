@@ -98,7 +98,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Resolution\" />
     <Folder Include="wwwroot\material\" />
   </ItemGroup>
 

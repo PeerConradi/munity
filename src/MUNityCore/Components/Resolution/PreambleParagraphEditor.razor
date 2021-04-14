@@ -1,0 +1,53 @@
+﻿@inject Services.SqlResolutionService resolutionService;
+
+<div class="panel panel-inverse m-t-0">
+    <div class="panel-heading">
+        <h4 class="panel-title">@(Index + 1) Präambel Absatz</h4>
+        <div class="panel-heading-btn">
+            <a class="btn btn-xs btn-icon btn-circle btn-default"
+               @onclick="() => expanded = !expanded">
+                <i class="fa @((expanded) ? "fa-window-minimize" : "fa-expand")"></i>
+            </a>
+            <div class="btn-group m-l-5">
+                <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> Funktionen<b class="caret"></b></button>
+                <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
+                    <a href="javascript:;" class="dropdown-item" @onclick="() => expanded = !expanded">
+                        @((expanded) ? "Einklappen" : "Ausklappen")
+                    </a>
+                    <a href="javascript:;" class="dropdown-item">Nach oben schieben</a>
+                    <a href="javascript:;" class="dropdown-item">Nach unten schieben</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="javascript:;" class="dropdown-item text-danger-darker"
+                       @onclick="() => OnRemove.InvokeAsync(Paragraph)">Löschen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (expanded)
+    {
+        <div class="panel-body">
+            <textarea class="form-control" @bind="Paragraph.Text" @onblur="() => SaveParagraphText(Paragraph)" />
+        </div>
+    }
+
+</div>
+@code {
+    [Parameter]
+    public MUNity.Models.Resolution.PreambleParagraph Paragraph { get; set; }
+
+    [Parameter]
+    public string ResolutionId { get; set; }
+
+    [Parameter]
+    public int Index { get; set; } = 0;
+
+    [Parameter]
+    public EventCallback<MUNity.Models.Resolution.PreambleParagraph> OnRemove { get; set; }
+
+    private bool expanded = false;
+
+    private void SaveParagraphText(MUNity.Models.Resolution.PreambleParagraph paragraph)
+    {
+        resolutionService.SetPreambleParagraphText(paragraph.PreambleParagraphId, paragraph.Text);
+    }
+}

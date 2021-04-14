@@ -159,11 +159,25 @@ namespace MUNityCore.Services
             return true;
         }
 
+        internal bool Vote(string votingId, string token, EVoteStates choice)
+        {
+            var slot = this._context.VotingSlots
+                .FirstOrDefault(n => n.User.Token == token &&
+                n.Voting.SimulationVotingId == votingId);
+            if (slot == null)
+                return false;
+
+            slot.Choice = choice;
+            this._context.SaveChanges();
+            return true;
+        }
+
         internal SimulationVotingDto GetCurrentVoting(int simulationId)
         {
             var voting = _context.SimulationVotings
                 .Include(n => n.VoteSlots)
                 .ThenInclude(n => n.User)
+                .ThenInclude(n => n.Role)
                 .FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.IsActive);
             if (voting == null)
                 return null;
@@ -177,7 +191,9 @@ namespace MUNityCore.Services
                     Choice = n.Choice,
                     SimulationUserId = n.User.SimulationUserId,
                     SimulationVoteSlotId = n.SimulationVotingSlotId,
-                    VoteTime = n.VoteTime
+                    VoteTime = n.VoteTime,
+                    DisplayName = n.User.DisplayName,
+                    RoleName = n.User.Role.Name
                 }).ToList(),
                 VotingId = voting.SimulationVotingId,
                 AllowAbstention = voting.AllowAbstention
@@ -381,6 +397,23 @@ namespace MUNityCore.Services
         {
             var petition = _context.Petitions.FirstOrDefault(n => n.PetitionId == petitionId);
             _context.Petitions.Remove(petition);
+            _context.SaveChanges();
+        }
+
+        internal void ActivatePetition(string petitionId)
+        {
+            var petition = _context.Petitions.Include(n => n.AgendaItem).FirstOrDefault(n => n.PetitionId == petitionId);
+            var agendaItemId = petition.AgendaItem.AgendaItemId;
+            var currentActivePetition = _context.Petitions.FirstOrDefault(n => n.AgendaItem.AgendaItemId == agendaItemId &&
+                n.Status == MUNitySchema.Models.Simulation.EPetitionStates.Active);
+            if (currentActivePetition != null)
+            {
+                _context.Petitions.Remove(currentActivePetition);
+            }
+            if (petition != null)
+            {
+                petition.Status = MUNitySchema.Models.Simulation.EPetitionStates.Active;
+            }
             _context.SaveChanges();
         }
 
@@ -1113,6 +1146,18 @@ namespace MUNityCore.Services
         {
             return _context.SimulationPetitionTypes.Include(n => n.PetitionType)
                 .Where(n => n.Simulation.SimulationId == simulationId).ToList();
+        }
+
+        public List<AgendaItemInfo> GetAgendaItemInfosForSim(int simulationId)
+        {
+            return _context.AgendaItems.Where(n => n.Simulation.SimulationId == simulationId)
+                .Select(n => new AgendaItemInfo()
+                {
+                    AgendaItemId = n.AgendaItemId,
+                    Description = n.Description,
+                    Name = n.Name,
+                    PetitionCount = n.Petitions.Count
+                }).ToList();
         }
 
         internal SimulationStatus GetCurrentStatus(int simulationId)

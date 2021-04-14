@@ -1,0 +1,83 @@
+﻿@inject Services.SqlResolutionService resolutionService;
+@using MUNityCore.Extensions.CastExtensions;
+
+@if (resolution != null)
+{
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin: -15px -15px 0px -15px">
+        <b class="navbar-brand">@resolution.Header.Topic</b>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <button class="btn btn-success" @onclick="() => CreatePreambleParagraph()"><i class="fa fa-plus"></i> Neuer Präambelabsatz</button>
+                </li>
+                <li class="nav-item m-l-5">
+                    <button class="btn btn-success" @onclick="() => CreateOperativeParagraph()"><i class="fa fa-plus"></i> Neuer Operativer Absatz</button>
+                </li>
+                @*<li class="nav-item m-l-5">
+                        <button class="btn btn-primary"><i class="fa fa-window-restore"></i> Alle ausklappen</button>
+                    </li>*@
+            </ul>
+        </div>
+    </nav>
+    <h3 class="m-t-5">Präambel</h3>
+
+    @foreach (var preambleParagraph in resolution.Preamble.Paragraphs)
+    {
+        <PreambleParagraphEditor Paragraph="preambleParagraph"
+                                 ResolutionId="@ResolutionId"
+                                 Index="@resolution.Preamble.Paragraphs.IndexOf(preambleParagraph)"
+                                 OnRemove="RemovePreambleParagraph"/>
+    }
+
+    <h3>Operativer Abschnitt</h3>
+    @foreach (var operativeParagraph in resolution.OperativeSection.Paragraphs)
+    {
+        <OperativeParagraphEditor Paragraph="operativeParagraph"
+                                  ResolutionId="@ResolutionId" />
+    }
+}
+
+
+
+@code {
+    [Parameter]
+    public string ResolutionId { get; set; }
+
+    MUNity.Models.Resolution.Resolution resolution;
+
+    protected override async Task OnInitializedAsync()
+    {
+        resolution = await resolutionService.GetResolutionDtoAsync(ResolutionId);
+        await base.OnInitializedAsync();
+    }
+
+    private void CreatePreambleParagraph()
+    {
+        var newParagraph = resolutionService.CreatePreambleParagraph(ResolutionId);
+        if (newParagraph != null)
+        {
+            this.resolution.Preamble.Paragraphs.Add(newParagraph.ToModel());
+        }
+    }
+
+    private void RemovePreambleParagraph(MUNity.Models.Resolution.PreambleParagraph paragraph)
+    {
+        if (resolutionService.RemovePreambleParagraph(paragraph.PreambleParagraphId))
+        {
+            this.resolution.Preamble.Paragraphs.Remove(paragraph);
+        }
+    }
+
+    private void CreateOperativeParagraph()
+    {
+        var newParagraph = resolutionService.CreateOperativeParagraph(ResolutionId);
+        if (newParagraph != null)
+        {
+            this.resolution.OperativeSection.Paragraphs.Add(newParagraph.ToModel());
+        }
+    }
+}

@@ -387,15 +387,20 @@ namespace MUNityCore.Services
 
         internal ResolutionAuth CreateSimulationResolution(CreateSimulationResolutionRequest body, string submitter = "")
         {
+            return CreateSimulationResolution(body.SimulationId, body.Titel, submitter);
+        }
+
+        internal ResolutionAuth CreateSimulationResolution(int simulationId, string title, string submitter = "")
+        {
             var resolution = new ResaElement()
             {
-                Name = body.Titel,
-                FullName = body.Titel,
-                Topic = body.Titel,
+                Name = title,
+                FullName = title,
+                Topic = title,
                 SubmitterName = submitter
             };
 
-            var simulation = _context.Simulations.Find(body.SimulationId);
+            var simulation = _context.Simulations.Find(simulationId);
 
             var auth = new ResolutionAuth()
             {
@@ -406,7 +411,7 @@ namespace MUNityCore.Services
                 AllowPublicEdit = true,
                 AllowPublicRead = true,
                 Simulation = simulation,
-                Name = body.Titel
+                Name = title
             };
             _context.Resolutions.Add(resolution);
             _context.ResolutionAuths.Add(auth);

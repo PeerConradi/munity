@@ -1,9 +1,11 @@
 ﻿@using Microsoft.EntityFrameworkCore;
 @page "/simulation/{id}"
+@page "/simulation/{id}/{page}"
 @inject Services.SimulationService simulationService
 @inject Services.FrontendSimulationService frontendSimulationService;
 @inject DataHandlers.EntityFramework.MunityContext context;
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService;
+@inject IJSRuntime JS;
 
 @if (loadingState == LoadingStates.Loading)
 {
@@ -13,7 +15,7 @@ else if (loadingState == LoadingStates.Forbid)
 {
     <Paragraph>Du bist nicht berechtigt an dieser Simulation teilzunehmen.</Paragraph>
 }
-else 
+else
 {
     if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
     {
@@ -27,14 +29,21 @@ else
     {
         <SimulationVoting SimulationId="@simulationId" Token="@frontendSimulationService.CurrentUserToken" />
     }
-    
+    else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Resolutions)
+    {
+        <SimulationResolutionHome SimulationId="@simulationId" />
+    }
 }
 
 @code {
     [Parameter]
     public string Id { get; set; }
 
-    private enum LoadingStates {
+    [Parameter]
+    public string Page { get; set; }
+
+    private enum LoadingStates
+    {
         Loading,
         Success,
         Forbid
@@ -53,6 +62,11 @@ else
             frontendSimulationService.TabChanged += delegate { this.StateHasChanged(); };
         }
 
+        if (!string.IsNullOrEmpty(Page))
+        {
+            frontendSimulationService.CurrentTabByString(Page);
+        }
+
         await base.OnInitializedAsync();
     }
 
@@ -69,14 +83,14 @@ else
                 loadingState = LoadingStates.Success;
                 this.StateHasChanged();
             }
-            else 
+            else
             {
                 if (this.frontendSimulationService.CurrentUserToken == token.Token)
                 {
                     this.loadingState = LoadingStates.Success;
                     this.StateHasChanged();
                 }
-                else 
+                else
                 {
                     loadingState = LoadingStates.Forbid;
                     this.StateHasChanged();
@@ -88,5 +102,6 @@ else
             loadingState = LoadingStates.Forbid;
             this.StateHasChanged();
         }
+        await JS.InvokeAsync<string>("App.init");
     }
 }

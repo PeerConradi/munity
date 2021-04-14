@@ -63,6 +63,27 @@ namespace MUNityCore.Services
         public event EventHandler<int> CurrentSimulationIdChanged;
 
         private readonly MunityContext _context;
+
+        public void CurrentTabByString(string pageName)
+        {
+            switch (pageName.ToLower())
+            {
+                case "start":
+                    this.CurrentTab = SimulationTabs.Overview;
+                    break;
+                case "agenda":
+                    this.CurrentTab = SimulationTabs.Agenda;
+                    break;
+                case "voting":
+                    this.CurrentTab = SimulationTabs.Voting;
+                    break;
+                case "resolution":
+                    this.CurrentTab = SimulationTabs.Resolutions;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 }

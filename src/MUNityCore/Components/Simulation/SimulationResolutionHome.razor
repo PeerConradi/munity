@@ -1,0 +1,151 @@
+﻿@inject Services.SimulationService simulationService
+@inject Services.SqlResolutionService resolutionService;
+
+<h3>
+    Resolutionen <i class="fa @((showResolutions) ? "fa-eye" : "fa-eye-slash")"
+                    style="cursor: pointer;"
+                    @onclick="() => showResolutions = !showResolutions"></i>
+</h3>
+
+@if (showResolutions)
+{
+    <div class="row">
+        <div class="card-columns">
+            @foreach (var resolution in resolutions)
+            {
+                <div class="card bg-dark border-0 text-white">
+                    <div class="card-body">
+                        <h4 class="card-title">@resolution.Name</h4>
+                        <a href="javascript:;" class="btn btn-sm btn-primary"
+                           @onclick="() => { resolutionMode = EResolutionMode.None; selectedResolution = resolution; resolutionMode = EResolutionMode.Write; }">Bearbeiten</a>
+                        <a href="javascript:;" class="btn btn-sm btn-secondary"
+                           @onclick="() => { resolutionMode = EResolutionMode.None; selectedResolution = resolution; resolutionMode = EResolutionMode.Read; }">Lesen</a>
+                        @*<a href="javascript:;" class="btn btn-sm btn-warning">Duplizieren</a>*@
+                    </div>
+                </div>
+            }
+
+            <div class="card bg-dark border-1 text-white" style="width: 80px;">
+                <div class="card-body justify-content-center">
+                    <button class="btn btn-circle btn-lg btn-success"
+                            @onclick="() => createNewModal.Show()">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-8 col-md-12">
+        @if (selectedResolution != null)
+        {
+            <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
+                <div class="panel-heading ui-sortable-handle">
+                    <h4 class="panel-title">Resolutionen</h4>
+                    <div class="panel-heading-btn">
+                        @if (resolutionMode == EResolutionMode.Write)
+                        {
+                            <a class="btn btn-xs btn-icon btn-circle btn-primary"
+                               @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
+                        }
+                        else if (resolutionMode == EResolutionMode.Read)
+                        {
+                            <a class="btn btn-xs btn-icon btn-circle btn-secondary"
+                               @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
+                        }
+                        <a class="btn btn-xs btn-icon btn-circle btn-danger"
+                           @onclick="() => { selectedResolution = null; resolutionMode = EResolutionMode.None; }">X</a>
+                    </div>
+                </div>
+                <div class="panel-body bg-white-darker">
+                    @if (resolutionMode == EResolutionMode.Write)
+                    {
+                        <MUNityCore.Components.Resolution.ResolutionEditor ResolutionId="@selectedResolution.ResolutionId" />
+                    }
+                    else if (resolutionMode == EResolutionMode.Read)
+                    {
+                        <MUNityCore.Components.Resolution.ResolutionReader ResolutionId="@selectedResolution.ResolutionId" />
+                    }
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+<Modal @ref="createNewModal">
+    <ModalContent>
+        <ModalHeader>
+            <ModalTitle>Neue Resolution</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <div class="form">
+                <Label>Neue Resolution erstellen:</Label>
+                <div class="form-group">
+                    <input type="text" class="form-control" @bind-value="titleOfNewResolution" placeholder="Titel der Resolution">
+                </div>
+                <button class="btn btn-sm btn-primary" @onclick="() => CreateNewResolution()">Resolution erstellen</button>
+            </div>
+        </ModalBody>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public int SimulationId { get; set; }
+
+    private Modal createNewModal;
+
+    private string titleOfNewResolution;
+
+    private MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo selectedResolution;
+
+    private bool showResolutions = true;
+
+    private enum EResolutionMode
+    {
+        None,
+        Write,
+        Read,
+        ReadWithAmendments
+    }
+
+    private EResolutionMode resolutionMode = EResolutionMode.Write;
+
+    private List<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo> resolutions =
+        new List<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo>();
+
+    private void CreateNewResolution()
+    {
+        if (string.IsNullOrEmpty(titleOfNewResolution)) return;
+        var created = resolutionService.CreateSimulationResolution(SimulationId, titleOfNewResolution, "");
+        if (created != null)
+        {
+            var info = new MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo()
+            {
+                AllowAmendments = created.AllowOnlineAmendments,
+                AllowPublicEdit = created.AllowPublicEdit,
+                LastChangedTime = created.CreationDate,
+                Name = created.Name,
+                ResolutionId = created.ResolutionId
+            };
+            resolutions.Add(info);
+            titleOfNewResolution = "";
+            createNewModal.Hide();
+        }
+    }
+
+    private async Task UpdateResolutions()
+    {
+        this.resolutions = await simulationService.GetResolutions(SimulationId);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateResolutions();
+        await base.OnInitializedAsync();
+    }
+}

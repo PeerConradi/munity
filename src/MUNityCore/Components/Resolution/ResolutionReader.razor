@@ -1,0 +1,33 @@
+﻿@inject Services.SqlResolutionService resolutionService;
+
+@if (resolution != null)
+{
+    <h3>@resolution.Header.Topic</h3>
+    <h5>Einbringer: @resolution.Header.SubmitterName</h5>
+    <h5>Unterstützer: @resolution.Header.SupporterNames</h5>
+    <h5>@resolution.Header.CommitteeName.ToUpper(),</h5>
+
+    @foreach(var preambleParagraph in resolution.Preamble.Paragraphs)
+    {
+        <p>@preambleParagraph.Text</p>
+    }
+    <br />
+    <br />
+    foreach(var operativeParagraph in resolution.OperativeSection.Paragraphs)
+    {
+        <p>@operativeParagraph.Text</p>
+    }
+}
+
+@code {
+    [Parameter]
+    public string ResolutionId { get; set; }
+
+    public MUNity.Models.Resolution.Resolution resolution;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.resolution = await resolutionService.GetResolutionDtoAsync(ResolutionId);
+        base.OnInitializedAsync();
+    }
+}
