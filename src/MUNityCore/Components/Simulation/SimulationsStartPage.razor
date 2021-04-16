@@ -178,6 +178,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender)
+            return;
+
         if (this.knownSimulations == null)
         {
             this.knownSimulations = await this.localStorageService.GetItemAsync<List<MUNity.Schema.Simulation.SimulationTokenResponse>>("munity_simsims");
