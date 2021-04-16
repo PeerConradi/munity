@@ -3,9 +3,11 @@
 @page "/simulation/{id}/{page}"
 @inject Services.SimulationService simulationService
 @inject Services.FrontendSimulationService frontendSimulationService;
+@inject Services.SpeakerlistService speakerlistService; 
 @inject DataHandlers.EntityFramework.MunityContext context;
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService;
 @inject IJSRuntime JS;
+
 
 @if (loadingState == LoadingStates.Loading)
 {
@@ -17,22 +19,76 @@ else if (loadingState == LoadingStates.Forbid)
 }
 else
 {
-    if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
-    {
-        <SimulationUsers SimulationId="@simulationId" />
-    }
-    else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
-    {
-        <SimulationAgenda SimulationId="@frontendSimulationService.CurrentSimulationId" Token="@frontendSimulationService.CurrentUserToken" />
-    }
-    else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Voting)
-    {
-        <SimulationVoting SimulationId="@simulationId" Token="@frontendSimulationService.CurrentUserToken" />
-    }
-    else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Resolutions)
-    {
-        <SimulationResolutionHome SimulationId="@simulationId" />
-    }
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark" style="margin: -25px -30px 10px -30px">
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto text-white">
+                <li class="nav-item">
+                    <h4>Redeliste:</h4>
+                </li>
+                <li class="nav-item m-l-10">
+                    <h4>@((listOfSpeakers.CurrentSpeaker != null) ? listOfSpeakers.CurrentSpeaker.Name : "Niemand")</h4>
+                </li>
+                <li class="nav-item text-secondary m-l-20">
+                    <h4>@listOfSpeakers.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
+                </li>
+                <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
+                    @((listOfSpeakers.Speakers.Any()) ? listOfSpeakers.Speakers.First().Name : "keine Warteschlange")
+                    @((listOfSpeakers.Speakers.Any() && listOfSpeakers.Speakers.Count() > 1) ? "..." : null)
+                </li>
+                <li class="nav-item m-l-10">
+                    <h4>@((listOfSpeakers.CurrentQuestion != null) ? listOfSpeakers.CurrentQuestion.Name : "Niemand")</h4>
+                </li>
+                <li class="nav-item text-secondary m-l-20">
+                    <h4>@listOfSpeakers.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
+                </li>
+                <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
+                    @((listOfSpeakers.Questions.Any()) ? listOfSpeakers.Questions.First().Name : "keine Warteschlange").
+                    @((listOfSpeakers.Questions.Any() && listOfSpeakers.Questions.Count() > 1) ? "..." : null)
+                </li>
+            </ul>
+            <div class="my-2 my-lg-0">
+                <a class="btn @((showListOfSpeakers) ? "btn-primary" : "btn-default") btn-icon btn-circle btn-lg"
+                   @onclick="() => showListOfSpeakers = !showListOfSpeakers">
+                    <i class="fa fa-comment"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row">
+        <div class="@((showListOfSpeakers) ? "col-lg-8" : "col-lg-12")">
+            @if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
+            {
+            <SimulationUsers SimulationId="@simulationId" />
+            }
+            else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
+            {
+            <SimulationAgenda SimulationId="@frontendSimulationService.CurrentSimulationId" Token="@frontendSimulationService.CurrentUserToken" />
+            }
+            else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Voting)
+            {
+            <SimulationVoting SimulationId="@simulationId" Token="@frontendSimulationService.CurrentUserToken" />
+            }
+            else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Resolutions)
+            {
+            <SimulationResolutionHome SimulationId="@simulationId" />
+            }
+        </div>
+
+        @if (showListOfSpeakers)
+        {
+            <div class="col-lg-4">
+                <MUNityCore.Components.ListOfSpeakers.ListOfSpeakersSimulationView 
+                                                                                   ListOfSpeakers="@listOfSpeakers"
+                                                                                   SimulationId="@simulationId"
+                                                                                   Token="@frontendSimulationService.CurrentUserToken"/>
+            </div>
+        }
+    </div>
+
+    
 }
 
 @code {
@@ -49,11 +105,15 @@ else
         Forbid
     }
 
+    private bool showListOfSpeakers = false;
+
     private LoadingStates loadingState = LoadingStates.Loading;
 
     private int simulationId = -1;
 
     MUNity.Schema.Simulation.GamePhases currentPhase { get; set; }
+
+    private MUNity.Models.ListOfSpeakers.ListOfSpeakers listOfSpeakers { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -66,6 +126,13 @@ else
         {
             frontendSimulationService.CurrentTabByString(Page);
         }
+
+        var listOfSpeakersId = this.simulationService.GetSpeakerlistIdOfSimulation(this.simulationId);
+        if (string.IsNullOrEmpty(listOfSpeakersId))
+        {
+            listOfSpeakersId = this.simulationService.InitListOfSpeakers(this.simulationId).ListOfSpeakersId;
+        }
+        this.listOfSpeakers = speakerlistService.GetSpeakerlist(listOfSpeakersId);
 
         await base.OnInitializedAsync();
     }

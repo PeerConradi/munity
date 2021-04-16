@@ -56,6 +56,23 @@ namespace MUNityCore.Services
             return mdl;
         }
 
+        public async Task<Speaker> AddSpeaker(string listId, string iso, string name)
+        {
+            var list = await _context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
+                .FirstOrDefaultAsync(n => n.ListOfSpeakersId == listId);
+            if (list == null) return null;
+
+            var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == iso &&
+            n.Name == name && n.Mode == Speaker.SpeakerModes.WaitToSpeak);
+
+            if (existing != null) return existing;
+
+            var mdl = list.AddSpeaker(name, iso);
+            await _context.SaveChangesAsync();
+            return mdl;
+        }
+
         public async Task<Speaker> AddQuestion(AddSpeakerBody body)
         {
             var list = await _context.ListOfSpeakers
@@ -70,6 +87,25 @@ namespace MUNityCore.Services
                 return existing;
 
             var mdl = list.AddQuestion(body.Name, body.Iso);
+            //list.AllSpeakers.Add(mdl);
+            await _context.SaveChangesAsync();
+            return mdl;
+        }
+
+        public async Task<Speaker> AddQuestion(string listId, string iso, string name)
+        {
+            var list = await _context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
+                .FirstOrDefaultAsync(n => n.ListOfSpeakersId == listId);
+            if (list == null) return null;
+
+            var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == iso &&
+            n.Name == name && n.Mode == Speaker.SpeakerModes.WaitForQuesiton);
+
+            if (existing != null)
+                return existing;
+
+            var mdl = list.AddQuestion(name, iso);
             //list.AllSpeakers.Add(mdl);
             await _context.SaveChangesAsync();
             return mdl;
@@ -135,6 +171,16 @@ namespace MUNityCore.Services
             return true;
         }
 
+        internal async Task<bool> RemoveSpeaker(Speaker speaker)
+        {
+            var speakerToRemove = await _context.Speakers
+                .FirstOrDefaultAsync(n => n.Id == speaker.Id);
+            if (speakerToRemove == null) return false;
+            _context.Speakers.Remove(speakerToRemove);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         internal async Task<bool> NextSpeaker(string listid)
         {
             var list = await this._context.ListOfSpeakers.Include(n => n.AllSpeakers).FirstOrDefaultAsync(n => n.ListOfSpeakersId == listid);
@@ -160,6 +206,17 @@ namespace MUNityCore.Services
             var list = this._context.ListOfSpeakers
                 .Include(n => n.AllSpeakers)
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return null;
+            list.ResumeSpeaker();
+            this._context.SaveChanges();
+            return list.StartSpeakerTime.ToUniversalTime();
+        }
+
+        internal DateTime? ResumeSpeaker(string listId)
+        {
+            var list = this._context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
+                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return null;
             list.ResumeSpeaker();
             this._context.SaveChanges();
@@ -209,8 +266,13 @@ namespace MUNityCore.Services
 
         internal bool ClearSpeaker(ListOfSpeakersRequest body)
         {
+            return ClearSpeaker(body.ListOfSpeakersId);
+        }
+
+        internal bool ClearSpeaker(string listId)
+        {
             var list = _context.ListOfSpeakers
-                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return false;
             list.ClearCurrentSpeaker();
             _context.SaveChanges();
@@ -231,6 +293,16 @@ namespace MUNityCore.Services
         {
             var list = _context.ListOfSpeakers
                 .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            if (list == null) return false;
+            list.Pause();
+            _context.SaveChanges();
+            return true;
+        }
+
+        internal bool Pause(string listId)
+        {
+            var list = _context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return false;
             list.Pause();
             _context.SaveChanges();

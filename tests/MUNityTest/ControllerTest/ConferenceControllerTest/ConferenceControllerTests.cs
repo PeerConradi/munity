@@ -54,8 +54,8 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
         {
             return _testUser ??= new MunityUser
             {
-                MunityUserId = 0,
-                Username = "testuser",
+                Id = "0",
+                NormalizedEmail = "user@test.com",
                 Forename = "Test",
                 Lastname = "User"
             };
@@ -76,8 +76,8 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
 
             var user = new MunityUser
             {
-                MunityUserId = 0,
-                Username = "testuser",
+                Id = "0",
+                NormalizedEmail = "user@test.com",
                 Forename = "Max",
                 Lastname = "Mustermann",
                 Birthday = new DateTime(1990, 1, 1)

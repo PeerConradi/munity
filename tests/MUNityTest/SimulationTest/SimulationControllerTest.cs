@@ -13,6 +13,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace MUNityTest.SimulationTest
 {
@@ -109,6 +110,12 @@ namespace MUNityTest.SimulationTest
             var createdUser = okObjetResult.Value as SimulationUserAdminDto;
             Assert.NotNull(createdUser);
             var usersNow = await GetTestUsersAdminDto();
+            if (usersNow == null)
+            {
+                var allUsers = _context.SimulationUser.ToList();
+                Console.WriteLine("Benutzer und Token: ");
+                Console.WriteLine(string.Join(", ", allUsers.Select(n => n.SimulationUserId.ToString() + " " + n.Token)));
+            }
             Assert.NotNull(usersNow, "Error when getting the Users another time see logs!");
             Assert.AreEqual(2, usersNow.Count);
         }
@@ -185,6 +192,7 @@ namespace MUNityTest.SimulationTest
         {
             var users = await GetTestUsersAdminDto();
             var roles = await GetTestSimulationRoles();
+            Assert.NotNull(users);
             Assert.AreEqual(2, users.Count);
             Assert.AreEqual(2, roles.Count);
 

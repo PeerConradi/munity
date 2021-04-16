@@ -179,7 +179,8 @@ namespace MUNityCore.Controllers
         public async Task<ActionResult<List<SimulationUserAdminDto>>> GetUsersAsAdmin([FromHeader] string simsimtoken, int id)
         {
             var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
-            if (!isAllowed) return BadRequest();
+            if (!isAllowed) 
+                return Forbid();
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
                 .Include(n => n.HubConnections)

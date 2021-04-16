@@ -822,14 +822,12 @@ namespace MUNityCore.Services
 
         public async Task<bool> IsTokenValidAndUserChairOrOwner(int simulationId, string token)
         {
-            if (!string.IsNullOrEmpty(Program.MasterToken) && token == Program.MasterToken)
-                return true;
             return await _context.SimulationUser.AnyAsync(n =>
-            n.Simulation.SimulationId == simulationId &&
-            n.Token == token &&
-            (n.CanCreateRole ||
-            n.Role != null &&
-            n.Role.RoleType == RoleTypes.Chairman));
+                n.Simulation.SimulationId == simulationId &&
+                n.Token == token &&
+                (n.CanCreateRole ||
+                n.Role != null &&
+                n.Role.RoleType == RoleTypes.Chairman));
         }
 
         public async Task<bool> IsTokenValidAndUserChairOrOwner(SimulationRequest request)
@@ -1187,6 +1185,14 @@ namespace MUNityCore.Services
             var dir = new System.IO.DirectoryInfo(path);
             var files = dir.GetFiles("*.csv");
             return files.Select(n => n.Name.Substring(0, n.Name.Length - 4)).ToList();
+        }
+
+        internal (string name, string iso) GetUserRoleOrName(int simulationId, string token)
+        {
+            var user = _context.SimulationUser.Include(n => n.Role).FirstOrDefault(n => n.Simulation.SimulationId == simulationId &&
+            n.Token == token);
+            if (user.Role != null) return (user.Role.Name, user.Role.Iso);
+            return (user.DisplayName, "un");
         }
     }
 }

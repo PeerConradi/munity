@@ -136,11 +136,11 @@ namespace MUNityTest.TestEnvironment
                 {
                     _userMax = new MunityUser
                     {
-                        Username = "maxmustermann",
+                        UserName = "maxmustermann",
                         Title = "",
                         Forename = "Max",
                         Lastname = "Mustermann",
-                        Mail = "max-mustermann@mail.com"
+                        NormalizedEmail = "max-mustermann@mail.com"
                     };
                 }
 
@@ -157,11 +157,11 @@ namespace MUNityTest.TestEnvironment
                 {
                     _userMike = new MunityUser
                     {
-                        Username = "mikelitoris",
+                        UserName = "mikelitoris",
                         Title = "",
                         Forename = "Mike",
                         Lastname = "Litoris",
-                        Mail = "mike@litoris.com"
+                        NormalizedEmail = "mike@litoris.com"
                     };
                 }
 
@@ -178,11 +178,11 @@ namespace MUNityTest.TestEnvironment
                 {
                     _userMillie = new MunityUser
                     {
-                        Username = "mbb",
+                        UserName = "mbb",
                         Title = "",
                         Forename = "Millie Bobby",
                         Lastname = "Brown",
-                        Mail = "millie-brown@mail.com"
+                        NormalizedEmail = "millie-brown@mail.com"
                     };
                 }
 
@@ -199,11 +199,11 @@ namespace MUNityTest.TestEnvironment
                 {
                     _userFinn = new MunityUser
                     {
-                        Username = "f.wolfhard",
+                        UserName = "f.wolfhard",
                         Title = "",
                         Forename = "Finn",
                         Lastname = "Wolfhard",
-                        Mail = "finn@mail.com"
+                        NormalizedEmail = "finn@mail.com"
                     };
                 }
 
