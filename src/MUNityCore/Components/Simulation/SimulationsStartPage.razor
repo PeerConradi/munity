@@ -97,9 +97,9 @@
         modalRef.Hide();
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        simulations = await simulationService.GetHomeScreenInfos();
+        simulations = simulationService.GetHomeScreenInfos();
     }
 
     private void JoinSimulation(int id)

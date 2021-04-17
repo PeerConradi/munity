@@ -1164,15 +1164,20 @@ namespace MUNityCore.Services
                 .OrderByDescending(n => n.StatusTime)
                 .FirstOrDefault(n => n.Simulation.SimulationId == simulationId);
         }
-
-        internal Task<List<MUNityCore.Dtos.Simulations.HomeScreenInfo>> GetHomeScreenInfos() 
+        
+        /// <summary>
+        /// Gibt Informationen über die Simulation zurück
+        /// </summary>
+        /// <returns></returns>
+        // Versuche nicht diese Methoda Async zu machen, dass funktioniert nicht!
+        internal List<MUNityCore.Dtos.Simulations.HomeScreenInfo> GetHomeScreenInfos() 
         {
             return _context.Simulations.AsNoTracking().Select(n => new MUNityCore.Dtos.Simulations.HomeScreenInfo() {
                 Id = n.SimulationId,
                 Name = n.Name,
                 RoleNames = string.Join(", ", n.Roles.Select(a => a.Name)),
                 SlotCount = n.Users.Count
-            }).ToListAsync();
+            }).ToList();
         }
 
         internal List<string> GetPetitionPresetNames()
