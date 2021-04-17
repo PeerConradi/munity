@@ -1165,14 +1165,14 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.Simulation.SimulationId == simulationId);
         }
 
-        internal List<MUNityCore.Dtos.Simulations.HomeScreenInfo> GetHomeScreenInfos() 
+        internal Task<List<MUNityCore.Dtos.Simulations.HomeScreenInfo>> GetHomeScreenInfos() 
         {
             return _context.Simulations.AsNoTracking().Select(n => new MUNityCore.Dtos.Simulations.HomeScreenInfo() {
                 Id = n.SimulationId,
                 Name = n.Name,
                 RoleNames = string.Join(", ", n.Roles.Select(a => a.Name)),
                 SlotCount = n.Users.Count
-            }).ToList();
+            }).ToListAsync();
         }
 
         internal List<string> GetPetitionPresetNames()

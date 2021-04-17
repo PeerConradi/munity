@@ -157,6 +157,14 @@ namespace MUNityCore
                 //app.UseCors("DevPolicy");
                 app.UseDeveloperExceptionPage();
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
+
+                app.UseSwaggerUI(c =>
+                 {
+                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
+                     c.DisplayOperationId();
+                 });
+
+                app.UseSwagger();
             }
             else
             {
@@ -167,14 +175,6 @@ namespace MUNityCore
                 app.UseHsts();
             }
 
-            // app.UseSwaggerUI(c =>
-            // {
-            //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Munity API V1");
-            //     c.DisplayOperationId();
-            // });
-
-            // app.UseSwagger();
-
             //opt.WithOrigins("https://www.mun-hosting.web.app", "mun-hosting.web.app", "https://mun-hosting.web.app", "http://localhost", "https://localhost", "localhost", "127.0.0.1", "*.localhost")
             app.UseCors(opt =>
             {
@@ -183,8 +183,6 @@ namespace MUNityCore
                 .AllowAnyHeader()
                 .AllowCredentials();
             });
-
-            
 
             //app.UseForwardedHeaders(new ForwardedHeadersOptions
             //{
