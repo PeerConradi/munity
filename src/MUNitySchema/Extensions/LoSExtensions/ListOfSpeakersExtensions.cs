@@ -24,6 +24,7 @@ namespace MUNity.Extensions.LoSExtensions
         /// <param name="list"></param>
         public static void NextSpeaker(this ListOfSpeakers list)
         {
+            Console.WriteLine("Next Speaker selected!");
             if (list.Speakers.Any(n => n.Mode == Speaker.SpeakerModes.WaitToSpeak))
             {
 
@@ -127,6 +128,12 @@ namespace MUNity.Extensions.LoSExtensions
             }
         }
 
+        public static void StartAnswer(this ListOfSpeakers list, DateTime startTime)
+        {
+            list.StartSpeakerTime = startTime;
+            list.StartAnswer();
+        }
+
         /// <summary>
         /// This will give the Question the full QuestionTime and set the Mode to question.
         /// </summary>
@@ -203,6 +210,12 @@ namespace MUNity.Extensions.LoSExtensions
             }
         }
 
+        public static void ResumeSpeaker(this ListOfSpeakers list, DateTime startTime)
+        {
+            list.StartSpeakerTime = startTime;
+            list.ResumeSpeaker();
+        }
+
         private static void ContinueAnswer(this ListOfSpeakers list)
         {
             list.StartSpeakerTime = DateTime.Now.ToUniversalTime().AddSeconds(list.RemainingSpeakerTime.TotalSeconds - list.QuestionTime.TotalSeconds);
@@ -240,6 +253,12 @@ namespace MUNity.Extensions.LoSExtensions
             }
         }
 
+        public static void ResumeQuestion(this ListOfSpeakers list, DateTime startTime)
+        {
+            list.StartQuestionTime = startTime;
+            list.ResumeQuestion();
+        }
+
         /// <summary>
         /// Creates a new instance of s speaker and adds it to the end of speakers.
         /// The speaker will get an Id from a new Guid.
@@ -264,6 +283,22 @@ namespace MUNity.Extensions.LoSExtensions
             }
             list.AllSpeakers.Add(newSpeaker);
             return newSpeaker;
+        }
+
+        public static Speaker AddSpeaker(this ListOfSpeakers list, Speaker speaker)
+        {
+            var exisiting = list.AllSpeakers.FirstOrDefault(n => n.Id == speaker.Id);
+            if (exisiting != null) return exisiting;
+
+            list.AllSpeakers.Add(speaker);
+            return speaker;
+        }
+
+        public static void RemoveSpeaker(this ListOfSpeakers list, string id)
+        {
+            var speaker = list.AllSpeakers.FirstOrDefault(n => n.Id == id);
+            if (speaker != null)
+                list.AllSpeakers.Remove(speaker);
         }
 
         /// <summary>

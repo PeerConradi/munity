@@ -44,11 +44,16 @@ namespace MUNity.Hubs
         Task NextQuestion();
 
         Task SettingsChanged(IListTimeSettings settings);
+
         Task QuestionSecondsAdded(int seconds);
 
         Task SpeakerSecondsAdded(int seconds);
+
         Task AnswerTimerStarted(DateTime value);
+
+
         Task ClearSpeaker();
+
         Task ClearQuestion();
 
         Task Pause();

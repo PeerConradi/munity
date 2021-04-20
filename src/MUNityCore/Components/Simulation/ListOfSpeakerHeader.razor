@@ -1,30 +1,37 @@
-﻿<nav class="navbar navbar-expand-lg navbar-light bg-dark" style="margin: -25px -30px 10px -30px">
+﻿@inject Services.FrontendSimulationService frontendSimulationService;
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-dark" style="margin: -25px -30px 10px -30px">
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto text-white">
             <li class="nav-item">
                 <h4>Redeliste:</h4>
             </li>
-            <li class="nav-item m-l-10">
-                <h4>@((ListOfSpeaker.CurrentSpeaker != null) ? ListOfSpeaker.CurrentSpeaker.Name : "Niemand")</h4>
-            </li>
-            <li class="nav-item text-secondary m-l-20">
-                <h4>@ListOfSpeaker.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
-            </li>
-            <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
-                @((ListOfSpeaker.Speakers.Any()) ? ListOfSpeaker.Speakers.First().Name : "keine Warteschlange")
-                @((ListOfSpeaker.Speakers.Any() && ListOfSpeaker.Speakers.Count() > 1) ? "..." : null)
-            </li>
-            <li class="nav-item m-l-10">
-                <h4>@((ListOfSpeaker.CurrentQuestion != null) ? ListOfSpeaker.CurrentQuestion.Name : "Niemand")</h4>
-            </li>
-            <li class="nav-item text-secondary m-l-20">
-                <h4>@ListOfSpeaker.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
-            </li>
-            <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
-                @((ListOfSpeaker.Questions.Any()) ? ListOfSpeaker.Questions.First().Name : "keine Warteschlange").
-                @((ListOfSpeaker.Questions.Any() && ListOfSpeaker.Questions.Count() > 1) ? "..." : null)
-            </li>
+            @if (this.frontendSimulationService.CurrentSpeakerlist != null)
+            {
+                <li class="nav-item m-l-10">
+                    <h4>@((ListOfSpeaker.CurrentSpeaker != null) ? ListOfSpeaker.CurrentSpeaker.Name : "Niemand")</h4>
+                </li>
+                <li class="nav-item text-secondary m-l-20">
+                    <h4>@ListOfSpeaker.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
+                </li>
+                <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
+                    @((ListOfSpeaker.Speakers.Any()) ? ListOfSpeaker.Speakers.First().Name : "keine Warteschlange")
+                    @((ListOfSpeaker.Speakers.Any() && ListOfSpeaker.Speakers.Count() > 1) ? "..." : null)
+                </li>
+                <li class="nav-item m-l-10">
+                    <h4>@((ListOfSpeaker.CurrentQuestion != null) ? ListOfSpeaker.CurrentQuestion.Name : "Niemand")</h4>
+                </li>
+                <li class="nav-item text-secondary m-l-20">
+                    <h4>@ListOfSpeaker.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
+                </li>
+                <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
+                    @((ListOfSpeaker.Questions.Any()) ? ListOfSpeaker.Questions.First().Name : "keine Warteschlange").
+                    @((ListOfSpeaker.Questions.Any() && ListOfSpeaker.Questions.Count() > 1) ? "..." : null)
+                </li>
+            }
+
         </ul>
         <div class="my-2 my-lg-0">
             <a class="btn @((showListOfSpeakers) ? "btn-primary" : "btn-default") btn-icon btn-circle btn-lg"
@@ -37,12 +44,16 @@
 
 
 @code {
-
-    [Parameter]
     public MUNity.Models.ListOfSpeakers.ListOfSpeakers ListOfSpeaker { get; set; }
 
     [Parameter]
     public EventCallback<bool> ShowList { get; set; }
 
     private bool showListOfSpeakers = false;
+
+    protected override void OnInitialized()
+    {
+        this.ListOfSpeaker = this.frontendSimulationService.CurrentSpeakerlist;
+        base.OnInitialized();
+    }
 }

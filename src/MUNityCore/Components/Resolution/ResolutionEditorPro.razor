@@ -1,0 +1,55 @@
+﻿<div class="row">
+    <div class="col-lg-8 col-md-12">
+        <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
+            <div class="panel-heading ui-sortable-handle">
+                <h4 class="panel-title">Resolutionen</h4>
+                <div class="panel-heading-btn">
+                    @if (resolutionMode == EResolutionMode.Write)
+                    {
+                        <a class="btn btn-xs btn-icon btn-circle btn-primary"
+                            @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
+                    }
+                    else if (resolutionMode == EResolutionMode.Read)
+                    {
+                        <a class="btn btn-xs btn-icon btn-circle btn-secondary"
+                            @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
+                    }
+                    <a class="btn btn-xs btn-icon btn-circle btn-danger"
+                       @onclick="() => this.OnEditorClosed.InvokeAsync()">X</a>
+                </div>
+            </div>
+            <div class="panel-body bg-white-darker">
+                @if (resolutionMode == EResolutionMode.Write)
+                {
+                    <MUNityCore.Components.Resolution.ResolutionEditor ResolutionId="@ResolutionId" />
+                }
+                else if (resolutionMode == EResolutionMode.Read)
+                {
+                    <MUNityCore.Components.Resolution.ResolutionReader ResolutionId="@ResolutionId" />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+
+
+    public enum EResolutionMode
+    {
+        None,
+        Write,
+        Read,
+        ReadWithAmendments
+    }
+
+    [Parameter]
+    public EResolutionMode resolutionMode { get; set; } = EResolutionMode.Write;
+
+    [Parameter]
+    public string ResolutionId { get; set; }
+
+    [Parameter]
+    public EventCallback OnEditorClosed { get; set; }
+
+
+}

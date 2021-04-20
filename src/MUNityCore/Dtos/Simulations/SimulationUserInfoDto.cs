@@ -14,6 +14,8 @@ namespace MUNityCore.Dtos.Simulations
 
         public string RoleName { get; set; }
 
+        public string RoleIso { get; set; }
+
         public RoleTypes RoleType { get; set; }
     }
 }

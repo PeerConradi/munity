@@ -17,9 +17,9 @@
                     <div class="card-body">
                         <h4 class="card-title">@resolution.Name</h4>
                         <a href="javascript:;" class="btn btn-sm btn-primary"
-                           @onclick="() => { resolutionMode = EResolutionMode.None; selectedResolution = resolution; resolutionMode = EResolutionMode.Write; }">Bearbeiten</a>
+                           @onclick="() => { resolutionMode = MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode.None; selectedResolution = resolution; resolutionMode = MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode.Write; }">Bearbeiten</a>
                         <a href="javascript:;" class="btn btn-sm btn-secondary"
-                           @onclick="() => { resolutionMode = EResolutionMode.None; selectedResolution = resolution; resolutionMode = EResolutionMode.Read; }">Lesen</a>
+                           @onclick="() => { resolutionMode = MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode.None; selectedResolution = resolution; resolutionMode = MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode.Read; }">Lesen</a>
                         @*<a href="javascript:;" class="btn btn-sm btn-warning">Duplizieren</a>*@
                     </div>
                 </div>
@@ -37,43 +37,11 @@
     </div>
 }
 
-<div class="row">
-    <div class="col-lg-8 col-md-12">
-        @if (selectedResolution != null)
-        {
-            <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
-                <div class="panel-heading ui-sortable-handle">
-                    <h4 class="panel-title">Resolutionen</h4>
-                    <div class="panel-heading-btn">
-                        @if (resolutionMode == EResolutionMode.Write)
-                        {
-                            <a class="btn btn-xs btn-icon btn-circle btn-primary"
-                               @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
-                        }
-                        else if (resolutionMode == EResolutionMode.Read)
-                        {
-                            <a class="btn btn-xs btn-icon btn-circle btn-secondary"
-                               @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
-                        }
-                        <a class="btn btn-xs btn-icon btn-circle btn-danger"
-                           @onclick="() => { selectedResolution = null; resolutionMode = EResolutionMode.None; }">X</a>
-                    </div>
-                </div>
-                <div class="panel-body bg-white-darker">
-                    @if (resolutionMode == EResolutionMode.Write)
-                    {
-                        <MUNityCore.Components.Resolution.ResolutionEditor ResolutionId="@selectedResolution.ResolutionId" />
-                    }
-                    else if (resolutionMode == EResolutionMode.Read)
-                    {
-                        <MUNityCore.Components.Resolution.ResolutionReader ResolutionId="@selectedResolution.ResolutionId" />
-                    }
-                </div>
-            </div>
-
-        }
-    </div>
-</div>
+@if (selectedResolution != null)
+{
+    <MUNityCore.Components.Resolution.ResolutionEditorPro ResolutionId="@selectedResolution.ResolutionId"
+                                                          OnEditorClosed="EditorClosed"/>
+} 
 
 <Modal @ref="createNewModal">
     <ModalContent>
@@ -103,17 +71,14 @@
 
     private MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo selectedResolution;
 
-    private bool showResolutions = true;
+    private MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode resolutionMode;
 
-    private enum EResolutionMode
+    private void EditorClosed()
     {
-        None,
-        Write,
-        Read,
-        ReadWithAmendments
+        this.selectedResolution = null;
     }
 
-    private EResolutionMode resolutionMode = EResolutionMode.Write;
+    private bool showResolutions = true;
 
     private List<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo> resolutions =
         new List<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo>();

@@ -195,7 +195,7 @@ namespace MUNityCore.Controllers
         [HttpPut]
         public async Task<IActionResult> NextSpeaker([FromBody]ListOfSpeakersRequest body)
         {
-            bool result = await _speakerlistService.NextSpeaker(body.ListOfSpeakersId);
+            bool result = await _speakerlistService.NextSpeakerAsync(body.ListOfSpeakersId);
             if (result)
             {
                 _ = GetHubGroup(body)?.NextSpeaker();

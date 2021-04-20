@@ -1,13 +1,13 @@
 ﻿@using Microsoft.EntityFrameworkCore;
+@using Microsoft.AspNetCore.SignalR.Client;
+@using MUNity.Hubs;
+@using MUNity.Extensions.LoSExtensions;
 @page "/simulation/{id}"
 @page "/simulation/{id}/{page}"
-@inject Services.SimulationService simulationService
-@inject Services.FrontendSimulationService frontendSimulationService;
-@inject Services.SpeakerlistService speakerlistService; 
-@inject DataHandlers.EntityFramework.MunityContext context;
-@inject Blazored.LocalStorage.ILocalStorageService localStorageService;
+@inject Services.FrontendSimulationService frontService;
+@inject Services.SpeakerlistHubService speakerlistHubService;
+@inject NavigationManager navigationManager;
 @inject IJSRuntime JS;
-
 
 @if (loadingState == LoadingStates.Loading)
 {
@@ -20,40 +20,37 @@ else if (loadingState == LoadingStates.Forbid)
 else
 {
 
-    @*<ListOfSpeakerHeader ListOfSpeaker="@listOfSpeakers" ShowList="ShowListCallback" />*@
+    <ListOfSpeakerHeader ShowList="ShowListCallback" />
 
     <div class="row">
         <div class="@((showListOfSpeakers) ? "col-lg-8" : "col-lg-12")">
-            @if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
+            @if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
             {
-            <SimulationUsers SimulationId="@simulationId" />
+                <SimulationUsers SimulationId="@simulationId" />
             }
-            else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
+            else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
             {
-            <SimulationAgenda SimulationId="@frontendSimulationService.CurrentSimulationId" Token="@frontendSimulationService.CurrentUserToken" />
+                <SimulationAgenda SimulationId="@frontService.CurrentSimulationId" Token="@frontService.CurrentUserToken" />
             }
-            else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Voting)
+            else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Voting)
             {
-            <SimulationVoting SimulationId="@simulationId" Token="@frontendSimulationService.CurrentUserToken" />
+                <SimulationVoting SimulationId="@simulationId" Token="@frontService.CurrentUserToken" />
             }
-            else if (frontendSimulationService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Resolutions)
+            else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Resolutions)
             {
-            <SimulationResolutionHome SimulationId="@simulationId" />
+                <SimulationResolutionHome SimulationId="@simulationId" />
             }
         </div>
 
         @if (showListOfSpeakers)
         {
             <div class="col-lg-4">
-                <MUNityCore.Components.ListOfSpeakers.ListOfSpeakersSimulationView 
-                                                                                   ListOfSpeakers="@listOfSpeakers"
-                                                                                   SimulationId="@simulationId"
-                                                                                   Token="@frontendSimulationService.CurrentUserToken"/>
+                <MUNityCore.Components.ListOfSpeakers.ListOfSpeakersSimulationView />
             </div>
         }
     </div>
 
-    
+
 }
 
 @code {
@@ -78,70 +75,67 @@ else
 
     MUNity.Schema.Simulation.GamePhases currentPhase { get; set; }
 
-    private MUNity.Models.ListOfSpeakers.ListOfSpeakers listOfSpeakers { get; set; }
+    private HubConnection _listOfSpeakersHub;
 
     private void ShowListCallback(bool value)
     {
-        this.showListOfSpeakers = value;
+        this.showListOfSpeakers = !this.showListOfSpeakers;
     }
+
+    private void SurpressSocket(bool value)
+    {
+        this.surpressSocket = value;
+    }
+
+    private bool surpressSocket = false;
 
     protected override async Task OnInitializedAsync()
     {
         if (int.TryParse(Id, out simulationId))
         {
-            frontendSimulationService.TabChanged += delegate { this.StateHasChanged(); };
+            frontService.TabChanged += delegate { this.StateHasChanged(); };
         }
 
         if (!string.IsNullOrEmpty(Page))
         {
-            frontendSimulationService.CurrentTabByString(Page);
+            frontService.CurrentTabByString(Page);
         }
-
-        var listOfSpeakersId = this.simulationService.GetSpeakerlistIdOfSimulation(this.simulationId);
-        if (string.IsNullOrEmpty(listOfSpeakersId))
-        {
-            listOfSpeakersId = this.simulationService.InitListOfSpeakers(this.simulationId).ListOfSpeakersId;
-        }
-        //this.listOfSpeakers = speakerlistService.GetSpeakerlist(listOfSpeakersId);
 
         await base.OnInitializedAsync();
     }
 
+    private void RefreshSpeakerlistTimer()
+    {
+        if (this.frontService.CurrentSpeakerlist == null)
+            return;
+        if (this.frontService.CurrentSpeakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
+            this.frontService.CurrentSpeakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question ||
+            this.frontService.CurrentSpeakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking)
+        {
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await base.OnAfterRenderAsync(firstRender);
         if (!firstRender)
             return;
 
-        var knownSimulations = await this.localStorageService.GetItemAsync<List<MUNity.Schema.Simulation.SimulationTokenResponse>>("munity_simsims");
-        var token = knownSimulations.FirstOrDefault(n => n.SimulationId == simulationId);
-        if (token != null)
+
+        var result = await this.frontService.Init(this.simulationId);
+        if (result)
         {
-            if (this.frontendSimulationService.CurrentSimulationId != simulationId)
-            {
-                this.frontendSimulationService.CurrentSimulationId = simulationId;
-                this.frontendSimulationService.CurrentUserToken = token.Token;
-                loadingState = LoadingStates.Success;
-                this.StateHasChanged();
-            }
-            else
-            {
-                if (this.frontendSimulationService.CurrentUserToken == token.Token)
-                {
-                    this.loadingState = LoadingStates.Success;
-                    this.StateHasChanged();
-                }
-                else
-                {
-                    loadingState = LoadingStates.Forbid;
-                    this.StateHasChanged();
-                }
-            }
+            this.loadingState = LoadingStates.Success;
         }
         else
         {
-            loadingState = LoadingStates.Forbid;
-            this.StateHasChanged();
+            this.loadingState = LoadingStates.Forbid;
         }
+        this.StateHasChanged();
+
         //await JS.InvokeAsync<string>("App.init");
+
+
     }
 }

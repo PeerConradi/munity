@@ -1,111 +1,10 @@
-﻿@inject Services.SimulationService simulationService;
-@inject Services.SpeakerlistService speakerlistService;
+﻿@inject Services.FrontendSimulationService frontendSimulationService;
+@inject Services.SpeakerlistHubService speakerlistHubService;
 
 @if (ListOfSpeakers != null)
 {
-    <div class="card border-0 text-truncate mb-3 bg-dark text-white">
-        <div class="card-body">
-            <div class="mb-3 text-grey">
-                <b>Redeliste</b>
-                <button class="btn btn-sm btn-circle @resumeSpeakerButtonClass"
-                        @onclick="() => ToggleSpeaking()">
-                    <i class="fa @((ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking) ? "fa-pause" : "fa-play") "></i>
-                </button>
-                <button class="btn btn-sm btn-circle btn-primary"
-                        @onclick="() => NextSpeaker()">
-                    <i class="fa fa-step-forward"></i>
-                </button>
-                @if (ListOfSpeakers.CurrentSpeaker != null)
-                {
-                    <button class="btn btn-sm btn-circle btn-danger"
-                            @onclick="() => ClearSpeaker()"><i class="fa fa-times"></i></button>
-                }
-            </div>
-            <div class="d-flex align-items-center mb-1">
-                <h2 class="text-white mb-0">@((ListOfSpeakers.CurrentSpeaker != null) ? ListOfSpeakers.CurrentSpeaker.Name : "Niemand")</h2>
-                <div class="ml-auto" style="position: relative;">
-                    <a href="javascript:;" title="Auf die Redeliste setzen"
-                       class="btn btn-icon btn-circle @((isOnSpeakerlist) ? "btn-default disabled" : "btn-success")"
-                       @onclick="() => AddMeToSpeakerlist()">
-                        <i class="fa fa-plus"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="stats-progress progress bg-secondary" style="height: 2px;">
-                <div class="progress-bar" style="width: @(RemainingSpeakerTimePercentage)%;"></div>
-            </div>
-
-
-            <div class="mb-4 text-grey">
-                <i class="fa fa-clock"></i> @ListOfSpeakers.RemainingSpeakerTime.ToString(@"mm\:ss") verbleibend
-            </div>
-            @foreach (var waitingSpeaker in ListOfSpeakers.Speakers)
-            {
-                <div class="d-flex mb-2">
-                    <div class="d-flex align-items-center">
-                        @waitingSpeaker.Name
-                    </div>
-                </div>
-            }
-
-        </div>
-    </div>
-
-    <div class="card border-0 text-truncate mb-3 bg-dark text-white">
-        <div class="card-body">
-            <div class="mb-3 text-grey">
-                <b class="mb-3">Fragen und Kurzbemerkungen</b>
-                <button class="btn btn-sm btn-circle @resumeQuestionButtonClass"
-                        @onclick="() => ToggleSpeaking()">
-                    <i class="fa @((ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "fa-pause" : "fa-play") "></i>
-                </button>
-                <button class="btn btn-sm btn-circle btn-primary"
-                        @onclick="() => NextSpeaker()">
-                    <i class="fa fa-step-forward"></i>
-                </button>
-                @if (ListOfSpeakers.CurrentQuestion != null)
-                {
-                    <button class="btn btn-sm btn-circle btn-danger"
-                            @onclick="() => ClearSpeaker()">
-                        <i class="fa fa-times"></i>
-                    </button>
-                }
-            </div>
-            <div class="d-flex align-items-center mb-1">
-                <h2 class="text-white mb-0">@((ListOfSpeakers.CurrentQuestion != null) ? ListOfSpeakers.CurrentQuestion.Name : "Niemand")</h2>
-                <div class="ml-auto" style="position: relative;">
-                    <a href="javascript:;" title="Auf die Redeliste setzen"
-                       class="btn btn-icon btn-circle  @((isOnQuestions) ? "btn-default disabled" : "btn-success")"
-                       @onclick="() => AddMeToQuestions()">
-                        <i class="fa fa-plus"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="stats-progress progress bg-secondary" style="height: 2px;">
-                <div class="progress-bar" style="width: @(RemainingQuestionTimePercentage)%;"></div>
-            </div>
-
-
-            <div class="mb-4 text-grey">
-                <i class="fa fa-clock"></i> @ListOfSpeakers.RemainingQuestionTime.ToString(@"mm\:ss") verbleibend
-            </div>
-            @foreach (var waitingQuestion in ListOfSpeakers.Questions)
-            {
-                <div class="d-flex mb-2">
-                    <div class="d-flex align-items-center">
-                        @waitingQuestion.Name
-                    </div>
-                    <div class="d-flex align-items-center ml-auto">
-                        <button class="btn btn-sm btn-circle btn-danger"
-                                @onclick="() => RemoveSpeaker(waitingQuestion)"><i class="fa fa-trash"></i></button>
-                    </div>
-                </div>
-            }
-
-        </div>
-    </div>
+    <SpeakersPanel ListOfSpeakers="@ListOfSpeakers" />
+    <QuestionsPanel ListOfSpeakers="@ListOfSpeakers" />
 }
 else
 {
@@ -118,124 +17,13 @@ else
     </div>
 }
 
-
-
 @code {
-    [Parameter]
     public MUNity.Models.ListOfSpeakers.ListOfSpeakers ListOfSpeakers { get; set; }
-
-    [Parameter]
-    public string Token { get; set; }
-
-    [Parameter]
-    public int SimulationId { get; set; }
-
-    private bool isChair = false;
-
-    private string roleName;
-
-    private string iso;
-
-    private bool isOnSpeakerlist => ListOfSpeakers.Speakers.Any(n => n.Name == this.roleName);
-
-    private bool isOnQuestions => ListOfSpeakers.Questions.Any(n => n.Name == this.roleName);
-
-    private string resumeSpeakerButtonClass
-    {
-        get
-        {
-            if (ListOfSpeakers.CurrentSpeaker == null) return "disabled btn-default";
-            if (ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
-                ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer) 
-                return "btn-warning";
-
-            return "btn-success";
-        }
-    }
-
-    private string resumeQuestionButtonClass
-    {
-        get
-        {
-            if (ListOfSpeakers.CurrentQuestion == null) return "disabled btn-default";
-            if (ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) return "btn-warning";
-            return "btn-success";
-        }
-    }
-
-
-    public double RemainingSpeakerTimePercentage
-    {
-        get
-        {
-            if (this.ListOfSpeakers.SpeakerTime.TotalSeconds == 0) return 0;
-            return Math.Round(this.ListOfSpeakers.RemainingSpeakerTime.TotalSeconds * 100 / this.ListOfSpeakers.SpeakerTime.TotalSeconds);
-        }
-    }
-
-    public double RemainingQuestionTimePercentage
-    {
-        get
-        {
-            if (this.ListOfSpeakers.QuestionTime.TotalSeconds == 0) return 0;
-            return Math.Round(this.ListOfSpeakers.RemainingQuestionTime.TotalSeconds * 100 / this.ListOfSpeakers.QuestionTime.TotalSeconds);
-        }
-    }
-
-
-    private async Task AddMeToSpeakerlist()
-    {
-        var roleOrUserName = simulationService.GetUserRoleOrName(SimulationId, Token);
-
-        var added = await this.speakerlistService.AddSpeaker(ListOfSpeakers.ListOfSpeakersId, this.iso, this.roleName);
-        if (added != null)
-        {
-            this.ListOfSpeakers.AllSpeakers.Add(added);
-        }
-    }
-
-    private async Task AddMeToQuestions()
-    {
-
-        var added = await this.speakerlistService.AddQuestion(ListOfSpeakers.ListOfSpeakersId, this.iso, this.roleName);
-        if (added != null)
-        {
-            //this.ListOfSpeakers.AllSpeakers.Add(added);
-        }
-    }
-
-    private async Task RemoveSpeaker(MUNity.Models.ListOfSpeakers.Speaker speaker)
-    {
-        await this.speakerlistService.RemoveSpeaker(speaker);
-    }
-
-    private async Task NextSpeaker()
-    {
-        await this.speakerlistService.NextSpeaker(this.ListOfSpeakers.ListOfSpeakersId);
-    }
-
-    private void ToggleSpeaking()
-    {
-        if (this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
-            this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
-        {
-            this.speakerlistService.Pause(this.ListOfSpeakers.ListOfSpeakersId);
-        }
-        else
-        {
-            this.speakerlistService.ResumeSpeaker(this.ListOfSpeakers.ListOfSpeakersId);
-        }
-    }
-
-    private void ClearSpeaker()
-    {
-        this.speakerlistService.ClearSpeaker(this.ListOfSpeakers.ListOfSpeakersId);
-    }
 
     protected override void OnInitialized()
     {
-        var user = simulationService.GetUserRoleOrName(SimulationId, Token);
-        this.roleName = user.name;
-        this.iso = user.iso;
+        this.ListOfSpeakers = frontendSimulationService.CurrentSpeakerlist;
+        this.speakerlistHubService.SpeakerlistChanged += delegate { this.StateHasChanged(); };
+        base.OnInitialized();
     }
 }

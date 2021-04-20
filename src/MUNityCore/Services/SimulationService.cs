@@ -488,14 +488,28 @@ namespace MUNityCore.Services
         public List<SimulationUserInfoDto> GetSimulationUserInfos(int simulationId)
         {
             return this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId)
+                .AsNoTracking()
+                .Select(n => new SimulationUserInfoDto()
+                {
+                    SimulationUserId = n.SimulationUserId,
+                    DisplayName = n.DisplayName,
+                    RoleName = (n.Role != null) ? n.Role.Name : "",
+                    RoleType = (n.Role != null) ? n.Role.RoleType : RoleTypes.None,
+                    RoleIso = (n.Role != null) ? n.Role.Iso : "un"
+                }).ToList();
+        }
+
+        public async Task<List<SimulationUserInfoDto>> GetSimulationUserInfosAsync(int simulationId)
+        {
+            return await this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId)
                 .Select(n => new SimulationUserInfoDto()
                 {
                     SimulationUserId = n.SimulationUserId,
                     DisplayName = n.DisplayName,
                     RoleName = (n.Role != null) ? n.Role.Name : "",
                     RoleType = (n.Role != null) ? n.Role.RoleType : RoleTypes.None
-                    
-                }).ToList();
+
+                }).ToListAsync();
         }
 
         public SimulationUser GetSimulationUserByPublicId(int simulationId, string publicId)
@@ -1194,7 +1208,7 @@ namespace MUNityCore.Services
 
         internal (string name, string iso) GetUserRoleOrName(int simulationId, string token)
         {
-            var user = _context.SimulationUser.Include(n => n.Role).FirstOrDefault(n => n.Simulation.SimulationId == simulationId &&
+            var user = _context.SimulationUser.Include(n => n.Role).AsNoTracking().FirstOrDefault(n => n.Simulation.SimulationId == simulationId &&
             n.Token == token);
             if (user.Role != null) return (user.Role.Name, user.Role.Iso);
             return (user.DisplayName, "un");
