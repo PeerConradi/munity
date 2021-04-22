@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Models.Simulation;
 using MUNity.Schema.Simulation;
@@ -20,6 +22,7 @@ namespace MUNityCore.Services
 {
     public class FrontendSimulationService
     {
+
         private MUNityCore.DataHandlers.EntityFramework.MunityContext _context;
 
         private Blazored.LocalStorage.ILocalStorageService _storageService;
@@ -30,7 +33,13 @@ namespace MUNityCore.Services
 
         private Services.SpeakerlistHubService _speakerlistHubService;
 
+        private HubConnection _hubConnection;
+
+        private NavigationManager _navigationManager;
+
         public event EventHandler<SimulationTabs> TabChanged;
+
+        public event EventHandler<List<int>> ConnectedUsersChanged;
 
         private int _currentSimulationId = -1;
         public int CurrentSimulationId
@@ -45,6 +54,8 @@ namespace MUNityCore.Services
                 }
             }
         }
+
+        public bool IsChair { get; private set; }
 
         public enum SimulationTabs
         {
@@ -116,6 +127,19 @@ namespace MUNityCore.Services
             this.CurrentDisplayName = infos.DisplayName;
             this.CurrentRoleIso = infos.Role?.Iso ?? "un";
             this.CurrentRoleName = infos.Role?.Name ?? "";
+            this.IsChair = infos.Role.RoleType == RoleTypes.Chairman;
+
+            _hubConnection = new HubConnectionBuilder().WithUrl(_navigationManager.BaseUri + "simsocket").Build();
+
+            _hubConnection.On<List<int>>(nameof(MUNity.Hubs.ITypedSimulationHub.ConnectedUsersChanged), (n) =>
+            {
+                this.ConnectedUsersChanged?.Invoke(this, n);
+            });
+
+            await _hubConnection.StartAsync();
+
+            await _hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.SignIn), this.CurrentSimulationId, infos.SimulationUserId);
+
             await InitSpeakerlist();
             return true;
         }
@@ -163,13 +187,15 @@ namespace MUNityCore.Services
         public FrontendSimulationService(MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext,
             Blazored.LocalStorage.ILocalStorageService storageService,
             Services.SpeakerlistService speakerlistService, Services.SimulationService simulationService,
-            Services.SpeakerlistHubService speakerlistHubService)
+            Services.SpeakerlistHubService speakerlistHubService,
+            NavigationManager navigationManager)
         {
             this._context = munityContext;
             this._storageService = storageService;
             this._speakerlistService = speakerlistService;
             this._simulationService = simulationService;
             this._speakerlistHubService = speakerlistHubService;
+            this._navigationManager = navigationManager;
         }
 
     }

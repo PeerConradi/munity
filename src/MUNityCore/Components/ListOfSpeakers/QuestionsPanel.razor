@@ -6,17 +6,23 @@
     <div class="card-body">
         <div class="mb-3 text-grey">
             <b class="mb-3">Fragen und Kurzbemerkungen</b>
-            <button class="btn btn-sm btn-circle @resumeQuestionButtonClass">
-                <i class="fa @((ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "fa-pause" : "fa-play") "></i>
-            </button>
-            <button class="btn btn-sm btn-circle btn-primary">
-                <i class="fa fa-step-forward"></i>
-            </button>
-            @if (ListOfSpeakers.CurrentQuestion != null)
+            @if (frontendSimulationService.IsChair)
             {
-                <button class="btn btn-sm btn-circle btn-danger">
-                    <i class="fa fa-times"></i>
+                <button class="btn btn-sm btn-circle @resumeQuestionButtonClass"
+                        @onclick="() => ToggleQuestion()">
+                    <i class="fa @((ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "fa-pause" : "fa-play") "></i>
                 </button>
+                <button class="btn btn-sm btn-circle btn-primary"
+                        @onclick="() => NextQuestion()">
+                    <i class="fa fa-step-forward"></i>
+                </button>
+                @if (ListOfSpeakers.CurrentQuestion != null)
+                {
+                    <button class="btn btn-sm btn-circle btn-danger"
+                            @onclick="() => speakerlistHubService.ClearQuestion(this.ListOfSpeakers)">
+                        <i class="fa fa-times"></i>
+                    </button>
+                }
             }
         </div>
         <div class="d-flex align-items-center mb-1">
@@ -36,21 +42,41 @@
 
 
         <div class="mb-4 text-grey">
-            <i class="fa fa-clock"></i> @ListOfSpeakers.RemainingQuestionTime.ToString(@"mm\:ss") verbleibend
+            <i class="fa fa-clock"></i>
+            @if (ListOfSpeakers.RemainingQuestionTime.TotalSeconds > 0)
+            {
+                <span>@ListOfSpeakers.RemainingQuestionTime.ToString(@"mm\:ss") verbleibend</span>
+            }
+            else
+            {
+                @if (frontendSimulationService.IsChair)
+                {
+                    <span class="text-red">@ListOfSpeakers.RemainingQuestionTime.ToString(@"mm\:ss") überzogen</span>
+                }
+                else
+                {
+                    <span class="text-red">Bitte zum Ende kommen!</span>
+                }
+
+            }
         </div>
         @foreach (var waitingQuestion in ListOfSpeakers.Questions)
         {
-            <div class="d-flex mb-2">
-                <div class="d-flex align-items-center">
-                    @waitingQuestion.Name
-                </div>
-                @*<div class="d-flex align-items-center ml-auto">
-                        <button class="btn btn-sm btn-circle btn-danger"
-                                @onclick="() => RemoveSpeaker(waitingQuestion)">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </div>*@
+    <div class="d-flex mb-2">
+        <div class="d-flex align-items-center">
+            @waitingQuestion.Name
+        </div>
+        @if (frontendSimulationService.IsChair)
+        {
+            <div class="d-flex align-items-center ml-auto">
+                <button class="btn btn-sm btn-circle btn-danger"
+                        @onclick="() => RemoveQuestion(waitingQuestion)">
+                    <i class="fa fa-trash"></i>
+                </button>
             </div>
+        }
+
+    </div>
         }
 
     </div>
@@ -59,6 +85,8 @@
 @code {
     [Parameter]
     public MUNity.Models.ListOfSpeakers.ListOfSpeakers ListOfSpeakers { get; set; }
+
+    private System.Timers.Timer refreshTimer;
 
     public double RemainingQuestionTimePercentage
     {
@@ -84,5 +112,43 @@
     private void AddMeToQuestions()
     {
         var added = this.speakerlistHubService.AddQuestion(this.ListOfSpeakers, this.frontendSimulationService.CurrentRoleIso, this.frontendSimulationService.CurrentRoleName);
+    }
+
+    private void ToggleQuestion()
+    {
+        if (this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
+        {
+            this.speakerlistHubService.Pause(this.ListOfSpeakers);
+        }
+        else
+        {
+            this.speakerlistHubService.ResumeQuestion(this.ListOfSpeakers);
+        }
+    }
+
+    private void NextQuestion()
+    {
+        this.speakerlistHubService.NextQuestion(this.ListOfSpeakers);
+    }
+
+    private void RemoveQuestion(MUNity.Models.ListOfSpeakers.Speaker speaker)
+    {
+        this.speakerlistHubService.RemoveSpeaker(this.ListOfSpeakers, speaker.Id);
+    }
+
+    private void RefreshView()
+    {
+        if (this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
+        {
+            InvokeAsync(this.StateHasChanged);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        this.refreshTimer = new System.Timers.Timer(1000);
+        this.refreshTimer.Elapsed += delegate { RefreshView(); };
+        this.refreshTimer.Start();
+        base.OnInitialized();
     }
 }

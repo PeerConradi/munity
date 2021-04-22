@@ -1,4 +1,5 @@
 ﻿@inject Services.SimulationService simulationService;
+@inject Services.FrontendSimulationService frontendSimulationService;
 
 <div class="col-lg-12 col-md-12">
     <div class="card border-0 text-truncate mb-3 bg-dark text-white">
@@ -12,7 +13,7 @@
             <!-- end title -->
             <!-- begin conversion-rate -->
             <div class="d-flex align-items-center mb-1">
-                <h2 class="text-white mb-0">0 Online</h2>
+                <h2 class="text-white mb-0">@users.Count(n => n.IsOnline) Online</h2>
                 <div class="ml-auto" style="position: relative;">
                     @*<p>Right Text</p>*@
                 </div>
@@ -33,7 +34,7 @@
             {
                 <div class="d-flex mb-2">
                     <div class="d-flex align-items-center">
-                        <i class="fa fa-circle text-red f-s-8 mr-2"></i>
+                        <i class="fa fa-circle @((chair.IsOnline) ? "text-lime" : "text-red") f-s-8 mr-2"></i>
                         <img src="img/flags/small/un.png" class="m-r-5" />
                         @chair.RoleName (@chair.DisplayName)
                     </div>
@@ -54,7 +55,7 @@
             {
                 <div class="d-flex mb-2">
                     <div class="d-flex align-items-center">
-                        <i class="fa fa-circle text-red f-s-8 mr-2"></i>
+                        <i class="fa fa-circle @((del.IsOnline) ? "text-lime" : "text-red") f-s-8 mr-2"></i>
                         <img src="img/flags/small/@(del.RoleIso).png" class="m-r-5" />
                         @del.RoleName (@del.DisplayName)
                     </div>
@@ -75,7 +76,7 @@
             {
                 <div class="d-flex mb-2">
                     <div class="d-flex align-items-center">
-                        <i class="fa fa-circle text-red f-s-8 mr-2"></i>
+                        <i class="fa fa-circle @((na.IsOnline) ? "text-lime" : "text-red") f-s-8 mr-2"></i>
                        @na.RoleName (@na.DisplayName)
                     </div>
                     <div class="d-flex align-items-center ml-auto">
@@ -96,7 +97,7 @@
             {
                 <div class="d-flex mb-2">
                     <div class="d-flex align-items-center">
-                        <i class="fa fa-circle text-red f-s-8 mr-2"></i>
+                        <i class="fa fa-circle @((na.IsOnline) ? "text-lime" : "text-red") f-s-8 mr-2"></i>
                         @na.DisplayName @(string.IsNullOrEmpty(na.RoleName) ? "" : "- " + na.RoleName)
                     </div>
                     <div class="d-flex align-items-center ml-auto">
@@ -121,6 +122,17 @@
     protected override void OnInitialized()
     {
         users = simulationService.GetSimulationUserInfos(SimulationId);
+        this.frontendSimulationService.ConnectedUsersChanged += ConnectedUsersChanged;
         base.OnInitialized();
+    }
+
+    private void ConnectedUsersChanged(object sender, List<int> connectedUsers)
+    {
+        Console.WriteLine("Connected users changed!");
+        foreach(var user in users)
+        {
+            user.IsOnline = connectedUsers.Contains(user.SimulationUserId);
+        }
+        this.InvokeAsync(() => this.StateHasChanged());
     }
 }

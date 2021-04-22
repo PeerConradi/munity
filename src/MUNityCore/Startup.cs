@@ -94,7 +94,7 @@ namespace MUNityCore
             {
                 options.MaximumReceiveMessageSize = 68000;
                 options.ClientTimeoutInterval = new System.TimeSpan(2,0,0);
-                options.KeepAliveInterval = new TimeSpan(0, 0, 30);
+                options.KeepAliveInterval = new TimeSpan(0, 0, 10);
             });
 
             

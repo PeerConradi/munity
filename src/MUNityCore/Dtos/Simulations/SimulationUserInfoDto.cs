@@ -17,5 +17,7 @@ namespace MUNityCore.Dtos.Simulations
         public string RoleIso { get; set; }
 
         public RoleTypes RoleType { get; set; }
+
+        public bool IsOnline { get; set; }
     }
 }

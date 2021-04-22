@@ -173,6 +173,11 @@ namespace MUNityCore.Services
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.ResumeSpeaker), list.ListOfSpeakersId);
         }
 
+        public Task ResumeQuestion(ListOfSpeakers list)
+        {
+            return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.ResumeQuestion), list.ListOfSpeakersId);
+        }
+
         public Task Pause(ListOfSpeakers list)
         {
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.Pause), list.ListOfSpeakersId);
@@ -183,9 +188,19 @@ namespace MUNityCore.Services
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.NextSpeaker), list.ListOfSpeakersId);
         }
 
+        public Task NextQuestion(ListOfSpeakers list)
+        {
+            return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.NextQuestion), list.ListOfSpeakersId);
+        }
+
         public Task ClearSpeaker(ListOfSpeakers list)
         {
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.ClearSpeaker), list.ListOfSpeakersId);
+        }
+
+        public Task ClearQuestion(ListOfSpeakers list)
+        {
+            return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.ClearQuestion), list.ListOfSpeakersId);
         }
 
         public Task RemoveSpeaker(ListOfSpeakers list, string speakerId)

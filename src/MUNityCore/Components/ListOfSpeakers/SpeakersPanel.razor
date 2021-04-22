@@ -6,20 +6,23 @@
     <div class="card-body">
         <div class="mb-3 text-grey">
             <b>Redeliste</b>
-            <button class="btn btn-sm btn-circle @resumeSpeakerButtonClass"
-                    @onclick="() => ToggleSpeaking()">
-                <i class="fa @((ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking) ? "fa-pause" : "fa-play") "></i>
-            </button>
-            <button class="btn btn-sm btn-circle btn-primary"
-                    @onclick="() => NextSpeaker()">
-                <i class="fa fa-step-forward"></i>
-            </button>
-            @if (ListOfSpeakers.CurrentSpeaker != null)
+            @if (this.frontendSimulationService.IsChair)
             {
-                <button class="btn btn-sm btn-circle btn-danger"
-                        @onclick="() => ClearSpeaker()">
-                    <i class="fa fa-times"></i>
+                <button class="btn btn-sm btn-circle @resumeSpeakerButtonClass"
+                        @onclick="() => ToggleSpeaking()">
+                    <i class="fa @((ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking) ? "fa-pause" : "fa-play") "></i>
                 </button>
+                <button class="btn btn-sm btn-circle btn-primary"
+                        @onclick="() => NextSpeaker()">
+                    <i class="fa fa-step-forward"></i>
+                </button>
+                @if (ListOfSpeakers.CurrentSpeaker != null)
+                {
+                    <button class="btn btn-sm btn-circle btn-danger"
+                            @onclick="() => ClearSpeaker()">
+                        <i class="fa fa-times"></i>
+                    </button>
+                }
             }
         </div>
         <div class="d-flex align-items-center mb-1">
@@ -39,15 +42,41 @@
 
 
         <div class="mb-4 text-grey">
-            <i class="fa fa-clock"></i> @ListOfSpeakers.RemainingSpeakerTime.ToString(@"mm\:ss") verbleibend
+            <i class="fa fa-clock"></i>
+            @if (ListOfSpeakers.RemainingSpeakerTime.TotalSeconds > 0)
+            {
+                <span>@ListOfSpeakers.RemainingSpeakerTime.ToString(@"mm\:ss") verbleibend</span>
+            }
+            else
+            {
+                @if (frontendSimulationService.IsChair)
+                {
+                    <span class="text-red">@ListOfSpeakers.RemainingSpeakerTime.ToString(@"mm\:ss") überzogen</span>
+                }
+                else
+                {
+                    <span class="text-red">Bitte zum Ende kommen!</span>
+                }
+
+            }
         </div>
         @foreach (var waitingSpeaker in ListOfSpeakers.Speakers)
         {
-            <div class="d-flex mb-2">
-                <div class="d-flex align-items-center">
-                    @waitingSpeaker.Name
-                </div>
+    <div class="d-flex mb-2">
+        <div class="d-flex align-items-center">
+            @waitingSpeaker.Name
+        </div>
+        @if (this.frontendSimulationService.IsChair)
+        {
+            <div class="d-flex align-items-center ml-auto">
+                <button class="btn btn-sm btn-circle btn-danger"
+                        @onclick="() => RemoveSpeaker(waitingSpeaker)">
+                    <i class="fa fa-trash"></i>
+                </button>
             </div>
+        }
+
+    </div>
         }
 
     </div>
@@ -128,8 +157,8 @@
     {
         if (this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
             this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
-            {
-                InvokeAsync(this.StateHasChanged);
-            }
+        {
+            InvokeAsync(this.StateHasChanged);
+        }
     }
 }

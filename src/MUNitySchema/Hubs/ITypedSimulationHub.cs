@@ -43,6 +43,8 @@ namespace MUNity.Hubs
         /// <returns></returns>
         Task UserConnected(int simulationId, SimulationUserDefaultDto user);
 
+        Task ConnectedUsersChanged(List<int> connectedUsers);
+
         /// <summary>
         /// A user has disconnected.
         /// </summary>
