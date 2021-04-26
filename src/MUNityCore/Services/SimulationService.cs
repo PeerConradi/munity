@@ -830,6 +830,14 @@ namespace MUNityCore.Services
             n.Role.RoleType == RoleTypes.Chairman);
         }
 
+        public bool IsUserChair(int userId)
+        {
+            var userWithRole = _context.SimulationUser.Include(n => n.Role)
+                .FirstOrDefault(n => n.SimulationUserId == userId);
+            if (userWithRole.Role == null) return false;
+            return userWithRole.Role.RoleType == RoleTypes.Chairman;
+        }
+
         public async Task<bool> IsTokenValidAndUserChair(int simulationId, string token)
         {
             if (!string.IsNullOrEmpty(Program.MasterToken) && token == Program.MasterToken)

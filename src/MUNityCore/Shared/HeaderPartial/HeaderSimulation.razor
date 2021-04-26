@@ -17,9 +17,13 @@
     </li>
 
     <li>
-        <a @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Voting"
+        <a @onclick="() => { newVoting = false; frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Voting; }"
            class="btn @votingClass">
             Abstimmung
+            @if (newVoting)
+            {
+                <span class="badge badge-danger">neu</span>
+            }
         </a>
     </li>
 
@@ -32,7 +36,7 @@
 </ul>
 
 @code {
-    private string overViewClass => 
+    private string overViewClass =>
         (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Overview) ? "btn-primary text-white" : "btn-default";
 
     private string agendaClass =>
@@ -43,4 +47,21 @@
 
     private string resolutionClass =>
         (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Resolutions) ? "btn-primary text-white" : "btn-default";
+
+    private bool newVoting = false;
+
+    protected override void OnInitialized()
+    {
+        frontendSimulationService.VotingCreated += OnVotingCreated;
+        base.OnInitialized();
+    }
+
+    private void OnVotingCreated(object sender, MUNity.Schema.Simulation.Voting.SimulationVotingDto dto)
+    {
+        if ( frontendSimulationService.CurrentTab != FrontendSimulationService.SimulationTabs.Voting)
+        {
+            newVoting = true;
+            InvokeAsync(this.StateHasChanged);
+        }
+    }
 }

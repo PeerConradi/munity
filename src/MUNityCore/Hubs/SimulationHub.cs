@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Extensions.CastExtensions;
+using MUNityCore.Components.Simulation;
+using MUNityCore.DataHandlers.EntityFramework;
 
 namespace MUNityCore.Hubs
 {
     public class SimulationHub : Hub<MUNity.Hubs.ITypedSimulationHub>
     {
         private readonly Services.SimulationService _service;
+
         public SimulationHub(Services.SimulationService service)
         {
             _service = service;
@@ -35,6 +38,7 @@ namespace MUNityCore.Hubs
             };
             Console.WriteLine("Simulation User Connected: " + userId.ToString());
             ConnectionUsers.ConnectionIds.TryAdd(Context.ConnectionId, newConnection);
+            await this.Groups.AddToGroupAsync(Context.ConnectionId, "sim_" + simulationId);
             await NotifyUsersChanged(simulationId);
             
         }
@@ -45,6 +49,28 @@ namespace MUNityCore.Hubs
                 .ConnectedUsersChanged(ConnectionUsers.ConnectionIds.Where(n =>
                 n.Value.SimulationId == simulationId)
                 .Select(n => n.Value.SimulationUserId).ToList());
+        }
+
+        public Task CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions)
+        {
+            if (!IsContextChair())
+                return null;
+
+            var mdl = _service.CreateVotingForDelegates(simulationId, text, allowAbstentions);
+
+            var dto = _service.GetCurrentVoting(simulationId);
+            this.Clients.Group("sim_" + simulationId.ToString()).VoteCreated(dto);
+            return null;
+        }
+
+        private bool IsContextChair()
+        {
+            ConnectionUsers.ConnectedUser user;
+            if (ConnectionUsers.ConnectionIds.TryGetValue(Context.ConnectionId, out user))
+            {
+                return this._service.IsUserChair(user.SimulationUserId);
+            }
+            return false;
         }
 
         //public override Task OnConnectedAsync()

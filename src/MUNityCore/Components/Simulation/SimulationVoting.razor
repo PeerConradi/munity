@@ -1,4 +1,5 @@
 ﻿@inject Services.SimulationService simulationService;
+@inject Services.FrontendSimulationService frontendSimulationService;
 
 @if (isChair)
 {
@@ -7,9 +8,9 @@
         <div class="panel panel-inverse panel-success" data-sortable-id="ui-widget-1" style="">
             <div class="panel-heading ui-sortable-handle">
                 <h4 class="panel-title">Neue Abstimmung erstellen</h4>
-                <div class="panel-heading-btn">
+                @*<div class="panel-heading-btn">
                     <a class="btn btn-xs btn-icon btn-circle btn-success"><i class="fa fa-redo"></i></a>
-                </div>
+                </div>*@
             </div>
             <div class="panel-body">
                 <h3>Abstimmung erstellen</h3>
@@ -175,13 +176,21 @@
     {
         this.isChair = await simulationService.IsTokenValidAndUserChair(SimulationId, Token);
         this.myUserId = simulationService.GetSimulationUserId(SimulationId, Token) ?? -1;
+        this.frontendSimulationService.VotingCreated += OnVotingCreated;
         ReloadCurrentVoting();
         //base.OnInitialized();
+    }
+
+    private void OnVotingCreated(object sender, MUNity.Schema.Simulation.Voting.SimulationVotingDto dto)
+    {
+        this.currentVoting = dto;
+        InvokeAsync(this.StateHasChanged);
     }
 
     private void ReloadCurrentVoting()
     {
         currentVoting = simulationService.GetCurrentVoting(SimulationId);
+        InvokeAsync(this.StateHasChanged);
     }
 
     private void VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates choice)
@@ -192,17 +201,19 @@
             if (slot != null)
             {
                 slot.Choice = choice;
+
             }
         }
     }
 
-    private void CreateVoting()
+    private async Task CreateVoting()
     {
-        var voting = this.simulationService.CreateVotingForDelegates(SimulationId, NewVoting.DisplayName, NewVoting.AllowAbstention);
-        if (voting != null)
-        {
-            NewVoting.DisplayName = "";
-            ReloadCurrentVoting();
-        }
+        await this.frontendSimulationService.CreateVoting(NewVoting.DisplayName, NewVoting.AllowAbstention);
+        //var voting = this.simulationService.CreateVotingForDelegates(SimulationId, NewVoting.DisplayName, NewVoting.AllowAbstention);
+        //if (voting != null)
+        //{
+        //    NewVoting.DisplayName = "";
+        //    ReloadCurrentVoting();
+        //}
     }
 }

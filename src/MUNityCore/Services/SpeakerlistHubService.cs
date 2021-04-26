@@ -126,7 +126,7 @@ namespace MUNityCore.Services
                 this._listOfSpeakers.AllSpeakers.Remove(target);
                 this.SpeakerlistChanged?.Invoke(this, new EventArgs());
             }
-                
+
         }
 
         private void HandleSpeakerAdded(Speaker speaker)

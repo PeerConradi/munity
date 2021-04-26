@@ -41,6 +41,8 @@ namespace MUNityCore.Services
 
         public event EventHandler<List<int>> ConnectedUsersChanged;
 
+        public event EventHandler<MUNity.Schema.Simulation.Voting.SimulationVotingDto> VotingCreated;
+
         private int _currentSimulationId = -1;
         public int CurrentSimulationId
         {
@@ -135,6 +137,10 @@ namespace MUNityCore.Services
             {
                 this.ConnectedUsersChanged?.Invoke(this, n);
             });
+            _hubConnection.On<MUNity.Schema.Simulation.Voting.SimulationVotingDto>(nameof(MUNity.Hubs.ITypedSimulationHub.VoteCreated), (n) =>
+            {
+                this.VotingCreated?.Invoke(this, n);
+            });
 
             await _hubConnection.StartAsync();
 
@@ -184,9 +190,15 @@ namespace MUNityCore.Services
             }
         }
 
+        internal async Task CreateVoting(string displayName, bool allowAbstention)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateVotingForDelegates), this.CurrentSimulationId, displayName, allowAbstention);
+        }
+
         public FrontendSimulationService(MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext,
             Blazored.LocalStorage.ILocalStorageService storageService,
-            Services.SpeakerlistService speakerlistService, Services.SimulationService simulationService,
+            Services.SpeakerlistService speakerlistService, 
+            Services.SimulationService simulationService,
             Services.SpeakerlistHubService speakerlistHubService,
             NavigationManager navigationManager)
         {

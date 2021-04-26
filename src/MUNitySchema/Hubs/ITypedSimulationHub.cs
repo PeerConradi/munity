@@ -121,6 +121,7 @@ namespace MUNity.Hubs
         /// <returns></returns>
         Task VoteCreated(SimulationVotingDto model);
 
+
         /// <summary>
         /// Has someone voted in something.
         /// </summary>
