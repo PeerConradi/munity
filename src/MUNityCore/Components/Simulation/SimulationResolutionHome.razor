@@ -1,47 +1,41 @@
 ﻿@inject Services.SimulationService simulationService
 @inject Services.SqlResolutionService resolutionService;
 
-<h3>
-    Resolutionen <i class="fa @((showResolutions) ? "fa-eye" : "fa-eye-slash")"
-                    style="cursor: pointer;"
-                    @onclick="() => showResolutions = !showResolutions"></i>
-</h3>
 
-@if (showResolutions)
+
+@if (!string.IsNullOrEmpty(selectedResolutionId))
 {
-    <div class="row">
-        <div class="card-columns">
-            @foreach (var resolution in resolutions)
-            {
-                <div class="card bg-dark border-0 text-white">
-                    <div class="card-body">
-                        <h4 class="card-title">@resolution.Name</h4>
-                        <a href="javascript:;" class="btn btn-sm btn-primary"
-                           @onclick="() => { resolutionMode = MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode.None; selectedResolution = resolution; resolutionMode = MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode.Write; }">Bearbeiten</a>
-                        <a href="javascript:;" class="btn btn-sm btn-secondary"
-                           @onclick="() => { resolutionMode = MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode.None; selectedResolution = resolution; resolutionMode = MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode.Read; }">Lesen</a>
-                        @*<a href="javascript:;" class="btn btn-sm btn-warning">Duplizieren</a>*@
-                    </div>
-                </div>
-            }
+    <MUNityCore.Components.Resolution.ResolutionEditorPro ResolutionId="@selectedResolutionId"
+                                                          OnEditorClosed="EditorClosed" />
+}
+else
+{
+    <h3> Resolutionen </h3>
 
-            <div class="card bg-dark border-1 text-white" style="width: 80px;">
-                <div class="card-body justify-content-center">
-                    <button class="btn btn-circle btn-lg btn-success"
-                            @onclick="() => createNewModal.Show()">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <Label>Resolution öffnen</Label>
+                <select class="form-control" @bind="@selectedResolutionId">
+                    <option value="" disabled>Resolution auswählen</option>
+                    @foreach (var resolution in resolutions)
+                    {
+
+                        <option value="@resolution.ResolutionId">@resolution.Name</option>
+                    }
+                </select>
+                <button class="btn btn-primary" @onclick="() => UpdateResolutions()">Aktualisieren</button>
+            </div>
+            <div class="form-group">
+                <label>Erstellen</label>
+                <button class="btn btn-block btn-success mt-10"
+                        @onclick="() => createNewModal.Show()">
+                    Neue Resolution erstellen
+                </button>
             </div>
         </div>
     </div>
 }
-
-@if (selectedResolution != null)
-{
-    <MUNityCore.Components.Resolution.ResolutionEditorPro ResolutionId="@selectedResolution.ResolutionId"
-                                                          OnEditorClosed="EditorClosed"/>
-} 
 
 <Modal @ref="createNewModal">
     <ModalContent>
@@ -69,13 +63,13 @@
 
     private string titleOfNewResolution;
 
-    private MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo selectedResolution;
-
     private MUNityCore.Components.Resolution.ResolutionEditorPro.EResolutionMode resolutionMode;
+
+    private string selectedResolutionId { get; set; } = "";
 
     private void EditorClosed()
     {
-        this.selectedResolution = null;
+        this.selectedResolutionId = string.Empty;
     }
 
     private bool showResolutions = true;

@@ -19,6 +19,27 @@
             </ul>
         </div>
     </nav>
+
+    <div class="form-group">
+        <label>Titel</label>
+        <input class="form-control" @bind-value="@resolutionTopic" />
+    </div>
+
+    <div class="form-group">
+        <label>Einbringer</label>
+        <input class="form-control" @bind-value="@resolutionSubmitter" />
+    </div>
+
+    <div class="form-group">
+        <label>Unterstützer</label>
+        <input class="form-control" @bind-value="@resolutionSupporters" />
+    </div>
+    h
+    <div class="form-group">
+        <label>Gremium</label>
+        <input class="form-control" @bind-value="@resolutionCommittee" />
+    </div>
+
     <h3 class="m-t-5">Präambel</h3>
 
     @foreach (var preambleParagraph in resolution.Preamble.Paragraphs)
@@ -44,6 +65,58 @@
     public string ResolutionId { get; set; }
 
     MUNity.Models.Resolution.Resolution resolution;
+
+    private string resolutionTopic
+    {
+        get => resolution?.Header?.Topic ?? "";
+        set
+        {
+            if (resolution?.Header != null)
+            {
+                resolution.Header.Topic = value;
+                this.resolutionService.SetTopicAsync(resolution.ResolutionId, value).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private string resolutionSubmitter
+    {
+        get => resolution?.Header?.SubmitterName ?? "";
+        set
+        {
+            if (resolution?.Header != null)
+            {
+                resolution.Header.SubmitterName = value;
+                this.resolutionService.SetSubmitterNameAsync(resolution.ResolutionId, value).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private string resolutionSupporters
+    {
+        get => resolution?.Header?.SupporterNames ?? "";
+        set
+        {
+            if (resolution?.Header != null)
+            {
+                resolution.Header.SupporterNames = value;
+                this.resolutionService.SetSupportersAsync(resolution.ResolutionId, value).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private string resolutionCommittee
+    {
+        get => resolution?.Header?.CommitteeName ?? "";
+        set
+        {
+            if (resolution?.Header != null)
+            {
+                resolution.Header.CommitteeName = value;
+                this.resolutionService.SetCommitteeNameAsync(resolution.ResolutionId, value).ConfigureAwait(false);
+            }
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
