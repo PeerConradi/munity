@@ -12,7 +12,8 @@
             <div class="panel-heading">
                 <h4 class="panel-title">Alle Tagesordnungspunkte</h4>
                 <div class="panel-heading-btn">
-                    <a class="btn btn-xs btn-icon btn-circle btn-success"><i class="fa fa-redo"></i></a>
+                    <a class="btn btn-xs btn-icon btn-circle btn-success"
+                       @onclick="() => ReloadAgendaItems()"><i class="fa fa-redo"></i></a>
                 </div>
             </div>
             <div class="panel-body bg-dark">
@@ -25,16 +26,20 @@
 
                     @foreach (var top in AgendaItems)
                     {
-                        <a class="widget-list-item rounded-0 p-t-3   @((this.selectedAgendaItem == top) ? "bg-dark-lighter" : null)" 
-                           @onclick="() => this.selectedAgendaItem = top">
-                            <div class="widget-list-content">
-                                <div class="widget-list-title font-weight-bold">@top.Name</div>
-                                <span class="text-info">@top.PetitionCount @((top.PetitionCount == 1) ? "Antrag" : "Anträge")</span>
-                            </div>
+                    <a class="widget-list-item rounded-0 p-t-3   @((this.selectedAgendaItem == top) ? "bg-dark-lighter" : null)"
+                       @onclick="() => this.selectedAgendaItem = top">
+                        <div class="widget-list-content">
+                            <div class="widget-list-title font-weight-bold">@top.Name</div>
+                            <span class="text-info">@top.PetitionCount @((top.PetitionCount == 1) ? "Antrag" : "Anträge")</span>
+                        </div>
+                        @if (isChair)
+                        {
                             <div class="widget-list-action text-nowrap text-grey">
                                 <i class="fa fa-trash text-danger" @onclick="() => { deleteAgendaItem = top; this.deleteAgendaItemModal.Show(); }"></i>
                             </div>
-                        </a>
+                        }
+
+                    </a>
                     }
 
                 </div>
@@ -58,8 +63,16 @@
                         var currentPetition = this.petitionsOfAgendaItem.FirstOrDefault(n => n.Status == MUNitySchema.Models.Simulation.EPetitionStates.Active);
                         if (currentPetition != null)
                         {
-                            <h3 class="m-b-10">@currentPetition.TypeName</h3>
+                            <h3 class="m-b-10">
+                                @currentPetition.TypeName
+                                @if (isChair)
+                                {
+                                    <button class="btn btn-circle btn-icon btn-danger ml-3"
+                                            @onclick="() => RemovePetition(currentPetition.PetitionId)"><i class="fa fa-trash"></i></button>
+                                }
+                            </h3>
                             <div class="text-grey m-b-1"><i class="fa fa-flag"></i> @currentPetition.SubmitterRoleName @currentPetition.SubmitterDisplayName</div>
+                            
                         }
                     }
                     else
@@ -68,38 +81,38 @@
                     }
 
 
-            <div class="widget-list widget-list-rounded inverse-mode m-t-5">
-                @if (selectedAgendaItem != null && petitionsOfAgendaItem != null && petitionsOfAgendaItem.Count > 0)
-                {
-                    @foreach (var petition in petitionsOfAgendaItem.Where(n => n.Status != MUNitySchema.Models.Simulation.EPetitionStates.Active))
-                    {
+                    <div class="widget-list widget-list-rounded inverse-mode m-t-5">
+                        @if (selectedAgendaItem != null && petitionsOfAgendaItem != null && petitionsOfAgendaItem.Count > 0)
+                        {
+                            @foreach (var petition in petitionsOfAgendaItem.Where(n => n.Status != MUNitySchema.Models.Simulation.EPetitionStates.Active))
+                            {
 
-                <div class="d-flex align-items-center m-b-15">
-                    <div class="widget-img rounded-lg m-r-10 bg-white p-1" style="width:60px;">
-                        <div class="h-100" style="background: url(/img/flags/medium/@(petition.RoleIso).png) center no-repeat; background-size: auto 100%;"></div>
+                                <div class="d-flex align-items-center m-b-15">
+                                    <div class="widget-img rounded-lg m-r-10 bg-white p-1" style="width:60px;">
+                                        <div class="h-100" style="background: url(/img/flags/medium/@(petition.RoleIso).png) center no-repeat; background-size: auto 100%;"></div>
+                                    </div>
+                                    <div class="text-truncate">
+                                        <div><span class="text-gray">[@petition.CategoryName]</span> @petition.TypeName</div>
+                                        <div class="text-grey">@petition.SubmitTime.ToString("dd.MM HH:mm") durch @petition.SubmitterDisplayName - @petition.SubmitterRoleName</div>
+                                    </div>
+                                    @if (isChair)
+                                    {
+                                        <div class="ml-auto text-center">
+                                            <button class="btn btn-xs btn-primary" @onclick="() => MakePetitionActive(petition.PetitionId)">Aktiv setzen</button>
+                                            <button class="btn btn-xs btn-danger" @onclick="() => RemovePetition(petition.PetitionId)">Löschen</button>
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+
+                        }
+                        else
+                        {
+                            <Paragraph>Es befindet sich kein Antrag in der Warteschlange.</Paragraph>
+                        }
+
                     </div>
-                    <div class="text-truncate">
-                        <div><span class="text-gray">[@petition.CategoryName]</span> @petition.TypeName</div>
-                        <div class="text-grey">@petition.SubmitTime.ToString("dd.MM HH:mm") durch @petition.SubmitterDisplayName - @petition.SubmitterRoleName</div>
-                    </div>
-                    @if (isChair)
-                    {
-                        <div class="ml-auto text-center">
-                            <button class="btn btn-xs btn-primary" @onclick="() => MakePetitionActive(petition.PetitionId)">Aktiv setzen</button>
-                            <button class="btn btn-xs btn-danger" @onclick="() => RemovePetition(petition.PetitionId)">Löschen</button>
-                        </div>
-                    }
-
-                </div>
-                    }
-
-                }
-                else
-                {
-                    <Paragraph>Es befindet sich kein Antrag in der Warteschlange.</Paragraph>
-                }
-
-            </div>
                 }
                 else
                 {
