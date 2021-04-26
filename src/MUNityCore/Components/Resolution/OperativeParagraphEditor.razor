@@ -2,7 +2,7 @@
 
 <div class="panel panel-inverse m-t-0">
     <div class="panel-heading">
-        <h4 class="panel-title">Operativer Absatz</h4>
+        <h4 class="panel-title">§ @Index Operativer Absatz</h4>
         <div class="panel-heading-btn">
             <a class="btn btn-xs btn-icon btn-circle btn-default"
                @onclick="() => expanded = !expanded">
@@ -37,6 +37,9 @@
 
     [Parameter]
     public string ResolutionId { get; set; }
+
+    [Parameter]
+    public string Index { get; set; }
 
     private bool expanded;
 

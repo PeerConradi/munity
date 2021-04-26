@@ -1,7 +1,8 @@
 ﻿@inject Services.SqlResolutionService resolutionService;
 @using MUNityCore.Extensions.CastExtensions;
+@using MUNity.Extensions.ResolutionExtensions;
 
-@if (resolution != null)
+@if (Resolution != null)
 {
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin: -15px -15px 0px -15px">
 
@@ -34,27 +35,28 @@
         <label>Unterstützer</label>
         <input class="form-control" @bind-value="@resolutionSupporters" />
     </div>
-    h
+    
     <div class="form-group">
         <label>Gremium</label>
         <input class="form-control" @bind-value="@resolutionCommittee" />
     </div>
 
-    <h3 class="m-t-5">Präambel</h3>
+    <h3 class="m-t-5">Präambel (@Resolution.Preamble.Paragraphs.Count Absätze)</h3>
 
-    @foreach (var preambleParagraph in resolution.Preamble.Paragraphs)
+    @foreach (var preambleParagraph in Resolution.Preamble.Paragraphs)
     {
         <PreambleParagraphEditor Paragraph="preambleParagraph"
-                                 ResolutionId="@ResolutionId"
-                                 Index="@resolution.Preamble.Paragraphs.IndexOf(preambleParagraph)"
+                                 ResolutionId="@Resolution.ResolutionId"
+                                 Index="@Resolution.Preamble.Paragraphs.IndexOf(preambleParagraph)"
                                  OnRemove="RemovePreambleParagraph" />
     }
 
-    <h3>Operativer Abschnitt</h3>
-    @foreach (var operativeParagraph in resolution.OperativeSection.Paragraphs)
+    <h3>Operativer Abschnitt (@Resolution.OperativeSection.Paragraphs.Count Absätze)</h3>
+    @foreach (var operativeParagraph in Resolution.OperativeSection.Paragraphs)
     {
         <OperativeParagraphEditor Paragraph="operativeParagraph"
-                                  ResolutionId="@ResolutionId" />
+                                  ResolutionId="@Resolution.ResolutionId"
+                                  Index="@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(operativeParagraph.OperativeParagraphId)"/>
     }
 }
 
@@ -62,74 +64,66 @@
 
 @code {
     [Parameter]
-    public string ResolutionId { get; set; }
-
-    MUNity.Models.Resolution.Resolution resolution;
+    public MUNity.Models.Resolution.Resolution Resolution { get; set; }
 
     private string resolutionTopic
     {
-        get => resolution?.Header?.Topic ?? "";
+        get => Resolution?.Header?.Topic ?? "";
         set
         {
-            if (resolution?.Header != null)
+            if (Resolution?.Header != null)
             {
-                resolution.Header.Topic = value;
-                this.resolutionService.SetTopicAsync(resolution.ResolutionId, value).ConfigureAwait(false);
+                Resolution.Header.Topic = value;
+                this.resolutionService.SetTopicAsync(Resolution.ResolutionId, value).ConfigureAwait(false);
             }
         }
     }
 
     private string resolutionSubmitter
     {
-        get => resolution?.Header?.SubmitterName ?? "";
+        get => Resolution?.Header?.SubmitterName ?? "";
         set
         {
-            if (resolution?.Header != null)
+            if (Resolution?.Header != null)
             {
-                resolution.Header.SubmitterName = value;
-                this.resolutionService.SetSubmitterNameAsync(resolution.ResolutionId, value).ConfigureAwait(false);
+                Resolution.Header.SubmitterName = value;
+                this.resolutionService.SetSubmitterNameAsync(Resolution.ResolutionId, value).ConfigureAwait(false);
             }
         }
     }
 
     private string resolutionSupporters
     {
-        get => resolution?.Header?.SupporterNames ?? "";
+        get => Resolution?.Header?.SupporterNames ?? "";
         set
         {
-            if (resolution?.Header != null)
+            if (Resolution?.Header != null)
             {
-                resolution.Header.SupporterNames = value;
-                this.resolutionService.SetSupportersAsync(resolution.ResolutionId, value).ConfigureAwait(false);
+                Resolution.Header.SupporterNames = value;
+                this.resolutionService.SetSupportersAsync(Resolution.ResolutionId, value).ConfigureAwait(false);
             }
         }
     }
 
     private string resolutionCommittee
     {
-        get => resolution?.Header?.CommitteeName ?? "";
+        get => Resolution?.Header?.CommitteeName ?? "";
         set
         {
-            if (resolution?.Header != null)
+            if (Resolution?.Header != null)
             {
-                resolution.Header.CommitteeName = value;
-                this.resolutionService.SetCommitteeNameAsync(resolution.ResolutionId, value).ConfigureAwait(false);
+                Resolution.Header.CommitteeName = value;
+                this.resolutionService.SetCommitteeNameAsync(Resolution.ResolutionId, value).ConfigureAwait(false);
             }
         }
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        resolution = await resolutionService.GetResolutionDtoAsync(ResolutionId);
-        await base.OnInitializedAsync();
-    }
-
     private void CreatePreambleParagraph()
     {
-        var newParagraph = resolutionService.CreatePreambleParagraph(ResolutionId);
+        var newParagraph = resolutionService.CreatePreambleParagraph(Resolution.ResolutionId);
         if (newParagraph != null)
         {
-            this.resolution.Preamble.Paragraphs.Add(newParagraph.ToModel());
+            this.Resolution.Preamble.Paragraphs.Add(newParagraph.ToModel());
         }
     }
 
@@ -137,16 +131,16 @@
     {
         if (resolutionService.RemovePreambleParagraph(paragraph.PreambleParagraphId))
         {
-            this.resolution.Preamble.Paragraphs.Remove(paragraph);
+            this.Resolution.Preamble.Paragraphs.Remove(paragraph);
         }
     }
 
     private void CreateOperativeParagraph()
     {
-        var newParagraph = resolutionService.CreateOperativeParagraph(ResolutionId);
+        var newParagraph = resolutionService.CreateOperativeParagraph(Resolution.ResolutionId);
         if (newParagraph != null)
         {
-            this.resolution.OperativeSection.Paragraphs.Add(newParagraph.ToModel());
+            this.Resolution.OperativeSection.Paragraphs.Add(newParagraph.ToModel());
         }
     }
 }

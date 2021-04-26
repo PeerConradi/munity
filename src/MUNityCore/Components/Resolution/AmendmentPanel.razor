@@ -1,0 +1,179 @@
+﻿@using MUNity.Extensions.ResolutionExtensions
+@using MUNityCore.Dtos.Resolutions;
+@using MUNityCore.Extensions.CastExtensions;
+@inject Services.SqlResolutionService resolutionService;
+
+@if (Resolution != null && pattern != null)
+{
+    <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
+        <div class="panel-heading ui-sortable-handle">
+            <h4 class="panel-title">Änderungsanträge <span class="badge badge-primary">@Resolution.OperativeSection.AmendmentCount()</span></h4>
+            <div class="panel-heading-btn">
+
+                <a class="btn btn-xs btn-icon btn-circle btn-primary"><i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="panel-body bg-white-darker">
+            <button class="btn btn-block btn-success"
+                    @onclick="() => modalRef.Show()">
+                Neuer Änderungsantrag
+            </button>
+            @foreach (var amendment in Resolution.OperativeSection.GetOrderedAmendments())
+            {
+                <div class="card border-0 text-truncate mb-3 bg-dark text-white">
+                    <!-- begin card-body -->
+                    <div class="card-body">
+                        <!-- begin title -->
+                        <div class="mb-3 text-grey">
+                            <b class="mb-3">@amendment.Name</b>
+                        </div>
+                        <!-- end title -->
+                        <!-- begin conversion-rate -->
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="text-white mb-0">§ @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(amendment.TargetSectionId)</h2>
+                            <div class="ml-auto" style="position: relative;">
+                                <h3><i class="fa fa-eye-slash"></i></h3>
+                            </div>
+                        </div>
+                        <!-- end conversion-rate -->
+                        <!-- begin percentage -->
+                        <div class="mb-4 text-grey">
+                            <i class="fa fa-flag"></i> @amendment.SubmitterName (@amendment.SubmitTime.ToString("dd.MM HH:mm"))
+                        </div>
+                        <!-- end info-row -->
+                        <!-- begin info-row -->
+                        <div class="d-flex mb-2">
+                            <button class="btn btn-block btn-outline-success">Annehmen</button>
+                        </div>
+
+                        <div class="d-flex mb-2">
+                            <button class="btn btn-block btn-outline-danger">Ablehnen</button>
+                        </div>
+                    </div>
+                    <!-- end card-body -->
+                </div>
+            }
+        </div>
+    </div>
+
+    <Modal @ref="modalRef">
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>Änderungsantrag erstellen</ModalTitle>
+                <CloseButton />
+            </ModalHeader>
+            <ModalBody>
+                <EditForm Model="pattern">
+                    <Field>
+                        <FieldLabel>Antragsart</FieldLabel>
+                        <Select TValue="EAmendmentTypes" @bind-SelectedValue="pattern.AmendmentType">
+                            <SelectItem Value="EAmendmentTypes.Add">Antrag auf Hinzufügen</SelectItem>
+                            <SelectItem Value="EAmendmentTypes.Change">Antrag auf Textänderung</SelectItem>
+                            <SelectItem Value="EAmendmentTypes.Delete">Antrag auf Streichung</SelectItem>
+                            <SelectItem Value="EAmendmentTypes.Move">Antrag auf Verschiebung</SelectItem>
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Einbringer</FieldLabel>
+                        <InputText @bind-Value="@pattern.SubmitterName" class="form-control" />
+                    </Field>
+                    @if (pattern.AmendmentType == EAmendmentTypes.Change ||
+                     pattern.AmendmentType == EAmendmentTypes.Delete ||
+                     pattern.AmendmentType == EAmendmentTypes.Move)
+                    {
+                        <Field>
+                            <FieldLabel>Paragraphen</FieldLabel>
+                            <Select TValue="string" @bind-SelectedValue="@pattern.ParagraphId">
+                                <SelectItem Value="string.Empty" Disabled="true">Paragraphen auswählen</SelectItem>
+                                @foreach (var paragraph in Resolution.OperativeSection.GetAllParagraphs())
+                                {
+                                    <SelectItem Value="paragraph.OperativeParagraphId">@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(paragraph) @paragraph.Text</SelectItem>
+                                }
+                                
+                            </Select>
+                        </Field>
+                    }
+
+                    @if (pattern.AmendmentType == EAmendmentTypes.Change ||
+                      pattern.AmendmentType == EAmendmentTypes.Add)
+                    {
+                        <Field>
+                            <FieldLabel>Neuer Text</FieldLabel>
+                            <InputTextArea class="form-control" @bind-Value="@pattern.NewValue" />
+                        </Field>
+                    }
+                </EditForm>
+                @if (errored)
+                {
+                    <div class="alert alert-danger">Fehler beim Erstellen des Änderungsantrags!</div>
+                }
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="@HideModal">Abbruch</Button>
+                <Button Color="Color.Primary" Clicked="@SubmitCreateAmendment">Änderungsantrag erstellen</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
+else
+{
+    <p>Lade Änderungsanträge</p>
+}
+
+
+@code {
+    [Parameter]
+    public MUNity.Models.Resolution.Resolution Resolution { get; set; }
+
+    private CreateAmendmentPattern pattern = new CreateAmendmentPattern();
+
+    private Blazorise.Modal modalRef;
+
+    private bool errored = false;
+
+    private void HideModal()
+    {
+        this.modalRef.Hide();
+    }
+
+    private void SubmitCreateAmendment()
+    {
+        var newAmendment = this.resolutionService.CreateAmendment(pattern);
+        if (newAmendment != null)
+        {
+            modalRef.Hide();
+            if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment addAmendment)
+            {
+                this.Resolution.OperativeSection.AddAmendments.Add(addAmendment.ToModel());
+            }
+            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment changeAmendment)
+            {
+                this.Resolution.OperativeSection.ChangeAmendments.Add(changeAmendment.ToModel());
+            }
+            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment deleteAmendment)
+            {
+                this.Resolution.OperativeSection.DeleteAmendments.Add(deleteAmendment.ToModel());
+            }
+            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment moveAmendment)
+            {
+                this.Resolution.OperativeSection.MoveAmendments.Add(moveAmendment.ToModel());
+            }
+        }
+        else
+        {
+            errored = true;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (this.Resolution != null)
+        {
+            this.pattern.ResolutionId = this.Resolution.ResolutionId;
+        }
+
+
+        base.OnInitialized();
+    }
+
+}

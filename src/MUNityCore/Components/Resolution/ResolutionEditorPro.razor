@@ -1,5 +1,7 @@
-﻿<div class="row">
-    <div class="col-lg-8 col-md-12">
+﻿@inject Services.SqlResolutionService resolutionService;
+
+<div class="row">
+    <div class="@((resolutionMode == EResolutionMode.Write) ? "col-lg-8" : "col-lg-12")  col-md-12">
         <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
             <div class="panel-heading ui-sortable-handle">
                 <h4 class="panel-title">Resolutionseditor <span class="badge badge-primary">Pro</span></h4>
@@ -7,12 +9,12 @@
                     @if (resolutionMode == EResolutionMode.Write)
                     {
                         <a class="btn btn-xs btn-icon btn-circle btn-primary"
-                            @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
+                           @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
                     }
                     else if (resolutionMode == EResolutionMode.Read)
                     {
                         <a class="btn btn-xs btn-icon btn-circle btn-secondary"
-                            @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
+                           @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
                     }
                     <a class="btn btn-xs btn-icon btn-circle btn-danger"
                        @onclick="() => this.OnEditorClosed.InvokeAsync()">X</a>
@@ -21,18 +23,23 @@
             <div class="panel-body bg-white-darker">
                 @if (resolutionMode == EResolutionMode.Write)
                 {
-                    <MUNityCore.Components.Resolution.ResolutionEditor ResolutionId="@ResolutionId" />
+                    <MUNityCore.Components.Resolution.ResolutionEditor Resolution="@_resolution" />
                 }
                 else if (resolutionMode == EResolutionMode.Read)
                 {
-                    <MUNityCore.Components.Resolution.ResolutionReader ResolutionId="@ResolutionId" />
+                    <MUNityCore.Components.Resolution.ResolutionReader Resolution="@_resolution" />
                 }
             </div>
         </div>
     </div>
+    @if (resolutionMode == EResolutionMode.Write)
+    {
+        <div class="col-lg-4 col-md-12">
+            <MUNityCore.Components.Resolution.AmendmentPanel Resolution="@_resolution" />
+        </div>
+    }
 </div>
 @code {
-
 
     public enum EResolutionMode
     {
@@ -51,5 +58,11 @@
     [Parameter]
     public EventCallback OnEditorClosed { get; set; }
 
+    private MUNity.Models.Resolution.Resolution _resolution;
 
+    protected override async Task OnInitializedAsync()
+    {
+        _resolution = await resolutionService.GetResolutionDtoAsync(ResolutionId);
+        await base.OnInitializedAsync();
+    }
 }

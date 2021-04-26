@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using MUNity.Models.Resolution;
 using MUNity.Schema.Simulation;
 using MUNitySchema.Schema.Simulation.Resolution;
+using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Services
 {
@@ -606,7 +607,11 @@ namespace MUNityCore.Services
         {
             var paragraph = this._context.OperativeParagraphs
                 .Include(n => n.Resolution).FirstOrDefault(n => n.ResaOperativeParagraphId == resaOperativeParagraphId);
-            if (paragraph == null) return null;
+            if (paragraph == null)
+            {
+                Console.WriteLine("Zielparagraphen nicht gefunden: " + resaOperativeParagraphId);
+                return null;
+            }
             var amendment = new ResaDeleteAmendment()
             {
                 TargetParagraph = paragraph,
@@ -771,78 +776,37 @@ namespace MUNityCore.Services
 
         public async Task<List<AddAmendment>> GetAddAmendmentsDto(string resolutionId)
         {
-            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
-            if (resolutionDb == null) return null;
-            var filtered = _context.AddAmendments.Where(n => n.Resolution.ResaElementId == resolutionId);
-            var amendments = filtered.Select(n => new AddAmendment()
-            {
-                Name = "AddAmendment",
-                Activated = n.Activated,
-                Id = n.ResaAmendmentId,
-                SubmitterName = n.SubmitterName,
-                TargetSectionId = n.VirtualParagraph.ResaOperativeParagraphId,
-                SubmitTime = n.SubmitTime,
-                Type = n.ResaAmendmentType
-            }).ToList();
+            var filtered = _context.AddAmendments
+                .Include(n => n.VirtualParagraph)
+                .Where(n => n.Resolution.ResaElementId == resolutionId);
+            var amendments = await filtered.Select(n => n.ToModel()).ToListAsync();
             return amendments;
         }
 
         public async Task<List<ChangeAmendment>> GetChangeAmendmentsDto(string resolutionId)
         {
-            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
-            if (resolutionDb == null) return null;
-
-            var filtered = _context.ChangeAmendments.Where(n => n.Resolution.ResaElementId == resolutionId);
-            var amendments = filtered.Select(n => new ChangeAmendment()
-            {
-                Activated = n.Activated,
-                Id = n.ResaAmendmentId,
-                Name = "ChangeAmendment",
-                NewText = n.NewText,
-                SubmitterName = n.SubmitterName,
-                SubmitTime = n.SubmitTime,
-                TargetSectionId = n.TargetParagraph.ResaOperativeParagraphId,
-                Type = n.ResaAmendmentType
-            }).ToList();
+            var filtered = _context.ChangeAmendments
+                .Include(n => n.TargetParagraph)
+                .Where(n => n.Resolution.ResaElementId == resolutionId);
+            var amendments = await filtered.Select(n => n.ToModel()).ToListAsync();
             return amendments;
         }
 
         public async Task<List<DeleteAmendment>> GetDeleteAmendemtsDto(string resolutionId)
         {
-            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
-            if (resolutionDb == null) return null;
-
-            var filtered = _context.DeleteAmendments.Where(n => n.Resolution.ResaElementId == resolutionId);
-            var amendments = filtered.Select(n => new DeleteAmendment()
-            {
-                Activated = n.Activated,
-                Id = n.ResaAmendmentId,
-                Name = "DeleteAmendment",
-                SubmitterName = n.SubmitterName,
-                SubmitTime = n.SubmitTime,
-                TargetSectionId = n.TargetParagraph.ResaOperativeParagraphId,
-                Type = n.ResaAmendmentType
-            }).ToList();
+            var filtered = _context.DeleteAmendments
+                .Include(n => n.TargetParagraph)
+                .Where(n => n.Resolution.ResaElementId == resolutionId);
+            var amendments = await filtered.Select(n => n.ToModel()).ToListAsync();
             return amendments;
         }
 
         public async Task<List<MoveAmendment>> GetMoveAmendmentsDto(string resolutionId)
         {
-            var resolutionDb = await this._context.Resolutions.FindAsync(resolutionId);
-            if (resolutionDb == null) return null;
-
-            var filtered = _context.MoveAmendments.Where(n => n.Resolution.ResaElementId == resolutionId);
-            var amendments = filtered.Select(n => new MoveAmendment()
-            {
-                Activated = n.Activated,
-                Id = n.ResaAmendmentId,
-                Name = "MoveAmendment",
-                NewTargetSectionId = n.VirtualParagraph.ResaOperativeParagraphId,
-                SubmitterName = n.SubmitterName,
-                SubmitTime = n.SubmitTime,
-                TargetSectionId = n.SourceParagraph.ResaOperativeParagraphId,
-                Type = n.ResaAmendmentType
-            }).ToList();
+            var filtered = _context.MoveAmendments.Include(n => n.SourceParagraph)
+                .Include(n => n.VirtualParagraph)
+                .Where(n => n.Resolution.ResaElementId == resolutionId);
+            var amendments = await filtered.Select(n => n.ToModel()).ToListAsync();
             return amendments;
         }
         
@@ -899,6 +863,24 @@ namespace MUNityCore.Services
         public int ResolutionCount()
         {
             return this._context.Resolutions.Count();
+        }
+
+        public ResaAmendment CreateAmendment(MUNityCore.Dtos.Resolutions.CreateAmendmentPattern pattern)
+        {
+            switch (pattern.AmendmentType)
+            {
+                case Dtos.Resolutions.EAmendmentTypes.Add:
+                    return this.CreateAddAmendment(pattern.ResolutionId, pattern.NewIndex, pattern.SubmitterName, pattern.NewValue);
+                case Dtos.Resolutions.EAmendmentTypes.Change:
+                    return this.CreateChangeAmendment(pattern.ParagraphId, pattern.SubmitterName, pattern.NewValue);
+                case Dtos.Resolutions.EAmendmentTypes.Delete:
+                    return this.CreateDeleteAmendment(pattern.ParagraphId, pattern.SubmitterName);
+                case Dtos.Resolutions.EAmendmentTypes.Move:
+                    return this.CreateMoveAmendment(pattern.ParagraphId, pattern.SubmitterName, pattern.NewIndex);
+                default:
+                    Console.WriteLine($"Nicht unterstützter Antragstyp: {pattern.AmendmentType.ToString()}");
+                    return null;
+            }
         }
     }
 }
