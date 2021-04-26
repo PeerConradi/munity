@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="panel-body bg-white-darker">
-            <button class="btn btn-block btn-success"
+            <button class="btn btn-block btn-success mb-2"
                     @onclick="() => modalRef.Show()">
                 Neuer Änderungsantrag
             </button>
@@ -43,11 +43,13 @@
                         <!-- end info-row -->
                         <!-- begin info-row -->
                         <div class="d-flex mb-2">
-                            <button class="btn btn-block btn-outline-success">Annehmen</button>
+                            <button class="btn btn-block btn-outline-success"
+                                    @onclick="() => SubmitAmendment(amendment)">Annehmen</button>
                         </div>
 
                         <div class="d-flex mb-2">
-                            <button class="btn btn-block btn-outline-danger">Ablehnen</button>
+                            <button class="btn btn-block btn-outline-danger"
+                                    @onclick="() => DenyAmendment(amendment)">Ablehnen</button>
                         </div>
                     </div>
                     <!-- end card-body -->
@@ -125,6 +127,12 @@ else
     [Parameter]
     public MUNity.Models.Resolution.Resolution Resolution { get; set; }
 
+    [Parameter]
+    public EventCallback<MUNity.Models.Resolution.AbstractAmendment> AmendmentSubmitted { get; set; }
+
+    [Parameter]
+    public EventCallback<MUNity.Models.Resolution.AbstractAmendment> AmendmentDenied { get; set; }
+
     private CreateAmendmentPattern pattern = new CreateAmendmentPattern();
 
     private Blazorise.Modal modalRef;
@@ -176,4 +184,83 @@ else
         base.OnInitialized();
     }
 
+    private void SubmitAmendment(MUNity.Models.Resolution.AbstractAmendment amendment)
+    {
+        if (amendment is MUNity.Models.Resolution.AddAmendment addAmendment)
+        {
+            var success = this.resolutionService.SubmitAddAmendment(addAmendment.Id);
+            if (success)
+            {
+                addAmendment.Apply(this.Resolution.OperativeSection);
+                this.AmendmentSubmitted.InvokeAsync(amendment);
+            }
+        }
+        else if (amendment is MUNity.Models.Resolution.ChangeAmendment changeAmendment)
+        {
+            var success = this.resolutionService.SubmitChangeAmendment(changeAmendment.Id);
+            if (success)
+            {
+                changeAmendment.Apply(this.Resolution.OperativeSection);
+                this.AmendmentSubmitted.InvokeAsync(amendment);
+            }
+        }
+        else if (amendment is MUNity.Models.Resolution.DeleteAmendment deleteAmendment)
+        {
+            var success = this.resolutionService.SubmitDeleteAmendment(deleteAmendment.Id);
+            if (success)
+            {
+                deleteAmendment.Apply(this.Resolution.OperativeSection);
+                this.AmendmentSubmitted.InvokeAsync(amendment);
+            }
+        }
+        else if (amendment is MUNity.Models.Resolution.MoveAmendment moveAmendment)
+        {
+            var success = this.resolutionService.SubmitMoveAmendment(moveAmendment.Id);
+            if (success)
+            {
+                moveAmendment.Apply(this.Resolution.OperativeSection);
+                this.AmendmentSubmitted.InvokeAsync(amendment);
+            }
+        }
+    }
+
+    private void DenyAmendment(MUNity.Models.Resolution.AbstractAmendment amendment)
+    {
+        if (amendment is MUNity.Models.Resolution.AddAmendment addAmendment)
+        {
+            var success = this.resolutionService.RemoveAddAmendment(addAmendment.Id);
+            if (success)
+            {
+                addAmendment.Deny(this.Resolution.OperativeSection);
+                this.AmendmentDenied.InvokeAsync(amendment);
+            }
+        }
+        else if (amendment is MUNity.Models.Resolution.ChangeAmendment changeAmendment)
+        {
+            var success = this.resolutionService.RemoveChangeAmendment(changeAmendment.Id);
+            if (success)
+            {
+                changeAmendment.Deny(this.Resolution.OperativeSection);
+                this.AmendmentDenied.InvokeAsync(amendment);
+            }
+        }
+        else if (amendment is MUNity.Models.Resolution.DeleteAmendment deleteAmendment)
+        {
+            var success = this.resolutionService.RemoveDeleteAmendment(deleteAmendment.Id);
+            if (success)
+            {
+                deleteAmendment.Deny(this.Resolution.OperativeSection);
+                this.AmendmentDenied.InvokeAsync(amendment);
+            }
+        }
+        else if (amendment is MUNity.Models.Resolution.MoveAmendment moveAmendment)
+        {
+            var success = this.resolutionService.RemoveMoveAmendment(moveAmendment.Id);
+            if (success)
+            {
+                moveAmendment.Deny(this.Resolution.OperativeSection);
+                this.AmendmentDenied.InvokeAsync(amendment);
+            }
+        }
+    }
 }

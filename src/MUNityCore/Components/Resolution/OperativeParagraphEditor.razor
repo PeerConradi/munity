@@ -2,7 +2,7 @@
 
 <div class="panel panel-inverse m-t-0">
     <div class="panel-heading">
-        <h4 class="panel-title">§ @Index Operativer Absatz</h4>
+        <h4 class="panel-title">§ @Index Operativer Absatz: @previewText</h4>
         <div class="panel-heading-btn">
             <a class="btn btn-xs btn-icon btn-circle btn-default"
                @onclick="() => expanded = !expanded">
@@ -42,6 +42,15 @@
     public string Index { get; set; }
 
     private bool expanded;
+
+    private string previewText
+    {
+        get
+        {
+            if (Paragraph == null) return "";
+            return (Paragraph.Text.Length > 30) ? Paragraph.Text.Substring(0, 30) + "..." : Paragraph.Text;
+        }
+    }
 
     private void SaveParagraphText(MUNity.Models.Resolution.OperativeParagraph paragraph)
     {
