@@ -201,7 +201,7 @@
             </div>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Secondary" Clicked="@HideModal">Abbrechen</Button>
+            <Button Color="Color.Secondary" Clicked="@HideNewPetitionModal">Abbrechen</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -226,8 +226,16 @@
         set
         {
             _selectedAgendaItem = value;
-            this.petitionsOfAgendaItem = simulationService.GetPetitionsOfAgendaItem(_selectedAgendaItem.AgendaItemId);
+            if (value != null)
+                this.petitionsOfAgendaItem = simulationService.GetPetitionsOfAgendaItem(_selectedAgendaItem.AgendaItemId);
+            else
+                this.petitionsOfAgendaItem = null;
         }
+    }
+
+    private void HideNewPetitionModal()
+    {
+        this.newPetitionModal.Hide();
     }
 
     private MUNityCore.Dtos.Simulations.AgendaItemInfo deleteAgendaItem;
@@ -267,10 +275,10 @@
         this.HideModal();
     }
 
-    private void DeleteAgendaItem()
+    private async Task DeleteAgendaItem()
     {
-        this.simulationService.DeleteAgendaItem(deleteAgendaItem.AgendaItemId);
-        this.AgendaItems.Remove(deleteAgendaItem);
+        await this.frontendSimulationService.RemoveAgendaItem(this.deleteAgendaItem.AgendaItemId);
+        this.deleteAgendaItem = null;
         this.deleteAgendaItemModal.Hide();
     }
 
@@ -278,20 +286,16 @@
     {
         await this.frontendSimulationService.SubmitPetition(selectedAgendaItem.AgendaItemId, typeId);
         this.newPetitionModal.Hide();
-
-
     }
 
-    private void MakePetitionActive(string petitionId)
+    private async Task MakePetitionActive(string petitionId)
     {
-        simulationService.ActivatePetition(petitionId);
-        this.petitionsOfAgendaItem = simulationService.GetPetitionsOfAgendaItem(_selectedAgendaItem.AgendaItemId);
+        await this.frontendSimulationService.ActivatePetition(petitionId);
     }
 
-    private void RemovePetition(string petitionId)
+    private async Task RemovePetition(string petitionId)
     {
-        simulationService.RemovePetition(petitionId);
-        petitionsOfAgendaItem.Remove(petitionsOfAgendaItem.FirstOrDefault(n => n.PetitionId == petitionId));
+        await this.frontendSimulationService.RemovePetition(petitionId);
     }
 
     protected override async Task OnInitializedAsync()
@@ -301,8 +305,53 @@
         this.isChair = await this.simulationService.IsTokenValidAndUserChair(SimulationId, Token);
 
         this.frontendSimulationService.AgendaItemCreated += OnAgendaItemCreated;
+        this.frontendSimulationService.AgendaItemRemoved += OnAgendaItemRemoved;
         this.frontendSimulationService.PetitionAdded += OnPetitionAdded;
+        this.frontendSimulationService.PetitionActivated += OnPetitionActivated;
+        this.frontendSimulationService.PetitionRemoved += OnPetitionRemoved;
         //base.OnInitialized();
+    }
+
+    private void OnAgendaItemRemoved(object sender, int agendaItemId)
+    {
+        if (this.selectedAgendaItem != null && this.selectedAgendaItem.AgendaItemId == agendaItemId)
+        {
+            this.selectedAgendaItem = null;
+        }
+
+
+        if (this.deleteAgendaItem != null && this.deleteAgendaItem.AgendaItemId == agendaItemId)
+            this.deleteAgendaItem = null;
+
+        var agendaItem = this.AgendaItems.FirstOrDefault(n => n.AgendaItemId == agendaItemId);
+        if (agendaItem != null)
+        {
+            this.AgendaItems.Remove(agendaItem);
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnPetitionRemoved(object sender, MUNity.Schema.Simulation.PetitionInteractedDto item)
+    {
+        bool changesMade = false;
+
+        var agendaItem = this.AgendaItems.FirstOrDefault(n => n.AgendaItemId == item.AgendaItemId);
+        if (agendaItem != null)
+        {
+            agendaItem.PetitionCount--;
+            changesMade = true;
+        }
+
+        var petitionElement = this.petitionsOfAgendaItem.FirstOrDefault(n => n.PetitionId == item.PetitionId);
+        if (petitionElement != null)
+        {
+            this.petitionsOfAgendaItem.Remove(petitionElement);
+            changesMade = true;
+        }
+
+        if (changesMade)
+            InvokeAsync(StateHasChanged);
     }
 
     private void OnAgendaItemCreated(object sender, MUNity.Schema.Simulation.AgendaItemDto item)
@@ -343,5 +392,18 @@
             this.petitionsOfAgendaItem = this.petitionsOfAgendaItem.OrderBy(n => n.OrderIndex).ThenBy(n => n.SubmitTime).ToList();
         }
         this.InvokeAsync(this.StateHasChanged);
+    }
+
+    private void OnPetitionActivated(object sender, string petitionId)
+    {
+        if (this.selectedAgendaItem != null)
+        {
+            var petitionItem = this.petitionsOfAgendaItem.FirstOrDefault(n => n.PetitionId == petitionId);
+            if (petitionItem != null)
+            {
+                petitionItem.Status = MUNity.Models.Simulation.EPetitionStates.Active;
+                InvokeAsync(StateHasChanged);
+            }
+        }
     }
 }

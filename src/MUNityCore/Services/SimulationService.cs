@@ -281,7 +281,7 @@ namespace MUNityCore.Services
             return newPetitionType;
         }
 
-        internal bool DeleteAgendaItem(int agendaItemId)
+        internal bool RemoveAgendaItem(int agendaItemId)
         {
             var petitionsToRemove = this._context.Petitions.Where(n => n.AgendaItem.AgendaItemId == agendaItemId);
             if (petitionsToRemove.Any())
@@ -406,11 +406,19 @@ namespace MUNityCore.Services
             return changes == 1;
         }
 
-        internal void RemovePetition(string petitionId)
+        /// <summary>
+        /// Removes a Petition with the given id and will return the AgendaItemId of this petition.
+        /// </summary>
+        /// <param name="petitionId"></param>
+        /// <returns></returns>
+        internal int RemovePetition(string petitionId)
         {
-            var petition = _context.Petitions.FirstOrDefault(n => n.PetitionId == petitionId);
+            var petition = _context.Petitions.Include(n => n.AgendaItem).FirstOrDefault(n => n.PetitionId == petitionId);
+            if (petition == null)
+                return -1;
             _context.Petitions.Remove(petition);
             _context.SaveChanges();
+            return petition.AgendaItem.AgendaItemId;
         }
 
         internal void ActivatePetition(string petitionId)

@@ -93,6 +93,8 @@ namespace MUNity.Hubs
         /// <returns></returns>
         Task UserPetitionAccepted(PetitionDto petition);
 
+        Task PetitionActivated(string petitionId);
+
         /// <summary>
         /// the request of a user has been deleted or decliened.
         /// </summary>

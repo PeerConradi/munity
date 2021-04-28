@@ -90,7 +90,7 @@ namespace MUNityCore.Controllers.Simulation
             var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body);
             if (!isAllowed) return BadRequest();
 
-            bool success = this._simulationService.DeleteAgendaItem(body.AgendaItemId);
+            bool success = this._simulationService.RemoveAgendaItem(body.AgendaItemId);
 
             _ = this.SocketGroup(body)?.AgendaItemRemoved(body.AgendaItemId).ConfigureAwait(false);
 

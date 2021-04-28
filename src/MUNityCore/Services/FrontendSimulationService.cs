@@ -49,6 +49,12 @@ namespace MUNityCore.Services
 
         public event EventHandler<MUNity.Schema.Simulation.PetitionInfoDto> PetitionAdded;
 
+        public event EventHandler<MUNity.Schema.Simulation.PetitionInteractedDto> PetitionRemoved;
+
+        public event EventHandler<int> AgendaItemRemoved;
+
+        public event EventHandler<string> PetitionActivated;
+
         private int _currentSimulationId = -1;
         public int CurrentSimulationId
         {
@@ -150,6 +156,9 @@ namespace MUNityCore.Services
             _hubConnection.On<MUNity.Schema.Simulation.VotedEventArgs>(nameof(MUNity.Hubs.ITypedSimulationHub.Voted), n => this.Voted?.Invoke(this, n));
             _hubConnection.On<MUNity.Schema.Simulation.AgendaItemDto>(nameof(MUNity.Hubs.ITypedSimulationHub.AgendaItemAdded), n => this.AgendaItemCreated?.Invoke(this, n));
             _hubConnection.On<MUNity.Schema.Simulation.PetitionInfoDto>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionAdded), n => this.PetitionAdded?.Invoke(this, n));
+            _hubConnection.On<string>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionActivated), n => this.PetitionActivated?.Invoke(this, n));
+            _hubConnection.On<MUNity.Schema.Simulation.PetitionInteractedDto>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionDeleted), n => this.PetitionRemoved?.Invoke(this, n));
+            _hubConnection.On<int>(nameof(MUNity.Hubs.ITypedSimulationHub.AgendaItemRemoved), n => this.AgendaItemRemoved?.Invoke(this, n));
 
             await _hubConnection.StartAsync();
 
@@ -214,9 +223,24 @@ namespace MUNityCore.Services
             await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateAgendaItem), name, description);
         }
 
+        internal async Task RemoveAgendaItem(int agendaItemId)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.RemoveAgendaItem), agendaItemId);
+        }
+
         internal async Task SubmitPetition(int agendaItemId, int petitionType)
         {
             await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.MakePetition), agendaItemId, petitionType);
+        }
+
+        internal async Task ActivatePetition(string petitionId)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.ActivatePetition), petitionId);
+        }
+
+        internal async Task RemovePetition(string petitionId)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.RemovePetition), petitionId);
         }
 
         public FrontendSimulationService(MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext,

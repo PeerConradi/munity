@@ -92,6 +92,19 @@ namespace MUNityCore.Hubs
                 this.Clients.Group("sim_" + user.SimulationId).AgendaItemAdded(agendaItem.ToAgendaItemDto());
             }
         }
+
+        public async Task RemoveAgendaItem(int agendaItemId)
+        {
+            var user = GetContextUser();
+            if (user == null) return;
+            var isChair = _service.IsUserChair(user.SimulationUserId);
+
+            var removed = this._service.RemoveAgendaItem(agendaItemId);
+            if (removed)
+            {
+                await this.Clients.Group("sim_" + user.SimulationId).AgendaItemRemoved(agendaItemId);
+            }
+        }
         
         public async Task MakePetition(int agendaItemId, int petitionTypeId )
         {
@@ -105,6 +118,42 @@ namespace MUNityCore.Hubs
                 await this.Clients.Group("sim_" + user.SimulationId).PetitionAdded(info);
             }
         }
+
+        public async Task ActivatePetition(string petitionId)
+        {
+            var user = GetContextUser();
+            if (user == null)
+                return;
+
+            var isChair = _service.IsUserChair(user.SimulationUserId);
+            if (!isChair)
+                return;
+
+            this._service.ActivatePetition(petitionId);
+            await this.Clients.Group("sim_" + user.SimulationId).PetitionActivated(petitionId);
+        }
+
+        public async Task RemovePetition(string petitionId)
+        {
+            var user = GetContextUser();
+            if (user == null)
+                return;
+
+            var isChair = _service.IsUserChair(user.SimulationUserId);
+            if (!isChair)
+                return;
+
+            var agendaItemId = this._service.RemovePetition(petitionId);
+            if (agendaItemId != -1)
+            {
+                await this.Clients.Group("sim_" + user.SimulationId).PetitionDeleted(new MUNity.Schema.Simulation.PetitionInteractedDto()
+                {
+                    AgendaItemId = agendaItemId,
+                    PetitionId = petitionId
+                });
+            }
+        }
+
 
         private ConnectionUsers.ConnectedUser GetContextUser()
         {
