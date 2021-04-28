@@ -1,6 +1,7 @@
 ﻿@using Microsoft.EntityFrameworkCore;
 @inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
 @inject MUNityCore.Services.SimulationService simulationService; 
+@inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
 
 <h1 class="page-header mb-3">Tagesordnung</h1>
 
@@ -60,7 +61,7 @@
                     </div>
                     @if (this.petitionsOfAgendaItem.Count > 0)
                     {
-                        var currentPetition = this.petitionsOfAgendaItem.FirstOrDefault(n => n.Status == MUNitySchema.Models.Simulation.EPetitionStates.Active);
+                        var currentPetition = this.petitionsOfAgendaItem.FirstOrDefault(n => n.Status == MUNity.Models.Simulation.EPetitionStates.Active);
                         if (currentPetition != null)
                         {
                             <h3 class="m-b-10">
@@ -84,7 +85,7 @@
                     <div class="widget-list widget-list-rounded inverse-mode m-t-5">
                         @if (selectedAgendaItem != null && petitionsOfAgendaItem != null && petitionsOfAgendaItem.Count > 0)
                         {
-                            @foreach (var petition in petitionsOfAgendaItem.Where(n => n.Status != MUNitySchema.Models.Simulation.EPetitionStates.Active))
+                            @foreach (var petition in petitionsOfAgendaItem.Where(n => n.Status != MUNity.Models.Simulation.EPetitionStates.Active))
                             {
 
                                 <div class="d-flex align-items-center m-b-15">
@@ -233,7 +234,7 @@
 
     private List<MUNityCore.Dtos.Simulations.AgendaItemInfo> AgendaItems { get; set; }
 
-    private List<MUNityCore.Dtos.Simulations.PetitionInfoDto> petitionsOfAgendaItem { get; set; }
+    private List<MUNity.Schema.Simulation.PetitionInfoDto> petitionsOfAgendaItem { get; set; }
 
     private List<MUNityCore.Models.Simulation.PetitionTypeSimulation> petitionTypes;
 
@@ -260,20 +261,10 @@
         createAgendaItemModal.Hide();
     }
 
-    private void CreateAgendaItem()
+    private async Task CreateAgendaItem()
     {
-        var newItem = this.simulationService.CreateAgendaItem(SimulationId, newAgendaItem.Name, newAgendaItem.Description);
-        if (newItem != null)
-        {
-            this.AgendaItems.Add(new Dtos.Simulations.AgendaItemInfo()
-            {
-                AgendaItemId = newItem.AgendaItemId,
-                Description = newItem.Description,
-                Name = newItem.Name,
-                PetitionCount = 0
-            });
-            this.HideModal();
-        }
+        await this.frontendSimulationService.CreateAgendaItem(newAgendaItem.Name, newAgendaItem.Description);
+        this.HideModal();
     }
 
     private void DeleteAgendaItem()
@@ -283,18 +274,12 @@
         this.deleteAgendaItemModal.Hide();
     }
 
-    private void MakePetition(int typeId)
+    private async Task MakePetition(int typeId)
     {
-        var userId = this.simulationService.GetSimulationUserId(SimulationId, Token);
-        if (userId.HasValue)
-        {
-            var petition = this.simulationService.SubmitPetition(selectedAgendaItem.AgendaItemId, typeId, userId.Value);
-            if (petition != null)
-            {
-                this.petitionsOfAgendaItem = simulationService.GetPetitionsOfAgendaItem(selectedAgendaItem.AgendaItemId);
-                this.newPetitionModal.Hide();
-            }
-        }
+        await this.frontendSimulationService.SubmitPetition(selectedAgendaItem.AgendaItemId, typeId);
+        this.newPetitionModal.Hide();
+
+
     }
 
     private void MakePetitionActive(string petitionId)
@@ -314,7 +299,26 @@
         ReloadAgendaItems();
         this.petitionTypes = simulationService.GetPetitionTypesOfSimulation(SimulationId);
         this.isChair = await this.simulationService.IsTokenValidAndUserChair(SimulationId, Token);
+
+        this.frontendSimulationService.AgendaItemCreated += OnAgendaItemCreated;
+        this.frontendSimulationService.PetitionAdded += OnPetitionAdded;
         //base.OnInitialized();
+    }
+
+    private void OnAgendaItemCreated(object sender, MUNity.Schema.Simulation.AgendaItemDto item)
+    {
+        if (this.AgendaItems.All(n => n.AgendaItemId != item.AgendaItemId))
+        {
+            this.AgendaItems.Add(new Dtos.Simulations.AgendaItemInfo()
+            {
+                AgendaItemId = item.AgendaItemId,
+                Description = item.Description,
+                Name = item.Name,
+                PetitionCount = item.Petitions?.Count ?? 0
+            });
+            InvokeAsync(StateHasChanged);
+        }
+
     }
 
     private void ReloadAgendaItems()
@@ -324,5 +328,20 @@
         {
             this.selectedAgendaItem = this.AgendaItems.First();
         }
+    }
+
+    private void OnPetitionAdded(object sender, MUNity.Schema.Simulation.PetitionInfoDto petition)
+    {
+
+        var agendaItem = this.AgendaItems.FirstOrDefault(n => n.AgendaItemId == petition.AgendaItemId);
+        if (agendaItem != null)
+            agendaItem.PetitionCount++;
+
+        if (this.selectedAgendaItem != null && this.selectedAgendaItem.AgendaItemId == petition.AgendaItemId)
+        {
+            this.petitionsOfAgendaItem.Add(petition);
+            this.petitionsOfAgendaItem = this.petitionsOfAgendaItem.OrderBy(n => n.OrderIndex).ThenBy(n => n.SubmitTime).ToList();
+        }
+        this.InvokeAsync(this.StateHasChanged);
     }
 }

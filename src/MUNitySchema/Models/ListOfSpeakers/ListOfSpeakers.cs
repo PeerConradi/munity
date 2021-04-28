@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Linq;
 using System.Text.Json.Serialization;
-using MUNitySchema.Converter;
+using MUNity.Converter;
 
 namespace MUNity.Models.ListOfSpeakers
 {

@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace MUNitySchema.Converter
+namespace MUNity.Converter
 {
     /// <summary>
     /// TimeSpans are not serialized consistently depending on what properties are present. So this 

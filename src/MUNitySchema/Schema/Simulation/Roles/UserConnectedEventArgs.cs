@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MUNitySchema.Schema.Simulation.Roles
+namespace MUNity.Schema.Simulation.Roles
 {
     /// <summary>
     /// User has connected event args. This will be used by the socket in future implementations.

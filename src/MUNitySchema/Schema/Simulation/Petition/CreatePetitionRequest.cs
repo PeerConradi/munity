@@ -1,5 +1,4 @@
 ﻿using MUNity.Models.Simulation;
-using MUNitySchema.Models.Simulation;
 using System;
 using System.Collections.Generic;
 using System.Text;

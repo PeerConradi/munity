@@ -177,6 +177,7 @@
         this.isChair = await simulationService.IsTokenValidAndUserChair(SimulationId, Token);
         this.myUserId = simulationService.GetSimulationUserId(SimulationId, Token) ?? -1;
         this.frontendSimulationService.VotingCreated += OnVotingCreated;
+        this.frontendSimulationService.Voted += OnVoted;
         ReloadCurrentVoting();
         //base.OnInitialized();
     }
@@ -187,6 +188,19 @@
         InvokeAsync(this.StateHasChanged);
     }
 
+    private void OnVoted(object sender, MUNity.Schema.Simulation.VotedEventArgs args)
+    {
+        if (this.currentVoting.VotingId == args.VoteId)
+        {
+            var slot = this.currentVoting.Slots.FirstOrDefault(n => n.SimulationUserId == args.UserId);
+            if (slot != null)
+            {
+                slot.Choice = args.Choice;
+                InvokeAsync(this.StateHasChanged);
+            }
+        }
+    }
+
     private void ReloadCurrentVoting()
     {
         currentVoting = simulationService.GetCurrentVoting(SimulationId);
@@ -195,15 +209,7 @@
 
     private void VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates choice)
     {
-        if (this.simulationService.Vote(currentVoting.VotingId, Token, choice))
-        {
-            var slot = currentVoting.Slots.FirstOrDefault(n => n.SimulationUserId == myUserId);
-            if (slot != null)
-            {
-                slot.Choice = choice;
-
-            }
-        }
+        this.frontendSimulationService.Vote(currentVoting.VotingId, choice);
     }
 
     private async Task CreateVoting()

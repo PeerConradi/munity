@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MUNitySchema.Schema.Simulation.Resolution
+namespace MUNity.Schema.Simulation.Resolution
 {
     public class ResolutionSmallInfo
     {

@@ -74,8 +74,8 @@ else
 
     private bool showResolutions = true;
 
-    private List<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo> resolutions =
-        new List<MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo>();
+    private List<MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo> resolutions =
+        new List<MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo>();
 
     private void CreateNewResolution()
     {
@@ -83,7 +83,7 @@ else
         var created = resolutionService.CreateSimulationResolution(SimulationId, titleOfNewResolution, "");
         if (created != null)
         {
-            var info = new MUNitySchema.Schema.Simulation.Resolution.ResolutionSmallInfo()
+            var info = new MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo()
             {
                 AllowAmendments = created.AllowOnlineAmendments,
                 AllowPublicEdit = created.AllowPublicEdit,

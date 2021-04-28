@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MUNitySchema.Extensions.Voting
+namespace MUNity.Extensions.Voting
 {
 
 }

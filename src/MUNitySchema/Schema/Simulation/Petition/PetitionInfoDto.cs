@@ -1,13 +1,14 @@
-﻿using MUNitySchema.Models.Simulation;
+﻿using MUNity.Models.Simulation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace MUNityCore.Dtos.Simulations
+namespace MUNity.Schema.Simulation
 {
     public class PetitionInfoDto
     {
+        public int AgendaItemId { get; set; }
+
         public string PetitionId { get; set; }
 
         public string SubmitterDisplayName { get; set; }

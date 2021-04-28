@@ -8,7 +8,7 @@ using MUNityCore.Models.Resolution.SqlResa;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Models.Resolution;
 using MUNity.Schema.Simulation;
-using MUNitySchema.Schema.Simulation.Resolution;
+using MUNity.Schema.Simulation.Resolution;
 using MUNityCore.Extensions.CastExtensions;
 
 namespace MUNityCore.Services

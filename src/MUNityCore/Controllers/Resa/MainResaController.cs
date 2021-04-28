@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNity.Models.Resolution;
 using MUNity.Schema.Simulation.Resolution;
-using MUNitySchema.Schema.Simulation.Resolution;
+using MUNity.Schema.Simulation.Resolution;
 using System;
 using System.Collections.Generic;
 using System.Linq;

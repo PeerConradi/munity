@@ -16,7 +16,7 @@ using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.Simulation.Presets;
-using MUNitySchema.Schema.Simulation.Resolution;
+using MUNity.Schema.Simulation.Resolution;
 
 namespace MUNityCore.Services
 {
@@ -42,6 +42,12 @@ namespace MUNityCore.Services
         public event EventHandler<List<int>> ConnectedUsersChanged;
 
         public event EventHandler<MUNity.Schema.Simulation.Voting.SimulationVotingDto> VotingCreated;
+
+        public event EventHandler<MUNity.Schema.Simulation.VotedEventArgs> Voted;
+
+        public event EventHandler<MUNity.Schema.Simulation.AgendaItemDto> AgendaItemCreated;
+
+        public event EventHandler<MUNity.Schema.Simulation.PetitionInfoDto> PetitionAdded;
 
         private int _currentSimulationId = -1;
         public int CurrentSimulationId
@@ -141,6 +147,9 @@ namespace MUNityCore.Services
             {
                 this.VotingCreated?.Invoke(this, n);
             });
+            _hubConnection.On<MUNity.Schema.Simulation.VotedEventArgs>(nameof(MUNity.Hubs.ITypedSimulationHub.Voted), n => this.Voted?.Invoke(this, n));
+            _hubConnection.On<MUNity.Schema.Simulation.AgendaItemDto>(nameof(MUNity.Hubs.ITypedSimulationHub.AgendaItemAdded), n => this.AgendaItemCreated?.Invoke(this, n));
+            _hubConnection.On<MUNity.Schema.Simulation.PetitionInfoDto>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionAdded), n => this.PetitionAdded?.Invoke(this, n));
 
             await _hubConnection.StartAsync();
 
@@ -193,6 +202,21 @@ namespace MUNityCore.Services
         internal async Task CreateVoting(string displayName, bool allowAbstention)
         {
             await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateVotingForDelegates), this.CurrentSimulationId, displayName, allowAbstention);
+        }
+
+        internal async Task Vote(string votingId, MUNity.Schema.Simulation.EVoteStates choice)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.Vote), votingId, choice);
+        }
+
+        internal async Task CreateAgendaItem(string name, string description)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateAgendaItem), name, description);
+        }
+
+        internal async Task SubmitPetition(int agendaItemId, int petitionType)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.MakePetition), agendaItemId, petitionType);
         }
 
         public FrontendSimulationService(MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext,

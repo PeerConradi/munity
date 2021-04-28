@@ -51,15 +51,68 @@ namespace MUNityCore.Hubs
                 .Select(n => n.Value.SimulationUserId).ToList());
         }
 
-        public Task CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions)
+        public void CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions)
         {
             if (!IsContextChair())
-                return null;
+                return;
 
             var mdl = _service.CreateVotingForDelegates(simulationId, text, allowAbstentions);
 
             var dto = _service.GetCurrentVoting(simulationId);
             this.Clients.Group("sim_" + simulationId.ToString()).VoteCreated(dto);
+            return;
+        }
+
+        public async Task Vote(string votingId, MUNity.Schema.Simulation.EVoteStates choice)
+        {
+            var user = GetContextUser();
+            if (user == null) return;
+
+            var voted = _service.VoteByUserId(votingId, user.SimulationUserId, choice);
+            if (voted)
+            {
+                await this.Clients.Group("sim_" + user.SimulationId).Voted(new MUNity.Schema.Simulation.VotedEventArgs()
+                {
+                    Choice = choice,
+                    UserId = user.SimulationUserId,
+                    VoteId = votingId
+                });
+            }
+        }
+
+        public void CreateAgendaItem(string name, string description)
+        {
+            var user = GetContextUser();
+            if (user == null) return;
+            var isChair = _service.IsUserChair(user.SimulationUserId);
+
+            var agendaItem = this._service.CreateAgendaItem(user.SimulationId, name, description);
+            if (agendaItem != null)
+            {
+                this.Clients.Group("sim_" + user.SimulationId).AgendaItemAdded(agendaItem.ToAgendaItemDto());
+            }
+        }
+        
+        public async Task MakePetition(int agendaItemId, int petitionTypeId )
+        {
+            var user = GetContextUser();
+            if (user == null) return;
+
+            var petition = this._service.SubmitPetition(agendaItemId, petitionTypeId, user.SimulationUserId);
+            var info = _service.GetPetitionInfo(petition.PetitionId);
+            if (info != null)
+            {
+                await this.Clients.Group("sim_" + user.SimulationId).PetitionAdded(info);
+            }
+        }
+
+        private ConnectionUsers.ConnectedUser GetContextUser()
+        {
+            ConnectionUsers.ConnectedUser user;
+            if (ConnectionUsers.ConnectionIds.TryGetValue(Context.ConnectionId, out user))
+            {
+                return user;
+            }
             return null;
         }
 

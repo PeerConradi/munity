@@ -1,0 +1,33 @@
+﻿@inject Services.FrontendSimulationService frontendSimulationService;
+
+<div class="d-flex mb-2">
+    <div class="d-flex align-items-center">
+        <i class="fa fa-circle @((User.IsOnline) ? "text-lime" : "text-red") f-s-8 mr-2"></i>
+        @if (string.IsNullOrEmpty(User.RoleIso))
+        {
+            <img src="img/flags/small/un.png" class="m-r-5" />
+        }
+        else
+        {
+            <img src="img/flags/small/@(User.RoleIso).png" class="m-r-5" />
+        }
+        @User.RoleName (@User.DisplayName)
+    </div>
+    @if (frontendSimulationService.IsChair)
+    {
+        <div class="d-flex align-items-center ml-auto">
+            <div class="text-green f-s-11">
+                <i class="fa fa-link" @onclick="() => InviteLinkRequested.InvokeAsync(User.SimulationUserId)"></i>
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<int> InviteLinkRequested { get; set; }
+
+    [Parameter]
+    public Dtos.Simulations.SimulationUserInfoDto User { get; set; }
+}

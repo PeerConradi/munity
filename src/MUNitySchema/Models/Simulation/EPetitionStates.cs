@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MUNitySchema.Models.Simulation
+namespace MUNity.Models.Simulation
 {
     /// <summary>
     /// Different States the Petition can have.

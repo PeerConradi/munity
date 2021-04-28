@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using MUNity.Schema.Simulation;
 using MUNityCore.Extensions.CastExtensions;
 using Microsoft.EntityFrameworkCore;
-using MUNitySchema.Schema.Simulation.Resolution;
+using MUNity.Schema.Simulation.Resolution;
 using MUNity.Schema.Simulation.Managment;
 using MUNityCore.Extensions;
 using Microsoft.AspNetCore.Cors;

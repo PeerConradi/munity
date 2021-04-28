@@ -1,6 +1,5 @@
 ﻿@inject Services.FrontendSimulationService frontendSimulationService;
 
-
 <nav class="navbar navbar-expand-lg navbar-light bg-dark" style="margin: -25px -30px 10px -30px">
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -35,7 +34,7 @@
         </ul>
         <div class="my-2 my-lg-0">
             <a class="btn @((showListOfSpeakers) ? "btn-primary" : "btn-default") btn-icon btn-circle btn-lg"
-               @onclick="() => ShowList.InvokeAsync(showListOfSpeakers)">
+               @onclick="() => { ShowList.InvokeAsync(showListOfSpeakers); showListOfSpeakers = !showListOfSpeakers; }">
                 <i class="fa fa-comment"></i>
             </a>
         </div>

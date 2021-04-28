@@ -15,7 +15,7 @@ using MUNityCore.Dtos.Simulations;
 using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.Simulation.Presets;
-using MUNitySchema.Schema.Simulation.Resolution;
+using MUNity.Schema.Simulation.Resolution;
 
 namespace MUNityCore.Services
 {
@@ -155,6 +155,19 @@ namespace MUNityCore.Services
                 return false;
 
             slot.Choice = body.Choice;
+            this._context.SaveChanges();
+            return true;
+        }
+
+        internal bool VoteByUserId(string votingId, int userId, EVoteStates choice)
+        {
+            var slot = this._context.VotingSlots
+                .FirstOrDefault(n => n.User.SimulationUserId == userId &&
+                n.Voting.SimulationVotingId == votingId);
+            if (slot == null)
+                return false;
+
+            slot.Choice = choice;
             this._context.SaveChanges();
             return true;
         }
@@ -405,14 +418,14 @@ namespace MUNityCore.Services
             var petition = _context.Petitions.Include(n => n.AgendaItem).FirstOrDefault(n => n.PetitionId == petitionId);
             var agendaItemId = petition.AgendaItem.AgendaItemId;
             var currentActivePetition = _context.Petitions.FirstOrDefault(n => n.AgendaItem.AgendaItemId == agendaItemId &&
-                n.Status == MUNitySchema.Models.Simulation.EPetitionStates.Active);
+                n.Status == MUNity.Models.Simulation.EPetitionStates.Active);
             if (currentActivePetition != null)
             {
                 _context.Petitions.Remove(currentActivePetition);
             }
             if (petition != null)
             {
-                petition.Status = MUNitySchema.Models.Simulation.EPetitionStates.Active;
+                petition.Status = MUNity.Models.Simulation.EPetitionStates.Active;
             }
             _context.SaveChanges();
         }
@@ -433,6 +446,40 @@ namespace MUNityCore.Services
                     CategoryName = n.PetitionType.Category,
                     RoleIso = n.SimulationUser.Role.Iso
                 }).OrderBy(n => n.OrderIndex).ThenBy(n => n.SubmitTime).ToList();
+        }
+
+        internal PetitionInfoDto GetPetitionInfo(string petitionId)
+        {
+            var element = _context.Petitions
+                .Include(n => n.AgendaItem)
+                .ThenInclude(n => n.Simulation)
+                .ThenInclude(n => n.PetitionTypes)
+                .ThenInclude(n => n.PetitionType)
+                .Include(n => n.SimulationUser)
+                .ThenInclude(n => n.Role)
+                .Include(n => n.PetitionType)
+                .AsNoTracking()
+                .FirstOrDefault(n => n.PetitionId == petitionId);
+
+            if (element == null)
+                return null;
+
+            var dto = new PetitionInfoDto()
+            {
+                OrderIndex = element.AgendaItem.Simulation.PetitionTypes.FirstOrDefault(a =>
+                    a.PetitionType.PetitionTypeId == element.PetitionType.PetitionTypeId).OrderIndex,
+                PetitionId = element.PetitionId,
+                SubmitterDisplayName = element.SimulationUser.DisplayName,
+                SubmitterRoleName = element.SimulationUser.Role.Name,
+                SubmitTime = element.PetitionDate,
+                TypeName = element.PetitionType.Name,
+                Status = element.Status,
+                CategoryName = element.PetitionType.Category,
+                RoleIso = element.SimulationUser.Role.Iso,
+                AgendaItemId = element.AgendaItem.AgendaItemId
+            };
+
+            return dto;
         }
 
         internal async Task<bool> IsPetitionInteractionAllowed(PetitionInteractRequest body)
@@ -638,7 +685,7 @@ namespace MUNityCore.Services
                 PetitionDate = DateTime.Now,
                 PetitionType = petitionType,
                 SimulationUser = user,
-                Status = MUNitySchema.Models.Simulation.EPetitionStates.Unkown,
+                Status = MUNity.Models.Simulation.EPetitionStates.Unkown,
                 Text = ""
             };
             agendaItem.Petitions.Add(newItem);
@@ -1227,6 +1274,11 @@ namespace MUNityCore.Services
             n.Token == token);
             if (user.Role != null) return (user.Role.Name, user.Role.Iso);
             return (user.DisplayName, "un");
+        }
+
+        internal string GetInviteLink(int userId)
+        {
+            return "abc";
         }
     }
 }

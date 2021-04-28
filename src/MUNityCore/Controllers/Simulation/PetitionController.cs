@@ -128,7 +128,7 @@ namespace MUNityCore.Controllers.Simulation
                 var createdPetition = this._simulationService.SubmitPetition(petition);
                 if (createdPetition != null)
                 {
-                    await this.SocketGroup(petition).PetitionAdded(createdPetition.ToPetitionDto());
+                    await this.SocketGroup(petition).PetitionAdded(this._simulationService.GetPetitionInfo(createdPetition.PetitionId));
                     return Ok();
                 }
             }

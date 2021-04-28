@@ -1,4 +1,4 @@
-﻿using MUNitySchema.Models.Simulation;
+﻿using MUNity.Models.Simulation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

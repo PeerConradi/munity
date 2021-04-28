@@ -213,7 +213,7 @@ namespace MUNityTest.SimulationTest
                 PetitionTypeId = petitionTypes.First().PetitionTypeId,
                 PetitionUserId = user.SimulationUserId,
                 SimulationId = simulationId,                                    // SimulationId should be optional
-                Status = MUNitySchema.Models.Simulation.EPetitionStates.Unkown,
+                Status = MUNity.Models.Simulation.EPetitionStates.Unkown,
                 TargetAgendaItemId = agendaItems.First().AgendaItemId,
                 Text = "More info",
             };
