@@ -386,10 +386,14 @@
         if (agendaItem != null)
             agendaItem.PetitionCount++;
 
-        if (this.selectedAgendaItem != null && this.selectedAgendaItem.AgendaItemId == petition.AgendaItemId)
+        if (this.selectedAgendaItem != null && this.selectedAgendaItem.AgendaItemId == petition.AgendaItemId &&
+            this.petitionsOfAgendaItem != null)
         {
-            this.petitionsOfAgendaItem.Add(petition);
-            this.petitionsOfAgendaItem = this.petitionsOfAgendaItem.OrderBy(n => n.OrderIndex).ThenBy(n => n.SubmitTime).ToList();
+            if (this.petitionsOfAgendaItem.All(n => n.PetitionId != petition.PetitionId))
+            {
+                this.petitionsOfAgendaItem.Add(petition);
+                this.petitionsOfAgendaItem = this.petitionsOfAgendaItem.OrderBy(n => n.OrderIndex).ThenBy(n => n.SubmitTime).ToList();
+            }
         }
         this.InvokeAsync(this.StateHasChanged);
     }
