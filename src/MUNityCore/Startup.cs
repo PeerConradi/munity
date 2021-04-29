@@ -125,6 +125,7 @@ namespace MUNityCore
             services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
             services.AddScoped<Services.FrontendSimulationService>();
             services.AddScoped<Services.SpeakerlistHubService>();
+            services.AddScoped<Services.MainViewService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>

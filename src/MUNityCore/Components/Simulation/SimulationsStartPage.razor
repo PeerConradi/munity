@@ -3,6 +3,7 @@
 @inject Services.FrontendSimulationService frontendSimulationService;
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService;
 @inject NavigationManager navManager;
+@inject Services.MainViewService mainViewService;
 
 @if (simulations != null)
 {
@@ -149,6 +150,7 @@
             {
                 this.knownSimulations = new List<MUNity.Schema.Simulation.SimulationTokenResponse>();
             }
+            mainViewService.LoadingState = 100;
             this.StateHasChanged();
         }
 

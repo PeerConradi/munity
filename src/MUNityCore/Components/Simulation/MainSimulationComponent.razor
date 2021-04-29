@@ -8,6 +8,7 @@
 @inject Services.SpeakerlistHubService speakerlistHubService;
 @inject NavigationManager navigationManager;
 @inject IJSRuntime JS;
+@inject Services.MainViewService mainViewService;
 
 @if (loadingState == LoadingStates.Loading)
 {
@@ -143,7 +144,7 @@ else
         {
             this.loadingState = LoadingStates.Errored;
         }
-
+        this.mainViewService.LoadingState = 100;
         this.StateHasChanged();
 
         //await JS.InvokeAsync<string>("App.init");

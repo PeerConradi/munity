@@ -2,6 +2,7 @@
 @inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
 @inject MUNityCore.Services.SimulationService simulationService;
 @inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
+@inject Services.MainViewService mainViewService;
 
 <h1 class="page-header mb-3">Tagesordnung</h1>
 
@@ -287,13 +288,17 @@
 
     private async Task MakePetition(int typeId)
     {
+        this.mainViewService.LoadingState = 0;
         await ViewModel.SubmitPetition(selectedAgendaItem.AgendaItemId, typeId);
         this.newPetitionModal.Hide();
+        this.mainViewService.LoadingState = 100;
     }
 
     private async Task MakePetitionActive(string petitionId)
     {
+        this.mainViewService.LoadingState = 0;
         await ViewModel.ActivatePetition(petitionId);
+        this.mainViewService.LoadingState = 100;
     }
 
     private async Task RemovePetition(string petitionId)
@@ -340,6 +345,7 @@
 
     private void OnPetitionRemoved(object sender, MUNity.Schema.Simulation.PetitionInteractedDto item)
     {
+        this.mainViewService.LoadingState = 0;
         bool changesMade = false;
 
         var agendaItem = this.AgendaItems.FirstOrDefault(n => n.AgendaItemId == item.AgendaItemId);
@@ -358,6 +364,8 @@
 
         if (changesMade)
             InvokeAsync(StateHasChanged);
+
+        this.mainViewService.LoadingState = 100;
     }
 
     private void OnAgendaItemCreated(object sender, MUNity.Schema.Simulation.AgendaItemDto item)

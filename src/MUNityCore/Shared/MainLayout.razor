@@ -1,5 +1,17 @@
 ﻿@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService storageService;
+@inject Services.MainViewService mainViewService;
+
+@if (mainViewService.LoadingState < 100)
+{
+    <div class="pace @((mainViewService.LoadingState >= 100) ? "pace-inactive" : "pace-active") ">
+        <div class="pace-progress" data-progress-text="@mainViewService.LoadingState%" data-progress="@mainViewService.LoadingState" style="transform: translate3d(@mainViewService.LoadingState%, 0px, 0px);">
+            <div class="pace-progress-inner"></div>
+        </div>
+        <div class="pace-activity"></div>
+    </div>
+}
+
 
 <div id="page-container">
     <Header />
@@ -33,6 +45,12 @@
     private async Task AcceptCookies()
     {
         await storageService.SetItemAsync<string>("munity_cookies-accepted", "true");
+    }
+
+    protected override void OnInitialized()
+    {
+        mainViewService.LoadingStateChanged += delegate { this.StateHasChanged(); };
+        base.OnInitialized();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
