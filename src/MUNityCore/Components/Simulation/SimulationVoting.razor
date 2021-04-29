@@ -1,7 +1,7 @@
 ﻿@inject Services.SimulationService simulationService;
 @inject Services.FrontendSimulationService frontendSimulationService;
 
-@if (isChair)
+@if (ViewModel != null && ViewModel.IsChair)
 {
 <Row>
     <div class="col-12">
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="panel-body">
-                @if (currentVoting != null)
+                @if (currentVoting != null && currentVoting.Slots != null)
                 {
                     <h3>@currentVoting.Name</h3>
                     <div class="progress rounded-corner m-b-15">
@@ -74,7 +74,7 @@
                         <span class="text-gray">(@this.currentVoting.AbstentionPercentageOverall % aller Stimmen inkl. Enthaltungen und nicht abgegebene Stimmen) </span>
                     </p>
 
-                    @if (currentVoting.Slots.Any(n => n.SimulationUserId == myUserId && n.Choice == MUNity.Schema.Simulation.EVoteStates.NotVoted))
+                    @if (currentVoting.Slots.Any(n => n.SimulationUserId == ViewModel.UserId && n.Choice == MUNity.Schema.Simulation.EVoteStates.NotVoted))
                     {
                         <div class="btn-group-lg">
                             <button class="btn btn-success m-1" @onclick="() => VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates.Pro)">Dafür stimmen</button>
@@ -152,14 +152,7 @@
 
 @code {
     [Parameter]
-    public int SimulationId { get; set; }
-
-    [Parameter]
-    public string Token { get; set; }
-
-    private bool isChair = false;
-
-    private int myUserId;
+    public ViewModel.SimulationViewModel ViewModel { get; set; }
 
     private class CreateNewVotingModel
     {
@@ -172,14 +165,16 @@
 
     MUNity.Schema.Simulation.Voting.SimulationVotingDto currentVoting;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        this.isChair = await simulationService.IsTokenValidAndUserChair(SimulationId, Token);
-        this.myUserId = simulationService.GetSimulationUserId(SimulationId, Token) ?? -1;
-        this.frontendSimulationService.VotingCreated += OnVotingCreated;
-        this.frontendSimulationService.Voted += OnVoted;
-        ReloadCurrentVoting();
-        //base.OnInitialized();
+        if (this.ViewModel != null)
+        {
+            this.ViewModel.VotingCreated += OnVotingCreated;
+            this.ViewModel.Voted += OnVoted;
+            ReloadCurrentVoting();
+        }
+
+        base.OnInitialized();
     }
 
     private void OnVotingCreated(object sender, MUNity.Schema.Simulation.Voting.SimulationVotingDto dto)
@@ -203,23 +198,21 @@
 
     private void ReloadCurrentVoting()
     {
-        currentVoting = simulationService.GetCurrentVoting(SimulationId);
-        InvokeAsync(this.StateHasChanged);
+        if (this.ViewModel != null)
+        {
+            currentVoting = simulationService.GetCurrentVoting(ViewModel.SimulationId);
+            InvokeAsync(this.StateHasChanged);
+        }
+
     }
 
-    private void VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates choice)
+    private async Task VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates choice)
     {
-        this.frontendSimulationService.Vote(currentVoting.VotingId, choice);
+        await this.ViewModel.Vote(currentVoting.VotingId, choice);
     }
 
     private async Task CreateVoting()
     {
-        await this.frontendSimulationService.CreateVoting(NewVoting.DisplayName, NewVoting.AllowAbstention);
-        //var voting = this.simulationService.CreateVotingForDelegates(SimulationId, NewVoting.DisplayName, NewVoting.AllowAbstention);
-        //if (voting != null)
-        //{
-        //    NewVoting.DisplayName = "";
-        //    ReloadCurrentVoting();
-        //}
+        await this.ViewModel.CreateVoting(NewVoting.DisplayName, NewVoting.AllowAbstention);
     }
 }

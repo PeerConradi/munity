@@ -17,28 +17,28 @@ else if (loadingState == LoadingStates.Forbid)
 {
     <Paragraph>Du bist nicht berechtigt an dieser Simulation teilzunehmen.</Paragraph>
 }
-else
+else if (loadingState == LoadingStates.Success)
 {
 
-    <ListOfSpeakerHeader ShowList="ShowListCallback" />
+    @*<ListOfSpeakerHeader ShowList="ShowListCallback" />*@
 
     <div class="row">
         <div class="@((showListOfSpeakers) ? "col-lg-8" : "col-lg-12")">
             @if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
             {
-                <SimulationUsers SimulationId="@simulationId" />
+                <SimulationUsers ViewModel="@_simulationViewModel" />
             }
             else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
             {
-                <SimulationAgenda SimulationId="@frontService.CurrentSimulationId" Token="@frontService.CurrentUserToken" />
+                <SimulationAgenda ViewModel="@_simulationViewModel" />
             }
             else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Voting)
             {
-                <SimulationVoting SimulationId="@simulationId" Token="@frontService.CurrentUserToken" />
+                <SimulationVoting ViewModel="@_simulationViewModel" />
             }
             else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Resolutions)
             {
-                <SimulationResolutionHome SimulationId="@simulationId" />
+                <SimulationResolutionHome SimViewModel="@_simulationViewModel" />
             }
         </div>
 
@@ -49,8 +49,10 @@ else
             </div>
         }
     </div>
-
-
+}
+else
+{
+    <p>Fehler beim Laden der Simulation :(</p>
 }
 
 @code {
@@ -64,18 +66,17 @@ else
     {
         Loading,
         Success,
-        Forbid
+        Forbid,
+        Errored
     }
 
     private bool showListOfSpeakers = false;
 
     private LoadingStates loadingState = LoadingStates.Loading;
 
-    private int simulationId = -1;
-
     MUNity.Schema.Simulation.GamePhases currentPhase { get; set; }
 
-    private HubConnection _listOfSpeakersHub;
+    private ViewModel.SimulationViewModel _simulationViewModel;
 
     private void ShowListCallback(bool value)
     {
@@ -91,10 +92,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (int.TryParse(Id, out simulationId))
-        {
-            frontService.TabChanged += delegate { this.StateHasChanged(); };
-        }
+
 
         if (!string.IsNullOrEmpty(Page))
         {
@@ -122,16 +120,30 @@ else
         if (!firstRender)
             return;
 
+        try
+        {
+            int simulationId = -1;
+            if (int.TryParse(Id, out simulationId))
+            {
+                frontService.TabChanged += delegate { this.StateHasChanged(); };
+                _simulationViewModel = await this.frontService.GetOrInitViewModel(simulationId);
+                if (_simulationViewModel != null)
+                {
+                    this.loadingState = LoadingStates.Success;
+                }
+                else
+                {
+                    this.loadingState = LoadingStates.Forbid;
+                }
+            }
 
-        var result = await this.frontService.Init(this.simulationId);
-        if (result)
-        {
-            this.loadingState = LoadingStates.Success;
+
         }
-        else
+        catch (Exception ex)
         {
-            this.loadingState = LoadingStates.Forbid;
+            this.loadingState = LoadingStates.Errored;
         }
+
         this.StateHasChanged();
 
         //await JS.InvokeAsync<string>("App.init");

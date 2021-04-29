@@ -1,40 +1,43 @@
 ﻿@inject Services.SimulationService simulationService;
-@inject Services.FrontendSimulationService frontendSimulationService;
 @inject NavigationManager navManager;
 
-<div class="col-lg-12 col-md-12">
-    <div class="card border-0 text-truncate mb-3 bg-dark text-white">
-        <!-- begin card-body -->
-        <div class="card-body">
-            <!-- begin title -->
-            <div class="mb-3 text-grey">
-                <b class="mb-3">Benutzer</b>
-                <span class="ml-2"><i class="fa fa-info-circle" data-toggle="popover" data-trigger="hover" data-title="Conversion Rate" data-placement="top" data-content="Percentage of sessions that resulted in orders from total number of sessions." data-original-title="" title=""></i></span>
-            </div>
-            <!-- end title -->
-            <!-- begin conversion-rate -->
-            <div class="d-flex align-items-center mb-1">
-                <h2 class="text-white mb-0">@users.Count(n => n.IsOnline) Online</h2>
-                <div class="ml-auto" style="position: relative;">
-                    @*<p>Right Text</p>*@
+@if (users != null)
+{
+    <div class="col-lg-12 col-md-12">
+        <div class="card border-0 text-truncate mb-3 bg-dark text-white">
+            <!-- begin card-body -->
+            <div class="card-body">
+                <!-- begin title -->
+                <div class="mb-3 text-grey">
+                    <b class="mb-3">Benutzer</b>
+                    <span class="ml-2"><i class="fa fa-info-circle" data-toggle="popover" data-trigger="hover" data-title="Conversion Rate" data-placement="top" data-content="Percentage of sessions that resulted in orders from total number of sessions." data-original-title="" title=""></i></span>
                 </div>
-            </div>
-            <!-- end conversion-rate -->
-            <!-- begin percentage -->
-            <div class="mb-4 text-grey">
-                @users.Count Insgesamt
-            </div>
+                <!-- end title -->
+                <!-- begin conversion-rate -->
+                <div class="d-flex align-items-center mb-1">
+                    <h2 class="text-white mb-0">@users.Count(n => n.IsOnline) Online</h2>
+                    <div class="ml-auto" style="position: relative;">
+                        @*<p>Right Text</p>*@
+                    </div>
+                </div>
+                <!-- end conversion-rate -->
+                <!-- begin percentage -->
+                <div class="mb-4 text-grey">
+                    @users.Count Insgesamt
+                </div>
 
-            <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Chairman" InviteLinkRequested="OpenInviteModal" />
-            <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Delegate" InviteLinkRequested="OpenInviteModal" />
-            <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Ngo" InviteLinkRequested="OpenInviteModal" />
-            <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Spectator" InviteLinkRequested="OpenInviteModal" />
-            <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.None" InviteLinkRequested="OpenInviteModal" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Chairman" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Delegate" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Ngo" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Spectator" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.None" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
 
+            </div>
+            <!-- end card-body -->
         </div>
-        <!-- end card-body -->
     </div>
-</div>
+}
+
 
 <Modal @ref="inviteModal">
     <ModalContent Centered="true">
@@ -55,8 +58,9 @@
 </Modal>
 
 @code {
+
     [Parameter]
-    public int SimulationId { get; set; }
+    public ViewModel.SimulationViewModel ViewModel { get; set; }
 
     private Modal inviteModal;
 
@@ -64,22 +68,26 @@
 
     private void OpenInviteModal(int userId)
     {
-        inviteLink = navManager.BaseUri + simulationService.GetInviteLink(userId);
+        inviteLink = navManager.BaseUri + "invite/" + simulationService.GetInviteLink(userId);
         this.inviteModal.Show();
     }
 
     private List<MUNityCore.Dtos.Simulations.SimulationUserInfoDto> users;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        users = simulationService.GetSimulationUserInfos(SimulationId);
-        this.frontendSimulationService.ConnectedUsersChanged += ConnectedUsersChanged;
+        if (this.ViewModel != null)
+        {
+            users = simulationService.GetSimulationUserInfos(ViewModel.SimulationId);
+            this.ViewModel.ConnectedUsersChanged += ConnectedUsersChanged;
+        }
+
         base.OnInitialized();
     }
 
     private void ConnectedUsersChanged(object sender, List<int> connectedUsers)
     {
-        foreach(var user in users)
+        foreach (var user in users)
         {
             user.IsOnline = connectedUsers.Contains(user.SimulationUserId);
         }

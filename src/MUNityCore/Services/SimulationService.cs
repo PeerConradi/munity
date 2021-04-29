@@ -561,6 +561,20 @@ namespace MUNityCore.Services
             return list;
         }
 
+        internal SimulationUserInfoDto GetSimulationUserInfo(int userId)
+        {
+            return this._context.SimulationUser.Where(n => n.SimulationUserId == userId)
+                .AsNoTracking()
+                .Select(n => new SimulationUserInfoDto()
+                {
+                    SimulationUserId = n.SimulationUserId,
+                    DisplayName = n.DisplayName,
+                    RoleName = (n.Role != null) ? n.Role.Name : "",
+                    RoleType = (n.Role != null) ? n.Role.RoleType : RoleTypes.None,
+                    RoleIso = (n.Role != null) ? n.Role.Iso : "un"
+                }).FirstOrDefault();
+        }
+
         public async Task<List<SimulationUserInfoDto>> GetSimulationUserInfosAsync(int simulationId)
         {
             return await this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId)
@@ -1286,7 +1300,43 @@ namespace MUNityCore.Services
 
         internal string GetInviteLink(int userId)
         {
-            return "abc";
+            var user = _context.SimulationUser.FirstOrDefault(n => n.SimulationUserId == userId);
+            if (user == null)
+                return null;
+
+            var inviteLink = new SimulationInvite()
+            {
+                SimulationInviteId = Util.Tools.IdGenerator.RandomString(30),
+                ExpireDate = DateTime.Now.AddMonths(1),
+                User = user
+            };
+            _context.SimulationInvites.Add(inviteLink);
+            _context.SaveChanges();
+            return inviteLink.SimulationInviteId;
+        }
+
+        internal InvitationResponse ValidateInviteLink(string inviteLink)
+        {
+            var result = _context.SimulationInvites
+                .Include(n => n.User)
+                .ThenInclude(n => n.Role)
+                .Include(n => n.User)
+                .ThenInclude(n => n.Simulation)
+                .FirstOrDefault(n => n.SimulationInviteId == inviteLink);
+
+            if (result == null)
+                return null;
+
+            var mdl = new InvitationResponse()
+            {
+                DisplayName = result.User.DisplayName,
+                RoleIso = result.User.Role?.Iso ?? "",
+                RoleName = result.User.Role?.Name ?? "",
+                SimulationId = result.User.Simulation?.SimulationId ?? -1,
+                SimulationName = result.User.Simulation?.Name ?? "",
+                Token = result.User.Token
+            };
+            return mdl;
         }
     }
 }

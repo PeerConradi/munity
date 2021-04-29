@@ -3,14 +3,16 @@ using System;
 using MUNityCore.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityCore.Migrations
 {
     [DbContext(typeof(MunityContext))]
-    partial class MunityContextModelSnapshot : ModelSnapshot
+    [Migration("20210429153922_Added SimulationLog and Invites")]
+    partial class AddedSimulationLogandInvites
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1127,8 +1129,7 @@ namespace MUNityCore.Migrations
             modelBuilder.Entity("MUNityCore.Models.Simulation.SimulationInvite", b =>
                 {
                     b.Property<string>("SimulationInviteId")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(95) CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("ExpireDate")
                         .HasColumnType("datetime(6)");
@@ -1150,19 +1151,16 @@ namespace MUNityCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CategoryName")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int?>("SimulationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
-                        .HasMaxLength(2000)
-                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime(6)");

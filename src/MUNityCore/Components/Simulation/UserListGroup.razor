@@ -27,7 +27,7 @@
 
     @foreach (var user in _users)
     {
-        <UserListItem User="user" InviteLinkRequested="InviteLinkRequested" />
+        <UserListItem User="user" InviteLinkRequested="InviteLinkRequested" IsChair="@IsChair" />
     }
 }
 
@@ -42,6 +42,9 @@
 
     [Parameter]
     public EventCallback<int> InviteLinkRequested { get; set; }
+
+    [Parameter]
+    public bool IsChair { get; set; }
 
 
     private IEnumerable<Dtos.Simulations.SimulationUserInfoDto> _users

@@ -13,7 +13,7 @@
         }
         @User.RoleName (@User.DisplayName)
     </div>
-    @if (frontendSimulationService.IsChair)
+    @if (IsChair)
     {
         <div class="d-flex align-items-center ml-auto">
             <div class="text-green f-s-11">
@@ -30,4 +30,7 @@
 
     [Parameter]
     public Dtos.Simulations.SimulationUserInfoDto User { get; set; }
+
+    [Parameter]
+    public bool IsChair { get; set; } = false;
 }

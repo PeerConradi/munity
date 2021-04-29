@@ -109,6 +109,10 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<SimulationVotingSlot> VotingSlots { get; set; }
 
+        public DbSet<SimulationLog> SimulationLog { get; set; }
+
+        public DbSet<SimulationInvite> SimulationInvites { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MunityUser>().HasKey(n => n.Id);

@@ -14,7 +14,7 @@
                         <a class="btn btn-xs btn-icon btn-circle btn-primary"
                            @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
                     }
-                    else if (resolutionMode == EResolutionMode.Read && (simulationService.IsChair || _info.AllowPublicEdit))
+                    else if (resolutionMode == EResolutionMode.Read && (SimViewModel.IsChair || _info.AllowPublicEdit))
                     {
                         <a class="btn btn-xs btn-icon btn-circle btn-secondary"
                            @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
@@ -27,7 +27,8 @@
                 @if (resolutionMode == EResolutionMode.Write)
                 {
                     <MUNityCore.Components.Resolution.ResolutionEditor Resolution="@_resolution"
-                                                                       Info="@_info"/>
+                                                                       Info="@_info"
+                                                                       SimViewModel="@SimViewModel"/>
                 }
                 else if (resolutionMode == EResolutionMode.Read)
                 {
@@ -62,6 +63,9 @@
 
     [Parameter]
     public EventCallback OnEditorClosed { get; set; }
+
+    [Parameter]
+    public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
     private MUNity.Models.Resolution.Resolution _resolution;
 

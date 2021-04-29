@@ -15,7 +15,7 @@
                 <li class="nav-item m-l-5">
                     <button class="btn btn-success" @onclick="() => CreateOperativeParagraph()"><i class="fa fa-plus"></i> Neuer Operativer Absatz</button>
                 </li>
-                @if (simulationService.IsChair)
+                @if (SimViewModel.IsChair)
                 {
                     <li class="nav-item m-l-5">
                         @if (this.Info.AllowPublicEdit)
@@ -90,6 +90,9 @@
 
     [Parameter]
     public MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo Info { get; set; }
+
+    [Parameter]
+    public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
     private string resolutionTopic
     {

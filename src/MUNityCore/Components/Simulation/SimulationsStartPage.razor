@@ -65,8 +65,6 @@
 
     private Modal modalRef;
 
-    private MUNity.Schema.Simulation.JoinAuthenticate joinAuthenticate;
-
     private string displayName;
 
     private string userId;
@@ -85,9 +83,9 @@
             var simulationResponse = this.simulationService.JoinSimulation(selectedSimulation.Id, userId, userPass, displayName);
             if (simulationResponse != null)
             {
-                this.knownSimulations.Add(simulationResponse);
-                await this.localStorageService.SetItemAsync("munity_simsims", this.knownSimulations);
+                await this.frontendSimulationService.StoreSimulationToken(simulationResponse);
                 this.HideModal();
+                await JoinSimulation(simulationResponse.SimulationId);
             }
         }
     }
@@ -102,14 +100,17 @@
         simulations = simulationService.GetHomeScreenInfos();
     }
 
-    private void JoinSimulation(int id)
+    private async Task JoinSimulation(int id)
     {
         var token = this.knownSimulations.FirstOrDefault(n => n.SimulationId == id);
         if (token != null)
         {
-            this.frontendSimulationService.CurrentUserToken = token.Token;
-            this.frontendSimulationService.CurrentSimulationId = id;
-            navManager.NavigateTo("/simulation/" + id);
+            var sim = await this.frontendSimulationService.GetOrInitViewModel(id);
+            if (sim != null)
+            {
+                navManager.NavigateTo("/simulation/" + id);
+            }
+
         }
     }
 
@@ -120,7 +121,7 @@
 
         if (this.knownSimulations == null)
         {
-            this.knownSimulations = await this.localStorageService.GetItemAsync<List<MUNity.Schema.Simulation.SimulationTokenResponse>>("munity_simsims");
+            this.knownSimulations = await this.frontendSimulationService.GetStoredSimulations();
             if (this.knownSimulations != null && this.knownSimulations.Count > 0)
             {
                 var simsToDelete = new List<MUNity.Schema.Simulation.SimulationTokenResponse>();

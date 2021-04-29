@@ -1,0 +1,75 @@
+﻿@inject Services.SimulationService simulationService;
+@inject Services.FrontendSimulationService frontendSimulationService;
+@inject NavigationManager navManager;
+@page "/invite/{id}"
+
+@if (validationState == InviteLinkValidationStates.Checking)
+{
+    <p>Einladung wird überprüft!</p>
+}
+else if (validationState == InviteLinkValidationStates.Invalid)
+{
+    <p>Einladungslink ungültig</p>
+}
+else if (validationState == InviteLinkValidationStates.Valid)
+{
+    @if (!string.IsNullOrEmpty(_invitation.DisplayName))
+    {
+        <h3>Willkommen @_invitation.DisplayName <a class="text-blue-transparent-7">Anzeigename ändern</a></h3>
+    }
+    else
+    {
+        <h3>Willkommen</h3>
+        <p>Bitte gebe noch einen Anzeigenamen ein.</p>
+        <input type="text" class="form-control" />
+    }
+
+    <p>Du bist dabei dem Raum "@_invitation.SimulationName" beizutreten!</p>
+    <p>Deine Rolle: @((string.IsNullOrEmpty(_invitation.RoleName)) ? "Keine Rolle zugewiesen" : _invitation.RoleName)</p>
+    <button class="btn btn-primary" @onclick="() => EnterSimulation()">Raum betreten</button>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private MUNity.Schema.Simulation.InvitationResponse _invitation;
+
+    private enum InviteLinkValidationStates
+    {
+        Checking,
+        Valid,
+        Invalid
+    };
+
+    private InviteLinkValidationStates validationState = InviteLinkValidationStates.Checking;
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(Id))
+        {
+            _invitation = simulationService.ValidateInviteLink(Id);
+            validationState = InviteLinkValidationStates.Valid;
+        }
+        else
+        {
+            validationState = InviteLinkValidationStates.Invalid;
+        }
+
+        base.OnInitialized();
+    }
+
+    private async Task EnterSimulation()
+    {
+        await this.frontendSimulationService.RemoveSimulationTokensForSimulation(_invitation.SimulationId);
+        await this.frontendSimulationService.StoreSimulationToken(new MUNity.Schema.Simulation.SimulationTokenResponse()
+        {
+            Name = _invitation.SimulationName,
+            Pin = "12345",
+            SimulationId = _invitation.SimulationId,
+            Token = _invitation.Token
+        });
+
+        navManager.NavigateTo(navManager.BaseUri + "simulation/" + _invitation.SimulationId.ToString());
+    }
+}

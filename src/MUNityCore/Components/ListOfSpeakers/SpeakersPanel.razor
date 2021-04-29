@@ -6,17 +6,17 @@
     <div class="card-body">
         <div class="mb-3 text-grey">
             <b>Redeliste</b>
-            @if (this.frontendSimulationService.IsChair)
+            @if (this.frontendSimulationService.CurrentSimulation.IsChair)
             {
                 <button class="btn btn-sm btn-circle @resumeSpeakerButtonClass"
                         @onclick="() => ToggleSpeaking()">
-                    <i class="fa @((ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking) ? "fa-pause" : "fa-play") "></i>
+                    <i class="fa @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking) ? "fa-pause" : "fa-play") "></i>
                 </button>
                 <button class="btn btn-sm btn-circle btn-primary"
                         @onclick="() => NextSpeaker()">
                     <i class="fa fa-step-forward"></i>
                 </button>
-                @if (ListOfSpeakers.CurrentSpeaker != null)
+                @if (ViewModel.Speakerlist.CurrentSpeaker != null)
                 {
                     <button class="btn btn-sm btn-circle btn-danger"
                             @onclick="() => ClearSpeaker()">
@@ -26,7 +26,7 @@
             }
         </div>
         <div class="d-flex align-items-center mb-1">
-            <h2 class="text-white mb-0">@((ListOfSpeakers.CurrentSpeaker != null) ? ListOfSpeakers.CurrentSpeaker.Name : "Niemand")</h2>
+            <h2 class="text-white mb-0">@((ViewModel.Speakerlist.CurrentSpeaker != null) ? ViewModel.Speakerlist.CurrentSpeaker.Name : "Niemand")</h2>
             <div class="ml-auto" style="position: relative;">
                 <a href="javascript:;" title="Auf die Redeliste setzen"
                    class="btn btn-icon btn-circle @((isOnSpeakerlist) ? "btn-default disabled" : "btn-success")"
@@ -43,15 +43,15 @@
 
         <div class="mb-4 text-grey">
             <i class="fa fa-clock"></i>
-            @if (ListOfSpeakers.RemainingSpeakerTime.TotalSeconds > 0)
+            @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds > 0)
             {
-                <span>@ListOfSpeakers.RemainingSpeakerTime.ToString(@"mm\:ss") verbleibend</span>
+                <span>@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss") verbleibend</span>
             }
             else
             {
-                @if (frontendSimulationService.IsChair)
+                @if (frontendSimulationService.CurrentSimulation.IsChair)
                 {
-                    <span class="text-red">@ListOfSpeakers.RemainingSpeakerTime.ToString(@"mm\:ss") überzogen</span>
+                    <span class="text-red">@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss") überzogen</span>
                 }
                 else
                 {
@@ -60,13 +60,13 @@
 
             }
         </div>
-        @foreach (var waitingSpeaker in ListOfSpeakers.Speakers)
+        @foreach (var waitingSpeaker in ViewModel.Speakerlist.Speakers)
         {
     <div class="d-flex mb-2">
         <div class="d-flex align-items-center">
             @waitingSpeaker.Name
         </div>
-        @if (this.frontendSimulationService.IsChair)
+        @if (this.frontendSimulationService.CurrentSimulation.IsChair)
         {
             <div class="d-flex align-items-center ml-auto">
                 <button class="btn btn-sm btn-circle btn-danger"
@@ -84,7 +84,7 @@
 
 @code {
     [Parameter]
-    public MUNity.Models.ListOfSpeakers.ListOfSpeakers ListOfSpeakers { get; set; }
+    public ViewModel.SpeakerlistViewModel ViewModel { get; set; }
 
     private System.Timers.Timer refreshTimer;
 
@@ -92,8 +92,8 @@
     {
         get
         {
-            if (this.ListOfSpeakers.SpeakerTime.TotalSeconds == 0) return 0;
-            return Math.Round(this.ListOfSpeakers.RemainingSpeakerTime.TotalSeconds * 100 / this.ListOfSpeakers.SpeakerTime.TotalSeconds);
+            if (this.ViewModel.Speakerlist.SpeakerTime.TotalSeconds == 0) return 0;
+            return Math.Round(this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds * 100 / this.ViewModel.Speakerlist.SpeakerTime.TotalSeconds);
         }
     }
 
@@ -101,48 +101,48 @@
     {
         get
         {
-            if (ListOfSpeakers.CurrentSpeaker == null) return "disabled btn-default";
-            if (ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
-                ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
+            if (ViewModel.Speakerlist.CurrentSpeaker == null) return "disabled btn-default";
+            if (ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
+                ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
                 return "btn-warning";
 
             return "btn-success";
         }
     }
 
-    private bool isOnSpeakerlist => ListOfSpeakers.Speakers.Any(n => n.Name == this.frontendSimulationService.CurrentRoleName);
+    private bool isOnSpeakerlist => ViewModel.Speakerlist.Speakers.Any(n => n.Name == this.frontendSimulationService.CurrentSimulation.RoleName);
 
     private void ClearSpeaker()
     {
-        this.speakerlistHubService.ClearSpeaker(this.ListOfSpeakers);
+        this.ViewModel.ClearSpeaker();
     }
 
     private async Task AddMeToSpeakerlist()
     {
-        await this.frontendSimulationService.AddMeToSpeakerlist();
+        await this.frontendSimulationService.CurrentSimulation.AddMeToSpeakerlist();
     }
 
     private void NextSpeaker()
     {
-        this.speakerlistHubService.NextSpeaker(this.ListOfSpeakers);
+        this.ViewModel.NextSpeaker();
     }
 
     private void ToggleSpeaking()
     {
-        if (this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
-        this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
+        if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
+        this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
         {
-            this.speakerlistHubService.Pause(this.ListOfSpeakers);
+            this.ViewModel.Pause();
         }
         else
         {
-            this.speakerlistHubService.ResumeSpeaker(this.ListOfSpeakers);
+            this.ViewModel.ResumeSpeaker();
         }
     }
 
     private async Task RemoveSpeaker(MUNity.Models.ListOfSpeakers.Speaker speaker)
     {
-        await this.speakerlistHubService.RemoveSpeaker(this.ListOfSpeakers, speaker.Id);
+        await this.ViewModel.RemoveSpeaker(speaker.Id);
     }
 
     protected override void OnInitialized()
@@ -155,8 +155,8 @@
 
     private void RefreshView()
     {
-        if (this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
-            this.ListOfSpeakers.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
+        if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
+            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
         {
             InvokeAsync(this.StateHasChanged);
         }

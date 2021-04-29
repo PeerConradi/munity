@@ -17,12 +17,12 @@ using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Models.Simulation;
 using MUNityCore.Models.Simulation.Presets;
 using MUNity.Schema.Simulation.Resolution;
+using MUNityCore.ViewModel;
 
 namespace MUNityCore.Services
 {
     public class FrontendSimulationService
     {
-
         private MUNityCore.DataHandlers.EntityFramework.MunityContext _context;
 
         private Blazored.LocalStorage.ILocalStorageService _storageService;
@@ -33,43 +33,13 @@ namespace MUNityCore.Services
 
         private Services.SpeakerlistHubService _speakerlistHubService;
 
-        private HubConnection _hubConnection;
-
         private NavigationManager _navigationManager;
 
         public event EventHandler<SimulationTabs> TabChanged;
 
-        public event EventHandler<List<int>> ConnectedUsersChanged;
+        private List<SimulationViewModel> _viewModels;
 
-        public event EventHandler<MUNity.Schema.Simulation.Voting.SimulationVotingDto> VotingCreated;
-
-        public event EventHandler<MUNity.Schema.Simulation.VotedEventArgs> Voted;
-
-        public event EventHandler<MUNity.Schema.Simulation.AgendaItemDto> AgendaItemCreated;
-
-        public event EventHandler<MUNity.Schema.Simulation.PetitionInfoDto> PetitionAdded;
-
-        public event EventHandler<MUNity.Schema.Simulation.PetitionInteractedDto> PetitionRemoved;
-
-        public event EventHandler<int> AgendaItemRemoved;
-
-        public event EventHandler<string> PetitionActivated;
-
-        private int _currentSimulationId = -1;
-        public int CurrentSimulationId
-        {
-            get => _currentSimulationId;
-            set 
-            {
-                if (_currentSimulationId != value)
-                {
-                    _currentSimulationId = value;
-                    CurrentSimulationIdChanged?.Invoke(this, value);
-                }
-            }
-        }
-
-        public bool IsChair { get; private set; }
+        public event EventHandler<SimulationViewModel> CurrentSimulationChanged;
 
         public enum SimulationTabs
         {
@@ -93,17 +63,9 @@ namespace MUNityCore.Services
             }
         }
 
-        public string CurrentUserToken { get; set; }
-
-        public string CurrentDisplayName { get; set; } = "";
-
-        public string CurrentRoleName { get; set; } = "";
-
-        public string CurrentRoleIso { get; set; } = "un";
+        public SimulationViewModel CurrentSimulation => _viewModels?.FirstOrDefault();
 
         public bool SpeakerlistOpened = false;
-
-        public event EventHandler<int> CurrentSimulationIdChanged;
 
         public MUNity.Models.ListOfSpeakers.ListOfSpeakers CurrentSpeakerlist { get; set; }
 
@@ -128,70 +90,36 @@ namespace MUNityCore.Services
             }
         }
 
-        public async Task<bool> Init(int simulationId)
+        internal async Task<SimulationViewModel> GetOrInitViewModel(int simulationId)
         {
-            var token = await GetUserTokenForSimulation(simulationId);
-            if (token == null) return false;
 
-            this.CurrentSimulationId = simulationId;
-            this.CurrentUserToken = token;
+            var viewModel = this._viewModels.FirstOrDefault(n => n.SimulationId == simulationId);
+            if (viewModel != null)
+                return viewModel;
+
+            var token = await GetUserTokenForSimulation(simulationId);
+            if (token == null) return null;
+
             var infos = this._context.SimulationUser
                 .Include(n => n.Role)
                 .FirstOrDefault(n => n.Simulation.SimulationId == simulationId && n.Token == token);
-            this.CurrentDisplayName = infos.DisplayName;
-            this.CurrentRoleIso = infos.Role?.Iso ?? "un";
-            this.CurrentRoleName = infos.Role?.Name ?? "";
-            this.IsChair = infos.Role.RoleType == RoleTypes.Chairman;
-
-            _hubConnection = new HubConnectionBuilder().WithUrl(_navigationManager.BaseUri + "simsocket").Build();
-
-            _hubConnection.On<List<int>>(nameof(MUNity.Hubs.ITypedSimulationHub.ConnectedUsersChanged), (n) =>
+            if (infos != null)
             {
-                this.ConnectedUsersChanged?.Invoke(this, n);
-            });
-            _hubConnection.On<MUNity.Schema.Simulation.Voting.SimulationVotingDto>(nameof(MUNity.Hubs.ITypedSimulationHub.VoteCreated), (n) =>
-            {
-                this.VotingCreated?.Invoke(this, n);
-            });
-            _hubConnection.On<MUNity.Schema.Simulation.VotedEventArgs>(nameof(MUNity.Hubs.ITypedSimulationHub.Voted), n => this.Voted?.Invoke(this, n));
-            _hubConnection.On<MUNity.Schema.Simulation.AgendaItemDto>(nameof(MUNity.Hubs.ITypedSimulationHub.AgendaItemAdded), n => this.AgendaItemCreated?.Invoke(this, n));
-            _hubConnection.On<MUNity.Schema.Simulation.PetitionInfoDto>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionAdded), n => this.PetitionAdded?.Invoke(this, n));
-            _hubConnection.On<string>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionActivated), n => this.PetitionActivated?.Invoke(this, n));
-            _hubConnection.On<MUNity.Schema.Simulation.PetitionInteractedDto>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionDeleted), n => this.PetitionRemoved?.Invoke(this, n));
-            _hubConnection.On<int>(nameof(MUNity.Hubs.ITypedSimulationHub.AgendaItemRemoved), n => this.AgendaItemRemoved?.Invoke(this, n));
-
-            await _hubConnection.StartAsync();
-
-            await _hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.SignIn), this.CurrentSimulationId, infos.SimulationUserId);
-
-            await InitSpeakerlist();
-            return true;
-        }
-
-        private async Task InitSpeakerlist()
-        {
-            var listId = this._context.Simulations.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.SimulationId == this.CurrentSimulationId).ListOfSpeakers?.ListOfSpeakersId;
-            if (listId != null)
-            {
-                this.CurrentSpeakerlist = _speakerlistService.GetSpeakerlist(listId);
+                viewModel = await SimulationViewModel.Init(_navigationManager.BaseUri + "simsocket");
+                viewModel.DisplayName = infos.DisplayName;
+                viewModel.RoleIso = infos.Role?.Iso ?? "un";
+                viewModel.RoleName = infos.Role?.Name ?? "";
+                viewModel.IsChair = infos.Role.RoleType == RoleTypes.Chairman;
+                viewModel.UserId = infos.SimulationUserId;
+                viewModel.Token = infos.Token;
+                viewModel.SimulationId = simulationId;
+                await viewModel.SignIn();
+                this._viewModels.Add(viewModel);
+                if (this._viewModels.Count == 1)
+                    CurrentSimulationChanged?.Invoke(this, viewModel);
             }
-            else
-            {
-                this.CurrentSpeakerlist = this._simulationService.InitListOfSpeakers(this.CurrentSimulationId);
-            }
+            return viewModel;
 
-            await this._speakerlistHubService.InitHub(this.CurrentSpeakerlist);
-            await _speakerlistHubService.Subscribe(this.CurrentSpeakerlist.ListOfSpeakersId);
-            //if (this.CurrentSpeakerlist != null)
-            //{
-            //    await speakerlistHubService.Subscribe(this.frontService.CurrentSpeakerlist.ListOfSpeakersId, _listOfSpeakersHub.ConnectionId);
-            //}
-        }
-
-        public async Task AddMeToSpeakerlist()
-        {
-            if (this.CurrentSpeakerlist == null) return;
-            await this._speakerlistHubService.AddSpeaker(this.CurrentSpeakerlist, this.CurrentRoleIso, this.CurrentRoleName);
         }
 
         private async Task<string> GetUserTokenForSimulation(int simulationId)
@@ -207,55 +135,57 @@ namespace MUNityCore.Services
                 return null;
             }
         }
+        
 
-        internal async Task CreateVoting(string displayName, bool allowAbstention)
+        internal async Task<SimulationTokenResponse> CheckForToken(int simulationId)
         {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateVotingForDelegates), this.CurrentSimulationId, displayName, allowAbstention);
+            var savedTokens = await this._storageService.GetItemAsync<List<SimulationTokenResponse>>("munity_simsims");
+            if (savedTokens == null || savedTokens.Count == 0)
+                return null;
+
+            return savedTokens.FirstOrDefault(n => n.SimulationId == simulationId);
         }
 
-        internal async Task Vote(string votingId, MUNity.Schema.Simulation.EVoteStates choice)
+        internal async Task StoreSimulationToken(SimulationTokenResponse simulationResponse)
         {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.Vote), votingId, choice);
+            var savedTokens = await GetStoredSimulations();
+            savedTokens.Add(simulationResponse);
+            await this._storageService.SetItemAsync("munity_simsims", savedTokens);
         }
 
-        internal async Task CreateAgendaItem(string name, string description)
+        internal async Task RemoveSimulationTokensForSimulation(int simulationId)
         {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateAgendaItem), name, description);
+            var tokens = await GetStoredSimulations();
+            var toDelete = tokens.Where(n => n.SimulationId == simulationId);
+            foreach(var del in toDelete)
+            {
+                tokens.Remove(del);
+            }
+            await this._storageService.SetItemAsync("munity_simsims", tokens);
         }
 
-        internal async Task RemoveAgendaItem(int agendaItemId)
+        internal async Task<List<SimulationTokenResponse>> GetStoredSimulations()
         {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.RemoveAgendaItem), agendaItemId);
+            var list = await this._storageService.GetItemAsync<List<MUNity.Schema.Simulation.SimulationTokenResponse>>("munity_simsims");
+            if (list == null)
+                list = new List<SimulationTokenResponse>();
+            return list;
         }
 
-        internal async Task SubmitPetition(int agendaItemId, int petitionType)
-        {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.MakePetition), agendaItemId, petitionType);
-        }
-
-        internal async Task ActivatePetition(string petitionId)
-        {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.ActivatePetition), petitionId);
-        }
-
-        internal async Task RemovePetition(string petitionId)
-        {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.RemovePetition), petitionId);
-        }
-
-        public FrontendSimulationService(MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext,
+        public FrontendSimulationService(MUNityCore.DataHandlers.EntityFramework.MunityContext context,
             Blazored.LocalStorage.ILocalStorageService storageService,
             Services.SpeakerlistService speakerlistService, 
             Services.SimulationService simulationService,
             Services.SpeakerlistHubService speakerlistHubService,
             NavigationManager navigationManager)
         {
-            this._context = munityContext;
+            this._context = context;
             this._storageService = storageService;
             this._speakerlistService = speakerlistService;
             this._simulationService = simulationService;
             this._speakerlistHubService = speakerlistHubService;
             this._navigationManager = navigationManager;
+            this._viewModels = new List<SimulationViewModel>();
         }
 
     }

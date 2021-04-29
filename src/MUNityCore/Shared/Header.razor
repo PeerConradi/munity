@@ -1,5 +1,6 @@
 ﻿@using Services;
 @inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
+@inject NavigationManager navManager;
 
 
 <div id="header" class="header navbar-default">
@@ -20,7 +21,7 @@
 		</a>
 	</div>
 
-	@if (frontendSimulationService.CurrentSimulationId != -1)
+	@if (menuHeader == MenuHeaders.Simulation)
 	{
 		<MUNityCore.Shared.HeaderPartial.HeaderSimulation />
 	}
@@ -57,12 +58,36 @@
 
 @code 
 {
+    private enum MenuHeaders
+    {
+        None,
+        Simulation
+    }
 
-	protected override void OnInitialized()
-	{
-		if (this.frontendSimulationService != null)
-		{
-			this.frontendSimulationService.CurrentSimulationIdChanged += delegate { this.StateHasChanged(); };
-		}
-	}
+    private MenuHeaders menuHeader;
+
+    protected override void OnInitialized()
+    {
+        navManager.LocationChanged += OnLocationChanged;
+        RefreshHeaderNavigation(navManager.Uri);
+    }
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs args)
+    {
+        RefreshHeaderNavigation(args.Location);
+    }
+
+    private void RefreshHeaderNavigation(string fullUri)
+    {
+        var path = fullUri.Substring(navManager.BaseUri.Length);
+        if (path == "simulation" || path.StartsWith("simulation/"))
+        {
+            menuHeader = MenuHeaders.Simulation;
+        }
+        else
+        {
+            menuHeader = MenuHeaders.None;
+        }
+		this.StateHasChanged();
+    }
 }

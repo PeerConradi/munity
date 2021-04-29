@@ -6,35 +6,42 @@
 @if (!string.IsNullOrEmpty(selectedResolutionId))
 {
     <MUNityCore.Components.Resolution.ResolutionEditorPro ResolutionId="@selectedResolutionId"
-                                                          OnEditorClosed="EditorClosed" />
+                                                          OnEditorClosed="EditorClosed"
+                                                          SimViewModel="@SimViewModel"/>
 }
 else
 {
     <h3> Resolutionen </h3>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="form-group">
-                <Label>Resolution öffnen</Label>
-                <select class="form-control" @bind="@selectedResolutionId">
-                    <option value="" disabled>Resolution auswählen</option>
-                    @foreach (var resolution in resolutions)
-                    {
-
-                        <option value="@resolution.ResolutionId">@resolution.Name</option>
-                    }
-                </select>
-                <button class="btn btn-primary" @onclick="() => UpdateResolutions()">Aktualisieren</button>
-            </div>
-            <div class="form-group">
-                <label>Erstellen</label>
-                <button class="btn btn-block btn-success mt-10"
-                        @onclick="() => createNewModal.Show()">
-                    Neue Resolution erstellen
-                </button>
+    @if (resolutions != null && resolutions.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <Label>Resolution öffnen</Label>
+                    <select class="form-control" @bind="@selectedResolutionId">
+                        <option value="" disabled>Resolution auswählen</option>
+                        @foreach (var resolution in resolutions)
+                        {
+                            <option value="@resolution.ResolutionId">@resolution.Name</option>
+                        }
+                    </select>
+                    <button class="btn btn-primary" @onclick="() => UpdateResolutions()">Aktualisieren</button>
+                </div>
+                <div class="form-group">
+                    <label>Erstellen</label>
+                    <button class="btn btn-block btn-success mt-10"
+                            @onclick="() => createNewModal.Show()">
+                        Neue Resolution erstellen
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <p>Keine Resolutionen gefunden oder sie werden noch geladen :/</p>
+    }
+
 }
 
 <Modal @ref="createNewModal">
@@ -57,7 +64,7 @@ else
 
 @code {
     [Parameter]
-    public int SimulationId { get; set; }
+    public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
     private Modal createNewModal;
 
@@ -72,15 +79,13 @@ else
         this.selectedResolutionId = string.Empty;
     }
 
-    private bool showResolutions = true;
-
     private List<MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo> resolutions =
         new List<MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo>();
 
     private void CreateNewResolution()
     {
-        if (string.IsNullOrEmpty(titleOfNewResolution)) return;
-        var created = resolutionService.CreateSimulationResolution(SimulationId, titleOfNewResolution, "");
+        if (string.IsNullOrEmpty(titleOfNewResolution) || SimViewModel == null) return;
+        var created = resolutionService.CreateSimulationResolution(SimViewModel.SimulationId, titleOfNewResolution, "");
         if (created != null)
         {
             var info = new MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo()
@@ -99,7 +104,10 @@ else
 
     private async Task UpdateResolutions()
     {
-        this.resolutions = await simulationService.GetResolutions(SimulationId);
+        if (SimViewModel == null)
+            return;
+
+        this.resolutions = await simulationService.GetResolutions(SimViewModel.SimulationId);
     }
 
     protected override async Task OnInitializedAsync()

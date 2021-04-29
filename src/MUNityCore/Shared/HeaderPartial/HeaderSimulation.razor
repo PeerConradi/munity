@@ -52,8 +52,21 @@
 
     protected override void OnInitialized()
     {
-        frontendSimulationService.VotingCreated += OnVotingCreated;
+        if (frontendSimulationService.CurrentSimulation != null)
+        {
+            BindBadgesLoader(frontendSimulationService.CurrentSimulation);
+        }
+        else
+        {
+            frontendSimulationService.CurrentSimulationChanged += (o, vm) => BindBadgesLoader(vm);
+        }
+
         base.OnInitialized();
+    }
+
+    private void BindBadgesLoader(ViewModel.SimulationViewModel viewModel)
+    {
+        frontendSimulationService.CurrentSimulation.VotingCreated += OnVotingCreated;
     }
 
     private void OnVotingCreated(object sender, MUNity.Schema.Simulation.Voting.SimulationVotingDto dto)
