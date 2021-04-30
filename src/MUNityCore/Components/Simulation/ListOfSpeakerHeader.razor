@@ -4,7 +4,7 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto text-white">
-            <li class="nav-item">
+            <li>
                 <h4>Redeliste:</h4>
             </li>
             @if (this.ViewModel != null)
@@ -13,20 +13,39 @@
                     <h4>@((ViewModel.Speakerlist.CurrentSpeaker != null) ? ViewModel.Speakerlist.CurrentSpeaker.Name : "Niemand")</h4>
                 </li>
                 <li class="nav-item text-secondary m-l-20">
-                    <h4>@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
+                    @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds <= 0)
+                    {
+                        <h4 class="text-danger">Zum Ende kommen!</h4>
+                    }
+                    else
+                    {
+                        <h4>@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
+                    }
+
                 </li>
                 <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
-                    @((ViewModel.Speakerlist.Speakers.Any()) ? ViewModel.Speakerlist.Speakers.First().Name : "keine Warteschlange")
+                    @((ViewModel.Speakerlist.Speakers.Any()) ? "danach: " + ViewModel.Speakerlist.Speakers.First().Name : null)
                     @((ViewModel.Speakerlist.Speakers.Any() && ViewModel.Speakerlist.Speakers.Count() > 1) ? "..." : null)
+                </li>
+                <li class="ml-3">
+                    <h4>F &amp; K:</h4>
                 </li>
                 <li class="nav-item m-l-10">
                     <h4>@((ViewModel.Speakerlist.CurrentQuestion != null) ? ViewModel.Speakerlist.CurrentQuestion.Name : "Niemand")</h4>
                 </li>
                 <li class="nav-item text-secondary m-l-20">
-                    <h4>@ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
+                    @if (ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds <= 0)
+                    {
+                        <h4 class="text-danger">Zum Ende kommen!</h4>
+                    }
+                    else
+                    {
+                        <h4>@ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
+                    }
+
                 </li>
                 <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
-                    @((ViewModel.Speakerlist.Questions.Any()) ? ViewModel.Speakerlist.Questions.First().Name : "keine Warteschlange").
+                    @((ViewModel.Speakerlist.Questions.Any()) ? "danach: " + ViewModel.Speakerlist.Questions.First().Name : null).
                     @((ViewModel.Speakerlist.Questions.Any() && ViewModel.Speakerlist.Questions.Count() > 1) ? "..." : null)
                 </li>
             }
@@ -51,9 +70,24 @@
 
     private bool showListOfSpeakers = false;
 
+    private System.Timers.Timer refreshTimer;
+
     protected override void OnInitialized()
     {
         this.ViewModel.SpeakerlistChanged += delegate { this.StateHasChanged(); };
+        this.refreshTimer = new System.Timers.Timer(1000);
+        this.refreshTimer.Elapsed += OnTimeTick;
+        this.refreshTimer.Start();
         base.OnInitialized();
+    }
+
+    private void OnTimeTick(object sender, System.Timers.ElapsedEventArgs args)
+    {
+        if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
+        this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question ||
+        this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking)
+        {
+            InvokeAsync(StateHasChanged);
+        }
     }
 }

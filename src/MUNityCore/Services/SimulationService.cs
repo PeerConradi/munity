@@ -1300,6 +1300,10 @@ namespace MUNityCore.Services
 
         internal string GetInviteLink(int userId)
         {
+            var existingInviteLink = _context.SimulationInvites.FirstOrDefault(n => n.User.SimulationUserId == userId);
+            if (existingInviteLink != null)
+                return existingInviteLink.SimulationInviteId;
+
             var user = _context.SimulationUser.FirstOrDefault(n => n.SimulationUserId == userId);
             if (user == null)
                 return null;
@@ -1334,9 +1338,19 @@ namespace MUNityCore.Services
                 RoleName = result.User.Role?.Name ?? "",
                 SimulationId = result.User.Simulation?.SimulationId ?? -1,
                 SimulationName = result.User.Simulation?.Name ?? "",
-                Token = result.User.Token
+                Token = result.User.Token,
+                SimulationUserId = result.User.SimulationUserId
             };
             return mdl;
+        }
+
+        internal void SetUserDisplayName(int simulationUserId, string newName)
+        {
+            var user = _context.SimulationUser.FirstOrDefault(n => n.SimulationUserId == simulationUserId);
+            if (user == null)
+                return;
+            user.DisplayName = newName;
+            _context.SaveChanges();
         }
     }
 }

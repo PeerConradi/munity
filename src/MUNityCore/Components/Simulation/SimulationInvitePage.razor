@@ -13,18 +13,12 @@ else if (validationState == InviteLinkValidationStates.Invalid)
 }
 else if (validationState == InviteLinkValidationStates.Valid)
 {
-    @if (!string.IsNullOrEmpty(_invitation.DisplayName))
-    {
-        <h3>Willkommen @_invitation.DisplayName <a class="text-blue-transparent-7">Anzeigename ändern</a></h3>
-    }
-    else
-    {
-        <h3>Willkommen</h3>
-        <p>Bitte gebe noch einen Anzeigenamen ein.</p>
-        <input type="text" class="form-control" />
-    }
 
-    <p>Du bist dabei dem Raum "@_invitation.SimulationName" beizutreten!</p>
+<h3>Willkommen im Raum @_invitation.SimulationName</h3>
+    <div class="form-group">
+        <label>Anzeigename</label>
+        <input @bind="@displayName" type="text" class="form-control" />
+    </div>
     <p>Deine Rolle: @((string.IsNullOrEmpty(_invitation.RoleName)) ? "Keine Rolle zugewiesen" : _invitation.RoleName)</p>
     <button class="btn btn-primary" @onclick="() => EnterSimulation()">Raum betreten</button>
 }
@@ -34,6 +28,21 @@ else if (validationState == InviteLinkValidationStates.Valid)
     public string Id { get; set; }
 
     private MUNity.Schema.Simulation.InvitationResponse _invitation;
+
+    private string displayName
+    {
+        get => _invitation?.DisplayName;
+        set
+        {
+            if (_invitation != null && value != this._invitation.DisplayName)
+            {
+                this._invitation.DisplayName = value;
+                this.simulationService.SetUserDisplayName(_invitation.SimulationUserId, value);
+            }
+
+
+        }
+    }
 
     private enum InviteLinkValidationStates
     {

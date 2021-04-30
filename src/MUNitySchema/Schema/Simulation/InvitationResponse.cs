@@ -6,6 +6,7 @@ namespace MUNity.Schema.Simulation
 {
     public class InvitationResponse
     {
+        public int SimulationUserId { get; set; }
 
         public string Token { get; set; }
 

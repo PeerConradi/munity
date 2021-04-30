@@ -211,6 +211,21 @@ namespace MUNityCore.ViewModel
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.RemoveSpeaker), _listOfSpeakers.ListOfSpeakersId, speakerId);
         }
 
+        public Task StartAnswer()
+        {
+            return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.StartAnswer), _listOfSpeakers.ListOfSpeakersId);
+        }
+
+        public Task AddSpeakerSeconds(int seconds)
+        {
+            return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.AddSpeakerSeconds), _listOfSpeakers.ListOfSpeakersId, seconds);
+        }
+
+        public Task AddQuestionSeconds(int seconds)
+        {
+            return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.AddQuestionSeconds), _listOfSpeakers.ListOfSpeakersId, seconds);
+        }
+
         public void Dispose()
         {
             if (_hubConnection != null)
