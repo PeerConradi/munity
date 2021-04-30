@@ -216,12 +216,17 @@ namespace MUNityCore.Services
 
         internal SimulationStatus SetStatus(SetSimulationStatusDto body)
         {
-            var simulation = _context.Simulations.FirstOrDefault(n => n.SimulationId == body.SimulationId);
+            return SetStatus(body.SimulationId, body.StatusText);
+        }
+
+        internal SimulationStatus SetStatus(int simulationId, string statusText)
+        {
+            var simulation = _context.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
             if (simulation == null) return null;
             var status = new SimulationStatus()
             {
                 Simulation = simulation,
-                StatusText = body.StatusText,
+                StatusText = statusText,
                 StatusTime = DateTime.Now
             };
             _context.SimulationStatuses.Add(status);

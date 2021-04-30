@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Components.Simulation;
 using MUNityCore.DataHandlers.EntityFramework;
+using MUNity.Schema.Simulation;
 
 namespace MUNityCore.Hubs
 {
@@ -150,6 +151,29 @@ namespace MUNityCore.Hubs
                     AgendaItemId = agendaItemId,
                     PetitionId = petitionId
                 });
+            }
+        }
+
+        public async Task ChangeStatus(string newStatusText)
+        {
+            var user = GetContextUser();
+            if (user == null)
+                return;
+
+            var isChair = _service.IsUserChair(user.SimulationUserId);
+            if (!isChair)
+                return;
+
+            var newStatus = this._service.SetStatus(user.SimulationId, newStatusText);
+            if (newStatus != null)
+            {
+                var newStatusSocketMessage = new SimulationStatusDto()
+                {
+                    SimulationStatusId = newStatus.SimulationStatusId,
+                    StatusText = newStatus.StatusText,
+                    StatusTime = newStatus.StatusTime
+                };
+                await this.Clients.Group("sim_" + user.SimulationId.ToString()).StatusChanged(newStatusSocketMessage);
             }
         }
 

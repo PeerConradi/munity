@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
+using MUNity.Schema.Simulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace MUNityCore.ViewModel
         public event EventHandler<int> AgendaItemRemoved;
 
         public event EventHandler<string> PetitionActivated;
+
+        public event EventHandler<SimulationStatusDto> StatusChanged;
 
         public SpeakerlistViewModel SpeakerlistViewModel;
 
@@ -62,6 +65,7 @@ namespace MUNityCore.ViewModel
             _hubConnection.On<string>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionActivated), n => this.PetitionActivated?.Invoke(this, n));
             _hubConnection.On<MUNity.Schema.Simulation.PetitionInteractedDto>(nameof(MUNity.Hubs.ITypedSimulationHub.PetitionDeleted), n => this.PetitionRemoved?.Invoke(this, n));
             _hubConnection.On<int>(nameof(MUNity.Hubs.ITypedSimulationHub.AgendaItemRemoved), n => this.AgendaItemRemoved?.Invoke(this, n));
+            _hubConnection.On<SimulationStatusDto>(nameof(MUNity.Hubs.ITypedSimulationHub.StatusChanged), n => StatusChanged?.Invoke(this, n));
         }
 
         public async Task SignIn()
@@ -114,6 +118,11 @@ namespace MUNityCore.ViewModel
         internal async Task RemovePetition(string petitionId)
         {
             await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.RemovePetition), petitionId);
+        }
+
+        internal async Task ChangeStatus(string newStatusText)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.ChangeStatus), newStatusText);
         }
 
         public static async Task<SimulationViewModel> Init(string socketPath)

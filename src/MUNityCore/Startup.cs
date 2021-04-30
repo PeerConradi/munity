@@ -54,7 +54,7 @@ namespace MUNityCore
             {
                 options.ChangeTextOnKeyPress = true; // optional
             }).AddBootstrapProviders()
-              .AddFontAwesomeIcons();
+            .AddFontAwesomeIcons();
 
             // The App Settings contains information like the secret used to 
             var appSettingsSection = Configuration.GetSection("AppSettings");

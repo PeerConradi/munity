@@ -21,7 +21,7 @@ else if (loadingState == LoadingStates.Forbid)
 else if (loadingState == LoadingStates.Success)
 {
 
-    <ListOfSpeakerHeader ShowList="ShowListCallback" ViewModel="@_simulationViewModel.SpeakerlistViewModel" />
+    <ListOfSpeakerHeader ShowList="ShowListCallback" ViewModel="@_simulationViewModel.SpeakerlistViewModel" SimViewModel="@_simulationViewModel" />
 
     <div class="row">
         <div class="@((showListOfSpeakers) ? "col-lg-8" : "col-lg-12")">

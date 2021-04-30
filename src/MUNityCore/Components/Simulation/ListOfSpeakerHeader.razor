@@ -51,6 +51,16 @@
             }
 
         </ul>
+
+        <div class="my-2 my-lg-0">
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label text-white">Status</label>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" />
+                </div>
+            </div>
+        </div>
+
         <div class="my-2 my-lg-0">
             <a class="btn @((showListOfSpeakers) ? "btn-primary" : "btn-default") btn-icon btn-circle btn-lg"
                @onclick="() => { ShowList.InvokeAsync(showListOfSpeakers); showListOfSpeakers = !showListOfSpeakers; }">
@@ -64,6 +74,9 @@
 @code {
     [Parameter]
     public ViewModel.SpeakerlistViewModel ViewModel { get; set; }
+
+    [Parameter]
+    public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
     [Parameter]
     public EventCallback<bool> ShowList { get; set; }
