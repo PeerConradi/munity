@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject NavigationManager navManager;
+@inject Services.MainViewService mainViewService;
 
 <Row>
     <Column ColumnSize="ColumnSize.Is12">
@@ -50,5 +51,11 @@
     private void NavigateToSimulations()
     {
         navManager.NavigateTo("/simulations");
+    }
+
+    protected override void OnInitialized()
+    {
+        this.mainViewService.LoadingState = 100;
+        base.OnInitialized();
     }
 }

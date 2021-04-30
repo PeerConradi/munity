@@ -1,5 +1,6 @@
 ﻿@page "/admin/resolutions"
 @inject Services.SqlResolutionService resolutionService;
+@inject Services.MainViewService mainViewService;
 
 <AuthorizeView>
     <Authorized>
@@ -12,6 +13,10 @@
     
 </AuthorizeView>
 
-@code {
-
+@code {      
+    protected override void OnInitialized()
+    {
+        mainViewService.LoadingState = 100;
+        base.OnInitialized();
+    }
 }

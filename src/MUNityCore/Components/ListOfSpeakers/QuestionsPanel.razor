@@ -1,12 +1,8 @@
-﻿@inject Services.FrontendSimulationService frontendSimulationService;
-@inject Services.SpeakerlistService speakerlistService;
-@inject Services.SpeakerlistHubService speakerlistHubService;
-
-<div class="card border-0 text-truncate mb-3 bg-dark text-white">
+﻿<div class="card border-0 text-truncate mb-3 bg-dark text-white">
     <div class="card-body">
-        <div class="mb-3 text-grey">
-            <b class="mb-3">Fragen und Kurzbemerkungen</b>
-            @if (frontendSimulationService.CurrentSimulation.IsChair)
+        <div class="text-grey">
+            <b class="mr-3">Fragen und Kurzbemerkungen</b>
+            @if (SimViewModel.IsChair)
             {
                 <button class="btn btn-sm btn-circle @resumeQuestionButtonClass"
                         @onclick="() => ToggleQuestion()">
@@ -49,7 +45,7 @@
             }
             else
             {
-                @if (frontendSimulationService.CurrentSimulation.IsChair)
+                @if (SimViewModel.IsChair)
                 {
                     <span class="text-red">@ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss") überzogen</span>
                 }
@@ -66,7 +62,7 @@
         <div class="d-flex align-items-center">
             @waitingQuestion.Name
         </div>
-        @if (frontendSimulationService.CurrentSimulation.IsChair)
+        @if (SimViewModel.IsChair)
         {
             <div class="d-flex align-items-center ml-auto">
                 <button class="btn btn-sm btn-circle btn-danger"
@@ -85,6 +81,9 @@
 @code {
     [Parameter]
     public ViewModel.SpeakerlistViewModel ViewModel { get; set; }
+
+    [Parameter]
+    public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
     private System.Timers.Timer refreshTimer;
 
@@ -107,11 +106,11 @@
         }
     }
 
-    private bool isOnQuestions => ViewModel.Speakerlist.Questions.Any(n => n.Name == this.frontendSimulationService.CurrentSimulation.RoleName);
+    private bool isOnQuestions => ViewModel.Speakerlist.Questions.Any(n => n.Name == SimViewModel.RoleName);
 
     private async Task AddMeToQuestions()
     {
-        await this.frontendSimulationService.CurrentSimulation.AddMeToQuestions();
+        await SimViewModel.AddMeToQuestions();
     }
 
     private void ToggleQuestion()

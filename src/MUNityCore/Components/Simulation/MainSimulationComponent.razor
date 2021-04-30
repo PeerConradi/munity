@@ -21,7 +21,7 @@ else if (loadingState == LoadingStates.Forbid)
 else if (loadingState == LoadingStates.Success)
 {
 
-    @*<ListOfSpeakerHeader ShowList="ShowListCallback" />*@
+    <ListOfSpeakerHeader ShowList="ShowListCallback" ViewModel="@_simulationViewModel.SpeakerlistViewModel" />
 
     <div class="row">
         <div class="@((showListOfSpeakers) ? "col-lg-8" : "col-lg-12")">
@@ -46,7 +46,8 @@ else if (loadingState == LoadingStates.Success)
         @if (showListOfSpeakers)
         {
             <div class="col-lg-4">
-                <MUNityCore.Components.ListOfSpeakers.ListOfSpeakersSimulationView />
+                <MUNityCore.Components.ListOfSpeakers.ListOfSpeakersSimulationView ViewModel="@_simulationViewModel.SpeakerlistViewModel"
+                                                                                   SimViewModel="@_simulationViewModel"/>
             </div>
         }
     </div>

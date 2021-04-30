@@ -21,7 +21,7 @@ using MUNityCore.ViewModel;
 
 namespace MUNityCore.Services
 {
-    public class FrontendSimulationService
+    public class FrontendSimulationService : IDisposable
     {
         private MUNityCore.DataHandlers.EntityFramework.MunityContext _context;
 
@@ -117,6 +117,14 @@ namespace MUNityCore.Services
                 this._viewModels.Add(viewModel);
                 if (this._viewModels.Count == 1)
                     CurrentSimulationChanged?.Invoke(this, viewModel);
+
+                string speakerlistId = _context.Simulations.Where(n => n.SimulationId == simulationId).Select(n => n.ListOfSpeakers.ListOfSpeakersId).FirstOrDefault();
+                if (speakerlistId != null)
+                {
+                    var speakerlistModel = await _speakerlistHubService.GetSpeakerlistViewModel(speakerlistId);
+                    viewModel.SpeakerlistViewModel = speakerlistModel;
+                }
+                
             }
             return viewModel;
 
@@ -170,6 +178,14 @@ namespace MUNityCore.Services
             if (list == null)
                 list = new List<SimulationTokenResponse>();
             return list;
+        }
+
+        public void Dispose()
+        {
+            foreach(var viewModel in _viewModels)
+            {
+                viewModel.Dispose();
+            }
         }
 
         public FrontendSimulationService(MUNityCore.DataHandlers.EntityFramework.MunityContext context,

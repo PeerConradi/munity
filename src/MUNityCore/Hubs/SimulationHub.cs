@@ -21,7 +21,6 @@ namespace MUNityCore.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            Console.WriteLine("User disconnected!");
             ConnectionUsers.ConnectedUser outVal = null;
             ConnectionUsers.ConnectionIds.TryRemove(Context.ConnectionId, out outVal);
             Console.WriteLine("Simulation User Disconnected: " + outVal.SimulationUserId.ToString());

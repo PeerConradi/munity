@@ -10,7 +10,7 @@ using MUNity.Schema.ListOfSpeakers;
 
 namespace MUNityCore.ViewModel
 {
-    public class SpeakerlistViewModel
+    public class SpeakerlistViewModel : IDisposable
     {
         private HubConnection _hubConnection;
 
@@ -51,6 +51,7 @@ namespace MUNityCore.ViewModel
             this._hubConnection.On<bool>(nameof(ITypedListOfSpeakerHub.QuestionsStateChanged), HandleQuestionStateChanged);
 
             await _hubConnection.StartAsync();
+            await Subscribe();
         }
 
         private void HandleQuestionStateChanged(bool state)
@@ -110,6 +111,7 @@ namespace MUNityCore.ViewModel
 
         private void HandleNextSpeaker()
         {
+            Console.WriteLine("NextSpeaker recieved from HUB!");
             this._listOfSpeakers.NextSpeaker();
             this.SpeakerlistChanged?.Invoke(this, new EventArgs());
         }
@@ -127,8 +129,11 @@ namespace MUNityCore.ViewModel
 
         private void HandleSpeakerAdded(Speaker speaker)
         {
-            this._listOfSpeakers.AllSpeakers.Add(speaker);
-            this.SpeakerlistChanged?.Invoke(this, new EventArgs());
+            if (this._listOfSpeakers.AllSpeakers.All(n => n.Id != speaker.Id))
+            {
+                this._listOfSpeakers.AllSpeakers.Add(speaker);
+                this.SpeakerlistChanged?.Invoke(this, new EventArgs());
+            }
         }
 
         private void HandleQuestionTimerStarted(DateTime dateTime)
@@ -149,13 +154,14 @@ namespace MUNityCore.ViewModel
             this.SpeakerlistChanged?.Invoke(this, new EventArgs());
         }
 
-        public Task Subscribe(string listId)
+        private Task Subscribe()
         {
-            return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.Subscribe), listId);
+            return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.Subscribe), Speakerlist.ListOfSpeakersId);
         }
 
         public Task AddSpeaker(string iso, string name)
         {
+            
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.AddSpeaker), _listOfSpeakers.ListOfSpeakersId, iso, name);
         }
 
@@ -181,6 +187,7 @@ namespace MUNityCore.ViewModel
 
         public Task NextSpeaker()
         {
+            Console.WriteLine("NextSpeaker Client called!");
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.NextSpeaker), _listOfSpeakers.ListOfSpeakersId);
         }
 
@@ -202,6 +209,12 @@ namespace MUNityCore.ViewModel
         public Task RemoveSpeaker(string speakerId)
         {
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.RemoveSpeaker), _listOfSpeakers.ListOfSpeakersId, speakerId);
+        }
+
+        public void Dispose()
+        {
+            if (_hubConnection != null)
+                _hubConnection.DisposeAsync();
         }
     }
 }

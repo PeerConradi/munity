@@ -9,7 +9,11 @@ namespace MUNityCore.Services
     {
         private int _loadingState { get; set; }
 
+        private bool _showSidebar;
+
         public event EventHandler<int> LoadingStateChanged;
+
+        public event EventHandler<bool> ShowSidebarChanged;
 
         public int LoadingState
         {
@@ -20,6 +24,19 @@ namespace MUNityCore.Services
                 {
                     _loadingState = value;
                     LoadingStateChanged?.Invoke(this, value);
+                }
+            }
+        }
+
+        public bool ShowSidebar
+        {
+            get => _showSidebar;
+            set
+            {
+                if (value != _showSidebar)
+                {
+                    _showSidebar = value;
+                    ShowSidebarChanged?.Invoke(this, value);
                 }
             }
         }

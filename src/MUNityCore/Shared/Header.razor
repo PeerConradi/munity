@@ -1,25 +1,28 @@
 ﻿@using Services;
 @inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
 @inject NavigationManager navManager;
-
+@inject Services.MainViewService mainViewService;
 
 <div id="header" class="header navbar-default">
 	<!-- begin navbar-header -->
-	<div class="navbar-header">
-		<button type="button" class="navbar-toggle collapsed navbar-toggle-left" data-click="sidebar-minify">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button>
-		<button type="button" class="navbar-toggle" data-click="sidebar-toggled">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button>
-		<a href="/" class="navbar-brand">
-			MUNity
-		</a>
-	</div>
+    <div class="navbar-header">
+        <a href="/" class="navbar-brand">
+            MUNity
+        </a>
+
+        @*<button type="button" class="navbar-toggle collapsed navbar-toggle-left" @onclick="() => mainViewService.ShowSidebar = false">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>*@
+        <button type="button" class="navbar-toggle" @onclick="() => mainViewService.ShowSidebar = !mainViewService.ShowSidebar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+
+
+    </div>
 
 	@if (menuHeader == MenuHeaders.Simulation)
 	{
@@ -49,9 +52,6 @@
 				</li>
 			</NotAuthorized>
 		</AuthorizeView>
-
-		
-		
 	</ul>
 	<!-- end header navigation right -->
 </div>

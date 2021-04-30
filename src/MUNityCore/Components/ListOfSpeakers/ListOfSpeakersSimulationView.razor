@@ -1,10 +1,10 @@
 ﻿@inject Services.FrontendSimulationService frontendSimulationService;
 @inject Services.SpeakerlistHubService speakerlistHubService;
 
-@if (_speakerlistViewModel != null)
+@if (ViewModel != null)
 {
-    <SpeakersPanel ViewModel="@_speakerlistViewModel" />
-    <QuestionsPanel ViewModel="@_speakerlistViewModel" />
+    <SpeakersPanel ViewModel="@ViewModel" SimViewModel="@SimViewModel" />
+    <QuestionsPanel ViewModel="@ViewModel" SimViewModel="@SimViewModel" />
 }
 else
 {
@@ -19,15 +19,14 @@ else
 
 @code {
     [Parameter]
-    public string ListOfSpeakersId { get; set; }
+    public ViewModel.SpeakerlistViewModel ViewModel { get; set; }
 
-    private ViewModel.SpeakerlistViewModel _speakerlistViewModel;
+    [Parameter]
+    public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        this._speakerlistViewModel = await this.speakerlistHubService.GetSpeakerlistViewModel(ListOfSpeakersId);
-
-        this._speakerlistViewModel.SpeakerlistChanged += delegate { this.StateHasChanged(); };
+        this.ViewModel.SpeakerlistChanged += delegate { this.StateHasChanged(); };
         await base.OnInitializedAsync();
     }
 }

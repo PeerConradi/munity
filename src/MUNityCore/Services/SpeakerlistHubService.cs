@@ -13,7 +13,7 @@ using MUNityCore.ViewModel;
 
 namespace MUNityCore.Services
 {
-    public class SpeakerlistHubService
+    public class SpeakerlistHubService : IDisposable
     {
         private List<SpeakerlistViewModel> _viewModels = new List<SpeakerlistViewModel>();
 
@@ -23,6 +23,7 @@ namespace MUNityCore.Services
 
         public async Task<SpeakerlistViewModel> GetSpeakerlistViewModel(string speakerlistId)
         {
+            Console.WriteLine("GetSpeakerlistViewModel called!");
             var list = _viewModels.FirstOrDefault(n => n.SpeakerlistId == speakerlistId);
             if (list != null)
                 return list;
@@ -32,6 +33,14 @@ namespace MUNityCore.Services
             await list.Start();
             _viewModels.Add(list);
             return list;
+        }
+
+        public void Dispose()
+        {
+            foreach(var viewModel in _viewModels)
+            {
+                viewModel.Dispose();
+            }
         }
 
         public SpeakerlistHubService(SpeakerlistService speakerListService, NavigationManager navManager)

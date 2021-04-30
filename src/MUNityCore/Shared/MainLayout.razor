@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService storageService;
 @inject Services.MainViewService mainViewService;
+@inject NavigationManager navManager;
 
 @if (mainViewService.LoadingState < 100)
 {
@@ -13,7 +14,7 @@
 }
 
 
-<div id="page-container">
+<div id="page-container" class="page-container fade page-sidebar-fixed page-header-fixed show @((mainViewService.ShowSidebar) ? "page-sidebar-toggled" : null)">
     <Header />
     <Sidebar />
     <div id="content" class="content">
@@ -50,7 +51,15 @@
     protected override void OnInitialized()
     {
         mainViewService.LoadingStateChanged += delegate { this.StateHasChanged(); };
+        mainViewService.ShowSidebarChanged += delegate { this.StateHasChanged(); };
+        navManager.LocationChanged += ToggleSidebarOnNavChanged;
         base.OnInitialized();
+    }
+
+    private void ToggleSidebarOnNavChanged(object sender, LocationChangedEventArgs args)
+    {
+        if (mainViewService.ShowSidebar)
+            mainViewService.ShowSidebar = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

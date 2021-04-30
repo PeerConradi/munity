@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.ViewModel
 {
-    public class SimulationViewModel
+    public class SimulationViewModel : IDisposable
     {
         private HubConnection _hubConnection;
 
@@ -27,7 +27,7 @@ namespace MUNityCore.ViewModel
 
         public event EventHandler<string> PetitionActivated;
 
-        private SpeakerlistViewModel speakerlistViewModel;
+        public SpeakerlistViewModel SpeakerlistViewModel;
 
         public int SimulationId { get; set; }
 
@@ -71,14 +71,14 @@ namespace MUNityCore.ViewModel
 
         public async Task AddMeToSpeakerlist()
         {
-            if (this.speakerlistViewModel == null) return;
-            await this.speakerlistViewModel.AddSpeaker(this.RoleIso, this.RoleName);
+            if (this.SpeakerlistViewModel == null) return;
+            await this.SpeakerlistViewModel.AddSpeaker(this.RoleIso, this.RoleName);
         }
 
         public async Task AddMeToQuestions()
         {
-            if (this.speakerlistViewModel == null) return;
-            await this.speakerlistViewModel.AddQuestion(this.RoleIso, this.RoleName);
+            if (this.SpeakerlistViewModel == null) return;
+            await this.SpeakerlistViewModel.AddQuestion(this.RoleIso, this.RoleName);
         }
 
         internal async Task CreateVoting(string displayName, bool allowAbstention)
@@ -122,6 +122,12 @@ namespace MUNityCore.ViewModel
             var simViewModel = new SimulationViewModel(hubConnection);
             await hubConnection.StartAsync();
             return simViewModel;
+        }
+
+        public void Dispose()
+        {
+            if (this._hubConnection != null)
+                this._hubConnection.DisposeAsync();
         }
     }
 }
