@@ -327,7 +327,10 @@ namespace MUNityCore.Services
                 Password = password
             };
 
+            sim.ListOfSpeakers = new MUNity.Models.ListOfSpeakers.ListOfSpeakers();
+
             this._context.Simulations.Add(sim);
+            this._context.ListOfSpeakers.Add(sim.ListOfSpeakers);
             this._context.SaveChanges();
             return sim;
         }
