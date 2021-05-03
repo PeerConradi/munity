@@ -87,6 +87,7 @@ namespace MUNityTest.SimulationTest
             var service = new SimulationService(_context);
             var user = service.CreateUser(simulationId, "User1");
             Assert.NotNull(user);
+            Assert.AreEqual(2, _context.SimulationUser.Count());
         }
 
         [Test]
@@ -103,7 +104,7 @@ namespace MUNityTest.SimulationTest
         public async Task TestRoleExists()
         {
             var service = new SimulationService(_context);
-            var roles = await service.GetSimulationRoles(simulationId);
+            var roles = await service.GetSimulationRolesAsync(simulationId);
             Assert.IsTrue(roles.Any(n => n.Name == "Germany"));
         }
 

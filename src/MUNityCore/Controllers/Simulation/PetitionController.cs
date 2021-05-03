@@ -220,7 +220,7 @@ namespace MUNityCore.Controllers.Simulation
         [Route("[action]")]
         public async Task<ActionResult<List<PetitionTypeSimulationDto>>> SimulationPetitionTypes([FromHeader] string simsimtoken, int simulationId)
         {
-            var isallowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isallowed = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isallowed) return BadRequest();
             var types = this._simulationService.GetPetitionTypesOfSimulation(simulationId);
             var list = types.Select(n => n.ToDto()).ToList();

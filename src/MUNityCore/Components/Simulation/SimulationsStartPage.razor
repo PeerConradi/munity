@@ -129,7 +129,7 @@
 
                 foreach (var knownSimulation in knownSimulations)
                 {
-                    var isValid = await this.simulationService.IsTokenValid(knownSimulation.SimulationId, knownSimulation.Token);
+                    var isValid = await this.simulationService.IsTokenValidAsync(knownSimulation.SimulationId, knownSimulation.Token);
                     if (!isValid)
                     {
                         simsToDelete.Add(knownSimulation);

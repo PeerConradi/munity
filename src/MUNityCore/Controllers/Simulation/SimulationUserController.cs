@@ -37,9 +37,9 @@ namespace MUNityCore.Controllers.Simulation
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
-        public async Task<ActionResult<SimulationUserAdminDto>> CreateUser([FromBody]SimulationRequest body)
+        public ActionResult<SimulationUserAdminDto> CreateUser([FromBody]SimulationRequest body)
         {
-            var isAllowed = await this._simulationService.IsTokenValidAndUserChairOrOwner(body.SimulationId, body.Token);
+            var isAllowed = this._simulationService.IsTokenValidAndUserChairOrOwner(body.SimulationId, body.Token);
             if (!isAllowed) 
                 return Forbid();
             var newUser = this._simulationService.CreateUser(body.SimulationId, "");

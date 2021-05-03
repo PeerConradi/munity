@@ -1,39 +1,31 @@
 ﻿@using Services;
 @inject MUNityCore.Services.FrontendSimulationService frontendSimulationService;
 
-<ul class="navbar-nav">
-    <li>
-        <a @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Overview"
-           class="btn @overViewClass">
-            Start
-        </a>
-    </li>
+<div class="row align-self-center">
+    <button class="btn @overViewClass"
+        @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Overview">
+            <i class="fa fa-flag"></i> Start
+    </button>
 
-    <li>
-        <a @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda"
-           class="btn @agendaClass">
-            Tagesordnung
+    <button class="btn @agendaClass">
+        <a @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda">
+            <i class="fa fa-bookmark"></i> Tagesordnung
         </a>
-    </li>
+    </button>
 
-    <li>
-        <a @onclick="() => { newVoting = false; frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Voting; }"
-           class="btn @votingClass">
-            Abstimmung
+    <button class="btn @votingClass"
+            @onclick="() => { newVoting = false; frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Voting; }">
+            <i class="fa fa-vote-yea"></i> Abstimmung
             @if (newVoting)
             {
                 <span class="badge badge-danger">neu</span>
             }
-        </a>
-    </li>
+    </button>
 
-    <li>
-        <a @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Resolutions"
-           class="btn @resolutionClass">
-            Resolutionen
-        </a>
-    </li>
-</ul>
+    <button class="btn @resolutionClass"@onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Resolutions">
+        <i class="fa fa-list"></i> Resolutionen
+    </button>
+</div>
 
 @code {
     private string overViewClass =>

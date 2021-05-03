@@ -42,7 +42,7 @@ namespace MUNityCore.Controllers.Simulation
             if (!isAllowed) return BadRequest();
 
             Models.Simulation.SimulationRole role = _simulationService.CreateRole(body);
-            var roles = await _simulationService.GetSimulationRoles(body.SimulationId);
+            var roles = await _simulationService.GetSimulationRolesAsync(body.SimulationId);
             _ = GetSimulationHub(body)?.RolesChanged(new RolesChangedEventArgs(body.SimulationId, roles.Select(n => n.ToSimulationRoleItem())));
             return Ok(role.ToSimulationRoleItem());
         }
@@ -55,11 +55,12 @@ namespace MUNityCore.Controllers.Simulation
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
-        public async Task<ActionResult<List<SimulationRoleDto>>> GetSimulationRoles([FromHeader] string simsimtoken, int id)
+        public ActionResult<List<SimulationRoleDto>> GetSimulationRoles([FromHeader] string simsimtoken, int id)
         {
-            var isAllowed = await this._simulationService.IsTokenValid(id, simsimtoken);
-            if (!isAllowed) return BadRequest();
-            var roles = await this._simulationService.GetSimulationRoles(id);
+            var isAllowed = this._simulationService.IsTokenValid(id, simsimtoken);
+            if (!isAllowed) 
+                return Forbid();
+            var roles = this._simulationService.GetSimulationRoles(id);
             var models = roles.Select(n => n.ToSimulationRoleDto()).ToList();
             return Ok(models);
         }

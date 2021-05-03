@@ -384,6 +384,18 @@ namespace MUNityCore.Services
 
         public SimulationUser CreateUser(int simulationId, string displayName)
         {
+            // I have no idea why this is necessary but this will fix
+            // that the users are suddenly empty...
+            var hasSimulation = _context.Simulations
+                .Include(n => n.Users)
+                .FirstOrDefault(n => n.SimulationId == simulationId);
+
+            if (hasSimulation == null)
+            {
+                Console.WriteLine("Unknown Simulation: " + simulationId.ToString() + " when creating a new user");
+                return null;
+            }
+
             var baseUser = new SimulationUser()
             {
                 CanCreateRole = false,
@@ -391,15 +403,10 @@ namespace MUNityCore.Services
                 CanEditResolution = false,
                 CanSelectRole = false,
                 DisplayName = displayName,
-                Role = null
+                Role = null,
+                Simulation = hasSimulation
             };
-            // I have no idea why this is necessary but this will fix
-            // that the users are suddenly empty...
-            //var users = _context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId).ToList();
-            var simulation = _context.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
-            //simulation.Users.Add(baseUser);
-            //simulation.Users.AddRange(users);
-            baseUser.Simulation = simulation;
+            hasSimulation.Users.Add(baseUser);
             _context.SimulationUser.Add(baseUser);
             _context.SaveChanges();
             return baseUser;
@@ -545,7 +552,7 @@ namespace MUNityCore.Services
 
         public IQueryable<SimulationUser> GetSimulationUsers(int simulationId)
         {
-            return this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId);
+            return this._context.SimulationUser.AsNoTracking().Where(n => n.Simulation.SimulationId == simulationId);
         }
 
         public List<SimulationUserInfoDto> GetSimulationUserInfos(int simulationId)
@@ -837,9 +844,14 @@ namespace MUNityCore.Services
             return true;
         }
 
-        public Task<List<SimulationRole>> GetSimulationRoles(int simulationId)
+        public Task<List<SimulationRole>> GetSimulationRolesAsync(int simulationId)
         {
             return this._context.SimulationRoles.Where(n => n.Simulation.SimulationId == simulationId).ToListAsync();
+        }
+
+        public List<SimulationRole> GetSimulationRoles(int simulationId)
+        {
+            return this._context.SimulationRoles.Where(n => n.Simulation.SimulationId == simulationId).ToList();
         }
 
         #endregion
@@ -879,9 +891,16 @@ namespace MUNityCore.Services
             n.Token == requestSchema.Token);
         }
 
-        public async Task<bool> IsTokenValid(int simulationId, string token)
+        public async Task<bool> IsTokenValidAsync(int simulationId, string token)
         {
             return await _context.SimulationUser.AnyAsync(n =>
+            n.Simulation.SimulationId == simulationId &&
+            n.Token == token);
+        }
+
+        public bool IsTokenValid(int simulationId, string token)
+        {
+            return _context.SimulationUser.Any(n =>
             n.Simulation.SimulationId == simulationId &&
             n.Token == token);
         }
@@ -926,9 +945,19 @@ namespace MUNityCore.Services
             n.Role.RoleType == RoleTypes.Chairman);
         }
 
-        public async Task<bool> IsTokenValidAndUserChairOrOwner(int simulationId, string token)
+        public async Task<bool> IsTokenValidAndUserChairOrOwnerAsync(int simulationId, string token)
         {
-            return await _context.SimulationUser.AnyAsync(n =>
+            return await _context.SimulationUser.AsNoTracking().AnyAsync(n =>
+                n.Simulation.SimulationId == simulationId &&
+                n.Token == token &&
+                (n.CanCreateRole ||
+                n.Role != null &&
+                n.Role.RoleType == RoleTypes.Chairman));
+        }
+
+        public bool IsTokenValidAndUserChairOrOwner(int simulationId, string token)
+        {
+            return _context.SimulationUser.AsNoTracking().Any(n =>
                 n.Simulation.SimulationId == simulationId &&
                 n.Token == token &&
                 (n.CanCreateRole ||
@@ -940,7 +969,7 @@ namespace MUNityCore.Services
         {
             if (!string.IsNullOrEmpty(Program.MasterToken) && request.Token == Program.MasterToken)
                 return true;
-            return await IsTokenValidAndUserChairOrOwner(request.SimulationId, request.Token);
+            return await IsTokenValidAndUserChairOrOwnerAsync(request.SimulationId, request.Token);
         }
 
         #endregion

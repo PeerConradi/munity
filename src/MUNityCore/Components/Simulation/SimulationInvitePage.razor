@@ -70,7 +70,7 @@ else if (validationState == InviteLinkValidationStates.Valid)
 
     private async Task EnterSimulation()
     {
-        await this.frontendSimulationService.RemoveSimulationTokensForSimulation(_invitation.SimulationId);
+
         await this.frontendSimulationService.StoreSimulationToken(new MUNity.Schema.Simulation.SimulationTokenResponse()
         {
             Name = _invitation.SimulationName,

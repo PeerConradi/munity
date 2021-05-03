@@ -1,13 +1,12 @@
 ﻿@inject Services.SqlResolutionService resolutionService;
 
-<div class="panel panel-inverse m-t-0">
+<div class="panel panel-inverse m-t-0 @((expanded) ? "panel-expand" : null)">
     <div class="panel-heading">
-        <h4 class="panel-title">§ @Index Operativer Absatz: @previewText</h4>
+        <h4 class="panel-title" @onclick="() => expanded = !expanded" style="cursor: pointer;">@Index <span class="text-secondary">Operativer Absatz:</span>
+        <i class="fa fa-pen"></i>
+        @previewText</h4>
         <div class="panel-heading-btn">
-            <a class="btn btn-xs btn-icon btn-circle btn-default"
-               @onclick="() => expanded = !expanded">
-                <i class="fa @((expanded) ? "fa-window-minimize" : "fa-expand")"></i>
-            </a>
+
             <div class="btn-group m-l-5">
                 <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> Funktionen<b class="caret"></b></button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
@@ -20,12 +19,54 @@
                     <a href="javascript:;" class="dropdown-item text-danger-darker">Löschen</a>
                 </div>
             </div>
+
+            @if (expanded)
+            {
+                <a class="btn btn-sm ml-3 btn-icon btn-circle btn-danger"
+                   @onclick="() => expanded = !expanded">
+                    <i class="fa fa-times"></i>
+                </a>
+            }
         </div>
     </div>
     @if (expanded)
     {
-        <div class="panel-body">
-            <textarea class="form-control" @bind="Paragraph.Text" @onblur="() => SaveParagraphText(Paragraph)" />
+        <div class="panel-body" style="overflow-x: hidden">
+            <div class="row">
+                <h4>Text</h4>
+                <textarea class="form-control" @bind="Paragraph.Text" rows="10" @onblur="() => SaveParagraphText(Paragraph)" />
+            </div>
+            @if (SectionReference != null)
+            {
+                <h3>Änderungsanträge</h3>
+
+                foreach (var deleteAmendment in deleteAmendments)
+                {
+                    <div class="note note-danger">
+                        <div class="note-icon"><i class="fa fa-times"></i></div>
+                        <div class="note-content">
+                            <h4><b>Änderungsantrag</b></h4>
+                            <p>Eingereicht von: @deleteAmendment.SubmitterName</p>
+                        </div>
+                    </div>
+                }
+
+                foreach (var changeAmendment in changeAmendments)
+                {
+                    <div class="note note-primary">
+                        <div class="note-icon"><i class="fa fa-edit"></i></div>
+                        <div class="note-content">
+                            <h4><b>Änderungsantrag</b></h4>
+                            <p>Eingereicht von: @changeAmendment.SubmitterName</p>
+                            <p>Neuer Text @changeAmendment.NewText</p>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+        <div class="panel-footer" style="overflow-x:hidden;">
+            <button class="btn btn-success btn-block mt-3 mb-3" @onclick="() => expanded = false">Fertig/Speichern</button>
         </div>
     }
 
@@ -36,10 +77,29 @@
     public MUNity.Models.Resolution.OperativeParagraph Paragraph { get; set; }
 
     [Parameter]
+    public MUNity.Models.Resolution.OperativeSection SectionReference { get; set; }
+
+    [Parameter]
     public string ResolutionId { get; set; }
 
     [Parameter]
     public string Index { get; set; }
+
+    private IEnumerable<MUNity.Models.Resolution.ChangeAmendment> changeAmendments
+    {
+        get
+        {
+            return this.SectionReference.ChangeAmendments.Where(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+        }
+    }
+
+    private IEnumerable<MUNity.Models.Resolution.DeleteAmendment> deleteAmendments
+    {
+        get
+        {
+            return this.SectionReference.DeleteAmendments.Where(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+        }
+    }
 
     private bool expanded;
 

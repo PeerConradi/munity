@@ -25,31 +25,56 @@
                     <div class="card-body">
                         <!-- begin title -->
                         <div class="mb-3 text-grey">
-                            <b class="mb-3">@amendment.Name</b>
+                            <b class="mb-3">
+                                @((amendment is MUNity.Models.Resolution.AddAmendment) ? "Hinzufügen eines Absatzes" : null)
+                                @((amendment is MUNity.Models.Resolution.ChangeAmendment) ? "Textänderung" : null)
+                                @((amendment is MUNity.Models.Resolution.DeleteAmendment) ? "Streichen eines Absatzes" : null)
+                                @((amendment is MUNity.Models.Resolution.MoveAmendment) ? "Verschieben eines Absatzes" : null)
+
+                                @if (amendment is MUNity.Models.Resolution.ChangeAmendment changeAmendment)
+                                {
+                                    var targetParagrapg = Resolution.OperativeSection.FindOperativeParagraph(changeAmendment.TargetSectionId);
+                                    if (targetParagrapg != null)
+                                    {
+                                        <span>@MUNityCore.Util.Tools.StringComputation.LevenshteinDistance(targetParagrapg.Text, changeAmendment.NewText) Levenshtein-Distance</span>
+                                        <span>@Math.Round(MUNityCore.Util.Tools.StringComputation.StringDiff(targetParagrapg.Text, changeAmendment.NewText)) % Ähnlichkeit</span>
+                                    }
+                                }
+
+                            </b>
                         </div>
                         <!-- end title -->
                         <!-- begin conversion-rate -->
                         <div class="d-flex align-items-center mb-1">
-                            <h2 class="text-white mb-0">§ @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(amendment.TargetSectionId)</h2>
+                            <h2 class="text-white mb-0">Absatz: @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(amendment.TargetSectionId)</h2>
                             <div class="ml-auto" style="position: relative;">
                                 <h3><i class="fa fa-eye-slash"></i></h3>
                             </div>
                         </div>
-                        <!-- end conversion-rate -->
-                        <!-- begin percentage -->
+
+                        @if (amendment is MUNity.Models.Resolution.ChangeAmendment ca)
+                        {
+                            <div class="mb-4 text-grey text-wrap">
+                                Neuer Text: @ca.NewText
+                            </div>
+                        }
+
                         <div class="mb-4 text-grey">
                             <i class="fa fa-flag"></i> @amendment.SubmitterName (@amendment.SubmitTime.ToString("dd.MM HH:mm"))
                         </div>
-                        <!-- end info-row -->
-                        <!-- begin info-row -->
+
                         <div class="d-flex mb-2">
                             <button class="btn btn-block btn-outline-success"
-                                    @onclick="() => SubmitAmendment(amendment)">Annehmen</button>
+                                    @onclick="() => SubmitAmendment(amendment)">
+                                Annehmen
+                            </button>
                         </div>
 
                         <div class="d-flex mb-2">
                             <button class="btn btn-block btn-outline-danger"
-                                    @onclick="() => DenyAmendment(amendment)">Ablehnen</button>
+                                    @onclick="() => DenyAmendment(amendment)">
+                                Ablehnen
+                            </button>
                         </div>
                     </div>
                     <!-- end card-body -->

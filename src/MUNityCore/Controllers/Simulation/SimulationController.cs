@@ -108,7 +108,7 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<SimulationDto>> Simulation([FromHeader] string simsimtoken, int simulationId)
         {
-            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isAllowed = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isAllowed) return BadRequest("The given Token is not allowed to access the simulation");
 
             var response = this._simulationService.GetSimulationResponse(simulationId);
@@ -127,7 +127,7 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<string>> GetListOfSpeakersId([FromHeader] string simsimtoken, int simulationId)
         {
-            var isValid = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isValid = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isValid) return BadRequest();
             return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
         }
@@ -143,7 +143,7 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<string>> GetResolutionId([FromHeader] string simsimtoken, int simulationId)
         {
-            var isValid = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isValid = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isValid) return BadRequest();
             return this._simulationService.GetSpeakerlistIdOfSimulation(simulationId);
         }
@@ -176,9 +176,9 @@ namespace MUNityCore.Controllers
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task<ActionResult<List<SimulationUserAdminDto>>> GetUsersAsAdmin([FromHeader] string simsimtoken, int id)
+        public ActionResult<List<SimulationUserAdminDto>> GetUsersAsAdmin([FromHeader] string simsimtoken, int id)
         {
-            var isAllowed = await _simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
+            var isAllowed = _simulationService.IsTokenValidAndUserChairOrOwner(id, simsimtoken);
             if (!isAllowed) 
                 return Forbid();
             var users = this._simulationService.GetSimulationUsers(id);
@@ -200,7 +200,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         public async Task<ActionResult<bool>> IsUserOnline([FromHeader] string simsimtoken, int simulationId, int userId)
         {
-            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isAllowed = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isAllowed) return BadRequest();
             return Ok(this._simulationService.UserOnline(simulationId, userId));
         }
@@ -217,7 +217,7 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<SimulationUserDefaultDto>> GetUsersDefault([FromHeader] string simsimtoken, int id)
         {
-            var isAllowed = await this._simulationService.IsTokenValid(id, simsimtoken);
+            var isAllowed = await this._simulationService.IsTokenValidAsync(id, simsimtoken);
             if (!isAllowed) return BadRequest();
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
@@ -423,7 +423,7 @@ namespace MUNityCore.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<List<ResolutionSmallInfo>>> SimulationResolutions([FromHeader] string simsimtoken, int simulationId)
         {
-            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isAllowed = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isAllowed) return BadRequest();
             
             List<ResolutionSmallInfo> resolutions = await _simulationService.GetResolutions(simulationId);
@@ -532,7 +532,7 @@ namespace MUNityCore.Controllers
         [Route("[action]")]
         public async Task<ActionResult<List<SimulationSlotDto>>> Slots([FromHeader]string simsimtoken, int simulationId)
         {
-            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isAllowed = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isAllowed) BadRequest();
 
             List<SimulationSlotDto> slots = this._simulationService.GetSlots(simulationId);

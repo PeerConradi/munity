@@ -157,8 +157,39 @@ namespace MUNityCore.Services
         internal async Task StoreSimulationToken(SimulationTokenResponse simulationResponse)
         {
             var savedTokens = await GetStoredSimulations();
-            savedTokens.Add(simulationResponse);
-            await this._storageService.SetItemAsync("munity_simsims", savedTokens);
+            bool modified = false;
+            if (savedTokens.Any())
+            {
+                var existing = savedTokens.FirstOrDefault(n => n.SimulationId == simulationResponse.SimulationId);
+                if (existing != null)
+                {
+                    if (existing.Name != simulationResponse.Name)
+                    {
+                        existing.Name = simulationResponse.Name;
+                        modified = true;
+                    }
+                        
+                    if (existing.Token != simulationResponse.Token)
+                    {
+                        existing.Token = simulationResponse.Token;
+                        modified = true;
+                    }
+                }
+                else
+                {
+                    savedTokens.Add(simulationResponse);
+                    modified = true;
+                }
+            }
+            else
+            {
+                savedTokens.Add(simulationResponse);
+                modified = true;
+            }
+            if (modified)
+            {
+                await this._storageService.SetItemAsync("munity_simsims", savedTokens);
+            }
         }
 
         internal async Task RemoveSimulationTokensForSimulation(int simulationId)

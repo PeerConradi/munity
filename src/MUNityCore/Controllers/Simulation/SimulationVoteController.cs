@@ -64,7 +64,7 @@ namespace MUNityCore.Controllers.Simulation
         [Route("[action]")]
         public async Task<ActionResult<CreatedVoteModel>> GetActiveVote([FromHeader]string simsimtoken, int simulationId)
         {
-            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isAllowed = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isAllowed)
                 return BadRequest();
 

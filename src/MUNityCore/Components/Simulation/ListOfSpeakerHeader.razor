@@ -1,75 +1,112 @@
 ﻿@inject Services.FrontendSimulationService frontendSimulationService;
 
-<nav class="navbar navbar-expand-lg navbar-light bg-dark" style="margin: -25px -30px 10px -30px">
+<div class="row bg-dark text-white remove-padding ">
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto text-white">
-            <li>
-                <h4>Redeliste:</h4>
-            </li>
-            @if (this.ViewModel != null)
-            {
-                <li class="nav-item m-l-10">
-                    <h4>@((ViewModel.Speakerlist.CurrentSpeaker != null) ? ViewModel.Speakerlist.CurrentSpeaker.Name : "Niemand")</h4>
-                </li>
-                <li class="nav-item text-secondary m-l-20">
-                    @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds <= 0)
-                    {
-                        <h4 class="text-danger">Zum Ende kommen!</h4>
-                    }
-                    else
-                    {
-                        <h4>@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
-                    }
-
-                </li>
-                <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
-                    @((ViewModel.Speakerlist.Speakers.Any()) ? "danach: " + ViewModel.Speakerlist.Speakers.First().Name : null)
-                    @((ViewModel.Speakerlist.Speakers.Any() && ViewModel.Speakerlist.Speakers.Count() > 1) ? "..." : null)
-                </li>
-                <li class="ml-3">
-                    <h4>F &amp; K:</h4>
-                </li>
-                <li class="nav-item m-l-10">
-                    <h4>@((ViewModel.Speakerlist.CurrentQuestion != null) ? ViewModel.Speakerlist.CurrentQuestion.Name : "Niemand")</h4>
-                </li>
-                <li class="nav-item text-secondary m-l-20">
-                    @if (ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds <= 0)
-                    {
-                        <h4 class="text-danger">Zum Ende kommen!</h4>
-                    }
-                    else
-                    {
-                        <h4>@ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
-                    }
-
-                </li>
-                <li class="nav-item text-secondary m-l-20 text-wrap" style="max-width: 200px">
-                    @((ViewModel.Speakerlist.Questions.Any()) ? "danach: " + ViewModel.Speakerlist.Questions.First().Name : null).
-                    @((ViewModel.Speakerlist.Questions.Any() && ViewModel.Speakerlist.Questions.Count() > 1) ? "..." : null)
-                </li>
-            }
-
-        </ul>
-
-        <div class="my-2 my-lg-0">
-            <div class="form-group row">
-                <label class="col-md-3 col-form-label text-white">Status</label>
-                <div class="col-md-7">
-                    <input type="text" class="form-control" />
-                </div>
+    @if (ViewModel != null)
+    {
+        <!-- Redeliste -->
+        <div class="col-lg-3 col-sm-8 col-xs-9">
+            <div class="row ml-2 ml-xs-0">
+                <span class="text-sm-left text-secondary">Aktuelle*r Redner*in</span>
+            </div>
+            <div class="row ml-3 ml-xs-0">
+                <h4>@((ViewModel.Speakerlist.CurrentSpeaker != null) ? ViewModel.Speakerlist.CurrentSpeaker.Name : "Niemand")</h4>
+            </div>
+            <div class="row ml-2" style="margin-top: -5px;">
+                <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.Speakers.Count() warten</span>
             </div>
         </div>
 
-        <div class="my-2 my-lg-0">
-            <a class="btn @((showListOfSpeakers) ? "btn-primary" : "btn-default") btn-icon btn-circle btn-lg"
-               @onclick="() => { ShowList.InvokeAsync(showListOfSpeakers); showListOfSpeakers = !showListOfSpeakers; }">
+        <div class="col-lg-2 col-sm-4 col-xs-3">
+            <div class="row">
+                <span class="text-sm-left text-secondary">Zeit</span>
+            </div>
+            <div class="row">
+                @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds <= 0)
+                {
+                    <h4 class="text-danger">Zum Ende kommen!</h4>
+                }
+                else
+                {
+                    <h4 class="@speakerTimeClass">@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
+                }
+            </div>
+            <div class="row" style="margin-top: -5px;">
+                @if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
+                  this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.AnswerPaused)
+                {
+                    <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
+                }
+                else
+                {
+                    <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.SpeakerTime.ToString(@"mm\:ss")</span>
+                }
+
+            </div>
+        </div>
+
+        <!-- Fragen und Kurzbemerkungen -->
+        <div class="col-lg-3 col-sm-8 col-xs-9">
+            <div class="row ml-2">
+                <span class="text-sm-left text-secondary">Fragen und Kurzbemerkungen</span>
+            </div>
+            <div class="row ml-3">
+                <h4>@((ViewModel.Speakerlist.CurrentQuestion != null) ? ViewModel.Speakerlist.CurrentQuestion.Name : "Niemand")</h4>
+            </div>
+            <div class="row ml-2" style="margin-top: -5px;">
+                <span class="text-sm-left text-secondary">
+                    @((ViewModel.Speakerlist.Questions.Any()) ? "danach: " + ViewModel.Speakerlist.Questions.First().Name : null)
+                    @((ViewModel.Speakerlist.Questions.Any() && ViewModel.Speakerlist.Questions.Count() > 1) ? " +" + (ViewModel.Speakerlist.Questions.Count() - 1).ToString() : null)
+                </span>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-sm-4 col-xs-3">
+            <div class="row">
+                <span class="text-sm-left text-secondary">Zeit</span>
+            </div>
+            <div class="row">
+                @if (ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds <= 0)
+                {
+                    <h4 class="text-danger">Zum Ende kommen!</h4>
+                }
+                else
+                {
+                    <h4>@ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
+                }
+            </div>
+            <div class="row" style="margin-top: -5px;">
+                <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
+            </div>
+        </div>
+
+        <div class="col-lg-2 align-self-center col-sm-12 col-xs-12">
+            <a class="btn @((showListOfSpeakers) ? "btn-primary" : "btn-default") btn-lg"
+                @onclick="() => { ShowList.InvokeAsync(showListOfSpeakers); showListOfSpeakers = !showListOfSpeakers; }">
                 <i class="fa fa-comment"></i>
+                @((showListOfSpeakers) ? "Redeliste ausblenden" : "Redeliste anzeigen")
             </a>
         </div>
-    </div>
-</nav>
+    }
+</div>
 
+<style>
+    @@media (max-width: 767px) {
+        .hidden-xs {
+            display: none !important;
+        }
+
+        .remove-padding {
+            margin: -20px -30px 10px -30px;
+        }
+    }
+
+    @@media (min-width: 768px) {
+        .remove-padding {
+            margin: -25px -30px 10px -30px;
+        }
+    }
+</style>
 
 @code {
     [Parameter]
@@ -84,6 +121,29 @@
     private bool showListOfSpeakers = false;
 
     private System.Timers.Timer refreshTimer;
+
+    private string speakerTimeClass
+    {
+        get
+        {
+            if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
+            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
+            {
+                if (this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds > 10)
+                {
+                    return "text-primary";
+                }
+                else
+                {
+                    return "text-danger";
+                }
+            }
+            else
+            {
+                return "text-white";
+            }
+        }
+    }
 
     protected override void OnInitialized()
     {

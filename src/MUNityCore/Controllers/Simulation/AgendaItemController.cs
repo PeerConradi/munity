@@ -64,7 +64,7 @@ namespace MUNityCore.Controllers.Simulation
         [Route("[action]")]
         public async Task<ActionResult<IEnumerable<AgendaItemDto>>> AgendaItems([FromHeader] string simsimtoken, int simulationId, bool withPetitions = false)
         {
-            var isAllowed = await this._simulationService.IsTokenValid(simulationId, simsimtoken);
+            var isAllowed = await this._simulationService.IsTokenValidAsync(simulationId, simsimtoken);
             if (!isAllowed) return BadRequest();
             if (withPetitions)
             {

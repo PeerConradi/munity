@@ -1,6 +1,6 @@
 ﻿<AuthorizeView>
 	<Authorized>
-	 <li class="dropdown navbar-user">
+	 <li class="dropdown navbar-user hidden-xs">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 			<span class="d-none d-md-inline">Hi, @context.User.Identity.Name</span>
 			<img src="/img/cage.png" alt=""> 
@@ -17,6 +17,13 @@
  </Authorized>
 </AuthorizeView>
 
+<style>
+@@media (max-width: 767px) {
+  .hidden-xs {
+    display: none !important;
+  }
+}
+</style>
 
 @code {
 	protected override void OnInitialized()

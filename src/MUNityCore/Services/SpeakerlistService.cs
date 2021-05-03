@@ -364,12 +364,15 @@ namespace MUNityCore.Services
 
         internal bool ClearSpeaker(string listId)
         {
-            var list = _context.ListOfSpeakers
-                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
-            if (list == null) return false;
-            list.ClearCurrentSpeaker();
-            _context.SaveChanges();
-            return true;
+            var speaker = _context.Speakers.FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId &&
+            n.Mode == Speaker.SpeakerModes.CurrentlySpeaking);
+            if (speaker != null)
+            {
+                _context.Speakers.Remove(speaker);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         internal bool ClearQuestion(ListOfSpeakersRequest body)
@@ -379,12 +382,15 @@ namespace MUNityCore.Services
 
         internal bool ClearQuestion(string listId)
         {
-            var list = _context.ListOfSpeakers
-                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
-            if (list == null) return false;
-            list.ClearCurrentQuestion();
-            _context.SaveChanges();
-            return true;
+            var speaker = _context.Speakers.FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId &&
+            n.Mode == Speaker.SpeakerModes.CurrentQuestion);
+            if (speaker != null)
+            {
+                _context.Speakers.Remove(speaker);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         internal bool Pause(ListOfSpeakersRequest body)

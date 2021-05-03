@@ -4,25 +4,43 @@
             <b class="mr-3">Fragen und Kurzbemerkungen</b>
             @if (SimViewModel.IsChair)
             {
-                <button class="btn btn-sm btn-circle @resumeQuestionButtonClass"
+                <button class="btn btn-sm @resumeQuestionButtonClass"
                         @onclick="() => ToggleQuestion()">
                     <i class="fa @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "fa-pause" : "fa-play") "></i>
+                    @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.QuestionPaused) ? "fortsetzen" : null)
+                    @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "pausieren" : null)
+                    @((ViewModel.Speakerlist.Status != MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question && ViewModel.Speakerlist.Status != MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.QuestionPaused) ? "Frage starten" : null)
+
                 </button>
-                <button class="btn btn-sm btn-circle btn-primary"
+                <button class="btn btn-sm btn-primary"
                         @onclick="() => NextQuestion()">
                     <i class="fa fa-step-forward"></i>
+                    nächste FuK
                 </button>
-                @if (ViewModel.Speakerlist.CurrentQuestion != null)
-                {
-                    <button class="btn btn-sm btn-circle btn-danger"
-                            @onclick="() => ViewModel.ClearQuestion()">
-                        <i class="fa fa-times"></i>
-                    </button>
-                }
+                
             }
         </div>
         <div class="d-flex align-items-center mb-1">
-            <h2 class="text-white mb-0">@((ViewModel.Speakerlist.CurrentQuestion != null) ? ViewModel.Speakerlist.CurrentQuestion.Name : "Niemand")</h2>
+            <h2 class="text-white mb-0">
+                @if (ViewModel.Speakerlist.CurrentQuestion != null)
+                {
+                    @ViewModel.Speakerlist.CurrentQuestion.Name
+
+                    @if (SimViewModel.IsChair)
+                    {
+                        <button class="btn btn-sm btn-danger ml-2"
+                                @onclick="() => ViewModel.ClearQuestion()">
+                            <i class="fa fa-times"></i>
+                            Kopzeile leeren
+                        </button>
+                    }
+
+                }
+                else
+                {
+                    <span>-</span>
+                }
+            </h2>
             <div class="ml-auto" style="position: relative;">
                 <a href="javascript:;" title="Auf die Redeliste setzen"
                    class="btn btn-icon btn-circle  @((isOnQuestions) ? "btn-default disabled" : "btn-success")"
@@ -58,24 +76,39 @@
         </div>
         @foreach (var waitingQuestion in ViewModel.Speakerlist.Questions)
         {
-    <div class="d-flex mb-2">
-        <div class="d-flex align-items-center">
-            @waitingQuestion.Name
-        </div>
-        @if (SimViewModel.IsChair)
-        {
-            <div class="d-flex align-items-center ml-auto">
-                <button class="btn btn-sm btn-circle btn-danger"
-                        @onclick="() => RemoveQuestion(waitingQuestion)">
-                    <i class="fa fa-trash"></i>
-                </button>
+            <div class="d-flex mb-2">
+                <div class="d-flex align-items-center">
+                    @waitingQuestion.Name
+                </div>
+                @if (SimViewModel.IsChair)
+                {
+                    <div class="d-flex align-items-center ml-auto">
+                        <button class="btn btn-sm btn-circle btn-danger"
+                                @onclick="() => RemoveQuestion(waitingQuestion)">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                }
+
             </div>
         }
 
     </div>
-        }
 
-    </div>
+    @if (SimViewModel.IsChair)
+    {
+        <div class="card-footer bg-dark-darker">
+            <div class="row">
+                <div class="input-group">
+                    <input class="form-control" placeholder="Jemanden auf die Redeliste setzen" @bind="@manualSpeakerName" />
+                    <button type="button" class="btn btn-primary"
+                            @onclick="() => AddSpeakerManual()">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
@@ -86,6 +119,17 @@
     public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
     private System.Timers.Timer refreshTimer;
+
+    private string manualSpeakerName;
+
+    private async Task AddSpeakerManual()
+    {
+        if (!string.IsNullOrEmpty(manualSpeakerName))
+        {
+            await this.ViewModel.AddQuestion("un", manualSpeakerName);
+            this.manualSpeakerName = "";
+        }
+    }
 
     public double RemainingQuestionTimePercentage
     {
