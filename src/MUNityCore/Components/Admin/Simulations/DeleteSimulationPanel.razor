@@ -1,0 +1,38 @@
+﻿@inject Services.SimulationService simulationService;
+@inject NavigationManager navManager;
+
+<div class="panel panel-danger bg-red-darker text-white" data-sortable-id="ui-widget-1">
+    <div class="panel-heading">
+        <h4 class="panel-title">Simulation Löschen</h4>
+    </div>
+    <div class="panel-body">
+        <p>Bestätigungsnummer eingeben!</p>
+        <h3>@proofNumber</h3>
+        <input type="text" class="form-control" @bind="@proofNumerInput" placeholder="Bestätigungsnummer eingeben!" />
+        <button class="btn btn-danger" @onclick="() => DeleteSimulation()">Simulation löschen</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Models.Simulation.Simulation Simulation { get; set; }
+
+    private string proofNumber;
+
+    private string proofNumerInput;
+
+    protected override void OnInitialized()
+    {
+        proofNumber = new Random().Next(1000, 9999).ToString();
+        base.OnInitialized();
+    }
+
+    private void DeleteSimulation()
+    {
+        if (proofNumber == proofNumerInput)
+        {
+            simulationService.RemoveSimulation(this.Simulation.SimulationId);
+            this.navManager.NavigateTo("/admin/simulations");
+        }
+    }
+}

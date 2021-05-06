@@ -14,6 +14,11 @@
     </TableRowCell>
     <TableRowCell>@User.PublicUserId</TableRowCell>
     <TableRowCell>@User.Password</TableRowCell>
+    <TableRowCell TextAlignment="TextAlignment.Center">
+        <button class="btn btn-circle btn-danger" @onclick="() => RemoveUser()">
+            <i class="fa fa-trash"></i>
+            </button>
+    </TableRowCell>
 </TableRow>
 
 @code {
@@ -22,6 +27,9 @@
 
     [Parameter]
     public List<MUNityCore.Models.Simulation.SimulationRole> Roles { get; set; }
+
+    [Parameter]
+    public EventCallback<MUNityCore.Models.Simulation.SimulationUser> UserRemoved { get; set; }
 
     private int _roleId;
     private int roleId
@@ -38,5 +46,11 @@
     {
         this._roleId = User.Role?.SimulationRoleId ?? -2;
         base.OnInitialized();
+    }
+
+    private void RemoveUser()
+    {
+        this.simulationService.RemoveUser(this.User.SimulationUserId);
+        this.UserRemoved.InvokeAsync(this.User);
     }
 }

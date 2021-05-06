@@ -18,11 +18,12 @@
                     <TableHeaderCell>Rolle</TableHeaderCell>
                     <TableHeaderCell>Login-Id</TableHeaderCell>
                     <TableHeaderCell>Login-Pass</TableHeaderCell>
+                    <TableHeaderCell TextAlignment="TextAlignment.Center">Löschen</TableHeaderCell>
                 </TableHeader>
                 <TableBody>
                     @foreach (var user in Sim.Users)
                     {
-                        <UserCardUserRow User="@user" Roles="@Sim.Roles" />
+                        <UserCardUserRow User="@user" Roles="@Sim.Roles" UserRemoved="OnUserRemoved" />
                     }
                 </TableBody>
             </Table>
@@ -35,10 +36,20 @@
     [Parameter]
     public MUNityCore.Models.Simulation.Simulation Sim { get; set; }
 
+    [Parameter]
+    public EventCallback UsersChanged { get; set; }
+
     private string newUserDisplayName;
 
     private void CreateNewUser()
     {
         var user = simulationService.CreateUser(Sim.SimulationId, newUserDisplayName);
+        UsersChanged.InvokeAsync();
+    }
+
+    private void OnUserRemoved(MUNityCore.Models.Simulation.SimulationUser user)
+    {
+        this.StateHasChanged();
+        UsersChanged.InvokeAsync();
     }
 }

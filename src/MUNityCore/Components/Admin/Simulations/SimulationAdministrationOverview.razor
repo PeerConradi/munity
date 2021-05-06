@@ -31,25 +31,37 @@
         <Row>
             @if (simulations != null)
             {
-                <Table>
-                    <TableHeader>
-                        <TableHeaderCell>Id</TableHeaderCell>
-                        <TableHeaderCell>Name</TableHeaderCell>
-                        <TableHeaderCell>Anzahl Benutzer</TableHeaderCell>
-                        <TableHeaderCell>Anzahl Rollen</TableHeaderCell>
-                    </TableHeader>
-                    <TableBody>
-                        @foreach (var simulation in simulations)
-                        {
-                            <TableRow>
-                                <TableRowCell>@simulation.Id</TableRowCell>
-                                <TableRowCell><a href="/admin/simulation/@simulation.Id">@simulation.Name</a></TableRowCell>
-                                <TableRowCell>@simulation.AnzahlBenutzer</TableRowCell>
-                                <TableRowCell>@simulation.AnzahlRollen</TableRowCell>
-                            </TableRow>
-                        }
-                    </TableBody>
-                </Table>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <div class="panel panel-inverse" data-sortable-id="ui-widget-1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Geladene Simulationen</h4>
+                        </div>
+                        <div class="panel-body">
+                            <Table>
+                                <TableHeader>
+                                    <TableHeaderCell>Id</TableHeaderCell>
+                                    <TableHeaderCell>Name</TableHeaderCell>
+                                    <TableHeaderCell>Anzahl Benutzer</TableHeaderCell>
+                                    <TableHeaderCell>Anzahl Rollen</TableHeaderCell>
+                                </TableHeader>
+                                <TableBody>
+                                    @foreach (var simulation in simulations)
+                                    {
+                                        <TableRow>
+                                            <TableRowCell>@simulation.Id</TableRowCell>
+                                            <TableRowCell><a href="/admin/simulation/@simulation.Id">@simulation.Name</a></TableRowCell>
+                                            <TableRowCell>@simulation.AnzahlBenutzer</TableRowCell>
+                                            <TableRowCell>@simulation.AnzahlRollen</TableRowCell>
+                                        </TableRow>
+                                    }
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </div>
+
+
+                </Column>
+                
             }
             else
             {

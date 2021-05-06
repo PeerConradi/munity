@@ -13,15 +13,51 @@
                     <TableHeaderCell>Art</TableHeaderCell>
                     <TableHeaderCell>Iso</TableHeaderCell>
                     <TableHeaderCell>Name</TableHeaderCell>
+                    <TableHeaderCell TextAlignment="TextAlignment.Center">Löschen</TableHeaderCell>
                 </TableHeader>
                 <TableBody>
                     @foreach (var role in Simulation.Roles.OrderBy(n => n.RoleType).ThenBy(n => n.Name))
                     {
                         <TableRow>
                             <TableRowCell>@role.SimulationRoleId</TableRowCell>
-                            <TableRowCell>@role.RoleType.ToString()</TableRowCell>
+                            <TableRowCell>
+                                @if (role.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+                                {
+                                    <span>Vorsitzende*r</span>
+                                }
+                                else if (role.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate)
+                                {
+                                    <span>Delegierte*r</span>
+                                }
+                                else if (role.RoleType == MUNity.Schema.Simulation.RoleTypes.Moderator)
+                                {
+                                    <span>Moderator*in</span>
+                                }
+                                else if (role.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)
+                                {
+                                    <span>Nichtstaatliche*r Akteur*in</span>
+                                }
+                                else if (role.RoleType == MUNity.Schema.Simulation.RoleTypes.None)
+                                {
+                                    <span>Keine Rolle</span>
+                                }
+                                else if (role.RoleType == MUNity.Schema.Simulation.RoleTypes.Spectator)
+                                {
+                                    <span>Zuschauer*in</span>
+                                }
+                                else
+                                {
+                                    @role.RoleType.ToString()
+                                }
+
+                            </TableRowCell>
                             <TableRowCell>@role.Iso</TableRowCell>
                             <TableRowCell>@role.Name</TableRowCell>
+                            <TableRowCell TextAlignment="TextAlignment.Center">
+                            <button class="btn btn-circle btn-sm btn-danger" @onclick="() => RemoveRole(role)">
+                                <i class="fa fa-trash"></i>
+                                </button>
+                            </TableRowCell>
                         </TableRow>
                     }
                 </TableBody>
@@ -52,6 +88,9 @@
     [Parameter]
     public MUNityCore.Models.Simulation.Simulation Simulation { get; set; }
 
+    [Parameter]
+    public EventCallback RolesChanged { get; set; }
+
     private string newRoleName;
 
     private string newRoleIso;
@@ -66,6 +105,12 @@
         {
             simulationService.CreateRole(Simulation.SimulationId, newRoleName, newRoleIso, newRoleType);
         }
+        RolesChanged.InvokeAsync();
+    }
 
+    private void RemoveRole(MUNityCore.Models.Simulation.SimulationRole role)
+    {
+        this.simulationService.RemoveRole(role.SimulationRoleId);
+        RolesChanged.InvokeAsync();
     }
 }

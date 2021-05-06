@@ -75,15 +75,19 @@
                 </Column>
                 
                 <Column ColumnSize="ColumnSize.Is12">
-                    <UsersCard Sim="@simulation" />
+                    <UsersCard Sim="@simulation" UsersChanged="UpdateViewOnChange" />
                 </Column>
                 
                 <Column ColumnSize="ColumnSize.Is12">
-                    <RolesCard Simulation="@simulation" />
+                    <RolesCard Simulation="@simulation" RolesChanged="UpdateViewOnChange" />
                 </Column>
 
                 <Column ColumnSize="ColumnSize.Is12">
                     <PetitionTypesCard Simulation="@simulation" />
+                </Column>
+
+                <Column ColumnSize="ColumnSize.Is12">
+                    <DeleteSimulationPanel Simulation="@simulation" />
                 </Column>
             </Row>
         }
@@ -124,7 +128,7 @@
             {
                 loadingState = LoadingStates.NotFound;
             }
-            else 
+            else
             {
                 loadingState = LoadingStates.Success;
             }
@@ -133,5 +137,10 @@
         {
             loadingState = LoadingStates.InvalidInput;
         }
+    }
+
+    private void UpdateViewOnChange()
+    {
+        this.StateHasChanged();
     }
 }

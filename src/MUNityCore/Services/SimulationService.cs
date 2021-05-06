@@ -1109,6 +1109,31 @@ namespace MUNityCore.Services
             }
         }
 
+        internal void RemoveUser(int userId)
+        {
+            var user = this._context.SimulationUser.SingleOrDefault(n => n.SimulationUserId == userId);
+            if (user != null)
+            {
+                this._context.SimulationUser.Remove(user);
+                this._context.SaveChanges();
+            }
+        }
+
+        internal void RemoveRole(int roleId)
+        {
+            var usersWithRole = this._context.SimulationUser.Where(n => n.Role.SimulationRoleId == roleId).ToList();
+            if (usersWithRole.Any())
+            {
+                foreach(var user in usersWithRole)
+                {
+                    user.Role = null;
+                }
+            }
+            var role = this._context.SimulationRoles.FirstOrDefault(n => n.SimulationRoleId == roleId);
+            this._context.SimulationRoles.Remove(role);
+            this._context.SaveChanges();
+        }
+
         public SimulationUser JoinSimulation(Simulation simulation, string displayName)
         {
             if (simulation == null)
@@ -1329,5 +1354,77 @@ namespace MUNityCore.Services
             user.DisplayName = newName;
             _context.SaveChanges();
         }
+
+        internal void RemoveSimulation(int simulationId)
+        {
+            var simulation = _context.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
+            if (simulation == null)
+                return;
+            Console.WriteLine("Request the deletion of Simulation: " + simulation.Name);
+            RemoveHubConnectionsOfSimulation(simulationId);
+            // Remove Petitions
+            _context.Petitions.RemoveRange(_context.Petitions.Where(n => n.AgendaItem.Simulation.SimulationId == simulationId || n.SimulationUser.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed all Petitions");
+            // Remove AgendaItems
+            _context.AgendaItems.RemoveRange(_context.AgendaItems.Where(n => n.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed all AgendaItems");
+            // Remove SimulationPetitionTypes
+            _context.SimulationPetitionTypes.RemoveRange(_context.SimulationPetitionTypes.Where(n => n.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed all PetitionTypes");
+            //Remove given votes
+            _context.VotingSlots.RemoveRange(_context.VotingSlots.Where(n => n.Voting.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed all Votes");
+            // votings
+            _context.SimulationVotings.RemoveRange(_context.SimulationVotings.Where(n => n.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed all Votings");
+            // Remove Invites
+            _context.SimulationInvites.RemoveRange(_context.SimulationInvites.Where(n => n.User.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed all Invites");
+            // Remove roles:
+            _context.SimulationRoles.RemoveRange(_context.SimulationRoles.Where(n => n.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed all Roles");
+            // Remove Users
+            _context.SimulationUser.RemoveRange(_context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed all Users");
+            // Remove Log
+            _context.SimulationLog.RemoveRange(_context.SimulationLog.Where(n => n.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed the log");
+            // Remove Statuses
+            _context.SimulationStatuses.RemoveRange(_context.SimulationStatuses.Where(n => n.Simulation.SimulationId == simulationId));
+            _context.SaveChanges();
+            Console.WriteLine("Removed the statuses");
+            // Unlink resolutions
+            var resolutions = _context.ResolutionAuths.Where(n => n.Simulation.SimulationId == simulationId);
+            if (resolutions.Any())
+            {
+                foreach(var resolution in resolutions)
+                {
+                    resolution.Simulation = null;
+                }
+            }
+            Console.WriteLine("Unlinked the Resolutions");
+
+            _context.Simulations.Remove(simulation);
+            _context.SaveChanges();
+        }
+
+        internal void RemoveHubConnectionsOfSimulation(int simulationId)
+        {
+            var connections = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.Where(n => n.Value.SimulationId == simulationId).ToList();
+            foreach(var connection in connections)
+            {
+                Hubs.ConnectionUsers.ConnectionIds.TryRemove(connection);
+            }
+        }
+
     }
 }
