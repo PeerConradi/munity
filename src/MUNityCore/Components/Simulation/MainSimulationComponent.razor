@@ -144,6 +144,11 @@ else
         catch (Exception ex)
         {
             this.loadingState = LoadingStates.Errored;
+            Console.WriteLine($"Error while loading the Simulation Main Component: {ex}");
+            if (ex.StackTrace != null)
+            {
+                Console.WriteLine(ex.StackTrace);
+            }
         }
         this.mainViewService.LoadingState = 100;
         this.StateHasChanged();
