@@ -34,17 +34,32 @@ namespace MUNityCore.ViewModel
 
         public int SimulationId { get; set; }
 
-        public int UserId { get; set; }
+        /// <summary>
+        /// The context of the user that is currently connected to the simulation.
+        /// If no user is given the user is either a spectator or moderator, in both cases the
+        /// connected user can only view the simulation and not interact with anyone.
+        /// </summary>
+        public SimulationUserContext UserContext { get; set; }
 
-        public bool IsChair { get; set; }
+        public string Name { get; private set; }
 
-        public string Token { get; set; }
-
-        public string DisplayName { get; set; }
-
-        public string RoleIso { get; set; }
-
-        public string RoleName { get; set; }
+        public void FetchData(Services.SimulationService simulationService)
+        {
+            if (simulationService == null)
+            {
+                Console.WriteLine("Error: SimulationService was disposed!");
+            }
+            var sim = simulationService.GetSimulation(this.SimulationId);
+            if (sim == null)
+            {
+                Console.WriteLine($"Error: the Simulation with the id: {this.SimulationId} was not found. No Data for the SimulationViewModel");
+            }
+            else
+            {
+                this.Name = sim.Name;
+            }
+            
+        }
 
 
         private SimulationViewModel(HubConnection hubConnection)
@@ -70,19 +85,24 @@ namespace MUNityCore.ViewModel
 
         public async Task SignIn()
         {
-            await _hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.SignIn), this.SimulationId, UserId);
+            await _hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.SignIn), this.SimulationId, UserContext.UserId);
+        }
+
+        public async Task SignInContext()
+        {
+            await _hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.SignInContext), this.SimulationId);
         }
 
         public async Task AddMeToSpeakerlist()
         {
             if (this.SpeakerlistViewModel == null) return;
-            await this.SpeakerlistViewModel.AddSpeaker(this.RoleIso, this.RoleName);
+            await this.SpeakerlistViewModel.AddSpeaker(this.UserContext.RoleIso, this.UserContext.RoleName);
         }
 
         public async Task AddMeToQuestions()
         {
             if (this.SpeakerlistViewModel == null) return;
-            await this.SpeakerlistViewModel.AddQuestion(this.RoleIso, this.RoleName);
+            await this.SpeakerlistViewModel.AddQuestion(this.UserContext.RoleIso, this.UserContext.RoleName);
         }
 
         internal async Task CreateVoting(string displayName, bool allowAbstention)

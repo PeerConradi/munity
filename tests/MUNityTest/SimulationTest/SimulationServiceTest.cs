@@ -56,7 +56,7 @@ namespace MUNityTest.SimulationTest
         public async Task TestGetSimulation()
         {
             var service = new SimulationService(_context);
-            var simulation = await service.GetSimulation(this.simulationId);
+            var simulation = await service.GetSimulationAsync(this.simulationId);
             Assert.NotNull(simulation);
         }
 
@@ -65,7 +65,7 @@ namespace MUNityTest.SimulationTest
         public async Task TestGenerateInitalUser()
         {
             var service = new SimulationService(_context);
-            var simulation = await service.GetSimulation(this.simulationId);
+            var simulation = await service.GetSimulationAsync(this.simulationId);
             var user = service.CreateModerator(simulation, "TestUser");
             Assert.NotNull(user);
         }

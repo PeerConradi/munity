@@ -7,10 +7,9 @@
             <i class="fa fa-flag"></i> Start
     </button>
 
-    <button class="btn @agendaClass">
-        <a @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda">
+    <button class="btn @agendaClass"
+            @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda">
             <i class="fa fa-bookmark"></i> Tagesordnung
-        </a>
     </button>
 
     <button class="btn @votingClass"

@@ -1,0 +1,32 @@
+﻿@page "/admin/users" 
+@inject Services.IUserService userService;
+
+<AuthorizeView>
+    <Authorized>
+        <Heading>Hallo @context.User.Identity.Name</Heading>
+        <h1>Benutzer</h1>
+        <ul>
+            @if (displayUsers != null)
+            {
+                foreach(var user in displayUsers)
+                {
+                    <li>@user.Email</li>
+                }
+            }
+        </ul>
+        <Paragraph></Paragraph>
+    </Authorized>
+    <NotAuthorized>
+        <Paragraph>Kein Zugang ohne Login!</Paragraph>
+    </NotAuthorized>
+
+</AuthorizeView>
+@code {
+    private List<MUNityCore.Models.User.MunityUser> displayUsers = null;
+
+    protected override void OnInitialized()
+    {
+        this.displayUsers = userService.GetUserBlock(0);
+        base.OnInitialized();
+    }
+}

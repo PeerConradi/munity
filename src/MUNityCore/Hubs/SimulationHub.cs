@@ -43,6 +43,14 @@ namespace MUNityCore.Hubs
             
         }
 
+        public async Task SignInContext(int simulationId)
+        {
+            if (Context.User != null)
+            {
+                await this.Groups.AddToGroupAsync(Context.ConnectionId, "sim_" + simulationId);
+            }
+        }
+
         private Task NotifyUsersChanged(int simulationId)
         {
             return Clients.Group($"sim_{simulationId}")

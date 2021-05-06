@@ -14,7 +14,7 @@
                         <a class="btn btn-xs btn-icon btn-circle btn-primary"
                            @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
                     }
-                    else if (resolutionMode == EResolutionMode.Read && (SimViewModel.IsChair || _info.AllowPublicEdit))
+                    else if (resolutionMode == EResolutionMode.Read && (SimViewModel.UserContext.IsChair || _info.AllowPublicEdit))
                     {
                         <a class="btn btn-xs btn-icon btn-circle btn-secondary"
                            @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>

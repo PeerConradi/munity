@@ -258,19 +258,6 @@ namespace MUNityCore.Services
             return newRole;
         }
 
-        public void RemoveHubs(IEnumerable<SimulationHubConnection> hubs)
-        {
-            try
-            {
-                this._context.SimulationHubConnections.RemoveRange(hubs);
-                this._context.SaveChanges();
-            }
-            catch (Exception)
-            {
-                // TODO: Logger
-            }
-        }
-
         internal PetitionType CreatePetitionType(CreatePetitionTypeRequest body)
         {
             var newPetitionType = new PetitionType()
@@ -338,25 +325,6 @@ namespace MUNityCore.Services
         public string GetSpeakerlistIdOfSimulation(int simulationId)
         {
             return this._context.Simulations.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.SimulationId == simulationId)?.ListOfSpeakers?.ListOfSpeakersId;
-        }
-
-        internal Simulation GetSimulationAndUserByConnectionId(string connectionId)
-        {
-            return _context.Simulations
-                .Include(n => n.Users)
-                .ThenInclude(n => n.HubConnections)
-                .FirstOrDefault(n => 
-                    n.Users.Any(k => k.HubConnections.Any(a => a.ConnectionId == connectionId)));
-        }
-
-        internal async Task RemoveConnectionKey(string connectionKey)
-        {
-            var keys = _context.SimulationHubConnections.Where(n => n.ConnectionId == connectionKey);
-            if (keys.Any())
-            {
-                _context.SimulationHubConnections.RemoveRange(keys);
-                await _context.SaveChangesAsync();
-            }
         }
 
         public SimulationUser CreateModerator(Simulation simulation, string displayName)
@@ -522,9 +490,14 @@ namespace MUNityCore.Services
             return await IsTokenValidAndUserChair(body);
         }
 
-        public Task<Simulation> GetSimulation(int id)
+        public Task<Simulation> GetSimulationAsync(int id)
         {
             return this._context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == id);
+        }
+
+        public Simulation GetSimulation(int id)
+        {
+            return this._context.Simulations.FirstOrDefault(n => n.SimulationId == id);
         }
 
 
@@ -534,7 +507,7 @@ namespace MUNityCore.Services
                 .Include(n => n.Roles).FirstOrDefault(n => n.SimulationId == id);
             if (simulation == null) return null;
             var users = this._context.SimulationUser
-                .Include(n => n.HubConnections).Where(a => a.Simulation.SimulationId == id).AsEnumerable().Where(n => n.HubConnections.Any());
+                .Where(a => a.Simulation.SimulationId == id).AsEnumerable();
             simulation.Users = users.ToList();
             return simulation;
         }
@@ -542,6 +515,11 @@ namespace MUNityCore.Services
         public IEnumerable<Simulation> GetSimulations()
         {
             return this._context.Simulations.AsEnumerable();
+        }
+
+        public List<int> GetIdsOfAllSimulations()
+        {
+            return this._context.Simulations.Select(n => n.SimulationId).ToList();
         }
 
 
@@ -773,24 +751,6 @@ namespace MUNityCore.Services
             simulation.Phase = phase;
             await this._context.SaveChangesAsync();
             return true;
-        }
-
-        internal async Task AddUserSubscribtion(SimulationUser user, string connectionId)
-        {
-            // You can also connect as only a listener on the simulation for
-            // example the Sek.
-            if (user != null)
-            {
-                var mdl = new SimulationHubConnection()
-                {
-                    User = user,
-                    ConnectionId = connectionId,
-                    CreationDate = DateTime.Now,
-                };
-                user.LastKnownConnectionId = connectionId;
-                user.HubConnections.Add(mdl);
-                await this._context.SaveChangesAsync();
-            }
         }
 
         public SimulationRole AddDelegateRole(int simulationId, string name, string iso)
@@ -1071,7 +1031,7 @@ namespace MUNityCore.Services
 
         internal List<SimulationSlotDto> GetSlots(int simulationId)
         {
-            var t = from user in _context.SimulationUser.Include(n => n.HubConnections)
+            var t = from user in _context.SimulationUser
                     where user.Simulation.SimulationId == simulationId
                     select new SimulationSlotDto()
                     {
@@ -1080,7 +1040,7 @@ namespace MUNityCore.Services
                         CanEditResolution = user.CanEditResolution,
                         CanSelectRole = user.CanSelectRole,
                         DisplayName = user.DisplayName,
-                        IsOnline = user.HubConnections.Any(),
+                        IsOnline = false,
                         RoleId = (user.Role != null) ? user.Role.SimulationRoleId : -2,
                         RoleName = (user.Role != null) ? user.Role.Name : "",
                         RoleType = (user.Role != null) ? user.Role.RoleType : RoleTypes.None,
@@ -1137,10 +1097,6 @@ namespace MUNityCore.Services
         }
         
 
-        public List<SimulationHubConnection> UserConnections(int userId)
-        {
-            return this._context.SimulationHubConnections.Where(n => n.User.SimulationUserId == userId).ToList();
-        }
 
         internal async Task RemoveUser(int simulationId, int userId)
         {
@@ -1148,11 +1104,6 @@ namespace MUNityCore.Services
             var user = await this._context.SimulationUser.SingleOrDefaultAsync(n => n.SimulationUserId == userId);
             if (user != null)
             {
-                var hubs = await this._context.SimulationHubConnections.Where(n => n.User.SimulationUserId == userId).ToListAsync();
-                if (hubs.Any())
-                {
-                    this._context.SimulationHubConnections.RemoveRange(hubs);
-                }
                 this._context.SimulationUser.Remove(user);
                 await this._context.SaveChangesAsync();
             }
@@ -1209,17 +1160,6 @@ namespace MUNityCore.Services
                 mdl.Entries = csv.GetRecords<PetitionTemplateEntry>().ToList();
             }
             return mdl;
-        }
-
-        internal List<SimulationHubConnection> GetHubConnections(int simulationId)
-        {
-            return this._context.SimulationHubConnections.Where(n => n.User.Simulation.SimulationId == simulationId).ToList();
-        }
-
-        internal int RemoveHubConnection(SimulationHubConnection connection)
-        {
-            this._context.SimulationHubConnections.Remove(connection);
-            return this._context.SaveChanges();
         }
 
         public void ApplyPetitionTemplateToSimulation(string name, int simulationId)

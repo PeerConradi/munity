@@ -1,11 +1,11 @@
 ﻿@inject Services.FrontendSimulationService frontendSimulationService;
 
-<div class="row bg-dark text-white remove-padding ">
+<div class="row bg-dark text-white @((OffsetMargin) ? "remove-padding" : null) ">
 
     @if (ViewModel != null)
     {
         <!-- Redeliste -->
-        <div class="col-lg-3 col-sm-8 col-xs-9">
+        <div class="col-lg-3 col-sm-8 col-xs-9 mt-2 mb-2">
             <div class="row ml-2 ml-xs-0">
                 <span class="text-sm-left text-secondary">Aktuelle*r Redner*in</span>
             </div>
@@ -17,14 +17,14 @@
             </div>
         </div>
 
-        <div class="col-lg-2 col-sm-4 col-xs-3">
+        <div class="col-lg-2 col-sm-4 col-xs-3  mt-2 mb-2">
             <div class="row">
                 <span class="text-sm-left text-secondary">Zeit</span>
             </div>
             <div class="row">
                 @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds <= 0)
                 {
-                    <h4 class="text-danger">Zum Ende kommen!</h4>
+                    <h4 class="text-danger animate__animated animate__flash animate__repeat-3">Zum Ende kommen!</h4>
                 }
                 else
                 {
@@ -33,7 +33,7 @@
             </div>
             <div class="row" style="margin-top: -5px;">
                 @if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
-                  this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.AnswerPaused)
+                 this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.AnswerPaused)
                 {
                     <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
                 }
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Fragen und Kurzbemerkungen -->
-        <div class="col-lg-3 col-sm-8 col-xs-9">
+        <div class="col-lg-3 col-sm-8 col-xs-9  mt-2 mb-2">
             <div class="row ml-2">
                 <span class="text-sm-left text-secondary">Fragen und Kurzbemerkungen</span>
             </div>
@@ -61,14 +61,14 @@
             </div>
         </div>
 
-        <div class="col-lg-2 col-sm-4 col-xs-3">
+        <div class="col-lg-2 col-sm-4 col-xs-3  mt-2 mb-2">
             <div class="row">
                 <span class="text-sm-left text-secondary">Zeit</span>
             </div>
             <div class="row">
                 @if (ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds <= 0)
                 {
-                    <h4 class="text-danger">Zum Ende kommen!</h4>
+                    <h4 class="text-danger animate__animated animate__flash animate__repeat-3">Zum Ende kommen!</h4>
                 }
                 else
                 {
@@ -80,13 +80,17 @@
             </div>
         </div>
 
-        <div class="col-lg-2 align-self-center col-sm-12 col-xs-12">
-            <a class="btn @((showListOfSpeakers) ? "btn-primary" : "btn-default") btn-lg"
-                @onclick="() => { ShowList.InvokeAsync(showListOfSpeakers); showListOfSpeakers = !showListOfSpeakers; }">
-                <i class="fa fa-comment"></i>
-                @((showListOfSpeakers) ? "Redeliste ausblenden" : "Redeliste anzeigen")
-            </a>
-        </div>
+        @if (ShowToggleButton)
+        {
+            <div class="col-lg-2 align-self-center col-sm-12 col-xs-12">
+                <a class="btn @((showListOfSpeakers) ? "btn-primary" : "btn-default") btn-lg"
+                   @onclick="() => { ShowList.InvokeAsync(showListOfSpeakers); showListOfSpeakers = !showListOfSpeakers; }">
+                    <i class="fa fa-comment"></i>
+                    @((showListOfSpeakers) ? "Redeliste ausblenden" : "Redeliste anzeigen")
+                </a>
+            </div>
+        }
+
     }
 </div>
 
@@ -117,6 +121,12 @@
 
     [Parameter]
     public EventCallback<bool> ShowList { get; set; }
+
+    [Parameter]
+    public bool ShowToggleButton { get; set; } = true;
+
+    [Parameter]
+    public bool OffsetMargin { get; set; } = true;
 
     private bool showListOfSpeakers = false;
 

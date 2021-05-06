@@ -29,7 +29,7 @@ namespace MUNityCore.Services
 
         IEnumerable<MunityUser> GetBannedUsers();
 
-        IEnumerable<MunityUser> GetUserBlock(int blockid);
+        List<MunityUser> GetUserBlock(int blockid);
 
         Task<int> GetUserCount();
 

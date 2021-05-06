@@ -1,0 +1,66 @@
+﻿@if (SimViewModel != null)
+{
+    <div class="col-12">
+        <div class="panel panel-inverse">
+            <div class="panel-heading">
+                <h4 class="panel-title">@SimViewModel.SimulationId @SimViewModel.Name</h4>
+                <div class="panel-heading-btn">
+                    <a href="#" class="btn btn-xs btn-icon btn-circle btn-default"
+                       data-click="panel-expand">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <MUNityCore.Components.Simulation.ListOfSpeakerHeader SimViewModel="@SimViewModel"
+                                                                      ViewModel="@SimViewModel.SpeakerlistViewModel"
+                                                                      ShowToggleButton="false"
+                                                                      OffsetMargin="false" />
+                @if (newPetitionInfo != null)
+                {
+                    <div class="alert alert-success fade show animate__animated @((fadeOutNewPetition) ? "animate__fadeOut" : "animate__bounceIn")">
+                        <strong>Neuer Antrag</strong>
+                        @newPetitionInfo.CategoryName @newPetitionInfo.TypeName durch @newPetitionInfo.SubmitterRoleName
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public ViewModel.SimulationViewModel SimViewModel { get; set; }
+
+    private MUNity.Schema.Simulation.PetitionInfoDto newPetitionInfo;
+
+    private bool fadeOutNewPetition = false;
+
+    protected override void OnInitialized()
+    {
+        if (SimViewModel != null)
+        {
+            if (SimViewModel.SpeakerlistViewModel != null)
+            {
+                SimViewModel.SpeakerlistViewModel.SpeakerlistChanged += delegate { this.StateHasChanged(); };
+            }
+            SimViewModel.PetitionAdded += OnPetitionAdded;
+        }
+        base.OnInitialized();
+    }
+
+    private void OnPetitionAdded(object sender, MUNity.Schema.Simulation.PetitionInfoDto info)
+    {
+        this.newPetitionInfo = info;
+        this.fadeOutNewPetition = false;
+
+        InvokeAsync(StateHasChanged);
+        Task.Delay(5000).ContinueWith((n) =>
+        {
+            this.fadeOutNewPetition = true;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}

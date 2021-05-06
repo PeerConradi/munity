@@ -34,7 +34,7 @@
                             <div class="stats-progress progress">
 								<div class="progress-bar" style="width: 100%;"></div>
 							</div>
-							<div class="stats-desc">@simulation.Users.Count(n => string.IsNullOrEmpty(n.DisplayName)) freie Slots</div>
+							<div class="stats-desc">@MUNityCore.Hubs.ConnectionUsers.ConnectionIds.Count(n => n.Value.SimulationId == simulation.SimulationId) Online</div>
 						</div>
 					</div>
                 </Column>

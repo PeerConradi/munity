@@ -1,7 +1,7 @@
 ﻿@inject Services.SimulationService simulationService;
 @inject Services.FrontendSimulationService frontendSimulationService;
 
-@if (ViewModel != null && ViewModel.IsChair)
+@if (ViewModel != null && ViewModel.UserContext.IsChair)
 {
 <Row>
     <div class="col-12">
@@ -74,7 +74,7 @@
                         <span class="text-gray">(@this.currentVoting.AbstentionPercentageOverall % aller Stimmen inkl. Enthaltungen und nicht abgegebene Stimmen) </span>
                     </p>
 
-                    @if (currentVoting.Slots.Any(n => n.SimulationUserId == ViewModel.UserId && n.Choice == MUNity.Schema.Simulation.EVoteStates.NotVoted))
+                    @if (currentVoting.Slots.Any(n => n.SimulationUserId == ViewModel.UserContext.UserId && n.Choice == MUNity.Schema.Simulation.EVoteStates.NotVoted))
                     {
                         <div class="btn-group-lg">
                             <button class="btn btn-success m-1" @onclick="() => VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates.Pro)">Dafür stimmen</button>

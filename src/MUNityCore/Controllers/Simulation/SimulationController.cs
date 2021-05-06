@@ -183,7 +183,6 @@ namespace MUNityCore.Controllers
                 return Forbid();
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
-                .Include(n => n.HubConnections)
                 .Include(n => n.Simulation).ToList();
             var result = users.Select(n => n.ToSimulationUserAdminDto()).ToList();
             return Ok(result);
@@ -221,7 +220,6 @@ namespace MUNityCore.Controllers
             if (!isAllowed) return BadRequest();
             var users = this._simulationService.GetSimulationUsers(id);
             users.Include(n => n.Role)
-                .Include(n => n.HubConnections)
                 .Include(n => n.Simulation).ToList();
             var result = users.Select(n => n.AsSimulationUserDefaultDto());
             return Ok(result);
@@ -443,7 +441,7 @@ namespace MUNityCore.Controllers
         {
 
             if (string.IsNullOrWhiteSpace(request.DisplayName)) return BadRequest();
-            var simulation = await this._simulationService.GetSimulation(request.SimulationId);
+            var simulation = await this._simulationService.GetSimulationAsync(request.SimulationId);
             if (simulation == null) return NotFound();
             var user = this._simulationService.GetSimulationUserByPublicId(request.SimulationId, request.UserId);
             if (user == null) return NotFound();
@@ -514,7 +512,6 @@ namespace MUNityCore.Controllers
 
             if (user != null)
             {
-                await this._simulationService.AddUserSubscribtion(user, body.ConnectionId);
                 await this.HubContext.Clients.Group($"sim_{body.SimulationId}").UserConnected(body.SimulationId, user.AsSimulationUserDefaultDto());
             }
             
@@ -554,29 +551,6 @@ namespace MUNityCore.Controllers
             }
             
             return Ok(slots);
-        }
-
-        /// <summary>
-        /// Removes all Connections from the simulation socket.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpPut]
-        [Route("[action]")]
-        public async Task<ActionResult> CloseAllConnections([FromBody]SimulationRequest request)
-        {
-            var isAllowed = await this._simulationService.IsTokenValidAndUserAdmin(request);
-            if (!isAllowed)
-                isAllowed = await this._simulationService.IsTokenValidAndUserChair(request);
-            if (!isAllowed) return BadRequest();
-
-            List<SimulationHubConnection> hubConnections = this._simulationService.GetHubConnections(request.SimulationId);
-            foreach(var connection in hubConnections)
-            {
-                await this.HubContext.Groups.RemoveFromGroupAsync(connection.ConnectionId, $"sim_{request.SimulationId}");
-                this._simulationService.RemoveHubConnection(connection);
-            }
-            return Ok();
         }
         
     }

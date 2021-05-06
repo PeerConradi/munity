@@ -72,8 +72,6 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<SimulationUser> SimulationUser { get; set; }
 
-        public DbSet<SimulationHubConnection> SimulationHubConnections { get; set; }
-
         public DbSet<ListOfSpeakers> ListOfSpeakers { get; set; }
 
         public DbSet<AgendaItem> AgendaItems { get; set; }
@@ -187,8 +185,6 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
             //modelBuilder.Entity<SimulationUser>().HasOne(n => n.Simulation).WithMany(n =>
             //    n.Users);
-
-            modelBuilder.Entity<SimulationHubConnection>().HasOne(n => n.User).WithMany(n => n.HubConnections);
 
             modelBuilder.Entity<ListOfSpeakers>().HasMany(n => n.AllSpeakers).WithOne(n => n.ListOfSpeakers);
             modelBuilder.Entity<ListOfSpeakers>().Ignore(n => n.CurrentSpeaker);

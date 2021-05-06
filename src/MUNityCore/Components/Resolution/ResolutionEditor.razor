@@ -15,7 +15,7 @@
                 <li class="nav-item m-l-5">
                     <button class="btn btn-success" @onclick="() => CreateOperativeParagraph()"><i class="fa fa-plus"></i> Neuer Operativer Absatz</button>
                 </li>
-                @if (SimViewModel.IsChair)
+                @if (SimViewModel.UserContext.IsChair)
                 {
                     <li class="nav-item m-l-5">
                         @if (this.Info.AllowPublicEdit)

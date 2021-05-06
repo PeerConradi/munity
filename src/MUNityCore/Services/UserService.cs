@@ -78,9 +78,9 @@ namespace MUNityCore.Services
             return this._context.Users.Where(n => n.UserState == MunityUser.EUserState.BANNED);
         }
 
-        public IEnumerable<MunityUser> GetUserBlock(int blockid)
+        public List<MunityUser> GetUserBlock(int blockid)
         {
-            return this._context.Users.OrderBy(n => n.Lastname).Skip(blockid).Take(100);
+            return this._context.Users.AsNoTracking().OrderBy(n => n.Lastname).Skip(blockid).Take(100).ToList();
         }
 
         public Task<int> GetUserCount()

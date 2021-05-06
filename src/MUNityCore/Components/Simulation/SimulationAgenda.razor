@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="panel-body bg-dark">
-                    @if (ViewModel.IsChair)
+                    @if (ViewModel.UserContext.IsChair)
                     {
                         <button class="btn btn-block btn-success mb-3" @onclick="() => ShowModal()">Neuer Tagesordnungspunkt</button>
                     }
@@ -35,7 +35,7 @@
                                     <div class="widget-list-title font-weight-bold">@top.Name</div>
                                     <span class="text-info">@top.PetitionCount @((top.PetitionCount == 1) ? "Antrag" : "Anträge")</span>
                                 </div>
-                                @if (ViewModel.IsChair)
+                                @if (ViewModel.UserContext.IsChair)
                                 {
                                     <div class="widget-list-action text-nowrap text-grey">
                                         <i class="fa fa-trash text-danger" @onclick="() => { deleteAgendaItem = top; this.deleteAgendaItemModal.Show(); }"></i>
@@ -68,7 +68,7 @@
                             {
                                 <h3 class="m-b-10">
                                     @currentPetition.TypeName
-                                    @if (ViewModel.IsChair)
+                                    @if (ViewModel.UserContext.IsChair)
                                     {
                                         <button class="btn btn-circle btn-icon btn-danger ml-3"
                                                 @onclick="() => RemovePetition(currentPetition.PetitionId)">
@@ -100,7 +100,7 @@
                                             <div><span class="text-gray text-wrap">[@petition.CategoryName]</span> @petition.TypeName</div>
                                             <div class="text-grey">@petition.SubmitTime.ToString("dd.MM HH:mm") durch @petition.SubmitterDisplayName - @petition.SubmitterRoleName</div>
                                         </div>
-                                        @if (ViewModel.IsChair)
+                                        @if (ViewModel.UserContext.IsChair)
                                         {
                                             <div class="ml-auto text-center">
                                                 <button class="btn btn-xs btn-primary" @onclick="() => MakePetitionActive(petition.PetitionId)">Aktiv setzen</button>

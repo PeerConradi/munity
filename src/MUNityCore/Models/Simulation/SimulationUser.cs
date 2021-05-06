@@ -33,9 +33,6 @@ namespace MUNityCore.Models.Simulation
         public bool CanEditListOfSpeakers { get; set; } = false;
 
         public string LastKnownConnectionId { get; set; }
-        
-
-        public List<SimulationHubConnection> HubConnections { get; set; }
 
         public Simulation Simulation { get; set; }
 
@@ -46,7 +43,6 @@ namespace MUNityCore.Models.Simulation
             this.Token = Util.Tools.IdGenerator.RandomString(20);
             this.Password = Util.Tools.IdGenerator.RandomString(8);
             this.PublicUserId = new Random().Next(100000000, 999999999).ToString();
-            this.HubConnections = new List<SimulationHubConnection>();
             PinRetries = 0;
         }
     }

@@ -26,11 +26,11 @@
                     @users.Count Insgesamt
                 </div>
 
-                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Chairman" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
-                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Delegate" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
-                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Ngo" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
-                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Spectator" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
-                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.None" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Chairman" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.UserContext.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Delegate" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.UserContext.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Ngo" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.UserContext.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.Spectator" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.UserContext.IsChair" />
+                <UserListGroup Users="users" RoleType="MUNity.Schema.Simulation.RoleTypes.None" InviteLinkRequested="OpenInviteModal" IsChair="@ViewModel.UserContext.IsChair" />
 
             </div>
             <!-- end card-body -->

@@ -1,0 +1,43 @@
+﻿@page "/sek/dashboard"
+@inject Services.FrontendSimulationService frontendSimulationService;
+@inject Services.SimulationService simulationService;
+
+<AuthorizeView Roles="Admin, Moderator">
+    <Authorized>
+        <h1>Willkommen</h1>
+        @if (_simulations == null)
+        {
+            <p>Simulationen werden geladen</p>
+        }
+        else
+        {
+            <div class="row">
+                @foreach(var simulation in _simulations)
+                {
+                    <SekSimulationBox SimViewModel="@simulation" />
+                }
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Paragraph>Zutritt verweigert</Paragraph>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    List<ViewModel.SimulationViewModel> _simulations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var simulationIds = this.simulationService.GetIdsOfAllSimulations();
+        this._simulations = new List<ViewModel.SimulationViewModel>();
+        foreach(var id in simulationIds)
+        {
+            var viewModel = await frontendSimulationService.GetOrInitViewModelWildcard(id);
+            viewModel.FetchData(simulationService);
+            await viewModel.SignInContext();
+            this._simulations.Add(viewModel);
+        }
+        //return base.OnInitializedAsync();
+    }
+}

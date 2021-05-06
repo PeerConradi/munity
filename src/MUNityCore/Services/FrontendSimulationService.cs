@@ -90,6 +90,24 @@ namespace MUNityCore.Services
             }
         }
 
+        internal async Task<SimulationViewModel> GetOrInitViewModelWildcard(int simulationId)
+        {
+            var viewModel = this._viewModels.FirstOrDefault(n => n.SimulationId == simulationId);
+            if (viewModel != null)
+                return viewModel;
+
+            viewModel = await SimulationViewModel.Init(_navigationManager.BaseUri + "simsocket");
+            viewModel.SimulationId = simulationId;
+            this._viewModels.Add(viewModel);
+            string speakerlistId = _context.Simulations.Where(n => n.SimulationId == simulationId).Select(n => n.ListOfSpeakers.ListOfSpeakersId).FirstOrDefault();
+            if (speakerlistId != null)
+            {
+                var speakerlistModel = await _speakerlistHubService.GetSpeakerlistViewModel(speakerlistId);
+                viewModel.SpeakerlistViewModel = speakerlistModel;
+            }
+            return viewModel;
+        }
+
         internal async Task<SimulationViewModel> GetOrInitViewModel(int simulationId)
         {
 
@@ -106,12 +124,16 @@ namespace MUNityCore.Services
             if (infos != null)
             {
                 viewModel = await SimulationViewModel.Init(_navigationManager.BaseUri + "simsocket");
-                viewModel.DisplayName = infos.DisplayName;
-                viewModel.RoleIso = infos.Role?.Iso ?? "un";
-                viewModel.RoleName = infos.Role?.Name ?? "";
-                viewModel.IsChair = infos.Role.RoleType == RoleTypes.Chairman;
-                viewModel.UserId = infos.SimulationUserId;
-                viewModel.Token = infos.Token;
+                var userContext = new SimulationUserContext()
+                {
+                    DisplayName = infos.DisplayName,
+                    RoleIso = infos.Role?.Iso ?? "un",
+                    RoleName = infos.Role?.Name ?? "",
+                    RoleType = infos.Role.RoleType,
+                    UserId = infos.SimulationUserId,
+                    Token = infos.Token
+                };
+                viewModel.UserContext = userContext;
                 viewModel.SimulationId = simulationId;
                 await viewModel.SignIn();
                 this._viewModels.Add(viewModel);
@@ -129,6 +151,8 @@ namespace MUNityCore.Services
             return viewModel;
 
         }
+
+
 
         private async Task<string> GetUserTokenForSimulation(int simulationId)
         {
