@@ -22,13 +22,17 @@
                 <span class="text-sm-left text-secondary">Zeit</span>
             </div>
             <div class="row">
-                @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds <= 0)
+                @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds <= 0 && ViewModel.Speakerlist.CurrentSpeaker != null)
                 {
                     <h4 class="text-danger animate__animated animate__flash animate__repeat-3">Zum Ende kommen!</h4>
                 }
-                else
+                else if (ViewModel.Speakerlist.CurrentSpeaker != null)
                 {
                     <h4 class="@speakerTimeClass">@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
+                }
+                else
+                {
+                    <h4 class="text-white">@ViewModel.Speakerlist.SpeakerTime.ToString(@"mm\:ss")</h4>
                 }
             </div>
             <div class="row" style="margin-top: -5px;">
@@ -66,13 +70,17 @@
                 <span class="text-sm-left text-secondary">Zeit</span>
             </div>
             <div class="row">
-                @if (ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds <= 0)
+                @if (ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds <= 0 && ViewModel.Speakerlist.CurrentQuestion != null)
                 {
                     <h4 class="text-danger animate__animated animate__flash animate__repeat-3">Zum Ende kommen!</h4>
                 }
+                else if (ViewModel.Speakerlist.CurrentQuestion != null)
+                {
+                    <h4 class="@questionTimeClass">@ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
+                }
                 else
                 {
-                    <h4>@ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
+                    <h4 class="text-white">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</h4>
                 }
             </div>
             <div class="row" style="margin-top: -5px;">
@@ -137,7 +145,7 @@
         get
         {
             if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
-            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
+            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
             {
                 if (this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds > 10)
                 {
@@ -154,6 +162,30 @@
             }
         }
     }
+
+    private string questionTimeClass
+    {
+        get
+        {
+            if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
+            {
+                if (this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds > 10)
+                {
+                    return "text-primary";
+                }
+                else
+                {
+                    return "text-danger";
+                }
+            }
+            else
+            {
+                return "text-white";
+            }
+        }
+    }
+
+
 
     protected override void OnInitialized()
     {
