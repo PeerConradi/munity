@@ -1,76 +1,98 @@
 ﻿@inject Services.SqlResolutionService resolutionService;
+@using MUNity.Extensions.ResolutionExtensions;
 
-<div class="panel panel-inverse m-t-0 @((expanded) ? "panel-expand" : null)">
-    <div class="panel-heading">
-        <h4 class="panel-title" @onclick="() => expanded = !expanded" style="cursor: pointer;">@Index <span class="text-secondary">Operativer Absatz:</span>
-        <i class="fa fa-pen"></i>
-        @previewText</h4>
-        <div class="panel-heading-btn">
 
-            <div class="btn-group m-l-5">
-                <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> Funktionen<b class="caret"></b></button>
-                <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
-                    <a href="javascript:;" class="dropdown-item" @onclick="() => expanded = !expanded">
-                        @((expanded) ? "Einklappen" : "Ausklappen")
-                    </a>
-                    <a href="javascript:;" class="dropdown-item">Nach oben schieben</a>
-                    <a href="javascript:;" class="dropdown-item">Nach unten schieben</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="javascript:;" class="dropdown-item text-danger-darker">Löschen</a>
+@if (!Paragraph.IsVirtual)
+{
+    <div class="panel panel-inverse m-t-0 @((expanded) ? "panel-expand" : null)">
+        <div class="panel-heading">
+            <h4 class="panel-title" @onclick="() => expanded = !expanded" style="cursor: pointer;">
+                @Index <span class="text-secondary">Operativer Absatz:</span>
+                <i class="fa fa-pen"></i>
+                @previewText
+            </h4>
+            <div class="panel-heading-btn">
+
+                <div class="btn-group m-l-5">
+                    <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> Funktionen<b class="caret"></b></button>
+                    <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
+                        <a href="javascript:;" class="dropdown-item" @onclick="() => expanded = !expanded">
+                            @((expanded) ? "Einklappen" : "Ausklappen")
+                        </a>
+                        <a href="javascript:;" class="dropdown-item">Nach oben schieben</a>
+                        <a href="javascript:;" class="dropdown-item">Nach unten schieben</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="javascript:;" class="dropdown-item text-danger-darker" @onclick="() => ParagraphRemoved.InvokeAsync(this.Paragraph)">Löschen</a>
+                    </div>
                 </div>
-            </div>
 
-            @if (expanded)
-            {
-                <a class="btn btn-sm ml-3 btn-icon btn-circle btn-danger"
-                   @onclick="() => expanded = !expanded">
-                    <i class="fa fa-times"></i>
-                </a>
-            }
+                @if (expanded)
+                {
+                    <a class="btn btn-sm ml-3 btn-icon btn-circle btn-danger"
+                       @onclick="() => expanded = !expanded">
+                        <i class="fa fa-times"></i>
+                    </a>
+                }
+            </div>
+        </div>
+        @if (expanded)
+        {
+            <div class="panel-body" style="overflow-x: hidden">
+                <div class="row">
+                    <h4>Text</h4>
+                    <textarea class="form-control" @bind="Paragraph.Text" rows="10" @onblur="() => SaveParagraphText(Paragraph)" />
+                </div>
+                @if (SectionReference != null)
+                {
+                    <h3>Änderungsanträge</h3>
+
+                    foreach (var deleteAmendment in deleteAmendments)
+                    {
+                        <div class="note note-danger">
+                            <div class="note-icon"><i class="fa fa-times"></i></div>
+                            <div class="note-content">
+                                <h4><b>Änderungsantrag</b></h4>
+                                <p>Eingereicht von: @deleteAmendment.SubmitterName</p>
+                            </div>
+                        </div>
+                    }
+
+                    foreach (var changeAmendment in changeAmendments)
+                    {
+                        <div class="note note-primary">
+                            <div class="note-icon"><i class="fa fa-edit"></i></div>
+                            <div class="note-content">
+                                <h4><b>Änderungsantrag</b></h4>
+                                <p>Eingereicht von: @changeAmendment.SubmitterName</p>
+                                <p>Neuer Text @changeAmendment.NewText</p>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+            <div class="panel-footer" style="overflow-x:hidden;">
+                <button class="btn btn-success btn-block mt-3 mb-3" @onclick="() => expanded = false">Fertig/Speichern</button>
+            </div>
+        }
+
+    </div>
+}
+else
+{
+    <div class="panel bg-cyan-transparent-5 m-t-0">
+        <div class="panel-heading">
+            <h4 class="panel-title" style="cursor: pointer;">
+               <span class="text-black">Virtueller Absatz</span>
+                @if (addAmendment != null)
+                {
+                    <span>Änderungsantrag auf Hinzufügen erstellt hier einen neuen Absatz.</span>
+                }
+            </h4>
         </div>
     </div>
-    @if (expanded)
-    {
-        <div class="panel-body" style="overflow-x: hidden">
-            <div class="row">
-                <h4>Text</h4>
-                <textarea class="form-control" @bind="Paragraph.Text" rows="10" @onblur="() => SaveParagraphText(Paragraph)" />
-            </div>
-            @if (SectionReference != null)
-            {
-                <h3>Änderungsanträge</h3>
+}
 
-                foreach (var deleteAmendment in deleteAmendments)
-                {
-                    <div class="note note-danger">
-                        <div class="note-icon"><i class="fa fa-times"></i></div>
-                        <div class="note-content">
-                            <h4><b>Änderungsantrag</b></h4>
-                            <p>Eingereicht von: @deleteAmendment.SubmitterName</p>
-                        </div>
-                    </div>
-                }
-
-                foreach (var changeAmendment in changeAmendments)
-                {
-                    <div class="note note-primary">
-                        <div class="note-icon"><i class="fa fa-edit"></i></div>
-                        <div class="note-content">
-                            <h4><b>Änderungsantrag</b></h4>
-                            <p>Eingereicht von: @changeAmendment.SubmitterName</p>
-                            <p>Neuer Text @changeAmendment.NewText</p>
-                        </div>
-                    </div>
-                }
-            }
-
-        </div>
-        <div class="panel-footer" style="overflow-x:hidden;">
-            <button class="btn btn-success btn-block mt-3 mb-3" @onclick="() => expanded = false">Fertig/Speichern</button>
-        </div>
-    }
-
-</div>
 
 @code {
     [Parameter]
@@ -83,7 +105,28 @@
     public string ResolutionId { get; set; }
 
     [Parameter]
-    public string Index { get; set; }
+    public EventCallback<MUNity.Models.Resolution.OperativeParagraph> ParagraphRemoved { get; set; }
+
+    private MUNity.Models.Resolution.AddAmendment addAmendment
+    {
+        get
+        {
+            return SectionReference.AddAmendments.FirstOrDefault(n => n.TargetSectionId == this.Paragraph.OperativeParagraphId);
+        }
+    }
+
+
+    public string Index
+    {
+        get
+        {
+            if (this.Paragraph.IsVirtual)
+                return "virtual";
+
+
+            return this.SectionReference.GetIndexNameOfOperativeParagraph(this.Paragraph.OperativeParagraphId);
+        }
+    }
 
     private IEnumerable<MUNity.Models.Resolution.ChangeAmendment> changeAmendments
     {

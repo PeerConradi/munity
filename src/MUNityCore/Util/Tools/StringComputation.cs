@@ -59,6 +59,10 @@ namespace MUNityCore.Util.Tools
             }
             double maxLen = a.Length > b.Length ? a.Length : b.Length;
             int minLen = a.Length < b.Length ? a.Length : b.Length;
+            if (a.Length == 0 && b.Length == 0)
+            {
+                return 100;
+            }
             int sameCharAtIndex = 0;
             for (int i = 0; i < minLen; i++) //Compare char by char
             {

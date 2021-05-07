@@ -28,7 +28,8 @@
                 {
                     <MUNityCore.Components.Resolution.ResolutionEditor Resolution="@_resolution"
                                                                        Info="@_info"
-                                                                       SimViewModel="@SimViewModel"/>
+                                                                       SimViewModel="@SimViewModel"
+                                                                       OperativeParagraphsChanged="OnOperativeParagraphsChanged"/>
                 }
                 else if (resolutionMode == EResolutionMode.Read)
                 {
@@ -41,7 +42,9 @@
     {
         <div class="col-lg-4 col-md-12">
             <MUNityCore.Components.Resolution.AmendmentPanel Resolution="@_resolution"
-                                                             AmendmentSubmitted="OnAmendmentSubmitted" />
+                                                             AmendmentSubmitted="OnAmendmentSubmitted"
+                                                             AmendmentDenied="OnAmendmentSubmitted"
+                                                             AmendmentChanged="OnAmendmentChanged"/>
         </div>
     }
 </div>
@@ -71,9 +74,17 @@
 
     private MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo _info { get; set; }
 
-
+    private void OnOperativeParagraphsChanged()
+    {
+        this.InvokeAsync(this.StateHasChanged);
+    }
 
     private void OnAmendmentSubmitted(MUNity.Models.Resolution.AbstractAmendment amendment)
+    {
+        InvokeAsync(this.StateHasChanged);
+    }
+
+    private void OnAmendmentChanged()
     {
         InvokeAsync(this.StateHasChanged);
     }

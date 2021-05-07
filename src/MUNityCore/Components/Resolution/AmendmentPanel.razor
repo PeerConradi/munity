@@ -1,9 +1,9 @@
 ﻿@using MUNity.Extensions.ResolutionExtensions
 @using MUNityCore.Dtos.Resolutions;
-@using MUNityCore.Extensions.CastExtensions;
+
 @inject Services.SqlResolutionService resolutionService;
 
-@if (Resolution != null && pattern != null)
+@if (Resolution != null)
 {
     <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
         <div class="panel-heading ui-sortable-handle">
@@ -15,7 +15,7 @@
         </div>
         <div class="panel-body bg-white-darker">
             <button class="btn btn-block btn-success mb-2"
-                    @onclick="() => modalRef.Show()">
+                    @onclick="() => createModal?.ShowModal()">
                 Neuer Änderungsantrag
             </button>
             @foreach (var amendment in Resolution.OperativeSection.GetOrderedAmendments())
@@ -46,7 +46,15 @@
                         <!-- end title -->
                         <!-- begin conversion-rate -->
                         <div class="d-flex align-items-center mb-1">
-                            <h2 class="text-white mb-0">Absatz: @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(amendment.TargetSectionId)</h2>
+                            @if (amendment is MUNity.Models.Resolution.AddAmendment)
+                            {
+                                <h2>Virtual</h2>
+                            }
+                            else
+                            {
+                                <h2 class="text-white mb-0">Absatz: @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(amendment.TargetSectionId)</h2>
+                            }
+
                             <div class="ml-auto" style="position: relative;">
                                 <h3><i class="fa fa-eye-slash"></i></h3>
                             </div>
@@ -82,70 +90,13 @@
             }
         </div>
     </div>
-
-    <Modal @ref="modalRef">
-        <ModalContent Centered="true">
-            <ModalHeader>
-                <ModalTitle>Änderungsantrag erstellen</ModalTitle>
-                <CloseButton />
-            </ModalHeader>
-            <ModalBody>
-                <EditForm Model="pattern">
-                    <Field>
-                        <FieldLabel>Antragsart</FieldLabel>
-                        <Select TValue="EAmendmentTypes" @bind-SelectedValue="pattern.AmendmentType">
-                            <SelectItem Value="EAmendmentTypes.Add">Antrag auf Hinzufügen</SelectItem>
-                            <SelectItem Value="EAmendmentTypes.Change">Antrag auf Textänderung</SelectItem>
-                            <SelectItem Value="EAmendmentTypes.Delete">Antrag auf Streichung</SelectItem>
-                            <SelectItem Value="EAmendmentTypes.Move">Antrag auf Verschiebung</SelectItem>
-                        </Select>
-                    </Field>
-                    <Field>
-                        <FieldLabel>Einbringer</FieldLabel>
-                        <InputText @bind-Value="@pattern.SubmitterName" class="form-control" />
-                    </Field>
-                    @if (pattern.AmendmentType == EAmendmentTypes.Change ||
-                     pattern.AmendmentType == EAmendmentTypes.Delete ||
-                     pattern.AmendmentType == EAmendmentTypes.Move)
-                    {
-                        <Field>
-                            <FieldLabel>Paragraphen</FieldLabel>
-                            <Select TValue="string" @bind-SelectedValue="@pattern.ParagraphId">
-                                <SelectItem Value="string.Empty" Disabled="true">Paragraphen auswählen</SelectItem>
-                                @foreach (var paragraph in Resolution.OperativeSection.GetAllParagraphs())
-                                {
-                                    <SelectItem Value="paragraph.OperativeParagraphId">@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(paragraph) @paragraph.Text</SelectItem>
-                                }
-                                
-                            </Select>
-                        </Field>
-                    }
-
-                    @if (pattern.AmendmentType == EAmendmentTypes.Change ||
-                      pattern.AmendmentType == EAmendmentTypes.Add)
-                    {
-                        <Field>
-                            <FieldLabel>Neuer Text</FieldLabel>
-                            <InputTextArea class="form-control" @bind-Value="@pattern.NewValue" />
-                        </Field>
-                    }
-                </EditForm>
-                @if (errored)
-                {
-                    <div class="alert alert-danger">Fehler beim Erstellen des Änderungsantrags!</div>
-                }
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary" Clicked="@HideModal">Abbruch</Button>
-                <Button Color="Color.Primary" Clicked="@SubmitCreateAmendment">Änderungsantrag erstellen</Button>
-            </ModalFooter>
-        </ModalContent>
-    </Modal>
 }
 else
 {
     <p>Lade Änderungsanträge</p>
 }
+
+<CreateAmendmentModal @ref="@createModal" Resolution="@Resolution" AmendmentCreated="OnAmendmentCreated" />
 
 
 @code {
@@ -158,55 +109,19 @@ else
     [Parameter]
     public EventCallback<MUNity.Models.Resolution.AbstractAmendment> AmendmentDenied { get; set; }
 
-    private CreateAmendmentPattern pattern = new CreateAmendmentPattern();
+    [Parameter]
+    public EventCallback AmendmentChanged { get; set; }
 
-    private Blazorise.Modal modalRef;
-
-    private bool errored = false;
-
-    private void HideModal()
-    {
-        this.modalRef.Hide();
-    }
-
-    private void SubmitCreateAmendment()
-    {
-        var newAmendment = this.resolutionService.CreateAmendment(pattern);
-        if (newAmendment != null)
-        {
-            modalRef.Hide();
-            if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment addAmendment)
-            {
-                this.Resolution.OperativeSection.AddAmendments.Add(addAmendment.ToModel());
-            }
-            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment changeAmendment)
-            {
-                this.Resolution.OperativeSection.ChangeAmendments.Add(changeAmendment.ToModel());
-            }
-            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment deleteAmendment)
-            {
-                this.Resolution.OperativeSection.DeleteAmendments.Add(deleteAmendment.ToModel());
-            }
-            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment moveAmendment)
-            {
-                this.Resolution.OperativeSection.MoveAmendments.Add(moveAmendment.ToModel());
-            }
-        }
-        else
-        {
-            errored = true;
-        }
-    }
+    private CreateAmendmentModal createModal;
 
     protected override void OnInitialized()
     {
-        if (this.Resolution != null)
-        {
-            this.pattern.ResolutionId = this.Resolution.ResolutionId;
-        }
-
-
         base.OnInitialized();
+    }
+
+    private void OnAmendmentCreated()
+    {
+        this.AmendmentChanged.InvokeAsync();
     }
 
     private void SubmitAmendment(MUNity.Models.Resolution.AbstractAmendment amendment)

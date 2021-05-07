@@ -701,7 +701,12 @@ namespace MUNityCore.Services
         public ResaAddAmendment CreateAddAmendment(string resolutionId, int index, string submitter, string newText)
         {
             var resolution = this._context.Resolutions.Find(resolutionId);
-            if (resolution == null) return null;
+            if (resolution == null)
+            {
+                Console.WriteLine($"Unable to create AddAmendment because the Resolution: {resolutionId} was not found.");
+                return null;
+            }
+            
             var virtualParagraph = new ResaOperativeParagraph()
             {
                 OrderIndex = index,

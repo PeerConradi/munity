@@ -48,6 +48,9 @@ namespace MUNity.Extensions.Conversion
         {
             var path = "";
 
+            if (input.Length == 0)
+                return "";
+
             for (int i = 0; i < input.Length; i++)
             {
                 // [1].a.ii

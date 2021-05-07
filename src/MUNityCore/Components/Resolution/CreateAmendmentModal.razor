@@ -1,0 +1,152 @@
+﻿@using MUNityCore.Dtos.Resolutions;
+@using MUNity.Extensions.ResolutionExtensions
+@using MUNityCore.Extensions.CastExtensions;
+
+
+@inject Services.SqlResolutionService resolutionService;
+
+@if (Resolution != null)
+{
+    <Modal @ref="modalRef">
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>Änderungsantrag erstellen</ModalTitle>
+                <CloseButton />
+            </ModalHeader>
+            <ModalBody>
+
+                <EditForm Model="pattern">
+                    <Field>
+                        <FieldLabel>Antragsart</FieldLabel>
+                        <Select TValue="EAmendmentTypes" @bind-SelectedValue="pattern.AmendmentType">
+                            <SelectItem Value="EAmendmentTypes.Add">Antrag auf Hinzufügen</SelectItem>
+                            @if (Resolution.OperativeSection.Paragraphs.Any(n => n.IsVirtual == false))
+                            {
+                                <SelectItem Value="EAmendmentTypes.Change">Antrag auf Textänderung</SelectItem>
+                                <SelectItem Value="EAmendmentTypes.Delete">Antrag auf Streichung</SelectItem>
+
+                            }
+
+                            @if (Resolution.OperativeSection.Paragraphs.Count(n => n.IsVirtual == false) > 1)
+                            {
+                                <SelectItem Value="EAmendmentTypes.Move">Antrag auf Verschiebung</SelectItem>
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Einbringer</FieldLabel>
+                        <InputText @bind-Value="@pattern.SubmitterName" class="form-control" />
+                    </Field>
+                    @if (pattern.AmendmentType == EAmendmentTypes.Change ||
+              pattern.AmendmentType == EAmendmentTypes.Delete ||
+              pattern.AmendmentType == EAmendmentTypes.Move)
+                    {
+                        <Field>
+                            <FieldLabel>Paragraphen</FieldLabel>
+                            <Select TValue="string" @bind-SelectedValue="@pattern.ParagraphId">
+                                <SelectItem Value="string.Empty" Disabled="true">Paragraphen auswählen</SelectItem>
+                                @foreach (var paragraph in Resolution.OperativeSection.GetAllParagraphs())
+                                {
+                                    <SelectItem Value="paragraph.OperativeParagraphId">@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(paragraph) @paragraph.Text</SelectItem>
+                                }
+
+                            </Select>
+                        </Field>
+                    }
+
+                    @if (pattern.AmendmentType == EAmendmentTypes.Add ||
+                pattern.AmendmentType == EAmendmentTypes.Move)
+                    {
+                        <Field>
+                            <FieldLabel>Neue Position</FieldLabel>
+                            <Select TValue="int" @bind-SelectedValue="@pattern.NewIndex">
+                                <SelectItem Value="0">erste Stelle</SelectItem>
+                                @if (Resolution.OperativeSection.Paragraphs.Any(n => n.IsVirtual == false))
+                                {
+                                    @for (int i = 0; i < Resolution.OperativeSection.Paragraphs.Count(n => n.IsVirtual == false) - 1; i++)
+                                    {
+                                        <SelectItem Value="(i+1)">hinter Paragraph @(i+1) @((Resolution.OperativeSection.Paragraphs[i].Text.Length > 20) ? Resolution.OperativeSection.Paragraphs[i].Text.Substring(0, 20) : Resolution.OperativeSection.Paragraphs[i].Text)</SelectItem>
+                                    }
+                                }
+                            </Select>
+                        </Field>
+                    }
+
+                    @if (pattern.AmendmentType == EAmendmentTypes.Change ||
+               pattern.AmendmentType == EAmendmentTypes.Add)
+                    {
+                        <Field>
+                            <FieldLabel>Neuer Text</FieldLabel>
+                            <InputTextArea class="form-control" @bind-Value="@pattern.NewValue" />
+                        </Field>
+                    }
+                </EditForm>
+
+                @if (errored)
+                {
+                    <div class="alert alert-danger">Fehler beim Erstellen des Änderungsantrags!</div>
+                }
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="@HideModal">Abbruch</Button>
+                <Button Color="Color.Primary" Clicked="@SubmitCreateAmendment">Änderungsantrag erstellen</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
+
+@code {
+
+    [Parameter]
+    public MUNity.Models.Resolution.Resolution Resolution { get; set; }
+
+    [Parameter]
+    public EventCallback AmendmentCreated { get; set; }
+
+    private CreateAmendmentPattern pattern = new CreateAmendmentPattern();
+
+    private Blazorise.Modal modalRef;
+
+    private bool errored = false;
+
+    public void ShowModal()
+    {
+        modalRef?.Show();
+    }
+
+    private void SubmitCreateAmendment()
+    {
+        pattern.ResolutionId = Resolution.ResolutionId;
+        var newAmendment = this.resolutionService.CreateAmendment(pattern);
+        if (newAmendment != null)
+        {
+            modalRef.Hide();
+            if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment addAmendment)
+            {
+                this.Resolution.OperativeSection.AddAmendments.Add(addAmendment.ToModel());
+            }
+            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment changeAmendment)
+            {
+                this.Resolution.OperativeSection.ChangeAmendments.Add(changeAmendment.ToModel());
+            }
+            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment deleteAmendment)
+            {
+                this.Resolution.OperativeSection.DeleteAmendments.Add(deleteAmendment.ToModel());
+            }
+            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment moveAmendment)
+            {
+                this.Resolution.OperativeSection.MoveAmendments.Add(moveAmendment.ToModel());
+            }
+            this.AmendmentCreated.InvokeAsync();
+        }
+        else
+        {
+            errored = true;
+        }
+    }
+
+    private void HideModal()
+    {
+        this.modalRef.Hide();
+    }
+}

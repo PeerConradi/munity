@@ -17,6 +17,7 @@ namespace MUNityCore.Dtos.Resolutions
 
         public int NewIndex { get; set; }
 
+        
         public string SubmitterName { get; set; } = "";
 
         public CreateAmendmentPattern(string resolutionId)

@@ -73,13 +73,13 @@
                                  OnRemove="RemovePreambleParagraph" />
     }
 
-    <h3>Operativer Abschnitt (@Resolution.OperativeSection.Paragraphs.Count Absätze)</h3>
+    <h3>Operativer Abschnitt (@Resolution.OperativeSection.Paragraphs.Count(n => n.IsVirtual == false) Absätze)</h3>
     @foreach (var operativeParagraph in Resolution.OperativeSection.Paragraphs)
     {
         <OperativeParagraphEditor Paragraph="operativeParagraph"
                                   ResolutionId="@Resolution.ResolutionId"
-                                  Index="@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(operativeParagraph.OperativeParagraphId)"
-                                  SectionReference="Resolution.OperativeSection"/>
+                                  SectionReference="Resolution.OperativeSection"
+                                  ParagraphRemoved="OnOperativeParagraphRemoved"/>
     }
 }
 
@@ -94,6 +94,9 @@
 
     [Parameter]
     public ViewModel.SimulationViewModel SimViewModel { get; set; }
+
+    [Parameter]
+    public EventCallback OperativeParagraphsChanged { get; set; }
 
     private string resolutionTopic
     {
@@ -162,6 +165,17 @@
         {
             this.Resolution.Preamble.Paragraphs.Remove(paragraph);
         }
+    }
+
+    private void OnOperativeParagraphRemoved(MUNity.Models.Resolution.OperativeParagraph paragraph)
+    {
+        var success = this.resolutionService.RemoveOperativeParagraph(paragraph.OperativeParagraphId);
+        if (success)
+        {
+            Resolution.OperativeSection.RemoveOperativeParagraph(paragraph);
+            OperativeParagraphsChanged.InvokeAsync();
+        }
+
     }
 
     private void CreateOperativeParagraph()
