@@ -99,6 +99,7 @@ namespace MUNityCore.Services
             var usersWithRoles = from users in _context.SimulationUser
                     join invites in _context.SimulationInvites on users.SimulationUserId equals invites.User.SimulationUserId
                     join roles in _context.SimulationRoles on users.Role.SimulationRoleId equals roles.SimulationRoleId
+                    where users.Simulation.SimulationId == simulationId
                     select new
                     {
                         RoleType = users.Role.RoleType.ToString(),
@@ -114,7 +115,7 @@ namespace MUNityCore.Services
 
             var withoutRoles = from users in _context.SimulationUser
                                join invites in _context.SimulationInvites on users.SimulationUserId equals invites.User.SimulationUserId
-                               where users.Role == null
+                               where users.Role == null && users.Simulation.SimulationId == simulationId
                                select new
                                {
                                    Kennung = users.PublicUserId,

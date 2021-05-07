@@ -61,7 +61,7 @@ namespace MUNityCore.Controllers.Simulation
 
 
             string text = this._simulationService.GetSimulationUserCsv(simulationId, "https://" + Request.Host.ToUriComponent() + "/invite/");
-            return File(Encoding.UTF8.GetBytes(text), "application/octet-stream", $"{simulation.Name}_Benutzer.csv");
+            return File(Encoding.Unicode.GetBytes(text), "application/octet-stream", $"{simulation.Name}_Benutzer.csv");
         }
 
 
