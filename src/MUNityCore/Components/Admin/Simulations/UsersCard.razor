@@ -1,4 +1,5 @@
 ﻿@inject Services.SimulationService simulationService;
+@inject NavigationManager navManager;
 
 @if (Sim != null)
 {
@@ -18,6 +19,7 @@
                     <TableHeaderCell>Rolle</TableHeaderCell>
                     <TableHeaderCell>Login-Id</TableHeaderCell>
                     <TableHeaderCell>Login-Pass</TableHeaderCell>
+                    <TableHeaderCell>Einladungslink</TableHeaderCell>
                     <TableHeaderCell TextAlignment="TextAlignment.Center">Löschen</TableHeaderCell>
                 </TableHeader>
                 <TableBody>
@@ -27,6 +29,7 @@
                     }
                 </TableBody>
             </Table>
+            <button class="btn btn-block btn-primary" @onclick="() => Download()">Liste herunterladen</button>
         </div>
     </div>
 }
@@ -51,5 +54,10 @@
     {
         this.StateHasChanged();
         UsersChanged.InvokeAsync();
+    }
+
+    private void Download()
+    {
+        navManager.NavigateTo("api/Simulation/User/SimulationUserCsv?simulationId=" + Sim.SimulationId.ToString(), true);
     }
 }

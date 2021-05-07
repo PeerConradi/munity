@@ -1,4 +1,5 @@
 ﻿@inject Services.SimulationService simulationService;
+@inject NavigationManager navManager;
 
 <TableRow>
     <TableRowCell>@User.SimulationUserId</TableRowCell>
@@ -14,6 +15,7 @@
     </TableRowCell>
     <TableRowCell>@User.PublicUserId</TableRowCell>
     <TableRowCell>@User.Password</TableRowCell>
+    <TableRowCell>@inviteLink</TableRowCell>
     <TableRowCell TextAlignment="TextAlignment.Center">
         <button class="btn btn-circle btn-danger" @onclick="() => RemoveUser()">
             <i class="fa fa-trash"></i>
@@ -31,6 +33,8 @@
     [Parameter]
     public EventCallback<MUNityCore.Models.Simulation.SimulationUser> UserRemoved { get; set; }
 
+    private string inviteLink;
+
     private int _roleId;
     private int roleId
     {
@@ -38,6 +42,7 @@
         set
         {
             simulationService.SetUserRole(User.SimulationUserId, value);
+
             _roleId = value;
         }
     }
@@ -45,6 +50,7 @@
     protected override void OnInitialized()
     {
         this._roleId = User.Role?.SimulationRoleId ?? -2;
+        this.inviteLink = navManager.BaseUri + "invite/" + this.simulationService.GetInviteLink(this.User.SimulationUserId);
         base.OnInitialized();
     }
 

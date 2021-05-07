@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using System.Text;
 
 namespace MUNityCore.Controllers.Simulation
 {
@@ -47,6 +49,21 @@ namespace MUNityCore.Controllers.Simulation
                 return NotFound();
             return Ok(newUser.ToSimulationUserAdminDto());
         }
+
+        [HttpGet]
+        [Route("[action]")]
+        [Authorize]
+        public IActionResult SimulationUserCsv(int simulationId)
+        {
+            var simulation = this._simulationService.GetSimulation(simulationId);
+            if (simulation == null)
+                return NotFound();
+
+
+            string text = this._simulationService.GetSimulationUserCsv(simulationId, "https://" + Request.Host.ToUriComponent() + "/invite/");
+            return File(Encoding.UTF8.GetBytes(text), "application/octet-stream", $"{simulation.Name}_Benutzer.csv");
+        }
+
 
         /// <summary>
         /// Will return a token for the given simulation. The owner (first user/creator) of the simulation

@@ -93,6 +93,42 @@ namespace MUNityCore.Services
             return mdl;
         }
 
+        internal string GetSimulationUserCsv(int simulationId, string baseUrl)
+        {
+            string returnVal = "RoleType;RoleName;BenutzerId;Password;Einladungslink\n";
+            var usersWithRoles = from users in _context.SimulationUser
+                    join invites in _context.SimulationInvites on users.SimulationUserId equals invites.User.SimulationUserId
+                    join roles in _context.SimulationRoles on users.Role.SimulationRoleId equals roles.SimulationRoleId
+                    select new
+                    {
+                        RoleType = users.Role.RoleType.ToString(),
+                        RoleName = users.Role.Name,
+                        Kennung = users.PublicUserId,
+                        Pass = users.Password,
+                        Invite = baseUrl + invites.SimulationInviteId
+                    };
+            foreach(var entry in usersWithRoles)
+            {
+                returnVal += $"{entry.RoleType};{entry.RoleName};{entry.Kennung};{entry.Pass};{entry.Invite}\n";
+            }
+
+            var withoutRoles = from users in _context.SimulationUser
+                               join invites in _context.SimulationInvites on users.SimulationUserId equals invites.User.SimulationUserId
+                               where users.Role == null
+                               select new
+                               {
+                                   Kennung = users.PublicUserId,
+                                   Pass = users.Password,
+                                   Invite = baseUrl + invites.SimulationInviteId
+                               };
+
+            foreach(var entry in withoutRoles)
+            {
+                returnVal += $"None;Keine Rolle;{entry.Kennung};{entry.Pass};{entry.Invite}\n";
+            }
+            return returnVal;
+        }
+
         internal SimulationVoting CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions)
         {
             var activeVotings = this._context.SimulationVotings.Where(n => n.Simulation.SimulationId == simulationId
