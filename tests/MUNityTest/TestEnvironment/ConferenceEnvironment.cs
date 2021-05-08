@@ -253,15 +253,15 @@ namespace MUNityTest.TestEnvironment
             }
         }
 
-        private TeamRole _teamRoleProjectLeader;
+        private ConferenceTeamRole _teamRoleProjectLeader;
 
-        public TeamRole TestRoleProjectLeader
+        public ConferenceTeamRole TestRoleProjectLeader
         {
             get
             {
                 if (_teamRoleProjectLeader == null)
                 {
-                    _teamRoleProjectLeader = new TeamRole
+                    _teamRoleProjectLeader = new ConferenceTeamRole
                     {
                         RoleName = "Projektleitung",
                         Conference = TestConference,
@@ -274,14 +274,14 @@ namespace MUNityTest.TestEnvironment
             }
         }
 
-        private TeamRole _teamRoleSecretaryLeader;
-        public TeamRole TestRoleSecretaryLeader
+        private ConferenceTeamRole _teamRoleSecretaryLeader;
+        public ConferenceTeamRole TestRoleSecretaryLeader
         {
             get
             {
                 if (_teamRoleSecretaryLeader == null)
                 {
-                    _teamRoleSecretaryLeader = new TeamRole
+                    _teamRoleSecretaryLeader = new ConferenceTeamRole
                     {
                         Conference = TestConference, ParentTeamRole = TestRoleProjectLeader
                     };
@@ -291,18 +291,18 @@ namespace MUNityTest.TestEnvironment
             }
         }
 
-        private PressRole _pressRole;
+        private ConferencePressRole _pressRole;
 
-        public PressRole TestPressRole
+        public ConferencePressRole TestPressRole
         {
             get
             {
                 if (_pressRole == null)
                 {
-                    _pressRole = new PressRole
+                    _pressRole = new ConferencePressRole
                     {
                         RoleName = "Zeitungs-Journalist",
-                        PressCategory = PressRole.EPressCategories.Print,
+                        PressCategory = ConferencePressRole.EPressCategories.Print,
                         Conference = TestConference,
                         RoleAuth = RoleAuthPesant
                     };

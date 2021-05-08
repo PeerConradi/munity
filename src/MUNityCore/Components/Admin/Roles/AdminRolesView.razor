@@ -1,0 +1,38 @@
+﻿@page "/admin/roles"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore;
+@inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
+@inject RoleManager<MUNityCore.Models.User.MunityRole> roleManager;
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <h1>Rollen</h1>
+        @foreach (var role in munityContext.Roles)
+        {
+            <p>@role.Name (@role.NormalizedName)</p>
+        }
+
+        @if (roles.All(n => n.NormalizedName != "MODERATOR"))
+        {
+            <button class="btn btn-success" @onclick="CreateModeratorRole">Moderator-Rolle erstellen</button>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>Zurtrift verweigert</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<Models.User.MunityRole> roles;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.roles = munityContext.Roles.AsNoTracking().ToList();
+    }
+
+    private async Task CreateModeratorRole()
+    {
+        await this.roleManager.CreateAsync(new MUNityCore.Models.User.MunityRole() { Name = "Moderator" });
+    }
+}

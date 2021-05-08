@@ -12,7 +12,7 @@ namespace MUNityCore.Models.Session
 
         public DateTime AttendanceDate { get; set; }
 
-        public List<AbstractRole> ShouldAttendRoles { get; set; }
+        public List<AbstractConferenceRole> ShouldAttendRoles { get; set; }
 
         public List<Attendance> Attendances { get; set; }
     }

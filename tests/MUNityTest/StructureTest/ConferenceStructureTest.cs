@@ -55,35 +55,35 @@ namespace MUNityTest.StructureTest
         [Test]
         public void TestCanHaveVisitor()
         {
-            var visitor = new VisitorRole();
+            var visitor = new ConferenceVisitorRole();
             Assert.NotNull(visitor);
         }
 
         [Test]
         public void TestCanHaveDelegate()
         {
-            var delegateRole = new DelegateRole();
+            var delegateRole = new ConferenceDelegateRole();
             Assert.NotNull(delegateRole);
         }
 
         [Test]
         public void TestCanHaveTeamRole()
         {
-            var teamRole = new TeamRole();
+            var teamRole = new ConferenceTeamRole();
             Assert.NotNull(teamRole);
         }
 
         [Test]
         public void TestCanHavePressRole()
         {
-            var pressRole = new PressRole();
+            var pressRole = new ConferencePressRole();
             Assert.NotNull(pressRole);
         }
 
         [Test]
         public void TestCanHaveSecretaryGeneral()
         {
-            var secretaryGeneral = new SecretaryGeneralRole();
+            var secretaryGeneral = new ConferenceSecretaryGeneralRole();
             secretaryGeneral.Title = "Seine Exzellenz der Generalseretär";
             Assert.NotNull(secretaryGeneral);
         }
@@ -116,12 +116,12 @@ namespace MUNityTest.StructureTest
 
             // Team Rollen
             // Projektleitung (PL)
-            var projectLeader = new TeamRole();
+            var projectLeader = new ConferenceTeamRole();
             projectLeader.RoleName = "Projektleitung";
             projectLeader.Conference = conference;
 
             // EPL
-            var cb = new TeamRole();
+            var cb = new ConferenceTeamRole();
             cb.RoleName = "Chairbetreuung";
             cb.ParentTeamRole = projectLeader;
             cb.Conference = conference;
@@ -141,20 +141,20 @@ namespace MUNityTest.StructureTest
             delegationGermany.Name = "Deutschland";
 
             // Delegierter (normal/männlich)
-            var delegationRoleGermany = new DelegateRole();
+            var delegationRoleGermany = new ConferenceDelegateRole();
             delegationRoleGermany.Committee = generalAssembly;
             delegationRoleGermany.Delegation = delegationGermany;
             delegationRoleGermany.Title = "Delegierter";
 
             // Delegierter (präsident/männlich)
-            var delegationRolePresident = new DelegateRole();
+            var delegationRolePresident = new ConferenceDelegateRole();
             delegationRolePresident.Committee = generalAssembly;
             delegationRolePresident.Delegation = delegationGermany;
             delegationRolePresident.Title = "Präsident";
 
             // Presse Teili
-            var pressRole = new PressRole();
-            pressRole.PressCategory = PressRole.EPressCategories.TV;
+            var pressRole = new ConferencePressRole();
+            pressRole.PressCategory = ConferencePressRole.EPressCategories.TV;
         }
     }
 }

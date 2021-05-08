@@ -147,14 +147,14 @@ namespace MUNityCore.Services
             return auth;
         }
 
-        public List<MUNityCore.Models.User.UserRole> Roles()
+        public List<MUNityCore.Models.User.MunityRole> Roles()
         {
             return this._context.Roles.ToList();
         }
 
         public bool CreateAdminRole()
         {
-            var role = new MUNityCore.Models.User.UserRole();
+            var role = new MUNityCore.Models.User.MunityRole();
             role.Name = "Admin";
             role.NormalizedName = "ADMIN";
             this._context.Roles.Add(role);

@@ -136,7 +136,7 @@ namespace MUNityCore.Services
             return _context.Committees.FirstOrDefaultAsync(n => n.CommitteeId == id);
         }
 
-        public TeamRole CreateLeaderRole(Conference conference)
+        public ConferenceTeamRole CreateLeaderRole(Conference conference)
         {
             var roleAuth = new RoleAuth
             {
@@ -148,7 +148,7 @@ namespace MUNityCore.Services
                 PowerLevel = 1
             };
             _context.RoleAuths.Add(roleAuth);
-            var role = new TeamRole
+            var role = new ConferenceTeamRole
             {
                 Conference = conference,
                 RoleAuth = roleAuth,
@@ -183,9 +183,9 @@ namespace MUNityCore.Services
             return group;
         }
 
-        public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null, RoleAuth auth = null)
+        public ConferenceTeamRole CreateTeamRole(Conference conference, string roleName, ConferenceTeamRole parentRole = null, RoleAuth auth = null)
         {
-            var role = new TeamRole {Conference = conference, RoleName = roleName, RoleAuth = auth};
+            var role = new ConferenceTeamRole {Conference = conference, RoleName = roleName, RoleAuth = auth};
 
             if (parentRole != null)
                 role.ParentTeamRole = parentRole;
@@ -195,7 +195,7 @@ namespace MUNityCore.Services
             return role;
         }
 
-        public bool AddRoleToGroup(TeamRole role, TeamRoleGroup group)
+        public bool AddRoleToGroup(ConferenceTeamRole role, TeamRoleGroup group)
         {
             if (group != null && role != null)
             {
@@ -207,16 +207,16 @@ namespace MUNityCore.Services
             return false;
         }
 
-        public SecretaryGeneralRole CreateSecretaryGeneralRole(Conference conference, string roleName, string title, RoleAuth auth = null)
+        public ConferenceSecretaryGeneralRole CreateSecretaryGeneralRole(Conference conference, string roleName, string title, RoleAuth auth = null)
         {
-            var role = new SecretaryGeneralRole {Title = title, RoleName = roleName, Conference = conference};
+            var role = new ConferenceSecretaryGeneralRole {Title = title, RoleName = roleName, Conference = conference};
 
             _context.SecretaryGenerals.Add(role);
             _context.SaveChanges();
             return role;
         }
 
-        public IQueryable<TeamRole> GetTeamRoles(string conferenceId)
+        public IQueryable<ConferenceTeamRole> GetTeamRoles(string conferenceId)
         {
             return _context.TeamRoles.Where(n => n.Conference.ConferenceId == conferenceId);
         }
@@ -236,9 +236,9 @@ namespace MUNityCore.Services
             return _context.Delegation.Where(c => c.Conference.ConferenceId == conferenceId);
         }
 
-        public DelegateRole CreateDelegateRole(Committee committee, Delegation delegation, string name, bool isLeader = false)
+        public ConferenceDelegateRole CreateDelegateRole(Committee committee, Delegation delegation, string name, bool isLeader = false)
         {
-            var role = new DelegateRole
+            var role = new ConferenceDelegateRole
             {
                 RoleName = name,
                 Committee = committee,
@@ -253,25 +253,25 @@ namespace MUNityCore.Services
             return role;
         }
 
-        public IQueryable<DelegateRole> GetDelegateRolesOfConference(string conferenceId)
+        public IQueryable<ConferenceDelegateRole> GetDelegateRolesOfConference(string conferenceId)
         {
             return _context.Delegates.Where(c => c.Conference.ConferenceId == conferenceId);
         }
 
-        public IQueryable<DelegateRole> GetDelegateRolesOfCommittee(string committeeId)
+        public IQueryable<ConferenceDelegateRole> GetDelegateRolesOfCommittee(string committeeId)
         {
             return _context.Delegates.Where(n => n.Committee.CommitteeId == committeeId);
         }
 
-        public IQueryable<DelegateRole> GetDelegateRolesOfDelegation(string delegationId)
+        public IQueryable<ConferenceDelegateRole> GetDelegateRolesOfDelegation(string delegationId)
         {
 
             return _context.Delegates.Where(n => n.Delegation.DelegationId == delegationId);
         }
 
-        public NgoRole CreateNgoRole(Conference conference,string roleName, string ngoName)
+        public ConferenceNgoRole CreateNgoRole(Conference conference,string roleName, string ngoName)
         {
-            var role = new NgoRole {RoleName = roleName, NgoName = ngoName, Conference = conference};
+            var role = new ConferenceNgoRole {RoleName = roleName, NgoName = ngoName, Conference = conference};
 
             _context.NgoRoles.Add(role);
             _context.SaveChanges();
@@ -279,14 +279,14 @@ namespace MUNityCore.Services
 
         }
 
-        public IQueryable<NgoRole> GetNgoRoles(string conferenceId)
+        public IQueryable<ConferenceNgoRole> GetNgoRoles(string conferenceId)
         {
             return _context.NgoRoles.Where(n => n.Conference.ConferenceId == conferenceId);
         }
 
-        public PressRole CreatePressRole(Conference conference, PressRole.EPressCategories category, string roleName)
+        public ConferencePressRole CreatePressRole(Conference conference, ConferencePressRole.EPressCategories category, string roleName)
         {
-            var role = new PressRole {RoleName = roleName, Conference = conference, PressCategory = category};
+            var role = new ConferencePressRole {RoleName = roleName, Conference = conference, PressCategory = category};
 
             _context.PressRoles.Add(role);
             _context.SaveChanges();
@@ -294,12 +294,12 @@ namespace MUNityCore.Services
             return role;
         }
 
-        public IQueryable<PressRole> GetPressRoles(string conferenceId)
+        public IQueryable<ConferencePressRole> GetPressRoles(string conferenceId)
         {
             return _context.PressRoles.Where(n => n.Conference.ConferenceId == conferenceId);
         }
 
-        public Participation Participate(MunityUser user, AbstractRole role)
+        public Participation Participate(MunityUser user, AbstractConferenceRole role)
         {
             var participation = new Participation {User = user, Role = role};
 
@@ -320,7 +320,7 @@ namespace MUNityCore.Services
             return list;
         }
 
-        public IQueryable<AbstractRole> GetUserRolesOnConference(string username, string conferenceid)
+        public IQueryable<AbstractConferenceRole> GetUserRolesOnConference(string username, string conferenceid)
         {
             return this._context.Participations.Where(n =>
                 n.Role.Conference.ConferenceId == conferenceid && n.User.UserName == username).Select(n => n.Role);

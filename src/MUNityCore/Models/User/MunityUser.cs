@@ -18,7 +18,7 @@ namespace MUNityCore.Models.User
     /// inside any of the controllers unless you use it to validate something.
     /// When sending out information, always use the UserSchema
     /// </summary>
-    public class MunityUser : IdentityUser<string>
+    public class MunityUser : IdentityUser
     {
         public enum EUserState
         {

@@ -13,7 +13,7 @@ namespace MUNityCore.Models.Conference
 
     /// <summary>
     /// When users want to apply as a group it is possible to create a collective Application
-    /// for the same AbstractRole. If you want to create custom Applications for multiple Roles
+    /// for the same AbstractConferenceRole. If you want to create custom Applications for multiple Roles
     /// but every and ever user of the group should have a custom Application use GroupedRoleApplication.
     /// </summary>
     public class GroupApplication
@@ -24,7 +24,7 @@ namespace MUNityCore.Models.Conference
 
         public List<MunityUser> Users { get; set; }
 
-        public AbstractRole Role { get; set; }
+        public AbstractConferenceRole Role { get; set; }
 
         public Delegation Delegation { get; set; }
 

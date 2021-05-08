@@ -17,14 +17,14 @@ namespace MUNityCore.Models.Conference
     ///
     /// Every role is part of one conference. You cannot use the exact same role inside another conference but you can
     /// use templates to create a general structure of a conference.
-    /// <seealso cref="Roles.DelegateRole"/>
-    /// <seealso cref="Roles.NgoRole"/>
-    /// <seealso cref="Roles.PressRole"/>
-    /// <seealso cref="Roles.SecretaryGeneralRole"/>
-    /// <seealso cref="Roles.TeamRole"/>
-    /// <seealso cref="Roles.VisitorRole"/>
+    /// <seealso cref="Roles.ConferenceDelegateRole"/>
+    /// <seealso cref="Roles.ConferenceNgoRole"/>
+    /// <seealso cref="Roles.ConferencePressRole"/>
+    /// <seealso cref="Roles.ConferenceSecretaryGeneralRole"/>
+    /// <seealso cref="Roles.ConferenceTeamRole"/>
+    /// <seealso cref="Roles.ConferenceVisitorRole"/>
     /// </summary>
-    public abstract class AbstractRole
+    public abstract class AbstractConferenceRole
     {
 
         /// <summary>

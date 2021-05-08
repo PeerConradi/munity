@@ -57,7 +57,7 @@ namespace MUNityCore.Models.Conference
         public List<Committee> Committees { get; set; }
 
 
-        public List<AbstractRole> Roles { get; set; }
+        public List<AbstractConferenceRole> Roles { get; set; }
 
         public Project ConferenceProject { get; set; }
 

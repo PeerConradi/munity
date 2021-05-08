@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {
-    public class MunityContext : IdentityDbContext<MunityUser, UserRole, string>
+    public class MunityContext : IdentityDbContext<MunityUser, MunityRole, string>
     {
 
         public DbSet<Country> Countries { get; set; }
@@ -34,17 +34,17 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<Delegation> Delegation { get; set; }
 
-        public DbSet<VisitorRole> Visitors { get; set; }
+        public DbSet<ConferenceVisitorRole> Visitors { get; set; }
 
-        public DbSet<DelegateRole> Delegates { get; set; }
+        public DbSet<ConferenceDelegateRole> Delegates { get; set; }
 
-        public DbSet<TeamRole> TeamRoles { get; set; }
+        public DbSet<ConferenceTeamRole> TeamRoles { get; set; }
 
-        public DbSet<NgoRole> NgoRoles { get; set; }
+        public DbSet<ConferenceNgoRole> NgoRoles { get; set; }
 
-        public DbSet<PressRole> PressRoles { get; set; }
+        public DbSet<ConferencePressRole> PressRoles { get; set; }
 
-        public DbSet<SecretaryGeneralRole> SecretaryGenerals { get; set; }
+        public DbSet<ConferenceSecretaryGeneralRole> SecretaryGenerals { get; set; }
 
         public DbSet<Conference> Conferences { get; set; }
 
@@ -113,6 +113,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<MunityUser>().HasKey(n => n.Id);
 
             //modelBuilder.Entity<IdentityUserLogin<string>>().HasKey(n => n.UserId);
@@ -141,9 +143,9 @@ namespace MUNityCore.DataHandlers.EntityFramework
             modelBuilder.Entity<Conference>().HasOne(n => n.ConferenceProject)
                 .WithMany(n => n.Conferences);
 
-            modelBuilder.Entity<AbstractRole>().HasOne(n => n.Conference).WithMany(n => n.Roles);
+            modelBuilder.Entity<AbstractConferenceRole>().HasOne(n => n.Conference).WithMany(n => n.Roles);
 
-            modelBuilder.Entity<TeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
+            modelBuilder.Entity<ConferenceTeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
 
             modelBuilder.Entity<MunityUser>().HasOne(n => n.Auth).WithMany(n => n.Users);
 
@@ -151,13 +153,13 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
             modelBuilder.Entity<MunityUser>().HasMany(n => n.CreatedResolutions).WithOne(a => a.CreationUser).IsRequired(false);
 
-            modelBuilder.Entity<AbstractRole>().HasDiscriminator(n => n.RoleType)
-                .HasValue<DelegateRole>("DelegateRole")
-                .HasValue<NgoRole>("NgoRole")
-                .HasValue<PressRole>("PressRole")
-                .HasValue<SecretaryGeneralRole>("SecretaryGeneralRole")
-                .HasValue<TeamRole>("TeamRole")
-                .HasValue<VisitorRole>("VisitorRole");
+            modelBuilder.Entity<AbstractConferenceRole>().HasDiscriminator(n => n.RoleType)
+                .HasValue<ConferenceDelegateRole>("DelegateRole")
+                .HasValue<ConferenceNgoRole>("NgoRole")
+                .HasValue<ConferencePressRole>("PressRole")
+                .HasValue<ConferenceSecretaryGeneralRole>("SecretaryGeneralRole")
+                .HasValue<ConferenceTeamRole>("TeamRole")
+                .HasValue<ConferenceVisitorRole>("VisitorRole");
 
 
             modelBuilder.Entity<Committee>().HasMany(n => n.Sessions).WithOne(n =>
@@ -208,7 +210,7 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
             modelBuilder.Entity<ResaElement>().HasMany(n => n.Amendments).WithOne(n => n.Resolution);
 
-            base.OnModelCreating(modelBuilder);
+            
         }
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)

@@ -230,19 +230,19 @@ namespace MUNityTest.WorkflowTests
 
             // Print
             var service = new ConferenceService(_context);
-            var printChef = service.CreatePressRole(_conference, PressRole.EPressCategories.Print, "Chefredakteur/in");
-            var printRedakteur = service.CreatePressRole(_conference, PressRole.EPressCategories.Print, "Redakteur/in");
-            var printEditor = service.CreatePressRole(_conference, PressRole.EPressCategories.Print, "Editor/in");
-            var printLayout = service.CreatePressRole(_conference, PressRole.EPressCategories.Print, "Layouter/in");
+            var printChef = service.CreatePressRole(_conference, ConferencePressRole.EPressCategories.Print, "Chefredakteur/in");
+            var printRedakteur = service.CreatePressRole(_conference, ConferencePressRole.EPressCategories.Print, "Redakteur/in");
+            var printEditor = service.CreatePressRole(_conference, ConferencePressRole.EPressCategories.Print, "Editor/in");
+            var printLayout = service.CreatePressRole(_conference, ConferencePressRole.EPressCategories.Print, "Layouter/in");
 
             // TV
-            var tvRedakteur = service.CreatePressRole(_conference, PressRole.EPressCategories.TV, "Redakteur/in");
-            var tvModerator = service.CreatePressRole(_conference, PressRole.EPressCategories.TV, "TV Moderator/in");
-            var tvEditor = service.CreatePressRole(_conference, PressRole.EPressCategories.TV, "Cutter");
+            var tvRedakteur = service.CreatePressRole(_conference, ConferencePressRole.EPressCategories.TV, "Redakteur/in");
+            var tvModerator = service.CreatePressRole(_conference, ConferencePressRole.EPressCategories.TV, "TV Moderator/in");
+            var tvEditor = service.CreatePressRole(_conference, ConferencePressRole.EPressCategories.TV, "Cutter");
 
             // Online
             var onlineRedakteur =
-                service.CreatePressRole(_conference, PressRole.EPressCategories.Print, "Online Redakteur");
+                service.CreatePressRole(_conference, ConferencePressRole.EPressCategories.Print, "Online Redakteur");
 
             var getPress = service.GetPressRoles(_conference.ConferenceId);
             Assert.AreEqual(8, getPress.Count());
@@ -301,7 +301,7 @@ namespace MUNityTest.WorkflowTests
 
             var participation = participations.First();
             Assert.NotNull(participation.Role);
-            Assert.IsTrue(participation.Role is TeamRole);
+            Assert.IsTrue(participation.Role is ConferenceTeamRole);
         }
 
         [Test]

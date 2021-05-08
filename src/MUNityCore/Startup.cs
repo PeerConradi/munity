@@ -34,6 +34,14 @@ namespace MUNityCore
 {
     public class Startup
     {
+        private enum DatabaseConfigurations
+        {
+            MySql,
+            SQLite
+        }
+
+        private DatabaseConfigurations databaseConfiguration;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -81,7 +89,7 @@ namespace MUNityCore
                 };
             });
 
-            services.AddIdentity<MUNityCore.Models.User.MunityUser, MUNityCore.Models.User.UserRole>()
+            services.AddIdentity<MUNityCore.Models.User.MunityUser, MUNityCore.Models.User.MunityRole>()
                 .AddEntityFrameworkStores<MunityContext>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
@@ -97,20 +105,9 @@ namespace MUNityCore
                 options.KeepAliveInterval = new TimeSpan(0, 0, 10);
             });
 
-            
-            var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
-
-            var version = new Version(10, 1, 26);
-            var serverVersion = new MariaDbServerVersion(version);
-
-            services.AddDbContext<MunityContext>(options =>
-            {
-                options.UseMySql(mySqlConnectionString, serverVersion, builder =>
-                {
-                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-                });
-                
-            });
+            // Setup the Database to use
+            SetupDatabaseWithMySql(services);
+            //SetupDatabaseWithSQLite(services);
             
             // All services that are used inside the controllers.
             //services.AddScoped<Services.InstallationService>();
@@ -154,6 +151,16 @@ namespace MUNityCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            try
+            {
+                UpdateDatabase(app);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("Unable to create the database!");
+                Logger.LogError(e.StackTrace);
+            }
+
             if (env.IsDevelopment())
             {
                 //app.UseCors("DevPolicy");
@@ -214,24 +221,64 @@ namespace MUNityCore
                 endpoints.MapFallbackToPage("/_Host");
             });
 
-            try
-            {
-                UpdateDatabase(app);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+
             
         }
 
-        private static void UpdateDatabase(IApplicationBuilder app)
+        private void SetupDatabaseWithMySql(IServiceCollection services)
+        {
+            var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
+
+            var version = new Version(10, 1, 26);
+            var serverVersion = new MariaDbServerVersion(version);
+
+            services.AddDbContext<MunityContext>(options =>
+            {
+                options.UseMySql(mySqlConnectionString, serverVersion, builder =>
+                {
+                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                });
+
+            });
+            databaseConfiguration = DatabaseConfigurations.MySql;
+        }
+
+        private void SetupDatabaseWithSQLite(IServiceCollection services)
+        {
+            
+            string sqlDbLiteName = "munity";
+            // Create database
+            var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
+            optionsBuilder.UseSqlite($"Data Source={sqlDbLiteName}.db");
+            var context = new MunityContext(optionsBuilder.Options);
+            var created = context.Database.EnsureCreated();
+
+
+            if (created)
+            {
+                Logger.LogInfo("SQLite Database created!");
+            }
+
+            services.AddDbContext<MunityContext>(options =>
+            {
+                options.UseSqlite($"Data Source={sqlDbLiteName}.db");
+            });
+            databaseConfiguration = DatabaseConfigurations.SQLite;
+            Logger.LogInfo($"Started with SQLite under: {Environment.CurrentDirectory}/{sqlDbLiteName}");
+        }
+
+        private void UpdateDatabase(IApplicationBuilder app)
         {
             using var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
+            
+            // Only migrate when its a MySQL Database. The SqlLite Database will be generated, when 
+            // the Service is set up
             using var context = serviceScope.ServiceProvider.GetService<MunityContext>();
-            context.Database.Migrate();
+            if (databaseConfiguration == DatabaseConfigurations.MySql)
+                context.Database.Migrate();
+
         }
     }
 }

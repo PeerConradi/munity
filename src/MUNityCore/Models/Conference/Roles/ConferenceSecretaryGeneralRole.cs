@@ -13,7 +13,7 @@ namespace MUNityCore.Models.Conference.Roles
     /// The Secretary General Role is one of the most important roles of the conference.
     /// You are technically able to create more than one of this roles.
     /// </summary>
-    public class SecretaryGeneralRole : AbstractRole
+    public class ConferenceSecretaryGeneralRole : AbstractConferenceRole
     {
 
         /// <summary>

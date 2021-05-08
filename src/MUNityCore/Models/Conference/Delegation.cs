@@ -13,7 +13,7 @@ namespace MUNityCore.Models.Conference
     /// <summary>
     /// A delegation is a model that groups different types of delegate roles
     ///
-    /// <seealso cref="Roles.DelegateRole"/>
+    /// <seealso cref="Roles.ConferenceDelegateRole"/>
     /// </summary>
     public class Delegation
     {

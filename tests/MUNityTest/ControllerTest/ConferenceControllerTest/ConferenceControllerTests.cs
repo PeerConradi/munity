@@ -110,11 +110,11 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
             };
         }
 
-        private TeamRole _leaderRole;
+        private ConferenceTeamRole _leaderRole;
 
-        public TeamRole GetLeaderRole()
+        public ConferenceTeamRole GetLeaderRole()
         {
-            return _leaderRole ??= new TeamRole
+            return _leaderRole ??= new ConferenceTeamRole
             {
                 RoleId = 0,
                 RoleName = "Leader"
@@ -189,7 +189,7 @@ namespace MUNityTest.ControllerTest.ConferenceControllerTest
                 service.GetProject("testproject")).ReturnsAsync(GetTestProject);
 
             mockConferenceService.Setup(service =>
-                service.Participate(GetTestUser(), It.IsAny<AbstractRole>())).Returns(GetParticipation);
+                service.Participate(GetTestUser(), It.IsAny<AbstractConferenceRole>())).Returns(GetParticipation);
 
             // Since this is a TestCase we dont want to actually create a conference
             // So we Mock a conference Result

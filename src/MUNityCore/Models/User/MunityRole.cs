@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MUNityCore.Models.User
 {
-    public class UserRole : IdentityRole<string>
+    public class MunityRole : IdentityRole<string>
     {
-        public UserRole()
+
+        public MunityRole()
         {
             this.Id = Guid.NewGuid().ToString();
         }

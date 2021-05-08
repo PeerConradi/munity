@@ -13,7 +13,7 @@ namespace MUNityCore.Models.Conference.Roles
     /// A visitor role is for someone who just wants to come to the conference
     /// without being part of any of the other roles.
     /// </summary>
-    public class VisitorRole : AbstractRole
+    public class ConferenceVisitorRole : AbstractConferenceRole
     {
         [MaxLength(100)]
         public string Organization { get; set; }

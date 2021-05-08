@@ -2,7 +2,8 @@
 
 <div class="d-flex mb-2">
     <div class="d-flex align-items-center">
-        <i class="fa fa-circle @((User.IsOnline) ? "text-lime" : "text-red") f-s-8 mr-2"></i>
+        <i class="fa  @((User.IsOnline) ? "text-lime fa-circle" : "text-red fa-sign-out-alt") f-s-8 mr-2"></i>
+        <span class="@((User.IsOnline) ? "text-lime" : "text-red") mr-3">@((User.IsOnline) ? "online" : "offline")</span>
         @if (string.IsNullOrEmpty(User.RoleIso))
         {
             <img src="img/flags/small/un.png" class="m-r-5" />

@@ -35,7 +35,7 @@ namespace MUNityCore.Services
 
         bool CanUserEditConference(MunityUser user, Conference conference);
 
-        List<MUNityCore.Models.User.UserRole> Roles();
+        List<MUNityCore.Models.User.MunityRole> Roles();
 
         bool CreateAdminRole();
 

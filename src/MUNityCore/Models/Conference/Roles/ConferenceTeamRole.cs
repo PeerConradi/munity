@@ -13,13 +13,13 @@ namespace MUNityCore.Models.Conference.Roles
     /// A team role is any role for organization purposes. Note that anyone that is assigned
     /// this type of role will have access to the inside area of the conference.
     /// </summary>
-    public class TeamRole : AbstractRole
+    public class ConferenceTeamRole : AbstractConferenceRole
     {
 
         /// <summary>
         /// A parent role that is above this role.
         /// </summary>
-        public TeamRole ParentTeamRole { get; set; }
+        public ConferenceTeamRole ParentTeamRole { get; set; }
 
         /// <summary>
         /// The Level of this row. This is not assigned from the amount of roles above this roles.
@@ -36,7 +36,7 @@ namespace MUNityCore.Models.Conference.Roles
         /// </summary>
         public TeamRoleGroup TeamRoleGroup { get; set; }
 
-        public TeamRole()
+        public ConferenceTeamRole()
         {
             this.AllowMultipleParticipations = true;
         }

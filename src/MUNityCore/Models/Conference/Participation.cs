@@ -19,7 +19,7 @@ namespace MUNityCore.Models.Conference
 
         public int ParticipationId { get; set; }
 
-        public AbstractRole Role { get; set; }
+        public AbstractConferenceRole Role { get; set; }
 
         public MunityUser User { get; set; }
 

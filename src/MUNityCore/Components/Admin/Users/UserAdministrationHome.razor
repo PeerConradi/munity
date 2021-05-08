@@ -1,19 +1,66 @@
-﻿@page "/admin/users" 
+﻿@page "/admin/users"
+@using Microsoft.AspNetCore.Identity; 
 @inject Services.IUserService userService;
+@inject RoleManager<MUNityCore.Models.User.MunityRole> roleManager;
+@inject UserManager<MUNityCore.Models.User.MunityUser> userManager;
 
 <AuthorizeView>
     <Authorized>
         <Heading>Hallo @context.User.Identity.Name</Heading>
         <h1>Benutzer</h1>
-        <ul>
-            @if (displayUsers != null)
-            {
-                foreach(var user in displayUsers)
+        @if (users != null && roles != null)
+        {
+               <Table>
+                   <TableHeader>
+                       <TableHeaderCell>Id</TableHeaderCell>
+                       <TableHeaderCell>Name</TableHeaderCell>
+                       <TableHeaderCell>Rollen</TableHeaderCell>
+                   </TableHeader>
+                   <TableBody>
+                       @foreach (var user in users)
+                       {
+                           <TableRow>
+                               <TableRowCell>@user.UserId</TableRowCell>
+                               <TableRowCell>@user.Username</TableRowCell>
+                               <TableRowCell>
+                                   @foreach (var role in roles)
+                                   {
+                                       if (user.Roles.Any(n => n.RoleId == role.Id))
+                                       {
+                                           @if (role.Name == "Admin" && !hasMultipleAdmins)
+                                           {
+                                               <Badge Color="Color.Primary">@role.Name</Badge>
+
+                                           }
+                                           else
+                                           {
+                                               <Badge Color="Color.Primary" Style="cursor: pointer;" @onclick="() => RemoveFromRole(user.UserId, role.Name)">
+                                                   <Icon Name="IconName.MinusCircle" />
+                                                   @role.Name
+                                               </Badge>
+
+                                           }
+
+                                       }
+                                       else
+                                       {
+                                           <Badge Color="Color.Success" Style="cursor: pointer;"  @onclick="() => AddToRole(user.UserId, role.Id, role.Name)">
+                                               <Icon Name="IconName.Add" /> Zu @role.Name hinzufügen
+                                           </Badge>
+                                       }
+                                   }
+                               </TableRowCell>
+
+                           </TableRow>
+                       }
+
+                   </TableBody>
+               </Table>
+        }
+         else
                 {
-                    <li>@user.Email</li>
+                    <Paragraph>Benutzer werden geladen.</Paragraph>
                 }
-            }
-        </ul>
         <Paragraph></Paragraph>
     </Authorized>
     <NotAuthorized>
@@ -22,11 +69,50 @@
 
 </AuthorizeView>
 @code {
-    private List<MUNityCore.Models.User.MunityUser> displayUsers = null;
+    private List<Dtos.Users.UserWithRolesDto> users = null;
+
+    private List<MUNityCore.Models.User.MunityRole> roles = null;
+
+    private bool hasMultipleAdmins = false;
 
     protected override void OnInitialized()
     {
-        this.displayUsers = userService.GetUserBlock(0);
         base.OnInitialized();
+        this.users = userService.UsersWithRoles();
+        this.roles = roleManager.Roles.ToList();
+        hasMultipleAdmins = false;
+    }
+
+    private async Task AddToRole(string userId, string roleId, string roleName)
+    {
+        var user = userService.GetUserById(userId);
+        if (user != null)
+        {
+            await userManager.AddToRoleAsync(user, roleName);
+            var userDto = this.users.FirstOrDefault(n => n.UserId == userId);
+            if (userDto != null)
+            {
+                userDto.Roles.Add(new Dtos.Users.MunityRoleDto()
+                {
+                    Name = roleName,
+                    RoleId = roleId
+                });
+            }
+        }
+
+    }
+
+    private async Task RemoveFromRole(string userId, string roleName)
+    {
+        var user = userService.GetUserById(userId);
+        if (user != null)
+        {
+            await userManager.RemoveFromRoleAsync(user, roleName);
+            var userDto = this.users.FirstOrDefault(n => n.UserId == userId);
+            if (userDto != null)
+            {
+                userDto.Roles.RemoveAll(n => n.Name == roleName);
+            }
+        }
     }
 }

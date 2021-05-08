@@ -13,7 +13,7 @@ namespace MUNityCore.Models.Conference.Roles
     /// TV for VLogs, Newsshows etc.
     /// Online if you want to seperate your newspaper into an paper and online version.
     /// </summary>
-    public class PressRole : AbstractRole
+    public class ConferencePressRole : AbstractConferenceRole
     {
         public enum EPressCategories
         {

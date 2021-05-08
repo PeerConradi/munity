@@ -1,0 +1,64 @@
+﻿@page "/install"
+@using Microsoft.AspNetCore.Identity;
+@inject Services.IAuthService authService;
+@inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
+@inject RoleManager<MUNityCore.Models.User.MunityRole> roleManager;
+@inject UserManager<MUNityCore.Models.User.MunityUser> userManager;
+@inject SignInManager<MUNityCore.Models.User.MunityUser> signInManager;
+
+
+<AuthorizeView>
+    <Authorized>
+        @if (isInstalled)
+        {
+            <h3>Installation bereits abgeschlossen!</h3>
+        }
+        else
+        {
+            <h1>Installation durführen</h1>
+            <p>Klicke die unten stehende Schaltfläche um eine Installation zu starten.</p>
+            <p>Bei der Installation wird der aktuell angemeldete Benutzer zum Administrator gemacht.</p>
+            <button class="btn btn-danger btn-block" @onclick="Install">Einrichtung abschließen</button>
+        }
+
+        @if(showRelogNotice)
+        {
+            <p>Bitte <a @onclick="SignOut">melde dich ab</a> und danach wieder an, damit die Installation abgeschlossen werden kann. Danach solltest du das Admin-Panel im Menü sehen können.</p>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <h1>You are not allowed to do that!</h1>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    private bool showRelogNotice = false;
+
+    private bool isInstalled
+    {
+        get
+        {
+            return munityContext.Roles.Any(n => n.Name == "Admin");
+        }
+    }
+
+    private async Task SignOut()
+    {
+        await this.signInManager.SignOutAsync();
+    }
+
+    private async Task Install()
+    {
+        await this.roleManager.CreateAsync(new MUNityCore.Models.User.MunityRole() { Name = "Admin" });
+        await this.roleManager.CreateAsync(new MUNityCore.Models.User.MunityRole() { Name = "Moderator" });
+        var user = this.signInManager.Context.User;
+        var realUser = this.authService.GetUser(user.Identity.Name);
+        if (realUser != null)
+        {
+            await this.userManager.AddToRoleAsync(realUser, "Admin");
+            showRelogNotice = true;
+        }
+        this.StateHasChanged();
+    }
+}

@@ -45,7 +45,7 @@
         ClosedToPublic,
 
         /// <summary>
-        /// Looks inside the ApplicationValue of an AbstractRole
+        /// Looks inside the ApplicationValue of an AbstractConferenceRole
         /// </summary>
         Custom
     }

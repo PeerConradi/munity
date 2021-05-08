@@ -26,14 +26,14 @@ namespace MUNityCore.Services
 
         Task<Committee> GetCommittee(string id);
 
-        public TeamRole CreateLeaderRole(Conference conference);
+        public ConferenceTeamRole CreateLeaderRole(Conference conference);
 
-        public TeamRole CreateTeamRole(Conference conference, string roleName, TeamRole parentRole = null,
+        public ConferenceTeamRole CreateTeamRole(Conference conference, string roleName, ConferenceTeamRole parentRole = null,
             RoleAuth auth = null);
 
-        public Participation Participate(MunityUser user, AbstractRole role);
+        public Participation Participate(MunityUser user, AbstractConferenceRole role);
 
-        public IQueryable<AbstractRole> GetUserRolesOnConference(string username, string conferenceid);
+        public IQueryable<AbstractConferenceRole> GetUserRolesOnConference(string username, string conferenceid);
 
         Task SaveDatabaseChanges();
 

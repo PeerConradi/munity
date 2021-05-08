@@ -83,6 +83,45 @@ namespace MUNityCore.Services
             return this._context.Users.AsNoTracking().OrderBy(n => n.Lastname).Skip(blockid).Take(100).ToList();
         }
 
+        public List<Dtos.Users.UserWithRolesDto> UsersWithRoles()
+        {
+            var users = from user in _context.Users
+                        join roleIds in _context.UserRoles on user.Id equals roleIds.UserId
+                        join roles in _context.Roles on roleIds.RoleId equals roles.Id
+                        select new
+                        {
+                            UserId = user.Id,
+                            Username = user.UserName,
+                            RoleId = roles.Id,
+                            RoleName = roles.Name
+                        };
+            var result = users.ToList().GroupBy(n => n.UserId).Select(n =>
+            new Dtos.Users.UserWithRolesDto()
+            {
+                UserId = n.Key,
+                Username = n.First().Username,
+                Roles = n.Select(a => new Dtos.Users.MunityRoleDto()
+                {
+                    RoleId = a.RoleId,
+                    Name = a.RoleName
+                }).ToList()
+            }).ToList();
+
+            var noRolesUsers = from user in _context.Users
+                               where _context.UserRoles.All(n => n.UserId != user.Id)
+                               select new Dtos.Users.UserWithRolesDto()
+                               {
+                                   Roles = new List<Dtos.Users.MunityRoleDto>(),
+                                   UserId = user.Id,
+                                   Username = user.UserName
+                               };
+            result.AddRange(noRolesUsers);
+
+            return result;
+        }
+
+
+
         public Task<int> GetUserCount()
         {
             return this._context.Users.CountAsync();
@@ -139,6 +178,11 @@ namespace MUNityCore.Services
             if (user == null) return null;
             return user.AsInformation();
             
+        }
+
+        public MunityUser GetUserById(string id)
+        {
+            return this._context.Users.FirstOrDefault(n => n.Id == id);
         }
 
         public UserService(MunityContext context)

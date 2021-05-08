@@ -23,53 +23,45 @@ __MariaDB__
 The Project uses a MariaDB. You can get it from here: https://mariadb.org/download/
 or use a tool like [Xampp](https://www.apachefriends.org/de/index.html).
 
-__MongoDB__
 
-For documents this projects uses a MongoDB. You can get the community edition from here: 
-https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/.
+## Configure the Database
 
-## First run
+For this step you can use either SQLite or MariaDb/MySQL Databases.
 
-The projects should run out of the box, if MariaDB and MongoDB are running.
+Open up the src/MUNityCore/Startup.cs file
 
-### Starting the backend
+Activate either one of the functions:
 
-When you opened up the Project Solution in Visual Studio you can start the Backend by going to the top of Visual Studio and make sure that ```Debug``` and ```MUNityCore``` are selected. THen hit ```IIS Express``` to run the backend.
+```c#
+SetupDatabaseWithMySql(services);
+//SetupDatabaseWithSQLite(services);
+```
 
-### Starting the Frontend
+SQLite will allow you to start the app, without having any other application installed. Note that SQLite is not
+suiteable for a production system since it will not be farst enought to handle all incoming changes. For developing and testing its fine.
 
-You can start the Frontend by going into the project folder and into the MUNityClient project and open a command line there. Then type:
-```dotnet watch run``` to start the API with HotReload. If you have also a backend running on your System make sure that the API_URL inside ```MUNityClient/Program.cs``` matches the URL and port where the API is running.
+### Further configurate MySQL
 
-## The Projects
+To setup the MariaDB better, go into the appsettings.json file and set your mysql user and password:
 
-After cloning the repository and opening the Solution File ```MunityCore.sln```.
+```json
+"MySqlSettings": {
+    "ConnectionString": "server=localhost;userid=root;password='';database='munitybase'"
+  },
+```
 
-### MUNityClient
+## Start the app
 
-This is a Blazor Web-Assembly Client. MUNity switched late 2020 from Angular to Blazor. The Blazor project is organized into a the main Folders:
-* Pages - contains all Components that have a route to them
-* Services - Injectable Services that communicate with the API and Storage
-* Shared - contains the different sub components
-* ViewModel - contains ViewModels that store data, and listens to websockets or the storage.
+You can use the Visual Studio Debugger to start the app. If you are using VSCode bring up the console and go into
+src/MUNityCore and call: ````dotnet watch run``` this will start the app and always reloads it, when you make changes.
 
-### MUNityCore
-Is the WebAPI 2.0 project that access the MariaDB and MongoDB and will serve the Data over REST.
+This will start the server at localhost:5001 and may already open a browser.
 
-### MUNitySchema
-The Shared code between the MUNityCore and MUNityClient. The Schema can also be found as a nuget package: https://www.nuget.org/packages/MUNityBase/
-This package is maintained by Peer Conradi.
+# Install
 
-__Every project also has an Unit Test Project.__
+If this is the first time you setup the application, it will generate the database. Now you need to create an account.
+Go to: ```https://localhost:5001/Identity/Account/Register``` and create an account.
 
-## Developing and Debugging
+This will bring you back to the startpage with you now signed in.
 
-You should be able to start the project.
-
-> You need to have the MariaDB and MongoDB installed and running in the background.
-
-On the first start the application will create the Databases MUNityCore and MUNityBase. 
-
-The start will open a browser window with a not reachable page. This is correct since there is 
-no frontend inside this project. Note that it will also not run with  port 80. You can still reach the
-swagger API documentation by going to /swagger/index.html
+Go to ```https://localhost:5001/install``` to start the installation.

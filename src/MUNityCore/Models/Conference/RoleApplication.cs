@@ -23,7 +23,7 @@ namespace MUNityCore.Models.Conference
         public MunityUser User { get; set; }
 
 
-        public AbstractRole Role { get; set; }
+        public AbstractConferenceRole Role { get; set; }
 
         public DateTime ApplyDate { get; set; }
 

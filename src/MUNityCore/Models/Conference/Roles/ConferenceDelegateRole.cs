@@ -18,7 +18,7 @@ namespace MUNityCore.Models.Conference.Roles
     ///
     /// Every Delegate Role takes a seat inside a Committee
     /// </summary>
-    public class DelegateRole : AbstractRole
+    public class ConferenceDelegateRole : AbstractConferenceRole
     {
 
         /// <summary>

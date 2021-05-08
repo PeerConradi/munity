@@ -38,5 +38,9 @@ namespace MUNityCore.Services
         IEnumerable<MunityUser> GetAdministrators();
 
         Task<UserInformation> GetUserInformation(string username);
+
+        List<Dtos.Users.UserWithRolesDto> UsersWithRoles();
+
+        MunityUser GetUserById(string id);
     }
 }
