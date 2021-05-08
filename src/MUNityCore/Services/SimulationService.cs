@@ -322,6 +322,11 @@ namespace MUNityCore.Services
             return true;
         }
 
+        internal string GetAgendaItemName(int agendaItemId)
+        {
+            return this._context.AgendaItems.FirstOrDefault(n => n.AgendaItemId == agendaItemId)?.Name ?? null;
+        }
+
         internal bool SetUserRole(SetUserSimulationRole body)
         {
             var role = _context.SimulationRoles.FirstOrDefault(n => n.SimulationRoleId == body.RoleId);
@@ -1392,6 +1397,20 @@ namespace MUNityCore.Services
             _context.SaveChanges();
         }
 
+        internal List<OldVotingDto> GetPastVotings(int simulationId)
+        {
+            var result = _context.SimulationVotings.Include(n => n.VoteSlots).Where(n => n.IsActive == false).Select(a =>
+            new OldVotingDto
+            {
+                Name = a.Name,
+                ProCount = a.VoteSlots.Count(n => n.Choice == EVoteStates.Pro),
+                ConCount = a.VoteSlots.Count(n => n.Choice == EVoteStates.Con),
+                AbstentionCount = a.VoteSlots.Count(n => n.Choice == EVoteStates.Abstention),
+                NotVotedCount = a.VoteSlots.Count(n => n.Choice == EVoteStates.NotVoted)
+            });
+            return result.ToList();
+        }
+
         internal void RemoveSimulation(int simulationId)
         {
             var simulation = _context.Simulations.FirstOrDefault(n => n.SimulationId == simulationId);
@@ -1462,6 +1481,8 @@ namespace MUNityCore.Services
                 Hubs.ConnectionUsers.ConnectionIds.TryRemove(connection);
             }
         }
+
+        
 
     }
 }

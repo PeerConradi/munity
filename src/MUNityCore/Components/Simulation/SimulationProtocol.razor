@@ -1,0 +1,111 @@
+﻿@inject Services.LogSimulationService logService;
+
+<h3>Sitzungsprotokoll</h3>
+<h6>Filter Einstellen</h6>
+
+<div class="panel panel-inverse">
+    <div class="panel-heading ">
+        <h4 class="panel-title">Filter einstellen</h4>
+    </div>
+    <div class="panel-body">
+        <Table>
+            <!-- show users -->
+            <TableRow>
+                <TableRowCell>
+                    <div class="switcher">
+                        <input type="checkbox" @bind-value="@showCategoryUser" id="switcher_checkbox_1" checked="">
+                        <label for="switcher_checkbox_1"></label>
+                    </div>
+                </TableRowCell>
+                <TableRowCell>Benutzerprotokoll (connected/disconnected)</TableRowCell>
+            </TableRow>
+
+            <!-- show agenda -->
+            <TableRow>
+                <TableRowCell>
+                    <div class="switcher">
+                        <input type="checkbox" @bind-value="@showCategoryAgenda" id="switcher_agenda" checked="">
+                        <label for="switcher_agenda"></label>
+                    </div>
+                </TableRowCell>
+                <TableRowCell>Tagesordnungspunkte und Anträge</TableRowCell>
+            </TableRow>
+
+            <!-- show Votinglog -->
+            <TableRow>
+                <TableRowCell>
+                    <div class="switcher">
+                        <input type="checkbox" @bind-value="@showCategoryVoting" id="switcher_voting" checked="">
+                        <label for="switcher_voting"></label>
+                    </div>
+                </TableRowCell>
+                <TableRowCell>Abstimmungen</TableRowCell>
+            </TableRow>
+        </Table>
+
+        <button class="btn btn-primary btn-block" @onclick="LoadProtocol">Protokoll laden</button>
+    </div>
+</div>
+
+<div class="panel panel-inverse">
+    <div class="panel-heading ">
+        <h4 class="panel-title">Filter einstellen</h4>
+    </div>
+    <div class="panel-body">
+        <Table>
+            <TableHeader>
+                <TableHeaderCell>Zeitpunkt</TableHeaderCell>
+                <TableHeaderCell>Kategorie</TableHeaderCell>
+                <TableHeaderCell>Name</TableHeaderCell>
+                <TableHeaderCell>Beschreibung</TableHeaderCell>
+            </TableHeader>
+            <TableBody>
+                @if (log == null)
+                {
+                    <TableRow>
+                        <TableRowCell ColumnSpan="4">Protokoll wird geladen</TableRowCell>
+                    </TableRow>
+                }
+                else
+                {
+                    @foreach (var entry in log)
+                    {
+                        <TableRow>
+                            <TableRowCell>@entry.Timestamp.ToString("yyyy.MM.dd HH:mm:ss")</TableRowCell>
+                            <TableRowCell>@entry.CategoryName</TableRowCell>
+                            <TableRowCell>@entry.Name</TableRowCell>
+                            <TableRowCell>@entry.Text</TableRowCell>
+                        </TableRow>
+                    }
+                }
+            </TableBody>
+        </Table>
+    </div>
+</div>
+
+
+        
+
+@code {
+    [Parameter]
+    public int SimulationId { get; set; }
+
+    private List<MUNityCore.Models.Simulation.SimulationLog> log = null;
+
+    private bool showCategoryUser = false;
+
+    private bool showCategoryAgenda = true;
+
+    private bool showCategoryVoting = false;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        LoadProtocol();
+    }
+
+    private void LoadProtocol()
+    {
+        log = logService.GetFilteredLogOfSimulation(SimulationId, showCategoryUser, showCategoryAgenda, showCategoryVoting);
+    }
+}

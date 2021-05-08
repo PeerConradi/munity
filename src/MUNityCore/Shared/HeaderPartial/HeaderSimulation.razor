@@ -3,27 +3,34 @@
 
 <div class="row align-self-center">
     <button class="btn @overViewClass"
-        @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Overview">
-            <i class="fa fa-flag"></i> Start
+            @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Overview">
+        <i class="fa fa-flag"></i> Start
     </button>
 
     <button class="btn @agendaClass"
             @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda">
-            <i class="fa fa-bookmark"></i> Tagesordnung
+        <i class="fa fa-bookmark"></i> Tagesordnung
     </button>
 
     <button class="btn @votingClass"
             @onclick="() => { newVoting = false; frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Voting; }">
-            <i class="fa fa-vote-yea"></i> Abstimmung
-            @if (newVoting)
-            {
-                <span class="badge badge-danger">neu</span>
-            }
+        <i class="fa fa-vote-yea"></i> Abstimmung
+        @if (newVoting)
+        {
+            <span class="badge badge-danger">neu</span>
+        }
     </button>
 
-    <button class="btn @resolutionClass"@onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Resolutions">
-        <i class="fa fa-list"></i> Resolutionen
+    <button class="btn @resolutionClass" @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Resolutions">
+        <i class="fa fa-file-archive"></i> Resolutionen
     </button>
+
+    @if (frontendSimulationService.CurrentSimulation?.UserContext != null && frontendSimulationService.CurrentSimulation.UserContext.IsChair)
+    {
+        <button class="btn @protocolClass" @onclick="() => frontendSimulationService.CurrentTab = Services.FrontendSimulationService.SimulationTabs.Protocol">
+            <i class="fa fa-list"></i> Protokoll
+        </button>
+    }
 </div>
 
 @code {
@@ -38,6 +45,9 @@
 
     private string resolutionClass =>
         (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Resolutions) ? "btn-primary text-white" : "btn-default";
+
+    private string protocolClass =>
+        (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Protocol) ? "btn-primary text-white" : "btn-default";
 
     private bool newVoting = false;
 

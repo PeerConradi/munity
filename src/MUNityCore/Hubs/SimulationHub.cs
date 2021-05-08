@@ -15,16 +15,19 @@ namespace MUNityCore.Hubs
     {
         private readonly Services.SimulationService _service;
 
-        public SimulationHub(Services.SimulationService service)
+        private readonly Services.LogSimulationService _simulationLogger;
+
+        public SimulationHub(Services.SimulationService service, Services.LogSimulationService simulationLogService)
         {
             _service = service;
+            _simulationLogger = simulationLogService;
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             ConnectionUsers.ConnectedUser outVal = null;
             ConnectionUsers.ConnectionIds.TryRemove(Context.ConnectionId, out outVal);
-            Console.WriteLine("Simulation User Disconnected: " + outVal.SimulationUserId.ToString());
+            _simulationLogger.LogUserDisconnected(outVal.SimulationUserId);
             await NotifyUsersChanged(outVal.SimulationId);
             await base.OnDisconnectedAsync(exception);
         }
@@ -36,7 +39,7 @@ namespace MUNityCore.Hubs
                 SimulationId = simulationId,
                 SimulationUserId = userId
             };
-            Console.WriteLine("Simulation User Connected: " + userId.ToString());
+            _simulationLogger.LogUserConnected(userId);
             ConnectionUsers.ConnectionIds.TryAdd(Context.ConnectionId, newConnection);
             await this.Groups.AddToGroupAsync(Context.ConnectionId, "sim_" + simulationId);
             await NotifyUsersChanged(simulationId);
@@ -67,6 +70,7 @@ namespace MUNityCore.Hubs
             var mdl = _service.CreateVotingForDelegates(simulationId, text, allowAbstentions);
 
             var dto = _service.GetCurrentVoting(simulationId);
+            _simulationLogger.LogVotingCreated(simulationId, text);
             this.Clients.Group("sim_" + simulationId.ToString()).VoteCreated(dto);
             return;
         }
@@ -97,6 +101,7 @@ namespace MUNityCore.Hubs
             var agendaItem = this._service.CreateAgendaItem(user.SimulationId, name, description);
             if (agendaItem != null)
             {
+                _simulationLogger.LogAgendaItemCreated(user.SimulationId, name);
                 this.Clients.Group("sim_" + user.SimulationId).AgendaItemAdded(agendaItem.ToAgendaItemDto());
             }
         }
@@ -107,9 +112,12 @@ namespace MUNityCore.Hubs
             if (user == null) return;
             var isChair = _service.IsUserChair(user.SimulationUserId);
 
+            var name = this._service.GetAgendaItemName(agendaItemId);
+
             var removed = this._service.RemoveAgendaItem(agendaItemId);
             if (removed)
             {
+                _simulationLogger.LogAgendaItemRemoved(user.SimulationId, name);
                 await this.Clients.Group("sim_" + user.SimulationId).AgendaItemRemoved(agendaItemId);
             }
         }
@@ -123,6 +131,7 @@ namespace MUNityCore.Hubs
             var info = _service.GetPetitionInfo(petition.PetitionId);
             if (info != null)
             {
+                _simulationLogger.LogPetitionCreated(user.SimulationId, info);
                 await this.Clients.Group("sim_" + user.SimulationId).PetitionAdded(info);
             }
         }

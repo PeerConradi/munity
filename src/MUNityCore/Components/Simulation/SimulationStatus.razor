@@ -1,0 +1,56 @@
+﻿@inject Services.SimulationService simulationService;
+
+<div class="col-12 mb-5">
+    <div class="card border-0 text-truncate bg-dark text-white">
+        <div class="card-body">
+            <div class="mb-3 text-grey">
+                <b class="mb-3">Status</b>
+            </div>
+
+            <div class="d-flex align-items-center mb-1">
+                <h2 class="text-white mb-0">@((currentStatus != null) ? currentStatus.StatusText : "Unbekannt")</h2>
+            </div>
+            <div class="mb-4 text-grey">
+                @currentStatus?.StatusTime.ToString("dd.MM.yyyy HH:mm:ss")
+            </div>
+
+                @if (ViewModel.UserContext.IsChair)
+                {
+                    <div class="mb-4 text-grey">
+                        Status Einstellen
+                        <div class="form-group">
+                            <input type="text" class="form-control" @bind-value="newStatusText" />
+                        </div>
+                        <button class="btn btn-success" @onclick="SetStatus">Status ändern</button>
+                    </div>
+                }
+            </div>
+        </div>
+</div>
+
+@code {
+    [Parameter]
+    public ViewModel.SimulationViewModel ViewModel { get; set; }
+
+    private Models.Simulation.SimulationStatus currentStatus;
+
+    private string newStatusText = "";
+
+    private void SetStatus()
+    {
+        if (!string.IsNullOrEmpty(newStatusText))
+        {
+            this.currentStatus = this.simulationService.SetStatus(ViewModel.SimulationId, newStatusText);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (ViewModel != null)
+        {
+            currentStatus = simulationService.GetCurrentStatus(ViewModel.SimulationId);
+        }
+
+    }
+}

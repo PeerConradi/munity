@@ -27,6 +27,7 @@ else if (loadingState == LoadingStates.Success)
         <div class="@((showListOfSpeakers) ? "col-lg-8" : "col-lg-12")">
             @if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Overview)
             {
+                <SimulationStatus ViewModel="@_simulationViewModel" />
                 <SimulationUsers ViewModel="@_simulationViewModel" />
             }
             else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Agenda)
@@ -40,6 +41,10 @@ else if (loadingState == LoadingStates.Success)
             else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Resolutions)
             {
                 <SimulationResolutionHome SimViewModel="@_simulationViewModel" />
+            }
+            else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Protocol)
+            {
+                <SimulationProtocol SimulationId="@_simulationViewModel.SimulationId" />
             }
         </div>
 

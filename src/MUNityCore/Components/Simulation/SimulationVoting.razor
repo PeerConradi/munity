@@ -5,7 +5,7 @@
 {
 <Row>
     <div class="col-12">
-        <div class="panel panel-inverse panel-success" data-sortable-id="ui-widget-1" style="">
+        <div class="panel panel-inverse panel-success">
             <div class="panel-heading ui-sortable-handle">
                 <h4 class="panel-title">Neue Abstimmung erstellen</h4>
                 @*<div class="panel-heading-btn">
@@ -140,11 +140,32 @@
             <div class="panel-heading ui-sortable-handle">
                 <h4 class="panel-title">Vergangene Abstimmungen</h4>
                 <div class="panel-heading-btn">
-                    <a class="btn btn-xs btn-icon btn-circle btn-success"><i class="fa fa-redo"></i></a>
+                    <a class="btn btn-xs btn-icon btn-circle btn-success" @onclick="ReloadPastVotings"><i class="fa fa-redo"></i></a>
                 </div>
             </div>
             <div class="panel-body">
-                
+                @if (_oldVotings != null)
+                {
+                    if (_oldVotings.Count > 0)
+                    {
+                <div class="widget-list widget-list-rounded m-b-30">
+                    @foreach (var oldVoting in _oldVotings)
+                    {
+                        <div class="widget-list-item">
+                            <div class="widget-list-content">
+                                <h4 class="widget-list-title">@oldVoting.Name</h4>
+                                <p class="widget-list-desc">@oldVoting.ProCount dafür, @oldVoting.ConCount dagegen, @oldVoting.AbstentionCount Enthaltungen, @oldVoting.NotVotedCount Nicht abgestimmt</p>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+                    }
+                    else
+                    {
+
+                    }
+                }
             </div>
         </div>
     </div>
@@ -153,6 +174,8 @@
 @code {
     [Parameter]
     public ViewModel.SimulationViewModel ViewModel { get; set; }
+
+    private List<Dtos.Simulations.OldVotingDto> _oldVotings;
 
     private class CreateNewVotingModel
     {
@@ -172,6 +195,7 @@
             this.ViewModel.VotingCreated += OnVotingCreated;
             this.ViewModel.Voted += OnVoted;
             ReloadCurrentVoting();
+            ReloadPastVotings();
         }
 
         base.OnInitialized();
@@ -203,7 +227,14 @@
             currentVoting = simulationService.GetCurrentVoting(ViewModel.SimulationId);
             InvokeAsync(this.StateHasChanged);
         }
+    }
 
+    private void ReloadPastVotings()
+    {
+        if (this.ViewModel != null)
+        {
+            _oldVotings = this.simulationService.GetPastVotings(this.ViewModel.SimulationId);
+        }
     }
 
     private async Task VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates choice)
