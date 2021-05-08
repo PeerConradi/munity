@@ -267,6 +267,16 @@ namespace MUNityCore.Services
                 StatusTime = DateTime.Now
             };
             _context.SimulationStatuses.Add(status);
+
+            _context.SimulationLog.Add(new SimulationLog()
+            {
+                CategoryName = "STATUS",
+                Name = "Status geändert",
+                Simulation = simulation,
+                Text = $"Der Status wurde auf \"{statusText}\" geändert",
+                Timestamp = DateTime.Now
+            });
+
             this._context.SaveChanges();
             return status;
         }

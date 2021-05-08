@@ -103,12 +103,13 @@ namespace MUNityCore.Services
             return this._context.SimulationLog.Where(n => n.Simulation.SimulationId == simulationId).OrderBy(n => n.Timestamp).ToList();
         }
 
-        internal List<SimulationLog> GetFilteredLogOfSimulation(int simulationId, bool userLog, bool agendaLog, bool votingLog)
+        internal List<SimulationLog> GetFilteredLogOfSimulation(int simulationId, bool userLog, bool agendaLog, bool votingLog, bool statusLog)
         {
             var log = this._context.SimulationLog.Where(n => n.Simulation.SimulationId == simulationId &&
                 (userLog && n.CategoryName == TYPE_USERS) ||
                 (agendaLog && n.CategoryName == TYPE_AGENDA) ||
-                (votingLog && n.CategoryName == TYPE_VOTING));
+                (votingLog && n.CategoryName == TYPE_VOTING) ||
+                (statusLog && n.CategoryName == TYPE_STATUS));
 
             return log.ToList();
         }

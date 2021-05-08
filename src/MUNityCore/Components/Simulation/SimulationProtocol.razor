@@ -13,7 +13,7 @@
             <TableRow>
                 <TableRowCell>
                     <div class="switcher">
-                        <input type="checkbox" @bind-value="@showCategoryUser" id="switcher_checkbox_1" checked="">
+                        <input type="checkbox" @bind-value="@showCategoryUser" id="switcher_checkbox_1" checked="@showCategoryUser">
                         <label for="switcher_checkbox_1"></label>
                     </div>
                 </TableRowCell>
@@ -24,7 +24,7 @@
             <TableRow>
                 <TableRowCell>
                     <div class="switcher">
-                        <input type="checkbox" @bind-value="@showCategoryAgenda" id="switcher_agenda" checked="">
+                        <input type="checkbox" @bind-value="@showCategoryAgenda" id="switcher_agenda" checked="@showCategoryAgenda">
                         <label for="switcher_agenda"></label>
                     </div>
                 </TableRowCell>
@@ -35,11 +35,22 @@
             <TableRow>
                 <TableRowCell>
                     <div class="switcher">
-                        <input type="checkbox" @bind-value="@showCategoryVoting" id="switcher_voting" checked="">
+                        <input type="checkbox" @bind-value="@showCategoryVoting" id="switcher_voting" checked="@showCategoryVoting">
                         <label for="switcher_voting"></label>
                     </div>
                 </TableRowCell>
                 <TableRowCell>Abstimmungen</TableRowCell>
+            </TableRow>
+
+            <!-- show Votinglog -->
+            <TableRow>
+                <TableRowCell>
+                    <div class="switcher">
+                        <input type="checkbox" @bind-value="@showStatusLog" id="switcher_status" checked="@showStatusLog">
+                        <label for="switcher_status"></label>
+                    </div>
+                </TableRowCell>
+                <TableRowCell>Status</TableRowCell>
             </TableRow>
         </Table>
 
@@ -98,6 +109,8 @@
 
     private bool showCategoryVoting = false;
 
+    private bool showStatusLog = true;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -106,6 +119,6 @@
 
     private void LoadProtocol()
     {
-        log = logService.GetFilteredLogOfSimulation(SimulationId, showCategoryUser, showCategoryAgenda, showCategoryVoting);
+        log = logService.GetFilteredLogOfSimulation(SimulationId, showCategoryUser, showCategoryAgenda, showCategoryVoting, showStatusLog);
     }
 }
