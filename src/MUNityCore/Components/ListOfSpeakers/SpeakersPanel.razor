@@ -57,13 +57,16 @@
                 }
             </h2>
 
-            <div class="ml-auto" style="position: relative;">
-                <a href="javascript:;" title="Auf die Redeliste setzen"
-                   class="btn btn-icon btn-circle @((isOnSpeakerlist) ? "btn-default disabled" : "btn-success")"
-                   @onclick="() => AddMeToSpeakerlist()">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </div>
+            @if (SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)
+            {
+                <div class="ml-auto" style="position: relative;">
+                    <a href="javascript:;" title="Auf die Redeliste setzen"
+                       class="btn btn-icon btn-circle @((isOnSpeakerlist) ? "btn-default disabled" : "btn-success")"
+                       @onclick="() => AddMeToSpeakerlist()">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </div>
+            }
         </div>
 
         <div class="stats-progress progress bg-secondary" style="height: 2px;">
