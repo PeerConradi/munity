@@ -157,7 +157,8 @@ namespace MUNityCore.Hubs
                 return;
 
             var isChair = _service.IsUserChair(user.SimulationUserId);
-            if (!isChair)
+            var isOwner = this._service.IsPetitionOwner(petitionId, user.SimulationUserId);
+            if (!isChair && !isOwner)
                 return;
 
             var agendaItemId = this._service.RemovePetition(petitionId);

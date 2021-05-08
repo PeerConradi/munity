@@ -92,32 +92,36 @@
                                 @foreach (var petition in petitionsOfAgendaItem.Where(n => n.Status != MUNity.Models.Simulation.EPetitionStates.Active))
                                 {
 
-                                    <div class="d-flex align-items-center m-b-15">
-                                        <div class="widget-img rounded-lg m-r-10 bg-white p-1" style="width:60px;">
-                                            <div class="h-100" style="background: url(/img/flags/medium/@(petition.RoleIso).png) center no-repeat; background-size: auto 100%;"></div>
-                                        </div>
-                                        <div class="text-truncate">
-                                            <div><span class="text-gray text-wrap">[@petition.CategoryName]</span> @petition.TypeName</div>
-                                            <div class="text-grey">@petition.SubmitTime.ToString("dd.MM HH:mm") durch @petition.SubmitterDisplayName - @petition.SubmitterRoleName</div>
-                                        </div>
-                                        @if (ViewModel.UserContext.IsChair)
-                                        {
-                                            <div class="ml-auto text-center">
-                                                <button class="btn btn-xs btn-primary" @onclick="() => MakePetitionActive(petition.PetitionId)">Aktiv setzen</button>
-                                                <button class="btn btn-xs btn-danger" @onclick="() => RemovePetition(petition.PetitionId)">Löschen</button>
-                                            </div>
-                                        }
+                            <div class="d-flex align-items-center m-b-15">
+                                <div class="widget-img rounded-lg m-r-10 bg-white p-1" style="width:60px;">
+                                    <div class="h-100" style="background: url(/img/flags/medium/@(petition.RoleIso).png) center no-repeat; background-size: auto 100%;"></div>
+                                </div>
+                                <div class="text-truncate">
+                                    <div><span class="text-gray text-wrap">[@petition.CategoryName]</span> @petition.TypeName</div>
+                                    <div class="text-grey">@petition.SubmitTime.ToString("dd.MM HH:mm") durch @petition.SubmitterDisplayName - @petition.SubmitterRoleName</div>
+                                </div>
+                                <div class="ml-auto text-center">
+                                    @if (ViewModel.UserContext.IsChair)
+                                    {
 
+                                        <button class="btn btn-xs btn-primary" @onclick="() => MakePetitionActive(petition.PetitionId)">Aktiv setzen</button>
+                                    }
+
+                                    @if (ViewModel.UserContext.IsChair || petition.SubmitterRoleName == ViewModel.UserContext.RoleName)
+                                    {
+                                        <button class="btn btn-xs btn-danger" @onclick="() => RemovePetition(petition.PetitionId)">Löschen</button>
+                                    }
                                     </div>
+                                </div>
                                 }
 
-                            }
-                            else
-                            {
+                                }
+                                else
+                                {
                                 <Paragraph>Es befindet sich kein Antrag in der Warteschlange.</Paragraph>
-                            }
+                                }
 
-                        </div>
+                            </div>
                     }
                     else
                     {
@@ -196,7 +200,7 @@
                     <a @onclick="() => MakePetition(petitionType.PetitionType.PetitionTypeId)" class="widget-list-item"
                        style="cursor: pointer;">
                         <div class="widget-list-media icon">
-                            <i class="fa fa-comment bg-inverse text-white"></i>
+                            <i class="fa fa-comment @((petitionType.AllowDelegates && ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || petitionType.AllowNgo && ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo) ? "bg-success" : "bg-inverse")  text-white"></i>
                         </div>
                         <div class="widget-list-content">
                             <h4 class="widget-list-title">@petitionType.PetitionType?.Name</h4>

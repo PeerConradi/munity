@@ -1492,7 +1492,10 @@ namespace MUNityCore.Services
             }
         }
 
-        
+        internal bool IsPetitionOwner(string petitionId, int simulationUserId)
+        {
+            return _context.Petitions.Any(n => n.SimulationUser.SimulationUserId == simulationUserId && n.PetitionId == petitionId);
+        }
 
     }
 }
