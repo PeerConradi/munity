@@ -46,11 +46,11 @@
               this.SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate)
             {
                 <div class="ml-auto" style="position: relative;">
-                    <a title="Auf die Redeliste setzen"
-                       class="btn btn-icon btn-circle  @((isOnQuestions) ? "btn-default disabled" : "btn-success")"
+                    <button title="Auf die Fragen und Kurzbemerkungen Liste setzen"
+                       class="btn btn-icon btn-circle  @((isOnQuestions || ViewModel.Speakerlist.QuestionsClosed) ? "btn-default disabled" : "btn-success")"
                        @onclick="() => AddMeToQuestions()">
-                        <i class="fa fa-plus"></i>
-                    </a>
+                        <i class="fa @((ViewModel.Speakerlist.QuestionsClosed) ? "fa-lock" : "fa-plus")"></i>
+                    </button>
                 </div>
             }
 
@@ -134,17 +134,26 @@
 
     @if (SimViewModel.UserContext.IsChair)
     {
-        <div class="card-footer bg-dark-darker">
-            <div class="row">
-                <div class="input-group">
-                    <input class="form-control" placeholder="Jemanden auf die Redeliste setzen" @bind="@manualSpeakerName" />
-                    <button type="button" class="btn btn-primary"
-                            @onclick="() => AddSpeakerManual()">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </div>
+<div class="card-footer bg-dark-darker">
+    <div class="row">
+        <div class="input-group">
+            <input class="form-control" placeholder="Jemanden auf die Redeliste setzen" @bind="@manualSpeakerName" />
+            <button type="button" class="btn btn-primary"
+                    @onclick="() => AddSpeakerManual()">
+                <i class="fa fa-plus"></i>
+            </button>
         </div>
+    </div>
+    
+    <!-- Open Close List Button -->
+    <div class="row">
+        <button class="btn btn-block mt-2 @((ViewModel.Speakerlist.QuestionsClosed) ? "btn-outline-danger" : "btn-outline-success")"
+                @onclick="ToggleListOpened">
+            <i class="fa @((ViewModel.Speakerlist.QuestionsClosed) ? "fa-lock" : "fa-lock-open")"></i>
+            @((ViewModel.Speakerlist.QuestionsClosed) ? "Liste ist geschlossen - Redeliste öffnen" : "Liste ist offen - Redeliste schließen")
+        </button>
+    </div>
+</div>
     }
 </div>
 
@@ -162,6 +171,18 @@
     private bool displayQuesitonTimeEditor = false;
 
     private string questionTimeInput = "";
+
+    private async Task ToggleListOpened()
+    {
+        if (this.ViewModel.Speakerlist.QuestionsClosed)
+        {
+            await this.ViewModel.OpenQuestions();
+        }
+        else
+        {
+            await this.ViewModel.CloseQuestions();
+        }
+    }
 
     private async Task SetQuestionTime()
     {

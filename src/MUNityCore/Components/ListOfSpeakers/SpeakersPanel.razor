@@ -57,14 +57,16 @@
                 }
             </h2>
 
-            @if (SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)
+            <!-- Button to add self to list -->
+            @if (SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || 
+                SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)
             {
                 <div class="ml-auto" style="position: relative;">
-                    <a title="Auf die Redeliste setzen"
-                       class="btn btn-icon btn-circle @((isOnSpeakerlist) ? "btn-default disabled" : "btn-success")"
-                       @onclick="() => AddMeToSpeakerlist()">
-                        <i class="fa fa-plus"></i>
-                    </a>
+                    <button title="Auf die Redeliste setzen"
+                       class="btn btn-icon btn-circle @((isOnSpeakerlist || ViewModel.Speakerlist.ListClosed) ? "btn-default disabled" : "btn-success")"
+                       @onclick="() => AddMeToSpeakerlist()" disabled="@ViewModel.Speakerlist.ListClosed">
+                        <i class="fa @((ViewModel.Speakerlist.ListClosed) ? "fa-lock" : "fa-plus")"></i>
+                    </button>
                 </div>
             }
         </div>
@@ -166,6 +168,13 @@
                     </button>
                 </div>
             </div>
+            <div class="row">
+                <button class="btn btn-block mt-2 @((ViewModel.Speakerlist.ListClosed) ? "btn-outline-danger" : "btn-outline-success")"
+                        @onclick="ToggleListOpened">
+                    <i class="fa @((ViewModel.Speakerlist.ListClosed) ? "fa-lock" : "fa-lock-open")"></i>
+                    @((ViewModel.Speakerlist.ListClosed) ? "Liste ist geschlossen - Redeliste öffnen" : "Liste ist offen - Redeliste schließen")
+                </button>    
+            </div>
         </div>
     }
 
@@ -193,6 +202,18 @@
         {
             await this.ViewModel.SetSpeakerTime(speakerTimeInput);
             this.displaySpeakertimeEditor = false;
+        }
+    }
+
+    private async Task ToggleListOpened()
+    {
+        if (this.ViewModel.Speakerlist.ListClosed)
+        {
+            await this.ViewModel.OpenSpeakerlist();
+        }
+        else
+        {
+            await this.ViewModel.CloseSpeakerlist();
         }
     }
 

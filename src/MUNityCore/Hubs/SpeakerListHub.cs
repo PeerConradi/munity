@@ -142,5 +142,33 @@ namespace MUNityCore.Hubs
             if (result != null)
                 await Clients.Group("los_" + listId).QuestionTimeChanged(timeString);
         }
+
+        public async Task CloseSpeakers(string listId)
+        {
+            var success = this._speakerlistService.CloseList(listId);
+            if (success)
+                await Clients.Group("los_" + listId).SpeakersStateChanged(true);
+        }
+
+        public async Task OpenSpeakers(string listId)
+        {
+            var success = this._speakerlistService.OpenList(listId);
+            if (success)
+                await Clients.Group("los_" + listId).SpeakersStateChanged(false);
+        }
+
+        public async Task CloseQuestions(string listId)
+        {
+            var success = this._speakerlistService.CloseQuestions(listId);
+            if (success)
+                await Clients.Group("los_" + listId).QuestionsStateChanged(true);
+        }
+
+        public async Task OpenQuestions(string listId)
+        {
+            var success = this._speakerlistService.OpenQuestions(listId);
+            if (success)
+                await Clients.Group("los_" + listId).QuestionsStateChanged(false);
+        }
     }
 }

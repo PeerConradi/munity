@@ -446,7 +446,12 @@ namespace MUNityCore.Services
 
         internal bool CloseList(ListOfSpeakersRequest body)
         {
-            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            return CloseList(body.ListOfSpeakersId);
+        }
+
+        internal bool CloseList(string listId)
+        {
+            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null)
                 return false;
             list.ListClosed = true;
@@ -456,7 +461,12 @@ namespace MUNityCore.Services
 
         internal bool OpenList(ListOfSpeakersRequest body)
         {
-            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            return OpenList(body.ListOfSpeakersId);
+        }
+
+        internal bool OpenList(string listId)
+        {
+            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null)
                 return false;
             list.ListClosed = false;
@@ -466,7 +476,12 @@ namespace MUNityCore.Services
 
         internal bool CloseQuestions(ListOfSpeakersRequest body)
         {
-            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            return CloseQuestions(body.ListOfSpeakersId);
+        }
+
+        internal bool CloseQuestions(string listId)
+        {
+            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null)
                 return false;
             list.QuestionsClosed = true;
@@ -476,7 +491,12 @@ namespace MUNityCore.Services
 
         internal bool OpenQuestions(ListOfSpeakersRequest body)
         {
-            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
+            return OpenQuestions(body.ListOfSpeakersId);
+        }
+
+        internal bool OpenQuestions(string listId)
+        {
+            var list = _context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null)
                 return false;
             list.QuestionsClosed = false;

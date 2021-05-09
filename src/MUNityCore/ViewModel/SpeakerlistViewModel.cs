@@ -260,6 +260,26 @@ namespace MUNityCore.ViewModel
             return this._hubConnection.SendAsync(nameof(Hubs.SpeakerListHub.SetQuestionTime), _listOfSpeakers.ListOfSpeakersId, input);
         }
 
+        public Task OpenSpeakerlist()
+        {
+            return this._hubConnection.SendAsync(nameof(Hubs.SpeakerListHub.OpenSpeakers), _listOfSpeakers.ListOfSpeakersId);
+        }
+
+        public Task CloseSpeakerlist()
+        {
+            return this._hubConnection.SendAsync(nameof(Hubs.SpeakerListHub.CloseSpeakers), _listOfSpeakers.ListOfSpeakersId);
+        }
+
+        public Task OpenQuestions()
+        {
+            return this._hubConnection.SendAsync(nameof(Hubs.SpeakerListHub.OpenQuestions), _listOfSpeakers.ListOfSpeakersId);
+        }
+
+        public Task CloseQuestions()
+        {
+            return this._hubConnection.SendAsync(nameof(Hubs.SpeakerListHub.CloseQuestions), _listOfSpeakers.ListOfSpeakersId);
+        }
+
         public void Dispose()
         {
             if (_hubConnection != null)
