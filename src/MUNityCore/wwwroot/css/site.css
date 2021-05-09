@@ -56,7 +56,7 @@ a, .btn-link {
     left: auto;
     bottom: auto;
     z-index: 4000;
-    font-size: 24px;
+    font-size: 14px;
 }
 
 
@@ -68,7 +68,7 @@ a, .btn-link {
     left: 0;
     z-index: 1000;
     overflow: hidden;
-    background-color: rgb(0 0 0 / 0,30);
+    background-color: rgb(0 0 0 / 0.10);
     opacity: 0.8;
     text-align: center;
     font-weight: bold;
