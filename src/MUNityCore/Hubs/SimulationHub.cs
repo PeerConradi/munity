@@ -27,8 +27,12 @@ namespace MUNityCore.Hubs
         {
             ConnectionUsers.ConnectedUser outVal = null;
             ConnectionUsers.ConnectionIds.TryRemove(Context.ConnectionId, out outVal);
-            _simulationLogger.LogUserDisconnected(outVal.SimulationUserId);
-            await NotifyUsersChanged(outVal.SimulationId);
+            if (outVal != null)
+            {
+                _simulationLogger.LogUserDisconnected(outVal.SimulationUserId);
+                await NotifyUsersChanged(outVal.SimulationId);
+            }
+            
             await base.OnDisconnectedAsync(exception);
         }
 
