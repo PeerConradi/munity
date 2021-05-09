@@ -19,7 +19,18 @@
     <link href="material/app.min.css" rel="stylesheet" />
 </head>
 <body>
-    @*render-mode="ServerPrerendered"*@
+    <!-- Blazor overlay -->
+    <div id="components-reconnect-modal" class="my-reconnect-modal components-reconnect-hide">
+        <div class="show">
+            <h2 class="badge badge-danger connectionError">Verbindungsabbruch, Verbindung wird wiederhergestellt!</h2>
+        </div>
+        <div class="failed">
+        </div>
+        <div class="rejected">
+        </div>
+    </div>
+
+    @*render-mode="Server"*@
     <component type="typeof(App)" render-mode="Server" />
 
     <div id="blazor-error-ui">
@@ -32,6 +43,9 @@
         <a href="" class="reload">Neu laden</a>
         <a class="dismiss">🗙</a>
     </div>
+
+
+
 
     <!-- inside of body section and after the div/app tag  -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

@@ -48,3 +48,58 @@ a, .btn-link {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+.connectionError {
+    position: absolute;
+    top: 90px;
+    right: 30px;
+    left: auto;
+    bottom: auto;
+    z-index: 4000;
+    font-size: 24px;
+}
+
+
+.my-reconnect-modal > div {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    overflow: hidden;
+    background-color: rgb(0 0 0 / 0,30);
+    opacity: 0.8;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+
+.components-reconnect-hide > div {
+    display: none;
+}
+
+.components-reconnect-show > div {
+    display: none;
+}
+
+.components-reconnect-show > .show {
+    display: block;
+}
+
+.components-reconnect-failed > div {
+    display: none;
+}
+
+.components-reconnect-failed > .failed {
+    display: block;
+}
+
+.components-reconnect-rejected > div {
+    display: none;
+}
+
+.components-reconnect-rejected > .rejected {
+    display: block;
+}
