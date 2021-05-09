@@ -128,5 +128,19 @@ namespace MUNityCore.Hubs
             if (result)
                 await Clients.Group("los_" + listId).Pause();
         }
+
+        public async Task SetSpeakerTime(string listId, string timeString)
+        {
+            var result = this._speakerlistService.SetSpeakerTime(listId, timeString);
+            if (result != null)
+                await Clients.Group("los_" + listId).SpeakerTimeChanged(timeString);
+        }
+
+        public async Task SetQuestionTime(string listId, string timeString)
+        {
+            var result = this._speakerlistService.SetQuestionTime(listId, timeString);
+            if (result != null)
+                await Clients.Group("los_" + listId).QuestionTimeChanged(timeString);
+        }
     }
 }

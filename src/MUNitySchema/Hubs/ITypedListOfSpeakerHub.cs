@@ -61,5 +61,9 @@ namespace MUNity.Hubs
         Task SpeakersStateChanged(bool state);
 
         Task QuestionsStateChanged(bool state);
+
+        Task SpeakerTimeChanged(string newTime);
+
+        Task QuestionTimeChanged(string newTime);
     }
 }

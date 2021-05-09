@@ -17,7 +17,7 @@
                     <i class="fa fa-step-forward"></i>
                     nächste FuK
                 </button>
-                
+
             }
         </div>
         <div class="d-flex align-items-center mb-1">
@@ -43,7 +43,7 @@
             </h2>
 
             @if (this.SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo ||
-               this.SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate)
+              this.SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate)
             {
                 <div class="ml-auto" style="position: relative;">
                     <a title="Auf die Redeliste setzen"
@@ -79,7 +79,38 @@
                 }
 
             }
+
+            @if (SimViewModel.UserContext.IsChair && (ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question))
+            {
+                <a class="ml-1 alert-link text-success-lighter" style="cursor: pointer;" @onclick="() => AddTenSeconds()">+10 Sekunden</a>
+                <a class="ml-1 alert-link text-danger" style="cursor: pointer;" @onclick="() => RemoveTenSeconds()">-10 Sekunden</a>
+            }
         </div>
+
+
+        @if (SimViewModel.UserContext.IsChair)
+        {
+            <div class="mb-4">
+                @if (displayQuesitonTimeEditor)
+                {
+                    <div class="row">
+                        <div class="input-group">
+                            <input class="form-control" placeholder="mm:ss" @bind="@questionTimeInput" />
+                            <button type="button" class="btn btn-primary"
+                                    @onclick="SetQuestionTime">
+                                <i class="fa fa-save"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a class="btn-link" @onclick="() => displayQuesitonTimeEditor = true" style="cursor: pointer">FuK Zeit einstellen</a>
+                }
+            </div>
+        }
+
+
         @foreach (var waitingQuestion in ViewModel.Speakerlist.Questions)
         {
             <div class="d-flex mb-2">
@@ -127,6 +158,20 @@
     private System.Timers.Timer refreshTimer;
 
     private string manualSpeakerName;
+
+    private bool displayQuesitonTimeEditor = false;
+
+    private string questionTimeInput = "";
+
+    private async Task SetQuestionTime()
+    {
+        TimeSpan newTime;
+        if (TimeSpan.TryParseExact(questionTimeInput, @"mm\:ss", null, out newTime))
+        {
+            await this.ViewModel.SetQuestionTime(questionTimeInput);
+            this.displayQuesitonTimeEditor = false;
+        }
+    }
 
     private async Task AddSpeakerManual()
     {
@@ -191,6 +236,16 @@
         {
             InvokeAsync(this.StateHasChanged);
         }
+    }
+
+    private async Task AddTenSeconds()
+    {
+        await this.ViewModel.AddQuestionSeconds(10);
+    }
+
+    private async Task RemoveTenSeconds()
+    {
+        await this.ViewModel.AddQuestionSeconds(-10);
     }
 
     protected override void OnInitialized()

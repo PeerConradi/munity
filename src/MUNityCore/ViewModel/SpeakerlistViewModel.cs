@@ -49,9 +49,33 @@ namespace MUNityCore.ViewModel
             this._hubConnection.On(nameof(ITypedListOfSpeakerHub.Pause), HandlePauseBy);
             this._hubConnection.On<bool>(nameof(ITypedListOfSpeakerHub.SpeakersStateChanged), HandleSpeakerStateChanged);
             this._hubConnection.On<bool>(nameof(ITypedListOfSpeakerHub.QuestionsStateChanged), HandleQuestionStateChanged);
+            this._hubConnection.On<string>(nameof(ITypedListOfSpeakerHub.SpeakerTimeChanged), HandleSpeakerTimeChanged);
+            this._hubConnection.On<string>(nameof(ITypedListOfSpeakerHub.QuestionTimeChanged), HandleQuestionTimeChanged);
 
             await _hubConnection.StartAsync();
             await Subscribe();
+        }
+
+        private void HandleQuestionTimeChanged(string newTime)
+        {
+            TimeSpan questionTime;
+
+            if (TimeSpan.TryParseExact(newTime, @"mm\:ss", null, out questionTime))
+            {
+                this._listOfSpeakers.QuestionTime = questionTime;
+                this.SpeakerlistChanged?.Invoke(this, new EventArgs());
+            }
+        }
+
+        private void HandleSpeakerTimeChanged(string newTime)
+        {
+            TimeSpan speakerTime;
+            if (TimeSpan.TryParseExact(newTime, @"mm\:ss", null, out speakerTime))
+            {
+                this._listOfSpeakers.SpeakerTime = speakerTime;
+                this.SpeakerlistChanged?.Invoke(this, new EventArgs());
+            }
+            
         }
 
         private void HandleQuestionStateChanged(bool state)
@@ -224,6 +248,16 @@ namespace MUNityCore.ViewModel
         public Task AddQuestionSeconds(int seconds)
         {
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.AddQuestionSeconds), _listOfSpeakers.ListOfSpeakersId, seconds);
+        }
+
+        public Task SetSpeakerTime(string input)
+        {
+            return this._hubConnection.SendAsync(nameof(Hubs.SpeakerListHub.SetSpeakerTime), _listOfSpeakers.ListOfSpeakersId, input);
+        }
+
+        public Task SetQuestionTime(string input)
+        {
+            return this._hubConnection.SendAsync(nameof(Hubs.SpeakerListHub.SetQuestionTime), _listOfSpeakers.ListOfSpeakersId, input);
         }
 
         public void Dispose()

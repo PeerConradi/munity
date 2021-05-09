@@ -60,7 +60,7 @@
             @if (SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)
             {
                 <div class="ml-auto" style="position: relative;">
-                    <a href="javascript:;" title="Auf die Redeliste setzen"
+                    <a title="Auf die Redeliste setzen"
                        class="btn btn-icon btn-circle @((isOnSpeakerlist) ? "btn-default disabled" : "btn-success")"
                        @onclick="() => AddMeToSpeakerlist()">
                         <i class="fa fa-plus"></i>
@@ -93,12 +93,38 @@
             }
 
             @if (SimViewModel.UserContext.IsChair && (ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
-               ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer))
+              ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer))
             {
                 <a class="ml-1 alert-link text-success-lighter" style="cursor: pointer;" @onclick="() => AddTenSeconds()">+10 Sekunden</a>
                 <a class="ml-1 alert-link text-danger" style="cursor: pointer;" @onclick="() => RemoveTenSeconds()">-10 Sekunden</a>
             }
         </div>
+
+        @if (SimViewModel.UserContext.IsChair)
+        {
+            <div class="mb-4">
+                @if (displaySpeakertimeEditor)
+                {
+                    <div class="row">
+                        <div class="input-group">
+                            <input class="form-control" placeholder="mm:ss" @bind="@speakerTimeInput" />
+                            <button type="button" class="btn btn-primary"
+                                    @onclick="SetSpeakerTime">
+                                <i class="fa fa-save"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a class="btn-link" @onclick="() => displaySpeakertimeEditor = true" style="cursor: pointer">Redezeit einstellen</a>
+                }
+            </div>
+        }
+
+
+
+
         @foreach (var waitingSpeaker in ViewModel.Speakerlist.Speakers)
         {
             <div class="d-flex mb-2">
@@ -155,6 +181,20 @@
     private System.Timers.Timer refreshTimer;
 
     private string manualSpeakerName;
+
+    private bool displaySpeakertimeEditor = false;
+
+    private string speakerTimeInput = "";
+
+    private async Task SetSpeakerTime()
+    {
+        TimeSpan newTime;
+        if (TimeSpan.TryParseExact(speakerTimeInput, @"mm\:ss", null, out newTime))
+        {
+            await this.ViewModel.SetSpeakerTime(speakerTimeInput);
+            this.displaySpeakertimeEditor = false;
+        }
+    }
 
     private async Task AddSpeakerManual()
     {

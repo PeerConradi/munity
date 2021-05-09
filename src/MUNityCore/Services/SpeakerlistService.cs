@@ -357,6 +357,37 @@ namespace MUNityCore.Services
             return true;
         }
 
+        internal TimeSpan? SetSpeakerTime(string listId, string timeString)
+        {
+            var list = this._context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
+            if (list == null) return null;
+
+            TimeSpan speakerTime;
+            if (!TimeSpan.TryParseExact(timeString, @"mm\:ss", null, out speakerTime))
+                return null;
+
+            list.SpeakerTime = speakerTime;
+            _context.SaveChanges();
+            return speakerTime;
+        }
+
+        internal TimeSpan? SetQuestionTime(string listId, string timeString)
+        {
+            var list = this._context.ListOfSpeakers
+                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
+            if (list == null) return null;
+
+            TimeSpan questionTime;
+            if (!TimeSpan.TryParseExact(timeString, @"mm\:ss", null, out questionTime))
+                return null;
+
+            list.QuestionTime = questionTime;
+            _context.SaveChanges();
+            return questionTime;
+        }
+
+
         internal bool ClearSpeaker(ListOfSpeakersRequest body)
         {
             return ClearSpeaker(body.ListOfSpeakersId);
