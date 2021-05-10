@@ -111,6 +111,10 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
         public DbSet<SimulationInvite> SimulationInvites { get; set; }
 
+        public DbSet<SimulationPresents> PresentChecks { get; set; }
+
+        public DbSet<PresentsState> PresentStates { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -210,7 +214,9 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
             modelBuilder.Entity<ResaElement>().HasMany(n => n.Amendments).WithOne(n => n.Resolution);
 
-            
+            modelBuilder.Entity<SimulationPresents>().HasMany(n => n.CheckedUsers).WithOne(n => n.SimulationPresents);
+
+            modelBuilder.Entity<Simulation>().HasMany(n => n.PresentChecks).WithOne(n => n.Simulation);
         }
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)

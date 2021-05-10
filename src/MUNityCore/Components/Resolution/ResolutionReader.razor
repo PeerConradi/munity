@@ -7,17 +7,15 @@
     <h5>Unterstützer: @Resolution.Header.SupporterNames</h5>
     <h5>@Resolution.Header.CommitteeName.ToUpper(),</h5>
 
-    @foreach(var preambleParagraph in Resolution.Preamble.Paragraphs)
+    @foreach (var preambleParagraph in Resolution.Preamble.Paragraphs)
     {
         <p>@preambleParagraph.Text</p>
     }
     <br />
     <br />
-    foreach(var operativeParagraph in Resolution.OperativeSection.Paragraphs)
+    foreach (var operativeParagraph in Resolution.OperativeSection.Paragraphs)
     {
-        <span class="badge badge-danger">@Resolution.OperativeSection.DeleteAmendments.Count(n => n.TargetSectionId == operativeParagraph.OperativeParagraphId) Anträge auf streichen</span>
-        <span class="badge badge-primary">@Resolution.OperativeSection.ChangeAmendments.Count(n => n.TargetSectionId == operativeParagraph.OperativeParagraphId) Anträge auf Textänderung</span>
-        <p>@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(operativeParagraph) @operativeParagraph.Text</p>
+        <ResolutionReaderOperative Paragraph="operativeParagraph" Resolution="@Resolution" />
     }
 }
 

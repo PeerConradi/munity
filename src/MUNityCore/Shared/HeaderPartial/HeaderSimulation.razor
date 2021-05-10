@@ -7,6 +7,11 @@
         <i class="fa fa-flag"></i> Start
     </button>
 
+    <button class="btn @presentsClass"
+            @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Presents">
+        <i class="fa fa-check-double"></i> Anwesenheit
+    </button>
+
     <button class="btn @agendaClass"
             @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda">
         <i class="fa fa-bookmark"></i> Tagesordnung
@@ -48,6 +53,9 @@
 
     private string protocolClass =>
         (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Protocol) ? "btn-primary text-white" : "btn-default";
+
+    private string presentsClass =>
+        (frontendSimulationService.CurrentTab == FrontendSimulationService.SimulationTabs.Presents) ? "btn-primary text-white" : "btn-default";
 
     private bool newVoting = false;
 

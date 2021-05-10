@@ -49,6 +49,8 @@ namespace MUNityCore.Models.Simulation
 
         public List<Resolution.V2.ResolutionAuth> Resolutions { get; set; }
 
+        public List<SimulationPresents> PresentChecks { get; set; }
+
 
         public Simulation()
         {

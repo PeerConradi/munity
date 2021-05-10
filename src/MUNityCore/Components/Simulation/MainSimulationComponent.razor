@@ -46,6 +46,10 @@ else if (loadingState == LoadingStates.Success)
             {
                 <SimulationProtocol SimulationId="@_simulationViewModel.SimulationId" />
             }
+            else if (frontService.CurrentTab == Services.FrontendSimulationService.SimulationTabs.Presents)
+            {
+                <SimulationPresents SimViewModel="@_simulationViewModel" />
+            }
         </div>
 
         @if (showListOfSpeakers)

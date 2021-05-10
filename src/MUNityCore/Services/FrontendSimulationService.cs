@@ -47,7 +47,8 @@ namespace MUNityCore.Services
             Agenda,
             Voting,
             Resolutions,
-            Protocol
+            Protocol,
+            Presents
         }
 
         private SimulationTabs _currentTab;

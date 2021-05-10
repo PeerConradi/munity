@@ -3,14 +3,16 @@ using System;
 using MUNityCore.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityCore.Migrations
 {
     [DbContext(typeof(MunityContext))]
-    partial class MunityContextModelSnapshot : ModelSnapshot
+    [Migration("20210510200713_Added PresentCheck Models")]
+    partial class AddedPresentCheckModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1074,7 +1076,7 @@ namespace MUNityCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("RegistertTimestamp")
+                    b.Property<DateTime>("RegistertTimestamp")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("SimulationPresentsId")
@@ -1083,7 +1085,7 @@ namespace MUNityCore.Migrations
                     b.Property<int?>("SimulationUserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("State")
+                    b.Property<int?>("StatePresentsStateId")
                         .HasColumnType("int");
 
                     b.Property<string>("StateValue")
@@ -1094,6 +1096,8 @@ namespace MUNityCore.Migrations
                     b.HasIndex("SimulationPresentsId");
 
                     b.HasIndex("SimulationUserId");
+
+                    b.HasIndex("StatePresentsStateId");
 
                     b.ToTable("PresentStates");
                 });
@@ -1188,14 +1192,8 @@ namespace MUNityCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CheckedDate")
+                    b.Property<DateTime>("CheckedDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("MarkedFinished")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("SimulationId")
                         .HasColumnType("int");
@@ -2161,9 +2159,15 @@ namespace MUNityCore.Migrations
                         .WithMany()
                         .HasForeignKey("SimulationUserId");
 
+                    b.HasOne("MUNityCore.Models.Simulation.PresentsState", "State")
+                        .WithMany()
+                        .HasForeignKey("StatePresentsStateId");
+
                     b.Navigation("SimulationPresents");
 
                     b.Navigation("SimulationUser");
+
+                    b.Navigation("State");
                 });
 
             modelBuilder.Entity("MUNityCore.Models.Simulation.Simulation", b =>

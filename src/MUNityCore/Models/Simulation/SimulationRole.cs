@@ -57,5 +57,10 @@ namespace MUNityCore.Models.Simulation
             };
             return item;
         }
+
+        public bool IsDelegateOrNgo()
+        {
+            return this.RoleType == RoleTypes.Delegate || this.RoleType == RoleTypes.Ngo;
+        }
     }
 }

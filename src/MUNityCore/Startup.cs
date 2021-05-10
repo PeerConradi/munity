@@ -124,6 +124,7 @@ namespace MUNityCore
             services.AddScoped<Services.SpeakerlistHubService>();
             services.AddScoped<Services.MainViewService>();
             services.AddScoped<Services.LogSimulationService>();
+            services.AddScoped<Services.PresentsService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>
