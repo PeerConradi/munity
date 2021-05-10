@@ -245,7 +245,7 @@ namespace MUNityCore
                 dbName = "munitybase";
 
 
-            string mySqlConnectionString = $"server={sqlServer},{sqlPort};userid={sqlUser};password={sqlPass};";
+            string mySqlConnectionString = $"server={sqlServer},{sqlPort};userid={sqlUser};password={sqlPass};database={dbName}";
             Console.WriteLine("Start with MariaDB");
             Console.WriteLine(mySqlConnectionString);
             var version = new Version(10, 1, 26);
