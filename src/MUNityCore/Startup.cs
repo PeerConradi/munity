@@ -228,8 +228,25 @@ namespace MUNityCore
 
         private void SetupDatabaseWithMySql(IServiceCollection services)
         {
-            var mySqlConnectionString = Configuration.GetValue<string>("MySqlSettings:ConnectionString");
+            var sqlServer = Environment.GetEnvironmentVariable("MYSQL_SERVER");
+            if (sqlServer == null)
+                sqlServer = "localhost";
+            var sqlUser = Environment.GetEnvironmentVariable("MYSQL_USER");
+            if (sqlUser == null)
+                sqlUser = "root";
+            var sqlPass = Environment.GetEnvironmentVariable("MYSQL_PASS");
+            if (sqlPass == null)
+                sqlPass = "";
+            var sqlPort = Environment.GetEnvironmentVariable("MYSQL_PORT");
+            if (sqlPort == null)
+                sqlPort = "3306";
+            var dbName = Environment.GetEnvironmentVariable("MYSQL_DATABASE");
+            if (dbName == null)
+                dbName = "munitybase";
 
+
+            string mySqlConnectionString = $"server={sqlServer},{sqlPort};userid={sqlUser};password={sqlPass};";
+             
             var version = new Version(10, 1, 26);
             var serverVersion = new MariaDbServerVersion(version);
 

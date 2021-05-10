@@ -6,17 +6,57 @@ services:
     image: mariadb
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=example
-    ports:
-      - 3306:3306
+      - MYSQL_ROOT_PASSWORD=${MUNITY_DB_PASS}
+    networks:
+      - munity
 
   munity-backend:
 #    image: munity-backend
     build:
       context: .
-    ports:
-      - 5001:80
     environment:
-      - MUNITY_FRONTEND_IP=DOMAIN
-      - MUNITY_ADMIN_PASS=Passw0rd
+      - MYSQL_SERVER=mariadb
+      - MYSQL_USER=root
+      - MYSQL_PASS=${MUNITY_DB_PASS}
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=munitybase
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.munity.rule=Host(`alt.mun-tools.com`)"
+      - "traefik.http.routers.munity.entrypoints=websecure"
+      - "traefik.http.routers.munity.tls.certresolver=myresolver"
+    networks:
+      - traefik
+      - munity
 
+  traefik:
+    image: "traefik:v2.4@sha256:08d8a7759f5fffa2441488151cedcd4d556c1f124c097f929f469c1f7b82c16f"
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=peerconradi@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--api.insecure=true"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    networks:
+      - traefik
+    volumes:
+      - "/var/volumes/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+
+networks:
+  traefik:
+    external: true
+  munity:
+    internal: true
