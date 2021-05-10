@@ -4,7 +4,7 @@ services:
 
   mariadb:
     image: mariadb
-    restart: always
+    restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=${MUNITY_DB_PASS}
     networks:
@@ -12,6 +12,9 @@ services:
 
   munity-backend:
 #    image: munity-backend
+    restart: unless-stopped
+    volumes:
+      - /var/volumes/munity/db:/var/lib/mysql
     build:
       context: .
     environment:
@@ -53,6 +56,32 @@ services:
     volumes:
       - "/var/volumes/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+    
+  db-backup:
+    image: mariadb:10@sha256:36288c675a192bd0a8a99cd6ba0780e31df85f0bfd0cbb204837cd108be3d236
+    volumes:
+      - /var/volumes/munity/database-dump:/dump
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - MYSQL_PWD=${MUNITY_DB_PASS}
+      - MYSQL_USER=root
+      - BACKUP_NUM_KEEP=7
+      - BACKUP_FREQUENCY=1d
+    entrypoint: |
+      bash -c 'bash -s <<EOF
+      trap "break;exit" SIGHUP SIGINT SIGTERM
+      sleep 2m
+      while /bin/true; do
+        mysqldump -h mariadb --all-databases | gzip -c > /dump/dump_\`date +%d-%m-%Y"_"%H_%M_%S\`.sql.gz
+        (ls -t /dump/dump*.sql.gz|head -n $$BACKUP_NUM_KEEP;ls /dump/dump*.sql.gz)|sort|uniq -u|xargs rm -- {}
+        sleep $$BACKUP_FREQUENCY
+      done
+      EOF'
+    networks:
+      - munity
+    depends_on:
+      - mariadb
     restart: unless-stopped
 
 networks:
