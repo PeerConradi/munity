@@ -26,7 +26,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
-      - "traefik.http.routers.munity.rule=Host(`alt.mun-tools.com`)"
+      - "traefik.http.routers.munity.rule=Host(`mun-tools.com`)"
       - "traefik.http.routers.munity.entrypoints=websecure"
       - "traefik.http.routers.munity.tls.certresolver=myresolver"
     networks:
