@@ -7,7 +7,7 @@
 <AuthorizeView>
     <Authorized>
         <Heading>Hallo @context.User.Identity.Name</Heading>
-        <h1>Benutzer</h1>
+        <h1>BenutzerInnen</h1>
         @if (users != null && roles != null)
         {
                <Table>
@@ -59,7 +59,7 @@
         }
          else
                 {
-                    <Paragraph>Benutzer werden geladen.</Paragraph>
+                    <Paragraph>Liste wird geladen.</Paragraph>
                 }
         <Paragraph></Paragraph>
     </Authorized>
