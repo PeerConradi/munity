@@ -98,7 +98,7 @@
                                 </div>
                                 <div class="text-truncate">
                                     <div><span class="text-gray text-wrap">[@petition.CategoryName]</span> @petition.TypeName</div>
-                                    <div class="text-grey">@petition.SubmitTime.ToString("dd.MM HH:mm") durch @petition.SubmitterDisplayName - @petition.SubmitterRoleName</div>
+                                    <div class="text-grey">@petition.SubmitTime.ToLocalTime().ToString("dd.MM HH:mm") durch @petition.SubmitterDisplayName - @petition.SubmitterRoleName</div>
                                 </div>
                                 <div class="ml-auto text-center">
                                     @if (ViewModel.UserContext.IsChair)
