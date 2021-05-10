@@ -5,6 +5,8 @@ services:
   mariadb:
     image: mariadb
     restart: unless-stopped
+    volumes:
+      - /var/volumes/munity/db:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${MUNITY_DB_PASS}
     networks:
@@ -13,8 +15,6 @@ services:
   munity-backend:
 #    image: munity-backend
     restart: unless-stopped
-    volumes:
-      - /var/volumes/munity/db:/var/lib/mysql
     build:
       context: .
     environment:
