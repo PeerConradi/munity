@@ -78,4 +78,19 @@
             InvokeAsync(this.StateHasChanged);
         }
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var lastTab = await this.frontendSimulationService.LoadLastTab();
+            if (lastTab != null && this.frontendSimulationService.CurrentTab != lastTab.Value)
+            {
+                this.frontendSimulationService.CurrentTab = lastTab.Value;
+                this.StateHasChanged();
+            }
+        }
+
+        //return base.OnAfterRenderAsync(firstRender);
+    }
 }

@@ -59,6 +59,7 @@ namespace MUNityCore.Services
                 if (this._currentTab != value)
                 {
                     this._currentTab = value;
+                    this.StoreCurrentTab().ConfigureAwait(false);
                     TabChanged?.Invoke(this, value);
                 }
             }
@@ -234,6 +235,26 @@ namespace MUNityCore.Services
             if (list == null)
                 list = new List<SimulationTokenResponse>();
             return list;
+        }
+
+        internal async Task StoreCurrentTab()
+        {
+            await this._storageService.SetItemAsync<SimulationTabs>("munity_currentTab", this.CurrentTab);
+        }
+
+        internal async Task<SimulationTabs?> LoadLastTab()
+        {
+            return await this._storageService.GetItemAsync<SimulationTabs?>("munity_currentTab");
+        }
+
+        internal async Task<string> GetLastOpenedResolutionId()
+        {
+            return await this._storageService.GetItemAsync<string>("munity_lastResolution");
+        }
+
+        internal async Task SaveResolutionOpenedId(string resolutionId)
+        {
+            await this._storageService.SetItemAsync<string>("munity_lastResolution", resolutionId);
         }
 
         public void Dispose()

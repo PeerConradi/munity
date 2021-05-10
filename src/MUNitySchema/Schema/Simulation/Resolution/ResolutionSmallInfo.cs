@@ -16,5 +16,13 @@ namespace MUNity.Schema.Simulation.Resolution
         public bool AllowPublicEdit { get; set; }
 
         public bool AllowAmendments { get; set; }
+
+        public string SubmitterName { get; set; }
+
+        public int PreambleParagraphCount { get; set; }
+
+        public int OperativeParagraphCount { get; set; }
+
+        public int AmendmentCount { get; set; }
     }
 }

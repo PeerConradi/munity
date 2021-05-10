@@ -26,7 +26,7 @@
                         <label class="col-md-3 col-form-label">Enthaltungen erlauben</label>
                         <div class="col-md-9 p-t-3">
                             <div class="switcher">
-                                <input type="checkbox" name="switcher_checkbox_1" @bind-value="@NewVoting.AllowAbstention" id="switcher_checkbox_1" checked="">
+                                <input type="checkbox" name="switcher_checkbox_1" @bind-value="@NewVoting.AllowAbstention" id="switcher_checkbox_1" checked="@NewVoting.AllowAbstention">
                                 <label for="switcher_checkbox_1"></label>
                             </div>
                         </div>
@@ -181,7 +181,7 @@
     {
         public string DisplayName { get; set; }
 
-        public bool AllowAbstention { get; set; } = true;
+        public bool AllowAbstention { get; set; } = false;
     }
 
     private CreateNewVotingModel NewVoting = new CreateNewVotingModel();

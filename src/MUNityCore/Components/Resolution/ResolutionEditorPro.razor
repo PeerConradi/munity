@@ -5,7 +5,22 @@
     <div class="@((resolutionMode == EResolutionMode.Write) ? "col-lg-8" : "col-lg-12")  col-md-12">
         <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
             <div class="panel-heading ui-sortable-handle">
-                <h4 class="panel-title">Resolutionseditor <span class="badge badge-primary">Pro</span></h4>
+                <h4 class="panel-title">
+                    Resolutionseditor <span class="badge badge-primary">Pro</span>
+                    @if (simulationService.CurrentSimulation != null)
+                    {
+                        if (simulationService.CurrentSimulation.UserContext != null &&
+                            simulationService.CurrentSimulation.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate &&
+                            _info != null &&
+                            _info.AllowAmendments &&
+                            resolutionMode == EResolutionMode.Read)
+                        {
+                            <button class="btn btn-success btn-sm ml-3" @onclick="() => createAmendmentModal.ShowModal()">Änderungsantrag einreichen</button>
+                        }
+                    }
+                </h4>
+                
+
                 <div class="panel-heading-btn">
                     <a class="btn btn-xs btn-icon btn-circle btn-success"
                        @onclick="() => ReloadResolution()"><i class="fa fa-redo"></i></a>
@@ -48,7 +63,15 @@
         </div>
     }
 </div>
+
+@if (_resolution != null)
+{
+    <CreateAmendmentModal Resolution="@_resolution" @ref="createAmendmentModal" AmendmentCreated="OnAmendmentCreated" />
+}
+
 @code {
+
+    private CreateAmendmentModal createAmendmentModal;
 
     public enum EResolutionMode
     {
@@ -73,6 +96,11 @@
     private MUNity.Models.Resolution.Resolution _resolution;
 
     private MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo _info { get; set; }
+
+    private void OnAmendmentCreated()
+    {
+        InvokeAsync(this.StateHasChanged);
+    }
 
     private void OnOperativeParagraphsChanged()
     {

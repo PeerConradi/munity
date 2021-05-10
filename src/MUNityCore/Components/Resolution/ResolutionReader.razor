@@ -1,4 +1,6 @@
-﻿@if (Resolution != null)
+﻿@using MUNity.Extensions.ResolutionExtensions;
+
+@if (Resolution != null)
 {
     <h3>@Resolution.Header.Topic</h3>
     <h5>Einbringer: @Resolution.Header.SubmitterName</h5>
@@ -13,7 +15,9 @@
     <br />
     foreach(var operativeParagraph in Resolution.OperativeSection.Paragraphs)
     {
-        <p>@operativeParagraph.Text</p>
+        <span class="badge badge-danger">@Resolution.OperativeSection.DeleteAmendments.Count(n => n.TargetSectionId == operativeParagraph.OperativeParagraphId) Anträge auf streichen</span>
+        <span class="badge badge-primary">@Resolution.OperativeSection.ChangeAmendments.Count(n => n.TargetSectionId == operativeParagraph.OperativeParagraphId) Anträge auf Textänderung</span>
+        <p>@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(operativeParagraph) @operativeParagraph.Text</p>
     }
 }
 

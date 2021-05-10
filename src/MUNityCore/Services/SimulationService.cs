@@ -832,7 +832,11 @@ namespace MUNityCore.Services
                                   AllowPublicEdit = auth.AllowPublicEdit,
                                   LastChangedTime = resa.CreatedDate,
                                   Name = resa.Topic,
-                                  ResolutionId = resa.ResaElementId
+                                  ResolutionId = resa.ResaElementId,
+                                  SubmitterName = resa.SubmitterName,
+                                  PreambleParagraphCount = _context.PreambleParagraphs.Count(n => n.ResaElement.ResaElementId == resa.ResaElementId),
+                                  OperativeParagraphCount = _context.OperativeParagraphs.Count(n => n.Resolution.ResaElementId == resa.ResaElementId),
+                                  AmendmentCount = _context.Amendments.Count(n => n.Resolution.ResaElementId == resa.ResaElementId)
                               };
             return resolutions.ToListAsync();
         }

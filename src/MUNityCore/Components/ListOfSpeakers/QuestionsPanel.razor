@@ -24,6 +24,14 @@
             <h2 class="text-white mb-0">
                 @if (ViewModel.Speakerlist.CurrentQuestion != null)
                 {
+                    @if (string.IsNullOrEmpty(ViewModel.Speakerlist.CurrentQuestion.Iso))
+                    {
+                        <img src="/img/flags/small/un.png" class="mr-2" />
+                    }
+                    else
+                    {
+                        <img src="/img/flags/small/@(ViewModel.Speakerlist.CurrentQuestion.Iso).png" class="mr-2" />
+                    }
                     @ViewModel.Speakerlist.CurrentQuestion.Name
 
                     @if (SimViewModel.UserContext.IsChair)
@@ -115,6 +123,14 @@
         {
             <div class="d-flex mb-2">
                 <div class="d-flex align-items-center">
+                    @if (string.IsNullOrEmpty(waitingQuestion.Iso))
+                    {
+                        <img src="/img/flags/small/un.png" class="mr-2" />
+                    }
+                    else
+                    {
+                        <img src="/img/flags/small/@(waitingQuestion.Iso).png" class="mr-2" />
+                    }
                     @waitingQuestion.Name
                 </div>
                 @if (SimViewModel.UserContext.IsChair)

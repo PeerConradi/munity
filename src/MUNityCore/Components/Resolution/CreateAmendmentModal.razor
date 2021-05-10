@@ -4,6 +4,7 @@
 
 
 @inject Services.SqlResolutionService resolutionService;
+@inject Services.FrontendSimulationService frontendSimulationService;
 
 @if (Resolution != null)
 {
@@ -35,11 +36,12 @@
                     </Field>
                     <Field>
                         <FieldLabel>Einbringer</FieldLabel>
-                        <InputText @bind-Value="@pattern.SubmitterName" class="form-control" />
+                        <input type="text" @bind-value="@pattern.SubmitterName" 
+                               class="form-control @((editSubmitterAllowed) ? "" : "disabled")" disabled="@((editSubmitterAllowed)? null : "disabled")"  />
                     </Field>
                     @if (pattern.AmendmentType == EAmendmentTypes.Change ||
-              pattern.AmendmentType == EAmendmentTypes.Delete ||
-              pattern.AmendmentType == EAmendmentTypes.Move)
+             pattern.AmendmentType == EAmendmentTypes.Delete ||
+             pattern.AmendmentType == EAmendmentTypes.Move)
                     {
                         <Field>
                             <FieldLabel>Paragraphen</FieldLabel>
@@ -55,7 +57,7 @@
                     }
 
                     @if (pattern.AmendmentType == EAmendmentTypes.Add ||
-                pattern.AmendmentType == EAmendmentTypes.Move)
+               pattern.AmendmentType == EAmendmentTypes.Move)
                     {
                         <Field>
                             <FieldLabel>Neue Position</FieldLabel>
@@ -73,7 +75,7 @@
                     }
 
                     @if (pattern.AmendmentType == EAmendmentTypes.Change ||
-               pattern.AmendmentType == EAmendmentTypes.Add)
+              pattern.AmendmentType == EAmendmentTypes.Add)
                     {
                         <Field>
                             <FieldLabel>Neuer Text</FieldLabel>
@@ -103,6 +105,22 @@
     [Parameter]
     public EventCallback AmendmentCreated { get; set; }
 
+    private bool editSubmitterAllowed
+    {
+        get
+        {
+            if (this.frontendSimulationService?.CurrentSimulation != null)
+            {
+                if (this.frontendSimulationService.CurrentSimulation.UserContext.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman &&
+                this.frontendSimulationService.CurrentSimulation.UserContext.RoleType != MUNity.Schema.Simulation.RoleTypes.None)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
     private CreateAmendmentPattern pattern = new CreateAmendmentPattern();
 
     private Blazorise.Modal modalRef;
@@ -117,6 +135,7 @@
     private void SubmitCreateAmendment()
     {
         pattern.ResolutionId = Resolution.ResolutionId;
+
 
         var newAmendment = this.resolutionService.CreateAmendment(pattern);
         if (newAmendment != null)
@@ -150,5 +169,20 @@
     private void HideModal()
     {
         this.modalRef.Hide();
+    }
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(pattern.SubmitterName))
+        {
+            if (this.frontendSimulationService?.CurrentSimulation != null)
+            {
+                if (this.frontendSimulationService.CurrentSimulation.UserContext.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman &&
+                this.frontendSimulationService.CurrentSimulation.UserContext.RoleType != MUNity.Schema.Simulation.RoleTypes.None)
+                {
+                    pattern.SubmitterName = this.frontendSimulationService.CurrentSimulation.UserContext.RoleName;
+                }
+            }
+        }
     }
 }
