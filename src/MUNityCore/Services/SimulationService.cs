@@ -1413,7 +1413,7 @@ namespace MUNityCore.Services
 
         internal List<OldVotingDto> GetPastVotings(int simulationId)
         {
-            var result = _context.SimulationVotings.Include(n => n.VoteSlots).Where(n => n.IsActive == false && n.SimulationVotingId == simulationId).Select(a =>
+            var result = _context.SimulationVotings.Include(n => n.VoteSlots).Where(n => n.IsActive == false && n.Simulation.SimulationId == simulationId).Select(a =>
             new OldVotingDto
             {
                 Name = a.Name,
