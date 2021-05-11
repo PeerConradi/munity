@@ -88,15 +88,16 @@ namespace MUNityCore.Extensions.CastExtensions
 
         public static MUNity.Models.Resolution.MoveAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment sourceAmendment)
         {
+
             var model = new MUNity.Models.Resolution.MoveAmendment()
             {
                 Activated = sourceAmendment.Activated,
                 Id = sourceAmendment.ResaAmendmentId,
                 Name = sourceAmendment.GetType().Name,
-                NewTargetSectionId = sourceAmendment.VirtualParagraph.ResaOperativeParagraphId,
+                NewTargetSectionId = sourceAmendment.VirtualParagraph?.ResaOperativeParagraphId ?? "",
                 SubmitterName = sourceAmendment.SubmitterName,
                 SubmitTime = sourceAmendment.SubmitTime,
-                TargetSectionId = sourceAmendment.SourceParagraph.ResaOperativeParagraphId,
+                TargetSectionId = sourceAmendment.SourceParagraph?.ResaOperativeParagraphId ?? "",
                 Type = sourceAmendment.ResaAmendmentType
             };
             return model;

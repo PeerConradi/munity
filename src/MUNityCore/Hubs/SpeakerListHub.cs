@@ -13,13 +13,11 @@ namespace MUNityCore.Hubs
 
         public override async Task OnDisconnectedAsync(Exception e)
         {
-            Console.WriteLine("Speakerlist client disconnected!");
             await base.OnDisconnectedAsync(e);
         }
 
         public override Task OnConnectedAsync()
         {
-            Console.WriteLine("Speakerlist client connected!");
             return base.OnConnectedAsync();
         }
 

@@ -23,7 +23,6 @@ namespace MUNityCore.Services
 
         public async Task<SpeakerlistViewModel> GetSpeakerlistViewModel(string speakerlistId)
         {
-            Console.WriteLine("GetSpeakerlistViewModel called!");
             var list = _viewModels.FirstOrDefault(n => n.SpeakerlistId == speakerlistId);
             if (list != null)
                 return list;
