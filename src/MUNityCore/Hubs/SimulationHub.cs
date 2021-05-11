@@ -189,13 +189,7 @@ namespace MUNityCore.Hubs
             var newStatus = this._service.SetStatus(user.SimulationId, newStatusText);
             if (newStatus != null)
             {
-                var newStatusSocketMessage = new SimulationStatusDto()
-                {
-                    SimulationStatusId = newStatus.SimulationStatusId,
-                    StatusText = newStatus.StatusText,
-                    StatusTime = newStatus.StatusTime
-                };
-                await this.Clients.Group("sim_" + user.SimulationId.ToString()).StatusChanged(newStatusSocketMessage);
+                await this.Clients.Group("sim_" + user.SimulationId).StatusChanged(newStatus.ToModel());
             }
         }
 

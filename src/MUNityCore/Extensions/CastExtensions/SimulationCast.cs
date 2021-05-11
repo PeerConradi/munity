@@ -135,5 +135,16 @@ namespace MUNityCore.Extensions.CastExtensions
             if (items != null && items.Any()) return items.ToList();
             return new List<PetitionDto>();
         }
+
+        public static MUNity.Schema.Simulation.SimulationStatusDto ToModel(this SimulationStatus status)
+        {
+            var newStatusSocketMessage = new SimulationStatusDto()
+            {
+                SimulationStatusId = status.SimulationStatusId,
+                StatusText = status.StatusText,
+                StatusTime = status.StatusTime
+            };
+            return newStatusSocketMessage;
+        }
     }
 }

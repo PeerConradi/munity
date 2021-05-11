@@ -1,0 +1,42 @@
+﻿@if (Petition != null)
+{
+    <div class="d-flex align-items-center m-b-15">
+        <div class="widget-img rounded-lg m-r-10 bg-white p-1" style="width:60px;">
+            <div class="h-100" style="background: url(/img/flags/medium/@(Petition.RoleIso).png) center no-repeat; background-size: auto 100%;"></div>
+        </div>
+        <div class="text-truncate">
+            <div><span class="text-gray text-wrap">[@Petition.CategoryName]</span> @Petition.TypeName</div>
+            <div class="text-grey">@Petition.SubmitTime.ToString("dd.MM HH:mm") durch @Petition.SubmitterDisplayName - @Petition.SubmitterRoleName</div>
+        </div>
+        <div class="ml-auto text-center">
+            @if (AllowActivate)
+            {
+
+                <button class="btn btn-xs btn-primary" @onclick="() => OnActivate.InvokeAsync(Petition.PetitionId)">Aktiv setzen</button>
+            }
+
+            @if (AllowDeletion)
+            {
+                <button class="btn btn-xs btn-danger" @onclick="() => OnDelete.InvokeAsync(Petition.PetitionId)">Löschen</button>
+            }
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public MUNity.Schema.Simulation.PetitionInfoDto Petition { get; set; }
+
+    [Parameter]
+    public bool AllowActivate { get; set; } = false;
+
+    [Parameter]
+    public bool AllowDeletion { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<string> OnActivate { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnDelete { get; set; }
+}

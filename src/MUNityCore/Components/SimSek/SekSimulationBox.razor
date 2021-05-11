@@ -1,36 +1,64 @@
-﻿@if (SimViewModel != null)
-{
-    <div class="col-12">
-        <div class="panel panel-inverse">
-            <div class="panel-heading">
-                <h4 class="panel-title">@SimViewModel.SimulationId @SimViewModel.Name</h4>
-                <div class="panel-heading-btn">
-                    <a href="#" class="btn btn-xs btn-icon btn-circle btn-default"
-                       data-click="panel-expand">
-                        <i class="fa fa-expand"></i>
-                    </a>
+﻿@inject Services.FrontendSimulationService frontendSimulationService;
+@inject Services.SimulationService simulationService;
+@page "/sek/sim/{Id}"
+
+<AuthorizeView Roles="Admin, Moderator">
+    <Authorized>
+        @if (SimViewModel != null)
+        {
+            <div class="row">
+                <h4>@SimViewModel.SimulationId @SimViewModel.Name</h4>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <MUNityCore.Components.Simulation.ListOfSpeakerHeader SimViewModel="@SimViewModel"
+                                                                          ViewModel="@SimViewModel.SpeakerlistViewModel"
+                                                                          ShowToggleButton="false"
+                                                                          OffsetMargin="false" />
                 </div>
             </div>
-            <div class="panel-body">
-                <MUNityCore.Components.Simulation.ListOfSpeakerHeader SimViewModel="@SimViewModel"
-                                                                      ViewModel="@SimViewModel.SpeakerlistViewModel"
-                                                                      ShowToggleButton="false"
-                                                                      OffsetMargin="false" />
-                @if (newPetitionInfo != null)
-                {
+
+
+
+
+            @if (newPetitionInfo != null)
+            {
+                <div class="row">
                     <div class="alert alert-success fade show animate__animated @((fadeOutNewPetition) ? "animate__fadeOut" : "animate__bounceIn")">
                         <strong>Neuer Antrag</strong>
                         @newPetitionInfo.CategoryName @newPetitionInfo.TypeName durch @newPetitionInfo.SubmitterRoleName
                     </div>
-                }
+                </div>
 
+            }
+
+            <div class="row mt-3">
+                <div class="col-lg-8">
+                    <SekAgendaStatusboard ViewModel="@SimViewModel" />
+                </div>
+
+                <div class="col-lg-4">
+                    <SekPresentsAndVotings ViewModel="@SimViewModel" />
+
+                    <SekResolutionsList ViewModel="@SimViewModel" />
+                </div>
             </div>
-        </div>
-    </div>
-}
+        }
+    </Authorized>
+    <NotAuthorized>
+        <Paragraph>Zutritt verweigert</Paragraph>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
 
 
 @code {
+    [Parameter]
+    public string Id { get; set; }
+
     [Parameter]
     public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
@@ -38,8 +66,21 @@
 
     private bool fadeOutNewPetition = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+        if (!string.IsNullOrEmpty(Id))
+        {
+            int simulationId = 0;
+            if (int.TryParse(Id, out simulationId))
+            {
+                this.SimViewModel = await frontendSimulationService.GetOrInitViewModelWildcard(simulationId);
+                SimViewModel.FetchData(simulationService);
+                await SimViewModel.SignInContext();
+            }
+
+        }
+
         if (SimViewModel != null)
         {
             if (SimViewModel.SpeakerlistViewModel != null)
@@ -48,7 +89,6 @@
             }
             SimViewModel.PetitionAdded += OnPetitionAdded;
         }
-        base.OnInitialized();
     }
 
     private void OnPetitionAdded(object sender, MUNity.Schema.Simulation.PetitionInfoDto info)

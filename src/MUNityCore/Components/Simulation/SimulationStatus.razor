@@ -1,4 +1,6 @@
-﻿@inject Services.SimulationService simulationService;
+﻿@using MUNityCore.Extensions.CastExtensions; 
+
+@inject Services.SimulationService simulationService;
 
 <div class="col-12 mb-5">
     <div class="card border-0 text-truncate bg-dark text-white">
@@ -14,7 +16,7 @@
                 @currentStatus?.StatusTime.ToString("dd.MM.yyyy HH:mm:ss")
             </div>
 
-                @if (ViewModel.UserContext.IsChair)
+                @if (ViewModel?.UserContext != null && ViewModel.UserContext.IsChair)
                 {
                     <div class="mb-4 text-grey">
                         Status Einstellen
@@ -32,15 +34,16 @@
     [Parameter]
     public ViewModel.SimulationViewModel ViewModel { get; set; }
 
-    private Models.Simulation.SimulationStatus currentStatus;
+    private MUNity.Schema.Simulation.SimulationStatusDto currentStatus;
 
     private string newStatusText = "";
 
-    private void SetStatus()
+    private async Task SetStatus()
     {
         if (!string.IsNullOrEmpty(newStatusText))
         {
-            this.currentStatus = this.simulationService.SetStatus(ViewModel.SimulationId, newStatusText);
+            await this.ViewModel.ChangeStatus(newStatusText);
+            this.newStatusText = "";
         }
     }
 
@@ -49,8 +52,15 @@
         base.OnInitialized();
         if (ViewModel != null)
         {
-            currentStatus = simulationService.GetCurrentStatus(ViewModel.SimulationId);
+            currentStatus = simulationService.GetCurrentStatus(ViewModel.SimulationId)?.ToModel();
+            ViewModel.StatusChanged += OnStatusChanged;
         }
 
+    }
+
+    private void OnStatusChanged(object sender, MUNity.Schema.Simulation.SimulationStatusDto status)
+    {
+        this.currentStatus = status;
+        InvokeAsync(StateHasChanged);
     }
 }
