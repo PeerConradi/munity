@@ -1,5 +1,6 @@
 ﻿@inject Services.SimulationService simulationService;
 @inject Services.FrontendSimulationService frontendSimulationService;
+@inject Services.PresentsService presentsService;
 
 @if (ViewModel != null && ViewModel.UserContext.IsChair)
 {
@@ -19,6 +20,19 @@
                         <label class="col-form-label col-md-3">Anzeigetext</label>
                         <div class="col-md-9">
                             <input type="text" class="form-control m-b-5" @bind-value="NewVoting.DisplayName" placeholder="Anzeigetext">
+                            <small class="f-s-12 text-grey-darker">Dieser Text wird allen als Thema der Abstimmung angezeigt.</small>
+                        </div>
+                    </div>
+                    <div class="form-group row m-b-15">
+                        <label class="col-form-label col-md-3">Anwesenheit verwenden</label>
+                        <div class="col-md-9">
+                            <Blazorise.Select TValue="int" @bind-SelectedValue="NewVoting.PresentsId" class="form-control">
+                                <SelectItem TValue="int" Value="-1">Alle (Anwesenheit ignorieren)</SelectItem>
+                                @if (currentPresents != null)
+                                {
+                                    <SelectItem TValue="int" Value="@currentPresents.SimulationPresentsId">Aktuelle Anwesenheit (festgestellt @currentPresents.CreatedTime.ToString("dd.MM HH:mm"))</SelectItem>
+                                }
+                            </Blazorise.Select>
                             <small class="f-s-12 text-grey-darker">Dieser Text wird allen als Thema der Abstimmung angezeigt.</small>
                         </div>
                     </div>
@@ -177,11 +191,15 @@
 
     private List<Dtos.Simulations.OldVotingDto> _oldVotings;
 
+    private MUNityCore.Models.Simulation.SimulationPresents currentPresents;
+
     private class CreateNewVotingModel
     {
         public string DisplayName { get; set; }
 
         public bool AllowAbstention { get; set; } = false;
+
+        public int PresentsId { get; set; } = -1;
     }
 
     private CreateNewVotingModel NewVoting = new CreateNewVotingModel();
@@ -196,6 +214,7 @@
             this.ViewModel.Voted += OnVoted;
             ReloadCurrentVoting();
             ReloadPastVotings();
+            ReloadCurrentPresents();
         }
 
         base.OnInitialized();
@@ -237,6 +256,11 @@
         }
     }
 
+    private void ReloadCurrentPresents()
+    {
+        this.currentPresents = this.presentsService.GetLastPresentCheckOfSimulation(this.ViewModel.SimulationId);
+    }
+
     private async Task VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates choice)
     {
         await this.ViewModel.Vote(currentVoting.VotingId, choice);
@@ -244,6 +268,14 @@
 
     private async Task CreateVoting()
     {
-        await this.ViewModel.CreateVoting(NewVoting.DisplayName, NewVoting.AllowAbstention);
+        if (NewVoting.PresentsId == -1)
+        {
+            await this.ViewModel.CreateVoting(NewVoting.DisplayName, NewVoting.AllowAbstention);
+        }
+        else
+        {
+            await this.ViewModel.CreateVotingForPresentDelegates(NewVoting.PresentsId, NewVoting.DisplayName, NewVoting.AllowAbstention);
+        }
+
     }
 }

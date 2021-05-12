@@ -145,6 +145,11 @@ namespace MUNityCore.ViewModel
             await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.ChangeStatus), newStatusText);
         }
 
+        internal async Task CreateVotingForPresentDelegates(int presentsId, string text, bool allowAbstention)
+        {
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateVotingForPresentDelegates), presentsId, text, allowAbstention);
+        }
+
         public static async Task<SimulationViewModel> Init(string socketPath)
         {
             var hubConnection = new HubConnectionBuilder().WithUrl(socketPath).Build();

@@ -79,6 +79,19 @@ namespace MUNityCore.Hubs
             return;
         }
 
+        public void CreateVotingForPresentDelegates(int presentsId, string text, bool allowAbstentions)
+        {
+            if (!IsContextChair())
+                return;
+
+            var mdl = _service.CreateVotingsForPresentDelegates(presentsId, text, allowAbstentions);
+
+            var dto = _service.GetCurrentVoting(mdl.Simulation.SimulationId);
+            _simulationLogger.LogVotingCreated(mdl.Simulation.SimulationId, text);
+            this.Clients.Group("sim_" + mdl.Simulation.SimulationId.ToString()).VoteCreated(dto);
+            return;
+        }
+
         public async Task Vote(string votingId, MUNity.Schema.Simulation.EVoteStates choice)
         {
             var user = GetContextUser();

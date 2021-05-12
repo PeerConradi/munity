@@ -162,6 +162,44 @@ namespace MUNityCore.Services
             return mdl;
         }
 
+        internal SimulationVoting CreateVotingsForPresentDelegates(int presentsId, string text, bool allowAbstention)
+        {
+            var presents = this._context.PresentChecks
+                .Include(n => n.CheckedUsers)
+                .ThenInclude(n => n.SimulationUser)
+                .ThenInclude(n => n.Role)
+                .Include(n => n.Simulation)
+                .FirstOrDefault(n => n.SimulationPresentsId == presentsId);
+
+            // Deactivate the current active voting
+            var activeVotings = this._context.SimulationVotings.Where(n => n.Simulation.SimulationId == presents.Simulation.SimulationId
+            && n.IsActive);
+            if (activeVotings.Any())
+                foreach (var v in activeVotings)
+                    v.IsActive = false;
+
+            var mdl = new SimulationVoting()
+            {
+                Description = "",
+                IsActive = true,
+                Name = text,
+                Simulation = presents.Simulation,
+                AllowAbstention = allowAbstention
+            };
+
+            mdl.VoteSlots = presents.CheckedUsers.Where(n => n.SimulationUser.Role.RoleType == RoleTypes.Delegate && n.State == PresentsState.PresentsStates.Present)
+                    .Select(n => new SimulationVotingSlot()
+                    {
+                        Choice = EVoteStates.NotVoted,
+                        User = n.SimulationUser,
+                        Voting = mdl
+                    }).ToList();
+
+            this._context.SimulationVotings.Add(mdl);
+            this._context.SaveChanges();
+            return mdl;
+        }
+
         internal async Task<SimulationListItemDto> GetInfo(int simulationId)
         {
             var simulation = await _context.Simulations.FirstOrDefaultAsync(n => n.SimulationId == simulationId);
