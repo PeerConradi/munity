@@ -66,12 +66,12 @@ namespace MUNityCore.Hubs
                 .Select(n => n.Value.SimulationUserId).ToList());
         }
 
-        public void CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions)
+        public void CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions, bool allowNgoVote)
         {
             if (!IsContextChair())
                 return;
 
-            var mdl = _service.CreateVotingForDelegates(simulationId, text, allowAbstentions);
+            var mdl = _service.CreateVotingForDelegates(simulationId, text, allowAbstentions, allowNgoVote);
 
             var dto = _service.GetCurrentVoting(simulationId);
             _simulationLogger.LogVotingCreated(simulationId, text);
@@ -79,12 +79,12 @@ namespace MUNityCore.Hubs
             return;
         }
 
-        public void CreateVotingForPresentDelegates(int presentsId, string text, bool allowAbstentions)
+        public void CreateVotingForPresentDelegates(int presentsId, string text, bool allowAbstentions,bool allowNgoVote)
         {
             if (!IsContextChair())
                 return;
 
-            var mdl = _service.CreateVotingsForPresentDelegates(presentsId, text, allowAbstentions);
+            var mdl = _service.CreateVotingsForPresentDelegates(presentsId, text, allowAbstentions, allowNgoVote);
 
             var dto = _service.GetCurrentVoting(mdl.Simulation.SimulationId);
             _simulationLogger.LogVotingCreated(mdl.Simulation.SimulationId, text);

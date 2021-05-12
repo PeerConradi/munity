@@ -130,7 +130,7 @@ namespace MUNityCore.Services
             return returnVal;
         }
 
-        internal SimulationVoting CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions)
+        internal SimulationVoting CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions, bool allowNgoVote)
         {
             var activeVotings = this._context.SimulationVotings.Where(n => n.Simulation.SimulationId == simulationId
             && n.IsActive);
@@ -149,7 +149,7 @@ namespace MUNityCore.Services
             };
 
             mdl.VoteSlots = _context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId &&
-                n.Role != null && n.Role.RoleType == RoleTypes.Delegate)
+                n.Role != null && (n.Role.RoleType == RoleTypes.Delegate || allowNgoVote && n.Role.RoleType == RoleTypes.Ngo))
                     .Select(n => new SimulationVotingSlot()
                     {
                         Choice = EVoteStates.NotVoted,
@@ -162,7 +162,7 @@ namespace MUNityCore.Services
             return mdl;
         }
 
-        internal SimulationVoting CreateVotingsForPresentDelegates(int presentsId, string text, bool allowAbstention)
+        internal SimulationVoting CreateVotingsForPresentDelegates(int presentsId, string text, bool allowAbstention, bool allowNgoVote)
         {
             var presents = this._context.PresentChecks
                 .Include(n => n.CheckedUsers)
@@ -187,7 +187,9 @@ namespace MUNityCore.Services
                 AllowAbstention = allowAbstention
             };
 
-            mdl.VoteSlots = presents.CheckedUsers.Where(n => n.SimulationUser.Role.RoleType == RoleTypes.Delegate && n.State == PresentsState.PresentsStates.Present)
+            mdl.VoteSlots = presents.CheckedUsers.Where(n => 
+            (n.SimulationUser.Role.RoleType == RoleTypes.Delegate || allowNgoVote && n.SimulationUser.Role.RoleType == RoleTypes.Ngo) && 
+            n.State == PresentsState.PresentsStates.Present)
                     .Select(n => new SimulationVotingSlot()
                     {
                         Choice = EVoteStates.NotVoted,

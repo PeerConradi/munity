@@ -105,9 +105,9 @@ namespace MUNityCore.ViewModel
             await this.SpeakerlistViewModel.AddQuestion(this.UserContext.RoleIso, this.UserContext.RoleName);
         }
 
-        internal async Task CreateVoting(string displayName, bool allowAbstention)
+        internal async Task CreateVoting(string displayName, bool allowAbstention, bool allowNgoVote)
         {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateVotingForDelegates), this.SimulationId, displayName, allowAbstention);
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateVotingForDelegates), this.SimulationId, displayName, allowAbstention, allowNgoVote);
         }
 
         internal async Task Vote(string votingId, MUNity.Schema.Simulation.EVoteStates choice)
@@ -145,9 +145,9 @@ namespace MUNityCore.ViewModel
             await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.ChangeStatus), newStatusText);
         }
 
-        internal async Task CreateVotingForPresentDelegates(int presentsId, string text, bool allowAbstention)
+        internal async Task CreateVotingForPresentDelegates(int presentsId, string text, bool allowAbstention, bool allowNgoVote)
         {
-            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateVotingForPresentDelegates), presentsId, text, allowAbstention);
+            await this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SimulationHub.CreateVotingForPresentDelegates), presentsId, text, allowAbstention, allowNgoVote);
         }
 
         public static async Task<SimulationViewModel> Init(string socketPath)

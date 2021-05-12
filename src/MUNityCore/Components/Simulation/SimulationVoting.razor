@@ -45,6 +45,16 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group row m-b-10">
+                        <label class="col-md-3 col-form-label">Nichtstaatlichen Akteuren erlauben abzustimmen</label>
+                        <div class="col-md-9 p-t-3">
+                            <div class="switcher">
+                                <input type="checkbox" name="switcher_checkbox_1" @bind-value="@NewVoting.AllowNgoVote" id="switcher_checkbox_1" checked="@NewVoting.AllowNgoVote">
+                                <label for="switcher_checkbox_1"></label>
+                            </div>
+                        </div>
+                    </div>
                     <button class="btn btn-success" type="submit">Abstimmung erstellen!</button>
                 </EditForm>
                 
@@ -199,6 +209,8 @@
 
         public bool AllowAbstention { get; set; } = false;
 
+        public bool AllowNgoVote { get; set; } = false;
+
         public int PresentsId { get; set; } = -1;
     }
 
@@ -270,11 +282,11 @@
     {
         if (NewVoting.PresentsId == -1)
         {
-            await this.ViewModel.CreateVoting(NewVoting.DisplayName, NewVoting.AllowAbstention);
+            await this.ViewModel.CreateVoting(NewVoting.DisplayName, NewVoting.AllowAbstention, NewVoting.AllowNgoVote);
         }
         else
         {
-            await this.ViewModel.CreateVotingForPresentDelegates(NewVoting.PresentsId, NewVoting.DisplayName, NewVoting.AllowAbstention);
+            await this.ViewModel.CreateVotingForPresentDelegates(NewVoting.PresentsId, NewVoting.DisplayName, NewVoting.AllowAbstention, NewVoting.AllowNgoVote);
         }
 
     }
