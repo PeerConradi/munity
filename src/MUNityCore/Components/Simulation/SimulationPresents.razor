@@ -1,14 +1,14 @@
 ﻿@inject Services.FrontendSimulationService frontendSimulationService;
 @inject Services.PresentsService presentsService;
 
-@if (SimViewModel != null && SimViewModel.UserContext != null && SimViewModel.UserContext.IsChair)
+@if (SimViewModel != null && SimViewModel.UserContext != null && presents != null)
 {
     <h3>Anwesenheit</h3>
+    <button class="btn btn-block btn-outline-primary" @onclick="ReloadCurrentPresents">Aktualisieren</button>
 
-    <button class="btn btn-block btn-primary" @onclick="CreateNewPresentsCheck">Neue Anwesenheitsfeststellung</button>
-
-    @if (presents != null)
+    @if (SimViewModel.UserContext.IsChair)
     {
+        <button class="btn btn-block btn-primary" @onclick="CreateNewPresentsCheck">Neue Anwesenheitsfeststellung</button>
         <h1>Anwesenheitsfeststellung</h1>
         <h4>Gestartet: @presents.CreatedTime.ToString("dd.MM.yyyy HH:mm:ss")</h4>
         <h4>Status: @((presents.MarkedFinished) ? "Abgeschlossen" : "Im Gange")</h4>
@@ -21,28 +21,122 @@
                 <TableHeaderCell>Feststellungsdatum</TableHeaderCell>
             </TableHeader>
             <TableBody>
-                @foreach(var slot in presents.CheckedUsers)
+                @foreach (var slot in presents.CheckedUsers)
                 {
-                <TableRow>
-                    <TableRowCell>@slot.SimulationUser.Role?.Name</TableRowCell>
-                    <TableRowCell>
-                        <button class="btn @((slot.State == Models.Simulation.PresentsState.PresentsStates.Present) ? "btn-success" : "btn-outline-success")"
-                                @onclick="() => MarkPresent(slot)">Anwesend</button>
-                    </TableRowCell>
-                    <TableRowCell>
-                        <button class="btn @((slot.State == Models.Simulation.PresentsState.PresentsStates.Absent) ? "btn-danger" : "btn-outline-danger")"
-                                @onclick="() => MarkAbsent(slot)">Abwesend</button>
-                    </TableRowCell>
-                    <TableRowCell>
-                        @((slot.RegistertTimestamp != null) ? slot.RegistertTimestamp.Value.ToString("HH:mm:ss") : "Nicht festgestellt")
-                    </TableRowCell>
-                </TableRow>
+                    <TableRow>
+                        <TableRowCell>@slot.SimulationUser.Role?.Name</TableRowCell>
+                        <TableRowCell>
+                            @if (presents.MarkedFinished)
+                            {
+                                if (slot.State == Models.Simulation.PresentsState.PresentsStates.Present)
+                                {
+                                    <Heading Size="HeadingSize.Is3">
+                                        <Badge Color="Color.Success">
+                                            <Icon Name="IconName.Check" />
+                                        </Badge>
+                                    </Heading>
+                                }
+                            }
+                            else
+                            {
+                                <button class="btn @((slot.State == Models.Simulation.PresentsState.PresentsStates.Present) ? "btn-success" : "btn-outline-success")"
+                                        @onclick="() => MarkPresent(slot)">
+                                    Anwesend
+                                </button>
+                            }
+
+                        </TableRowCell>
+                        <TableRowCell>
+                            @if (presents.MarkedFinished)
+                            {
+                                @if (slot.State == Models.Simulation.PresentsState.PresentsStates.Absent)
+                                {
+                                    <Heading Size="HeadingSize.Is3">
+                                        <Badge Color="Color.Danger">
+                                            <Icon Name="IconName.Times" />
+                                        </Badge>
+                                    </Heading>
+                                }
+
+                            }
+                            else
+                            {
+                                <button class="btn @((slot.State == Models.Simulation.PresentsState.PresentsStates.Absent) ? "btn-danger" : "btn-outline-danger")"
+                                        @onclick="() => MarkAbsent(slot)">
+                                    Abwesend
+                                </button>
+                            }
+
+                        </TableRowCell>
+                        <TableRowCell>
+                            @((slot.RegistertTimestamp != null) ? slot.RegistertTimestamp.Value.ToString("HH:mm:ss") : "Nicht festgestellt")
+                        </TableRowCell>
+                    </TableRow>
                 }
             </TableBody>
         </Table>
 
-        <button class="btn btn-block btn-primary" @onclick="MarkFinished">Als abgeschlossen markieren!</button>
+        @if (!presents.MarkedFinished)
+        {
+            <button class="btn btn-block btn-primary" @onclick="MarkFinished">Als abgeschlossen markieren!</button>
+        }
+
     }
+    else if (SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
+        SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)
+    {
+
+        <Row>
+            <Column ColumnSize="ColumnSize.Is12">
+                <Heading Size="HeadingSize.Is3">Feststellung gestartet: @presents.CreatedTime.ToString()</Heading>
+            </Column>
+
+
+
+            @if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Present)
+            {
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Heading Size="HeadingSize.Is1">
+                        <Badge Color="Color.Success"><Icon Name="IconName.Check" /> Sie sind als anwesend gemeldet</Badge>
+                    </Heading>
+                </Column>
+
+            }
+            else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Absent)
+            {
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Heading Size="HeadingSize.Is1">
+                        <Badge Color="Color.Danger"><Icon Name="IconName.Times" /> Sie sind als abwesend gemeldet</Badge>
+                    </Heading>
+                </Column>
+            }
+            else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.NotChecked)
+            {
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Heading Size="HeadingSize.Is1">
+                        <Badge Color="Color.Primary"><Icon Name="IconName.QuestionCircle" /> Sie sind noch nicht erfasst</Badge>
+                    </Heading>
+                </Column>
+            }
+            else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Late)
+            {
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Alert Color="Color.Warning">Sie wurden nachträglich mit aufgenommen</Alert>
+                </Column>
+            }
+        </Row>
+
+
+    }
+    else
+    {
+        <Paragraph>Zugriff verweigert!</Paragraph>
+    }
+
+}
+else
+{
+    <Paragraph>Wird geladen!</Paragraph>
 }
 
 @code {
@@ -50,6 +144,14 @@
     public ViewModel.SimulationViewModel SimViewModel { get; set; }
 
     private MUNityCore.Models.Simulation.SimulationPresents presents;
+
+    private MUNityCore.Models.Simulation.PresentsState myPresentsState
+    {
+        get
+        {
+            return presents?.CheckedUsers?.FirstOrDefault(n => n.SimulationUser.SimulationUserId == SimViewModel.UserContext.UserId);
+        }
+    }
 
     private void CreateNewPresentsCheck()
     {
@@ -74,9 +176,15 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        ReloadCurrentPresents();
+    }
+
+    private void ReloadCurrentPresents()
+    {
         if (SimViewModel != null)
         {
             this.presents = presentsService.GetLastPresentCheckOfSimulation(SimViewModel.SimulationId);
+            this.StateHasChanged();
         }
     }
 }

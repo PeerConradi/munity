@@ -90,6 +90,7 @@ namespace MUNityCore.Services
             {
                 check.MarkedFinished = true;
             }
+            _context.SaveChanges();
         }
 
         public PresentsService(MunityContext context)
