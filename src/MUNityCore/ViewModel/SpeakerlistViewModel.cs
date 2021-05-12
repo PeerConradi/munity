@@ -135,7 +135,6 @@ namespace MUNityCore.ViewModel
 
         private void HandleNextSpeaker()
         {
-            Console.WriteLine("NextSpeaker recieved from HUB!");
             this._listOfSpeakers.NextSpeaker();
             this.SpeakerlistChanged?.Invoke(this, new EventArgs());
         }
@@ -211,7 +210,6 @@ namespace MUNityCore.ViewModel
 
         public Task NextSpeaker()
         {
-            Console.WriteLine("NextSpeaker Client called!");
             return this._hubConnection.SendAsync(nameof(MUNityCore.Hubs.SpeakerListHub.NextSpeaker), _listOfSpeakers.ListOfSpeakersId);
         }
 
