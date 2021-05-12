@@ -188,18 +188,24 @@ else
 
                 @foreach (var petitionType in petitionTypes.Where(n => n.PetitionType.Category == activePetitionCategory))
                 {
-                    <a @onclick="() => MakePetition(petitionType.PetitionType.PetitionTypeId)" class="widget-list-item"
-                       style="cursor: pointer;">
-                        <div class="widget-list-media icon">
-                            <i class="fa fa-comment @((petitionType.AllowDelegates && ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || petitionType.AllowNgo && ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo) ? "bg-success" : "bg-inverse")  text-white"></i>
-                        </div>
-                        <div class="widget-list-content">
-                            <h4 class="widget-list-title">@petitionType.PetitionType?.Name</h4>
-                        </div>
-                        <div class="widget-list-action text-right">
-                            <i class="fa fa-angle-right fa-lg text-muted"></i>
-                        </div>
-                    </a>
+                    @if (petitionType.AllowDelegates && ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || 
+                        petitionType.AllowNgo && ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo ||
+                        ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Chairman)
+                    {
+                        <a @onclick="() => MakePetition(petitionType.PetitionType.PetitionTypeId)" class="widget-list-item"
+                           style="cursor: pointer;">
+                            <div class="widget-list-media icon">
+                                <i class="fa fa-comment @((petitionType.AllowDelegates && ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || petitionType.AllowNgo && ViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo) ? "bg-success" : "bg-inverse")  text-white"></i>
+                            </div>
+                            <div class="widget-list-content">
+                                <h4 class="widget-list-title">@petitionType.PetitionType?.Name</h4>
+                            </div>
+                            <div class="widget-list-action text-right">
+                                <i class="fa fa-angle-right fa-lg text-muted"></i>
+                            </div>
+                        </a>
+                    }
+
                 }
             </div>
         </ModalBody>
