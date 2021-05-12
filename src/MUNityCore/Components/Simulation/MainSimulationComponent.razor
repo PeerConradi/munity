@@ -144,6 +144,7 @@ else
                     {
                         await this.frontService.EnsureUserContext(_simulationViewModel);
                     }
+                    await _simulationViewModel.SignIn();
                     this.loadingState = LoadingStates.Success;
                 }
                 else

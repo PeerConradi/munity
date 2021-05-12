@@ -585,7 +585,7 @@ namespace MUNityCore.Services
             return this._context.SimulationUser.AsNoTracking().Where(n => n.Simulation.SimulationId == simulationId);
         }
 
-        public IEnumerable<SimulationUserInfoDto> GetSimulationUserInfos(int simulationId)
+        public List<SimulationUserInfoDto> GetSimulationUserInfos(int simulationId)
         {
             var list = this._context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId)
                 .AsNoTracking()
@@ -596,7 +596,7 @@ namespace MUNityCore.Services
                     RoleName = (n.Role != null) ? n.Role.Name : "",
                     RoleType = (n.Role != null) ? n.Role.RoleType : RoleTypes.None,
                     RoleIso = (n.Role != null) ? n.Role.Iso : "un"
-                });
+                }).ToList();
             foreach (var user in list)
             {
                 user.IsOnline = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.AsEnumerable().Any(a => a.Value.SimulationId == simulationId &&
