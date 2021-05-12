@@ -79,7 +79,7 @@
         }
     }
 
-    private void ReloadAgendaItems()
+    public void ReloadAgendaItems()
     {
         if (this.ViewModel == null)
             return;
@@ -89,6 +89,7 @@
         {
             this.selectedAgendaItem = this.AgendaItems.First();
         }
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnAgendaItemRemoved(object sender, int agendaItemId)

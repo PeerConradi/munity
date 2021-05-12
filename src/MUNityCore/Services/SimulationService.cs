@@ -1505,5 +1505,13 @@ namespace MUNityCore.Services
         {
             return _context.Simulations.Select(n => new SimulationReference() { SimulationId = n.SimulationId, Name = n.Name }).ToList();
         }
+
+        internal void DeleteAllInviteLinks(int simulationId)
+        {
+            var initeLinks = _context.SimulationInvites.Where(n => n.User.Simulation.SimulationId == simulationId).ToList();
+            _context.SimulationInvites.RemoveRange(initeLinks);
+            Console.WriteLine($"{initeLinks.Count} Invite Links entfernt!");
+            _context.SaveChanges();
+        }
     }
 }

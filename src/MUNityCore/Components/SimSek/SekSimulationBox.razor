@@ -33,17 +33,21 @@
 
             }
 
-            <div class="row mt-3">
-                <div class="col-lg-8">
-                    <SekAgendaStatusboard ViewModel="@SimViewModel" />
-                </div>
+            @if (SimViewModel != null)
+            {
+                <div class="row mt-3">
+                    <div class="col-lg-8">
+                        <SekAgendaStatusboard @ref="@agendaBoard" ViewModel="@SimViewModel" />
+                    </div>
 
-                <div class="col-lg-4">
-                    <SekPresentsAndVotings ViewModel="@SimViewModel" />
+                    <div class="col-lg-4">
+                        <SekPresentsAndVotings ViewModel="@SimViewModel" />
 
-                    <SekResolutionsList ViewModel="@SimViewModel" />
+                        <SekResolutionsList ViewModel="@SimViewModel" />
+                    </div>
                 </div>
-            </div>
+            }
+
         }
     </Authorized>
     <NotAuthorized>
@@ -56,8 +60,23 @@
 
 
 @code {
+    private SekAgendaStatusboard agendaBoard;
+
+    private string _id;
     [Parameter]
-    public string Id { get; set; }
+    public string Id
+    {
+        get => _id;
+        set
+        {
+            if (value != _id)
+            {
+                _id = value;
+                LoadSimulation().ConfigureAwait(false);
+
+            }
+        }
+    }
 
     [Parameter]
     public ViewModel.SimulationViewModel SimViewModel { get; set; }
@@ -69,6 +88,11 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        await LoadSimulation();
+    }
+
+    private async Task LoadSimulation()
+    {
         if (!string.IsNullOrEmpty(Id))
         {
             int simulationId = 0;
@@ -89,6 +113,8 @@
             }
             SimViewModel.PetitionAdded += OnPetitionAdded;
         }
+        agendaBoard?.ReloadAgendaItems();
+        await InvokeAsync(StateHasChanged);
     }
 
     private void OnPetitionAdded(object sender, MUNity.Schema.Simulation.PetitionInfoDto info)

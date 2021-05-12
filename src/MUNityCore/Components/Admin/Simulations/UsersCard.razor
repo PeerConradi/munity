@@ -30,7 +30,10 @@
                 </TableBody>
             </Table>
             <button class="btn btn-block btn-primary" @onclick="() => Download()">Liste herunterladen</button>
+
+            <button class="btn btn-warning m-t-10" @onclick="DeleteAllInviteLinks">Einladungslinks neu generieren (VORSICHT MACHT ALLE AKTUELLEN UNGÜLTIG!)</button>
         </div>
+        
     </div>
 }
 
@@ -59,5 +62,10 @@
     private void Download()
     {
         navManager.NavigateTo("api/Simulation/User/SimulationUserCsv?simulationId=" + Sim.SimulationId.ToString(), true);
+    }
+
+    private void DeleteAllInviteLinks()
+    {
+        this.simulationService.DeleteAllInviteLinks(this.Sim.SimulationId);
     }
 }
