@@ -1501,5 +1501,9 @@ namespace MUNityCore.Services
             return _context.Petitions.Any(n => n.SimulationUser.SimulationUserId == simulationUserId && n.PetitionId == petitionId);
         }
 
+        internal List<SimulationReference> GetSimulationReferences()
+        {
+            return _context.Simulations.Select(n => new SimulationReference() { SimulationId = n.SimulationId, Name = n.Name }).ToList();
+        }
     }
 }

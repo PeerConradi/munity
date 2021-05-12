@@ -29,7 +29,7 @@
                         <a class="btn btn-xs btn-icon btn-circle btn-primary"
                            @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
                     }
-                    else if (resolutionMode == EResolutionMode.Read && (SimViewModel.UserContext.IsChair || _info.AllowPublicEdit))
+                    else if (resolutionMode == EResolutionMode.Read && CanSwitchToEditMode)
                     {
                         <a class="btn btn-xs btn-icon btn-circle btn-secondary"
                            @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
@@ -44,6 +44,7 @@
                     <MUNityCore.Components.Resolution.ResolutionEditor Resolution="@_resolution"
                                                                        Info="@_info"
                                                                        SimViewModel="@SimViewModel"
+                                                                       IsSignedIn="@IsSignedIn"
                                                                        OperativeParagraphsChanged="OnOperativeParagraphsChanged"/>
                 }
                 else if (resolutionMode == EResolutionMode.Read)
@@ -66,10 +67,18 @@
 
 @if (_resolution != null)
 {
-    <CreateAmendmentModal Resolution="@_resolution" @ref="createAmendmentModal" AmendmentCreated="OnAmendmentCreated" />
+    <CreateAmendmentModal Resolution="@_resolution" @ref="createAmendmentModal" AmendmentCreated="OnAmendmentCreated" IsSekContext="@IsSignedIn" />
 }
 
 @code {
+
+    private bool CanSwitchToEditMode
+    {
+        get
+        {
+            return (SimViewModel?.UserContext != null && SimViewModel.UserContext.IsChair || _info.AllowPublicEdit) || IsSignedIn;
+        }
+    }
 
     private CreateAmendmentModal createAmendmentModal;
 
@@ -92,6 +101,9 @@
 
     [Parameter]
     public ViewModel.SimulationViewModel SimViewModel { get; set; }
+
+    [Parameter]
+    public bool IsSignedIn { get; set; } = false;
 
     private MUNity.Models.Resolution.Resolution _resolution;
 

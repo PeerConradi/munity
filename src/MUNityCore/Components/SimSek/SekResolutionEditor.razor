@@ -1,0 +1,17 @@
+﻿@inject Services.FrontendSimulationService frontendSimulationService;
+@inject Services.SimulationService simulationService;
+@page "/sek/resolution/{Id}"
+
+<AuthorizeView Roles="Admin, Moderator">
+    <Authorized>
+        <MUNityCore.Components.Resolution.ResolutionEditorPro ResolutionId="@Id" IsSignedIn="true" />
+    </Authorized>
+    <NotAuthorized>
+        <Paragraph>Zutritt verweigert</Paragraph>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+}

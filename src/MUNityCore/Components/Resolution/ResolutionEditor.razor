@@ -15,7 +15,7 @@
                 <li class="nav-item m-l-5">
                     <button class="btn btn-success" @onclick="() => CreateOperativeParagraph()"><i class="fa fa-plus"></i> Neuer Operativer Absatz</button>
                 </li>
-                @if (SimViewModel.UserContext.IsChair)
+                @if (SimViewModel?.UserContext != null && SimViewModel.UserContext.IsChair || IsSignedIn)
                 {
                     <li class="nav-item m-l-5">
                         @if (this.Info.AllowPublicEdit)
@@ -94,6 +94,9 @@
 
     [Parameter]
     public ViewModel.SimulationViewModel SimViewModel { get; set; }
+
+    [Parameter]
+    public bool IsSignedIn { get; set; } = false;
 
     [Parameter]
     public EventCallback OperativeParagraphsChanged { get; set; }

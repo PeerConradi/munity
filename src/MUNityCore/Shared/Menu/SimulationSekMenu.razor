@@ -1,4 +1,6 @@
-﻿<AuthorizeView Roles="Admin, Moderator">
+﻿@inject Services.SimulationService simulationService;
+
+<AuthorizeView Roles="Admin, Moderator">
     <Authorized>
         <li class="has-sub @subClass">
             <a @onclick="() => isExpanded = !isExpanded"
@@ -9,6 +11,11 @@
             </a>
             <ul class="sub-menu" style="@expandedStyle">
                 <li><a href="/sek/dashboard">Übersicht</a></li>
+                @foreach (var reference in _references)
+                {
+                    <li><a href="/sek/sim/@reference.SimulationId">@reference.Name</a></li>
+                }
+
             </ul>
         </li>
     </Authorized>
@@ -20,4 +27,12 @@
     private string expandedStyle => isExpanded ? "display: block;" : null;
 
     private string subClass => isExpanded ? "expand" : "closed";
+
+    private List<MUNity.Schema.Simulation.SimulationReference> _references { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _references = this.simulationService.GetSimulationReferences();
+    }
 }

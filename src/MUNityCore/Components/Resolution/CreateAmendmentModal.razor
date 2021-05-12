@@ -105,11 +105,17 @@
     [Parameter]
     public EventCallback AmendmentCreated { get; set; }
 
+    [Parameter]
+    public bool IsSekContext { get; set; }
+
     private bool editSubmitterAllowed
     {
         get
         {
-            if (this.frontendSimulationService?.CurrentSimulation != null)
+            if (IsSekContext)
+                return true;
+
+            if (this.frontendSimulationService?.CurrentSimulation?.UserContext != null)
             {
                 if (this.frontendSimulationService.CurrentSimulation.UserContext.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman &&
                 this.frontendSimulationService.CurrentSimulation.UserContext.RoleType != MUNity.Schema.Simulation.RoleTypes.None)
@@ -175,8 +181,9 @@
     {
         if (string.IsNullOrEmpty(pattern.SubmitterName))
         {
-            if (this.frontendSimulationService?.CurrentSimulation != null)
+            if (this.frontendSimulationService?.CurrentSimulation?.UserContext != null && !IsSekContext)
             {
+
                 if (this.frontendSimulationService.CurrentSimulation.UserContext.RoleType != MUNity.Schema.Simulation.RoleTypes.Chairman &&
                 this.frontendSimulationService.CurrentSimulation.UserContext.RoleType != MUNity.Schema.Simulation.RoleTypes.None)
                 {
