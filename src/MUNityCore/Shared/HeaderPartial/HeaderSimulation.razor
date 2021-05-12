@@ -13,8 +13,12 @@
     </button>
 
     <button class="btn @agendaClass"
-            @onclick="() => frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda">
+            @onclick="() => { newAgendaOrPetition = false; frontendSimulationService.CurrentTab = FrontendSimulationService.SimulationTabs.Agenda; }">
         <i class="fa fa-bookmark"></i> Tagesordnung
+        @if (newAgendaOrPetition)
+        {
+            <span class="badge badge-danger">neu</span>
+        }
     </button>
 
     <button class="btn @votingClass"
@@ -59,6 +63,8 @@
 
     private bool newVoting = false;
 
+    private bool newAgendaOrPetition = false;
+
     protected override void OnInitialized()
     {
         if (frontendSimulationService.CurrentSimulation != null)
@@ -76,6 +82,26 @@
     private void BindBadgesLoader(ViewModel.SimulationViewModel viewModel)
     {
         frontendSimulationService.CurrentSimulation.VotingCreated += OnVotingCreated;
+        frontendSimulationService.CurrentSimulation.PetitionAdded += OnPetitionCreated;
+        frontendSimulationService.CurrentSimulation.AgendaItemCreated += OnAgendaItemCreated;
+    }
+
+    private void OnAgendaItemCreated(object sender, MUNity.Schema.Simulation.AgendaItemDto item)
+    {
+        if (frontendSimulationService.CurrentTab != FrontendSimulationService.SimulationTabs.Agenda)
+        {
+            newAgendaOrPetition = true;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnPetitionCreated(object sender, MUNity.Schema.Simulation.PetitionInfoDto petition)
+    {
+        if (frontendSimulationService.CurrentTab != FrontendSimulationService.SimulationTabs.Agenda)
+        {
+            newAgendaOrPetition = true;
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     private void OnVotingCreated(object sender, MUNity.Schema.Simulation.Voting.SimulationVotingDto dto)
