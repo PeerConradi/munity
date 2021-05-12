@@ -3,19 +3,34 @@
 
 @if (Paragraph != null && Resolution != null)
 {
-    @if (deleteAmendmentCount > 0)
+    @if (Paragraph.IsVirtual)
     {
-        <span class="badge badge-danger">@deleteAmendmentCount Anträge auf streichen</span>
-    }
+        @if (addAmendment != null)
+        {
+            <p class="text-success"><b>Neuer Absatz</b> <br /> 
+            @Paragraph.Text <br /> 
+            Eingereicht durch: @addAmendment.SubmitterName <br />
+            </p>
+        }
 
-
-    @if (changeAmendmentCount > 0)
+        }
+    else
     {
-        <span class="badge badge-primary">@changeAmendmentCount Anträge auf Textänderung</span>
-    }
+        @if (deleteAmendmentCount > 0)
+        {
+            <span class="badge badge-danger">@deleteAmendmentCount Anträge auf streichen</span>
+        }
 
-    <p>@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(Paragraph) @Paragraph.Text</p>
-}
+
+        @if (changeAmendmentCount > 0)
+        {
+            <span class="badge badge-primary">@changeAmendmentCount Anträge auf Textänderung</span>
+        }
+
+        <p style="font-size: 14px;">@Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(Paragraph) @Paragraph.Text</p>
+        }
+
+    }
 
 @code {
     [Parameter]
@@ -28,13 +43,19 @@
 
     private int changeAmendmentCount = 0;
 
+    private MUNity.Models.Resolution.AddAmendment addAmendment;
+
     protected override void OnInitialized()
     {
         if (Paragraph != null && Resolution != null)
         {
             deleteAmendmentCount = Resolution.OperativeSection.DeleteAmendments.Count(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
             changeAmendmentCount = Resolution.OperativeSection.ChangeAmendments.Count(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+            if (Paragraph.IsVirtual)
+            {
+                addAmendment = Resolution.OperativeSection.AddAmendments.FirstOrDefault(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+            }
         }
-        //base.OnInitialized();
+    //base.OnInitialized();
     }
 }

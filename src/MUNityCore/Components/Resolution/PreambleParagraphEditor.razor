@@ -1,4 +1,5 @@
 ﻿@inject Services.SqlResolutionService resolutionService;
+@using MUNity.Extensions; 
 
 <div class="panel panel-inverse m-t-0">
     <div class="panel-heading">
@@ -14,8 +15,8 @@
                     <a href="javascript:;" class="dropdown-item" @onclick="() => expanded = !expanded">
                         @((expanded) ? "Einklappen" : "Ausklappen")
                     </a>
-                    <a href="javascript:;" class="dropdown-item">Nach oben schieben</a>
-                    <a href="javascript:;" class="dropdown-item">Nach unten schieben</a>
+                    <a @onclick="MoveUp" style="cursor: pointer;" class="dropdown-item"><i class="fa fa-arrow-up"></i>Nach oben schieben</a>
+                    <a @onclick="MoveDown" style="cursor: pointer;" class="dropdown-item"><i class="fa fa-arrow-down"></i>Nach unten schieben</a>
                     <div class="dropdown-divider"></div>
                     <a href="javascript:;" class="dropdown-item text-danger-darker"
                        @onclick="() => OnRemove.InvokeAsync(Paragraph)">Löschen</a>
@@ -36,6 +37,9 @@
     public MUNity.Models.Resolution.PreambleParagraph Paragraph { get; set; }
 
     [Parameter]
+    public MUNity.Models.Resolution.ResolutionPreamble PreambleReference { get; set; }
+
+    [Parameter]
     public string ResolutionId { get; set; }
 
     [Parameter]
@@ -43,6 +47,9 @@
 
     [Parameter]
     public EventCallback<MUNity.Models.Resolution.PreambleParagraph> OnRemove { get; set; }
+
+    [Parameter]
+    public EventCallback ParagraphMoved { get; set; }
 
     private string previewText
     {
@@ -58,5 +65,27 @@
     private void SaveParagraphText(MUNity.Models.Resolution.PreambleParagraph paragraph)
     {
         resolutionService.SetPreambleParagraphText(paragraph.PreambleParagraphId, paragraph.Text);
+    }
+
+    private void MoveUp()
+    {
+        var index = PreambleReference.Paragraphs.IndexOf(this.Paragraph);
+        if (index > 0)
+        {
+            PreambleReference.Paragraphs.Swap(index - 1, index);
+            this.resolutionService.ReorderPreamble(ResolutionId, PreambleReference.Paragraphs.Select(n => n.PreambleParagraphId).ToList());
+            ParagraphMoved.InvokeAsync();
+        }
+    }
+
+    private void MoveDown()
+    {
+        var index = PreambleReference.Paragraphs.IndexOf(this.Paragraph);
+        if (index < PreambleReference.Paragraphs.Count)
+        {
+            PreambleReference.Paragraphs.Swap(index + 1, index);
+            this.resolutionService.ReorderPreamble(ResolutionId, PreambleReference.Paragraphs.Select(n => n.PreambleParagraphId).ToList());
+            ParagraphMoved.InvokeAsync();
+        }
     }
 }

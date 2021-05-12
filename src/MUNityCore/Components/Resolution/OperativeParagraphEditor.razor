@@ -1,4 +1,5 @@
 ﻿@inject Services.SqlResolutionService resolutionService;
+@using MUNity.Extensions; 
 @using MUNity.Extensions.ResolutionExtensions;
 
 
@@ -19,8 +20,8 @@
                         <a href="javascript:;" class="dropdown-item" @onclick="() => expanded = !expanded">
                             @((expanded) ? "Einklappen" : "Ausklappen")
                         </a>
-                        <a href="javascript:;" class="dropdown-item">Nach oben schieben</a>
-                        <a href="javascript:;" class="dropdown-item">Nach unten schieben</a>
+                        <a @onclick="MoveUp" style="cursor: pointer;" class="dropdown-item"><i class="fa fa-arrow-up"></i>Nach oben schieben</a>
+                        <a @onclick="MoveDown" style="cursor: pointer;" class="dropdown-item"><i class="fa fa-arrow-down"></i>Nach unten schieben</a>
                         <div class="dropdown-divider"></div>
                         <a href="javascript:;" class="dropdown-item text-danger-darker" @onclick="() => ParagraphRemoved.InvokeAsync(this.Paragraph)">Löschen</a>
                     </div>
@@ -88,6 +89,10 @@ else
                 {
                     <span>Änderungsantrag auf Hinzufügen erstellt hier einen neuen Absatz.</span>
                 }
+                else if (moveAmendment != null)
+                {
+                    <span>Hier wird paragraph @SectionReference.GetIndexNameOfOperativeParagraph(@sourceParagraphOfMove?.OperativeParagraphId) hin verschoben</span>
+                }
             </h4>
         </div>
     </div>
@@ -107,11 +112,30 @@ else
     [Parameter]
     public EventCallback<MUNity.Models.Resolution.OperativeParagraph> ParagraphRemoved { get; set; }
 
+    [Parameter]
+    public EventCallback ParagraphMoved { get; set; }
+
     private MUNity.Models.Resolution.AddAmendment addAmendment
     {
         get
         {
             return SectionReference.AddAmendments.FirstOrDefault(n => n.TargetSectionId == this.Paragraph.OperativeParagraphId);
+        }
+    }
+
+    private MUNity.Models.Resolution.MoveAmendment moveAmendment
+    {
+        get
+        {
+            return SectionReference.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId == this.Paragraph.OperativeParagraphId);
+        }
+    }
+
+    private MUNity.Models.Resolution.OperativeParagraph sourceParagraphOfMove
+    {
+        get
+        {
+            return SectionReference.FindOperativeParagraph(moveAmendment.TargetSectionId);
         }
     }
 
@@ -158,5 +182,27 @@ else
     private void SaveParagraphText(MUNity.Models.Resolution.OperativeParagraph paragraph)
     {
         resolutionService.SetOperativeParagraphText(paragraph.OperativeParagraphId, paragraph.Text);
+    }
+
+    private void MoveUp()
+    {
+        var index = SectionReference.GetIndexOfParagraph(this.Paragraph);
+        if (index > 0)
+        {
+            SectionReference.Paragraphs.Swap(index - 1, index);
+            this.resolutionService.ReorderOperative(ResolutionId, SectionReference.Paragraphs.Select(n => n.OperativeParagraphId).ToList());
+            ParagraphMoved.InvokeAsync();
+        }
+    }
+
+    private void MoveDown()
+    {
+        var index = SectionReference.GetIndexOfParagraph(this.Paragraph);
+        if (index < SectionReference.Paragraphs.Count)
+        {
+            SectionReference.Paragraphs.Swap(index + 1, index);
+            this.resolutionService.ReorderOperative(ResolutionId, SectionReference.Paragraphs.Select(n => n.OperativeParagraphId).ToList());
+            ParagraphMoved.InvokeAsync();
+        }
     }
 }

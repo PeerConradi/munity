@@ -67,7 +67,7 @@
                                 {
                                     @foreach (var paragraph in Resolution.OperativeSection.Paragraphs.Where(n => n.IsVirtual == false))
                                     {
-                                        <SelectItem Value="@Resolution.OperativeSection.GetIndexOfParagraph(paragraph)">hinter Paragraph @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(paragraph) @((paragraph.Text.Length > 20) ? paragraph.Text.Substring(0, 20) : paragraph.Text)</SelectItem>
+                                        <SelectItem Value="@(Resolution.OperativeSection.GetIndexOfParagraph(paragraph) +1)">hinter Paragraph @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(paragraph) @((paragraph.Text.Length > 20) ? paragraph.Text.Substring(0, 20) : paragraph.Text)</SelectItem>
                                     }
                                 }
                             </Select>
@@ -163,6 +163,7 @@
             else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment moveAmendment)
             {
                 this.Resolution.OperativeSection.MoveAmendments.Add(moveAmendment.ToModel());
+                this.Resolution.OperativeSection.Paragraphs.Insert(moveAmendment.VirtualParagraph.OrderIndex, moveAmendment.VirtualParagraph.ToModel());
             }
             this.AmendmentCreated.InvokeAsync();
         }

@@ -66,6 +66,12 @@
                                 Neuer Text: @ca.NewText
                             </div>
                         }
+                        else if (amendment is MUNity.Models.Resolution.AddAmendment aa)
+                        {
+                            <div class="mb-4 text-grey text-wrap">
+                                Text: @Resolution.OperativeSection.FindOperativeParagraph(aa.TargetSectionId)?.Text;
+                            </div>
+                        }
 
                         <div class="mb-4 text-grey">
                             <i class="fa fa-flag"></i> @amendment.SubmitterName (@amendment.SubmitTime.ToString("dd.MM HH:mm"))

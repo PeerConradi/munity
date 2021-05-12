@@ -70,7 +70,9 @@
         <PreambleParagraphEditor Paragraph="preambleParagraph"
                                  ResolutionId="@Resolution.ResolutionId"
                                  Index="@Resolution.Preamble.Paragraphs.IndexOf(preambleParagraph)"
-                                 OnRemove="RemovePreambleParagraph" />
+                                 OnRemove="RemovePreambleParagraph"
+                                 PreambleReference="@Resolution.Preamble" 
+                                 ParagraphMoved="OnParagraphMoved" />
     }
 
     <h3>Operativer Abschnitt (@Resolution.OperativeSection.Paragraphs.Count(n => n.IsVirtual == false) Absätze)</h3>
@@ -79,7 +81,8 @@
         <OperativeParagraphEditor Paragraph="operativeParagraph"
                                   ResolutionId="@Resolution.ResolutionId"
                                   SectionReference="Resolution.OperativeSection"
-                                  ParagraphRemoved="OnOperativeParagraphRemoved"/>
+                                  ParagraphRemoved="OnOperativeParagraphRemoved"
+                                  ParagraphMoved="OnParagraphMoved"/>
     }
 }
 
@@ -168,6 +171,11 @@
         {
             this.Resolution.Preamble.Paragraphs.Remove(paragraph);
         }
+    }
+
+    private void OnParagraphMoved()
+    {
+        this.StateHasChanged();
     }
 
     private void OnOperativeParagraphRemoved(MUNity.Models.Resolution.OperativeParagraph paragraph)

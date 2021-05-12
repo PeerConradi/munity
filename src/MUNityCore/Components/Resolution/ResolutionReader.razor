@@ -13,7 +13,7 @@
     }
     <br />
     <br />
-    foreach (var operativeParagraph in Resolution.OperativeSection.Paragraphs.Where(n => n.IsVirtual == false))
+    foreach (var operativeParagraph in Resolution.OperativeSection.Paragraphs)
     {
         <ResolutionReaderOperative Paragraph="operativeParagraph" Resolution="@Resolution" />
     }

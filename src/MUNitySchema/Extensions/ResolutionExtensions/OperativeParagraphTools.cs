@@ -328,6 +328,9 @@ namespace MUNity.Extensions.ResolutionExtensions
         /// <returns></returns>
         public static string GetIndexNameOfOperativeParagraph(this OperativeSection section, string paragraphId)
         {
+            if (string.IsNullOrEmpty(paragraphId) ||section == null)
+                return "";
+
             var path = section.GetOperativeParagraphPath(paragraphId);
             var numbers = new List<int>();
             OperativeParagraph parent = null;
