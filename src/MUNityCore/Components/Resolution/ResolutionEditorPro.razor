@@ -10,7 +10,8 @@
                     @if (simulationService.CurrentSimulation != null)
                     {
                         if (simulationService.CurrentSimulation.UserContext != null &&
-                            simulationService.CurrentSimulation.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate &&
+                            (simulationService.CurrentSimulation.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
+                            simulationService.CurrentSimulation.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo) &&
                             _info != null &&
                             _info.AllowAmendments &&
                             resolutionMode == EResolutionMode.Read)
