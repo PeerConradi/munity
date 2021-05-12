@@ -21,7 +21,7 @@
                 <TableHeaderCell>Feststellungsdatum</TableHeaderCell>
             </TableHeader>
             <TableBody>
-                @foreach (var slot in presents.CheckedUsers)
+                @foreach (var slot in presents.CheckedUsers.OrderBy(n => n.SimulationUser.Role.RoleType).ThenBy(n => n.SimulationUser.Role.Name))
                 {
                     <TableRow>
                         <TableRowCell>@slot.SimulationUser.Role?.Name</TableRowCell>
