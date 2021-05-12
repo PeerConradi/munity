@@ -4,12 +4,20 @@
 
 <AuthorizeView Roles="Admin, Moderator">
     <Authorized>
-        <div class="row">
-            @foreach (var simulation in _simulations)
+        <Row>
+            @if (_simulations != null)
             {
-                <SekSimulationInfoCard ViewModel="@simulation" />
+                @foreach (var simulation in _simulations)
+                {
+                    <SekSimulationInfoCard ViewModel="@simulation" />
+                }
             }
-        </div>
+            else
+                {
+                    <Paragraph>Simulationen werden geladen.</Paragraph>
+                }
+
+        </Row>
     </Authorized>
     <NotAuthorized>
         <Paragraph>Zutritt verweigert</Paragraph>

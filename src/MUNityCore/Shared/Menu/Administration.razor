@@ -1,7 +1,8 @@
 <AuthorizeView Roles="Admin">
     <Authorized>
         <li class="has-sub @subClass">
-            <a @onclick="() => isExpanded = !isExpanded">
+            <a @onclick="() => isExpanded = !isExpanded"
+               style="cursor: pointer;">
                 <b class="caret"></b>
                 <i class="fa fa-th-large"></i>
                 <span>Administration</span>

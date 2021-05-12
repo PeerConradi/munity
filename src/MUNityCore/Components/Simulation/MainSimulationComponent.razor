@@ -18,7 +18,7 @@ else if (loadingState == LoadingStates.Forbid)
 {
     <Paragraph>Du bist nicht berechtigt an dieser Simulation teilzunehmen.</Paragraph>
 }
-else if (loadingState == LoadingStates.Success)
+else if (loadingState == LoadingStates.Success && _simulationViewModel != null)
 {
 
     <ListOfSpeakerHeader ShowList="ShowListCallback" ViewModel="@_simulationViewModel.SpeakerlistViewModel" SimViewModel="@_simulationViewModel" />
@@ -140,6 +140,10 @@ else
                 _simulationViewModel = await this.frontService.GetOrInitViewModel(simulationId);
                 if (_simulationViewModel != null)
                 {
+                    if (_simulationViewModel.UserContext == null)
+                    {
+                        await this.frontService.EnsureUserContext(_simulationViewModel);
+                    }
                     this.loadingState = LoadingStates.Success;
                 }
                 else

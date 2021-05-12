@@ -7,7 +7,7 @@
 <h1 class="page-header mb-3">Tagesordnung</h1>
 
 
-@if (this.ViewModel != null)
+@if (this.ViewModel?.UserContext != null)
 {
     <Row>
         <div class="col-lg-4 col-md-12">
@@ -117,6 +117,14 @@
             </div>
         </div>
     </Row>
+}
+else
+{
+    <Paragraph>Tagesordnung wird geladen!</Paragraph>
+    @if (this.ViewModel != null && this.ViewModel.UserContext == null)
+    {
+        <Paragraph>Warte auf Authentifizierung!</Paragraph>
+    }
 }
 
 
