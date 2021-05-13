@@ -604,9 +604,9 @@ namespace MUNityCore.Services
             return simulation;
         }
 
-        public IEnumerable<Simulation> GetSimulations()
+        public List<Simulation> GetSimulations()
         {
-            return this._context.Simulations.AsEnumerable();
+            return this._context.Simulations.ToList();
         }
 
         public List<int> GetIdsOfAllSimulations()
@@ -833,6 +833,13 @@ namespace MUNityCore.Services
             if (auth == null) return false;
             auth.Simulation = null;
             this._context.SaveChanges();
+            return true;
+        }
+
+        internal bool LinkResolution(Simulation simulation, MUNityCore.Models.Resolution.V2.ResolutionAuth auth)
+        {
+            auth.Simulation = simulation;
+            _context.SaveChanges();
             return true;
         }
 

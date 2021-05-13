@@ -207,8 +207,6 @@ namespace MUNityCore.DataHandlers.EntityFramework
 
             modelBuilder.Entity<ResaElement>().HasMany(n => n.OperativeParagraphs).WithOne(n => n.Resolution);
 
-            
-
             modelBuilder.Entity<ResaOperativeParagraph>().HasOne(n => n.Parent).WithMany(n => n.Children);
 
             modelBuilder.Entity<ResaOperativeParagraph>().HasMany(n => n.DeleteAmendments).WithOne(n => n.TargetParagraph);

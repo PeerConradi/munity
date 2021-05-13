@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -50,6 +51,8 @@ namespace MUNityCore.Models.Resolution.V2
 
         public Simulation.Simulation Simulation { get; set; }
 
+        [ForeignKey(nameof(ResolutionId))]
+        public MUNityCore.Models.Resolution.SqlResa.ResaElement Resolution { get; set; }
 
         public ResolutionAuth(MUNity.Models.Resolution.Resolution resolution)
         {

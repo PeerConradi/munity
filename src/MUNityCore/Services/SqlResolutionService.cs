@@ -887,5 +887,11 @@ namespace MUNityCore.Services
                     return null;
             }
         }
+
+        internal List<ResolutionAuth> GetAuthsWithSimulationsOrResolutions()
+        {
+            return _context.ResolutionAuths.Include(n => n.Resolution)
+                .Include(n => n.Simulation).ToList();
+        }
     }
 }
