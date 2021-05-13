@@ -53,7 +53,7 @@ The project uses swagger. Go to localhost:[port]/swagger to see the auto generat
 
 ## Demo
 
-Find a Demo here (MUN-TOOLS)[https://www.mun-tools.com/]
+Find a Demo here (MUN-TOOLS)[https://mun-tools.com/]
 
 _The Live Version may not match the current GitHub Version_
 
