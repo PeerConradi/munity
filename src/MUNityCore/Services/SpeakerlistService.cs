@@ -192,10 +192,14 @@ namespace MUNityCore.Services
 
         internal bool AddQuestionSeconds(string listId, int seconds)
         {
-            var list = _context.ListOfSpeakers
-                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
-            if (list == null) return false;
-            list.AddQuestionSeconds(seconds);
+            var currentQuestion = _context.Speakers.Include(n => n.ListOfSpeakers)
+                .FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId && n.Mode == Speaker.SpeakerModes.CurrentQuestion);
+            if (currentQuestion == null) return false;
+
+            var logEntry = EnsureLogEntry(currentQuestion.ListOfSpeakers, currentQuestion.Iso, currentQuestion.Name);
+            logEntry.PermitedQuestionsSeconds += seconds;
+
+            currentQuestion.ListOfSpeakers.AddQuestionSeconds(seconds);
             this._context.SaveChanges();
             return true;
         }
@@ -207,25 +211,22 @@ namespace MUNityCore.Services
 
         internal bool AddSpeakerSeconds(string listId, int seconds)
         {
-            var list = _context.ListOfSpeakers
-                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
-            if (list == null) return false;
-            list.AddSpeakerSeconds(seconds);
+            var currentSpeaker = _context.Speakers.Include(n => n.ListOfSpeakers)
+                .FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId && n.Mode == Speaker.SpeakerModes.CurrentQuestion);
+            if (currentSpeaker == null) return false;
+
+            var logEntry = EnsureLogEntry(currentSpeaker.ListOfSpeakers, currentSpeaker.Iso, currentSpeaker.Name);
+            logEntry.PermitedQuestionsSeconds += seconds;
+
+            currentSpeaker.ListOfSpeakers.AddSpeakerSeconds(seconds);
             this._context.SaveChanges();
             return true;
-        }
-
-        [Obsolete("You should not call this from outside the service")]
-        public void SaveChanges()
-        {
-            this._context.SaveChanges();
         }
 
         public ListOfSpeakers GetSpeakerlistByPublicId(string publicId)
         {
             return this._context.ListOfSpeakers.Include(n => n.AllSpeakers).FirstOrDefault(n => n.PublicId == publicId);
         }
-
 
         public SpeakerlistService(DataHandlers.EntityFramework.MunityContext context)
         {
@@ -277,6 +278,17 @@ namespace MUNityCore.Services
         {
             var list = this._context.ListOfSpeakers.Include(n => n.AllSpeakers).FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return false;
+
+            // Save time of speaker
+            if (list.CurrentSpeaker != null)
+            {
+                var speakerEntry = EnsureLogEntry(list, list.CurrentSpeaker.Iso, list.CurrentSpeaker.Name);
+                if (speakerEntry != null)
+                {
+                    speakerEntry.UsedSpeakerSeconds += (long)(list.RemainingSpeakerTime.TotalSeconds - list.SpeakerTime.TotalSeconds) * -1;
+                }
+            }
+
             var result = list.NextSpeaker();
             var logNewSpeaker = EnsureLogEntry(list, result.newSpeaker.Iso, result.newSpeaker.Name);
             if (logNewSpeaker != null)
@@ -295,6 +307,17 @@ namespace MUNityCore.Services
                 .Include(n => n.AllSpeakers)
                 .FirstOrDefault(n => n.ListOfSpeakersId == listid);
             if (list == null) return false;
+
+            // Save time of speaker
+            if (list.CurrentQuestion != null)
+            {
+                var speakerEntry = EnsureLogEntry(list, list.CurrentQuestion.Iso, list.CurrentQuestion.Name);
+                if (speakerEntry != null)
+                {
+                    speakerEntry.UsedQuestionSeconds += (long)(list.RemainingQuestionTime.TotalSeconds - list.QuestionTime.TotalSeconds) * -1;
+                }
+            }
+
             var result = list.NextQuestion();
 
             var logNewSpeaker = EnsureLogEntry(list, result.newSpeaker.Iso, result.newSpeaker.Name);
@@ -412,10 +435,16 @@ namespace MUNityCore.Services
 
         internal bool ClearSpeaker(string listId)
         {
-            var speaker = _context.Speakers.FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId &&
+            var speaker = _context.Speakers.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId &&
             n.Mode == Speaker.SpeakerModes.CurrentlySpeaking);
             if (speaker != null)
             {
+                var speakerEntry = EnsureLogEntry(speaker.ListOfSpeakers, speaker.Iso, speaker.Name);
+                if (speakerEntry != null)
+                {
+                    speakerEntry.UsedSpeakerSeconds += (long)(speaker.ListOfSpeakers.RemainingSpeakerTime.TotalSeconds - speaker.ListOfSpeakers.SpeakerTime.TotalSeconds) * -1;
+                }
+
                 _context.Speakers.Remove(speaker);
                 _context.SaveChanges();
                 return true;
@@ -430,10 +459,17 @@ namespace MUNityCore.Services
 
         internal bool ClearQuestion(string listId)
         {
-            var speaker = _context.Speakers.FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId &&
+
+            var speaker = _context.Speakers.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId &&
             n.Mode == Speaker.SpeakerModes.CurrentQuestion);
             if (speaker != null)
             {
+                var speakerEntry = EnsureLogEntry(speaker.ListOfSpeakers, speaker.Iso, speaker.Name);
+                if (speakerEntry != null)
+                {
+                    speakerEntry.UsedQuestionSeconds += (long)(speaker.ListOfSpeakers.RemainingQuestionTime.TotalSeconds - speaker.ListOfSpeakers.QuestionTime.TotalSeconds) * -1;
+                }
+
                 _context.Speakers.Remove(speaker);
                 _context.SaveChanges();
                 return true;
@@ -453,22 +489,6 @@ namespace MUNityCore.Services
                 .FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return false;
             var oldState = list.Pause();
-            if ((oldState == ListOfSpeakers.EStatus.Speaking || oldState == ListOfSpeakers.EStatus.Answer ) && list.CurrentSpeaker != null)
-            {
-                var speakerEntry = EnsureLogEntry(list, list.CurrentSpeaker.Iso, list.CurrentSpeaker.Name);
-                if (speakerEntry != null)
-                {
-                    speakerEntry.UsedSpeakerSeconds += (long)(DateTime.Now.ToUniversalTime() - list.StartSpeakerTime).TotalSeconds;
-                }
-            }
-            else if (oldState == ListOfSpeakers.EStatus.Question && list.CurrentQuestion != null)
-            {
-                var questionEntry = EnsureLogEntry(list, list.CurrentQuestion.Iso, list.CurrentQuestion.Name);
-                if (questionEntry != null)
-                {
-                    questionEntry.UsedQuestionSeconds += (long)(DateTime.Now.ToUniversalTime() - list.StartQuestionTime).TotalSeconds;
-                }
-            }
             _context.SaveChanges();
             return true;
         }
