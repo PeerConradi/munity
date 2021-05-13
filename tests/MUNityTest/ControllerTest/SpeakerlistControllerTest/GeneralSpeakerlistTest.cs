@@ -190,14 +190,14 @@ namespace MUNityCoreTest.ControllerTest.SpeakerlistControllerTest
 
         [Test]
         [Order(9)]
-        public async Task TestNextQuestion()
+        public void TestNextQuestion()
         {
             var dto = new ListOfSpeakersRequest()
             {
                 ListOfSpeakersId = listId,
                 Token = "test"
             };
-            var result = await controller.NextQuestion(dto);
+            var result = controller.NextQuestion(dto);
             Assert.IsTrue(result is OkResult, $"Expected an ok result but got: {result.GetType()}");
             var list = GetTestSpeakerlist();
             Assert.NotNull(list.CurrentQuestion);
