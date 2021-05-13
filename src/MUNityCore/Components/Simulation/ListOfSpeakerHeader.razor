@@ -1,4 +1,5 @@
 ﻿@inject Services.FrontendSimulationService frontendSimulationService;
+@inject IJSRuntime jsRuntime;
 
 <div class="row bg-dark text-white @((OffsetMargin) ? "remove-padding" : null) ">
 
@@ -22,18 +23,7 @@
                 <span class="text-sm-left text-secondary">Zeit</span>
             </div>
             <div class="row">
-                @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds <= 0 && ViewModel.Speakerlist.CurrentSpeaker != null)
-                {
-                    <h4 class="text-danger animate__animated animate__flash animate__repeat-3">Zum Ende kommen!</h4>
-                }
-                else if (ViewModel.Speakerlist.CurrentSpeaker != null)
-                {
-                    <h4 class="@speakerTimeClass">@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
-                }
-                else
-                {
-                    <h4 class="text-white">@ViewModel.Speakerlist.SpeakerTime.ToString(@"mm\:ss")</h4>
-                }
+                <h4 id="speakerTimer">@this.ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
             </div>
             <div class="row" style="margin-top: -5px;">
                 @if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
@@ -70,18 +60,7 @@
                 <span class="text-sm-left text-secondary">Zeit</span>
             </div>
             <div class="row">
-                @if (ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds <= 0 && ViewModel.Speakerlist.CurrentQuestion != null)
-                {
-                    <h4 class="text-danger animate__animated animate__flash animate__repeat-3">Zum Ende kommen!</h4>
-                }
-                else if (ViewModel.Speakerlist.CurrentQuestion != null)
-                {
-                    <h4 class="@questionTimeClass">@ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss")</h4>
-                }
-                else
-                {
-                    <h4 class="text-white">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</h4>
-                }
+                <h4 id="questionTimer">@((this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds > 0) ? this.ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss") : "Zum Ende kommen")</h4>
             </div>
             <div class="row" style="margin-top: -5px;">
                 <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
@@ -189,11 +168,16 @@
 
     protected override void OnInitialized()
     {
-        this.ViewModel.SpeakerlistChanged += delegate { this.StateHasChanged(); };
-        this.refreshTimer = new System.Timers.Timer(1000);
-        this.refreshTimer.Elapsed += OnTimeTick;
-        this.refreshTimer.Start();
+        this.ViewModel.SpeakerlistChanged += delegate {
+            HandleSpeakerlistToJavaScript();
+            this.StateHasChanged();
+        };
+        //this.ViewModel.SpeakerStarted += delegate {  };
+        //this.refreshTimer = new System.Timers.Timer(1000);
+        //this.refreshTimer.Elapsed += OnTimeTick;
+        //this.refreshTimer.Start();
         base.OnInitialized();
+        this.HandleSpeakerlistToJavaScript();
     }
 
     private void OnTimeTick(object sender, System.Timers.ElapsedEventArgs args)
@@ -203,6 +187,37 @@
         this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking)
         {
             InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void HandleSpeakerlistToJavaScript()
+    {
+        if (this.ViewModel == null)
+            return;
+
+        if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
+            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
+        {
+            this.jsRuntime.InvokeVoidAsync("startSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer");
+        }
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.SpeakerPaused)
+        {
+            this.jsRuntime.InvokeVoidAsync("pauseQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
+            this.jsRuntime.InvokeVoidAsync("pauseSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer");
+        }
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Stopped)
+        {
+            this.jsRuntime.InvokeVoidAsync("resetSpeakerTimer", (int)this.ViewModel.Speakerlist.SpeakerTime.TotalSeconds, "speakerTimer");
+            this.jsRuntime.InvokeVoidAsync("resetQuestionTimer", (int)this.ViewModel.Speakerlist.QuestionTime.TotalSeconds, "questionTimer");
+        }
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
+        {
+            this.jsRuntime.InvokeVoidAsync("pauseSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer");
+            this.jsRuntime.InvokeVoidAsync("startQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
+        }
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.QuestionPaused)
+        {
+            this.jsRuntime.InvokeVoidAsync("pauseQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
         }
     }
 }

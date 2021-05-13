@@ -92,6 +92,7 @@ namespace MUNityCore.ViewModel
 
         private void HandlePauseBy()
         {
+            var preState = this.Speakerlist.Status;
             this._listOfSpeakers.Pause();
             this.SpeakerlistChanged?.Invoke(this, new EventArgs());
         }

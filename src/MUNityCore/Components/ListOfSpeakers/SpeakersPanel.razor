@@ -1,4 +1,6 @@
-﻿<div class="card border-0 text-truncate mb-3 bg-dark text-white">
+﻿@inject IJSRuntime jsRuntime; 
+
+<div class="card border-0 text-truncate mb-3 bg-dark text-white">
     <div class="card-body">
         <div class="text-grey">
             <b class="mr-3">Redeliste</b>
@@ -78,7 +80,7 @@
 
         <div class="mb-4 text-grey">
             <i class="fa fa-clock mr-2"></i>
-            @if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds > 0)
+            @*@if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds > 0)
             {
                 <span>@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss") verbleibend</span>
             }
@@ -92,7 +94,8 @@
                 {
                     <span class="text-red">Bitte zum Ende kommen!</span>
                 }
-            }
+            }*@
+            <span id="speakerTimer_panel">@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</span>
 
             @if (SimViewModel.UserContext.IsChair && (ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
               ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer))
@@ -186,8 +189,6 @@
 
     [Parameter]
     public ViewModel.SimulationViewModel SimViewModel { get; set; }
-
-    private System.Timers.Timer refreshTimer;
 
     private string manualSpeakerName;
 
@@ -310,10 +311,32 @@
 
     protected override void OnInitialized()
     {
-        this.refreshTimer = new System.Timers.Timer(1000);
-        this.refreshTimer.Elapsed += delegate { RefreshView(); };
-        this.refreshTimer.Start();
+        this.ViewModel.SpeakerlistChanged += delegate { this.HandleSpeakerlistToJavaScript(); this.StateHasChanged(); };
         base.OnInitialized();
+    }
+
+    private void HandleSpeakerlistToJavaScript()
+    {
+        if (this.ViewModel == null)
+            return;
+
+        if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
+            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
+        {
+            this.jsRuntime.InvokeVoidAsync("startSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer_panel");
+        }
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.SpeakerPaused)
+        {
+            this.jsRuntime.InvokeVoidAsync("pauseSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer_panel");
+        }
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Stopped)
+        {
+            this.jsRuntime.InvokeVoidAsync("resetSpeakerTimer", (int)this.ViewModel.Speakerlist.SpeakerTime.TotalSeconds, "speakerTimer_panel");
+        }
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
+        {
+            this.jsRuntime.InvokeVoidAsync("pauseSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer_panel");
+        }
     }
 
     private void RefreshView()
