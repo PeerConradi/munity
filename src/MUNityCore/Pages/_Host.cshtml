@@ -19,6 +19,7 @@
     <link href="material/app.min.css" rel="stylesheet" />
 </head>
 <body>
+    <h3 id="incompatibleBrowser">Ihr Browser ist inkompatibel. Bitte wechseln Sie auf einen <a href="https://www.google.com/intl/de/chrome/">moderneren</a> Browser.</h3>
     <!-- Blazor overlay -->
     <div id="components-reconnect-modal" class="my-reconnect-modal components-reconnect-hide">
         <div class="show">
@@ -47,7 +48,26 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <script defer>
+        const supported = (() => {
+            try {
+                if (typeof WebAssembly === "object"
+                    && typeof WebAssembly.instantiate === "function") {
+                    const module = new WebAssembly.Module(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+                    if (module instanceof WebAssembly.Module)
+                        return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
+                }
+            } catch (e) {
+            }
+            return false;
+        })();
 
+    if(supported){
+        document.getElementById('incompatibleBrowser').style.display = "none";
+    }
+
+
+    </script>
 
 
     <!-- inside of body section and after the div/app tag  -->

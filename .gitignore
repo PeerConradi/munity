@@ -332,3 +332,4 @@ ASALocalRun/
 # Test Environment Configuration
 testsettings.json
 MUNityClient/dist
+src/MUNityCore/munity.db
