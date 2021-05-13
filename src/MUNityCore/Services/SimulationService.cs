@@ -130,7 +130,8 @@ namespace MUNityCore.Services
             return returnVal;
         }
 
-        internal SimulationVoting CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions, bool allowNgoVote)
+
+        internal SimulationVoting CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions, bool allowNgoVote, IEnumerable<int> exeptions)
         {
             var activeVotings = this._context.SimulationVotings.Where(n => n.Simulation.SimulationId == simulationId
             && n.IsActive);
@@ -149,7 +150,7 @@ namespace MUNityCore.Services
             };
 
             mdl.VoteSlots = _context.SimulationUser.Where(n => n.Simulation.SimulationId == simulationId &&
-                n.Role != null && (n.Role.RoleType == RoleTypes.Delegate || allowNgoVote && n.Role.RoleType == RoleTypes.Ngo))
+                n.Role != null && (n.Role.RoleType == RoleTypes.Delegate || allowNgoVote && n.Role.RoleType == RoleTypes.Ngo) && !exeptions.Contains(n.SimulationUserId))
                     .Select(n => new SimulationVotingSlot()
                     {
                         Choice = EVoteStates.NotVoted,
@@ -162,7 +163,7 @@ namespace MUNityCore.Services
             return mdl;
         }
 
-        internal SimulationVoting CreateVotingsForPresentDelegates(int presentsId, string text, bool allowAbstention, bool allowNgoVote)
+        internal SimulationVoting CreateVotingsForPresentDelegates(int presentsId, string text, bool allowAbstention, bool allowNgoVote, IEnumerable<int> exceptions)
         {
             var presents = this._context.PresentChecks
                 .Include(n => n.CheckedUsers)
@@ -189,7 +190,7 @@ namespace MUNityCore.Services
 
             mdl.VoteSlots = presents.CheckedUsers.Where(n => 
             (n.SimulationUser.Role.RoleType == RoleTypes.Delegate || allowNgoVote && n.SimulationUser.Role.RoleType == RoleTypes.Ngo) && 
-            n.State == PresentsState.PresentsStates.Present)
+            n.State == PresentsState.PresentsStates.Present && !exceptions.Contains(n.SimulationUser.SimulationUserId))
                     .Select(n => new SimulationVotingSlot()
                     {
                         Choice = EVoteStates.NotVoted,
@@ -1559,6 +1560,18 @@ namespace MUNityCore.Services
             _context.SimulationInvites.RemoveRange(initeLinks);
             Console.WriteLine($"{initeLinks.Count} Invite Links entfernt!");
             _context.SaveChanges();
+        }
+
+        internal List<SimulationUserDisplay> GetDelegationAndNgoDisplaysOfSimulation(int simulationId)
+        {
+            return this._context.SimulationUser.AsNoTracking().Include(n => n.Role)
+                .Where(n => n.Simulation.SimulationId == simulationId &&
+                (n.Role.RoleType == RoleTypes.Delegate || n.Role.RoleType == RoleTypes.Ngo))
+                .Select(n => new SimulationUserDisplay()
+                {
+                    SimulationUserId = n.SimulationUserId,
+                    Name = n.Role.Name
+                }).ToList();
         }
     }
 }

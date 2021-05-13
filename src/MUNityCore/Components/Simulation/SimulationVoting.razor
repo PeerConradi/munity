@@ -55,6 +55,37 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group row m-b-10">
+                        <label class="col-md-3 col-form-label">Von der Abstimmung ausgeschlossen</label>
+                        <div class="col-md-9 p-t-3">
+                            <div class="row">
+                                <div class="col-8">
+                                    <select @bind="exceptedFromVoteSelection" class="form-control">
+                                        @foreach (var user in userDisplays.Where(n => !NewVoting.VoteExceptions.Contains(n.SimulationUserId)))
+                                        {
+                                            <option value="@user.SimulationUserId">@user.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <button class="btn btn-primary" type="button" @onclick="() => NewVoting.VoteExceptions.Add(exceptedFromVoteSelection)">Von Abstimmung ausschließen</button>
+                                </div>
+                            </div>
+                            @foreach (var voteException in NewVoting.VoteExceptions)
+                            {
+                                <div class="row">
+                                    <div class="col-8">
+                                        @userDisplays.FirstOrDefault(n => n.SimulationUserId == voteException)?.Name
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success" type="button" @onclick="() => NewVoting.VoteExceptions.Remove(voteException)">Wieder aufnehmen</button>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
                     <button class="btn btn-success" type="submit">Abstimmung erstellen!</button>
                 </EditForm>
                 
@@ -203,25 +234,19 @@
 
     private MUNityCore.Models.Simulation.SimulationPresents currentPresents;
 
-    private class CreateNewVotingModel
-    {
-        public string DisplayName { get; set; }
-
-        public bool AllowAbstention { get; set; } = false;
-
-        public bool AllowNgoVote { get; set; } = false;
-
-        public int PresentsId { get; set; } = -1;
-    }
-
-    private CreateNewVotingModel NewVoting = new CreateNewVotingModel();
+    private MUNity.Schema.Simulation.Voting.NewVotingSocketDto NewVoting = new MUNity.Schema.Simulation.Voting.NewVotingSocketDto();
 
     MUNity.Schema.Simulation.Voting.SimulationVotingDto currentVoting;
+
+    private List<MUNity.Schema.Simulation.SimulationUserDisplay> userDisplays;
+
+    private int exceptedFromVoteSelection;
 
     protected override void OnInitialized()
     {
         if (this.ViewModel != null)
         {
+            this.userDisplays = simulationService.GetDelegationAndNgoDisplaysOfSimulation(this.ViewModel.SimulationId);
             this.ViewModel.VotingCreated += OnVotingCreated;
             this.ViewModel.Voted += OnVoted;
             ReloadCurrentVoting();
@@ -280,14 +305,8 @@
 
     private async Task CreateVoting()
     {
-        if (NewVoting.PresentsId == -1)
-        {
-            await this.ViewModel.CreateVoting(NewVoting.DisplayName, NewVoting.AllowAbstention, NewVoting.AllowNgoVote);
-        }
-        else
-        {
-            await this.ViewModel.CreateVotingForPresentDelegates(NewVoting.PresentsId, NewVoting.DisplayName, NewVoting.AllowAbstention, NewVoting.AllowNgoVote);
-        }
+        NewVoting.SimulationId = this.ViewModel.SimulationId;
+        await this.ViewModel.CreateVoting(NewVoting);
 
     }
 }

@@ -66,30 +66,39 @@ namespace MUNityCore.Hubs
                 .Select(n => n.Value.SimulationUserId).ToList());
         }
 
-        public void CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions, bool allowNgoVote)
+        public void CreateVotingForDelegates(int simulationId, string text, bool allowAbstentions, bool allowNgoVote, IEnumerable<int> exceptions)
         {
             if (!IsContextChair())
                 return;
 
-            var mdl = _service.CreateVotingForDelegates(simulationId, text, allowAbstentions, allowNgoVote);
+            var mdl = _service.CreateVotingForDelegates(simulationId, text, allowAbstentions, allowNgoVote, exceptions);
 
             var dto = _service.GetCurrentVoting(simulationId);
             _simulationLogger.LogVotingCreated(simulationId, text);
             this.Clients.Group("sim_" + simulationId.ToString()).VoteCreated(dto);
-            return;
         }
 
-        public void CreateVotingForPresentDelegates(int presentsId, string text, bool allowAbstentions,bool allowNgoVote)
+        public void CreateVoting(MUNity.Schema.Simulation.Voting.NewVotingSocketDto model)
         {
             if (!IsContextChair())
                 return;
 
-            var mdl = _service.CreateVotingsForPresentDelegates(presentsId, text, allowAbstentions, allowNgoVote);
+            if (model.PresentsId == -1)
+                CreateVotingForDelegates(model.SimulationId, model.DisplayName, model.AllowAbstention, model.AllowNgoVote, model.VoteExceptions);
+            else
+                CreateVotingForPresentDelegates(model.PresentsId, model.DisplayName, model.AllowAbstention, model.AllowNgoVote, model.VoteExceptions);
+        }
+
+        public void CreateVotingForPresentDelegates(int presentsId, string text, bool allowAbstentions,bool allowNgoVote, IEnumerable<int> exeptions)
+        {
+            if (!IsContextChair())
+                return;
+
+            var mdl = _service.CreateVotingsForPresentDelegates(presentsId, text, allowAbstentions, allowNgoVote, exeptions);
 
             var dto = _service.GetCurrentVoting(mdl.Simulation.SimulationId);
             _simulationLogger.LogVotingCreated(mdl.Simulation.SimulationId, text);
             this.Clients.Group("sim_" + mdl.Simulation.SimulationId.ToString()).VoteCreated(dto);
-            return;
         }
 
         public async Task Vote(string votingId, MUNity.Schema.Simulation.EVoteStates choice)
