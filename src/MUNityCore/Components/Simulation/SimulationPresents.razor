@@ -1,75 +1,85 @@
 ﻿@inject Services.FrontendSimulationService frontendSimulationService;
 @inject Services.PresentsService presentsService;
 
-<h3>Anwesenheit</h3>
-<button class="btn btn-block btn-outline-primary" @onclick="ReloadCurrentPresents">Aktualisieren</button>
 
-@if (SimViewModel != null && SimViewModel.UserContext != null)
-{
-
-
-    @if (SimViewModel.UserContext.IsChair)
-    {
-        <button class="btn btn-block btn-primary" @onclick="CreateNewPresentsCheck">Neue Anwesenheitsfeststellung</button>
-        @if (presents != null)
+<div class="panel panel-inverse" data-sortable-id="ui-widget-1">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            Anwesenheit
+            <button class="btn btn-outline-primary" @onclick="ReloadCurrentPresents">Aktualisieren</button>
+        </h4>
+    </div>
+    <div class="panel-body">
+        @if (SimViewModel != null && SimViewModel.UserContext != null)
         {
-            <CheckPresentsTable Presents="@presents" />
+
+
+            @if (SimViewModel.UserContext.IsChair)
+            {
+                <button class="btn btn-block btn-primary" @onclick="CreateNewPresentsCheck">Neue Anwesenheitsfeststellung</button>
+                @if (presents != null)
+                {
+                    <CheckPresentsTable Presents="@presents" />
+                }
+            }
+            else if (SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
+                SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)
+            {
+
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is12">
+                        <Heading Size="HeadingSize.Is3">Feststellung gestartet: @presents.CreatedTime.ToString()</Heading>
+                    </Column>
+
+
+
+                    @if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Present)
+                    {
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Heading Size="HeadingSize.Is1">
+                                <Badge Color="Color.Success"><Icon Name="IconName.Check" /> Sie sind als anwesend gemeldet</Badge>
+                            </Heading>
+                        </Column>
+
+                    }
+                    else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Absent)
+                    {
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Heading Size="HeadingSize.Is1">
+                                <Badge Color="Color.Danger"><Icon Name="IconName.Times" /> Sie sind als abwesend gemeldet</Badge>
+                            </Heading>
+                        </Column>
+                    }
+                    else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.NotChecked)
+                    {
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Heading Size="HeadingSize.Is1">
+                                <Badge Color="Color.Primary"><Icon Name="IconName.QuestionCircle" /> Sie sind noch nicht erfasst</Badge>
+                            </Heading>
+                        </Column>
+                    }
+                    else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Late)
+                    {
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Alert Color="Color.Warning">Sie wurden nachträglich mit aufgenommen</Alert>
+                        </Column>
+                    }
+                </Row>
+
+            }
+            else
+            {
+                <Paragraph>Zugriff verweigert!</Paragraph>
+            }
         }
-    }
-    else if (SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate ||
-        SimViewModel.UserContext.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)
-    {
-
-        <Row>
-            <Column ColumnSize="ColumnSize.Is12">
-                <Heading Size="HeadingSize.Is3">Feststellung gestartet: @presents.CreatedTime.ToString()</Heading>
-            </Column>
+        else
+        {
+            <Paragraph>Wird geladen!</Paragraph>
+        }
+    </div>
+</div>
 
 
-
-            @if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Present)
-            {
-                <Column ColumnSize="ColumnSize.Is12">
-                    <Heading Size="HeadingSize.Is1">
-                        <Badge Color="Color.Success"><Icon Name="IconName.Check" /> Sie sind als anwesend gemeldet</Badge>
-                    </Heading>
-                </Column>
-
-            }
-            else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Absent)
-            {
-                <Column ColumnSize="ColumnSize.Is12">
-                    <Heading Size="HeadingSize.Is1">
-                        <Badge Color="Color.Danger"><Icon Name="IconName.Times" /> Sie sind als abwesend gemeldet</Badge>
-                    </Heading>
-                </Column>
-            }
-            else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.NotChecked)
-            {
-                <Column ColumnSize="ColumnSize.Is12">
-                    <Heading Size="HeadingSize.Is1">
-                        <Badge Color="Color.Primary"><Icon Name="IconName.QuestionCircle" /> Sie sind noch nicht erfasst</Badge>
-                    </Heading>
-                </Column>
-            }
-            else if (myPresentsState.State == Models.Simulation.PresentsState.PresentsStates.Late)
-            {
-                <Column ColumnSize="ColumnSize.Is12">
-                    <Alert Color="Color.Warning">Sie wurden nachträglich mit aufgenommen</Alert>
-                </Column>
-            }
-        </Row>
-
-    }
-    else
-    {
-        <Paragraph>Zugriff verweigert!</Paragraph>
-    }
-}
-else
-{
-    <Paragraph>Wird geladen!</Paragraph>
-}
 
 @code {
     [Parameter]

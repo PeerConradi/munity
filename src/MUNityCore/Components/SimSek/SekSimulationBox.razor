@@ -1,4 +1,6 @@
-﻿@inject Services.FrontendSimulationService frontendSimulationService;
+﻿@using MUNityCore.Extensions.CastExtensions;
+
+@inject Services.FrontendSimulationService frontendSimulationService;
 @inject Services.SimulationService simulationService;
 @inject Services.SpeakerlistService speakerlistService;
 @page "/sek/sim/{Id}"
@@ -8,7 +10,7 @@
         @if (SimViewModel != null)
         {
             <div class="row">
-                <h4>@SimViewModel.SimulationId @SimViewModel.Name</h4>
+                <h4>@SimViewModel.SimulationId @SimViewModel.Name  Status: @currentStatus?.StatusText</h4>
             </div>
 
             <div class="row">
@@ -95,6 +97,8 @@
 
     private bool fadeOutNewPetition = false;
 
+    private MUNity.Schema.Simulation.SimulationStatusDto currentStatus;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -123,6 +127,8 @@
                 _speakerlistLog = speakerlistService.GetLog(this.SimViewModel.SpeakerlistViewModel.SpeakerlistId);
             }
             SimViewModel.PetitionAdded += OnPetitionAdded;
+            SimViewModel.StatusChanged += OnStatusChanged;
+            currentStatus = this.simulationService.GetCurrentStatus(SimViewModel.SimulationId).ToModel();
         }
         agendaBoard?.ReloadAgendaItems();
         await InvokeAsync(StateHasChanged);
@@ -139,5 +145,11 @@
             this.fadeOutNewPetition = true;
             InvokeAsync(StateHasChanged);
         });
+    }
+
+    private void OnStatusChanged(object sender, MUNity.Schema.Simulation.SimulationStatusDto status)
+    {
+        currentStatus = status;
+        InvokeAsync(this.StateHasChanged);
     }
 }

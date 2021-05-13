@@ -15,6 +15,8 @@ namespace MUNityCore.Services
 
         public event EventHandler<bool> ShowSidebarChanged;
 
+        public event EventHandler<bool> ShowSidebarLageViewChanged;
+
         public int LoadingState
         {
             get => _loadingState;
@@ -37,6 +39,20 @@ namespace MUNityCore.Services
                 {
                     _showSidebar = value;
                     ShowSidebarChanged?.Invoke(this, value);
+                }
+            }
+        }
+
+        private bool _showSidbarLageView = true;
+        public bool ShowSidebarLargeView
+        {
+            get => _showSidbarLageView;
+            set
+            {
+                if (_showSidbarLageView != value)
+                {
+                    _showSidbarLageView = value;
+                    ShowSidebarLageViewChanged?.Invoke(this, value);
                 }
             }
         }

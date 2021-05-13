@@ -16,8 +16,11 @@
 
 <div id="page-container" class="page-container fade page-sidebar-fixed page-header-fixed show @((mainViewService.ShowSidebar) ? "page-sidebar-toggled" : null)">
     <Header />
-    <Sidebar />
-    <div id="content" class="content">
+    @if (mainViewService.ShowSidebar || mainViewService.ShowSidebarLargeView)
+    {
+        <Sidebar />
+    }
+    <div class="@((mainViewService.ShowSidebarLargeView) ? "content" : "content-full-width p-l-20 p-r-20 p-t-25")">
         @Body
     </div>
 </div>
@@ -52,6 +55,7 @@
     {
         mainViewService.LoadingStateChanged += delegate { this.StateHasChanged(); };
         mainViewService.ShowSidebarChanged += delegate { this.StateHasChanged(); };
+        mainViewService.ShowSidebarLageViewChanged += delegate { StateHasChanged(); };
         navManager.LocationChanged += ToggleSidebarOnNavChanged;
         base.OnInitialized();
     }

@@ -6,15 +6,19 @@
 <div id="header" class="header navbar-default">
 	<!-- begin navbar-header -->
     <div class="navbar-header">
+        <!-- Menu-Button for large views -->
+        <button type="button" class="navbar-toggle collapsed navbar-toggle-left" @onclick="() => mainViewService.ShowSidebarLargeView = !mainViewService.ShowSidebarLargeView">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+
         <a href="/" class="navbar-brand">
             MUNity
         </a>
 
-        @*<button type="button" class="navbar-toggle collapsed navbar-toggle-left" @onclick="() => mainViewService.ShowSidebar = false">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>*@
+
+
         <button type="button" class="navbar-toggle" @onclick="() => mainViewService.ShowSidebar = !mainViewService.ShowSidebar">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
