@@ -60,7 +60,7 @@
 
 <div class="panel panel-inverse">
     <div class="panel-heading ">
-        <h4 class="panel-title">Filter einstellen</h4>
+        <h4 class="panel-title">Protokoll</h4>
     </div>
     <div class="panel-body">
         <Table>
@@ -82,8 +82,30 @@
                     @foreach (var entry in log)
                     {
                         <TableRow>
-                            <TableRowCell>@entry.Timestamp.ToString("yyyy.MM.dd HH:mm:ss")</TableRowCell>
-                            <TableRowCell>@entry.CategoryName</TableRowCell>
+                            <TableRowCell>@entry.Timestamp.ToString("dd.MM.yyyy HH:mm:ss")</TableRowCell>
+                            <TableRowCell>
+                                @if (entry.CategoryName == "AGENDA")
+                                {
+                                    <span class="badge badge-primary">Tagesordnung</span>
+                                }
+                                else if (entry.CategoryName == "STATUS")
+                                {
+                                    <span class="badge badge-success">Status</span>
+                                }
+                                else if (entry.CategoryName == "USERS")
+                                {
+                                    <span class="badge badge-black">Benutzer</span>
+                                }
+                                else if (entry.CategoryName == "VOTE")
+                                {
+                                    <span class="badge badge-cyan">Abstimmung</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-secondary">@entry.CategoryName</span>
+                                }
+
+                            </TableRowCell>
                             <TableRowCell>@entry.Name</TableRowCell>
                             <TableRowCell>@entry.Text</TableRowCell>
                         </TableRow>

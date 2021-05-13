@@ -109,7 +109,7 @@ namespace MUNityCore.Services
                 (userLog && n.CategoryName == TYPE_USERS) ||
                 (agendaLog && n.CategoryName == TYPE_AGENDA) ||
                 (votingLog && n.CategoryName == TYPE_VOTING) ||
-                (statusLog && n.CategoryName == TYPE_STATUS));
+                (statusLog && n.CategoryName == TYPE_STATUS)).OrderByDescending(n => n.Timestamp);
 
             return log.ToList();
         }
