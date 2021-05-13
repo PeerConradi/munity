@@ -3,52 +3,42 @@
 let speakerInterval;
 let questionInterval;
 
-function startSpeakerTimer(durationInSeconds, elementId) {
-    const domElement = document.getElementById(elementId)
-    if (!domElement)
-        console.log("Element could not be found. Make sure to call after DOM is loaded");
+function startSpeakerTimer(durationInSeconds, classSelector) {
     if (speakerInterval) {
         clearInterval(speakerInterval);
     }
 
-    updateElement(domElement, durationInSeconds);
+    updateElements(classSelector, durationInSeconds);
 
     let passedSeconds = 0
     speakerInterval = setInterval(() => {
         const diff = durationInSeconds - passedSeconds++
-        updateElement(domElement, diff)
+        updateElements(classSelector, diff)
     }, 1000);
 }
 
-function startQuestionTimer(durationInSeconds, elementId) {
-    const domElement = document.getElementById(elementId)
-    if (!domElement)
-        console.log("Element could not be found. Make sure to call after DOM is loaded");
+function startQuestionTimer(durationInSeconds, classSelector) {
     if (speakerInterval) {
         clearInterval(questionInterval);
     }
 
-    updateElement(domElement, durationInSeconds);
+    updateElements(classSelector, durationInSeconds);
 
     let passedSeconds = 0
     questionInterval = setInterval(() => {
         const diff = durationInSeconds - passedSeconds++
-        updateElement(domElement, diff)
+        updateElements(classSelector, diff)
     }, 1000);
 }
 
 function pauseSpeakerTimer(pausedAtInSeconds, elementId) {
-    const domElement = document.getElementById(elementId)
-    if (!domElement) throw "Element could not be found. Make sure to call after DOM is loaded"
     if (speakerInterval) clearInterval(speakerInterval)
-    updateElement(domElement, pausedAtInSeconds)
+    updateElements(elementId, pausedAtInSeconds)
 }
 
 function pauseQuestionTimer(pausedAtInSeconds, elementId) {
-    const domElement = document.getElementById(elementId)
-    if (!domElement) throw "Element could not be found. Make sure to call after DOM is loaded"
     if (questionInterval) clearInterval(questionInterval)
-    updateElement(domElement, pausedAtInSeconds)
+    updateElements(elementId, pausedAtInSeconds)
 }
 
 function resetSpeakerTimer(resetTo, elementId) {
@@ -59,24 +49,49 @@ function resetQuestionTimer(resetTo, elementId) {
     pauseQuestionTimer(resetTo, elementId)
 }
 
-function updateElement(domElement, currentTimeInSeconds) {
+function updateElements(identifier, currentTimeInSeconds) {
+    const elements = fetchElements(identifier);
     if (currentTimeInSeconds < 10) {
-        domElement.classList.add(DANGER_CLASS)
+        addClasses(elements, [DANGER_CLASS])
     } else {
-        if (domElement.classList.contains(DANGER_CLASS)) domElement.classList.remove(DANGER_CLASS)
+        removeClasses(elements, [DANGER_CLASS])
     }
 
     if (currentTimeInSeconds <= 0) {
-        domElement.innerHTML = 'Bitte zum Ende kommen'
-        domElement.classList.add('animate__animated')
-        domElement.classList.add('animate__flash')
-        //domElement.classList.add('animate__animated')
+        elements.forEach(e => e.innerHTML = 'Bitte zum Ende kommen')
+        addClasses(elements, ['animate__animated', 'animate__flash'])
     } else {
-        if (domElement.classList.contains('animate__animated')) domElement.classList.remove('animate__animated')
-        if (domElement.classList.contains('animate__flash')) domElement.classList.remove('animate__flash')
-        //if (domElement.classList.contains('animate__animated')) domElement.classList.remove('animate__animated')
-        domElement.innerHTML = computeTimeString(currentTimeInSeconds)
+        const timeStr = computeTimeString(currentTimeInSeconds)
+        elements.forEach(e => e.innerHTML = timeStr)
+        removeClasses(elements, ['animate__animated', 'animate__flash'])
     }
+}
+
+function addClasses(DOMElements, classes) {
+    if (!DOMElements || DOMElements.length == 0 || !classes || classes.length == 0)
+        return;
+
+    DOMElements.forEach(n => {
+        classes.forEach(cl => {
+            if (!n.classList?.contains(cl))
+                n.classList.add(cl);
+        });
+
+    });
+}
+
+function removeClasses(DOMElements, classes) {
+
+    if (!DOMElements || DOMElements.length == 0 || !classes || classes.length == 0)
+        return;
+
+    DOMElements.forEach(n => {
+        classes.forEach(cl => {
+            if (n.classList?.contains(cl))
+                n.classList.remove(cl);
+        });
+
+    });
 }
 
 function computeTimeString(seconds) {
@@ -85,4 +100,8 @@ function computeTimeString(seconds) {
     }) + ":" + (seconds % 60).toLocaleString("de-DE", {
         minimumIntegerDigits: 2,
     })
+}
+
+function fetchElements(identifier) {
+    return [...document.getElementsByClassName(identifier)]
 }

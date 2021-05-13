@@ -23,7 +23,7 @@
                 <span class="text-sm-left text-secondary">Zeit</span>
             </div>
             <div class="row">
-                <h4 id="speakerTimer">@this.ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
+                <h4 class="speakerTimer">@this.ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
             </div>
             <div class="row" style="margin-top: -5px;">
                 @if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
@@ -60,7 +60,7 @@
                 <span class="text-sm-left text-secondary">Zeit</span>
             </div>
             <div class="row">
-                <h4 id="questionTimer">@((this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds > 0) ? this.ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss") : "Zum Ende kommen")</h4>
+                <h4 class="questionTimer">@((this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds > 0) ? this.ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss") : "Zum Ende kommen")</h4>
             </div>
             <div class="row" style="margin-top: -5px;">
                 <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
