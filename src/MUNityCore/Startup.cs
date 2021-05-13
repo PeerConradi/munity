@@ -252,7 +252,7 @@ namespace MUNityCore
             var version = new Version(10, 1, 26);
             var serverVersion = new MariaDbServerVersion(version);
 
-            services.AddDbContext<MunityContext>(options =>
+            services.AddDbContextFactory<MunityContext>(options =>
             {
                 options.UseMySql(mySqlConnectionString, serverVersion, builder =>
                 {
@@ -260,6 +260,9 @@ namespace MUNityCore
                 });
 
             });
+            services.AddScoped<MunityContext>(p =>
+                p.GetRequiredService<IDbContextFactory<MunityContext>>()
+                .CreateDbContext());
             databaseConfiguration = DatabaseConfigurations.MySql;
         }
 
@@ -279,10 +282,13 @@ namespace MUNityCore
                 Logger.LogInfo("SQLite Database created!");
             }
 
-            services.AddDbContext<MunityContext>(options =>
+            services.AddDbContextFactory<MunityContext>(options =>
             {
                 options.UseSqlite($"Data Source={sqlDbLiteName}.db");
             });
+            services.AddScoped<MunityContext>(p =>
+                p.GetRequiredService<IDbContextFactory<MunityContext>>()
+                .CreateDbContext());
             databaseConfiguration = DatabaseConfigurations.SQLite;
             Logger.LogInfo($"Started with SQLite under: {Environment.CurrentDirectory}/{sqlDbLiteName}");
         }

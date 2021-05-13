@@ -282,7 +282,7 @@ namespace MUNityCore.Services
             if (logNewSpeaker != null)
             {
                 logNewSpeaker.TimesSpeaking += 1;
-                logNewSpeaker.PermitedSpeakingSeconds = (long)list.SpeakerTime.TotalSeconds;
+                logNewSpeaker.PermitedSpeakingSeconds += (long)list.SpeakerTime.TotalSeconds;
             }
                 
             _context.SaveChanges();
@@ -301,7 +301,7 @@ namespace MUNityCore.Services
             if (logNewSpeaker != null)
             {
                 logNewSpeaker.TimesQuestioning += 1;
-                logNewSpeaker.PermitedQuestionsSeconds = (long)list.QuestionTime.TotalSeconds;
+                logNewSpeaker.PermitedQuestionsSeconds += (long)list.QuestionTime.TotalSeconds;
             }
             _context.SaveChanges();
             return true;
@@ -458,7 +458,7 @@ namespace MUNityCore.Services
                 var speakerEntry = EnsureLogEntry(list, list.CurrentSpeaker.Iso, list.CurrentSpeaker.Name);
                 if (speakerEntry != null)
                 {
-                    speakerEntry.UsedSpeakerSeconds = (long)(DateTime.Now.ToUniversalTime() - list.StartSpeakerTime).TotalSeconds;
+                    speakerEntry.UsedSpeakerSeconds += (long)(DateTime.Now.ToUniversalTime() - list.StartSpeakerTime).TotalSeconds;
                 }
             }
             else if (oldState == ListOfSpeakers.EStatus.Question && list.CurrentQuestion != null)
@@ -466,7 +466,7 @@ namespace MUNityCore.Services
                 var questionEntry = EnsureLogEntry(list, list.CurrentQuestion.Iso, list.CurrentQuestion.Name);
                 if (questionEntry != null)
                 {
-                    questionEntry.UsedQuestionSeconds = (long)(DateTime.Now.ToUniversalTime() - list.StartQuestionTime).TotalSeconds;
+                    questionEntry.UsedQuestionSeconds += (long)(DateTime.Now.ToUniversalTime() - list.StartQuestionTime).TotalSeconds;
                 }
             }
             _context.SaveChanges();

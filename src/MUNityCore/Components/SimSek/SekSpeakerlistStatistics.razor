@@ -1,8 +1,6 @@
-﻿@inject Services.SpeakerlistService speakerlistService;
+﻿<h3>Redelistenstatistik</h3>
 
-<h3>Redelistenstatistik</h3>
-
-@if (log != null)
+@if (Log != null)
 {
     <Table>
         <TableHeader>
@@ -15,7 +13,7 @@
             <TableHeaderCell>Verwendete FuK-Zeit</TableHeaderCell>
         </TableHeader>
         <TableBody>
-            @foreach(var entry in log)
+            @foreach(var entry in Log)
             {
                 <TableRow>
                     <TableRowCell>@entry.SpeakerName</TableRowCell>
@@ -36,26 +34,9 @@ else
 }
 
 
+
 @code {
     [Parameter]
-    public string SpeakerlistId { get; set; }
+    public List<MUNityCore.Models.Speakerlists.ListOfSpeakersLog> Log { get; set; }
 
-    private List<MUNityCore.Models.Speakerlists.ListOfSpeakersLog> log;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        if (!string.IsNullOrEmpty(SpeakerlistId))
-        {
-            try
-            {
-                log = speakerlistService.GetLog(SpeakerlistId);
-            }
-            catch (Exception)
-            {
-                //throw;
-            }
-
-        }
-    }
 }
