@@ -213,9 +213,9 @@ namespace MUNityCore.Controllers
         /// <returns></returns>
         [Route("[action]")]
         [HttpPut]
-        public async Task<IActionResult> NextQuestion([FromBody]ListOfSpeakersRequest body)
+        public IActionResult NextQuestion([FromBody]ListOfSpeakersRequest body)
         {
-            bool result = await _speakerlistService.NextQuestion(body.ListOfSpeakersId);
+            bool result = _speakerlistService.NextQuestion(body.ListOfSpeakersId);
             if (result)
             {
                 _ = GetHubGroup(body)?.NextQuestion();

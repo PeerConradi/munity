@@ -36,8 +36,10 @@ namespace MUNityCore.Hubs
             if (this._speakerlistService.IsListClosed(listId))
                 return;
 
-            var newSpeaker = await this._speakerlistService.AddSpeaker(listId, iso, name);
-            await Clients.Group("los_" + listId).SpeakerAdded(newSpeaker);
+            var newSpeaker = this._speakerlistService.AddSpeaker(listId, iso, name);
+            if (newSpeaker != null)
+                await Clients.Group("los_" + listId).SpeakerAdded(newSpeaker);
+            
         }
 
         public async Task AddQuestion(string listId, string iso, string name)
@@ -45,7 +47,7 @@ namespace MUNityCore.Hubs
             if (this._speakerlistService.IsQuestionsClosed(listId))
                 return;
 
-            var result = await this._speakerlistService.AddQuestion(listId, iso, name);
+            var result = this._speakerlistService.AddQuestion(listId, iso, name);
             if (result != null)
                 await Clients.Group("los_" + listId).SpeakerAdded(result);
         }
@@ -66,7 +68,7 @@ namespace MUNityCore.Hubs
 
         public async Task NextQuestion(string listId)
         {
-            var result = await this._speakerlistService.NextQuestion(listId);
+            var result = this._speakerlistService.NextQuestion(listId);
             if (result)
                 await Clients.Group("los_" + listId).NextQuestion();
         }

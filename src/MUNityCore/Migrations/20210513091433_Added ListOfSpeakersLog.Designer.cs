@@ -3,14 +3,16 @@ using System;
 using MUNityCore.DataHandlers.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MUNityCore.Migrations
 {
     [DbContext(typeof(MunityContext))]
-    partial class MunityContextModelSnapshot : ModelSnapshot
+    [Migration("20210513091433_Added ListOfSpeakersLog")]
+    partial class AddedListOfSpeakersLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1386,12 +1388,6 @@ namespace MUNityCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TimesOnSpeakerlist")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimesQuestioning")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimesSpeaking")
                         .HasColumnType("int");
 
                     b.Property<long>("UsedQuestionSeconds")

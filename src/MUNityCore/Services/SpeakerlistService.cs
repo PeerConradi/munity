@@ -7,6 +7,7 @@ using MUNity.Models.ListOfSpeakers;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Extensions.LoSExtensions;
 using MUNity.Schema.ListOfSpeakers;
+using MUNityCore.Models.Speakerlists;
 
 namespace MUNityCore.Services
 {
@@ -62,27 +63,19 @@ namespace MUNityCore.Services
             if (existing != null) return existing;
 
             var mdl = list.AddSpeaker(body.Name, body.Iso);
+
             await _context.SaveChangesAsync();
             return mdl;
         }
 
-        public async Task<Speaker> AddSpeaker(string listId, string iso, string name)
+        public Speaker AddSpeaker(string listId, string iso, string name)
         {
-            var list = await _context.ListOfSpeakers
+            var list = _context.ListOfSpeakers
                 .Include(n => n.AllSpeakers)
-                .FirstOrDefaultAsync(n => n.ListOfSpeakersId == listId);
+                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return null;
 
-            var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == iso &&
-            n.Name == name && n.Mode == Speaker.SpeakerModes.WaitToSpeak);
-
-            if (existing != null)
-                return existing;
-
-            var mdl = list.AddSpeaker(name, iso);
-            //list.AllSpeakers.Add(mdl);
-            await _context.SaveChangesAsync();
-            return mdl;
+            return AddSpeaker(list, iso, name);
         }
 
         public Speaker AddSpeaker(ListOfSpeakers list, string iso, string name)
@@ -95,8 +88,31 @@ namespace MUNityCore.Services
 
             var mdl = list.AddSpeaker(name, iso);
             //list.AllSpeakers.Add(mdl);
+            var logEntry = EnsureLogEntry(list, iso, name);
+            logEntry.TimesOnSpeakerlist += 1;
             _context.SaveChanges();
             return mdl;
+        }
+
+        private ListOfSpeakersLog EnsureLogEntry(ListOfSpeakers speakerlist, string iso, string name)
+        {
+            var entry = _context.ListOfSpeakersLog.FirstOrDefault(n => n.Speakerlist == speakerlist && n.SpeakerName == name);
+            if (entry == null)
+                entry = CreateLogEntry(speakerlist, iso, name);
+            return entry;
+        }
+
+        private ListOfSpeakersLog CreateLogEntry(ListOfSpeakers speakerlist, string iso, string name)
+        {
+            var entry = new ListOfSpeakersLog()
+            {
+                SpeakerIso = iso,
+                Speakerlist = speakerlist,
+                SpeakerName = name
+            };
+            _context.ListOfSpeakersLog.Add(entry);
+            _context.SaveChanges();
+            return entry;
         }
 
         public async Task<Speaker> AddQuestion(AddSpeakerBody body)
@@ -118,23 +134,14 @@ namespace MUNityCore.Services
             return mdl;
         }
 
-        public async Task<Speaker> AddQuestion(string listId, string iso, string name)
+        public Speaker AddQuestion(string listId, string iso, string name)
         {
-            var list = await _context.ListOfSpeakers
+            var list = _context.ListOfSpeakers
                 .Include(n => n.AllSpeakers)
-                .FirstOrDefaultAsync(n => n.ListOfSpeakersId == listId);
+                .FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return null;
 
-            var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == iso &&
-            n.Name == name && n.Mode == Speaker.SpeakerModes.WaitForQuesiton);
-
-            if (existing != null)
-                return existing;
-
-            var mdl = list.AddQuestion(name, iso);
-            //list.AllSpeakers.Add(mdl);
-            await _context.SaveChangesAsync();
-            return mdl;
+            return AddQuestion(list, iso, name);
         }
 
         public Speaker AddQuestion(ListOfSpeakers list, string iso, string name)
@@ -146,6 +153,8 @@ namespace MUNityCore.Services
                 return existing;
 
             var mdl = list.AddQuestion(name, iso);
+            var logEntry = EnsureLogEntry(list, iso, name);
+            logEntry.TimesOnQuestions += 1;
             //list.AllSpeakers.Add(mdl);
             _context.SaveChanges();
             return mdl;
@@ -268,31 +277,39 @@ namespace MUNityCore.Services
         {
             var list = this._context.ListOfSpeakers.Include(n => n.AllSpeakers).FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return false;
-            list.NextSpeaker();
+            var result = list.NextSpeaker();
+            var logNewSpeaker = EnsureLogEntry(list, result.newSpeaker.Iso, result.newSpeaker.Name);
+            if (logNewSpeaker != null)
+            {
+                logNewSpeaker.TimesSpeaking += 1;
+                logNewSpeaker.PermitedSpeakingSeconds = (long)list.SpeakerTime.TotalSeconds;
+            }
+                
             _context.SaveChanges();
             return true;
         }
 
-        internal async Task<bool> NextQuestion(string listid)
+        internal bool NextQuestion(string listid)
         {
-            var list = await this._context.ListOfSpeakers
+            var list = this._context.ListOfSpeakers
                 .Include(n => n.AllSpeakers)
-                .FirstOrDefaultAsync(n => n.ListOfSpeakersId == listid);
+                .FirstOrDefault(n => n.ListOfSpeakersId == listid);
             if (list == null) return false;
-            list.NextQuestion();
-            await _context.SaveChangesAsync();
+            var result = list.NextQuestion();
+
+            var logNewSpeaker = EnsureLogEntry(list, result.newSpeaker.Iso, result.newSpeaker.Name);
+            if (logNewSpeaker != null)
+            {
+                logNewSpeaker.TimesQuestioning += 1;
+                logNewSpeaker.PermitedQuestionsSeconds = (long)list.QuestionTime.TotalSeconds;
+            }
+            _context.SaveChanges();
             return true;
         }
 
         internal DateTime? ResumeSpeaker(ListOfSpeakersRequest body)
         {
-            var list = this._context.ListOfSpeakers
-                .Include(n => n.AllSpeakers)
-                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
-            if (list == null) return null;
-            list.ResumeSpeaker();
-            this._context.SaveChanges();
-            return list.StartSpeakerTime.ToUniversalTime();
+            return this.ResumeSpeaker(body.ListOfSpeakersId);
         }
 
         internal DateTime? ResumeSpeaker(string listId)
@@ -426,20 +443,32 @@ namespace MUNityCore.Services
 
         internal bool Pause(ListOfSpeakersRequest body)
         {
-            var list = _context.ListOfSpeakers
-                .FirstOrDefault(n => n.ListOfSpeakersId == body.ListOfSpeakersId);
-            if (list == null) return false;
-            list.Pause();
-            _context.SaveChanges();
-            return true;
+            return this.Pause(body.ListOfSpeakersId);
         }
 
         internal bool Pause(string listId)
         {
             var list = _context.ListOfSpeakers
+                .Include(n => n.AllSpeakers)
                 .FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return false;
-            list.Pause();
+            var oldState = list.Pause();
+            if ((oldState == ListOfSpeakers.EStatus.Speaking || oldState == ListOfSpeakers.EStatus.Answer ) && list.CurrentSpeaker != null)
+            {
+                var speakerEntry = EnsureLogEntry(list, list.CurrentSpeaker.Iso, list.CurrentSpeaker.Name);
+                if (speakerEntry != null)
+                {
+                    speakerEntry.UsedSpeakerSeconds = (long)(DateTime.Now.ToUniversalTime() - list.StartSpeakerTime).TotalSeconds;
+                }
+            }
+            else if (oldState == ListOfSpeakers.EStatus.Question && list.CurrentQuestion != null)
+            {
+                var questionEntry = EnsureLogEntry(list, list.CurrentQuestion.Iso, list.CurrentQuestion.Name);
+                if (questionEntry != null)
+                {
+                    questionEntry.UsedQuestionSeconds = (long)(DateTime.Now.ToUniversalTime() - list.StartQuestionTime).TotalSeconds;
+                }
+            }
             _context.SaveChanges();
             return true;
         }
@@ -518,6 +547,11 @@ namespace MUNityCore.Services
                 .Where(n => n.Mode == Speaker.SpeakerModes.WaitToSpeak && n.ListOfSpeakers.ListOfSpeakersId == listId)
                 .AsNoTracking()
                 .ToList();
+        }
+
+        internal List<ListOfSpeakersLog> GetLog(string listOfSpeakersId)
+        {
+            return _context.ListOfSpeakersLog.Where(n => n.Speakerlist.ListOfSpeakersId == listOfSpeakersId).OrderBy(n => n.SpeakerName).ToList();
         }
     }
 }

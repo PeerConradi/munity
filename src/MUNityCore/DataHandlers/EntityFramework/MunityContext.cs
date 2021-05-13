@@ -14,6 +14,7 @@ using MUNity.Models.ListOfSpeakers;
 using MUNityCore.Models.Resolution.SqlResa;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using MUNityCore.Models.Speakerlists;
 
 namespace MUNityCore.DataHandlers.EntityFramework
 {
@@ -114,6 +115,8 @@ namespace MUNityCore.DataHandlers.EntityFramework
         public DbSet<SimulationPresents> PresentChecks { get; set; }
 
         public DbSet<PresentsState> PresentStates { get; set; }
+
+        public DbSet<ListOfSpeakersLog> ListOfSpeakersLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

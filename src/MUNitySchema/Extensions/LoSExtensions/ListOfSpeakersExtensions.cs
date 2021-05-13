@@ -22,9 +22,9 @@ namespace MUNity.Extensions.LoSExtensions
         /// This will set the speaking mode to stopped.
         /// </summary>
         /// <param name="list"></param>
-        public static void NextSpeaker(this ListOfSpeakers list)
+        public static (Speaker last, Speaker newSpeaker) NextSpeaker(this ListOfSpeakers list)
         {
-            Console.WriteLine("Next Speaker selected!");
+            Speaker lastSpeaker = list.CurrentSpeaker;
             if (list.Speakers.Any(n => n.Mode == Speaker.SpeakerModes.WaitToSpeak))
             {
 
@@ -48,6 +48,7 @@ namespace MUNity.Extensions.LoSExtensions
                 list.ClearCurrentSpeaker();
             }
             list.Status = EStatus.Stopped;
+            return (lastSpeaker, list.CurrentSpeaker);
         }
 
         /// <summary>
@@ -56,15 +57,16 @@ namespace MUNity.Extensions.LoSExtensions
         /// In either case the Mode/Status will be set to STOPPED.
         /// </summary>
         /// <param name="list"></param>
-        public static void NextQuestion(this ListOfSpeakers list)
+        public static (Speaker last, Speaker newSpeaker) NextQuestion(this ListOfSpeakers list)
         {
+            var lastQuestion = list.CurrentQuestion;
             if (list.Questions.Any())
             {
                 // Delete the current Questions (remove all of this type of there is a bug and for some reason two are current Speaker)
                 var currentQuestion = list.AllSpeakers.Where(n => n.Mode == Speaker.SpeakerModes.CurrentQuestion).ToList();
                 currentQuestion.ForEach(n => list.AllSpeakers.Remove(n));
 
-                var nextQuestion = list.AllSpeakers.Where(n => n.Mode == Speaker.SpeakerModes.WaitForQuesiton).OrderBy(n => n.OrdnerIndex).First();
+                var nextQuestion = list.AllSpeakers.Where(n => n.Mode == Speaker.SpeakerModes.WaitForQuesiton).OrderBy(n => n.OrdnerIndex).FirstOrDefault();
                 nextQuestion.Mode = Speaker.SpeakerModes.CurrentQuestion;
                 list.NotifyPropertyChanged(nameof(list.Questions));
                 list.NotifyPropertyChanged(nameof(list.CurrentQuestion));
@@ -82,7 +84,7 @@ namespace MUNity.Extensions.LoSExtensions
             {
                 list.Status = EStatus.Stopped;
             }
-            
+            return (lastQuestion, list.CurrentQuestion);
         }
 
         /// <summary>
@@ -177,12 +179,15 @@ namespace MUNity.Extensions.LoSExtensions
                 list.Status = EStatus.QuestionPaused;
         }
 
-        public static void Pause(this ListOfSpeakers list)
+        public static EStatus Pause(this ListOfSpeakers list)
         {
+            var oldState = list.Status;
             if (list.Status == EStatus.Question)
                 list.PauseQuestion();
             else if (list.Status == EStatus.Speaking || list.Status == EStatus.Answer)
                 list.PauseSpeaker();
+
+            return oldState;
         }
 
         /// <summary>

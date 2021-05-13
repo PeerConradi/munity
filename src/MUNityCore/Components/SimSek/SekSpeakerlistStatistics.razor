@@ -1,0 +1,61 @@
+﻿@inject Services.SpeakerlistService speakerlistService;
+
+<h3>Redelistenstatistik</h3>
+
+@if (log != null)
+{
+    <Table>
+        <TableHeader>
+            <TableHeaderCell>Name</TableHeaderCell>
+            <TableHeaderCell>Redebeiträge</TableHeaderCell>
+            <TableHeaderCell>FuKs</TableHeaderCell>
+            <TableHeaderCell>Gegebene Redezeit</TableHeaderCell>
+            <TableHeaderCell>Gegebene Fragezeit</TableHeaderCell>
+            <TableHeaderCell>Verwendete Redezeit</TableHeaderCell>
+            <TableHeaderCell>Verwendete FuK-Zeit</TableHeaderCell>
+        </TableHeader>
+        <TableBody>
+            @foreach(var entry in log)
+            {
+                <TableRow>
+                    <TableRowCell>@entry.SpeakerName</TableRowCell>
+                    <TableRowCell>@entry.TimesOnSpeakerlist</TableRowCell>
+                    <TableRowCell>@entry.TimesOnQuestions</TableRowCell>
+                    <TableRowCell>@entry.PermitedSpeakingSeconds Sekunden</TableRowCell>
+                    <TableRowCell>@entry.PermitedQuestionsSeconds Sekunden</TableRowCell>
+                    <TableRowCell>@entry.UsedSpeakerSeconds Sekunden</TableRowCell>
+                    <TableRowCell>@entry.UsedQuestionSeconds Sekunden</TableRowCell>
+                </TableRow>
+            }
+        </TableBody>
+    </Table>
+}
+else
+{
+    <Paragraph>Keine Statstik für die Redeliste geladen</Paragraph>
+}
+
+
+@code {
+    [Parameter]
+    public string SpeakerlistId { get; set; }
+
+    private List<MUNityCore.Models.Speakerlists.ListOfSpeakersLog> log;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (!string.IsNullOrEmpty(SpeakerlistId))
+        {
+            try
+            {
+                log = speakerlistService.GetLog(SpeakerlistId);
+            }
+            catch (Exception)
+            {
+                //throw;
+            }
+
+        }
+    }
+}
