@@ -7,17 +7,11 @@
 {
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin: -15px -15px 0px -15px">
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <button class="btn btn-success" @onclick="() => CreatePreambleParagraph()"><i class="fa fa-plus"></i> Neuer Präambelabsatz</button>
-                </li>
-                <li class="nav-item m-l-5">
-                    <button class="btn btn-success" @onclick="() => CreateOperativeParagraph()"><i class="fa fa-plus"></i> Neuer Operativer Absatz</button>
-                </li>
+        <div class="row">
+            <button class="btn btn-success m-r-3" @onclick="() => CreatePreambleParagraph()"><i class="fa fa-plus"></i> Neuer Präambelabsatz</button>
+            <button class="btn btn-success m-r-3" @onclick="() => CreateOperativeParagraph()"><i class="fa fa-plus"></i> Neuer Operativer Absatz</button>
                 @if (SimViewModel?.UserContext != null && SimViewModel.UserContext.IsChair || IsSignedIn)
                 {
-                    <li class="nav-item m-l-5">
                         @if (this.Info.AllowPublicEdit)
                         {
                             <button class="btn btn-success"
@@ -32,14 +26,11 @@
                         <i class="fa fa-pen-fancy"></i> Nur Vorsitz darf schreiben
                             </button>
                         }
-
-                    </li>
                 }
 
                 @*<li class="nav-item m-l-5">
             <button class="btn btn-primary"><i class="fa fa-window-restore"></i> Alle ausklappen</button>
         </li>*@
-            </ul>
         </div>
     </nav>
 
