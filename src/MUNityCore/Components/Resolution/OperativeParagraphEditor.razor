@@ -5,79 +5,41 @@
 
 @if (!Paragraph.IsVirtual)
 {
-    <div class="panel panel-inverse m-t-0 @((expanded) ? "panel-expand" : null)">
-        <div class="panel-heading">
-            <h4 class="panel-title" @onclick="() => expanded = !expanded" style="cursor: pointer;">
-                @Index <span class="text-secondary">Operativer Absatz:</span>
-                <i class="fa fa-pen"></i>
-                @previewText
-            </h4>
-            <div class="panel-heading-btn">
+<div class="panel panel-inverse m-t-0">
+    <div class="panel-heading">
+        <h4 class="panel-title" @onclick="() => expanded = !expanded" style="cursor: pointer;">
+            @Index <span class="text-secondary">Operativer Absatz:</span>
+            <i class="fa fa-pen"></i>
+            @previewText
+        </h4>
+        <div class="panel-heading-btn">
 
-                <div class="btn-group m-l-5">
-                    <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> Funktionen<b class="caret"></b></button>
-                    <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
-                        <a href="javascript:;" class="dropdown-item" @onclick="() => expanded = !expanded">
-                            @((expanded) ? "Einklappen" : "Ausklappen")
-                        </a>
-                        <a @onclick="MoveUp" style="cursor: pointer;" class="dropdown-item"><i class="fa fa-arrow-up"></i>Nach oben schieben</a>
-                        <a @onclick="MoveDown" style="cursor: pointer;" class="dropdown-item"><i class="fa fa-arrow-down"></i>Nach unten schieben</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="javascript:;" class="dropdown-item text-danger-darker" @onclick="() => ParagraphRemoved.InvokeAsync(this.Paragraph)">Löschen</a>
-                    </div>
-                </div>
-
-                @if (expanded)
-                {
-                    <a class="btn btn-sm ml-3 btn-icon btn-circle btn-danger"
-                       @onclick="() => expanded = !expanded">
-                        <i class="fa fa-times"></i>
+            <div class="btn-group m-l-5">
+                <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> Funktionen<b class="caret"></b></button>
+                <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
+                    <a href="javascript:;" class="dropdown-item" @onclick="() => expanded = !expanded">
+                        @((expanded) ? "Einklappen" : "Ausklappen")
                     </a>
-                }
+                    <a @onclick="MoveUp" style="cursor: pointer;" class="dropdown-item"><i class="fa fa-arrow-up"></i>Nach oben schieben</a>
+                    <a @onclick="MoveDown" style="cursor: pointer;" class="dropdown-item"><i class="fa fa-arrow-down"></i>Nach unten schieben</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="javascript:;" class="dropdown-item text-danger-darker" @onclick="() => ParagraphRemoved.InvokeAsync(this.Paragraph)">Löschen</a>
+                </div>
             </div>
         </div>
-        @if (expanded)
-        {
-            <div class="panel-body" style="overflow-x: hidden">
-                <div class="row">
-                    <h4>Text</h4>
-                    <textarea class="form-control" @bind="Paragraph.Text" rows="10" @onblur="() => SaveParagraphText(Paragraph)" />
-                </div>
-                @if (SectionReference != null)
-                {
-                    <h3>Änderungsanträge</h3>
-
-                    foreach (var deleteAmendment in deleteAmendments)
-                    {
-                        <div class="note note-danger">
-                            <div class="note-icon"><i class="fa fa-times"></i></div>
-                            <div class="note-content">
-                                <h4><b>Änderungsantrag</b></h4>
-                                <p>Eingereicht von: @deleteAmendment.SubmitterName</p>
-                            </div>
-                        </div>
-                    }
-
-                    foreach (var changeAmendment in changeAmendments)
-                    {
-                        <div class="note note-primary">
-                            <div class="note-icon"><i class="fa fa-edit"></i></div>
-                            <div class="note-content">
-                                <h4><b>Änderungsantrag</b></h4>
-                                <p>Eingereicht von: @changeAmendment.SubmitterName</p>
-                                <p>Neuer Text @changeAmendment.NewText</p>
-                            </div>
-                        </div>
-                    }
-                }
-
-            </div>
-            <div class="panel-footer" style="overflow-x:hidden;">
-                <button class="btn btn-success btn-block mt-3 mb-3" @onclick="() => expanded = false">Fertig/Speichern</button>
-            </div>
-        }
-
     </div>
+    @if (expanded)
+    {
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-12">
+                    <textarea class="form-control" @bind="Paragraph.Text" rows="4" @onblur="() => SaveParagraphText(Paragraph)" />
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
 }
 else
 {
@@ -91,7 +53,7 @@ else
                 }
                 else if (moveAmendment != null)
                 {
-                    <span>Hier wird paragraph @SectionReference.GetIndexNameOfOperativeParagraph(@sourceParagraphOfMove?.OperativeParagraphId) hin verschoben</span>
+                    <span>Hier wird paragraph @ViewModel?.Resolution?.OperativeSection.GetIndexNameOfOperativeParagraph(@sourceParagraphOfMove?.OperativeParagraphId) hin verschoben</span>
                 }
             </h4>
         </div>
@@ -104,10 +66,8 @@ else
     public MUNity.Models.Resolution.OperativeParagraph Paragraph { get; set; }
 
     [Parameter]
-    public MUNity.Models.Resolution.OperativeSection SectionReference { get; set; }
+    public ViewModel.ResolutionViewModel ViewModel { get; set; }
 
-    [Parameter]
-    public string ResolutionId { get; set; }
 
     [Parameter]
     public EventCallback<MUNity.Models.Resolution.OperativeParagraph> ParagraphRemoved { get; set; }
@@ -119,7 +79,7 @@ else
     {
         get
         {
-            return SectionReference.AddAmendments.FirstOrDefault(n => n.TargetSectionId == this.Paragraph.OperativeParagraphId);
+            return ViewModel?.Resolution?.OperativeSection?.AddAmendments.FirstOrDefault(n => n.TargetSectionId == this.Paragraph.OperativeParagraphId);
         }
     }
 
@@ -127,7 +87,7 @@ else
     {
         get
         {
-            return SectionReference.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId == this.Paragraph.OperativeParagraphId);
+            return ViewModel?.Resolution?.OperativeSection?.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId == this.Paragraph.OperativeParagraphId);
         }
     }
 
@@ -135,7 +95,7 @@ else
     {
         get
         {
-            return SectionReference.FindOperativeParagraph(moveAmendment.TargetSectionId);
+            return ViewModel?.Resolution?.OperativeSection?.FindOperativeParagraph(moveAmendment.TargetSectionId);
         }
     }
 
@@ -148,7 +108,7 @@ else
                 return "virtual";
 
 
-            return this.SectionReference.GetIndexNameOfOperativeParagraph(this.Paragraph.OperativeParagraphId);
+            return this.ViewModel?.Resolution?.OperativeSection?.GetIndexNameOfOperativeParagraph(this.Paragraph.OperativeParagraphId);
         }
     }
 
@@ -156,7 +116,7 @@ else
     {
         get
         {
-            return this.SectionReference.ChangeAmendments.Where(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+            return this.ViewModel?.Resolution?.OperativeSection?.ChangeAmendments.Where(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
         }
     }
 
@@ -164,11 +124,11 @@ else
     {
         get
         {
-            return this.SectionReference.DeleteAmendments.Where(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+            return this.ViewModel?.Resolution?.OperativeSection?.DeleteAmendments.Where(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
         }
     }
 
-    private bool expanded;
+    private bool expanded = true;
 
     private string previewText
     {
@@ -179,29 +139,29 @@ else
         }
     }
 
-    private void SaveParagraphText(MUNity.Models.Resolution.OperativeParagraph paragraph)
+    private async Task SaveParagraphText(MUNity.Models.Resolution.OperativeParagraph paragraph)
     {
-        resolutionService.SetOperativeParagraphText(paragraph.OperativeParagraphId, paragraph.Text);
+        await this.ViewModel.SetOperativeParagraphText(paragraph.OperativeParagraphId, paragraph.Text);
     }
 
     private void MoveUp()
     {
-        var index = SectionReference.GetIndexOfParagraph(this.Paragraph);
+        var index = ViewModel?.Resolution?.OperativeSection?.GetIndexOfParagraph(this.Paragraph) ?? -1;
         if (index > 0)
         {
-            SectionReference.Paragraphs.Swap(index - 1, index);
-            this.resolutionService.ReorderOperative(ResolutionId, SectionReference.Paragraphs.Select(n => n.OperativeParagraphId).ToList());
+            ViewModel?.Resolution?.OperativeSection?.Paragraphs.Swap(index - 1, index);
+            this.resolutionService.ReorderOperative(ViewModel.Resolution.ResolutionId, ViewModel?.Resolution?.OperativeSection?.Paragraphs.Select(n => n.OperativeParagraphId).ToList());
             ParagraphMoved.InvokeAsync();
         }
     }
 
     private void MoveDown()
     {
-        var index = SectionReference.GetIndexOfParagraph(this.Paragraph);
-        if (index < SectionReference.Paragraphs.Count)
+        var index = ViewModel?.Resolution?.OperativeSection?.GetIndexOfParagraph(this.Paragraph) ?? -1;
+        if (index < ViewModel?.Resolution?.OperativeSection?.Paragraphs.Count && index != -1)
         {
-            SectionReference.Paragraphs.Swap(index + 1, index);
-            this.resolutionService.ReorderOperative(ResolutionId, SectionReference.Paragraphs.Select(n => n.OperativeParagraphId).ToList());
+            ViewModel.Resolution.OperativeSection.Paragraphs.Swap(index + 1, index);
+            this.resolutionService.ReorderOperative(ViewModel.Resolution.ResolutionId, ViewModel?.Resolution?.OperativeSection?.Paragraphs.Select(n => n.OperativeParagraphId).ToList());
             ParagraphMoved.InvokeAsync();
         }
     }

@@ -4,20 +4,21 @@
             <b class="mr-3">Fragen und Kurzbemerkungen</b>
             @if (SimViewModel.UserContext.IsChair)
             {
-                <button class="btn btn-sm @resumeQuestionButtonClass"
-                        @onclick="() => ToggleQuestion()">
-                    <i class="fa @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "fa-pause" : "fa-play") "></i>
-                    @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.QuestionPaused) ? "fortsetzen" : null)
-                    @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "pausieren" : null)
-                    @((ViewModel.Speakerlist.Status != MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question && ViewModel.Speakerlist.Status != MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.QuestionPaused) ? "Frage starten" : null)
+                <div class="row">
+                    <button class="btn btn-sm @resumeQuestionButtonClass"
+                            @onclick="() => ToggleQuestion()">
+                        <i class="fa @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "fa-pause" : "fa-play") "></i>
+                        @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.QuestionPaused) ? "fortsetzen" : null)
+                        @((ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question) ? "pausieren" : null)
+                        @((ViewModel.Speakerlist.Status != MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question && ViewModel.Speakerlist.Status != MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.QuestionPaused) ? "Frage starten" : null)
 
-                </button>
-                <button class="btn btn-sm btn-primary"
-                        @onclick="() => NextQuestion()">
-                    <i class="fa fa-step-forward"></i>
-                    nächste FuK
-                </button>
-
+                    </button>
+                    <button class="btn btn-sm m-l-3 btn-primary"
+                            @onclick="() => NextQuestion()">
+                        <i class="fa fa-step-forward"></i>
+                        nächste FuK
+                    </button>
+                </div>
             }
         </div>
         <div class="d-flex align-items-center mb-1">

@@ -20,6 +20,8 @@
     <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3.3" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.3.3" />
     <PackageReference Include="CsvHelper" Version="26.0.1" />
+    <PackageReference Include="HtmlSanitizer" Version="5.0.404" />
+    <PackageReference Include="Markdig" Version="0.24.0" />
     <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Core" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.4" />

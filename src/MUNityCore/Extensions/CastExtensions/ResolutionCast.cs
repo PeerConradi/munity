@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MUNity.Models.Resolution;
+using MUNity.Models.Resolution.EventArguments;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,7 +57,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static MUNity.Models.Resolution.ChangeAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment changeAmendment)
+        public static ChangeAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment changeAmendment)
         {
             var model = new MUNity.Models.Resolution.ChangeAmendment()
             {
@@ -71,7 +73,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static MUNity.Models.Resolution.DeleteAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment sourceAmendment)
+        public static DeleteAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment sourceAmendment)
         {
             var model = new MUNity.Models.Resolution.DeleteAmendment()
             {
@@ -86,7 +88,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static MUNity.Models.Resolution.MoveAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment sourceAmendment)
+        public static MoveAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment sourceAmendment)
         {
 
             var model = new MUNity.Models.Resolution.MoveAmendment()
@@ -102,5 +104,74 @@ namespace MUNityCore.Extensions.CastExtensions
             };
             return model;
         }
+
+        public static AddAmendmentCreatedEventArgs ToSocketModel(this MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment amendment, string resolutionId)
+        {
+            var args = new AddAmendmentCreatedEventArgs()
+            {
+                ResolutionId = resolutionId,
+                Tan = "12345",
+                Amendment = new AddAmendment()
+                {
+                    Activated = amendment.Activated,
+                    Id = amendment.ResaAmendmentId,
+                    Name = "AddAmendment",
+                    SubmitterName = amendment.SubmitterName,
+                    SubmitTime = amendment.SubmitTime,
+                    TargetSectionId = amendment.VirtualParagraph.ResaOperativeParagraphId,
+                    Type = amendment.ResaAmendmentType
+                },
+                VirtualParagraph = new OperativeParagraph()
+                {
+                    Children = new List<OperativeParagraph>(),
+                    Comment = "",
+                    Corrected = false,
+                    IsLocked = amendment.VirtualParagraph.IsLocked,
+                    IsVirtual = amendment.VirtualParagraph.IsVirtual,
+                    Name = "Virtual Paragraph",
+                    OperativeParagraphId = amendment.VirtualParagraph.ResaOperativeParagraphId,
+                    Text = amendment.VirtualParagraph.Text,
+                    Visible = amendment.VirtualParagraph.Visible
+                },
+                VirtualParagraphIndex = amendment.VirtualParagraph.OrderIndex
+            };
+            return args;
+        }
+
+        public static MoveAmendmentCreatedEventArgs ToSocketModel(this MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment amendment, string resolutionId)
+        {
+            var dto = new MoveAmendmentCreatedEventArgs()
+            {
+                ResolutionId = resolutionId,
+                Tan = "12345",
+                Amendment = new MoveAmendment()
+                {
+                    Activated = amendment.Activated,
+                    Id = amendment.ResaAmendmentId,
+                    Name = "move",
+                    NewTargetSectionId = amendment.VirtualParagraph.ResaOperativeParagraphId,
+                    SubmitterName = amendment.SubmitterName,
+                    SubmitTime = amendment.SubmitTime,
+                    TargetSectionId = amendment.SourceParagraph.ResaOperativeParagraphId,
+                    Type = amendment.ResaAmendmentType
+                },
+                VirtualParagraph = new OperativeParagraph()
+                {
+                    Children = new List<OperativeParagraph>(),
+                    Comment = "",
+                    Corrected = false,
+                    IsLocked = amendment.VirtualParagraph.IsLocked,
+                    IsVirtual = amendment.VirtualParagraph.IsVirtual,
+                    Name = "virtual",
+                    OperativeParagraphId = amendment.VirtualParagraph.ResaOperativeParagraphId,
+                    Text = amendment.VirtualParagraph.Text,
+                    Visible = amendment.VirtualParagraph.Visible
+                },
+                VirtualParagraphIndex = amendment.VirtualParagraph.OrderIndex
+            };
+
+            return dto;
+        }
+
     }
 }

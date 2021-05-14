@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using MUNity.Models.Resolution;
 using MUNity.Models.Resolution.EventArguments;
 using MUNity.Schema.Resolution;
+using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Services;
 using System;
 using System.Collections.Generic;
@@ -45,35 +46,7 @@ namespace MUNityCore.Controllers.Resa
             if (mdl == null)
                 return NotFound();
 
-            var dto = new MoveAmendmentCreatedEventArgs()
-            {
-                ResolutionId = body.ResolutionId,
-                Tan = "12345",
-                Amendment = new MoveAmendment()
-                {
-                    Activated = mdl.Activated,
-                    Id = mdl.ResaAmendmentId,
-                    Name = "move",
-                    NewTargetSectionId = mdl.VirtualParagraph.ResaOperativeParagraphId,
-                    SubmitterName = mdl.SubmitterName,
-                    SubmitTime = mdl.SubmitTime,
-                    TargetSectionId = mdl.SourceParagraph.ResaOperativeParagraphId,
-                    Type = mdl.ResaAmendmentType
-                },
-                VirtualParagraph = new OperativeParagraph()
-                {
-                    Children = new List<OperativeParagraph>(),
-                    Comment = "",
-                    Corrected = false,
-                    IsLocked = mdl.VirtualParagraph.IsLocked,
-                    IsVirtual = mdl.VirtualParagraph.IsVirtual,
-                    Name = "virtual",
-                    OperativeParagraphId = mdl.VirtualParagraph.ResaOperativeParagraphId,
-                    Text = mdl.VirtualParagraph.Text,
-                    Visible = mdl.VirtualParagraph.Visible
-                },
-                VirtualParagraphIndex = mdl.VirtualParagraph.OrderIndex
-            };
+            var dto = mdl.ToSocketModel(body.ResolutionId);
 
             GetHub(body)?.MoveAmendmentCreated(dto);
 

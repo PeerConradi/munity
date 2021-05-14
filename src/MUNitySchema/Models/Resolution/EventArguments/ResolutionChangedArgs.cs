@@ -104,6 +104,18 @@ namespace MUNity.Models.Resolution.EventArguments
         public string ParagraphId { get; set; }
 
         public string Text { get; set; }
+
+        public OperativeParagraphTextChangedEventArgs()
+        {
+
+        }
+
+        public OperativeParagraphTextChangedEventArgs(string resolutionId, string paragraphId, string text)
+        {
+            this.ResolutionId = resolutionId;
+            this.ParagraphId = paragraphId;
+            this.Text = text;
+        }
     }
 
     public class PreambleParagraphAddedEventArgs : ResolutionEventArgs

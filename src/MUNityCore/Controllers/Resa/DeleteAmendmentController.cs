@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MUNity.Models.Resolution;
 using MUNity.Schema.Resolution;
+using MUNityCore.Extensions.CastExtensions;
 using MUNityCore.Services;
 using System;
 using System.Collections.Generic;
@@ -40,16 +41,7 @@ namespace MUNityCore.Controllers.Resa
             if (mdl == null)
                 return NotFound();
 
-            var dto = new DeleteAmendment()
-            {
-                Activated = mdl.Activated,
-                Id = mdl.ResaAmendmentId,
-                Name = "delete",
-                SubmitterName = mdl.SubmitterName,
-                SubmitTime = mdl.SubmitTime,
-                TargetSectionId = mdl.TargetParagraph.ResaOperativeParagraphId,
-                Type = mdl.ResaAmendmentType
-            };
+            var dto = mdl.ToModel();
 
             GetHub(body)?.DeleteAmendmentCreated(dto);
 

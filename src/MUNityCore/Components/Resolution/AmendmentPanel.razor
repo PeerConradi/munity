@@ -3,11 +3,11 @@
 
 @inject Services.SqlResolutionService resolutionService;
 
-@if (Resolution != null)
+@if (ViewModel != null)
 {
     <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="">
         <div class="panel-heading ui-sortable-handle">
-            <h4 class="panel-title">Änderungsanträge <span class="badge badge-primary">@Resolution.OperativeSection.AmendmentCount()</span></h4>
+            <h4 class="panel-title">Änderungsanträge <span class="badge badge-primary">@ViewModel.Resolution.OperativeSection.AmendmentCount()</span></h4>
             @*<div class="panel-heading-btn">
 
                 <a class="btn btn-xs btn-icon btn-circle btn-primary"><i class="fa fa-arrow-circle-right"></i></a>
@@ -18,7 +18,7 @@
                     @onclick="() => createModal?.ShowModal()">
                 Neuer Änderungsantrag
             </button>
-            @foreach (var amendment in Resolution.OperativeSection.GetOrderedAmendments())
+            @foreach (var amendment in ViewModel.Resolution.OperativeSection.GetOrderedAmendments())
             {
                 <div class="card border-0 text-truncate mb-3 bg-dark text-white">
                     <!-- begin card-body -->
@@ -33,7 +33,7 @@
 
                                 @if (amendment is MUNity.Models.Resolution.ChangeAmendment changeAmendment)
                                 {
-                                    var targetParagrapg = Resolution.OperativeSection.FindOperativeParagraph(changeAmendment.TargetSectionId);
+                                    var targetParagrapg = ViewModel.Resolution.OperativeSection.FindOperativeParagraph(changeAmendment.TargetSectionId);
                                     if (targetParagrapg != null)
                                     {
                                         <span>@MUNityCore.Util.Tools.StringComputation.LevenshteinDistance(targetParagrapg.Text, changeAmendment.NewText) Levenshtein-Distance</span>
@@ -52,11 +52,22 @@
                             }
                             else
                             {
-                                <h2 class="text-white mb-0">Absatz: @Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(amendment.TargetSectionId)</h2>
+                                <h2 class="text-white mb-0">Absatz: @ViewModel.Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(amendment.TargetSectionId)</h2>
                             }
 
                             <div class="ml-auto" style="position: relative;">
-                                <h3><i class="fa fa-eye-slash"></i></h3>
+
+                                <h3>
+                                    @if (amendment.Activated)
+                                    {
+                                        <i class="fa fa-eye primary" style="cursor: pointer;" @onclick="() => ViewModel.DeactivateAmendment(amendment.Id)"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-eye-slash" style="cursor: pointer;" @onclick="() => ViewModel.ActivateAmendment(amendment.Id)"></i>
+                                    }
+
+                                </h3>
                             </div>
                         </div>
 
@@ -69,7 +80,7 @@
                         else if (amendment is MUNity.Models.Resolution.AddAmendment aa)
                         {
                             <div class="mb-4 text-grey text-wrap">
-                                Text: @Resolution.OperativeSection.FindOperativeParagraph(aa.TargetSectionId)?.Text;
+                                Text: @ViewModel.Resolution.OperativeSection.FindOperativeParagraph(aa.TargetSectionId)?.Text;
                             </div>
                         }
 
@@ -102,12 +113,12 @@ else
     <p>Lade Änderungsanträge</p>
 }
 
-<CreateAmendmentModal @ref="@createModal" Resolution="@Resolution" AmendmentCreated="OnAmendmentCreated" />
+<CreateAmendmentModal @ref="@createModal" ViewModel="@ViewModel" AmendmentCreated="OnAmendmentCreated" />
 
 
 @code {
     [Parameter]
-    public MUNity.Models.Resolution.Resolution Resolution { get; set; }
+    public ViewModel.ResolutionViewModel ViewModel { get; set; }
 
     [Parameter]
     public EventCallback<MUNity.Models.Resolution.AbstractAmendment> AmendmentSubmitted { get; set; }
@@ -123,6 +134,10 @@ else
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        if (this.ViewModel != null)
+        {
+            this.ViewModel.ChangedFromExtern += delegate { InvokeAsync(StateHasChanged); };
+            }
     }
 
     private void OnAmendmentCreated()
@@ -130,83 +145,13 @@ else
         this.AmendmentChanged.InvokeAsync();
     }
 
-    private void SubmitAmendment(MUNity.Models.Resolution.AbstractAmendment amendment)
+    private async Task SubmitAmendment(MUNity.Models.Resolution.AbstractAmendment amendment)
     {
-        if (amendment is MUNity.Models.Resolution.AddAmendment addAmendment)
-        {
-            var success = this.resolutionService.SubmitAddAmendment(addAmendment.Id);
-            if (success)
-            {
-                addAmendment.Apply(this.Resolution.OperativeSection);
-                this.AmendmentSubmitted.InvokeAsync(amendment);
-            }
-        }
-        else if (amendment is MUNity.Models.Resolution.ChangeAmendment changeAmendment)
-        {
-            var success = this.resolutionService.SubmitChangeAmendment(changeAmendment.Id);
-            if (success)
-            {
-                changeAmendment.Apply(this.Resolution.OperativeSection);
-                this.AmendmentSubmitted.InvokeAsync(amendment);
-            }
-        }
-        else if (amendment is MUNity.Models.Resolution.DeleteAmendment deleteAmendment)
-        {
-            var success = this.resolutionService.SubmitDeleteAmendment(deleteAmendment.Id);
-            if (success)
-            {
-                deleteAmendment.Apply(this.Resolution.OperativeSection);
-                this.AmendmentSubmitted.InvokeAsync(amendment);
-            }
-        }
-        else if (amendment is MUNity.Models.Resolution.MoveAmendment moveAmendment)
-        {
-            var success = this.resolutionService.SubmitMoveAmendment(moveAmendment.Id);
-            if (success)
-            {
-                moveAmendment.Apply(this.Resolution.OperativeSection);
-                this.AmendmentSubmitted.InvokeAsync(amendment);
-            }
-        }
+        await this.ViewModel.SubmitAmendment(amendment);
     }
 
-    private void DenyAmendment(MUNity.Models.Resolution.AbstractAmendment amendment)
+    private async Task DenyAmendment(MUNity.Models.Resolution.AbstractAmendment amendment)
     {
-        if (amendment is MUNity.Models.Resolution.AddAmendment addAmendment)
-        {
-            var success = this.resolutionService.RemoveAddAmendment(addAmendment.Id);
-            if (success)
-            {
-                addAmendment.Deny(this.Resolution.OperativeSection);
-                this.AmendmentDenied.InvokeAsync(amendment);
-            }
-        }
-        else if (amendment is MUNity.Models.Resolution.ChangeAmendment changeAmendment)
-        {
-            var success = this.resolutionService.RemoveChangeAmendment(changeAmendment.Id);
-            if (success)
-            {
-                changeAmendment.Deny(this.Resolution.OperativeSection);
-                this.AmendmentDenied.InvokeAsync(amendment);
-            }
-        }
-        else if (amendment is MUNity.Models.Resolution.DeleteAmendment deleteAmendment)
-        {
-            var success = this.resolutionService.RemoveDeleteAmendment(deleteAmendment.Id);
-            if (success)
-            {
-                deleteAmendment.Deny(this.Resolution.OperativeSection);
-                this.AmendmentDenied.InvokeAsync(amendment);
-            }
-        }
-        else if (amendment is MUNity.Models.Resolution.MoveAmendment moveAmendment)
-        {
-            var success = this.resolutionService.RemoveMoveAmendment(moveAmendment.Id);
-            if (success)
-            {
-                moveAmendment.Deny(this.Resolution.OperativeSection);
-                this.AmendmentDenied.InvokeAsync(amendment);
-            }
-        }
+        await this.ViewModel.RemoveAmendment(amendment);
     }
 }

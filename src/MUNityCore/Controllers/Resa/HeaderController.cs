@@ -127,7 +127,7 @@ namespace MUNityCore.Controllers.Resa
             if (!await CanUserEditResolution(body.ResolutionId))
                 return BadRequest();
 
-            var success = await this._resolutionService.SetSession(body.ResolutionId, body.Text);
+            var success = await this._resolutionService.SetSessionAsync(body.ResolutionId, body.Text);
             if (!success)
                 return NotFound();
 

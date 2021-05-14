@@ -6,5 +6,14 @@ namespace MUNity.Schema.Resolution
 {
     public class AddOperativeParagraphRequest : ResolutionRequest
     {
+        public AddOperativeParagraphRequest()
+        {
+
+        }
+
+        public AddOperativeParagraphRequest(string resolutionId)
+        {
+            this.ResolutionId = resolutionId;
+        }
     }
 }

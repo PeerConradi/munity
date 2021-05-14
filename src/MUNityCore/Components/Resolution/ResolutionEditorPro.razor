@@ -1,5 +1,6 @@
 ﻿@inject Services.SqlResolutionService resolutionService;
 @inject Services.FrontendSimulationService simulationService;
+@inject NavigationManager navManager;
 
 <div class="row">
     <div class="@((resolutionMode == EResolutionMode.Write) ? "col-lg-8" : "col-lg-12")  col-md-12">
@@ -20,29 +21,28 @@
                         }
                     }
                 </h4>
-                
 
                 <div class="panel-heading-btn">
-                    <a class="btn btn-xs btn-icon btn-circle btn-success"
-                       @onclick="() => ReloadResolution()"><i class="fa fa-redo"></i></a>
+                    @*<a class="btn btn-xs btn-icon btn-circle btn-success"
+                       @onclick="() => ReloadResolution()"><i class="fa fa-redo"></i></a>*@
                     @if (resolutionMode == EResolutionMode.Write)
                     {
-                        <a class="btn btn-xs btn-icon btn-circle btn-primary"
+                        <a class="btn btn-sm btn-icon btn-circle btn-primary"
                            @onclick="() => resolutionMode = EResolutionMode.Read"><i class="fa fa-glasses"></i></a>
                     }
                     else if (resolutionMode == EResolutionMode.Read && CanSwitchToEditMode)
                     {
-                        <a class="btn btn-xs btn-icon btn-circle btn-secondary"
+                        <a class="btn btn-sm btn-icon btn-circle btn-secondary"
                            @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
                     }
-                    <a class="btn btn-xs btn-icon btn-circle btn-danger"
+                    <a class="btn btn-sm btn-icon btn-circle btn-danger"
                        @onclick="() => this.OnEditorClosed.InvokeAsync()">X</a>
                 </div>
             </div>
             <div class="panel-body bg-white-darker">
                 @if (resolutionMode == EResolutionMode.Write)
                 {
-                    <MUNityCore.Components.Resolution.ResolutionEditor Resolution="@_resolution"
+                    <MUNityCore.Components.Resolution.ResolutionEditor ViewModel="@_viewModel"
                                                                        Info="@_info"
                                                                        SimViewModel="@SimViewModel"
                                                                        IsSignedIn="@IsSignedIn"
@@ -50,7 +50,7 @@
                 }
                 else if (resolutionMode == EResolutionMode.Read)
                 {
-                    <MUNityCore.Components.Resolution.ResolutionReader Resolution="@_resolution" />
+                    <MUNityCore.Components.Resolution.ResolutionReader ViewModel="@_viewModel" />
                 }
             </div>
         </div>
@@ -58,7 +58,7 @@
     @if (resolutionMode == EResolutionMode.Write)
     {
         <div class="col-lg-4 col-md-12">
-            <MUNityCore.Components.Resolution.AmendmentPanel Resolution="@_resolution"
+            <MUNityCore.Components.Resolution.AmendmentPanel ViewModel="@_viewModel"
                                                              AmendmentSubmitted="OnAmendmentSubmitted"
                                                              AmendmentDenied="OnAmendmentSubmitted"
                                                              AmendmentChanged="OnAmendmentChanged"/>
@@ -66,9 +66,9 @@
     }
 </div>
 
-@if (_resolution != null)
+@if (_viewModel != null)
 {
-    <CreateAmendmentModal Resolution="@_resolution" @ref="createAmendmentModal" AmendmentCreated="OnAmendmentCreated" IsSekContext="@IsSignedIn" />
+    <CreateAmendmentModal ViewModel="@_viewModel" @ref="createAmendmentModal" AmendmentCreated="OnAmendmentCreated" IsSekContext="@IsSignedIn" />
 }
 
 @code {
@@ -106,7 +106,8 @@
     [Parameter]
     public bool IsSignedIn { get; set; } = false;
 
-    private MUNity.Models.Resolution.Resolution _resolution;
+
+    private ViewModel.ResolutionViewModel _viewModel;
 
     private MUNity.Schema.Simulation.Resolution.ResolutionSmallInfo _info { get; set; }
 
@@ -133,21 +134,28 @@
     protected override async Task OnInitializedAsync()
     {
         await ReloadResolution();
+        if (this._viewModel != null)
+        {
+            this._viewModel.ChangedFromExtern += delegate { InvokeAsync(StateHasChanged); };
+            }
         await base.OnInitializedAsync();
     }
 
     private async Task ReloadResolution()
     {
-        _resolution = await resolutionService.GetResolutionDtoAsync(ResolutionId);
-        if (_resolution != null)
+        var resolution = await resolutionService.GetResolutionDtoAsync(ResolutionId);
+        if (resolution != null)
         {
             this._info = this.resolutionService.GetResolutionInfo(this.ResolutionId);
             if (!this._info.AllowPublicEdit)
                 this.resolutionMode = EResolutionMode.Read;
+
+            this._viewModel = await ViewModel.ResolutionViewModel.CreateViewModel(resolution, navManager.BaseUri + "resasocket");
         }
 
 
 
         this.StateHasChanged();
     }
+
 }

@@ -250,7 +250,7 @@ namespace MUNityCore.Services
             return true;
         }
 
-        internal void ActivateAmendment(string amendmentId)
+        internal bool ActivateAmendment(string amendmentId)
         {
             // Deactivate all other amendments if needed:
             //var resolutionId = _context.Amendments.FirstOrDefault(n => n.ResaAmendmentId == amendmentId).Resolution.ResaElementId;
@@ -276,7 +276,10 @@ namespace MUNityCore.Services
                 }
                 amendment.Activated = true;
                 this._context.SaveChanges();
+                return true;
             }
+
+            return false;
         }
 
         internal bool SubmitAddAmendment(string amendmentId)
@@ -314,7 +317,7 @@ namespace MUNityCore.Services
             return false;
         }
 
-        public async Task<bool> SetSession(string resolutionId, string agendaItem)
+        public async Task<bool> SetSessionAsync(string resolutionId, string agendaItem)
         {
             var reso = await this._context.Resolutions.FirstOrDefaultAsync(n => n.ResaElementId == resolutionId);
             if (reso == null) return false;
@@ -323,7 +326,7 @@ namespace MUNityCore.Services
             return true;
         }
 
-        internal void DeactivateAmendment(string amendmentId)
+        internal bool DeactivateAmendment(string amendmentId)
         {
             var amendment = _context.Amendments.FirstOrDefault(n => n.ResaAmendmentId == amendmentId);
             if (amendment != null)
@@ -349,7 +352,10 @@ namespace MUNityCore.Services
                     
                 }
                 this._context.SaveChanges();
+                return true;
             }
+
+            return false;
         }
 
         public async Task<bool> SetSubmitterNameAsync(string resolutionId, string newSubmitterName)

@@ -6,7 +6,7 @@
 @inject Services.SqlResolutionService resolutionService;
 @inject Services.FrontendSimulationService frontendSimulationService;
 
-@if (Resolution != null)
+@if (ViewModel?.Resolution != null)
 {
     <Modal @ref="modalRef">
         <ModalContent Centered="true">
@@ -100,13 +100,15 @@
 @code {
 
     [Parameter]
-    public MUNity.Models.Resolution.Resolution Resolution { get; set; }
+    public ViewModel.ResolutionViewModel ViewModel { get; set; }
 
     [Parameter]
     public EventCallback AmendmentCreated { get; set; }
 
     [Parameter]
     public bool IsSekContext { get; set; }
+
+    private MUNity.Models.Resolution.Resolution Resolution => this.ViewModel.Resolution;
 
     private bool editSubmitterAllowed
     {
@@ -138,39 +140,27 @@
         modalRef?.Show();
     }
 
-    private void SubmitCreateAmendment()
+    private async Task SubmitCreateAmendment()
     {
         pattern.ResolutionId = Resolution.ResolutionId;
 
-
-        var newAmendment = this.resolutionService.CreateAmendment(pattern);
-        if (newAmendment != null)
+        if (pattern.AmendmentType == EAmendmentTypes.Add)
         {
-            modalRef.Hide();
-            if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment addAmendment)
-            {
-                this.Resolution.OperativeSection.AddAmendments.Add(addAmendment.ToModel());
-                this.Resolution.OperativeSection.Paragraphs.Insert(addAmendment.VirtualParagraph.OrderIndex, addAmendment.VirtualParagraph.ToModel());
-            }
-            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment changeAmendment)
-            {
-                this.Resolution.OperativeSection.ChangeAmendments.Add(changeAmendment.ToModel());
-            }
-            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment deleteAmendment)
-            {
-                this.Resolution.OperativeSection.DeleteAmendments.Add(deleteAmendment.ToModel());
-            }
-            else if (newAmendment is MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment moveAmendment)
-            {
-                this.Resolution.OperativeSection.MoveAmendments.Add(moveAmendment.ToModel());
-                this.Resolution.OperativeSection.Paragraphs.Insert(moveAmendment.VirtualParagraph.OrderIndex, moveAmendment.VirtualParagraph.ToModel());
-            }
-            this.AmendmentCreated.InvokeAsync();
+            await this.ViewModel.CreateAddAmendment(pattern.SubmitterName, pattern.NewIndex, pattern.NewValue);
         }
-        else
+        else if (pattern.AmendmentType == EAmendmentTypes.Change)
         {
-            errored = true;
+            await this.ViewModel.CreateChangeAmendment(pattern.SubmitterName, pattern.ParagraphId, pattern.NewValue);
         }
+        else if (pattern.AmendmentType == EAmendmentTypes.Delete)
+        {
+            await this.ViewModel.CreateDeleteAmendment(pattern.SubmitterName, pattern.ParagraphId);
+        }
+        else if (pattern.AmendmentType == EAmendmentTypes.Move)
+        {
+            await this.ViewModel.CreateMoveAmendment(pattern.SubmitterName, pattern.ParagraphId, pattern.NewIndex);
+        }
+        modalRef.Hide();
     }
 
     private void HideModal()
