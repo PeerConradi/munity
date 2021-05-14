@@ -8,19 +8,19 @@
         <!-- Redeliste -->
         <div class="col-lg-3 col-sm-8 col-xs-9 mt-2 mb-2">
             <div class="row ml-2 ml-xs-0">
-                <span class="text-sm-left text-secondary">Aktuelle*r Redner*in</span>
+                <span class="text-sm-left text-white">Aktuelle*r Redner*in</span>
             </div>
             <div class="row ml-3 ml-xs-0">
                 <h4>@((ViewModel.Speakerlist.CurrentSpeaker != null) ? ViewModel.Speakerlist.CurrentSpeaker.Name : "Niemand")</h4>
             </div>
             <div class="row ml-2" style="margin-top: -5px;">
-                <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.Speakers.Count() warten</span>
+                <span class="text-sm-left text-white">@ViewModel.Speakerlist.Speakers.Count() warten</span>
             </div>
         </div>
 
         <div class="col-lg-2 col-sm-4 col-xs-3  mt-2 mb-2">
             <div class="row">
-                <span class="text-sm-left text-secondary">Zeit</span>
+                <span class="text-sm-left text-white">Zeit</span>
             </div>
             <div class="row">
                 <h4 class="speakerTimer">@this.ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</h4>
@@ -29,11 +29,11 @@
                 @if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer ||
                  this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.AnswerPaused)
                 {
-                    <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
+                    <span class="text-sm-left text-white">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
                 }
                 else
                 {
-                    <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.SpeakerTime.ToString(@"mm\:ss")</span>
+                    <span class="text-sm-left text-white">@ViewModel.Speakerlist.SpeakerTime.ToString(@"mm\:ss")</span>
                 }
 
             </div>
@@ -42,13 +42,13 @@
         <!-- Fragen und Kurzbemerkungen -->
         <div class="col-lg-3 col-sm-8 col-xs-9  mt-2 mb-2">
             <div class="row ml-2">
-                <span class="text-sm-left text-secondary">Fragen und Kurzbemerkungen</span>
+                <span class="text-sm-left text-white">Fragen und Kurzbemerkungen</span>
             </div>
             <div class="row ml-3">
                 <h4>@((ViewModel.Speakerlist.CurrentQuestion != null) ? ViewModel.Speakerlist.CurrentQuestion.Name : "Niemand")</h4>
             </div>
             <div class="row ml-2" style="margin-top: -5px;">
-                <span class="text-sm-left text-secondary">
+                <span class="text-sm-left text-white">
                     @((ViewModel.Speakerlist.Questions.Any()) ? "danach: " + ViewModel.Speakerlist.Questions.First().Name : null)
                     @((ViewModel.Speakerlist.Questions.Any() && ViewModel.Speakerlist.Questions.Count() > 1) ? " +" + (ViewModel.Speakerlist.Questions.Count() - 1).ToString() : null)
                 </span>
@@ -57,13 +57,13 @@
 
         <div class="col-lg-2 col-sm-4 col-xs-3  mt-2 mb-2">
             <div class="row">
-                <span class="text-sm-left text-secondary">Zeit</span>
+                <span class="text-sm-left text-white">Zeit</span>
             </div>
             <div class="row">
                 <h4 class="questionTimer">@((this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds > 0) ? this.ViewModel.Speakerlist.RemainingQuestionTime.ToString(@"mm\:ss") : "Zum Ende kommen")</h4>
             </div>
             <div class="row" style="margin-top: -5px;">
-                <span class="text-sm-left text-secondary">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
+                <span class="text-sm-left text-white">@ViewModel.Speakerlist.QuestionTime.ToString(@"mm\:ss")</span>
             </div>
         </div>
 
