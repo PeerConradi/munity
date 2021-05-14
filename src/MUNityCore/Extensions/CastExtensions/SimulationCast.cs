@@ -138,6 +138,9 @@ namespace MUNityCore.Extensions.CastExtensions
 
         public static MUNity.Schema.Simulation.SimulationStatusDto ToModel(this SimulationStatus status)
         {
+            if (status == null)
+                return null;
+
             var newStatusSocketMessage = new SimulationStatusDto()
             {
                 SimulationStatusId = status.SimulationStatusId,

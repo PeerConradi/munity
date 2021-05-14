@@ -128,7 +128,7 @@
             }
             SimViewModel.PetitionAdded += OnPetitionAdded;
             SimViewModel.StatusChanged += OnStatusChanged;
-            currentStatus = this.simulationService.GetCurrentStatus(SimViewModel.SimulationId).ToModel();
+            currentStatus = this.simulationService.GetCurrentStatus(SimViewModel.SimulationId)?.ToModel();
         }
         agendaBoard?.ReloadAgendaItems();
         await InvokeAsync(StateHasChanged);
