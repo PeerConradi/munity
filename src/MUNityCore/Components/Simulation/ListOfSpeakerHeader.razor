@@ -199,8 +199,10 @@
             this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
         {
             this.jsRuntime.InvokeVoidAsync("startSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer");
+            this.jsRuntime.InvokeVoidAsync("pauseQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
         }
-        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.SpeakerPaused)
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.SpeakerPaused ||
+            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.AnswerPaused)
         {
             this.jsRuntime.InvokeVoidAsync("pauseQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
             this.jsRuntime.InvokeVoidAsync("pauseSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer");
