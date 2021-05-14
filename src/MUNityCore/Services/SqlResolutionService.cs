@@ -122,14 +122,16 @@ namespace MUNityCore.Services
             }
         }
 
-        internal void EnablePublicEdit(string resolutionId)
+        internal bool EnablePublicEdit(string resolutionId)
         {
             var auth = this._context.ResolutionAuths.FirstOrDefault(n => n.ResolutionId == resolutionId);
             if (auth != null)
             {
                 auth.AllowPublicEdit = true;
                 _context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
         internal async Task<bool> SetSupportersAsync(string resolutionId, string text)
@@ -143,14 +145,16 @@ namespace MUNityCore.Services
             return true;
         }
 
-        internal void DisablePublicEdit(string resolutionId)
+        internal bool DisablePublicEdit(string resolutionId)
         {
             var auth = this._context.ResolutionAuths.FirstOrDefault(n => n.ResolutionId == resolutionId);
             if (auth != null)
             {
                 auth.AllowPublicEdit = false;
                 _context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
         internal ResolutionSmallInfo GetResolutionInfo(string resolutionId)

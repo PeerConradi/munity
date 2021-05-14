@@ -279,6 +279,23 @@ namespace MUNityCore.Hubs
                 await this.Clients.Group(body.ResolutionId).AmendmentRemoved(body.AmendmentId);
         }
 
+        public async Task ChangePublicMode(string resolutionId, bool allowPublicEdit)
+        {
+            var args = new PublicModeChangedEventArgs()
+            {
+                AllowPublicEdit = allowPublicEdit,
+                ResolutionId = resolutionId
+            };
+
+            var success = allowPublicEdit ? 
+                this._resolutionService.EnablePublicEdit(resolutionId) : 
+                this._resolutionService.DisablePublicEdit(resolutionId);
+
+            if (success)
+                await this.Clients.Group(resolutionId).PublicModeChanged(args);
+            
+        }
+        
         public async Task Subscribe(string resolutionId)
         {
             await this.Groups.AddToGroupAsync(this.Context.ConnectionId, resolutionId);

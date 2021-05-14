@@ -215,4 +215,9 @@ namespace MUNity.Models.Resolution.EventArguments
         public int VirtualParagraphIndex { get; set; }
     }
 
+    public class PublicModeChangedEventArgs : ResolutionEventArgs
+    {
+        public bool AllowPublicEdit { get; set; }
+    }
+
 }

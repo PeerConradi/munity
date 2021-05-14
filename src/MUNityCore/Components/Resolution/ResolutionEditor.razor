@@ -165,16 +165,14 @@
         await ViewModel.AddOperativeParagraph();
     }
 
-    private void AllowEveryoneToWrite()
+    private async Task AllowEveryoneToWrite()
     {
-        this.resolutionService.EnablePublicEdit(this.ViewModel.Resolution.ResolutionId);
-        this.Info.AllowPublicEdit = true;
+        await this.ViewModel.SetPublicEditMode(true);
     }
 
-    private void AllowOnlyChairsToWrite()
+    private async Task AllowOnlyChairsToWrite()
     {
-        this.resolutionService.DisablePublicEdit(this.ViewModel.Resolution.ResolutionId);
-        this.Info.AllowPublicEdit = false;
+        await this.ViewModel.SetPublicEditMode(false);
     }
 
     protected override void OnInitialized()

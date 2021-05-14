@@ -261,6 +261,11 @@ namespace MUNityCore.ViewModel
                 await HubConnection.SendAsync(nameof(Hubs.ResolutionHub.RemoveMoveAmendment), body);
         }
 
+        public async Task SetPublicEditMode(bool allowPublicEdit)
+        {
+            await HubConnection.SendAsync(nameof(Hubs.ResolutionHub.ChangePublicMode), resolutionId, allowPublicEdit);
+        }
+
 
         public event EventHandler<string> ErrorOccured;
         public event EventHandler<HeaderStringPropChangedEventArgs> NameChanged;
@@ -287,6 +292,8 @@ namespace MUNityCore.ViewModel
 
         public event EventHandler<string> AmendmentRemoved;
         public event EventHandler<string> AmendmentSubmitted;
+
+        public event EventHandler<PublicModeChangedEventArgs> PublicModeChanged;
 
         public event EventHandler ChangedFromExtern;
 
@@ -546,6 +553,7 @@ namespace MUNityCore.ViewModel
             HubConnection.On<AmendmentActivatedChangedEventArgs>(nameof(ITypedResolutionHub.AmendmentActivatedChanged), (args) => AmendmentActivatedChanged?.Invoke(this, args));
             HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentRemoved), (id) => AmendmentRemoved?.Invoke(this, id));
             HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentSubmitted), (id) => AmendmentSubmitted?.Invoke(this, id));
+            HubConnection.On<PublicModeChangedEventArgs>(nameof(ITypedResolutionHub.PublicModeChanged), (args) => PublicModeChanged?.Invoke(this, args));
 
             this.resolution = resolution;
         }
