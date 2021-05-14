@@ -1,8 +1,6 @@
 ﻿@inject Services.PresentsService presentsService;
 
-<h1>Anwesenheitsfeststellung</h1>
-<h4>Gestartet: @Presents.CreatedTime.ToString("dd.MM.yyyy HH:mm:ss")</h4>
-<h4>Status: @((Presents.MarkedFinished) ? "Abgeschlossen" : "Im Gange")</h4>
+<h1>Feststellungstabelle:</h1>
 
 <Table>
     <TableHeader>
@@ -76,18 +74,24 @@
     [Parameter]
     public MUNityCore.Models.Simulation.SimulationPresents Presents { get; set; }
 
+    [Parameter]
+    public EventCallback PresentStateChanged { get; set; }
+
     private void MarkFinished()
     {
         this.presentsService.FinishCheck(this.Presents.SimulationPresentsId);
+        this.PresentStateChanged.InvokeAsync();
     }
 
     private void MarkPresent(MUNityCore.Models.Simulation.PresentsState state)
     {
         this.presentsService.MarkPresent(state.PresentsStateId);
+        this.PresentStateChanged.InvokeAsync();
     }
 
     private void MarkAbsent(MUNityCore.Models.Simulation.PresentsState state)
     {
         this.presentsService.MarkAbsent(state.PresentsStateId);
+        this.PresentStateChanged.InvokeAsync();
     }
 }
