@@ -296,6 +296,11 @@
     private void ReloadCurrentPresents()
     {
         this.currentPresents = this.presentsService.GetLastPresentCheckOfSimulation(this.ViewModel.SimulationId);
+        if (currentPresents != null)
+        {
+            this.NewVoting.PresentsId = currentPresents.SimulationPresentsId;
+            this.StateHasChanged();
+        }
     }
 
     private async Task VoteOnCurrent(MUNity.Schema.Simulation.EVoteStates choice)
