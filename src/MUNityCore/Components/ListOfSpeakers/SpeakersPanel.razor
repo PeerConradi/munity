@@ -80,21 +80,6 @@
 
         <div class="mb-4 text-grey">
             <i class="fa fa-clock mr-2"></i>
-            @*@if (ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds > 0)
-            {
-                <span>@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss") verbleibend</span>
-            }
-            else
-            {
-                @if (SimViewModel.UserContext.IsChair)
-                {
-                    <span class="text-red">@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss") überzogen</span>
-                }
-                else
-                {
-                    <span class="text-red">Bitte zum Ende kommen!</span>
-                }
-            }*@
             <span class="speakerTimer">@ViewModel.Speakerlist.RemainingSpeakerTime.ToString(@"mm\:ss")</span>
 
             @if (SimViewModel.UserContext.IsChair && (ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Speaking ||
@@ -324,19 +309,23 @@
             this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Answer)
         {
             this.jsRuntime.InvokeVoidAsync("startSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer");
+            this.jsRuntime.InvokeVoidAsync("pauseQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
         }
         else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.SpeakerPaused ||
-            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.AnswerPaused)
+            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.AnswerPaused ||
+            this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Stopped)
         {
+            this.jsRuntime.InvokeVoidAsync("pauseQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
             this.jsRuntime.InvokeVoidAsync("pauseSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer");
-        }
-        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Stopped)
-        {
-            this.jsRuntime.InvokeVoidAsync("resetSpeakerTimer", (int)this.ViewModel.Speakerlist.SpeakerTime.TotalSeconds, "speakerTimer");
         }
         else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.Question)
         {
             this.jsRuntime.InvokeVoidAsync("pauseSpeakerTimer", (int)this.ViewModel.Speakerlist.RemainingSpeakerTime.TotalSeconds, "speakerTimer");
+            this.jsRuntime.InvokeVoidAsync("startQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
+        }
+        else if (this.ViewModel.Speakerlist.Status == MUNity.Models.ListOfSpeakers.ListOfSpeakers.EStatus.QuestionPaused)
+        {
+            this.jsRuntime.InvokeVoidAsync("pauseQuestionTimer", (int)this.ViewModel.Speakerlist.RemainingQuestionTime.TotalSeconds, "questionTimer");
         }
     }
 
