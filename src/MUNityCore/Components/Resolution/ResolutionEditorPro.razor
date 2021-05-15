@@ -136,12 +136,7 @@
         await ReloadResolution();
         if (this._viewModel != null)
         {
-            this._viewModel.ChangedFromExtern += delegate { InvokeAsync(StateHasChanged); };
-            if (this.simulationService.CurrentResolution != null)
-            {
-                this.simulationService.CurrentResolution.Dispose();
-                this.simulationService.CurrentResolution = this._viewModel;
-            }
+
         }
 
 
@@ -167,6 +162,12 @@
             if (this._viewModel != null)
             {
                 this._viewModel.PublicModeChanged += OnPublicModeChanged;
+                this._viewModel.ChangedFromExtern += delegate { InvokeAsync(StateHasChanged); };
+                if (this.simulationService.CurrentResolution != null)
+                {
+                    this.simulationService.CurrentResolution.Dispose();
+                }
+                this.simulationService.CurrentResolution = this._viewModel;
             }
         }
 
