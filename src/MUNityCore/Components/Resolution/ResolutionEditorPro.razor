@@ -36,11 +36,11 @@
                            @onclick="() => resolutionMode = EResolutionMode.Write"><i class="fa fa-pen"></i></a>
                     }
                     <a class="btn btn-sm btn-icon btn-circle btn-danger"
-                       @onclick="() => this.OnEditorClosed.InvokeAsync()">X</a>
+                       @onclick="() => { this.OnEditorClosed.InvokeAsync(); this.DisposeViewModel(); }">X</a>
                 </div>
             </div>
             <div class="panel-body bg-white-darker">
-                @if (resolutionMode == EResolutionMode.Write)
+                @if (resolutionMode == EResolutionMode.Write && this._viewModel != null)
                 {
                     <MUNityCore.Components.Resolution.ResolutionEditor ViewModel="@_viewModel"
                                                                        Info="@_info"
@@ -48,14 +48,14 @@
                                                                        IsSignedIn="@IsSignedIn"
                                                                        OperativeParagraphsChanged="OnOperativeParagraphsChanged"/>
                 }
-                else if (resolutionMode == EResolutionMode.Read)
+                else if (resolutionMode == EResolutionMode.Read && this._viewModel != null)
                 {
                     <MUNityCore.Components.Resolution.ResolutionReader ViewModel="@_viewModel" />
                 }
             </div>
         </div>
     </div>
-    @if (resolutionMode == EResolutionMode.Write)
+    @if (resolutionMode == EResolutionMode.Write && this._viewModel != null)
     {
         <div class="col-lg-4 col-md-12">
             <MUNityCore.Components.Resolution.AmendmentPanel ViewModel="@_viewModel"
@@ -138,7 +138,13 @@
         {
             this._viewModel.ChangedFromExtern += delegate { InvokeAsync(StateHasChanged); };
         }
+
         await base.OnInitializedAsync();
+    }
+
+    private void DisposeViewModel()
+    {
+        this._viewModel.Dispose();
     }
 
     private async Task ReloadResolution()
