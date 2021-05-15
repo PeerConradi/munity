@@ -610,7 +610,7 @@ namespace MUNityCore.ViewModel
         public void Dispose()
         {
             if (this.HubConnection != null)
-                this.HubConnection.DisposeAsync();
+                this.HubConnection.DisposeAsync().ConfigureAwait(false);
         }
     }
 }

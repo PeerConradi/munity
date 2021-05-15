@@ -137,7 +137,14 @@
         if (this._viewModel != null)
         {
             this._viewModel.ChangedFromExtern += delegate { InvokeAsync(StateHasChanged); };
+            if (this.simulationService.CurrentResolution != null)
+            {
+                this.simulationService.CurrentResolution.Dispose();
+                this.simulationService.CurrentResolution = this._viewModel;
+            }
         }
+
+
 
         await base.OnInitializedAsync();
     }

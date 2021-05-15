@@ -41,6 +41,8 @@ namespace MUNityCore.Services
 
         public event EventHandler<SimulationViewModel> CurrentSimulationChanged;
 
+        public ViewModel.ResolutionViewModel CurrentResolution;
+
         public enum SimulationTabs
         {
             Overview,
@@ -279,6 +281,11 @@ namespace MUNityCore.Services
             foreach(var viewModel in _viewModels)
             {
                 viewModel.Dispose();
+            }
+
+            if (CurrentResolution != null)
+            {
+                CurrentResolution.Dispose();
             }
         }
 
