@@ -184,6 +184,27 @@ namespace MUNity.Models.Resolution.EventArguments
             this.ResolutionId = resolutionId;
             this.PreambleParagraphId = preambleParagraphId;
         }
+
+        public PreambleParagraphRemovedEventArgs()
+        {
+
+        }
+    }
+
+    public class OperativeParagraphRemovedEventArgs : ResolutionEventArgs
+    {
+        public string OperativeParagraphId { get; set; }
+
+        public OperativeParagraphRemovedEventArgs()
+        {
+
+        }
+
+        public OperativeParagraphRemovedEventArgs(string resolutionId, string operativeParagraphId)
+        {
+            ResolutionId = resolutionId;
+            OperativeParagraphId = operativeParagraphId;
+        }
     }
 
     public class OperativeSectionChangedEventArgs : ResolutionEventArgs

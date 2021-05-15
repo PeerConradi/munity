@@ -142,6 +142,17 @@ namespace MUNityCore.Hubs
             }
         }
 
+        public async Task DeleteOperativeParagraph(RemoveOperativeParagraphRequest body)
+        {
+            var deleted = _resolutionService.RemoveOperativeParagraph(body.OperativeParagraphId);
+            if (deleted)
+            {
+                var socketParam = new OperativeParagraphRemovedEventArgs(body.ResolutionId, body.OperativeParagraphId);
+                await Clients.Group(body.ResolutionId).OperativeParagraphRemoved(socketParam);
+            }
+            
+        }
+
         public async Task ReorderPreambleParagraphs(ReorderPreambleRequest body)
         {
             var reordered = _resolutionService.ReorderPreamble(body.ResolutionId, body.NewOrder);

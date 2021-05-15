@@ -149,6 +149,16 @@ namespace MUNityCore.ViewModel
             await HubConnection.SendAsync(nameof(Hubs.ResolutionHub.DeletePreambleParagraph), body);
         }
 
+        public async Task DeleteOperativeParagraph(string paragraphId)
+        {
+            var body = new RemoveOperativeParagraphRequest()
+            {
+                OperativeParagraphId = paragraphId,
+                ResolutionId = resolutionId
+            };
+            await HubConnection.SendAsync(nameof(Hubs.ResolutionHub.DeleteOperativeParagraph), body);
+        }
+
         public async Task ReorderPreambleParagraphs(IEnumerable<string> paragraphIdsInOrder)
         {
             var body = new ReorderPreambleRequest()
@@ -282,6 +292,7 @@ namespace MUNityCore.ViewModel
 
         public event EventHandler<OperativeParagraphAddedEventArgs> OperativeParagraphAdded;
         public event EventHandler<OperativeParagraphTextChangedEventArgs> OperativeParagraphTextChanged;
+        public event EventHandler<OperativeParagraphRemovedEventArgs> OperativeParagraphRemoved;
 
         public event EventHandler<AddAmendmentCreatedEventArgs> AddAmendmentCreated;
         public event EventHandler<ChangeAmendment> ChangeAmendmentCreated;
@@ -502,6 +513,16 @@ namespace MUNityCore.ViewModel
             }
         }
 
+        private void ResolutionViewModel_OperativeParagraphRemoved(object sender, OperativeParagraphRemovedEventArgs e)
+        {
+            var paragraph = this.Resolution.OperativeSection.FindOperativeParagraph(e.OperativeParagraphId);
+            if (paragraph != null)
+            {
+                this.Resolution.OperativeSection.RemoveOperativeParagraph(paragraph);
+                this.ChangedFromExtern?.Invoke(this, new EventArgs());
+            }
+        }
+
         public static async Task<ResolutionViewModel> CreateViewModel(Resolution resolution, string socketPath)
         {
             var hubConnection = new HubConnectionBuilder().WithUrl(socketPath).Build();
@@ -526,6 +547,7 @@ namespace MUNityCore.ViewModel
 
             OperativeParagraphAdded += ResolutionOnlineHandler_OperativeParagraphAdded;
             OperativeParagraphTextChanged += ResolutionOnlineHandler_OperativeParagraphTextChanged;
+            OperativeParagraphRemoved += ResolutionViewModel_OperativeParagraphRemoved;
 
             AddAmendmentCreated += ResolutionOnlineHandler_AddAmendmentCreated;
             ChangeAmendmentCreated += ResolutionOnlineHandler_ChangeAmendmentCreated;
@@ -554,9 +576,12 @@ namespace MUNityCore.ViewModel
             HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentRemoved), (id) => AmendmentRemoved?.Invoke(this, id));
             HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentSubmitted), (id) => AmendmentSubmitted?.Invoke(this, id));
             HubConnection.On<PublicModeChangedEventArgs>(nameof(ITypedResolutionHub.PublicModeChanged), (args) => PublicModeChanged?.Invoke(this, args));
+            HubConnection.On<OperativeParagraphRemovedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphRemoved), (args) => OperativeParagraphRemoved?.Invoke(this, args));
 
             this.resolution = resolution;
         }
+
+        
 
         public void Dispose()
         {

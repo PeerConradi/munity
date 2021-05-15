@@ -1,5 +1,5 @@
 ﻿@using MUNity.Extensions.ResolutionExtensions;
-@using Markdig; 
+@using Markdig;
 
 @if (Paragraph != null && ViewModel?.Resolution != null)
 {
@@ -7,12 +7,35 @@
     {
         @if (addAmendment != null)
         {
-            <p class="text-success">
-                <b>Neuer Absatz</b> <br />
-                @Paragraph.Text <br />
-                Eingereicht durch: @addAmendment.SubmitterName <br />
-            </p>
+            @if (addAmendment.Activated)
+            {
+                <div class="text-success" style="font-size: 18px">
+                    <b>Neuer Absatz (Wird behandelt)</b> <br />
+                    <MUNityCore.Components.General.MarkdownView Content="@displayText" /><br />
+                    Eingereicht durch: @addAmendment.SubmitterName <br />
+                </div>
+            }
+            else
+            {
+                <div class="text-success">
+                    <b>Neuer Absatz</b> <br />
+                    <MUNityCore.Components.General.MarkdownView Content="@displayText" /><br />
+                    Eingereicht durch: @addAmendment.SubmitterName <br />
+                </div>
+            }
+
         }
+
+        @if (moveAmendment != null)
+        {
+            @if (moveAmendment.Activated)
+            {
+                <h2>
+                    <span class="badge badge-primary">Neue Position</span>
+                </h2>
+            }
+        }
+
 
     }
     else
@@ -28,26 +51,41 @@
             <span class="badge badge-primary" @onclick="() => amendmentsModal.Show()" style="cursor: pointer;">@changeAmendmentCount Anträge auf Textänderung</span>
         }
 
+        @if (moveAmendmentsCount > 0)
+        {
+            <span class="badge badge-secondary" @onclick="() => amendmentsModal.Show()" style="cursor: pointer;">@moveAmendmentsCount Anträge auf Verschieben</span>
+        }
+
         @if (ViewModel.Resolution.OperativeSection.DeleteAmendments.Any(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId))
         {
-            <p style="font-size: 18px; text-decoration: line-through" class="text-danger">@ViewModel.Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(Paragraph) @Paragraph.Text</p>
+            <div style="font-size: 18px; text-decoration: line-through" class="text-danger">
+                <MUNityCore.Components.General.MarkdownView Content="@displayText" />
+            </div>
             <h4>
                 <span class="badge badge-secondary">Aktuell behandelter Änderungsantrag auf Streichen <br /> Eingereicht durch @ViewModel.Resolution.OperativeSection.DeleteAmendments.FirstOrDefault(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId).SubmitterName</span>
             </h4>
         }
         else if (ViewModel.Resolution.OperativeSection.ChangeAmendments.Any(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId))
         {
-            <p style="font-size: 18px; text-decoration: line-through" class="text-danger">@ViewModel.Resolution.OperativeSection.GetIndexNameOfOperativeParagraph(Paragraph) @Paragraph.Text</p>
-            <p style="font-size: 18px" class="text-green-darker">@ViewModel.Resolution.OperativeSection.ChangeAmendments.FirstOrDefault(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId)?.NewText</p>
+            <div style="font-size: 18px; text-decoration: line-through" class="text-danger">
+                <MUNityCore.Components.General.MarkdownView Content="@displayText" />
+            </div>
+            <div style="font-size: 18px" class="text-green-darker">@ViewModel.Resolution.OperativeSection.ChangeAmendments.FirstOrDefault(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId)?.NewText</div>
             <h4>
                 <span class="badge badge-secondary">Aktuell behandelter Änderungsantrag auf Streichen <br /> Eingereicht durch @ViewModel.Resolution.OperativeSection.ChangeAmendments.FirstOrDefault(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId)?.SubmitterName</span>
             </h4>
+        }
+        else if (ViewModel.Resolution.OperativeSection.MoveAmendments.Any(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId))
+        {
+            <div style="font-size: 18px; text-decoration: line-through" class="text-danger">
+                <MUNityCore.Components.General.MarkdownView Content="@displayText" />
+            </div>
         }
         else
         {
             <div style="font-size: 16px;">
                 <MUNityCore.Components.General.MarkdownView Content="@displayText" />
-            </div> 
+            </div>
         }
 
     }
@@ -86,6 +124,16 @@
                                 <TableRowCell>@changeAmendment.NewText</TableRowCell>
                             </TableRow>
                         }
+
+                        @foreach (var moveAmendment in ViewModel.Resolution.OperativeSection.MoveAmendments.Where(n => n.TargetSectionId == Paragraph.OperativeParagraphId))
+                        {
+                            <TableRow>
+                                <TableRowCell>Verschieben</TableRowCell>
+                                <TableRowCell>@moveAmendment.SubmitterName</TableRowCell>
+                                <TableRowCell>@moveAmendment.SubmitTime.ToString("dd.MM.yyyy HH:mm")</TableRowCell>
+                                <TableRowCell>-</TableRowCell>
+                            </TableRow>
+                        }
                     </TableBody>
                 </Table>
             </ModalBody>
@@ -108,9 +156,35 @@
 
     private int changeAmendmentCount = 0;
 
+    private int moveAmendmentsCount = 0;
+
     private MUNity.Models.Resolution.AddAmendment addAmendment;
 
-    private string displayText => ViewModel?.Resolution?.OperativeSection?.GetIndexNameOfOperativeParagraph(Paragraph) + " " + Paragraph?.Text;
+    private MUNity.Models.Resolution.MoveAmendment moveAmendment;
+
+    private string displayText
+    {
+        get
+        {
+            if (!this.Paragraph.IsVirtual || this.Paragraph.IsVirtual && addAmendment != null)
+            {
+                return ViewModel?.Resolution?.OperativeSection?.GetIndexNameOfOperativeParagraph(Paragraph) + " " + Paragraph?.Text;
+            }
+            else if (this.Paragraph.IsVirtual && moveAmendment != null)
+            {
+                if (moveAmendment != null)
+                {
+                    var sourceParagraph = this.ViewModel.Resolution.OperativeSection.FindOperativeParagraph(moveAmendment.TargetSectionId);
+                    if (sourceParagraph != null)
+                    {
+
+                    }
+                }
+            }
+            return "";
+        }
+    }
+
 
     protected override void OnInitialized()
     {
@@ -119,14 +193,22 @@
         {
             deleteAmendmentCount = ViewModel.Resolution.OperativeSection.DeleteAmendments.Count(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
             changeAmendmentCount = ViewModel.Resolution.OperativeSection.ChangeAmendments.Count(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+            moveAmendmentsCount = ViewModel.Resolution.OperativeSection.MoveAmendments.Count(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
             if (Paragraph.IsVirtual)
             {
                 addAmendment = ViewModel.Resolution.OperativeSection.AddAmendments.FirstOrDefault(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+                moveAmendment = ViewModel.Resolution.OperativeSection.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId == Paragraph.OperativeParagraphId);
             }
             ViewModel.ChangedFromExtern += delegate
             {
                 deleteAmendmentCount = ViewModel.Resolution.OperativeSection.DeleteAmendments.Count(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
                 changeAmendmentCount = ViewModel.Resolution.OperativeSection.ChangeAmendments.Count(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+                moveAmendmentsCount = ViewModel.Resolution.OperativeSection.MoveAmendments.Count(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+                if (Paragraph.IsVirtual)
+                {
+                    addAmendment = ViewModel.Resolution.OperativeSection.AddAmendments.FirstOrDefault(n => n.TargetSectionId == Paragraph.OperativeParagraphId);
+                    moveAmendment = ViewModel.Resolution.OperativeSection.MoveAmendments.FirstOrDefault(n => n.NewTargetSectionId == Paragraph.OperativeParagraphId);
+                }
                 InvokeAsync(StateHasChanged);
             };
         }

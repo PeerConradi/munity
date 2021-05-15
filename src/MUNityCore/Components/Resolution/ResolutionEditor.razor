@@ -71,6 +71,7 @@
         <OperativeParagraphEditor Paragraph="operativeParagraph"
                                   ParagraphMoved="OnParagraphMoved"
                                   ViewModel="@ViewModel"
+                                  ParagraphRemoved="OnParagraphRemoved"
                                   />
     }
 }
@@ -153,6 +154,11 @@
     private async Task RemovePreambleParagraph(MUNity.Models.Resolution.PreambleParagraph paragraph)
     {
         await ViewModel.DeletePreambleParagraph(paragraph.PreambleParagraphId);
+    }
+    
+    private async Task OnParagraphRemoved(MUNity.Models.Resolution.OperativeParagraph paragraph)
+    {
+        await ViewModel.DeleteOperativeParagraph(paragraph.OperativeParagraphId);
     }
 
     private void OnParagraphMoved()

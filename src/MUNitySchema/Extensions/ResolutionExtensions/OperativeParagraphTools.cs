@@ -546,17 +546,17 @@ namespace MUNity.Extensions.ResolutionExtensions
             foreach (var paragraph in allParagraphs)
             {
                 var deleteAmendments = section.DeleteAmendments.Where(n => n.TargetSectionId ==
-                paragraph.OperativeParagraphId);
+                paragraph.OperativeParagraphId).OrderBy(n => n.SubmitTime).ToList();
                 if (deleteAmendments.Any())
                     list.AddRange(deleteAmendments);
 
                 var changeAmendments = section.ChangeAmendments.Where(n => n.TargetSectionId ==
-                paragraph.OperativeParagraphId);
+                paragraph.OperativeParagraphId).OrderBy(n => n.SubmitTime).ToList();
                 if (changeAmendments.Any())
                     list.AddRange(changeAmendments);
 
                 var moveAmendments = section.MoveAmendments.Where(n => n.TargetSectionId ==
-                paragraph.OperativeParagraphId);
+                paragraph.OperativeParagraphId).OrderBy(n => n.SubmitTime).ToList();
                 if (moveAmendments.Any())
                     list.AddRange(moveAmendments);
             }

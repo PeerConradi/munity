@@ -43,6 +43,8 @@ namespace MUNity.Hubs
 
         Task PreambleParagraphRemoved(PreambleParagraphRemovedEventArgs args);
 
+        Task OperativeParagraphRemoved(OperativeParagraphRemovedEventArgs args);
+
         Task OperativeParagraphAdded(OperativeParagraphAddedEventArgs args);
         Task DeleteAmendmentCreated(DeleteAmendment dto);
         Task OperativeParagraphTextChanged(OperativeParagraphTextChangedEventArgs args);
