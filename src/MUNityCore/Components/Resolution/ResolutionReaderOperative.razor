@@ -30,9 +30,10 @@
         {
             @if (moveAmendment.Activated)
             {
-                <h2>
-                    <span class="badge badge-primary">Neue Position</span>
-                </h2>
+                <div class="text-success">
+                    <MUNityCore.Components.General.MarkdownView Content="@displayText" /><br />
+                    Eingereicht durch: @moveAmendment.SubmitterName <br />
+                </div>
             }
         }
 
@@ -72,7 +73,7 @@
             </div>
             <div style="font-size: 18px" class="text-green-darker">@ViewModel.Resolution.OperativeSection.ChangeAmendments.FirstOrDefault(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId)?.NewText</div>
             <h4>
-                <span class="badge badge-secondary">Aktuell behandelter Änderungsantrag auf Streichen <br /> Eingereicht durch @ViewModel.Resolution.OperativeSection.ChangeAmendments.FirstOrDefault(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId)?.SubmitterName</span>
+                <span class="badge badge-secondary">Aktuell behandelter Änderungsantrag auf Textänderung <br /> Eingereicht durch @ViewModel.Resolution.OperativeSection.ChangeAmendments.FirstOrDefault(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId)?.SubmitterName</span>
             </h4>
         }
         else if (ViewModel.Resolution.OperativeSection.MoveAmendments.Any(n => n.Activated && n.TargetSectionId == Paragraph.OperativeParagraphId))
@@ -141,6 +142,16 @@
     </Modal>
 }
 
+<style type="text/css">
+    ul {
+        list-style-type: lower-alpha;
+    }
+
+    ul ul {
+        list-style-type: lower-roman;
+    }
+
+</style>
 
 
 @code {
@@ -177,7 +188,7 @@
                     var sourceParagraph = this.ViewModel.Resolution.OperativeSection.FindOperativeParagraph(moveAmendment.TargetSectionId);
                     if (sourceParagraph != null)
                     {
-
+                        return sourceParagraph.Text;
                     }
                 }
             }
