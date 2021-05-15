@@ -289,6 +289,7 @@ namespace MUNityCore.ViewModel
 
         public event EventHandler<PreambleParagraphAddedEventArgs> PreambleParagraphAdded;
         public event EventHandler<PreambleParagraphTextChangedEventArgs> PreambleParagraphTextChanged;
+        public event EventHandler<PreambleParagraphRemovedEventArgs> PreambleParagraphRemoved;
 
         public event EventHandler<OperativeParagraphAddedEventArgs> OperativeParagraphAdded;
         public event EventHandler<OperativeParagraphTextChangedEventArgs> OperativeParagraphTextChanged;
@@ -513,6 +514,16 @@ namespace MUNityCore.ViewModel
             }
         }
 
+        private void ResolutionViewModel_PreambleParagraphRemoved(object sender, PreambleParagraphRemovedEventArgs e)
+        {
+            var paragraph = this.Resolution.Preamble.Paragraphs.FirstOrDefault(n => n.PreambleParagraphId == e.PreambleParagraphId);
+            if (paragraph != null)
+            {
+                this.Resolution.Preamble.Paragraphs.Remove(paragraph);
+                this.ChangedFromExtern?.Invoke(this, new EventArgs());
+            }
+        }
+
         private void ResolutionViewModel_OperativeParagraphRemoved(object sender, OperativeParagraphRemovedEventArgs e)
         {
             var paragraph = this.Resolution.OperativeSection.FindOperativeParagraph(e.OperativeParagraphId);
@@ -541,9 +552,11 @@ namespace MUNityCore.ViewModel
             TopicChanged += ResolutionOnlineHandler_TopicChanged;
             CommitteeNameChanged += ResolutionOnlineHandler_CommitteeNameChanged;
             SubmitterNameChanged += ResolutionOnlineHandler_SubmitterNameChanged;
+            SupportersChanged += ResolutionOnlineHandler_SupportersChanged;
+
             PreambleParagraphAdded += ResolutionOnlineHandler_PreambleParagraphAdded;
             PreambleParagraphTextChanged += ResolutionOnlineHandler_PreambleParagraphTextChanged;
-            SupportersChanged += ResolutionOnlineHandler_SupportersChanged;
+            PreambleParagraphRemoved += ResolutionViewModel_PreambleParagraphRemoved;
 
             OperativeParagraphAdded += ResolutionOnlineHandler_OperativeParagraphAdded;
             OperativeParagraphTextChanged += ResolutionOnlineHandler_OperativeParagraphTextChanged;
@@ -558,16 +571,25 @@ namespace MUNityCore.ViewModel
             AmendmentSubmitted += ResolutionOnlineHandler_AmendmentSubmitted;
             AmendmentRemoved += ResolutionOnlineHandler_AmendmentRemoved;
 
+            // Header
             HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderNameChanged), (args) => NameChanged?.Invoke(this, args));
             HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderFullNameChanged), (args) => FullNameChanged?.Invoke(this, args));
             HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderTopicChanged), (args) => TopicChanged?.Invoke(this, args));
             HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderCommitteeNameChanged), (args) => CommitteeNameChanged.Invoke(this, args));
             HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderSubmitterNameChanged), (args) => SubmitterNameChanged?.Invoke(this, args));
             HubConnection.On<HeaderStringPropChangedEventArgs>(nameof(ITypedResolutionHub.HeaderSupportersChanged), (args) => SupportersChanged?.Invoke(this, args));
+            
+            //Preamble
             HubConnection.On<PreambleParagraphAddedEventArgs>(nameof(ITypedResolutionHub.PreambleParagraphAdded), (args) => PreambleParagraphAdded?.Invoke(this, args));
-            HubConnection.On<OperativeParagraphAddedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphAdded), (args) => OperativeParagraphAdded?.Invoke(this, args));
             HubConnection.On<PreambleParagraphTextChangedEventArgs>(nameof(ITypedResolutionHub.PreambleParagraphTextChanged), (args) => PreambleParagraphTextChanged?.Invoke(this, args));
+            HubConnection.On<PreambleParagraphRemovedEventArgs>(nameof(ITypedResolutionHub.PreambleParagraphRemoved), (args) => PreambleParagraphRemoved?.Invoke(this, args));
+
+            // Operative Paragraphs
+            HubConnection.On<OperativeParagraphAddedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphAdded), (args) => OperativeParagraphAdded?.Invoke(this, args));
             HubConnection.On<OperativeParagraphTextChangedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphTextChanged), (args) => OperativeParagraphTextChanged?.Invoke(this, args));
+            HubConnection.On<OperativeParagraphRemovedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphRemoved), (args) => OperativeParagraphRemoved?.Invoke(this, args));
+
+            // Amendments
             HubConnection.On<AddAmendmentCreatedEventArgs>(nameof(ITypedResolutionHub.AddAmendmentCreated), (args) => this.AddAmendmentCreated?.Invoke(this, args));
             HubConnection.On<ChangeAmendment>(nameof(ITypedResolutionHub.ChangeAmendmentCreated), (args) => ChangeAmendmentCreated?.Invoke(this, args));
             HubConnection.On<DeleteAmendment>(nameof(ITypedResolutionHub.DeleteAmendmentCreated), (args) => DeleteAmendmentCreated?.Invoke(this, args));
@@ -575,8 +597,10 @@ namespace MUNityCore.ViewModel
             HubConnection.On<AmendmentActivatedChangedEventArgs>(nameof(ITypedResolutionHub.AmendmentActivatedChanged), (args) => AmendmentActivatedChanged?.Invoke(this, args));
             HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentRemoved), (id) => AmendmentRemoved?.Invoke(this, id));
             HubConnection.On<string>(nameof(ITypedResolutionHub.AmendmentSubmitted), (id) => AmendmentSubmitted?.Invoke(this, id));
+
+            // General
             HubConnection.On<PublicModeChangedEventArgs>(nameof(ITypedResolutionHub.PublicModeChanged), (args) => PublicModeChanged?.Invoke(this, args));
-            HubConnection.On<OperativeParagraphRemovedEventArgs>(nameof(ITypedResolutionHub.OperativeParagraphRemoved), (args) => OperativeParagraphRemoved?.Invoke(this, args));
+            
 
             this.resolution = resolution;
         }
