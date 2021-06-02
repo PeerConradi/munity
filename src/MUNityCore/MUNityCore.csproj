@@ -65,6 +65,7 @@
     <None Include="wwwroot\css\open-iconic\font\fonts\open-iconic.svg" />
     <None Include="wwwroot\css\open-iconic\ICON-LICENSE" />
     <None Include="wwwroot\css\open-iconic\README.md" />
+    <None Include="wwwroot\js\one-page-parallax\app.min.js" />
     <None Include="wwwroot\webfonts\fa-brands-400.svg" />
     <None Include="wwwroot\webfonts\fa-brands-400.woff2" />
     <None Include="wwwroot\webfonts\fa-regular-400.svg" />
