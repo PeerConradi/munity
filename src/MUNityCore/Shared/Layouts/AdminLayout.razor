@@ -1,0 +1,60 @@
+﻿@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService storageService;
+@inject Services.MainViewService mainViewService;
+@inject NavigationManager navManager;
+
+<AdminStyle />
+
+<div id="app" class="app app-header-fixed app-sidebar-fixed ">
+    <AdminHeader />
+
+    <Sidebar />
+
+    <div id="content" class="app-content">
+        @Body
+    </div>
+</div>
+
+
+@code {
+
+    private bool showCookieBanner = false;
+
+    private async Task AcceptCookies()
+    {
+        await storageService.SetItemAsync<string>("munity_cookies-accepted", "true");
+    }
+
+    protected override void OnInitialized()
+    {
+        mainViewService.LoadingStateChanged += delegate { this.StateHasChanged(); };
+        mainViewService.ShowSidebarChanged += delegate { this.StateHasChanged(); };
+        mainViewService.ShowSidebarLageViewChanged += delegate { StateHasChanged(); };
+        navManager.LocationChanged += ToggleSidebarOnNavChanged;
+        base.OnInitialized();
+    }
+
+    private void ToggleSidebarOnNavChanged(object sender, LocationChangedEventArgs args)
+    {
+        if (mainViewService.ShowSidebar)
+            mainViewService.ShowSidebar = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await storageService.GetItemAsStringAsync("munity_cookies-accepted");
+            if (result == "true")
+            {
+                showCookieBanner = false;
+            }
+            else
+            {
+                showCookieBanner = true;
+            }
+            this.StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

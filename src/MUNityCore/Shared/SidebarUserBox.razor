@@ -1,26 +1,46 @@
 <AuthorizeView>
     <Authorized>
-        <ul class="nav">
-            <li class="nav-profile @activeClass">
-                <a @onclick="ToggleExpand">
-                    <div class="cover with-shadow"></div>
-                    <div class="image">
-                        <img src="/img/MUNBWTeddy.png" alt="">
-                    </div>
-                    <div class="info">
-                        <b class="caret pull-right"></b>Hallo
-                        <small>@context.User.Identity.Name</small>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <ul class="nav nav-profile @expandedClass" style="@expandedStyle">
-                    <li><a href="/Account/Manager"><i class="fa fa-cog"></i> Einstellungen</a></li>
-                    @*<li><a href="javascript:;"><i class="fa fa-pencil-alt"></i> Send Feedback</a></li>
-                    <li><a href="javascript:;"><i class="fa fa-question-circle"></i> Helps</a></li>*@
-                </ul>
-            </li>
-        </ul>
+        <div class="menu-profile">
+			<a href="javascript:;" class="menu-profile-link" data-toggle="app-sidebar-profile" data-target="#appSidebarProfileMenu">
+				<div class="menu-profile-cover with-shadow"></div>
+				<div class="menu-profile-image">
+					<img src="../assets/img/user/user-13.jpg" alt="" />
+				</div>
+				<div class="menu-profile-info" @onclick="ToggleExpand">
+					<div class="d-flex align-items-center">
+						<div class="flex-grow-1">
+							@context.User.Identity.Name
+						</div>
+						<div class="menu-caret ms-auto" ></div>
+					</div>
+					<small>Front end developer</small>
+				</div>
+			</a>
+		</div>
+
+		
+        <div id="appSidebarProfileMenu" class="@expandedClass">
+			<div class="menu-item pt-5px">
+				<a href="javascript:;" class="menu-link">
+					<div class="menu-icon"><i class="fa fa-cog"></i></div>
+					<div class="menu-text">Settings</div>
+				</a>
+			</div>
+			<div class="menu-item">
+				<a href="javascript:;" class="menu-link">
+					<div class="menu-icon"><i class="fa fa-pencil-alt"></i></div>
+					<div class="menu-text"> Send Feedback</div>
+				</a>
+			</div>
+			<div class="menu-item pb-5px">
+				<a href="javascript:;" class="menu-link">
+					<div class="menu-icon"><i class="fa fa-question-circle"></i></div>
+					<div class="menu-text"> Helps</div>
+				</a>
+			</div>
+			<div class="menu-divider m-0"></div>
+		</div>
+
     </Authorized>
     <NotAuthorized>
         

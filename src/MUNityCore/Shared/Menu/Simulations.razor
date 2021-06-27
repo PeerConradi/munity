@@ -1,9 +1,12 @@
 @inject MUNityCore.DataHandlers.EntityFramework.MunityContext munityContext;
 
-<li>
-    <a href="/simulations">
-        <span class="badge pull-right">@munityContext.Simulations.Count()</span>
-        <i class="fa fa-hdd"></i>
-        <span>Simulationen</span>
-    </a>
-</li>
+
+<div class="menu-item">
+	<a href="/simulations" class="menu-link">
+		<div class="menu-icon">
+			<i class="fa fa-calendar"></i> 
+		</div>
+		<div class="menu-text">Simulationen</div>
+		<div class="menu-badge">@munityContext.Simulations.Count()</div>
+	</a>
+</div>
