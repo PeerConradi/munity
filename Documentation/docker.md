@@ -43,38 +43,48 @@ sudo apt install python3-pip
 pip3 install docker-compose
 ```
 
-# Building MUNityCore + MunityFrontend (Angular)
+# Install MUNity
 
-## Step One
-Clone the backend
+## Clone the repository
+Clone Munity to your machine using git.
 
 ```
 git clone https://github.com/PeerConradi/munity.git
 ```
 
-## Stop Two // TODO
-Clone the Frontend
+## Setup the .env file
+
+Create a .env file and add 
 
 ```
-
+MUNITY_DB_PASS={YOUR DATABASE PASSWORD HERE}
 ```
 
-## Step Three
-Setup appsettings.json
+## Create a directory
+
+Create the directory: ```/var/volumes/munity``` using ```mkdir```
+
+### Additional setup
+
+MUNity loads additional MySQL information from the environment, you can specify the following:
+
+| Parameter | Default |
+|-----------|---------|
+|MYSQL_SERVER|localhost|
+|MYSQL_USER|root|
+|MYSQL_PASS|[EMPTY STRING]|
+|MYSQL_PORT|3306|
+|MYSQL_DATABASE|munitybase|
+
+> Note: When you use another mysql user than root make sure that this user is allowed to create the database: munitybase or this database already already exists and the user is allowed to create, drop and alter tables.
+
+## Configure the appsettings.json
+Setup appsettings.json this is used for a key that is important for authentication.
 ```
 {
-  "MySqlSettings": {
-    "ConnectionString": "server=localhost;userid=root;password='';database='munitybase'"
-  },
   "AppSettings": {
     "Secret": "REMEMBER TO CHANGE THIS KEY IN PRODUCTION EVERY TIME"
-  },
-  "MunityMongoDatabaseSettings": {
-    "ResolutionCollectionName": "Resolutions",
-    "PresenceCollectionName": "Presence",
-    "ConnectionString": "mongodb://localhost:27017",
-    "DatabaseName": "MunityDb"
-  },
+  }
   "Logging": {
     "LogLevel": {
       "Default": "Information",
@@ -86,18 +96,10 @@ Setup appsettings.json
 }
 ```
 
-## Step Four
-Create the Backend Docker image
+## Compose
+Build the docker containers
+
 ```
-cd munity
-docker build -t munity-backend .
+docker-compose up -d --build
 ```
 
-## Step Five
-```
-Create the Frontend Image
-Go back to home
-cd ~
-cd MunityFrontend
-docker build -t munity-frontend .
-```

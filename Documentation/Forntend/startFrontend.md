@@ -1,9 +1,19 @@
 # Frontend development
 
-> Author: Peer Conradi
-> | 12.09.2020
+## Startup Page
 
-If you want to start writing for the frontend you should know the basics of Angular 2+.
-MUNity is using Angular 9. 
+The MUNity frontend uses Blazor Server side.
 
-The Angular Application can be found under ```./MUNintyAngular/ClientApp```. I suggest using VIsual Studio Code.
+The first page that references all JavaScript and Stylesheets is the _Host.cshtml
+
+it can be found inside ```src/MUNityCore/Pages/_Host.cshtml```
+
+## Home Page (Index)
+
+The first content page that is loaded is the Index.razor that can also be found under: ```src/MUNityCore/Pages/Index.razor```.
+
+## Page oganisation
+
+Everything is made into Components, so you can find all Pages and Components inside the __src/MUNityCore/Components__.
+
+The parts are sorted into folders by the topic they cover for example: Simulations, List of Speakers, Resolutions etc.

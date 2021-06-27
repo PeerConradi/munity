@@ -1,18 +1,15 @@
 # munity
-Model United Nations REST API and Blazor Client
+A Model United Nations online software that offers functionality to organize MUNs and tools to use on the conference like a list of speakers, resolution editor.
 
 ## About
 MUNity is a work in progress to create and manage Model United Nations Conferences. It also contains a lot of software solutions for documents like resolutions, aswell as a solution to create speakerlists.
 
 > Note that this Software is still under development.
 
-[![Coverage Status](https://coveralls.io/repos/github/PeerConradi/munity/badge.svg?branch=master)](https://coveralls.io/github/PeerConradi/munity?branch=master)
-
 ## General structure
 
-There are 6 different projects in this project solution. 
+There are 4 different projects in this project solution. 
 * The Backend, a WebAPI 2.0 (with a Test Project)
-* The Frontend, a Blazor Web-Assembly Project (with a Test Project)
 * The MunitySchema, a shared code containing structures and logic that is shared between the FrontEnd and Backend. You can also find this one on nuget. (also with a Test Project)
 
 ## Status
@@ -23,29 +20,25 @@ This application is under development and cannot be used at the moment. Please c
 | ------------------- | ----------------------------------- | ---------------------------------------------------------------- |
 | User Managment      | ![10%](https://progress-bar.dev/10) | Started                                                          |
 | ConferenceManagment | ![21%](https://progress-bar.dev/21) | API Routes needed                                                |
-| ResaEditor          | ![40%](https://progress-bar.dev/50) | Rework at offline Mode needed. |
-| Speakerlist         | ![50%](https://progress-bar.dev/90) | __NEEDS Tests__                                     |
-| Simulation          | ![5%](https://progress-bar.dev/20)   | Reworking the different functions.                              |
-| Administration      | ![5%](https://progress-bar.dev/5)   | First API Endpoints                                              |
+| ResaEditor          | ![70%](https://progress-bar.dev/70) | Can't create sub operative paragraphs. |
+| Speakerlist         | ![100%](https://progress-bar.dev/100) | Done                                 |
+| Simulation          | ![90%](https://progress-bar.dev/90)   | Simulation internal done needs some more REST API Endpoints.                           |
+| Administration      | ![20%](https://progress-bar.dev/20)   | Base Administration done.                                            |
 | Dockerize           | ![80%](https://progress-bar.dev/80) | Environment Configurations needed for DbConnection Strings       |
 
+## Documentation
+
+For the developer documentation see: [MUNIty Documentation](Documentation/docs.md)
+
 ## Setup Development Environment
-Requiered: 
-* Visual Studio Community Edtion 2019 or higher or Visual Studio Code https://visualstudio.microsoft.com/de/downloads/
-* MariaDb (MySql Version: 10.1.26) https://mariadb.org/download/
-* MongoDb (latest) https://www.mongodb.com/try/download/community
 
-Look into the appsettings.json to change Database Connection Strings!
-After Starting the Databases for MySQL (MariaDb) and MongoDb will create itself.
-
-For more information check out the [Getting started](Documentation/GettingStarted.md)
+Check out the [Getting started](Documentation/GettingStarted.md) to learn how you can start developing munity.
 
 ## Installing MUNity on Linux
 
-A guide on how to install the application on a Linux System can 
-be found [here](Documentation/installation.md)
+A guide on how to install munity an an Ubuntu system without using docker can be found here: [here](Documentation/installation.md)
 
-A __NEW__ guide on how to run the MunityCore and Angular FrontEnd can be found: [here](Documentation/docker.md)
+If you want to you can also install munity using docker. Find a tutorial for that [here](Documentation/docker.md)
 
 ## Swagger
 
