@@ -13,6 +13,7 @@
     <title>MUNity</title>
     <base href="~/" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="~/css/RadzenTheme.css">
     <link href="~/css/material/app.min.css" rel="stylesheet" />
     <link href="~/css/corperate/app.min.css" rel="stylesheet" />
 
@@ -24,12 +25,12 @@
 <body>
 
     <h3 style="padding: 10%" id="incompatibleBrowser">
-        Ihr Browser ist inkompatibel. Bitte wechseln Sie auf einen moderneren Browser. 
-        <br/>
-        <a href="https://brave.com/">Brave</a> <br/>
-        <a href="https://www.mozilla.org/de/firefox/new/">Firefox</a> <br/>
-        <a href="https://www.microsoft.com/de-de/edge">Edge</a> <br/>
-        <a href="https://www.google.com/intl/de/chrome/">Chrome</a> <br/>
+        Ihr Browser ist inkompatibel. Bitte wechseln Sie auf einen moderneren Browser.
+        <br />
+        <a href="https://brave.com/">Brave</a> <br />
+        <a href="https://www.mozilla.org/de/firefox/new/">Firefox</a> <br />
+        <a href="https://www.microsoft.com/de-de/edge">Edge</a> <br />
+        <a href="https://www.google.com/intl/de/chrome/">Chrome</a> <br />
     </h3>
 
     <!-- Blazor overlay -->
@@ -38,7 +39,7 @@
             <div class="connectionError">
                 <div class="alert alert-danger">Verbindungsabbruch - Verbindung wird wiederhergestellt</div>
             </div>
-            
+
         </div>
         <div class="failed">
         </div>
@@ -74,9 +75,9 @@
             return false;
         })();
 
-    if(supported){
-        document.getElementById('incompatibleBrowser').style.display = "none";
-    }
+        if (supported) {
+            document.getElementById('incompatibleBrowser').style.display = "none";
+        }
 
 
     </script>
@@ -93,6 +94,6 @@
     <script src="_content/Blazorise/blazorise.js"></script>
     <script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script>
     <script src="_framework/blazor.server.js"></script>
-    <script src="js/one-page-parallax/app.min.js"></script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
 </body>
 </html>

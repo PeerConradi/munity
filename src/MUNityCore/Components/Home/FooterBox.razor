@@ -62,8 +62,10 @@
 				</div>
 				<div class="col-lg-6 text-center text-lg-end">
 					<span class="dropdown me-4">
-						<a class="footer-copyright-link dropdown-toggle @((showLanguageDrop) ? "show" : null)" @onclick="() => showLanguageDrop = !showLanguageDrop">United States (English)</a>
+						<a class="footer-copyright-link dropdown-toggle @((showLanguageDrop) ? "show" : null)" @onclick="Test">United States (English)</a>
 						<ul class="dropdown-menu  @((showLanguageDrop) ? "show" : null)" 
+							tabindex="0" @onfocusout="() => showLanguageDrop = false"
+							@ref="domElement"
 							style="@((showLanguageDrop) ? "position: absolute; inset: auto auto 0px 0px; margin: 0px; transform: translate(0px, -2px);" : null)">
 							<li><a class="dropdown-item">United States (English)</a></li>
 							<li><a class="dropdown-item">China (简体中文)</a></li>
@@ -87,4 +89,13 @@
 @code 
 {
     private bool showLanguageDrop = false;
+
+    private ElementReference domElement;
+
+    private async Task Test()
+    {
+        Console.WriteLine(domElement.GetType().Name);
+        showLanguageDrop = !showLanguageDrop;
+		await domElement.FocusAsync();
+    }
 } 
