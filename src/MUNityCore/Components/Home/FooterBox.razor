@@ -62,17 +62,18 @@
 				</div>
 				<div class="col-lg-6 text-center text-lg-end">
 					<span class="dropdown me-4">
-						<a class="footer-copyright-link dropdown-toggle" data-bs-toggle="dropdown">United States (English)</a>
-						<ul class="dropdown-menu">
-							<li><a href="#" class="dropdown-item">United States (English)</a></li>
-							<li><a href="#" class="dropdown-item">China (简体中文)</a></li>
-							<li><a href="#" class="dropdown-item">Brazil (Português)</a></li>
-							<li><a href="#" class="dropdown-item">Germany (Deutsch)</a></li>
-							<li><a href="#" class="dropdown-item">France (Français)</a></li>
-							<li><a href="#" class="dropdown-item">Japan (日本語)</a></li>
-							<li><a href="#" class="dropdown-item">Korea (한국어)</a></li>
-							<li><a href="#" class="dropdown-item">Latin America (Español)</a></li>
-							<li><a href="#" class="dropdown-item">Spain (Español)</a></li>
+						<a class="footer-copyright-link dropdown-toggle @((showLanguageDrop) ? "show" : null)" @onclick="() => showLanguageDrop = !showLanguageDrop">United States (English)</a>
+						<ul class="dropdown-menu  @((showLanguageDrop) ? "show" : null)" 
+							style="@((showLanguageDrop) ? "position: absolute; inset: auto auto 0px 0px; margin: 0px; transform: translate(0px, -2px);" : null)">
+							<li><a class="dropdown-item">United States (English)</a></li>
+							<li><a class="dropdown-item">China (简体中文)</a></li>
+							<li><a class="dropdown-item">Brazil (Português)</a></li>
+							<li><a class="dropdown-item">Germany (Deutsch)</a></li>
+							<li><a class="dropdown-item">France (Français)</a></li>
+							<li><a class="dropdown-item">Japan (日本語)</a></li>
+							<li><a class="dropdown-item">Korea (한국어)</a></li>
+							<li><a class="dropdown-item">Latin America (Español)</a></li>
+							<li><a class="dropdown-item">Spain (Español)</a></li>
 						</ul>
 					</span>
 					<a href="#" class="footer-copyright-link">Sitemap</a>
@@ -82,3 +83,8 @@
 	</div>
 </div>
 <!-- END footer -->
+
+@code 
+{
+    private bool showLanguageDrop = false;
+} 
