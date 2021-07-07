@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.User;
 using MUNity.Schema.User;
+using MUNity.Database.Models.User;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public interface IUserService
     {
@@ -19,11 +20,11 @@ namespace MUNityCore.Services
 
         Task<bool> CheckMail(string mail);
 
-        Models.User.UserPrivacySettings GetUserPrivacySettings(MunityUser user);
+        UserPrivacySettings GetUserPrivacySettings(MunityUser user);
 
-        Models.User.UserPrivacySettings InitUserPrivacySettings(MunityUser user);
+        UserPrivacySettings InitUserPrivacySettings(MunityUser user);
 
-        void UpdatePrivacySettings(Models.User.UserPrivacySettings settings);
+        void UpdatePrivacySettings(UserPrivacySettings settings);
 
         bool BanUser(MunityUser user);
 
@@ -39,7 +40,7 @@ namespace MUNityCore.Services
 
         Task<UserInformation> GetUserInformation(string username);
 
-        List<Dtos.Users.UserWithRolesDto> UsersWithRoles();
+        List<MUNityCore.Dtos.Users.UserWithRolesDto> UsersWithRoles();
 
         MunityUser GetUserById(string id);
     }

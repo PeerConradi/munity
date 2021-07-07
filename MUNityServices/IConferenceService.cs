@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityCore.Models.Conference;
-using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Organization;
 using MUNityCore.Models.User;
 using MUNity.Schema.Conference;
+using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Organization;
+using MUNity.Database.Models.Conference.Roles;
+using MUNity.Database.Models.User;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public interface IConferenceService
     {

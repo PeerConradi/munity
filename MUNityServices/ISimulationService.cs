@@ -1,10 +1,10 @@
-﻿using System;
+﻿using MUNity.Database.Models.Simulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityCore.Models.Simulation;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public interface ISimulationService
     {

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.User;
 using MUNity.Schema.User;
+using MUNity.Database.Models.User;
 
-namespace MUNityCore.Extensions.CastExtensions
+namespace MUNity.Extensions.CastExtensions
 {
     public static class UserCast
     {

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using MUNityCore.Models.Resolution.V2;
+using MUNity.Database.Models.Resolution.V2;
 using MUNity.Models.Resolution;
 using MUNity.Schema.Simulation;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public interface IResolutionService
     {

@@ -11,7 +11,7 @@ using MUNity.Extensions.LoSExtensions;
 using MUNity.Schema.ListOfSpeakers;
 using MUNityCore.ViewModel;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class SpeakerlistHubService : IDisposable
     {

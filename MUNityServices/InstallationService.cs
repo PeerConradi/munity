@@ -1,11 +1,11 @@
-﻿using MUNityCore.DataHandlers.EntityFramework;
+﻿using MUNity.Database.Context;
 using MUNityCore.Models.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class InstallationService
     {

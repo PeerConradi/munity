@@ -1,15 +1,16 @@
-﻿using MUNity.Models.Resolution;
+﻿using MUNity.Database.Models.Resolution.SqlResa;
+using MUNity.Models.Resolution;
 using MUNity.Models.Resolution.EventArguments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Extensions.CastExtensions
+namespace MUNity.Extensions.CastExtensions
 {
     public static class ResolutionCast
     {
-        public static MUNity.Models.Resolution.PreambleParagraph ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaPreambleParagraph sourceParagraph)
+        public static MUNity.Models.Resolution.PreambleParagraph ToModel(this ResaPreambleParagraph sourceParagraph)
         {
 
             MUNity.Models.Resolution.PreambleParagraph model = new MUNity.Models.Resolution.PreambleParagraph()
@@ -23,10 +24,10 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static MUNity.Models.Resolution.OperativeParagraph ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaOperativeParagraph sourceParagraph)
+        public static MUNity.Models.Resolution.OperativeParagraph ToModel(this ResaOperativeParagraph sourceParagraph)
         {
             if (sourceParagraph.Children == null)
-                sourceParagraph.Children = new List<Models.Resolution.SqlResa.ResaOperativeParagraph>();
+                sourceParagraph.Children = new List<ResaOperativeParagraph>();
             var model = new MUNity.Models.Resolution.OperativeParagraph()
             {
                 Children = sourceParagraph.Children.Select(n => n.ToModel()).ToList(),
@@ -42,7 +43,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static MUNity.Models.Resolution.AddAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment sourceAmendment)
+        public static MUNity.Models.Resolution.AddAmendment ToModel(this ResaAddAmendment sourceAmendment)
         {
             var model = new MUNity.Models.Resolution.AddAmendment()
             {
@@ -57,7 +58,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static ChangeAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaChangeAmendment changeAmendment)
+        public static ChangeAmendment ToModel(this ResaChangeAmendment changeAmendment)
         {
             var model = new MUNity.Models.Resolution.ChangeAmendment()
             {
@@ -73,7 +74,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static DeleteAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaDeleteAmendment sourceAmendment)
+        public static DeleteAmendment ToModel(this ResaDeleteAmendment sourceAmendment)
         {
             var model = new MUNity.Models.Resolution.DeleteAmendment()
             {
@@ -88,7 +89,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static MoveAmendment ToModel(this MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment sourceAmendment)
+        public static MoveAmendment ToModel(this ResaMoveAmendment sourceAmendment)
         {
 
             var model = new MUNity.Models.Resolution.MoveAmendment()
@@ -105,7 +106,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return model;
         }
 
-        public static AddAmendmentCreatedEventArgs ToSocketModel(this MUNityCore.Models.Resolution.SqlResa.ResaAddAmendment amendment, string resolutionId)
+        public static AddAmendmentCreatedEventArgs ToSocketModel(this ResaAddAmendment amendment, string resolutionId)
         {
             var args = new AddAmendmentCreatedEventArgs()
             {
@@ -138,7 +139,7 @@ namespace MUNityCore.Extensions.CastExtensions
             return args;
         }
 
-        public static MoveAmendmentCreatedEventArgs ToSocketModel(this MUNityCore.Models.Resolution.SqlResa.ResaMoveAmendment amendment, string resolutionId)
+        public static MoveAmendmentCreatedEventArgs ToSocketModel(this ResaMoveAmendment amendment, string resolutionId)
         {
             var dto = new MoveAmendmentCreatedEventArgs()
             {

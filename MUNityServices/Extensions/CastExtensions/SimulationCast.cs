@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNity.Database.Models.Simulation;
 using MUNity.Schema.Simulation;
-using MUNityCore.Models.Simulation;
 
-namespace MUNityCore.Extensions.CastExtensions
+namespace MUNity.Extensions.CastExtensions
 {
     public static class SimulationCast
     {
@@ -30,7 +30,7 @@ namespace MUNityCore.Extensions.CastExtensions
                 DisplayName = user.DisplayName,
                 RoleId = user.Role?.SimulationRoleId ?? -2,
                 SimulationUserId = user.SimulationUserId,
-                IsOnline = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.Any(n => n.Value.SimulationUserId == user.SimulationUserId)
+                //IsOnline = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.Any(n => n.Value.SimulationUserId == user.SimulationUserId)
             };
             return mdl;
         }
@@ -92,14 +92,14 @@ namespace MUNityCore.Extensions.CastExtensions
                 SimulationUserId = user.SimulationUserId,
                 DisplayName = user.DisplayName,
                 RoleId = user.Role?.SimulationRoleId ?? -2,
-                IsOnline = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.Any(n => n.Value.SimulationUserId == user.SimulationUserId),
+                //IsOnline = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.Any(n => n.Value.SimulationUserId == user.SimulationUserId),
                 PublicId = user.PublicUserId,
                 Password = user.Password,
             };
             return setup;
         }
 
-        public static PetitionDto ToPetitionDto(this Models.Simulation.Petition petition)
+        public static PetitionDto ToPetitionDto(this Petition petition)
         {
             var model = new PetitionDto()
             {

@@ -16,8 +16,6 @@ using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using MUNityCore.DataHandlers;
-using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -29,6 +27,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Blazored.LocalStorage;
+using MUNity.Database.Models.User;
+using MUNity.Database.Context;
+using MUNity.Services;
 
 namespace MUNityCore
 {
@@ -56,13 +57,14 @@ namespace MUNityCore
 
 
             // Adding a Blazor FrontEnd for configuration and stuff
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-            services.AddBlazorise(options =>
-            {
-                options.ChangeTextOnKeyPress = true; // optional
-            }).AddBootstrapProviders()
-            .AddFontAwesomeIcons();
+            // Lagency stuff from Blazor times
+            //services.AddRazorPages();
+            //services.AddServerSideBlazor();
+            //services.AddBlazorise(options =>
+            //{
+            //    options.ChangeTextOnKeyPress = true; // optional
+            //}).AddBootstrapProviders()
+            //.AddFontAwesomeIcons();
 
             // The App Settings contains information like the secret used to 
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -89,7 +91,7 @@ namespace MUNityCore
                 };
             });
 
-            services.AddIdentity<MUNityCore.Models.User.MunityUser, MUNityCore.Models.User.MunityRole>()
+            services.AddIdentity<MunityUser, MUNityCore.Models.User.MunityRole>()
                 .AddEntityFrameworkStores<MunityContext>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
@@ -112,19 +114,19 @@ namespace MUNityCore
             // All services that are used inside the controllers.
             //services.AddScoped<Services.InstallationService>();
             services.AddBlazoredLocalStorage();
-            services.AddScoped<Services.IAuthService, Services.AuthService>();
-            services.AddScoped<Services.IUserService, Services.UserService>();
-            services.AddScoped<Services.IOrganisationService, Services.OrganisationService>();
-            services.AddScoped<Services.IConferenceService, Services.ConferenceService>();
-            services.AddScoped<Services.SqlResolutionService>();
-            services.AddScoped<Services.SpeakerlistService>();
-            services.AddScoped<Services.SimulationService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IOrganisationService, OrganisationService>();
+            services.AddScoped<IConferenceService, ConferenceService>();
+            services.AddScoped<SqlResolutionService>();
+            services.AddScoped<SpeakerlistService>();
+            services.AddScoped<SimulationService>();
             services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
-            services.AddScoped<Services.FrontendSimulationService>();
-            services.AddScoped<Services.SpeakerlistHubService>();
-            services.AddScoped<Services.MainViewService>();
-            services.AddScoped<Services.LogSimulationService>();
-            services.AddScoped<Services.PresentsService>();
+            services.AddScoped<FrontendSimulationService>();
+            services.AddScoped<SpeakerlistHubService>();
+            services.AddScoped<MainViewService>();
+            services.AddScoped<LogSimulationService>();
+            services.AddScoped<PresentsService>();
 
             // Swagger for Documentation
             services.AddSwaggerGen(c =>

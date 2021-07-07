@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityCore.Models.Conference;
+using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Organization;
+using MUNity.Database.Models.User;
 using MUNityCore.Models.User;
-using MUNityCore.Models.Organization;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public interface IOrganisationService
     {

@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MUNity.Database.Context;
+using MUNity.Database.Models.Simulation;
 using MUNity.Schema.Simulation;
-using MUNityCore.DataHandlers.EntityFramework;
-using MUNityCore.Models.Simulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class LogSimulationService
     {

@@ -4,15 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using MUNityCore.Models.User;
 using Microsoft.EntityFrameworkCore;
-using MUNityCore.Util.Extensions;
-using MUNityCore.DataHandlers.EntityFramework;
-using MUNityCore.Exceptions.ConferenceExceptions;
-using MUNityCore.Models.Conference;
-using MUNityCore.Models.Conference.Roles;
-using MUNityCore.Models.Organization;
 using MUNity.Schema.Conference;
-using MUNityCore.Extensions.CastExtensions;
-namespace MUNityCore.Services
+using MUNity.Database.Context;
+using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Organization;
+using MUNity.Database.Models.Conference.Roles;
+using MUNity.Database.Models.User;
+using MUNity.Extensions.CastExtensions;
+using MUNity.Extensions.Conversion;
+
+namespace MUNity.Services
 {
     public class ConferenceService : IConferenceService
     {
@@ -27,7 +28,7 @@ namespace MUNityCore.Services
                 ProjectOrganization = organization
             };
 
-            var idFromShort = Util.Tools.IdGenerator.AsPrimaryKey(abbreviation);
+            var idFromShort = Util.IdGenerator.AsPrimaryKey(abbreviation);
 
             if (!_context.Projects.Any(n => n.ProjectId == idFromShort))
                 project.ProjectId = idFromShort;
@@ -63,7 +64,7 @@ namespace MUNityCore.Services
         public Conference CreateConference(string name, string fullname, string abbreviation, Project project)
         {
             if (_context.Conferences.Any(n => n.Name == name || n.FullName == fullname))
-                throw new NameAlreadyTakenException("The conference name or Fullname is already taken by another conference.");
+                throw new Exception("The conference name or Fullname is already taken by another conference.");
 
             if (project == null)
                 throw new ArgumentException("The project cannot be null!");
@@ -117,12 +118,9 @@ namespace MUNityCore.Services
                 CommitteeShort = abbreviation
             };
 
-
-
-            string customid = conference.ConferenceId + "-" + abbreviation.ToUrlValid();
-            if (!_context.Committees.Any(n => n.CommitteeId == customid))
-                committee.CommitteeId = customid;
-
+            //string customid = conference.ConferenceId + "-" + abbreviation.ToUrlValid();
+            //if (!_context.Committees.Any(n => n.CommitteeId == customid))
+            //    committee.CommitteeId = customid;
 
             committee.Conference = conference;
             _context.Committees.Add(committee);
@@ -399,7 +397,8 @@ namespace MUNityCore.Services
             var conference = await this._context.Conferences.Include(n => n.Committees).Include(n => n.ConferenceProject)
                 .FirstOrDefaultAsync(a => a.ConferenceId == conferenceId);
             if (conference == null) return null;
-            return conference.AsConferenceInformation();
+            throw new NotImplementedException("");
+            //return conference.AsConferenceInformation();
         }
 
         public bool AddRoleApplication(RoleApplication application)

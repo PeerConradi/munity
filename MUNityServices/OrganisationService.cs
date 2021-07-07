@@ -4,12 +4,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MUNityCore.DataHandlers.EntityFramework;
-using MUNityCore.Models.Conference;
+using MUNity.Database.Context;
+using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Organization;
+using MUNity.Database.Models.User;
 using MUNityCore.Models.User;
-using MUNityCore.Models.Organization;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class OrganisationService : IOrganisationService
     {
@@ -23,7 +24,7 @@ namespace MUNityCore.Services
             var organisation = new Organization();
 
             organisation.OrganizationId = Guid.NewGuid().ToString();
-            var shortAsKey = Util.Tools.IdGenerator.AsPrimaryKey(abbreviation);
+            var shortAsKey = Util.IdGenerator.AsPrimaryKey(abbreviation);
             if (!_context.Organizations.Any(n => n.OrganizationId == shortAsKey))
                 organisation.OrganizationId = shortAsKey;
 

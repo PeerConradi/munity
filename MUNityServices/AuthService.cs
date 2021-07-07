@@ -1,5 +1,4 @@
-﻿using MUNityCore.Models.Resolution;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -7,19 +6,20 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.CodeAnalysis.Options;
+//using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
-using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models;
-using MUNityCore.Models.Conference;
 using MUNityCore.Models.User;
-using MUNityCore.Models.Resolution.V2;
 using MUNity.Schema.Authentication;
 using MUNity.Schema.User;
+using MUNity.Database.Context;
+using MUNity.Database.Models.User;
+using MUNity.Database.Models.Conference;
+using MUNityBase;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class AuthService : IAuthService
     {
@@ -49,24 +49,24 @@ namespace MUNityCore.Services
             return true;
         }
 
-        public AuthenticationResponse Authenticate(MUNity.Schema.Authentication.AuthenticateRequest model)
-        {
-            // that user does not exists go away!
-            MunityUser user = _context.Users.FirstOrDefault(n => n.UserName == model.Username);
-            if (user == null)
-                return null;
+        //public AuthenticationResponse Authenticate(MUNity.Schema.Authentication.AuthenticateRequest model)
+        //{
+        //    // that user does not exists go away!
+        //    MunityUser user = _context.Users.FirstOrDefault(n => n.UserName == model.Username);
+        //    if (user == null)
+        //        return null;
 
-            var passwordCheck = Util.Hashing.PasswordHashing.CheckPassword(model.Password, "", user.PasswordHash);
+        //    var passwordCheck = Util.Hashing.PasswordHashing.CheckPassword(model.Password, "", user.PasswordHash);
 
-            // Password is not correct fuck off
-            if (!passwordCheck)
-                return null;
+        //    // Password is not correct fuck off
+        //    if (!passwordCheck)
+        //        return null;
 
-            // authentication successful so generate jwt token
-            var token = GenerateToken(user);
+        //    // authentication successful so generate jwt token
+        //    var token = GenerateToken(user);
             
-            return new AuthenticationResponse() { FirstName = user.Forename, LastName = user.Lastname, Username = user.UserName, Token = token};
-        }
+        //    return new AuthenticationResponse() { FirstName = user.Forename, LastName = user.Lastname, Username = user.UserName, Token = token};
+        //}
 
         public string GenerateToken(MunityUser user)
         {

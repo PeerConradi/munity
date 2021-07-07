@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using MUNityCore.Models.Conference;
-using MUNityCore.Models.Resolution;
 using MUNityCore.Models.User;
-using MUNityCore.Models.Resolution.V2;
 using MUNity.Schema.Authentication;
 using MUNity.Schema.User;
 using MUNity.Models.Resolution;
+using MUNity.Database.Models.User;
+using MUNity.Database.Models.Conference;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public interface IAuthService
     {
@@ -19,7 +18,7 @@ namespace MUNityCore.Services
 
         public MunityUser GetUserOfClaimPrincipal(ClaimsPrincipal principal);
 
-        AuthenticationResponse Authenticate(AuthenticateRequest model);
+        //AuthenticationResponse Authenticate(AuthenticateRequest model);
 
         Task<int> SetUserAuth(MunityUser user, MunityUserAuth auth);
 

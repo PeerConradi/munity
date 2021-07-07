@@ -1,12 +1,13 @@
-﻿using MUNityCore.DataHandlers.EntityFramework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityCore.Models.Simulation;
 using Microsoft.EntityFrameworkCore;
+using MUNity.Database.Context;
+using MUNity.Database.Models.Simulation;
+using MUNityBase;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class PresentsService
     {
@@ -29,7 +30,7 @@ namespace MUNityCore.Services
             };
 
             foreach(var user in simulation.Users.Where(n => n.Role != null &&
-            (n.Role.RoleType == MUNity.Schema.Simulation.RoleTypes.Delegate || n.Role.RoleType == MUNity.Schema.Simulation.RoleTypes.Ngo)))
+            (n.Role.RoleType == RoleTypes.Delegate || n.Role.RoleType == RoleTypes.Ngo)))
             {
                 if (user.Role != null && user.Role.IsDelegateOrNgo())
                 {

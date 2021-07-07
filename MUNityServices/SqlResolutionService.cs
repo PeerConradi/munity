@@ -1,17 +1,17 @@
-﻿using MUNityCore.DataHandlers.EntityFramework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityCore.Models.Resolution.V2;
-using MUNityCore.Models.Resolution.SqlResa;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Models.Resolution;
 using MUNity.Schema.Simulation;
 using MUNity.Schema.Simulation.Resolution;
-using MUNityCore.Extensions.CastExtensions;
+using MUNity.Extensions.CastExtensions;
+using MUNity.Database.Context;
+using MUNity.Database.Models.Resolution.SqlResa;
+using MUNity.Database.Models.Resolution.V2;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class SqlResolutionService
     {
@@ -884,13 +884,13 @@ namespace MUNityCore.Services
         {
             switch (pattern.AmendmentType)
             {
-                case Dtos.Resolutions.EAmendmentTypes.Add:
+                case MUNityCore.Dtos.Resolutions.EAmendmentTypes.Add:
                     return this.CreateAddAmendment(pattern.ResolutionId, pattern.NewIndex, pattern.SubmitterName, pattern.NewValue);
-                case Dtos.Resolutions.EAmendmentTypes.Change:
+                case MUNityCore.Dtos.Resolutions.EAmendmentTypes.Change:
                     return this.CreateChangeAmendment(pattern.ParagraphId, pattern.SubmitterName, pattern.NewValue);
-                case Dtos.Resolutions.EAmendmentTypes.Delete:
+                case MUNityCore.Dtos.Resolutions.EAmendmentTypes.Delete:
                     return this.CreateDeleteAmendment(pattern.ParagraphId, pattern.SubmitterName);
-                case Dtos.Resolutions.EAmendmentTypes.Move:
+                case MUNityCore.Dtos.Resolutions.EAmendmentTypes.Move:
                     return this.CreateMoveAmendment(pattern.ParagraphId, pattern.SubmitterName, pattern.NewIndex);
                 default:
                     Console.WriteLine($"Nicht unterstützter Antragstyp: {pattern.AmendmentType.ToString()}");

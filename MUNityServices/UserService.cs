@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Models.User;
 using MUNity.Schema.User;
-using MUNityCore.Extensions.CastExtensions;
+using MUNity.Database.Context;
+using MUNity.Database.Models.User;
+using MUNityBase;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class UserService : IUserService
     {
@@ -83,7 +84,7 @@ namespace MUNityCore.Services
             return this._context.Users.AsNoTracking().OrderBy(n => n.Lastname).Skip(blockid).Take(100).ToList();
         }
 
-        public List<Dtos.Users.UserWithRolesDto> UsersWithRoles()
+        public List<MUNityCore.Dtos.Users.UserWithRolesDto> UsersWithRoles()
         {
             var users = from user in _context.Users
                         join roleIds in _context.UserRoles on user.Id equals roleIds.UserId
@@ -96,11 +97,11 @@ namespace MUNityCore.Services
                             RoleName = roles.Name
                         };
             var result = users.ToList().GroupBy(n => n.UserId).Select(n =>
-            new Dtos.Users.UserWithRolesDto()
+            new MUNityCore.Dtos.Users.UserWithRolesDto()
             {
                 UserId = n.Key,
                 Username = n.First().Username,
-                Roles = n.Select(a => new Dtos.Users.MunityRoleDto()
+                Roles = n.Select(a => new MUNityCore.Dtos.Users.MunityRoleDto()
                 {
                     RoleId = a.RoleId,
                     Name = a.RoleName
@@ -109,9 +110,9 @@ namespace MUNityCore.Services
 
             var noRolesUsers = from user in _context.Users
                                where _context.UserRoles.All(n => n.UserId != user.Id)
-                               select new Dtos.Users.UserWithRolesDto()
+                               select new MUNityCore.Dtos.Users.UserWithRolesDto()
                                {
-                                   Roles = new List<Dtos.Users.MunityRoleDto>(),
+                                   Roles = new List<MUNityCore.Dtos.Users.MunityRoleDto>(),
                                    UserId = user.Id,
                                    Username = user.UserName
                                };
@@ -127,7 +128,7 @@ namespace MUNityCore.Services
             return this._context.Users.CountAsync();
         }
 
-        public Models.User.UserPrivacySettings GetUserPrivacySettings(MunityUser user)
+        public UserPrivacySettings GetUserPrivacySettings(MunityUser user)
         {
             if (user == null) return null;
             return this._context.Users.Include(n => n.PrivacySettings)
@@ -135,7 +136,7 @@ namespace MUNityCore.Services
                 ?.PrivacySettings;
         }
 
-        public Models.User.UserPrivacySettings InitUserPrivacySettings(MunityUser user)
+        public UserPrivacySettings InitUserPrivacySettings(MunityUser user)
         {
             if (user == null) return null;
             user.PrivacySettings = new UserPrivacySettings() {User = user};
@@ -143,7 +144,7 @@ namespace MUNityCore.Services
             return user.PrivacySettings;
         }
 
-        public void UpdatePrivacySettings(Models.User.UserPrivacySettings settings)
+        public void UpdatePrivacySettings(UserPrivacySettings settings)
         {
             this._context.Add(settings);
             this._context.SaveChanges();
@@ -176,7 +177,8 @@ namespace MUNityCore.Services
             var user = await _context.Users.Include(n => n.PrivacySettings).FirstOrDefaultAsync(n =>
                 n.UserName == username);
             if (user == null) return null;
-            return user.AsInformation();
+            throw new NotImplementedException();
+            //return user.AsInformation();
             
         }
 

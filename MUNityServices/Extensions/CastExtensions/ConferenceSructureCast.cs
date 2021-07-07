@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNity.Database.Models.Organization;
+using MUNity.Database.Models.Conference;
 
-namespace MUNityCore.Extensions.CastExtensions
+namespace MUNity.Extensions.CastExtensions
 {
     public static class ConferenceSructureCast
     {

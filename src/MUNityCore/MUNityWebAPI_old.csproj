@@ -62,23 +62,6 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="wwwroot\css\corperate\fonts\bootstrap-icons.woff2" />
-    <None Include="wwwroot\css\open-iconic\FONT-LICENSE" />
-    <None Include="wwwroot\css\open-iconic\font\fonts\open-iconic.svg" />
-    <None Include="wwwroot\css\open-iconic\ICON-LICENSE" />
-    <None Include="wwwroot\css\open-iconic\README.md" />
-    <None Include="wwwroot\js\one-page-parallax\app.min.js" />
-    <None Include="wwwroot\webfonts\fa-brands-400.svg" />
-    <None Include="wwwroot\webfonts\fa-brands-400.woff2" />
-    <None Include="wwwroot\webfonts\fa-regular-400.svg" />
-    <None Include="wwwroot\webfonts\fa-regular-400.woff2" />
-    <None Include="wwwroot\webfonts\fa-solid-900.svg" />
-    <None Include="wwwroot\webfonts\fa-solid-900.woff2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MUNityDatabase\MUNityDatabase.csproj" />
-    <ProjectReference Include="..\MUNitySchema\MUNitySchema.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -112,9 +95,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
-    <Folder Include="wwwroot\material\" />
+    <Folder Include="Shared\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MUNityServices\MUNityServices.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

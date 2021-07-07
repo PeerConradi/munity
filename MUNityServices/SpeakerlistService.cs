@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
-using MUNity.Models.ListOfSpeakers;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Extensions.LoSExtensions;
 using MUNity.Schema.ListOfSpeakers;
-using MUNityCore.Models.Speakerlists;
+using MUNity.Database.Context;
+using MUNity.Database.Models.ListOfSpeakers;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class SpeakerlistService
     {
         Random _rnd = new Random();
-        private readonly DataHandlers.EntityFramework.MunityContext _context;
+        private readonly MunityContext _context;
 
         public ListOfSpeakers CreateSpeakerlist()
         {

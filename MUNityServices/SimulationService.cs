@@ -10,14 +10,15 @@ using Microsoft.EntityFrameworkCore;
 using MUNity.Models.Simulation;
 using MUNity.Schema.Simulation;
 using MUNity.Schema.Simulation.Voting;
-using MUNityCore.DataHandlers.EntityFramework;
 using MUNityCore.Dtos.Simulations;
-using MUNityCore.Extensions.CastExtensions;
-using MUNityCore.Models.Simulation;
-using MUNityCore.Models.Simulation.Presets;
 using MUNity.Schema.Simulation.Resolution;
+using MUNity.Database.Context;
+using MUNity.Database.Models.Simulation;
+using MUNityBase;
+using MUNity.Database.Models.ListOfSpeakers;
+using MUNity.Database.Models.Resolution.V2;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
 
     /// <summary>
@@ -30,21 +31,6 @@ namespace MUNityCore.Services
 
         private readonly MunityContext _context;
 
-        public IEnumerable<Models.Simulation.Presets.ISimulationPreset> Presets
-        {
-            get
-            {
-                yield return new Models.Simulation.Presets.GV_Preset();
-                yield return new Models.Simulation.Presets.HA3_Preset();
-                yield return new Models.Simulation.Presets.KFK_Preset();
-                yield return new Models.Simulation.Presets.KWT_Preset();
-                yield return new Models.Simulation.Presets.MRR_Preset();
-                yield return new Models.Simulation.Presets.SR_Preset();
-                yield return new Models.Simulation.Presets.WiSo_Preset();
-                yield return new Models.Simulation.Presets.BW_TVT_EGO();
-                yield return new Models.Simulation.Presets.BW_TVT_Sim_Preset();
-            }
-        }
 
         internal SimulationVoting CreateVoting(CreateSimulationVoting body)
         {
@@ -407,7 +393,7 @@ namespace MUNityCore.Services
                 Password = password
             };
 
-            sim.ListOfSpeakers = new MUNity.Models.ListOfSpeakers.ListOfSpeakers();
+            sim.ListOfSpeakers = new ListOfSpeakers();
 
             this._context.Simulations.Add(sim);
             this._context.ListOfSpeakers.Add(sim.ListOfSpeakers);
@@ -440,7 +426,8 @@ namespace MUNityCore.Services
         internal SimulationDto GetSimulationResponse(int id)
         {
             var simulation = GetSimulationWithHubsUsersAndRoles(id);
-            return simulation.ToSimulationDto();
+            throw new NotImplementedException();
+            //return simulation.ToSimulationDto();
         }
 
         public SimulationUser CreateUser(int simulationId, string displayName)
@@ -502,14 +489,14 @@ namespace MUNityCore.Services
             var petition = _context.Petitions.Include(n => n.AgendaItem).FirstOrDefault(n => n.PetitionId == petitionId);
             var agendaItemId = petition.AgendaItem.AgendaItemId;
             var currentActivePetition = _context.Petitions.FirstOrDefault(n => n.AgendaItem.AgendaItemId == agendaItemId &&
-                n.Status == MUNity.Models.Simulation.EPetitionStates.Active);
+                n.Status == EPetitionStates.Active);
             if (currentActivePetition != null)
             {
                 _context.Petitions.Remove(currentActivePetition);
             }
             if (petition != null)
             {
-                petition.Status = MUNity.Models.Simulation.EPetitionStates.Active;
+                petition.Status = EPetitionStates.Active;
             }
             _context.SaveChanges();
         }
@@ -569,7 +556,6 @@ namespace MUNityCore.Services
         internal async Task<bool> IsPetitionInteractionAllowed(PetitionInteractRequest body)
         {
             if (body == null || string.IsNullOrEmpty(body.PetitionId)) return false;
-            if (!string.IsNullOrEmpty(Program.MasterToken) && body.Token == Program.MasterToken) return true;
 
             var isAdminOrChair = await IsTokenValidAndUserChairOrOwner(body);
             if (isAdminOrChair) return true;
@@ -695,11 +681,11 @@ namespace MUNityCore.Services
         }
         
 
-        public MUNity.Models.ListOfSpeakers.ListOfSpeakers InitListOfSpeakers(int simulationId)
+        public ListOfSpeakers InitListOfSpeakers(int simulationId)
         {
             var simulation = this._context.Simulations.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.SimulationId == simulationId);
             if (simulation == null) return null;
-            simulation.ListOfSpeakers = new MUNity.Models.ListOfSpeakers.ListOfSpeakers();
+            simulation.ListOfSpeakers = new ListOfSpeakers();
             this._context.ListOfSpeakers.Add(simulation.ListOfSpeakers);
             this._context.SaveChanges();
             return simulation.ListOfSpeakers;
@@ -712,12 +698,12 @@ namespace MUNityCore.Services
 
         
 
-        internal void ApplyPreset(Simulation simulation, ISimulationPreset preset, bool removeExistingRoles = true)
-        {
-            if (removeExistingRoles) simulation.Roles.Clear();
-            simulation.Roles.AddRange(preset.Roles);
-            this._context.SaveChanges();
-        }
+        //internal void ApplyPreset(Simulation simulation, ISimulationPreset preset, bool removeExistingRoles = true)
+        //{
+        //    if (removeExistingRoles) simulation.Roles.Clear();
+        //    simulation.Roles.AddRange(preset.Roles);
+        //    this._context.SaveChanges();
+        //}
 
 
 
@@ -793,7 +779,7 @@ namespace MUNityCore.Services
                 PetitionDate = DateTime.Now,
                 PetitionType = petitionType,
                 SimulationUser = user,
-                Status = MUNity.Models.Simulation.EPetitionStates.Unkown,
+                Status = EPetitionStates.Unkown,
                 Text = ""
             };
             agendaItem.Petitions.Add(newItem);
@@ -817,15 +803,16 @@ namespace MUNityCore.Services
             }
             if (string.IsNullOrEmpty(user.Token))
             {
-                user.Token = Util.Tools.IdGenerator.RandomString(20);
+                user.Token = Util.IdGenerator.RandomString(20);
                 this.SaveDbChanges();
             }
 
 
+            throw new NotImplementedException();
 
-            var response = user.ToTokenResponse();
-            Console.WriteLine("User joined the simulation and got token: " + response.Token);
-            return response;
+            //var response = user.ToTokenResponse();
+            //Console.WriteLine("User joined the simulation and got token: " + response.Token);
+            //return response;
         }
 
         internal bool UnlinkResolution(string resolutionId)
@@ -837,7 +824,7 @@ namespace MUNityCore.Services
             return true;
         }
 
-        internal bool LinkResolution(Simulation simulation, MUNityCore.Models.Resolution.V2.ResolutionAuth auth)
+        internal bool LinkResolution(Simulation simulation, ResolutionAuth auth)
         {
             auth.Simulation = simulation;
             _context.SaveChanges();
@@ -925,7 +912,7 @@ namespace MUNityCore.Services
             this._context = context;
         }
 
-        public Task<List<Models.Simulation.PetitionType>> GetPetitionTypes()
+        public Task<List<PetitionType>> GetPetitionTypes()
         {
             return this._context.PetitionTypes.ToListAsync();
         }
@@ -971,7 +958,6 @@ namespace MUNityCore.Services
 
         public async Task<bool> IsTokenValidAndUserDelegate(SimulationRequest requestSchema)
         {
-            if (!string.IsNullOrEmpty(Program.MasterToken) && requestSchema.Token == Program.MasterToken) return true;
             return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == requestSchema.SimulationId &&
             n.Token == requestSchema.Token &&
@@ -981,8 +967,6 @@ namespace MUNityCore.Services
 
         public async Task<bool> IsTokenValidAndUserChair(SimulationRequest requestSchema)
         {
-            if (!string.IsNullOrEmpty(Program.MasterToken) && requestSchema.Token == Program.MasterToken)
-                return true;
             return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == requestSchema.SimulationId &&
             n.Token == requestSchema.Token &&
@@ -1000,8 +984,6 @@ namespace MUNityCore.Services
 
         public async Task<bool> IsTokenValidAndUserChair(int simulationId, string token)
         {
-            if (!string.IsNullOrEmpty(Program.MasterToken) && token == Program.MasterToken)
-                return true;
             return await _context.SimulationUser.AnyAsync(n =>
             n.Simulation.SimulationId == simulationId &&
             n.Token == token &&
@@ -1031,8 +1013,6 @@ namespace MUNityCore.Services
 
         public async Task<bool> IsTokenValidAndUserChairOrOwner(SimulationRequest request)
         {
-            if (!string.IsNullOrEmpty(Program.MasterToken) && request.Token == Program.MasterToken)
-                return true;
             return await IsTokenValidAndUserChairOrOwnerAsync(request.SimulationId, request.Token);
         }
 
@@ -1076,22 +1056,22 @@ namespace MUNityCore.Services
                 (n.Name == agendaItem.Name));
                 if (hasMatchingAgendaItem) return null;
             }
-            
-            var item = new AgendaItem(agendaItem);
+            throw new NotImplementedException();
+            //var item = new AgendaItem(agendaItem);
 
-            if (hasAnyElements)
-            {
-                item.OrderIndex = simulation.AgendaItems.Max(n => n.OrderIndex) + 1;
-            }
-            else
-            {
-                item.OrderIndex = 1;
-            }
+            //if (hasAnyElements)
+            //{
+            //    item.OrderIndex = simulation.AgendaItems.Max(n => n.OrderIndex) + 1;
+            //}
+            //else
+            //{
+            //    item.OrderIndex = 1;
+            //}
 
-            simulation.AgendaItems.Add(item);
-            _context.AgendaItems.Add(item);
-            await this._context.SaveChangesAsync();
-            return item;
+            //simulation.AgendaItems.Add(item);
+            //_context.AgendaItems.Add(item);
+            //await this._context.SaveChangesAsync();
+            //return item;
         }
 
         public AgendaItem CreateAgendaItem(int simulationId, string name, string description)
@@ -1127,7 +1107,7 @@ namespace MUNityCore.Services
             return item;
         }
 
-        public Task<List<Models.Simulation.PetitionType>> GetSimulationPetitionTypes(int simulationId)
+        public Task<List<PetitionType>> GetSimulationPetitionTypes(int simulationId)
         {
             return _context.SimulationPetitionTypes.Where(n => n.Simulation.SimulationId == simulationId)
                 .Include(n => n.PetitionType).Select(n => n.PetitionType).ToListAsync();
@@ -1243,7 +1223,7 @@ namespace MUNityCore.Services
             if (simulation == null)
                 return null;
 
-            if (simulation.LobbyMode == MUNity.Schema.Simulation.LobbyModes.Closed)
+            if (simulation.LobbyMode == LobbyModes.Closed)
                 return null;
 
             var user = new SimulationUser()
@@ -1416,7 +1396,7 @@ namespace MUNityCore.Services
 
             var inviteLink = new SimulationInvite()
             {
-                SimulationInviteId = Util.Tools.IdGenerator.RandomString(30),
+                SimulationInviteId = Util.IdGenerator.RandomString(30),
                 ExpireDate = DateTime.Now.AddMonths(1),
                 User = user
             };

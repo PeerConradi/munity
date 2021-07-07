@@ -1,17 +1,86 @@
 ﻿@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService storageService;
+@inject Services.MainViewService mainViewService;
+@inject NavigationManager navManager;
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <div class="main">
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+@if (mainViewService.LoadingState < 100)
+{
+    @*<div class="pace @((mainViewService.LoadingState >= 100) ? "pace-inactive" : "pace-active") ">
+        <div class="pace-progress" data-progress-text="@mainViewService.LoadingState%" data-progress="@mainViewService.LoadingState" style="transform: translate3d(@mainViewService.LoadingState%, 0px, 0px);">
+            <div class="pace-progress-inner"></div>
         </div>
+        <div class="pace-activity"></div>
+    </div>*@
+}
 
-        <div class="content px-4">
-            @Body
-        </div>
+
+<div id="page-container" class="page-container fade page-sidebar-fixed page-header-fixed show @((mainViewService.ShowSidebar) ? "page-sidebar-toggled" : null)">
+    <Header />
+    @if (mainViewService.ShowSidebar || mainViewService.ShowSidebarLargeView)
+    {
+        <Sidebar />
+    }
+    <div class="@((mainViewService.ShowSidebarLargeView) ? "content" : "content-full-width p-l-20 p-r-20 p-t-25")">
+        @Body
     </div>
 </div>
+
+@if (showCookieBanner)
+{
+    <div class="alert bg-inverse-transparent-9 text-white position-fixed rounded-0 position-fixed mb-0 d-md-flex align-items-center pl-xl-5 pr-xl-5 pt-xl-4 pt-4 pb-xl-4" style="left: 0; right: 0; bottom: 0; z-index: 1020;">
+        <div class="flex-fill">
+            <h4>Wir verwenden Cookies</h4>
+            <p class="mb-0">
+                Damit MUNity korrekt arbeiten kann müssen einige deiner Daten gespeichert werden. Wir benötigen diese damit wir dich in den Simulationen identifizieren können, wir verwenden jedoch keine Cookies welche allgemein als Tracking-Cookies bekannt sind!
+            </p>
+        </div>
+        <div class="pl-xl-4 pt-xl-0 pt-3">
+            <a class="btn btn-outline-white btn-lg width-150" data-dismiss="alert"
+               @onclick="() => AcceptCookies()">Annehmen</a>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    private bool showCookieBanner = false;
+
+    private async Task AcceptCookies()
+    {
+        await storageService.SetItemAsync<string>("munity_cookies-accepted", "true");
+    }
+
+    protected override void OnInitialized()
+    {
+        mainViewService.LoadingStateChanged += delegate { this.StateHasChanged(); };
+        mainViewService.ShowSidebarChanged += delegate { this.StateHasChanged(); };
+        mainViewService.ShowSidebarLageViewChanged += delegate { StateHasChanged(); };
+        navManager.LocationChanged += ToggleSidebarOnNavChanged;
+        base.OnInitialized();
+    }
+
+    private void ToggleSidebarOnNavChanged(object sender, LocationChangedEventArgs args)
+    {
+        if (mainViewService.ShowSidebar)
+            mainViewService.ShowSidebar = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await storageService.GetItemAsStringAsync("munity_cookies-accepted");
+            if (result == "true")
+            {
+                showCookieBanner = false;
+            }
+            else
+            {
+                showCookieBanner = true;
+            }
+            this.StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

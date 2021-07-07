@@ -1,11 +1,11 @@
-﻿using MUNity.Schema.Simulation;
-using MUNityCore.Models.Simulation;
+﻿using MUNity.Database.Models.Simulation;
+using MUNity.Schema.Simulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Extensions.CastExtensions
+namespace MUNity.Extensions.CastExtensions
 {
     public static class PetitionTypeCasts
     {

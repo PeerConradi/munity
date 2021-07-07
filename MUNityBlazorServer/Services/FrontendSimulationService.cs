@@ -19,7 +19,7 @@ using MUNityCore.Models.Simulation.Presets;
 using MUNity.Schema.Simulation.Resolution;
 using MUNityCore.ViewModel;
 
-namespace MUNityCore.Services
+namespace MUNity.Services
 {
     public class FrontendSimulationService : IDisposable
     {
