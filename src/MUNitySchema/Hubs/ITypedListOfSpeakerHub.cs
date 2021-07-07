@@ -1,5 +1,5 @@
-﻿using MUNity.Models.ListOfSpeakers;
-using MUNity.Schema.ListOfSpeakers;
+﻿using MUNity.Schema.ListOfSpeakers;
+using MUNity.ViewModels.ListOfSpeakers;
 using System;
 using System.Collections.Generic;
 using System.Text;

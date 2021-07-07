@@ -1,5 +1,6 @@
 ﻿using MUNity.Schema.Simulation;
 using MUNity.Schema.Simulation.Voting;
+using MUNityBase;
 using System;
 using System.Collections.Generic;
 using System.Text;

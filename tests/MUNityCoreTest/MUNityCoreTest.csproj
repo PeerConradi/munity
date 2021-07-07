@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MUNityCore\MUNityCore.csproj" />
+    <ProjectReference Include="..\..\src\MUNityCore\MUNityWebAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
