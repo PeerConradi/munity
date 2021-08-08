@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using MUNity.Extensions.ResolutionExtensions;
 using System.Linq;
+using MUNity.Exceptions.Resolution;
 
 namespace MunityNUnitTest.ResolutionTest
 {
@@ -209,6 +210,13 @@ namespace MunityNUnitTest.ResolutionTest
             Assert.AreEqual("Paragraph 1.c", paragraphOne.Children[0].Text);
             Assert.AreEqual("Paragraph 1.a", paragraphOne.Children[1].Text);
             Assert.AreEqual("Paragraph 1.b", paragraphOne.Children[2].Text);
+        }
+
+        [Test]
+        public void TestParagraphNotFoundThrowsException()
+        {
+            var resolution = new Resolution();
+            Assert.Throws<OperativeParagraphNotFoundException>(() => resolution.OperativeSection.CreateMoveAmendment("", 1));
         }
     }
 }

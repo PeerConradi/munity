@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MUNity.Extensions.ResolutionExtensions;
+using MUNity.Exceptions.Resolution;
 
 namespace MunityNUnitTest.ResolutionTest
 {
@@ -177,5 +178,18 @@ namespace MunityNUnitTest.ResolutionTest
             Assert.AreEqual("2", infos[3].path);
             Assert.AreEqual("Paragraph 2", infos[3].text);
         }
+
+        [Test]
+        public void TestRemoveUnknownAmendmentType()
+        {
+            var resolution = new Resolution();
+            var fakeType = new FakeAmendmentType();
+            Assert.Throws<UnsupportedAmendmentTypeException>(() => resolution.OperativeSection.RemoveAmendment(fakeType));
+        }
+    }
+
+    public class FakeAmendmentType : AbstractAmendment
+    {
+
     }
 }

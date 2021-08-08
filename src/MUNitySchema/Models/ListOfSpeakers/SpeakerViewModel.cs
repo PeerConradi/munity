@@ -16,7 +16,6 @@ namespace MUNity.ViewModels.ListOfSpeakers
     /// </summary>
     public class SpeakerViewModel : INotifyPropertyChanged, IComparable<SpeakerViewModel>, ISpeaker
     {
-        
 
         /// <summary>
         /// The Id of the Speaker. This can and should change every time

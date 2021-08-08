@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using MUNity.Extensions.ResolutionExtensions;
 using System.Linq;
+using MUNity.Exceptions.Resolution;
 
 namespace MunityNUnitTest.ResolutionTest
 {
@@ -68,6 +69,13 @@ namespace MunityNUnitTest.ResolutionTest
             var deleteAmendmentTwo = resolution.OperativeSection.CreateDeleteAmendment(operativeParagraph);
             deleteAmendment.Deny(resolution.OperativeSection);
             Assert.IsFalse(resolution.OperativeSection.DeleteAmendments.Any(n => n.TargetSectionId == operativeParagraph.OperativeParagraphId));
+        }
+
+        [Test]
+        public void TestPushAmendmentForNotFoundThrowsException()
+        {
+            var resolution = new Resolution();
+            Assert.Throws<OperativeParagraphNotFoundException>(() => resolution.OperativeSection.CreateDeleteAmendment("notExisting"));
         }
     }
 }

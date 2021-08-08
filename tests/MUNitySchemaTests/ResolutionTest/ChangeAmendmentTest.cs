@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MUNity.Extensions.ResolutionExtensions;
+using MUNity.Exceptions.Resolution;
 
 namespace MunityNUnitTest.ResolutionTest
 {
@@ -52,6 +53,13 @@ namespace MunityNUnitTest.ResolutionTest
             changeAmendment.Deny(resolution.OperativeSection);
             Assert.AreEqual("Original Text", operativeParagraph.Text);
             Assert.IsFalse(resolution.OperativeSection.ChangeAmendments.Contains(changeAmendment));
+        }
+
+        [Test]
+        public void TestAmendmentParagraphNotFound()
+        {
+            var resolution = new Resolution();
+            Assert.Throws<OperativeParagraphNotFoundException>(() => resolution.OperativeSection.CreateChangeAmendment(""));
         }
     }
 }

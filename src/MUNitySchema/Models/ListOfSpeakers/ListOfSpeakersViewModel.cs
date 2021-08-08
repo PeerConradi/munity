@@ -678,5 +678,58 @@ namespace MUNity.ViewModels.ListOfSpeakers
                 Status = ESpeakerListStatus.Question;
             }
         }
+
+        public void ResumeSpeaker()
+        {
+            if (CurrentSpeaker != null)
+            {
+                if (Status == ESpeakerListStatus.SpeakerPaused)
+                    ContinueSpeaker();
+                else if (Status == ESpeakerListStatus.AnswerPaused)
+                    ContinueAnswer();
+                else
+                    StartSpeaker();
+
+                // Fixes a small glitch in the Question time!
+                StartQuestionTime = DateTime.Now.ToUniversalTime();
+
+            }
+            else
+            {
+                Status = ESpeakerListStatus.Stopped;
+            }
+        }
+
+        private void StartSpeaker()
+        {
+            if (CurrentSpeaker != null)
+            {
+                PausedQuestionTime = QuestionTime;
+                StartSpeakerTime = DateTime.Now.ToUniversalTime();
+                Status = ESpeakerListStatus.Speaking;
+            }
+        }
+
+        private void ContinueSpeaker()
+        {
+            StartSpeakerTime = DateTime.Now.ToUniversalTime().AddSeconds(RemainingSpeakerTime.TotalSeconds - SpeakerTime.TotalSeconds);
+            Status = ESpeakerListStatus.Speaking;
+        }
+
+        private void ContinueAnswer()
+        {
+            StartSpeakerTime = DateTime.Now.ToUniversalTime().AddSeconds(RemainingSpeakerTime.TotalSeconds - QuestionTime.TotalSeconds);
+            Status = ESpeakerListStatus.Answer;
+        }
+
+        public void ResetSpeakerTime()
+        {
+            StartSpeakerTime = DateTime.Now.ToUniversalTime();
+        }
+
+        public void ResetQuestionTime()
+        {
+            StartQuestionTime = DateTime.Now.ToUniversalTime();
+        }
     }
 }
