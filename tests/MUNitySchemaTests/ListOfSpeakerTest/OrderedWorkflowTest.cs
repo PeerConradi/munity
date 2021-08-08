@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using MUNity.Models.ListOfSpeakers;
 using MUNity.Extensions.LoSExtensions;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNityBase;
+using MUNity.ViewModels.ListOfSpeakers;
 
 namespace MunityNUnitTest.ListOfSpeakerTest
 {
     public class OrderedWorkflowTest
     {
-        private ListOfSpeakers _instance;
+        private ListOfSpeakersViewModel _instance;
 
         [Test]
         [Order(0)]
         public void TestCreateInstance()
         {
-            this._instance = new ListOfSpeakers();
+            this._instance = new ListOfSpeakersViewModel();
             this._instance.SpeakerTime = new TimeSpan(0, 3, 0);
             this._instance.QuestionTime = new TimeSpan(0, 0, 30);
             Assert.NotNull(_instance);
@@ -59,7 +60,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         public async Task TestStartFirstSpeaker()
         {
             _instance.ResumeSpeaker();
-            Assert.IsTrue(_instance.Status == ListOfSpeakers.EStatus.Speaking);
+            Assert.IsTrue(_instance.Status == ESpeakerListStatus.Speaking);
             await Task.Delay(3000);
             Assert.AreEqual(177, (int)Math.Round(_instance.RemainingSpeakerTime.TotalSeconds));
         }
@@ -90,7 +91,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         public void TestNextQuestion()
         {
             _instance.NextQuestion();
-            Assert.IsTrue(_instance.Status == ListOfSpeakers.EStatus.SpeakerPaused);
+            Assert.IsTrue(_instance.Status == ESpeakerListStatus.SpeakerPaused);
             Assert.NotNull(_instance.CurrentSpeaker);
             Assert.AreEqual(1, _instance.Questions.Count());
             Assert.AreEqual(30, _instance.RemainingQuestionTime.TotalSeconds);
@@ -101,7 +102,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         public async Task TestStartQuestion()
         {
             _instance.ResumeQuestion();
-            Assert.IsTrue(_instance.Status == ListOfSpeakers.EStatus.Question);
+            Assert.IsTrue(_instance.Status == ESpeakerListStatus.Question);
             await Task.Delay(3000);
             Assert.AreEqual(27, (int)Math.Round(_instance.RemainingQuestionTime.TotalSeconds));
         }
@@ -123,7 +124,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
             _instance.NextSpeaker();
             Assert.IsFalse(_instance.Speakers.Any());
             Assert.NotNull(_instance.CurrentSpeaker);
-            Assert.IsTrue(_instance.Status == ListOfSpeakers.EStatus.Stopped);
+            Assert.IsTrue(_instance.Status == ESpeakerListStatus.Stopped);
             Assert.IsNull(_instance.CurrentQuestion);
             Assert.IsFalse(_instance.Questions.Any());
             Assert.AreEqual(180, (int)_instance.RemainingSpeakerTime.TotalSeconds);

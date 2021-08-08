@@ -1,4 +1,5 @@
 ﻿using MUNityBase;
+using MUNityBase.Interfances;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
     /// A Speaker is someone who can be added to the Speakers or Questions inside a List of Speakers.
     /// You can give any time of name, so you could set it to a person a Country or Delegation.
     /// </summary>
-    public class SpeakerViewModel : INotifyPropertyChanged, IComparable<SpeakerViewModel>
+    public class SpeakerViewModel : INotifyPropertyChanged, IComparable<SpeakerViewModel>, ISpeaker
     {
         
 

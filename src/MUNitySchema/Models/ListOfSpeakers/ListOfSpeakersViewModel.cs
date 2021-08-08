@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using MUNity.Converter;
 using MUNityBase;
 using MUNityBase.Interfances;
+using System.Runtime.CompilerServices;
 
 namespace MUNity.ViewModels.ListOfSpeakers
 {
@@ -388,7 +389,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// Fire the PropertyChanged Event for a property with the given name.
         /// </summary>
         /// <param name="name"></param>
-        public void NotifyPropertyChanged(string name)
+        public void NotifyPropertyChanged([CallerMemberName]string name = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -401,7 +402,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// <param name="name">The display name of the speaker.</param>
         /// <param name="iso">The iso that could be used to get an icon.</param>
         /// <returns></returns>
-        public SpeakerViewModel AddSpeaker(string name, string iso = "")
+        public ISpeaker AddSpeaker(string name, string iso = "")
         {
             var newSpeaker = new SpeakerViewModel()
             {
@@ -419,7 +420,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
             return newSpeaker;
         }
 
-        public SpeakerViewModel AddSpeaker(SpeakerViewModel speaker)
+        public ISpeaker AddSpeaker(SpeakerViewModel speaker)
         {
             var exisiting = this.AllSpeakers.FirstOrDefault(n => n.Id == speaker.Id);
             if (exisiting != null) return exisiting;
@@ -442,7 +443,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// <param name="name">The display name that should be shown inside the list of questions and the current question.</param>
         /// <param name="iso">The iso that can be used to find an icon.</param>
         /// <returns></returns>
-        public SpeakerViewModel AddQuestion(string name, string iso = "")
+        public ISpeaker AddQuestion(string name, string iso = "")
         {
             var newSpeaker = new SpeakerViewModel()
             {
@@ -504,52 +505,178 @@ namespace MUNity.ViewModels.ListOfSpeakers
 
         public void RemoveQuestion(string id)
         {
-            throw new NotImplementedException();
-        }
-
-        ISpeaker IListOfSpeakers.AddSpeaker(string name, string iso)
-        {
-            throw new NotImplementedException();
-        }
-
-        ISpeaker IListOfSpeakers.AddQuestion(string name, string iso)
-        {
-            throw new NotImplementedException();
+            var speakerToRemove = this.AllSpeakers.FirstOrDefault(n => n.Id == id);
+            if (speakerToRemove != null)
+                this.AllSpeakers.Remove(speakerToRemove);
         }
 
         public void AddSpeakerSeconds(double seconds)
         {
-            throw new NotImplementedException();
+            this.StartSpeakerTime = this.StartSpeakerTime.AddSeconds(seconds);
         }
 
         public void AddQuestionSeconds(double seconds)
         {
-            throw new NotImplementedException();
+            this.StartQuestionTime = this.StartQuestionTime.AddSeconds(seconds);
         }
 
         public ISpeaker NextSpeaker()
         {
-            throw new NotImplementedException();
+            if (this.AllSpeakers.Any(n => n.Mode == SpeakerModes.WaitToSpeak))
+            {
+
+                // Remove all Questions, Current Speakers and the one currently asking a Question.
+                var questions = this.AllSpeakers.Where(n => n.Mode != SpeakerModes.WaitToSpeak).ToList();
+                questions.ForEach(n => AllSpeakers.Remove(n));
+
+                // Remove the current Question
+                ClearCurrentQuestion();
+
+                // Pick the first speaker in line
+                var nextSpeaker = AllSpeakers.OrderBy(n => n.OrdnerIndex).First();
+                nextSpeaker.Mode = SpeakerModes.CurrentlySpeaking;
+                NotifyPropertyChanged(nameof(CurrentSpeaker));
+                NotifyPropertyChanged(nameof(CurrentQuestion));
+                NotifyPropertyChanged(nameof(Questions));
+                NotifyPropertyChanged(nameof(Speakers));
+            }
+            else
+            {
+                ClearCurrentSpeaker();
+            }
+            Status = ESpeakerListStatus.Stopped;
+            return CurrentSpeaker;
         }
 
         public ISpeaker NextQuestion()
         {
-            throw new NotImplementedException();
+            if (Questions.Any())
+            {
+                // Delete the current Questions (remove all of this type of there is a bug and for some reason two are current Speaker)
+                var currentQuestion = AllSpeakers.Where(n => n.Mode == SpeakerModes.CurrentQuestion).ToList();
+                currentQuestion.ForEach(n => AllSpeakers.Remove(n));
+
+                var nextQuestion = AllSpeakers.Where(n => n.Mode == SpeakerModes.WaitForQuesiton).OrderBy(n => n.OrdnerIndex).FirstOrDefault();
+                nextQuestion.Mode = SpeakerModes.CurrentQuestion;
+                NotifyPropertyChanged(nameof(Questions));
+                NotifyPropertyChanged(nameof(CurrentQuestion));
+            }
+            else
+            {
+                ClearCurrentQuestion();
+            }
+
+            if (Status == ESpeakerListStatus.Speaking)
+            {
+                PauseSpeaker();
+            }
+            else
+            {
+                Status = ESpeakerListStatus.Stopped;
+            }
+            return CurrentQuestion;
         }
 
         public void Pause()
         {
-            throw new NotImplementedException();
+            if (Status == ESpeakerListStatus.Question)
+                PauseQuestion();
+            else if (Status == ESpeakerListStatus.Speaking || Status == ESpeakerListStatus.Answer)
+                PauseSpeaker();
         }
 
         public void ResumeQuestion()
         {
-            throw new NotImplementedException();
+            if (CurrentQuestion != null)
+            {
+                if (Status == ESpeakerListStatus.QuestionPaused)
+                {
+                    StartQuestionTime = DateTime.Now.ToUniversalTime().AddSeconds(RemainingQuestionTime.TotalSeconds - QuestionTime.TotalSeconds);
+                }
+                else
+                {
+                    StartQuestion();
+                }
+
+                Status = ESpeakerListStatus.Question;
+            }
+            else
+            {
+                Status = ESpeakerListStatus.Stopped;
+            }
         }
 
         public void StartAnswer()
         {
-            throw new NotImplementedException();
+            if (CurrentSpeaker != null)
+            {
+                PausedQuestionTime = QuestionTime;
+                StartSpeakerTime = DateTime.Now.ToUniversalTime();
+                Status = ESpeakerListStatus.Answer;
+            }
+            else
+            {
+                Status = ESpeakerListStatus.Stopped;
+            }
+        }
+
+        /// <summary>
+        /// Resets the Current Speaker and sets that Status to Stopped if the current Status has something to do with the speaker (talking or paused).
+        /// </summary>
+        /// <param name="list"></param>
+        public void ClearCurrentSpeaker()
+        {
+            if (Status == ESpeakerListStatus.Speaking || 
+                Status == ESpeakerListStatus.SpeakerPaused || 
+                Status == ESpeakerListStatus.Answer || 
+                Status == ESpeakerListStatus.AnswerPaused)
+                Status = ESpeakerListStatus.Stopped;
+            // Delete the current Speaker (remove all of this type of there is a bug and for some reason two are current Speaker)
+            var currentSpeakers = AllSpeakers.Where(n => n.Mode == SpeakerModes.CurrentlySpeaking).ToList();
+            currentSpeakers.ForEach(n => AllSpeakers.Remove(n));
+            NotifyPropertyChanged(nameof(CurrentSpeaker));
+        }
+
+        /// <summary>
+        /// Removes the current Question and sets the status to stopped if the CurrentQuestion was talking of is paused.
+        /// </summary>
+        /// <param name="list"></param>
+        public void ClearCurrentQuestion()
+        {
+            if (Status == ESpeakerListStatus.Question || 
+                Status == ESpeakerListStatus.QuestionPaused)
+                Status = ESpeakerListStatus.Stopped;
+            // Delete the current Questions (remove all of this type of there is a bug and for some reason two are current Speaker)
+            var currentQuestion = AllSpeakers.Where(n => n.Mode == SpeakerModes.CurrentQuestion).ToList();
+            currentQuestion.ForEach(n => AllSpeakers.Remove(n));
+            NotifyPropertyChanged(nameof(CurrentQuestion));
+        }
+
+        private void PauseSpeaker()
+        {
+            PausedSpeakerTime = RemainingSpeakerTime;
+            if (Status == ESpeakerListStatus.Speaking)
+                Status = ESpeakerListStatus.SpeakerPaused;
+            else if (Status == ESpeakerListStatus.Answer)
+                Status = ESpeakerListStatus.AnswerPaused;
+        }
+
+        private void PauseQuestion()
+        {
+            PausedQuestionTime = RemainingQuestionTime;
+            if (Status == ESpeakerListStatus.Question)
+                Status = ESpeakerListStatus.QuestionPaused;
+        }
+
+        private void StartQuestion()
+        {
+            if (CurrentQuestion != null)
+            {
+                // Reset the current Speaker time
+                PausedSpeakerTime = SpeakerTime;
+                StartQuestionTime = DateTime.Now.ToUniversalTime();
+                Status = ESpeakerListStatus.Question;
+            }
         }
     }
 }

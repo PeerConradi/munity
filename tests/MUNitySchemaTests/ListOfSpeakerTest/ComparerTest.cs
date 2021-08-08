@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using MUNity.Extensions.LoSExtensions;
+using MUNity.ViewModels.ListOfSpeakers;
 
 namespace MunityNUnitTest.ListOfSpeakerTest
 {
@@ -11,8 +12,8 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestInitWithSameId()
         {
-            var listOne = new MUNity.Models.ListOfSpeakers.ListOfSpeakers();
-            var listTwo = new MUNity.Models.ListOfSpeakers.ListOfSpeakers();
+            var listOne = new ListOfSpeakersViewModel();
+            var listTwo = new ListOfSpeakersViewModel();
             listTwo.ListOfSpeakersId = listOne.ListOfSpeakersId;
             var result = listOne.CompareTo(listTwo);
             Assert.AreEqual(0, result);
@@ -21,8 +22,8 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestMoreSpeakersReturnsFalse()
         {
-            var instanceOne = new MUNity.Models.ListOfSpeakers.ListOfSpeakers();
-            var instanceTwo = new MUNity.Models.ListOfSpeakers.ListOfSpeakers();
+            var instanceOne = new ListOfSpeakersViewModel();
+            var instanceTwo = new ListOfSpeakersViewModel();
             instanceTwo.ListOfSpeakersId = instanceOne.ListOfSpeakersId;
             instanceOne.AddSpeaker("Speaker 1");
             var result = instanceOne.CompareTo(instanceTwo);
