@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using MUNity.Converter;
 using MUNityBase;
+using MUNityBase.Interfances;
 
 namespace MUNity.ViewModels.ListOfSpeakers
 {
@@ -37,7 +38,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
     /// </code>
     /// <seealso cref="MUNity.Extensions.LoSExtensions"/>
     /// </summary>
-    public class ListOfSpeakers : INotifyPropertyChanged, IComparable<ListOfSpeakers>
+    public class ListOfSpeakersViewModel : INotifyPropertyChanged, IComparable<ListOfSpeakersViewModel>, IListOfSpeakers
     {
         
 
@@ -83,11 +84,11 @@ namespace MUNity.ViewModels.ListOfSpeakers
             }
         }
 
-        private EStatus _status;
+        private ESpeakerListStatus _status;
         /// <summary>
         /// The Current Status of the list, is someone talking, paused or is the List reset to default.
         /// </summary>
-        public EStatus Status 
+        public ESpeakerListStatus Status 
         {
             get => _status;
             set
@@ -182,16 +183,16 @@ namespace MUNity.ViewModels.ListOfSpeakers
         {
             get
             {
-                if (Status == EStatus.Stopped)
+                if (Status == ESpeakerListStatus.Stopped)
                     return SpeakerTime;
-                if (Status == EStatus.Question || 
-                    Status == EStatus.SpeakerPaused || 
-                    Status == EStatus.QuestionPaused || 
-                    Status == EStatus.AnswerPaused)
+                if (Status == ESpeakerListStatus.Question || 
+                    Status == ESpeakerListStatus.SpeakerPaused || 
+                    Status == ESpeakerListStatus.QuestionPaused || 
+                    Status == ESpeakerListStatus.AnswerPaused)
                 {
                     return PausedSpeakerTime;
                 }
-                else if (Status == EStatus.Speaking)
+                else if (Status == ESpeakerListStatus.Speaking)
                 {
                     var finishTime = StartSpeakerTime.AddSeconds(SpeakerTime.TotalSeconds);
                     return finishTime - DateTime.Now.ToUniversalTime();
@@ -199,7 +200,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
                     //       |---------------|<-------->|
                     //                          Verbleibende Zeit
                 }
-                else if (Status == EStatus.Answer)
+                else if (Status == ESpeakerListStatus.Answer)
                 {
                     var finishTime = StartSpeakerTime.AddSeconds(QuestionTime.TotalSeconds);
                     return finishTime - DateTime.Now.ToUniversalTime();
@@ -221,8 +222,8 @@ namespace MUNity.ViewModels.ListOfSpeakers
         {
             get
             {
-                if (Status == EStatus.Stopped) return QuestionTime;
-                if (Status != EStatus.Question) return PausedQuestionTime;
+                if (Status == ESpeakerListStatus.Stopped) return QuestionTime;
+                if (Status != ESpeakerListStatus.Question) return PausedQuestionTime;
 
                 var finishTime = StartQuestionTime.AddSeconds(QuestionTime.TotalSeconds);
                 return finishTime - DateTime.Now.ToUniversalTime();
@@ -232,17 +233,17 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// <summary>
         /// List that holds all Speakers that are inside the Speakers or Questions List and also the Current Speaker/Question.
         /// </summary>
-        public ObservableCollection<Speaker> AllSpeakers { get; set; }
+        public ObservableCollection<SpeakerViewModel> AllSpeakers { get; set; }
 
         /// <summary>
         /// A list of speakers that are waiting to speak next.
         /// </summary>
         [JsonIgnore]
-        public IEnumerable<Speaker> Speakers
+        public IEnumerable<SpeakerViewModel> Speakers
         {
             get
             {
-                return AllSpeakers.Where(n => n.Mode == Speaker.SpeakerModes.WaitToSpeak).OrderBy(n => n.OrdnerIndex);
+                return AllSpeakers.Where(n => n.Mode == SpeakerModes.WaitToSpeak).OrderBy(n => n.OrdnerIndex);
             }
         }
 
@@ -250,11 +251,11 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// A list of people that want to ask a question.
         /// </summary>
         [JsonIgnore]
-        public IEnumerable<Speaker> Questions
+        public IEnumerable<SpeakerViewModel> Questions
         {
             get
             {
-                return AllSpeakers.Where(n => n.Mode == Speaker.SpeakerModes.WaitForQuesiton).OrderBy(n => n.OrdnerIndex);
+                return AllSpeakers.Where(n => n.Mode == SpeakerModes.WaitForQuesiton).OrderBy(n => n.OrdnerIndex);
             }
         }
 
@@ -262,13 +263,13 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// The person currently speaking or waiting to answer a question.
         /// </summary>
         [JsonIgnore]
-        public Speaker CurrentSpeaker => AllSpeakers.FirstOrDefault(n => n.Mode == Speaker.SpeakerModes.CurrentlySpeaking);
+        public SpeakerViewModel CurrentSpeaker => AllSpeakers.FirstOrDefault(n => n.Mode == SpeakerModes.CurrentlySpeaking);
 
         /// <summary>
         /// The person currently asking a question.
         /// </summary>
         [JsonIgnore]
-        public Speaker CurrentQuestion => AllSpeakers.FirstOrDefault(n => n.Mode == Speaker.SpeakerModes.CurrentQuestion);
+        public SpeakerViewModel CurrentQuestion => AllSpeakers.FirstOrDefault(n => n.Mode == SpeakerModes.CurrentQuestion);
 
 
         private bool _listClosed = false;
@@ -344,18 +345,22 @@ namespace MUNity.ViewModels.ListOfSpeakers
             }
         }
 
+        ISpeaker IListOfSpeakers.CurrentSpeaker => throw new NotImplementedException();
+
+        ISpeaker IListOfSpeakers.CurrentQuestion => throw new NotImplementedException();
+
         /// <summary>
         /// Will create a new ListOfSpeakers and generate a new GUID for it, will also init the Speakers and Questions
         /// as an empty collection and set the default SpeakerTime to 3 minutes and the QuestionTime to 30 seconds.
         /// </summary>
-        public ListOfSpeakers()
+        public ListOfSpeakersViewModel()
         {
             this.ListOfSpeakersId = Guid.NewGuid().ToString();
             this.SpeakerTime = new TimeSpan(0, 3, 0);
             this.QuestionTime = new TimeSpan(0, 0, 30);
             this.PausedSpeakerTime = this.SpeakerTime;
             this.PausedQuestionTime = this.QuestionTime;
-            AllSpeakers = new ObservableCollection<Speaker>();
+            AllSpeakers = new ObservableCollection<SpeakerViewModel>();
             AllSpeakers.CollectionChanged += _allSpeakers_CollectionChanged;
         }
 
@@ -363,11 +368,11 @@ namespace MUNity.ViewModels.ListOfSpeakers
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
-                if (e.NewItems.OfType<Speaker>().Any(n => n.Mode == Speaker.SpeakerModes.WaitToSpeak))
+                if (e.NewItems.OfType<SpeakerViewModel>().Any(n => n.Mode == SpeakerModes.WaitToSpeak))
                 {
                     NotifyPropertyChanged(nameof(Speakers));
                 }
-                if (e.NewItems.OfType<Speaker>().Any(n => n.Mode == Speaker.SpeakerModes.WaitForQuesiton))
+                if (e.NewItems.OfType<SpeakerViewModel>().Any(n => n.Mode == SpeakerModes.WaitForQuesiton))
                 {
                     NotifyPropertyChanged(nameof(Questions));
                 }
@@ -389,11 +394,78 @@ namespace MUNity.ViewModels.ListOfSpeakers
         }
 
         /// <summary>
+        /// Creates a new instance of s speaker and adds it to the end of speakers.
+        /// The speaker will get an Id from a new Guid.
+        /// </summary>
+        /// <param name="list">The list of speakers that this should be added to.</param>
+        /// <param name="name">The display name of the speaker.</param>
+        /// <param name="iso">The iso that could be used to get an icon.</param>
+        /// <returns></returns>
+        public SpeakerViewModel AddSpeaker(string name, string iso = "")
+        {
+            var newSpeaker = new SpeakerViewModel()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Iso = iso,
+                Name = name,
+                ListOfSpeakers = this,
+                Mode = SpeakerModes.WaitToSpeak
+            };
+            if (this.Speakers.Any())
+            {
+                newSpeaker.OrdnerIndex = this.Speakers.Max(n => n.OrdnerIndex) + 1;
+            }
+            this.AllSpeakers.Add(newSpeaker);
+            return newSpeaker;
+        }
+
+        public SpeakerViewModel AddSpeaker(SpeakerViewModel speaker)
+        {
+            var exisiting = this.AllSpeakers.FirstOrDefault(n => n.Id == speaker.Id);
+            if (exisiting != null) return exisiting;
+
+            this.AllSpeakers.Add(speaker);
+            return speaker;
+        }
+
+        public void RemoveSpeaker(string id)
+        {
+            var speaker = this.AllSpeakers.FirstOrDefault(n => n.Id == id);
+            if (speaker != null)
+                this.AllSpeakers.Remove(speaker);
+        }
+
+        /// <summary>
+        /// Adds someone to the list of questions.
+        /// </summary>
+        /// <param name="list">The list that this should be added to.</param>
+        /// <param name="name">The display name that should be shown inside the list of questions and the current question.</param>
+        /// <param name="iso">The iso that can be used to find an icon.</param>
+        /// <returns></returns>
+        public SpeakerViewModel AddQuestion(string name, string iso = "")
+        {
+            var newSpeaker = new SpeakerViewModel()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Iso = iso,
+                Name = name,
+                ListOfSpeakers = this,
+                Mode = SpeakerModes.WaitForQuesiton
+            };
+            if (this.Questions.Any())
+            {
+                newSpeaker.OrdnerIndex = this.Questions.Max(n => n.OrdnerIndex) + 1;
+            }
+            this.AllSpeakers.Add(newSpeaker);
+            return newSpeaker;
+        }
+
+        /// <summary>
         /// Compares this list of Speakers to another list of speakers by the given values.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public int CompareTo(ListOfSpeakers other)
+        public int CompareTo(ListOfSpeakersViewModel other)
         {
             if (this.ListOfSpeakersId != other.ListOfSpeakersId) return 1;
             if (this.CurrentQuestion == null && other.CurrentQuestion != null) return 1;
@@ -428,6 +500,56 @@ namespace MUNity.ViewModels.ListOfSpeakers
 
             return 0;
             
+        }
+
+        public void RemoveQuestion(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        ISpeaker IListOfSpeakers.AddSpeaker(string name, string iso)
+        {
+            throw new NotImplementedException();
+        }
+
+        ISpeaker IListOfSpeakers.AddQuestion(string name, string iso)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddSpeakerSeconds(double seconds)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddQuestionSeconds(double seconds)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISpeaker NextSpeaker()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISpeaker NextQuestion()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Pause()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResumeQuestion()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartAnswer()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// Possible states that can be used within a list of Speakers.
     /// </summary>
-    public enum EStatus
+    public enum ESpeakerListStatus
     {
         /// <summary>
         /// Noone is Speaking and the last status is unknown. Resume a speaker or Questions will 

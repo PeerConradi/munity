@@ -30,7 +30,7 @@ namespace MUNity.Hubs
         /// <returns></returns>
         Task QuestionTimerStarted(DateTime questionStartTime);
 
-        Task SpeakerAdded(Speaker speaker);
+        Task SpeakerAdded(SpeakerViewModel speaker);
 
         /// <summary>
         /// Gets called when a speaker or question gets removed

@@ -10,7 +10,6 @@ namespace MUNity.Services
 {
     public interface IUserService
     {
-        MunityUser CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday);
 
         Task<MunityUser> GetUserByUsername(string username);
 

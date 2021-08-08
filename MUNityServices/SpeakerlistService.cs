@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using MUNity.Extensions.LoSExtensions;
 using MUNity.Schema.ListOfSpeakers;
 using MUNity.Database.Context;
-using MUNity.Database.Models.ListOfSpeakers;
+using MUNity.Database.Models.LoS;
+using MUNityBase;
+using MUNityBase.Interfances;
 
 namespace MUNity.Services
 {
@@ -50,7 +52,7 @@ namespace MUNity.Services
             return this._context.ListOfSpeakers.AnyAsync(n => n.ListOfSpeakersId == id);
         }
 
-        public async Task<Speaker> AddSpeaker(AddSpeakerBody body)
+        public async Task<ISpeaker> AddSpeaker(AddSpeakerBody body)
         {
             var list = await _context.ListOfSpeakers
                 .Include(n => n.AllSpeakers)
@@ -58,7 +60,7 @@ namespace MUNity.Services
             if (list == null) return null;
 
             var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == body.Iso &&
-            n.Name == body.Name && n.Mode == Speaker.SpeakerModes.WaitToSpeak);
+            n.Name == body.Name && n.Mode == SpeakerModes.WaitToSpeak);
 
             if (existing != null) return existing;
 
@@ -68,7 +70,7 @@ namespace MUNity.Services
             return mdl;
         }
 
-        public Speaker AddSpeaker(string listId, string iso, string name)
+        public ISpeaker AddSpeaker(string listId, string iso, string name)
         {
             var list = _context.ListOfSpeakers
                 .Include(n => n.AllSpeakers)
@@ -78,10 +80,10 @@ namespace MUNity.Services
             return AddSpeaker(list, iso, name);
         }
 
-        public Speaker AddSpeaker(ListOfSpeakers list, string iso, string name)
+        public ISpeaker AddSpeaker(ListOfSpeakers list, string iso, string name)
         {
             var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == iso &&
-            n.Name == name && n.Mode == Speaker.SpeakerModes.WaitToSpeak);
+            n.Name == name && n.Mode == SpeakerModes.WaitToSpeak);
 
             if (existing != null)
                 return existing;
@@ -115,7 +117,7 @@ namespace MUNity.Services
             return entry;
         }
 
-        public async Task<Speaker> AddQuestion(AddSpeakerBody body)
+        public async Task<ISpeaker> AddQuestion(AddSpeakerBody body)
         {
             var list = await _context.ListOfSpeakers
                 .Include(n => n.AllSpeakers)
@@ -123,7 +125,7 @@ namespace MUNity.Services
             if (list == null) return null;
 
             var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == body.Iso &&
-            n.Name == body.Name && n.Mode == Speaker.SpeakerModes.WaitForQuesiton);
+            n.Name == body.Name && n.Mode == SpeakerModes.WaitForQuesiton);
 
             if (existing != null) 
                 return existing;
@@ -134,7 +136,7 @@ namespace MUNity.Services
             return mdl;
         }
 
-        public Speaker AddQuestion(string listId, string iso, string name)
+        public ISpeaker AddQuestion(string listId, string iso, string name)
         {
             var list = _context.ListOfSpeakers
                 .Include(n => n.AllSpeakers)
@@ -144,10 +146,10 @@ namespace MUNity.Services
             return AddQuestion(list, iso, name);
         }
 
-        public Speaker AddQuestion(ListOfSpeakers list, string iso, string name)
+        public ISpeaker AddQuestion(ListOfSpeakers list, string iso, string name)
         {
             var existing = list.AllSpeakers.FirstOrDefault(n => n.Iso == iso &&
-            n.Name == name && n.Mode == Speaker.SpeakerModes.WaitForQuesiton);
+            n.Name == name && n.Mode == SpeakerModes.WaitForQuesiton);
 
             if (existing != null)
                 return existing;
@@ -193,7 +195,7 @@ namespace MUNity.Services
         internal bool AddQuestionSeconds(string listId, int seconds)
         {
             var currentQuestion = _context.Speakers.Include(n => n.ListOfSpeakers)
-                .FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId && n.Mode == Speaker.SpeakerModes.CurrentQuestion);
+                .FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId && n.Mode == SpeakerModes.CurrentQuestion);
             if (currentQuestion == null) return false;
 
             var logEntry = EnsureLogEntry(currentQuestion.ListOfSpeakers, currentQuestion.Iso, currentQuestion.Name);
@@ -212,7 +214,7 @@ namespace MUNity.Services
         internal bool AddSpeakerSeconds(string listId, int seconds)
         {
             var currentSpeaker = _context.Speakers.Include(n => n.ListOfSpeakers)
-                .FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId && n.Mode == Speaker.SpeakerModes.CurrentQuestion);
+                .FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId && n.Mode == SpeakerModes.CurrentQuestion);
             if (currentSpeaker == null) return false;
 
             var logEntry = EnsureLogEntry(currentSpeaker.ListOfSpeakers, currentSpeaker.Iso, currentSpeaker.Name);
@@ -228,7 +230,7 @@ namespace MUNity.Services
             return this._context.ListOfSpeakers.Include(n => n.AllSpeakers).FirstOrDefault(n => n.PublicId == publicId);
         }
 
-        public SpeakerlistService(DataHandlers.EntityFramework.MunityContext context)
+        public SpeakerlistService(MunityContext context)
         {
             _context = context;
         }
@@ -290,7 +292,7 @@ namespace MUNity.Services
             }
 
             var result = list.NextSpeaker();
-            var logNewSpeaker = EnsureLogEntry(list, result.newSpeaker.Iso, result.newSpeaker.Name);
+            var logNewSpeaker = EnsureLogEntry(list, result.Iso, result.Name);
             if (logNewSpeaker != null)
             {
                 logNewSpeaker.TimesSpeaking += 1;
@@ -320,7 +322,7 @@ namespace MUNity.Services
 
             var result = list.NextQuestion();
 
-            var logNewSpeaker = EnsureLogEntry(list, result.newSpeaker.Iso, result.newSpeaker.Name);
+            var logNewSpeaker = EnsureLogEntry(list, result.Iso, result.Name);
             if (logNewSpeaker != null)
             {
                 logNewSpeaker.TimesQuestioning += 1;
@@ -436,7 +438,7 @@ namespace MUNity.Services
         internal bool ClearSpeaker(string listId)
         {
             var speaker = _context.Speakers.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId &&
-            n.Mode == Speaker.SpeakerModes.CurrentlySpeaking);
+            n.Mode == SpeakerModes.CurrentlySpeaking);
             if (speaker != null)
             {
                 var speakerEntry = EnsureLogEntry(speaker.ListOfSpeakers, speaker.Iso, speaker.Name);
@@ -461,7 +463,7 @@ namespace MUNity.Services
         {
 
             var speaker = _context.Speakers.Include(n => n.ListOfSpeakers).FirstOrDefault(n => n.ListOfSpeakers.ListOfSpeakersId == listId &&
-            n.Mode == Speaker.SpeakerModes.CurrentQuestion);
+            n.Mode == SpeakerModes.CurrentQuestion);
             if (speaker != null)
             {
                 var speakerEntry = EnsureLogEntry(speaker.ListOfSpeakers, speaker.Iso, speaker.Name);
@@ -488,7 +490,7 @@ namespace MUNity.Services
                 .Include(n => n.AllSpeakers)
                 .FirstOrDefault(n => n.ListOfSpeakersId == listId);
             if (list == null) return false;
-            var oldState = list.Pause();
+            list.Pause();
             _context.SaveChanges();
             return true;
         }
@@ -556,7 +558,7 @@ namespace MUNity.Services
         internal List<Speaker> GetQuestions(string listId)
         {
             return _context.Speakers
-                .Where(n => n.Mode == Speaker.SpeakerModes.WaitForQuesiton && n.ListOfSpeakers.ListOfSpeakersId == listId)
+                .Where(n => n.Mode == SpeakerModes.WaitForQuesiton && n.ListOfSpeakers.ListOfSpeakersId == listId)
                 .AsNoTracking()
                 .ToList();
         }
@@ -564,7 +566,7 @@ namespace MUNity.Services
         internal List<Speaker> GetSpeakers(string listId)
         {
             return _context.Speakers
-                .Where(n => n.Mode == Speaker.SpeakerModes.WaitToSpeak && n.ListOfSpeakers.ListOfSpeakersId == listId)
+                .Where(n => n.Mode == SpeakerModes.WaitToSpeak && n.ListOfSpeakers.ListOfSpeakersId == listId)
                 .AsNoTracking()
                 .ToList();
         }

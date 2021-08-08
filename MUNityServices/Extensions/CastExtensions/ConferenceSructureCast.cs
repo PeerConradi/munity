@@ -1,7 +1,5 @@
-﻿using MUNityCore.Models.Conference;
-using MUNity.Schema.Conference;
+﻿using MUNity.Schema.Conference;
 using MUNity.Schema.Organization;
-using MUNityCore.Models.Organization;
 using System;
 using System.Collections.Generic;
 using System.Linq;

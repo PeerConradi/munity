@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNityBase;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,30 +13,9 @@ namespace MUNity.ViewModels.ListOfSpeakers
     /// A Speaker is someone who can be added to the Speakers or Questions inside a List of Speakers.
     /// You can give any time of name, so you could set it to a person a Country or Delegation.
     /// </summary>
-    public class Speaker : INotifyPropertyChanged, IComparable<Speaker>
+    public class SpeakerViewModel : INotifyPropertyChanged, IComparable<SpeakerViewModel>
     {
-        /// <summary>
-        /// The Mode with what the Speaker is handled
-        /// </summary>
-        public enum SpeakerModes
-        {
-            /// <summary>
-            /// Is the Speaker on the List of Speakers
-            /// </summary>
-            WaitToSpeak,
-            /// <summary>
-            /// Is the Speaker on the List of Questions
-            /// </summary>
-            WaitForQuesiton,
-            /// <summary>
-            /// Is The speaker Currently speaking
-            /// </summary>
-            CurrentlySpeaking,
-            /// <summary>
-            /// Is the speaker currently asking a question
-            /// </summary>
-            CurrentQuestion
-        }
+        
 
         /// <summary>
         /// The Id of the Speaker. This can and should change every time
@@ -117,7 +97,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// The Parent SpeakerlistId
         /// </summary>
         [JsonIgnore]
-        public ListOfSpeakers ListOfSpeakers { get; set; }
+        public ListOfSpeakersViewModel ListOfSpeakers { get; set; }
 
         /// <summary>
         /// Gets called when a proeprty has been changed. This does not inclide the SpeakerlistId or the Id.
@@ -133,7 +113,7 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public int CompareTo(Speaker other)
+        public int CompareTo(SpeakerViewModel other)
         {
             if (this.Id != other.Id) return 1;
             if (this.Iso != other.Iso) return 1;

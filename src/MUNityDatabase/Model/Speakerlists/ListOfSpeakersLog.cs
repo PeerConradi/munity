@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.ListOfSpeakers
+namespace MUNity.Database.Models.LoS
 {
     public class ListOfSpeakersLog
     {

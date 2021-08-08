@@ -15,7 +15,7 @@ using MUNity.Schema.Simulation.Resolution;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Simulation;
 using MUNityBase;
-using MUNity.Database.Models.ListOfSpeakers;
+using MUNity.Database.Models.LoS;
 using MUNity.Database.Models.Resolution.V2;
 
 namespace MUNity.Services
@@ -624,11 +624,11 @@ namespace MUNity.Services
                     RoleType = (n.Role != null) ? n.Role.RoleType : RoleTypes.None,
                     RoleIso = (n.Role != null) ? n.Role.Iso : "un"
                 }).ToList();
-            foreach (var user in list)
-            {
-                user.IsOnline = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.AsEnumerable().Any(a => a.Value.SimulationId == simulationId &&
-                        a.Value.SimulationUserId == user.SimulationUserId);
-            }
+            //foreach (var user in list)
+            //{
+            //    user.IsOnline = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.AsEnumerable().Any(a => a.Value.SimulationId == simulationId &&
+            //            a.Value.SimulationUserId == user.SimulationUserId);
+            //}
 
             return list;
         }
@@ -1459,7 +1459,7 @@ namespace MUNity.Services
             if (simulation == null)
                 return;
             Console.WriteLine("Request the deletion of Simulation: " + simulation.Name);
-            RemoveHubConnectionsOfSimulation(simulationId);
+            //RemoveHubConnectionsOfSimulation(simulationId);
             // Remove Petitions
             _context.Petitions.RemoveRange(_context.Petitions.Where(n => n.AgendaItem.Simulation.SimulationId == simulationId || n.SimulationUser.Simulation.SimulationId == simulationId));
             _context.SaveChanges();
@@ -1515,14 +1515,14 @@ namespace MUNity.Services
             _context.SaveChanges();
         }
 
-        internal void RemoveHubConnectionsOfSimulation(int simulationId)
-        {
-            var connections = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.Where(n => n.Value.SimulationId == simulationId).ToList();
-            foreach(var connection in connections)
-            {
-                Hubs.ConnectionUsers.ConnectionIds.TryRemove(connection);
-            }
-        }
+        //internal void RemoveHubConnectionsOfSimulation(int simulationId)
+        //{
+        //    var connections = MUNityCore.Hubs.ConnectionUsers.ConnectionIds.Where(n => n.Value.SimulationId == simulationId).ToList();
+        //    foreach(var connection in connections)
+        //    {
+        //        Hubs.ConnectionUsers.ConnectionIds.TryRemove(connection);
+        //    }
+        //}
 
         internal bool IsPetitionOwner(string petitionId, int simulationUserId)
         {

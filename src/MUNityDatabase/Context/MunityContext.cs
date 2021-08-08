@@ -13,7 +13,7 @@ using MUNity.Database.Models.Organization;
 using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.Resolution.V2;
 using MUNity.Database.Models.Simulation;
-using MUNity.Database.Models.ListOfSpeakers;
+using MUNity.Database.Models.LoS;
 using MUNity.Database.Models;
 using MUNity.Database.Models.Resolution.SqlResa;
 

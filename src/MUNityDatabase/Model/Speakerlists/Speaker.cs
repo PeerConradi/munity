@@ -1,41 +1,21 @@
-﻿using System;
+﻿using MUNityBase;
+using MUNityBase.Interfances;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace MUNity.Database.Models.ListOfSpeakers
+namespace MUNity.Database.Models.LoS
 {
 
     /// <summary>
     /// A Speaker is someone who can be added to the Speakers or Questions inside a List of Speakers.
     /// You can give any time of name, so you could set it to a person a Country or Delegation.
     /// </summary>
-    public class Speaker
+    public class Speaker : ISpeaker
     {
-        /// <summary>
-        /// The Mode with what the Speaker is handled
-        /// </summary>
-        public enum SpeakerModes
-        {
-            /// <summary>
-            /// Is the Speaker on the List of Speakers
-            /// </summary>
-            WaitToSpeak,
-            /// <summary>
-            /// Is the Speaker on the List of Questions
-            /// </summary>
-            WaitForQuesiton,
-            /// <summary>
-            /// Is The speaker Currently speaking
-            /// </summary>
-            CurrentlySpeaking,
-            /// <summary>
-            /// Is the speaker currently asking a question
-            /// </summary>
-            CurrentQuestion
-        }
 
         /// <summary>
         /// The Id of the Speaker. This can and should change every time
@@ -49,7 +29,6 @@ namespace MUNity.Database.Models.ListOfSpeakers
         /// </summary>
         public string Name { get; set; }
 
-        private string _iso;
         /// <summary>
         /// An Iso code because mostly Counties will be used in this list. You could use the
         /// Iso to identify an icon.

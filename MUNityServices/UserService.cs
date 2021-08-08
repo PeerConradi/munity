@@ -15,43 +15,6 @@ namespace MUNity.Services
     {
         private readonly MunityContext _context;
 
-        public MunityUser CreateUser(string username, string forename, string lastname, string password, string mail, DateTime birthday)
-        {
-
-            if (!Util.Tools.InputCheck.IsOnlyCharsAndNumbers(username))
-                throw new ArgumentException("The username is not valid, you are only allowed to use a-z A-Z 0-9");
-
-            if (_context.Users.Any(n => n.UserName.ToLower() == username.ToLower()))
-                throw new ArgumentException("The username is already taken!");
-
-            // Save today's date.
-            var today = DateTime.Today;
-
-            // Calculate the age.
-            var age = today.Year - birthday.Year;
-
-            // Go back to the year the person was born in case of a leap year
-            if (birthday.Date > today.AddYears(-age)) age--;
-
-            if (age < 13)
-                throw new ArgumentException("you are to young to create an account!");
-
-            var pass = Util.Hashing.PasswordHashing.InitHashing(password);
-            var user = new MunityUser
-            {
-                UserName = username,
-                Email = mail,
-                Forename = forename,
-                Lastname = lastname,
-                PasswordHash = pass.Key,
-                Birthday = birthday
-            };
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
-            return user;
-        }
 
         public Task<MunityUser> GetUserByUsername(string username)
         {

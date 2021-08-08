@@ -42,7 +42,7 @@ namespace MUNity.Database.Models.Simulation
         /// <summary>
         /// Die Redner in diesem Gremium.
         /// </summary>
-        public MUNity.Database.Models.ListOfSpeakers.ListOfSpeakers ListOfSpeakers { get; set; }
+        public MUNity.Database.Models.LoS.ListOfSpeakers ListOfSpeakers { get; set; }
 
         public string CurrentResolutionId { get; set; }
 
