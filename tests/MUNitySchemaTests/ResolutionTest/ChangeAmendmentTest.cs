@@ -61,5 +61,15 @@ namespace MunityNUnitTest.ResolutionTest
             var resolution = new Resolution();
             Assert.Throws<OperativeParagraphNotFoundException>(() => resolution.OperativeSection.CreateChangeAmendment(""));
         }
+
+        [Test]
+        public void TestRemoveOperativeParagraphRemovesChangeAmendments()
+        {
+            var resolution = new Resolution();
+            var paragraph = resolution.OperativeSection.CreateOperativeParagraph("Test");
+            var amendment = resolution.OperativeSection.CreateChangeAmendment(paragraph, "New Text");
+            resolution.OperativeSection.RemoveOperativeParagraph(paragraph);
+            Assert.AreEqual(0, resolution.OperativeSection.ChangeAmendments.Count);
+        }
     }
 }

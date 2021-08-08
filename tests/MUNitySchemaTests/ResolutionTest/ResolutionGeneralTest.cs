@@ -186,6 +186,30 @@ namespace MunityNUnitTest.ResolutionTest
             var fakeType = new FakeAmendmentType();
             Assert.Throws<UnsupportedAmendmentTypeException>(() => resolution.OperativeSection.RemoveAmendment(fakeType));
         }
+
+        [Test]
+        public void AddChildParentNotFound()
+        {
+            var resolution = new Resolution();
+            Assert.Throws<OperativeParagraphNotFoundException>(() => resolution.OperativeSection.CreateChildParagraph("notFound", "demo"));
+        }
+
+        [Test]
+        public void TestGetPathOfNotFoundParagraph()
+        {
+            var resolution = new Resolution();
+            var result = resolution.OperativeSection.GetOperativeParagraphPath("notFound");
+            Assert.IsNull(result);
+        }
+
+        [Test]
+        public void TestRemoveOperativeParagraphNotFoundException()
+        {
+            var resolution = new Resolution();
+            var fakeParagraph = new OperativeParagraph();
+            Assert.Throws<OperativeParagraphNotFoundException>(() => resolution.OperativeSection.RemoveOperativeParagraph(fakeParagraph));
+        }
+
     }
 
     public class FakeAmendmentType : AbstractAmendment

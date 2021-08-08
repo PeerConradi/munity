@@ -16,6 +16,12 @@ namespace MUNity.Util
                 .Select(s => s[_random.Next(s.Length)]).ToArray());
         }
 
+        /// <summary>
+        /// Turns the text into a lower case verison and removes all special characters
+        /// so the value can be used as primary key (of string) that can also be used for an URL
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string AsPrimaryKey(string input)
         {
             input = input.ToLower();
