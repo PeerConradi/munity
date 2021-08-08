@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MUNity.Extensions.LoSExtensions;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNity.ViewModels.ListOfSpeakers;
