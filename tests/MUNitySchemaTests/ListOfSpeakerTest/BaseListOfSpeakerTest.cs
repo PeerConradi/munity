@@ -77,7 +77,8 @@ namespace MunityNUnitTest.ListOfSpeakerTest
             var speaker = instance.AddSpeaker("Speaker 1");
             instance.NextSpeaker();
             instance.ResumeSpeaker();
-            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds < 31);
+            Assert.AreEqual(30, instance.RemainingSpeakerTime.TotalSeconds, 1);
+            //Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds < 31);
         }
 
         [Test]
@@ -128,7 +129,8 @@ namespace MunityNUnitTest.ListOfSpeakerTest
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
             instance.StartAnswer();
-            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds <= 30);
+            Assert.AreEqual(30, instance.RemainingSpeakerTime.TotalSeconds, 1);
+            //Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds <= 30);
         }
 
 

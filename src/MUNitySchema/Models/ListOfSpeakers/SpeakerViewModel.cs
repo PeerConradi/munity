@@ -121,5 +121,14 @@ namespace MUNity.ViewModels.ListOfSpeakers
             if (this.OrdnerIndex != other.OrdnerIndex) return 1;
             return 0;
         }
+
+        public int CompareTo(ISpeaker other)
+        {
+            if (this.Id != other.Id) return 1;
+            if (this.Iso != other.Iso) return 1;
+            if (this.Name != other.Name) return 1;
+            if (this.OrdnerIndex != other.OrdnerIndex) return 1;
+            return 0;
+        }
     }
 }

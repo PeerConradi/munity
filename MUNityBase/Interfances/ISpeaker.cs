@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MUNityBase.Interfances
 {
-    public interface ISpeaker
+    public interface ISpeaker : IComparable<ISpeaker>
     {
         string Id { get; set; }
 

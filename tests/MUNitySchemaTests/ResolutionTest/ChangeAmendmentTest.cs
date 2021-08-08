@@ -59,7 +59,9 @@ namespace MunityNUnitTest.ResolutionTest
         public void TestAmendmentParagraphNotFound()
         {
             var resolution = new Resolution();
-            Assert.Throws<OperativeParagraphNotFoundException>(() => resolution.OperativeSection.CreateChangeAmendment(""));
+            var exception = Assert.Throws<OperativeParagraphNotFoundException>(() => 
+                resolution.OperativeSection.CreateChangeAmendment(""));
+            Assert.NotNull(exception);
         }
 
         [Test]

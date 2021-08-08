@@ -129,5 +129,36 @@ namespace MunityNUnitTest.ListOfSpeakerTest
             Assert.AreEqual(180, (int)_instance.RemainingSpeakerTime.TotalSeconds);
             Assert.AreEqual(30, (int)_instance.RemainingQuestionTime.TotalSeconds);
         }
+
+        [Test]
+        [Order(11)]
+        public void TestAddTwoQuestionsAndActivateBoth()
+        {
+            var questionOne = _instance.AddQuestion("First Question");
+            var questionTwo = _instance.AddQuestion("Second Question");
+            _instance.NextQuestion();
+            _instance.NextQuestion();
+            Assert.AreEqual(0, _instance.Questions.Count());
+        }
+
+        [Test]
+        [Order(12)]
+        public void TestRemoveASpeaker()
+        {
+            var speaker = _instance.AddSpeaker("ToRemove");
+            Assert.IsTrue(_instance.Speakers.Contains(speaker));
+            _instance.RemoveSpeaker(speaker.Id);
+            Assert.IsFalse(_instance.Speakers.Contains(speaker));
+        }
+
+        [Test]
+        [Order(13)]
+        public void TestRemoveQuestion()
+        {
+            var question = _instance.AddQuestion("ToRemove");
+            Assert.IsTrue(_instance.Questions.Contains(question));
+            _instance.RemoveQuestion(question.Id);
+            Assert.IsFalse(_instance.Questions.Contains(question));
+        }
     }
 }

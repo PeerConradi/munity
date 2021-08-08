@@ -259,13 +259,13 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// The person currently speaking or waiting to answer a question.
         /// </summary>
         [JsonIgnore]
-        public SpeakerViewModel CurrentSpeaker => AllSpeakers.FirstOrDefault(n => n.Mode == SpeakerModes.CurrentlySpeaking);
+        public ISpeaker CurrentSpeaker => AllSpeakers.FirstOrDefault(n => n.Mode == SpeakerModes.CurrentlySpeaking);
 
         /// <summary>
         /// The person currently asking a question.
         /// </summary>
         [JsonIgnore]
-        public SpeakerViewModel CurrentQuestion => AllSpeakers.FirstOrDefault(n => n.Mode == SpeakerModes.CurrentQuestion);
+        public ISpeaker CurrentQuestion => AllSpeakers.FirstOrDefault(n => n.Mode == SpeakerModes.CurrentQuestion);
 
 
         private bool _listClosed = false;
@@ -341,10 +341,6 @@ namespace MUNity.ViewModels.ListOfSpeakers
             }
         }
 
-        ISpeaker IListOfSpeakers.CurrentSpeaker => throw new NotImplementedException();
-
-        ISpeaker IListOfSpeakers.CurrentQuestion => throw new NotImplementedException();
-
         /// <summary>
         /// Will create a new ListOfSpeakers and generate a new GUID for it, will also init the Speakers and Questions
         /// as an empty collection and set the default SpeakerTime to 3 minutes and the QuestionTime to 30 seconds.
@@ -415,14 +411,14 @@ namespace MUNity.ViewModels.ListOfSpeakers
             return newSpeaker;
         }
 
-        public ISpeaker AddSpeaker(SpeakerViewModel speaker)
-        {
-            var exisiting = this.AllSpeakers.FirstOrDefault(n => n.Id == speaker.Id);
-            if (exisiting != null) return exisiting;
+        //public ISpeaker AddSpeaker(SpeakerViewModel speaker)
+        //{
+        //    var exisiting = this.AllSpeakers.FirstOrDefault(n => n.Id == speaker.Id);
+        //    if (exisiting != null) return exisiting;
 
-            this.AllSpeakers.Add(speaker);
-            return speaker;
-        }
+        //    this.AllSpeakers.Add(speaker);
+        //    return speaker;
+        //}
 
         public void RemoveSpeaker(string id)
         {
@@ -463,34 +459,54 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// <returns></returns>
         public int CompareTo(ListOfSpeakersViewModel other)
         {
-            if (this.ListOfSpeakersId != other.ListOfSpeakersId) return 1;
-            if (this.CurrentQuestion == null && other.CurrentQuestion != null) return 1;
-            if (this.CurrentQuestion != null && other.CurrentQuestion == null) return 1;
+            if (this.ListOfSpeakersId != other.ListOfSpeakersId) 
+                return 1;
+            if (this.CurrentQuestion == null && other.CurrentQuestion != null) 
+                return 1;
+            if (this.CurrentQuestion != null && other.CurrentQuestion == null) 
+                return 1;
             if (this.CurrentQuestion != null && other.CurrentQuestion != null)
-                if (this.CurrentQuestion.CompareTo(other.CurrentQuestion) != 0) return 1;
+                if (this.CurrentQuestion.CompareTo(other.CurrentQuestion) != 0) 
+                    return 1;
 
-            if (this.CurrentSpeaker == null && other.CurrentSpeaker != null) return 1;
-            if (this.CurrentSpeaker != null && other.CurrentSpeaker == null) return 1;
+            if (this.CurrentSpeaker == null && other.CurrentSpeaker != null) 
+                return 1;
+            if (this.CurrentSpeaker != null && other.CurrentSpeaker == null) 
+                return 1;
             if (this.CurrentSpeaker != null && other.CurrentSpeaker != null)
-                if (this.CurrentSpeaker.CompareTo(other.CurrentSpeaker) != 0) return 1;
+                if (this.CurrentSpeaker.CompareTo(other.CurrentSpeaker) != 0) 
+                    return 1;
 
-            if (this.ListClosed != other.ListClosed) return 1;
-            if (this.Name != other.Name) return 1;
-            if (this.PausedQuestionTime != other.PausedQuestionTime) return 1;
-            if (this.PausedSpeakerTime != other.PausedSpeakerTime) return 1;
-            if (this.PublicId != other.PublicId) return 1;
-            if (this.QuestionsClosed != other.QuestionsClosed) return 1;
-            if (this.QuestionTime != other.QuestionTime) return 1;
-            if (this.SpeakerTime != other.SpeakerTime) return 1;
-            if (this.StartQuestionTime != other.StartQuestionTime) return 1;
-            if (this.StartSpeakerTime != other.StartSpeakerTime) return 1;
-            if (this.Status != other.Status) return 1;
-            if (this.AllSpeakers.Count != other.AllSpeakers.Count) return 1;
+            if (this.ListClosed != other.ListClosed) 
+                return 1;
+            if (this.Name != other.Name) 
+                return 1;
+            if (this.PausedQuestionTime != other.PausedQuestionTime) 
+                return 1;
+            if (this.PausedSpeakerTime != other.PausedSpeakerTime) 
+                return 1;
+            if (this.PublicId != other.PublicId) 
+                return 1;
+            if (this.QuestionsClosed != other.QuestionsClosed) 
+                return 1;
+            if (this.QuestionTime != other.QuestionTime) 
+                return 1;
+            if (this.SpeakerTime != other.SpeakerTime) 
+                return 1;
+            if (this.StartQuestionTime != other.StartQuestionTime) 
+                return 1;
+            if (this.StartSpeakerTime != other.StartSpeakerTime) 
+                return 1;
+            if (this.Status != other.Status) 
+                return 1;
+            if (this.AllSpeakers.Count != other.AllSpeakers.Count) 
+                return 1;
             if (this.AllSpeakers.Any() && other.AllSpeakers.Any())
             {
                 for (int i = 0; i < this.AllSpeakers.Count; i++)
                 {
-                    if (this.AllSpeakers[i].CompareTo(other.AllSpeakers[i]) != 0) return 1;
+                    if (this.AllSpeakers[i].CompareTo(other.AllSpeakers[i]) != 0) 
+                        return 1;
                 }
             }
 
@@ -549,7 +565,8 @@ namespace MUNity.ViewModels.ListOfSpeakers
             {
                 // Delete the current Questions (remove all of this type of there is a bug and for some reason two are current Speaker)
                 var currentQuestion = AllSpeakers.Where(n => n.Mode == SpeakerModes.CurrentQuestion).ToList();
-                currentQuestion.ForEach(n => AllSpeakers.Remove(n));
+                currentQuestion.ForEach(n => 
+                    AllSpeakers.Remove(n));
 
                 var nextQuestion = AllSpeakers.Where(n => n.Mode == SpeakerModes.WaitForQuesiton).OrderBy(n => n.OrdnerIndex).FirstOrDefault();
                 nextQuestion.Mode = SpeakerModes.CurrentQuestion;
@@ -576,7 +593,8 @@ namespace MUNity.ViewModels.ListOfSpeakers
         {
             if (Status == ESpeakerListStatus.Question)
                 PauseQuestion();
-            else if (Status == ESpeakerListStatus.Speaking || Status == ESpeakerListStatus.Answer)
+            else if (Status == ESpeakerListStatus.Speaking || 
+                Status == ESpeakerListStatus.Answer)
                 PauseSpeaker();
         }
 
