@@ -24,4 +24,8 @@
     <ProjectReference Include="..\..\MUNityBase\MUNityBase.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Converter\" />
+  </ItemGroup>
+
 </Project>

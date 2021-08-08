@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Text;
 using System.Linq;
 using System.Text.Json.Serialization;
-using MUNity.Converter;
 using MUNityBase;
 using MUNityBase.Interfances;
 using System.Runtime.CompilerServices;
@@ -106,7 +105,6 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// <summary>
         /// The time that the Speakers are allowed to talk.
         /// </summary>
-        [JsonConverter(typeof(TimespanConverter))]
         public TimeSpan SpeakerTime 
         {
             get => _speakerTime;
@@ -124,7 +122,6 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// <summary>
         /// The time that someone asking a question is allowed to talk and also how long the Speaker is allowed to answer a question.
         /// </summary>
-        [JsonConverter(typeof(TimespanConverter))]
         public TimeSpan QuestionTime 
         {
             get => _questionTime;
@@ -142,7 +139,6 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// <summary>
         /// The Remaining Time that a Speaker had when he/she had been paused.
         /// </summary>
-        [JsonConverter(typeof(TimespanConverter))]
         public TimeSpan PausedSpeakerTime 
         {
             get => _pausedSpeakerTime;
@@ -160,7 +156,6 @@ namespace MUNity.ViewModels.ListOfSpeakers
         /// <summary>
         /// The Remaining Time that a speaker had when he/she had been paused.
         /// </summary>
-        [JsonConverter(typeof(TimespanConverter))]
         public TimeSpan PausedQuestionTime 
         {
             get => _pausedQuestionTime;

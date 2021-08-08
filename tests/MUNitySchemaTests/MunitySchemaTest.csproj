@@ -17,4 +17,8 @@
     <ProjectReference Include="..\..\src\MUNitySchema\MUNitySchema.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ConverterTests\" />
+  </ItemGroup>
+
 </Project>
