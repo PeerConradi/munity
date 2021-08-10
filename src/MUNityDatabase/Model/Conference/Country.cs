@@ -37,6 +37,18 @@ namespace MUNity.Database.Models.Conference
         [MaxLength(250)]
         public string FullName { get; set; }
 
+        [MaxLength(150)]
+        public string Name_DE { get; set; }
+
+        [MaxLength(250)]
+        public string FullName_DE { get; set; }
+
+        [MaxLength(150)]
+        public string Name_EN { get; set; }
+
+        [MaxLength(250)]
+        public string FullName_EN { get; set; }
+
         [MaxLength(3)]
         public string Iso { get; set; }
 
