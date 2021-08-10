@@ -48,9 +48,9 @@ namespace MUNity.Database.Models.Conference
         [MaxLength(18)]
         public string ConferenceShort { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public DateTime CreationDate { get; set; }
 
@@ -72,6 +72,7 @@ namespace MUNity.Database.Models.Conference
             ConferenceId = Guid.NewGuid().ToString();
             Committees = new List<Committee>();
             Visibility = EConferenceVisibilityMode.Users;
+            CreationDate = DateTime.Now;
         }
     }
 }

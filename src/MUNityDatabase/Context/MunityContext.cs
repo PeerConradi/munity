@@ -42,10 +42,6 @@ namespace MUNity.Database.Context
 
         public DbSet<ConferenceTeamRole> TeamRoles { get; set; }
 
-        public DbSet<ConferenceNgoRole> NgoRoles { get; set; }
-
-        public DbSet<ConferencePressRole> PressRoles { get; set; }
-
         public DbSet<ConferenceSecretaryGeneralRole> SecretaryGenerals { get; set; }
 
         public DbSet<Conference> Conferences { get; set; }
@@ -163,8 +159,6 @@ namespace MUNity.Database.Context
 
             modelBuilder.Entity<AbstractConferenceRole>().HasDiscriminator(n => n.RoleType)
                 .HasValue<ConferenceDelegateRole>("DelegateRole")
-                .HasValue<ConferenceNgoRole>("NgoRole")
-                .HasValue<ConferencePressRole>("PressRole")
                 .HasValue<ConferenceSecretaryGeneralRole>("SecretaryGeneralRole")
                 .HasValue<ConferenceTeamRole>("TeamRole")
                 .HasValue<ConferenceVisitorRole>("VisitorRole");

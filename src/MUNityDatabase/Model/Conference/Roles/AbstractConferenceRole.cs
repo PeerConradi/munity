@@ -74,7 +74,7 @@ namespace MUNity.Database.Models.Conference.Roles
         /// only someone that is part of the organization that holds this conference apply for this role
         /// or anyone. Its also possible to only let users with an account on the platform apply for a role.
         /// </summary>
-        public EApplicationStates ApplicationState { get; set; }
+        public EApplicationStates ApplicationState { get; set; } = EApplicationStates.Closed;
 
         /// <summary>
         /// an extended value for the application state.
@@ -87,14 +87,16 @@ namespace MUNity.Database.Models.Conference.Roles
         /// which application and user he picks for this role. If this is turned to false it is
         /// first come - first served principal and the application mode will close when someone has applied.
         /// </summary>
-        public bool AllowMultipleParticipations { get; set; }
+        public bool AllowMultipleParticipations { get; set; } = false;
 
         /// <summary>
         /// The type of the role. This will most likely return "DelegateRole", "NgoRole", "PressRole",
         /// "SecreataryGeneralRole", "TeamRole" or "VisitorRole".
+        /// This field is used for the concurrencyToken
         /// </summary>
         [MaxLength(150)]
-        public string RoleType { get; set; }
+       
+        public string RoleType { get; [Obsolete("This is the concurrencyToken please only read")]set; }
 
         /// <summary>
         /// The timestamp when this role had been created or last changed.

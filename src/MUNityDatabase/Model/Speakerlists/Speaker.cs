@@ -50,5 +50,9 @@ namespace MUNity.Database.Models.LoS
         /// </summary>
         public ListOfSpeakers ListOfSpeakers { get; set; }
 
+        public int CompareTo(ISpeaker other)
+        {
+            return this.GetHashCode() - other.GetHashCode();
+        }
     }
 }

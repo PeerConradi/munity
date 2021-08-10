@@ -26,6 +26,9 @@ namespace MUNity.Database.Models.Conference
         [MaxLength(250)]
         public string FullName { get; set; }
 
+        /// <summary>
+        /// Short Term with a max length of 10 characters
+        /// </summary>
         [MaxLength(10)]
         public string Abbreviation { get; set; }
 
