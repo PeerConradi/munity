@@ -5,22 +5,25 @@ using System.Threading.Tasks;
 
 namespace MUNity.Database.Models.Session
 {
-    public class Attendance
+    public class AttendanceState
     {
         public enum AttendanceTypes
         {
             Ok,
             Late,
-            Replacement
+            Replacement,
+            NotChecked
         }
 
-        public int AttendanceId { get; set; }
+        public int AttendanceStateId { get; set; }
 
         public AttendanceCheck AttendanceCheck { get; set; }
 
         public DateTime AttendTime { get; set; }
 
-        public AttendanceTypes Type { get; set; }
+        public AttendanceTypes Type { get; set; } = AttendanceTypes.NotChecked;
+
+        public Conference.Participation Participant { get; set; }
 
         public string Comment { get; set; }
     }

@@ -12,10 +12,21 @@ namespace MUNity.Database.Models.Session
         [MaxLength(80)]
         public string CommitteeSessionId { get; set; }
 
+        public string Name { get; set; }
+
         public Committee Committee { get; set; }
+
+        public AttendanceCheck AttendanceCheck { get; set; }
+
+        public List<ProtocolEntry> ProtocolEntries { get; set; }
 
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
+
+        public CommitteeSession()
+        {
+            this.CommitteeSessionId = Guid.NewGuid().ToString();
+        }
     }
 }

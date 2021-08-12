@@ -59,6 +59,8 @@ namespace MUNity.Database.Models.Conference
         /// </summary>
         public Committee ResolutlyCommittee { get; set; }
 
+        public List<Committee> ChildCommittees { get; set; }
+
         /// <summary>
         /// The conference of this committee.
         /// </summary>

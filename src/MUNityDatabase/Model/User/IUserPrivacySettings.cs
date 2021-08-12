@@ -33,21 +33,21 @@ namespace MUNityCore.Models.User
         /// <summary>
         /// The history of conferences this user participated in
         /// </summary>
-        EDisplayAuthMode ConferenceHistory { get; set; }
+        EDisplayAuthMode ConferenceHistoryDisplayMode { get; set; }
 
         /// <summary>
         /// The friends this user has added
         /// </summary>
-        EDisplayAuthMode Friendslist { get; set; }
+        EDisplayAuthMode FriendslistDisplayMode { get; set; }
 
         /// <summary>
         /// Who is allowed to see the pinboard of the user.
         /// </summary>
-        EDisplayAuthMode Pinboard { get; set; }
+        EDisplayAuthMode PinboardDisplayMode { get; set; }
 
         /// <summary>
         /// The age of this user
         /// </summary>
-        EDisplayAuthMode Age { get; set; }
+        EDisplayAuthMode AgeDisplayMode { get; set; }
     }
 }

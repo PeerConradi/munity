@@ -76,10 +76,10 @@ namespace MUNity.Database.Models.User
         public ENameDisplayMode PublicNameDisplayMode { get; set; }
         public ENameDisplayMode InternalNameDisplayMode { get; set; }
         public ENameDisplayMode ConferenceNameDisplayMode { get; set; }
-        public EDisplayAuthMode ConferenceHistory { get; set; }
-        public EDisplayAuthMode Friendslist { get; set; }
-        public EDisplayAuthMode Pinboard { get; set; }
-        public EDisplayAuthMode Age { get; set; }
+        public EDisplayAuthMode ConferenceHistoryDisplayMode { get; set; }
+        public EDisplayAuthMode FriendslistDisplayMode { get; set; }
+        public EDisplayAuthMode PinboardDisplayMode { get; set; }
+        public EDisplayAuthMode AgeDisplayMode { get; set; }
 
         public MunityUser()
         {

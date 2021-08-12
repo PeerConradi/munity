@@ -16,6 +16,7 @@ using MUNity.Database.Models.Simulation;
 using MUNity.Database.Models.LoS;
 using MUNity.Database.Models;
 using MUNity.Database.Models.Resolution.SqlResa;
+using MUNity.Database.Models.Session;
 
 namespace MUNity.Database.Context
 {
@@ -53,6 +54,14 @@ namespace MUNity.Database.Context
         public DbSet<ConferenceSecretaryGeneralRole> SecretaryGenerals { get; set; }
 
         public DbSet<Conference> Conferences { get; set; }
+
+        public DbSet<CommitteeTopic> CommitteeTopics { get; set; }
+
+        public DbSet<AttendanceState> AttendanceStates { get; set; }
+
+        public DbSet<AttendanceCheck> AttendanceChecks { get; set; }
+
+        public DbSet<CommitteeSession> CommitteeSessions { get; set; }
 
         public DbSet<Participation> Participations { get; set; }
 
@@ -139,6 +148,9 @@ namespace MUNity.Database.Context
             modelBuilder.Entity<Committee>().HasMany(n => n.Resolutions)
                 .WithOne(a => a.Committee).IsRequired(false);
 
+            modelBuilder.Entity<Committee>().HasOne(n => n.ResolutlyCommittee)
+                .WithMany(n => n.ChildCommittees).IsRequired(false);
+
             modelBuilder.Entity<OrganizationRole>().HasOne(n => n.Organization)
                 .WithMany(a => a.Roles);
 
@@ -174,7 +186,6 @@ namespace MUNity.Database.Context
 
             modelBuilder.Entity<Committee>().HasMany(n => n.Sessions).WithOne(n =>
                 n.Committee);
-
 
 
             // The ResolutionId is also the Primary Key.
