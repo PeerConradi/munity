@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MUNityBase\MUNityBase.csproj" />
-    <ProjectReference Include="..\src\MUNityDatabase\MUNityDatabase.csproj" />
-    <ProjectReference Include="..\src\MUNitySchema\MUNitySchema.csproj" />
+    <ProjectReference Include="..\MUNityDatabase\MUNityDatabase.csproj" />
+    <ProjectReference Include="..\MUNitySchema\MUNitySchema.csproj" />
   </ItemGroup>
 
 </Project>

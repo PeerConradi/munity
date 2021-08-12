@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.User;
+using MUNityBase;
 using MUNityCore.Models.User;
 
 namespace MUNity.Database.Models.Conference
@@ -17,24 +18,6 @@ namespace MUNity.Database.Models.Conference
     /// </summary>
     public class Conference
     {
-        public enum EConferenceVisibilityMode
-        {
-            /// <summary>
-            /// The conference is only visible to the creator and everyone that
-            /// participate in it.
-            /// </summary>
-            Participants,
-            /// <summary>
-            /// The conference is visible to every account that is registered inside
-            /// the core.
-            /// </summary>
-            Users,
-            /// <summary>
-            /// The conference is visible to the public. Everyone calling the API
-            /// can access information about this conference.
-            /// </summary>
-            Public
-        }
 
         [MaxLength(80)]
         public string ConferenceId { get; set; }

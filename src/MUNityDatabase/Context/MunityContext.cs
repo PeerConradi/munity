@@ -19,7 +19,15 @@ using MUNity.Database.Models.Resolution.SqlResa;
 
 namespace MUNity.Database.Context
 {
-    public class MunityContext : IdentityDbContext<MunityUser, MunityRole, string>
+    public class MunityContext 
+        : IdentityDbContext<MunityUser, 
+            MunityRole, 
+            string, 
+            IdentityUserClaim<string>, 
+            MunityUserRole, 
+            IdentityUserLogin<string>, 
+            IdentityRoleClaim<string>, 
+            IdentityUserToken<string>>
     {
 
         public DbSet<Country> Countries { get; set; }
@@ -49,8 +57,6 @@ namespace MUNity.Database.Context
         public DbSet<Participation> Participations { get; set; }
 
         public DbSet<RoleAuth> RoleAuths { get; set; }
-
-        public DbSet<MunityUserAuth> UserAuths { get; set; }
 
         public DbSet<RoleApplication> RoleApplications { get; set; }
 
@@ -151,11 +157,13 @@ namespace MUNity.Database.Context
 
             modelBuilder.Entity<ConferenceTeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
 
-            modelBuilder.Entity<MunityUser>().HasOne(n => n.Auth).WithMany(n => n.Users);
-
-            modelBuilder.Entity<MunityUser>().HasOne(n => n.PrivacySettings).WithOne(n => n.User).HasForeignKey<UserPrivacySettings>(n => n.UserRef);
-
             modelBuilder.Entity<MunityUser>().HasMany(n => n.CreatedResolutions).WithOne(a => a.CreationUser).IsRequired(false);
+
+            // Each User can have many entries in the UserRole join table
+            modelBuilder.Entity<MunityUser>().HasMany(e => e.UserRoles)
+                .WithOne()
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
 
             modelBuilder.Entity<AbstractConferenceRole>().HasDiscriminator(n => n.RoleType)
                 .HasValue<ConferenceDelegateRole>("DelegateRole")

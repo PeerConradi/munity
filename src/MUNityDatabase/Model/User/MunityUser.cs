@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using MUNityBase;
 using MUNityCore.Models.User;
 
 
@@ -17,7 +18,7 @@ namespace MUNity.Database.Models.User
     /// inside any of the controllers unless you use it to validate something.
     /// When sending out information, always use the UserSchema
     /// </summary>
-    public class MunityUser : IdentityUser
+    public class MunityUser : IdentityUser, IUserPrivacySettings
     {
         public enum EUserState
         {
@@ -61,18 +62,24 @@ namespace MUNity.Database.Models.User
 
         public DateTime LastOnline { get; set; }
 
-        public MunityUserAuth Auth { get; set; }
-
         public EUserState UserState { get; set; }
 
         public List<MunityUser> Friends { get; set; }
 
-        public UserPrivacySettings PrivacySettings { get; set; }
-
         public List<Resolution.V2.ResolutionAuth> CreatedResolutions { get; set; }
+
+        public List<MunityUserRole> UserRoles { get; set; }
 
         [Timestamp]
         public byte[] UserTimestamp { get; set; }
+
+        public ENameDisplayMode PublicNameDisplayMode { get; set; }
+        public ENameDisplayMode InternalNameDisplayMode { get; set; }
+        public ENameDisplayMode ConferenceNameDisplayMode { get; set; }
+        public EDisplayAuthMode ConferenceHistory { get; set; }
+        public EDisplayAuthMode Friendslist { get; set; }
+        public EDisplayAuthMode Pinboard { get; set; }
+        public EDisplayAuthMode Age { get; set; }
 
         public MunityUser()
         {

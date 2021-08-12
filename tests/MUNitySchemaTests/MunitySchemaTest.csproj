@@ -7,18 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="NUnit" Version="3.13.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MUNityBase\MUNityBase.csproj" />
+    <ProjectReference Include="..\..\src\MUNityBase\MUNityBase.csproj" />
     <ProjectReference Include="..\..\src\MUNitySchema\MUNitySchema.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ConverterTests\" />
   </ItemGroup>
 
 </Project>

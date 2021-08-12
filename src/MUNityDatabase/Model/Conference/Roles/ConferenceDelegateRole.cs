@@ -48,7 +48,11 @@ namespace MUNity.Database.Models.Conference.Roles
         /// </summary>
         public Committee Committee { get; set; }
 
-
+        /// <summary>
+        /// An additional description of the delegate type, for example:
+        /// delegate, president, press, non-goverment etc.
+        /// </summary>
+        public string DelegateType { get; set; }
 
     }
 }

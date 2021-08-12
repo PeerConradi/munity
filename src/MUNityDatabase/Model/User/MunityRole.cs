@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityCore.Models.User
+namespace MUNity.Database.Models.User
 {
     public class MunityRole : IdentityRole<string>
     {
+
+        public bool CanCreateNewOrganizations { get; set; }
 
         public MunityRole()
         {

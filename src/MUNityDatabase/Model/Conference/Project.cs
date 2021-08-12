@@ -25,8 +25,10 @@ namespace MUNity.Database.Models.Conference
     {
         public string ProjectId { get; set; }
 
+        [MaxLength(250)]
         public string ProjectName { get; set; }
 
+        [MaxLength(20)]
         public string ProjectShort { get; set; }
 
         public Organization.Organization ProjectOrganization { get; set; }
