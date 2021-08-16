@@ -1,5 +1,10 @@
 # Conference Roles
 
+In this guide:
+
+* Create Team Roles
+* Create a Secretary General Role
+
 Every time a user is participating in a conference it is with a certain Role. The key role types are TeamRole, SecretaryGeneralRole, DelegateRole and VisitorRole.
 
 ## Role Auth
@@ -133,3 +138,25 @@ var financeManager = new ConferenceTeamRole()
 };
 ```
 
+## Create a secretary General Role
+
+The secretary general is normaly part of the team, but for the cases where this role should be splitted of it has its own type (ConferenceSecretaryGeneralRole).
+
+The structure would allow multiple secretary Generals for the same conference. Use this knowledge howevery you want.
+
+Example:
+```c#
+var sgRole = new ConferenceSecretaryGeneralRole()
+{
+    Conference = conference,
+    IconName = "un",
+    RoleAuth = participantAuth,
+    RoleFullName = "GeneralsekretärIn",
+    RoleName = "GeneralsekretärIn",
+    RoleShort = "GS",
+    Title = "Seine/Ihre Exzellenz der/die GeneralsekretärIn",
+};
+
+_context.SecretaryGenerals.Add(sgRole);
+_context.SaveChanges();
+```

@@ -73,6 +73,8 @@ namespace MUNity.Database.Context
 
         public DbSet<GroupedRoleApplication> GroupedRoleApplications { get; set; }
 
+        public DbSet<DelegationApplication> DelegationApplications { get; set; }
+
         public DbSet<TeamRoleGroup> TeamRoleGroups { get; set; }
 
         public DbSet<ResolutionAuth> ResolutionAuths { get; set; }

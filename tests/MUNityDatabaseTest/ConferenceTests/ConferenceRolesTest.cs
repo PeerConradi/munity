@@ -237,7 +237,7 @@ namespace MUNityDatabaseTest.ConferenceTests
             var delegation = new Delegation()
             {
                 Conference = conference,
-                Abbreviation = "DE",
+                DelegationShort = "DE",
                 FullName = "Delegation Deutschland",
                 Name = "Deutschland"
             };
@@ -283,7 +283,7 @@ namespace MUNityDatabaseTest.ConferenceTests
 
             var delegation = new Delegation()
             {
-                Abbreviation = "presse",
+                DelegationShort = "presse",
                 Conference = conference,
                 FullName = "Konferenzpresse",
                 Name = "Presse"
@@ -320,7 +320,7 @@ namespace MUNityDatabaseTest.ConferenceTests
 
             var delegation = new Delegation()
             {
-                Abbreviation = "ai",
+                DelegationShort = "ai",
                 Conference = conference,
                 FullName = "Amnesty International",
                 Name = "Amnesty International"

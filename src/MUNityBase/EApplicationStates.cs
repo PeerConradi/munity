@@ -1,6 +1,5 @@
-﻿namespace MUNity.Database.Models.Conference
+﻿namespace MUNityBase
 {
-
     /// <summary>
     /// Indicated a way a user can apply to a role.
     /// </summary>
@@ -28,16 +27,15 @@
         Registration,
 
         /// <summary>
-        /// If you just want to apply to be a specific delegation but the committee
-        /// doesn't matter. Look into the ApplicationValue to find out what Delegation is meant by this
+        /// Allows users to create a Delegation Applications for whatever Delegations this role is in.
+        /// All other DelegateRoles inside the delegation this one is in is also meant by the DelegationApplication.
         /// </summary>
         DelegationApplication,
 
         /// <summary>
-        /// If you want to apply to be inside a specific committee but the delegation doesn't matter
-        /// Look into the ApplicationValue to find out what Committee you can apply on
+        /// Allows applications to this role only with Grouped Applications.
         /// </summary>
-        CommitteeApplication,
+        OnlyDelegationGroup,
 
         /// <summary>
         /// Closed to public means only a list of users can apply to this role

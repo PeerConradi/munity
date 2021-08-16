@@ -30,7 +30,7 @@ namespace MUNity.Database.Models.Conference
         /// Short Term with a max length of 10 characters
         /// </summary>
         [MaxLength(10)]
-        public string Abbreviation { get; set; }
+        public string DelegationShort { get; set; }
 
         public Conference Conference { get; set; }
 

@@ -79,3 +79,4 @@ var session = new CommitteeSession()
 _context.CommitteeSessions.Add(session);
 _context.SaveChanges();
 ```
+

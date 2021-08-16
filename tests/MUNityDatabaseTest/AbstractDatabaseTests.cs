@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.Organization;
 using MUNity.Database.Models.User;
 using NUnit.Framework;
@@ -68,6 +69,11 @@ namespace MUNityDatabaseTest
             var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
             optionsBuilder.UseSqlite("Data Source=test_conference.db");
             _context = new MunityContext(optionsBuilder.Options);
+            ResetDatabase();   
+        }
+
+        public void ResetDatabase()
+        {
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
         }
@@ -113,6 +119,11 @@ namespace MUNityDatabaseTest
 
         private Committee CreateTestCommittee()
         {
+            return CreateCommittee("Generalversammlung", "Generalversammlung", "GV");
+        }
+
+        public Committee CreateCommittee(string name, string fullName, string committeeShort)
+        {
             var committee = new Committee()
             {
                 Conference = TestConference,
@@ -139,6 +150,175 @@ namespace MUNityDatabaseTest
             };
             _context.Users.Add(user);
             return user;
+        }
+
+        public RoleAuth EnsureProjectOwnerAuth()
+        {
+            var ownerAuth = _context.RoleAuths.FirstOrDefault(n => n.RoleAuthName == "Project-Owner");
+            if (ownerAuth == null)
+            {
+                ownerAuth = new RoleAuth()
+                {
+                    Conference = TestConference,
+                    CanEditConferenceSettings = true,
+                    CanEditParticipations = true,
+                    CanSeeApplications = true,
+                    PowerLevel = 1,
+                    RoleAuthName = "Project-Owner"
+                };
+                _context.RoleAuths.Add(ownerAuth);
+                _context.SaveChanges();
+            }
+            return ownerAuth;
+        }
+
+        public RoleAuth EnsureParticipantAuth()
+        {
+            var memberAuth = _context.RoleAuths.FirstOrDefault(n => n.RoleAuthName == "Participant");
+            if (memberAuth == null)
+            {
+                memberAuth = new RoleAuth()
+                {
+                    Conference = TestConference,
+                    CanEditConferenceSettings = true,
+                    CanEditParticipations = true,
+                    CanSeeApplications = true,
+                    PowerLevel = 1,
+                    RoleAuthName = "Participant"
+                };
+                _context.RoleAuths.Add(memberAuth);
+                _context.SaveChanges();
+            }
+            return memberAuth;
+        }
+
+        public Delegation EnsureDelegation(string name, string fullName, string shortName)
+        {
+            var delegation = _context.Delegation.FirstOrDefault(n => n.Name == name);
+            if (delegation == null)
+            {
+                delegation = new Delegation()
+                {
+                    Conference = TestConference,
+                    DelegationShort = shortName,
+                    FullName = fullName,
+                    Name = name
+                };
+                _context.Delegation.Add(delegation);
+                _context.SaveChanges();
+            }
+            return delegation;
+        }
+
+        public Country EnsureGermany()
+        {
+            var country = _context.Countries.FirstOrDefault(n => n.Name == "Deutschland");
+            if (country == null)
+            {
+                country = new Country()
+                {
+                    Continent = Country.EContinent.Europe,
+                    FullName = "Bundesrepublik Deutschland",
+                    Iso = "de",
+                    Name = "Deutschland"
+                };
+
+                _context.Countries.Add(country);
+                _context.SaveChanges();
+            }
+            return country;
+        }
+
+
+        public ConferenceDelegateRole EnsureGermanyDelegateRole()
+        {
+            var delegateRole = _context.Delegates.FirstOrDefault(n => n.RoleName == "Deutschland");
+            if (delegateRole == null)
+            {
+                delegateRole = new ConferenceDelegateRole()
+                {
+                    Committee = TestCommittee,
+                    Conference = TestConference,
+                    IconName = "de",
+                    Delegation = EnsureDelegation("Deutschland", "Deutschland", "de"),
+                    RoleAuth = EnsureParticipantAuth(),
+                    IsDelegationLeader = true,
+                    RoleFullName = "Abgeordneter Deutschlands",
+                    RoleName = "Deutschland",
+                    RoleShort = "DE",
+                    Title = "Abgeordneter Deutschlands in der Generalversammlung",
+                    DelegateState = EnsureGermany()
+                };
+
+                _context.Delegates.Add(delegateRole);
+                _context.SaveChanges();
+            }
+            return delegateRole;
+        }
+
+        public ConferenceDelegateRole CreateDelegateRole(Delegation delegation, Committee committee, string fullName, string name, string shortName)
+        {
+            var delegateRole = new ConferenceDelegateRole()
+            {
+                Committee = committee,
+                Conference = TestConference,
+                IconName = "de",
+                Delegation = delegation,
+                RoleAuth = EnsureParticipantAuth(),
+                IsDelegationLeader = true,
+                RoleFullName = "Abgeordneter Deutschlands",
+                RoleName = "Deutschland",
+                RoleShort = "DE",
+                Title = "Abgeordneter Deutschlands in der Generalversammlung",
+                DelegateState = EnsureGermany()
+            };
+
+            _context.Delegates.Add(delegateRole);
+            _context.SaveChanges();
+            return delegateRole;
+        }
+        
+
+        public TeamRoleGroup EnsureOwnerTeamRoleGroup()
+        {
+            var leaderRoleGroup = _context.TeamRoleGroups.FirstOrDefault(n => n.Name == "Projektleitung");
+            if (leaderRoleGroup == null)
+            {
+                leaderRoleGroup = new TeamRoleGroup()
+                {
+                    FullName = "die Projektleitung",
+                    Name = "Projektleitung",
+                    TeamRoleGroupShort = "PL",
+                    GroupLevel = 1
+                };
+                _context.TeamRoleGroups.Add(leaderRoleGroup);
+                _context.SaveChanges();
+            }
+            return leaderRoleGroup;
+        }
+
+        public ConferenceTeamRole EnsureProjectOwnerRole()
+        {
+            var leaderRole = _context.TeamRoles.FirstOrDefault(n => n.RoleName == "Projektleiter");
+            if (leaderRole == null)
+            {
+                var leaderAuth = EnsureProjectOwnerAuth();
+                var leaderRoleGroup = EnsureOwnerTeamRoleGroup();
+                leaderRole = new ConferenceTeamRole()
+                {
+                    Conference = TestConference,
+                    IconName = "pl",
+                    RoleFullName = "Projektleiter",
+                    RoleAuth = leaderAuth,
+                    RoleName = "Projektleiter",
+                    RoleShort = "PL",
+                    TeamRoleGroup = leaderRoleGroup,
+                    TeamRoleLevel = 1,
+                };
+                _context.TeamRoles.Add(leaderRole);
+                _context.SaveChanges();
+            }
+            return leaderRole;
         }
 
 
