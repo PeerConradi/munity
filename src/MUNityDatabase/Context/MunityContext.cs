@@ -11,11 +11,10 @@ using MUNity.Database.Models.User;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Organization;
 using MUNity.Database.Models.Conference.Roles;
-using MUNity.Database.Models.Resolution.V2;
 using MUNity.Database.Models.Simulation;
 using MUNity.Database.Models.LoS;
 using MUNity.Database.Models;
-using MUNity.Database.Models.Resolution.SqlResa;
+using MUNity.Database.Models.Resolution;
 using MUNity.Database.Models.Session;
 
 namespace MUNity.Database.Context
@@ -225,7 +224,7 @@ namespace MUNity.Database.Context
 
             modelBuilder.Entity<ResaOperativeParagraph>().HasMany(n => n.MoveAmendments).WithOne(n => n.SourceParagraph);
 
-            modelBuilder.Entity<ResaElement>().HasMany(n => n.Amendments).WithOne(n => n.Resolution);
+            modelBuilder.Entity<ResaElement>().HasMany(n => n.AddAmendments).WithOne(n => n.Resolution);
 
             modelBuilder.Entity<SimulationPresents>().HasMany(n => n.CheckedUsers).WithOne(n => n.SimulationPresents);
 

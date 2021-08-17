@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Resolution.SqlResa
+namespace MUNity.Database.Models.Resolution
 {
     public class ResaAmendment
     {

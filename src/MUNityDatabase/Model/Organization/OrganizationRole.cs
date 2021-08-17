@@ -21,5 +21,9 @@ namespace MUNity.Database.Models.Organization
         public List<OrganizationMember> MembersWithRole { get; set; }
 
         public bool CanCreateProject { get; set; }
+
+        public bool CanCreateRoles { get; set; }
+
+        public bool CanManageMembers { get; set; }
     }
 }

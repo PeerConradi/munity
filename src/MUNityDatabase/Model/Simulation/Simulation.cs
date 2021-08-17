@@ -46,7 +46,7 @@ namespace MUNity.Database.Models.Simulation
 
         public string CurrentResolutionId { get; set; }
 
-        public List<Resolution.V2.ResolutionAuth> Resolutions { get; set; }
+        public List<Resolution.ResolutionAuth> Resolutions { get; set; }
 
         public List<SimulationPresents> PresentChecks { get; set; }
 

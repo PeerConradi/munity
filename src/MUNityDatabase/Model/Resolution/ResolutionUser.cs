@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Resolution.V2
+namespace MUNity.Database.Models.Resolution
 {
 
     [DataContract]

@@ -82,7 +82,7 @@ namespace MUNity.Database.Models.Conference
         [Timestamp]
         public byte[] CommitteeTimestamp { get; set; }
 
-        public List <Resolution.V2.ResolutionAuth> Resolutions { get; set; }
+        public List <Resolution.ResolutionAuth> Resolutions { get; set; }
 
 
         public Committee()

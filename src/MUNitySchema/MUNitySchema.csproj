@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Converter\" />
+    <Folder Include="Dtos\Organization\" />
   </ItemGroup>
 
 </Project>

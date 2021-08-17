@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MUNityCore.Models.User;
 using MUNity.Schema.User;
 using MUNity.Database.Models.User;
+using MUNityBase;
 
 namespace MUNity.Extensions.CastExtensions
 {
@@ -15,39 +16,27 @@ namespace MUNity.Extensions.CastExtensions
             var mdl = new UserInformation();
             mdl.Username = user.UserName;
             mdl.LastOnline = user.LastOnline;
-            switch (user.PrivacySettings.PublicNameDisplayMode)
+            switch (user.PublicNameDisplayMode)
             {
-                case UserPrivacySettings.ENameDisplayMode.FullName:
+                case ENameDisplayMode.FullName:
                     mdl.Forename = user.Forename;
                     mdl.Lastname = user.Lastname;
                     break;
-                case UserPrivacySettings.ENameDisplayMode.FullForenameAndFirstLetterLastName:
+                case ENameDisplayMode.FullForenameAndFirstLetterLastName:
                     mdl.Forename = user.Forename;
                     mdl.Lastname = user.Lastname.First() + ".";
                     break;
-                case UserPrivacySettings.ENameDisplayMode.FirstLetterForenameFullLastName:
+                case ENameDisplayMode.FirstLetterForenameFullLastName:
                     mdl.Forename = user.Forename.First() + ".";
                     mdl.Lastname = user.Lastname;
                     break;
-                case UserPrivacySettings.ENameDisplayMode.Initals:
+                case ENameDisplayMode.Initals:
                     mdl.Forename = user.Forename.First() + ".";
                     mdl.Lastname = user.Lastname.First() + ".";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return mdl;
-        }
-
-        public static UserAuthSchema AsAuthSchema(this MunityUserAuth auth)
-        {
-            var mdl = new UserAuthSchema()
-            {
-                AuthLevel = auth.AuthLevel,
-                CanCreateOrganization = auth.CanCreateOrganization,
-                UserAuthId = auth.MunityUserAuthId,
-                UserAuthName = auth.UserAuthName
-            };
             return mdl;
         }
     }

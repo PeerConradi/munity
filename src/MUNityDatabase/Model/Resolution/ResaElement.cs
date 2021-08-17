@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Resolution.SqlResa
+namespace MUNity.Database.Models.Resolution
 {
     public class ResaElement
     {
@@ -31,8 +31,7 @@ namespace MUNity.Database.Models.Resolution.SqlResa
 
         public string SupporterNames { get; set; }
 
-        //public List<ResaSupporter> Supporters { get; set; }
-        public List<ResaAmendment> Amendments { get; set; }
+        public List<ResaAddAmendment> AddAmendments { get; set; }
 
         public ResaElement()
         {
@@ -40,7 +39,7 @@ namespace MUNity.Database.Models.Resolution.SqlResa
             this.PreambleParagraphs = new List<ResaPreambleParagraph>();
             this.OperativeParagraphs = new List<ResaOperativeParagraph>();
             //this.Supporters = new List<ResaSupporter>();
-            this.Amendments = new List<ResaAmendment>();
+            this.AddAmendments = new List<ResaAddAmendment>();
         }
     }
 }

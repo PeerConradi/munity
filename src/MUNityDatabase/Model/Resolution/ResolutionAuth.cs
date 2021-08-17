@@ -1,12 +1,11 @@
-﻿using MUNity.Database.Models.Resolution.SqlResa;
-using MUNity.Database.Models.User;
+﻿using MUNity.Database.Models.User;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Resolution.V2
+namespace MUNity.Database.Models.Resolution
 {
 
     /// <summary>

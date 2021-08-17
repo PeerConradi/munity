@@ -1,4 +1,4 @@
-﻿using MUNity.Database.Models.Resolution.SqlResa;
+﻿using MUNity.Database.Models.Resolution;
 using MUNity.Models.Resolution;
 using MUNity.Models.Resolution.EventArguments;
 using System;

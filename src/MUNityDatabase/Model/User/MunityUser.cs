@@ -66,7 +66,7 @@ namespace MUNity.Database.Models.User
 
         public List<MunityUser> Friends { get; set; }
 
-        public List<Resolution.V2.ResolutionAuth> CreatedResolutions { get; set; }
+        public List<Resolution.ResolutionAuth> CreatedResolutions { get; set; }
 
         public List<MunityUserRole> UserRoles { get; set; }
 

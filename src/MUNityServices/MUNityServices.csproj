@@ -16,4 +16,8 @@
     <ProjectReference Include="..\MUNitySchema\MUNitySchema.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfances\" />
+  </ItemGroup>
+
 </Project>

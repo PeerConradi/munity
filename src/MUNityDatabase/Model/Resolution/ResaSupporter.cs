@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MUNity.Database.Models.Resolution.SqlResa
+namespace MUNity.Database.Models.Resolution
 {
     public class ResaSupporter
     {

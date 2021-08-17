@@ -32,12 +32,12 @@ namespace MUNity.Schema.Conference
         /// <summary>
         /// The start Date of the conference.
         /// </summary>
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         /// <summary>
         /// The end Date of the conference.
         /// </summary>
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         /// <summary>
         /// The id of the parent project of this conference. Every conference is inside a project for example
