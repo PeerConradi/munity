@@ -1,0 +1,79 @@
+﻿@inject NavigationManager navManager;
+
+<div class="menu-item @((Children.Any()) ? "has-sub" : null) @((IsExpanded) ? "active" : null)">
+    
+    <a class="menu-link" style="cursor: pointer;" @onclick="() => NavigateOrExpand()">
+        @if (!string.IsNullOrEmpty(this.IconName))
+        {
+            <div class="menu-icon">
+                <i class="oi @IconName"></i>
+            </div>
+        }
+
+        <div class="menu-text">
+            @Title
+            @if (!string.IsNullOrEmpty(Badge))
+            {
+                <span class="menu-label">@Badge</span>
+            }
+        </div>
+        @if (Children.Any())
+        {
+            <div class="menu-caret"></div>
+        }
+    </a>
+    <div class="menu-submenu">
+        <CascadingValue Value="this">
+            @ChildContent
+        </CascadingValue>
+    </div>
+        
+</div>
+
+
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter] public MenuItem Parent { get; set; }
+
+    [Parameter] public string Title { get; set; }
+
+    [Parameter] public string Url { get; set; }
+
+    [Parameter] public string IconName { get; set; }
+
+    [Parameter] public string Badge{ get; set; }
+
+    public bool IsExpanded { get; set; }
+
+    private List<MenuItem> Children { get; set; } = new();
+
+    private void NavigateOrExpand()
+    {
+        if (Children.Any())
+        {
+            IsExpanded = !IsExpanded;
+        }
+        else
+        {
+            navManager.NavigateTo(Url);
+        }
+    }
+
+    public void AddSubItem(MenuItem item)
+    {
+        if (!Children.Contains(item))
+        {
+            Children.Add(item);
+            this.StateHasChanged();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+
+        if (Parent != null)
+            Parent.AddSubItem(this);
+    }
+}

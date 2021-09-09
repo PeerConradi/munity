@@ -1,0 +1,106 @@
+﻿<div class="navbar-item dropdown">
+    <a class="navbar-link dropdown-toggle icon @((ShowNotifications) ? "show" : null)" @onclick="() => ToggleNotifications()">
+        <i class="oi oi-bell"></i>
+        <span class="badge">5</span>
+    </a>
+    <div class="dropdown-menu media-list dropdown-menu-end @((ShowNotifications) ? "show" : null)"
+         style="@((ShowNotifications) ? NotificationStyle : null)">
+        <div class="dropdown-header">NOTIFICATIONS (5)</div>
+        <a href="javascript:;" class="dropdown-item media">
+            <div class="media-left">
+                <i class="oi oi-bug media-object bg-gray-500"></i>
+            </div>
+            <div class="media-body">
+                <h6 class="media-heading">Server Error Reports <i class="fa fa-exclamation-circle text-danger"></i></h6>
+                <div class="text-muted fs-10px">3 minutes ago</div>
+            </div>
+        </a>
+        <a href="javascript:;" class="dropdown-item media">
+            <div class="media-left">
+                <img src="https://www.profielactueel.nl/content/modules/catalog/1/3800/3759/10_xx_2_1.png" class="media-object" alt="">
+                @*<i class="oi oi-file text-blue media-object-icon"></i>*@
+            </div>
+            <div class="media-body">
+                <h6 class="media-heading">John Smith</h6>
+                <p>Quisque pulvinar tellus sit amet sem scelerisque tincidunt.</p>
+                <div class="text-muted fs-10px">25 minutes ago</div>
+            </div>
+        </a>
+        <a href="javascript:;" class="dropdown-item media">
+            <div class="media-left">
+                <img src="https://www.profielactueel.nl/content/modules/catalog/1/3800/3759/10_xx_2_1.png" class="media-object" alt="">
+                @*<i class="oi oi-file text-blue media-object-icon"></i>*@
+            </div>
+            <div class="media-body">
+                <h6 class="media-heading">Olivia</h6>
+                <p>Quisque pulvinar tellus sit amet sem scelerisque tincidunt.</p>
+                <div class="text-muted fs-10px">35 minutes ago</div>
+            </div>
+        </a>
+        <a href="javascript:;" class="dropdown-item media">
+            <div class="media-left">
+                <i class="oi oi-plus media-object bg-gray-500"></i>
+            </div>
+            <div class="media-body">
+                <h6 class="media-heading"> New User Registered</h6>
+                <div class="text-muted fs-10px">1 hour ago</div>
+            </div>
+        </a>
+        <a href="javascript:;" class="dropdown-item media">
+            <div class="media-left">
+                <i class="oi oi-arrow-bottom media-object bg-gray-500"></i>
+                @*<i class="oi oi-wifi text-warning media-object-icon fs-14px"></i>*@
+            </div>
+            <div class="media-body">
+                <h6 class="media-heading"> New Email From John</h6>
+                <div class="text-muted fs-10px">2 hour ago</div>
+            </div>
+        </a>
+        <div class="dropdown-footer text-center">
+            <a href="javascript:;" class="text-decoration-none">View more</a>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="navbar-item navbar-user dropdown" @onclick="() =>  ToggleUserMenu()">
+    <a class="navbar-link dropdown-toggle d-flex align-items-center @((ShowUserSubMenu) ? "show" : null)"
+       style="cursor: pointer;">
+        <img src="https://www.profielactueel.nl/content/modules/catalog/1/3800/3759/10_xx_2_1.png" alt="">
+        <span>
+            <span class="d-none d-md-inline">Adam Schwartz</span>
+            <b class="caret"></b>
+        </span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end me-1 @((ShowUserSubMenu) ? "show" : null)" style="@((ShowUserSubMenu) ? SubMenuStyle : null)">
+        <a href="javascript:;" class="dropdown-item">Edit Profile</a>
+        <a href="javascript:;" class="dropdown-item"><span class="badge bg-danger float-end rounded-pill">2</span> Inbox</a>
+        <a href="javascript:;" class="dropdown-item">Calendar</a>
+        <a href="javascript:;" class="dropdown-item">Setting</a>
+        <div class="dropdown-divider"></div>
+        <a href="javascript:;" class="dropdown-item">Log Out</a>
+    </div>
+</div>
+
+@code {
+    public bool ShowUserSubMenu { get; set; }
+
+    private string SubMenuStyle = "position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(9px, 52px);";
+
+    public bool ShowNotifications { get; set; }
+
+    private string NotificationStyle = "position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(-316px, 52px);";
+
+    private void ToggleUserMenu()
+    {
+        this.ShowNotifications = false;
+        this.ShowUserSubMenu = !ShowUserSubMenu;
+    }
+
+    private void ToggleNotifications()
+    {
+        this.ShowUserSubMenu = false;
+        this.ShowNotifications = !ShowNotifications;
+    }
+}

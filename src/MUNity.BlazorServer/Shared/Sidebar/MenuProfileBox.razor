@@ -1,0 +1,57 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <div class="menu-profile @((IsExpanded) ? "active" : null)" @onclick="() => ToggleExpand()">
+            <a class="menu-profile-link">
+                <div class="menu-profile-cover with-shadow"></div>
+                <div class="menu-profile-image">
+                    <img src="../assets/img/user/user-13.jpg" alt="" />
+                </div>
+                <div class="menu-profile-info">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            @context.User.Identity.Name
+                        </div>
+                        <div class="menu-caret ms-auto"></div>
+                    </div>
+                    <small>MUNity-User</small>
+                </div>
+            </a>
+        </div>
+        <div id="appSidebarProfileMenu" class="collapse @((IsExpanded) ? "expand" : "closed")"
+             style="@((IsExpanded) ? expandedStyle : null)">
+            <div class="menu-item pt-5px">
+                <a href="javascript:;" class="menu-link">
+                    <div class="menu-icon"><i class="oi oi-cog"></i></div>
+                    <div class="menu-text">Settings</div>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="javascript:;" class="menu-link">
+                    <div class="menu-icon"><i class="oi oi-pencil"></i></div>
+                    <div class="menu-text"> Send Feedback</div>
+                </a>
+            </div>
+            <div class="menu-item pb-5px">
+                <a href="javascript:;" class="menu-link">
+                    <div class="menu-icon"><i class="oi oi-question-mark"></i></div>
+                    <div class="menu-text"> Helps</div>
+                </a>
+            </div>
+            <div class="menu-divider m-0"></div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+
+
+@code {
+    public bool IsExpanded { get; set; }
+
+    private string expandedStyle = "display: block;";
+
+    private void ToggleExpand()
+    {
+        Console.WriteLine("Toggle expand");
+        this.IsExpanded = !IsExpanded;
+    }
+}

@@ -1,0 +1,77 @@
+﻿<div class="panel panel-inverse @((isExpanded) ? "panel-expand" : null)">
+    <div class="panel-heading ui-sortable-handle">
+        <h4 class="panel-title">@Title</h4>
+        <div class="panel-heading-btn">
+            @if (Expandable)
+            {
+                <a class="btn btn-xs btn-icon btn-primary" @onclick="() => ToggleExpanded()"><i class="oi @((isExpanded) ? "oi-fullscreen-exit" : "oi-fullscreen-enter")"></i></a>
+
+            }
+
+            @if (Reloadable)
+            {
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-success"><i class="oi oi-reload"></i></a>
+
+            }
+
+            @if (Minimizable)
+            {
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" @onclick="() => ToggleMinimized()"><i class="oi oi-minus"></i></a>
+
+            }
+
+            @if (Closeable)
+            {
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-danger"><i class="oi oi-x"></i></a>
+
+            }
+        </div>
+    </div>
+    <div class="panel-body" style="@((isMinimized) ? "display: none;" : null)">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback RefreshRequested { get; set; }
+
+    [Parameter]
+    public bool Expandable { get; set; } = true;
+
+    [Parameter]
+    public bool Reloadable { get; set; } = false;
+
+    [Parameter]
+    public bool Minimizable { get; set; } = true;
+
+    [Parameter]
+    public bool Closeable { get; set; } = false;
+
+    private bool isExpanded;
+
+    private bool isMinimized;
+
+    private void ToggleExpanded()
+    {
+        isMinimized = false;
+        isExpanded = !isExpanded;
+    }
+
+    private void ToggleMinimized()
+    {
+        isExpanded = false;
+        isMinimized = !isMinimized;
+    }
+
+    private void RefreshClicked()
+    {
+        RefreshRequested.InvokeAsync();
+    }
+}
