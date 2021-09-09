@@ -18,6 +18,7 @@ namespace MUNity.BlazorServer
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+            .ConfigureLogging(n => n.SetMinimumLevel(LogLevel.Debug))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

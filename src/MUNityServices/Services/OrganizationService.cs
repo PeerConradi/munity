@@ -7,6 +7,7 @@ using MUNity.Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,27 +21,20 @@ namespace MUNity.Services
 
         public bool IsNameAvailable(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
             return context.Organizations.All(n => n.OrganizationName.ToLower() != name.ToLower());
         }
 
         public bool IsShortAvailable(string shortName)
         {
+            if (string.IsNullOrWhiteSpace(shortName))
+                return false;
             return context.Organizations.All(n => n.OrganizationShort.ToLower() != shortName.ToLower());
         }
 
         public Organization CreateOrganization(string name, string shortName, MunityUser user)
         {
-            if (!IsNameAvailable(name))
-            {
-                log?.LogInformation($"Unable to create an organization with the name: {name} because its already taken.");
-                throw new NameTakenException("There is already an organization with the name");
-            } 
-
-            if (!IsShortAvailable(shortName))
-            {
-                log?.LogInformation($"Unable to create an organization with the short: {shortName} because its already taken.");
-                throw new NameTakenException("There is already an organization using that shortName");
-            }
                 
             var organization = new Organization()
             {
@@ -76,6 +70,53 @@ namespace MUNity.Services
             return organization;
         }
 
+        public CreateOrganizationResponse CreateOrganization(CreateOrganizationRequest request, ClaimsPrincipal claim)
+        {
+            log?.LogDebug("Request creating an organization!");
+
+            var response = new CreateOrganizationResponse();
+
+            if (claim == null ||claim.Identity == null || string.IsNullOrEmpty(claim.Identity.Name))
+            {
+                response.Status = CreateOrganizationResponse.CreateOrgaStatusCodes.Error;
+                log?.LogDebug($"The given claim was not valid.");
+                return response;
+            }
+
+            log?.LogInformation($"{claim.Identity.Name} wants to create the organization {request.Name}");
+
+
+            var user = context.Users.FirstOrDefault(n => n.UserName == claim.Identity.Name);
+            if (user == null)
+            {
+                response.Status = CreateOrganizationResponse.CreateOrgaStatusCodes.Error;
+                log?.LogDebug($"User was not found to create the organization.");
+                return response;
+            }
+
+            if (!IsNameAvailable(request.Name))
+            {
+                response.Status = CreateOrganizationResponse.CreateOrgaStatusCodes.NameTaken;
+                log?.LogDebug($"Organization Name: {request.Name} was already taken!");
+                return response;
+            }
+
+            if (!IsShortAvailable(request.ShortName))
+            {
+                response.Status = CreateOrganizationResponse.CreateOrgaStatusCodes.ShortTaken;
+                log?.LogDebug($"Organization Short: {request.ShortName} was already taken!");
+                return response;
+            }
+
+            var createdOrganization = CreateOrganization(request.Name, request.ShortName, user);
+            if (createdOrganization != null)
+            {
+                response.OrganizationId = createdOrganization.OrganizationId;
+                log?.LogDebug($"Organization {request.Name} with the id {createdOrganization.OrganizationId} has been created!");
+            }
+            return response;
+        }
+
         public bool OrganizationWithIdExisits(string id)
         {
             return context.Organizations.Any(n => n.OrganizationId == id);
@@ -94,6 +135,16 @@ namespace MUNity.Services
                 OrganizationId = n.OrganizationId,
                 Short = n.OrganizationShort
             }).FirstOrDefault(n => n.OrganizationId == organizationId);
+        }
+
+        public List<OrganizationTinyInfo> GetTyinInfosOfAllOrgas()
+        {
+            return context.Organizations.Select(n => new OrganizationTinyInfo()
+            {
+                Name = n.OrganizationName,
+                OrganizationId = n.OrganizationId,
+                Short = n.OrganizationShort
+            }).ToList();
         }
 
         public OrganizationWithConferenceInfo GetOrgaConferenceInfo(string organizationId)

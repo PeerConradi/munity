@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Pages\Shared\" />
-    <Folder Include="Components\Organization\" />
   </ItemGroup>
 
 </Project>

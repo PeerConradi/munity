@@ -1,0 +1,47 @@
+﻿@inject MUNity.Services.OrganizationService orgaService;
+
+@if (tinyInfos != null)
+{
+    <div class="card border-0 mb-3 bg-gray-900 text-white">
+        <!-- BEGIN card-body -->
+        <div class="card-body">
+            <!-- BEGIN title -->
+            <div class="mb-3 text-gray-300">
+                <b>Organisationen</b>
+            </div>
+
+            @foreach (var orga in tinyInfos)
+            {
+                <div class="row align-items-center pb-1px">
+                    <!-- BEGIN col-4 -->
+                    <div class="col-4">
+                        <div class="h-100px d-flex align-items-center justify-content-center">
+                            <img src="/img/svg/img-4.svg" class="mw-100 mh-100">
+                        </div>
+                    </div>
+                    <!-- END col-4 -->
+                    <!-- BEGIN col-8 -->
+                    <div class="col-8">
+                        <div class="mb-2px text-truncate">@orga.Name</div>
+                        <div class="mb-2px  text-gray-300 fs-11px">@orga.Short</div>
+                        <a href="#" class="btn btn-xs btn-indigo fs-10px ps-2 pe-2">Dashboard öffnen</a>
+                    </div>
+                    <!-- END col-8 -->
+                </div>
+
+                <hr class=" bg-white-transparent-2 mt-20px mb-20px">
+            }
+        </div>
+        <!-- END card-body -->
+    </div>
+}
+
+@code {
+    List<MUNity.Schema.Organization.OrganizationTinyInfo> tinyInfos;
+
+    protected override void OnInitialized()
+    {
+        tinyInfos = this.orgaService.GetTyinInfosOfAllOrgas();
+        base.OnInitialized();
+    }
+}

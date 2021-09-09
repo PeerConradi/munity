@@ -1,0 +1,20 @@
+﻿@page "/createOrganization"
+
+<MUNity.BlazorServer.Shared.Elements.WidgetBox Title="Neue Organisation anmelden">
+    <h3>Über Organisationen</h3>
+    <p>Organisationen werden verwendet um Projekte zu verwalten. Eine Organisation kann hierbei ein Verein, eine Schule oder andere Einrichtung, aber auch ein Team sein.
+    Jede Organisation kann mehrere Projekte verwalten, wie Model United Nations Berlin. Dieses Projekt kann dann mehrere Konferenzen beinhalten wie: MUN Berlin 2012 und MUN Berlin 2013.</p>
+    <AuthorizeView>
+        <Authorized>
+            <MUNity.BlazorServer.Components.Organization.CreateOrgaComponent />
+
+        </Authorized>
+        <NotAuthorized>
+            <p>Zum anlegen einer Organisation musst du angemeldet sein.</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</MUNity.BlazorServer.Shared.Elements.WidgetBox>
+
+@code {
+
+}
