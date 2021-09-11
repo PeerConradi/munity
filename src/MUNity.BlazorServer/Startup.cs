@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MUNity.BlazorServer.Areas.Identity;
-using MUNity.BlazorServer.Data;
 using MUNity.Database.Context;
 using MUNity.Database.Models.User;
 using MUNity.Services;
@@ -73,8 +72,7 @@ namespace MUNity.BlazorServer
 
             services.AddScoped<UserService>();
             services.AddScoped<OrganizationService>();
-
-            services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<ProjectService>();
 
             services.AddLogging();
             

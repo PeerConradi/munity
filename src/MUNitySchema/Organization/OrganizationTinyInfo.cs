@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace MUNity.Schema.Organization
@@ -14,36 +13,36 @@ namespace MUNity.Schema.Organization
         public string Name { get; set; }
     }
 
-    public class OrganizationWithConferenceInfo : OrganizationTinyInfo
+    public class OrganizationDashboardInfo
     {
-        public int ProjectCount { get; set; }
+        public string OrganizationId { get; set; }
+
+        public string Name { get; set; }
+
+        public string Short { get; set; }
+
+        public List<OrganizationDashboardProjectInfo> Projects { get; set; }
+
+        public List<OrganizationMemberInfo> Memebrs { get; set; }
+    }
+
+    public class OrganizationDashboardProjectInfo
+    {
+        public string ProjectId { get; set; }
+
+        public string Name { get; set; }
 
         public int ConferenceCount { get; set; }
     }
 
-    public class CreateOrganizationRequest
+    public class OrganizationMemberInfo
     {
-        [Required]
-        [MinLength(2)]
-        public string ShortName { get; set; }
+        public string MemberUserName { get; set; }
 
-        [Required]
-        [MinLength(3)]
-        public string Name { get; set; }
-    }
+        public string Forename { get; set; }
 
-    public class CreateOrganizationResponse
-    {
-        public enum CreateOrgaStatusCodes
-        {
-            Success,
-            NameTaken,
-            ShortTaken,
-            Error
-        }
+        public string LastName { get; set; }
 
-        public CreateOrgaStatusCodes Status { get; set; }
-
-        public string OrganizationId { get; set; }
+        public string RoleName { get; set; }
     }
 }

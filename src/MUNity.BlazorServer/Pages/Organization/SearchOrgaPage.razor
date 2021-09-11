@@ -1,0 +1,16 @@
+﻿@page "/organizations"
+
+<h1 class="page-header">Organisationen Suchen </h1>
+
+<div class="input-group input-group-lg mb-3">
+    <input type="text" class="form-control input-white" placeholder="Enter keywords here...">
+    <button type="button" class="btn btn-primary"><i class="oi oi-magnifying-glass"></i> Search</button>
+</div>
+
+<MUNity.BlazorServer.Components.Organization.OrganizationListComponent DetailLevel="MUNity.BlazorServer.Components.Organization.OrganizationListComponent.DetailLevels.Tiny"
+                                                                       ListMode="MUNity.BlazorServer.Components.Organization.OrganizationListComponent.ListModes.ALL" />
+
+
+@code {
+
+}

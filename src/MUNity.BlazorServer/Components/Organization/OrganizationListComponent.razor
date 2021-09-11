@@ -24,7 +24,7 @@
                     <div class="col-8">
                         <div class="mb-2px text-truncate">@orga.Name</div>
                         <div class="mb-2px  text-gray-300 fs-11px">@orga.Short</div>
-                        <a href="#" class="btn btn-xs btn-indigo fs-10px ps-2 pe-2">Dashboard öffnen</a>
+                        <a href="/Organization/@orga.OrganizationId" class="btn btn-xs btn-indigo fs-10px ps-2 pe-2">Dashboard öffnen</a>
                     </div>
                     <!-- END col-8 -->
                 </div>
@@ -37,11 +37,48 @@
 }
 
 @code {
+    public enum ListModes
+    {
+        ALL,
+        OfCurrentUser,
+        PublicVisible
+    }
+
+    public enum DetailLevels
+    {
+        Tiny,
+        Detailed
+    }
+
+    [Parameter]
+    public ListModes ListMode { get; set; } = ListModes.OfCurrentUser;
+
+    [Parameter]
+    public DetailLevels DetailLevel { get; set; } = DetailLevels.Tiny;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     List<MUNity.Schema.Organization.OrganizationTinyInfo> tinyInfos;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        tinyInfos = this.orgaService.GetTyinInfosOfAllOrgas();
-        base.OnInitialized();
+        if (DetailLevel == DetailLevels.Tiny)
+        {
+            if (ListMode == ListModes.ALL)
+                tinyInfos = this.orgaService.GetTyinInfosOfAllOrgas();
+            else if (ListMode == ListModes.OfCurrentUser)
+            {
+                var user = (await authenticationStateTask).User;
+                if (user != null)
+                {
+                    tinyInfos = this.orgaService.GetTinyInfoOfUserOrganizations(user);
+                }
+            }
+        }
+
+        //base.OnInitialized();
     }
+
+
 }

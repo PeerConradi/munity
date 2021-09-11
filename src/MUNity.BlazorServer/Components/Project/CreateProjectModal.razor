@@ -1,0 +1,97 @@
+﻿<!-- Create Project Modal -->
+@inject Services.ProjectService projectService;
+
+@if (isVisible)
+{
+    <div class="modal fade show" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Neues Projekt</h4>
+                    <button type="button" class="btn-close" @onclick="() => Hide()"></button>
+                </div>
+                @if (response == null)
+                {
+                    <EditForm Model="createProjectModel" OnValidSubmit="CreateProject">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="modal-body">
+                            <h3>Über Projekte</h3>
+                            <p>Projekte sind den Konferenzen übergeordnet. Ein Projekt ist also eine Art Gruppe von Konferenzen. So gehören die Konferenzen MUN Berlin 2011 und MUN Berlin 2012 zum Projekt MUN Berlin.</p>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Projektname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Model United Nations ..." @bind-Value="@createProjectModel.Name" />
+                                    <small class="fs-12px text-gray-500-darker">Der Name des Projekts (Model United Nations Berlin)</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Projekt Kürzel</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@createProjectModel.Short" />
+                                    <small class="fs-12px text-gray-500-darker">Das Kürzel des Projekts (MUN Berlin)</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-white" @onclick="() => Hide()">Abbrechen</button>
+                            <button class="btn btn-success" type="submit">Projekt erstellen</button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    <div class="modal-body">
+                        <div class="col-12">
+                            @if (response.Status == Schema.Project.CreateProjectResponse.CreateProjectStatus.Success)
+                            {
+                                <div class="alert alert-success">Das Porjekt wurde erfolgreich erstellt. <button class="btn btn-sm btn-secondary">Projekt öffnen</button></div>
+                            }
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-white" @onclick="() => Hide()">Schließen</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    private bool isVisible = false;
+
+    [Parameter] public string OrganizationId { get; set; }
+
+    private MUNity.Schema.Project.CreateProjectModel createProjectModel;
+
+    private MUNity.Schema.Project.CreateProjectResponse response;
+
+    protected override void OnInitialized()
+    {
+        this.createProjectModel = new Schema.Project.CreateProjectModel();
+        createProjectModel.OrganizationId = OrganizationId;
+    }
+
+    public void Show()
+    {
+        isVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        isVisible = false;
+    }
+
+    public void CreateProject()
+    {
+        this.response = projectService.CreateProject(createProjectModel);
+    }
+}

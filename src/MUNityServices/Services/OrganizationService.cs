@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Organization;
 using MUNity.Database.Models.User;
@@ -23,14 +24,14 @@ namespace MUNity.Services
         {
             if (string.IsNullOrWhiteSpace(name))
                 return false;
-            return context.Organizations.All(n => n.OrganizationName.ToLower() != name.ToLower());
+            return context.Organizations.AsNoTracking().All(n => n.OrganizationName.ToLower() != name.ToLower());
         }
 
         public bool IsShortAvailable(string shortName)
         {
             if (string.IsNullOrWhiteSpace(shortName))
                 return false;
-            return context.Organizations.All(n => n.OrganizationShort.ToLower() != shortName.ToLower());
+            return context.Organizations.AsNoTracking().All(n => n.OrganizationShort.ToLower() != shortName.ToLower());
         }
 
         public Organization CreateOrganization(string name, string shortName, MunityUser user)
@@ -86,7 +87,7 @@ namespace MUNity.Services
             log?.LogInformation($"{claim.Identity.Name} wants to create the organization {request.Name}");
 
 
-            var user = context.Users.FirstOrDefault(n => n.UserName == claim.Identity.Name);
+            var user = context.Users.AsNoTracking().FirstOrDefault(n => n.UserName == claim.Identity.Name);
             if (user == null)
             {
                 response.Status = CreateOrganizationResponse.CreateOrgaStatusCodes.Error;
@@ -117,19 +118,26 @@ namespace MUNity.Services
             return response;
         }
 
+        
+
         public bool OrganizationWithIdExisits(string id)
         {
-            return context.Organizations.Any(n => n.OrganizationId == id);
+            return context.Organizations.AsNoTracking().Any(n => n.OrganizationId == id);
         }
 
         public bool IsUsernameMemberOfOrganiation(string username, string organizationId)
         {
-            return context.OrganizationMember.Any(n => n.User.UserName == username && n.Organization.OrganizationId == organizationId);
+            return context.OrganizationMember.AsNoTracking().Any(n => n.User.UserName == username && n.Organization.OrganizationId == organizationId);
+        }
+
+        public bool IsMemberOfOrganization(ClaimsPrincipal principal, string organizationId)
+        {
+            return IsUsernameMemberOfOrganiation(principal.Identity.Name, organizationId);
         }
 
         public OrganizationTinyInfo GetTinyInfo(string organizationId)
         {
-            return context.Organizations.Select(n => new OrganizationTinyInfo()
+            return context.Organizations.AsNoTracking().Select(n => new OrganizationTinyInfo()
             {
                 Name = n.OrganizationName,
                 OrganizationId = n.OrganizationId,
@@ -139,7 +147,7 @@ namespace MUNity.Services
 
         public List<OrganizationTinyInfo> GetTyinInfosOfAllOrgas()
         {
-            return context.Organizations.Select(n => new OrganizationTinyInfo()
+            return context.Organizations.AsNoTracking().Select(n => new OrganizationTinyInfo()
             {
                 Name = n.OrganizationName,
                 OrganizationId = n.OrganizationId,
@@ -147,9 +155,25 @@ namespace MUNity.Services
             }).ToList();
         }
 
+        public List<OrganizationTinyInfo> GetTinyInfoOfUserOrganizations(string username)
+        {
+            return context.Organizations.AsNoTracking().Where(n => n.Member.Any(a => a.User.UserName == username))
+                .Select(n => new OrganizationTinyInfo()
+                {
+                    Name = n.OrganizationName,
+                    OrganizationId = n.OrganizationId,
+                    Short = n.OrganizationShort
+                }).ToList();
+        }
+
+        public List<OrganizationTinyInfo> GetTinyInfoOfUserOrganizations(ClaimsPrincipal claimPrincipal)
+        {
+            return GetTinyInfoOfUserOrganizations(claimPrincipal.Identity.Name);
+        }
+
         public OrganizationWithConferenceInfo GetOrgaConferenceInfo(string organizationId)
         {
-            return context.Organizations.Select(n => new OrganizationWithConferenceInfo()
+            return context.Organizations.AsNoTracking().Select(n => new OrganizationWithConferenceInfo()
             {
                 Name = n.OrganizationName,
                 OrganizationId = n.OrganizationId,
@@ -157,6 +181,48 @@ namespace MUNity.Services
                 ProjectCount = n.Projects.Count,
                 ConferenceCount = n.Projects.Select(n => n.Conferences).Count()
             }).FirstOrDefault(n => n.OrganizationId == organizationId);
+        }
+
+        public Organization GetCompleteOrganizationInfo(string organizationId)
+        {
+            return context.Organizations
+                .AsNoTracking()
+                .Include(n => n.Member)
+                .ThenInclude(n => n.User)
+                .Include(n => n.Projects)
+                .Include(n => n.Roles)
+                .FirstOrDefault(n => n.OrganizationId == organizationId);
+        }
+
+        public OrganizationDashboardInfo GetDashboardInfo(string organizationId)
+        {
+            var info = context.Organizations
+                .AsNoTracking()
+                .Select(n => new OrganizationDashboardInfo()
+                {
+                    OrganizationId = n.OrganizationId,
+                    Name = n.OrganizationName,
+                    Short = n.OrganizationShort,
+                    Projects = n.Projects.Select(a => new OrganizationDashboardProjectInfo()
+                    {
+                        ConferenceCount = a.Conferences.Count,
+                        Name = a.ProjectName,
+                        ProjectId = a.ProjectId
+                    }).ToList()
+                })
+                .FirstOrDefault(n => n.OrganizationId == organizationId);
+            info.Memebrs = context.OrganizationMember
+                .Where(n => n.Organization.OrganizationId == organizationId)
+                .Take(8)
+                .Select(a => new OrganizationMemberInfo()
+                {
+                    Forename = a.User.Forename,
+                    LastName = a.User.Lastname,
+                    MemberUserName = a.User.UserName,
+                    RoleName = a.Role.RoleName
+                }).ToList();
+
+            return info;
         }
 
         public OrganizationService(MunityContext context, ILogger<OrganizationService> logger)
