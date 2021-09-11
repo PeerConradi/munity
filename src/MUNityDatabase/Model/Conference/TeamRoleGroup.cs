@@ -32,6 +32,8 @@ namespace MUNity.Database.Models.Conference
 
         public int GroupLevel { get; set; }
 
+        public Conference Conference { get; set; }
+
         public List<ConferenceTeamRole> TeamRoles { get; set; } = new List<ConferenceTeamRole>();
 
         [Timestamp]

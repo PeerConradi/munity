@@ -51,4 +51,21 @@ namespace MUNity.Schema.Conference
         /// </summary>
         public string EndDate { get; set; }
     }
+
+    public class CreateConferenceResponse
+    {
+        public enum CreateConferecenStatuses
+        {
+            Success,
+            Error,
+            NameTaken,
+            ShortTaken,
+            NoPermission,
+            ProjectNotFound
+        }
+
+        public CreateConferecenStatuses Status { get; set; }
+
+        public string ConferenceId { get; set; }
+    }
 }

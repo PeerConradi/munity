@@ -1,0 +1,128 @@
+﻿<!-- Create Project Modal -->
+@inject Services.ConferenceService conferenceService;
+
+@if (isVisible)
+{
+    <div class="modal fade show" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Neues Projekt</h4>
+                    <button type="button" class="btn-close" @onclick="() => Hide()"></button>
+                </div>
+                @if (response == null)
+                {
+                    <EditForm Model="request" OnValidSubmit="CreateConference">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="modal-body">
+                            <h3>Über Projekte</h3>
+                            <p>Projekte sind den Konferenzen übergeordnet. Ein Projekt ist also eine Art Gruppe von Konferenzen. So gehören die Konferenzen MUN Berlin 2011 und MUN Berlin 2012 zum Projekt MUN Berlin.</p>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Konferenzname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Model United Nations ..." @bind-Value="@request.Name" />
+                                    <small class="fs-12px text-gray-500-darker">Ein kurzer Name für die Konferenz. Zum Beispiel MUN Berlin 2011</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Vollständiger Konferenzname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.FullName" />
+                                    <small class="fs-12px text-gray-500-darker">Der komplette name der Konferenz zum Beispiel Model United Nations Berlin 2011</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Vollständiger Konferenzname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.ConferenceShort" />
+                                    <small class="fs-12px text-gray-500-darker">Ein Kürzel für diese Konferenz. Dieses leitet sich meistens durch das Projekt ab. Zum Beispiel: MUN-BER 2021</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Startdatum</label>
+                                <div class="col-md-9">
+                                    <InputDate type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.StartDate" />
+                                    <small class="fs-12px text-gray-500-darker">Startdatum für die Konferenz</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Endatum</label>
+                                <div class="col-md-9">
+                                    <InputDate type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.EndDate" />
+                                    <small class="fs-12px text-gray-500-darker">Edndatum für die Konferenz</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-white" @onclick="() => Hide()">Abbrechen</button>
+                            <button class="btn btn-success" type="submit">Projekt erstellen</button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    <div class="modal-body">
+                        <div class="col-12">
+                            @if (response.Status == Schema.Conference.CreateConferenceResponse.CreateConferecenStatuses.Success)
+                            {
+                                <div class="alert alert-success">Das Porjekt wurde erfolgreich erstellt. <button class="btn btn-sm btn-secondary">Konferenz öffnen</button></div>
+                            }
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-white" @onclick="() => Hide()">Schließen</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    private bool isVisible = false;
+
+    [Parameter] public string ProjectId { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> authStateTask { get; set; }
+
+    private MUNity.Schema.Conference.CreateConferenceRequest request;
+
+    private MUNity.Schema.Conference.CreateConferenceResponse response;
+
+    protected override void OnInitialized()
+    {
+        this.request = new Schema.Conference.CreateConferenceRequest();
+        this.request.ProjectId = this.ProjectId;
+    }
+
+    public void Show()
+    {
+        isVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        isVisible = false;
+    }
+
+    public async Task CreateConference()
+    {
+        var claim = (await authStateTask)?.User;
+        if (claim != null)
+        {
+            this.response = conferenceService.CreateConference(request, claim);
+        }
+
+    }
+}

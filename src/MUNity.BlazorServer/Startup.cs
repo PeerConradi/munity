@@ -73,6 +73,7 @@ namespace MUNity.BlazorServer
             services.AddScoped<UserService>();
             services.AddScoped<OrganizationService>();
             services.AddScoped<ProjectService>();
+            services.AddScoped<ConferenceService>();
 
             services.AddLogging();
             

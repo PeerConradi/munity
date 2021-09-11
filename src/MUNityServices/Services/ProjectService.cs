@@ -1,4 +1,5 @@
-﻿using MUNity.Database.Models.Conference;
+﻿using Microsoft.EntityFrameworkCore;
+using MUNity.Database.Models.Conference;
 using MUNity.Schema.Project;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,29 @@ namespace MUNity.Services
             context.SaveChanges();
             response.ProjectId = project.ProjectId;
             return response;
+        }
+
+        public ProjectDashboardInfo GetDashboardInfo(string projectId)
+        {
+            return context.Projects.AsNoTracking()
+                .Select(n => new ProjectDashboardInfo()
+                {
+                    Name = n.ProjectName,
+                    Short = n.ProjectShort,
+                    ProjectId = n.ProjectId,
+                    Conferences = n.Conferences.Select(a => new ProjectDashboardConferenceInfo()
+                    {
+                        ConferenceId = a.ConferenceId,
+                        EndDate = a.EndDate,
+                        Name = a.Name,
+                        FullName = a.FullName,
+                        Short = a.ConferenceShort,
+                        StartDate = a.StartDate,
+                        CreationDate = a.CreationDate,
+                        CreationUserUsername = a.CreationUser.UserName
+                    }).ToList()
+                })
+                .FirstOrDefault(n => n.ProjectId == projectId);
         }
 
         public ProjectService(Database.Context.MunityContext context)
