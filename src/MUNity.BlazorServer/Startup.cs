@@ -38,6 +38,7 @@ namespace MUNity.BlazorServer
             services.AddServerSideBlazor();
 
             // Database
+            // To get more output add: .EnableSensitiveDataLogging().LogTo(Console.WriteLine) after Use...()
             services.AddDbContext<MunityContext>(options =>
                 options.UseSqlite("Data Source=demo.db"));
 
@@ -69,6 +70,7 @@ namespace MUNity.BlazorServer
             
             //services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<MunityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
+            
 
             services.AddScoped<UserService>();
             services.AddScoped<OrganizationService>();
@@ -109,9 +111,15 @@ namespace MUNity.BlazorServer
                 endpoints.MapFallbackToPage("/_Host");
             });
 
+            MigrateDatabase(app);
+        }
+
+        private void MigrateDatabase(IApplicationBuilder app)
+        {
             var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<MunityContext>();
             context.Database.EnsureCreated();
+            context.Database.Migrate();
         }
     }
 }

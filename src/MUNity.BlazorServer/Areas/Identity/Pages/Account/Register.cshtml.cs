@@ -80,7 +80,7 @@ namespace MUNityCore.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new MunityUser { UserName = Input.Username, Email = Input.Email };
+                var user = new MunityUser { UserName = Input.Username, Email = Input.Email, RegistrationDate = DateTime.UtcNow };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

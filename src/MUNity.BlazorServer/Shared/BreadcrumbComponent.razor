@@ -1,0 +1,15 @@
+﻿<ol class="breadcrumb float-xl-end">
+    @if (Source is MUNity.Schema.General.IConferenceBreadcrumb cbc)
+    {
+        <li class="breadcrumb-item"><a href="/o/dashboard/@cbc.OrganizationId">@cbc.OrganizationShort</a></li>
+        <li class="breadcrumb-item"><a href="/p/dashboard/@cbc.ProjectId">@cbc.ProjectShort</a></li>
+        <li class="breadcrumb-item"><a href="/c/dashboard/@cbc.ConferenceId">@cbc.ConferenceShort</a></li>
+    }
+    <li class="breadcrumb-item active">@PageName</li>
+</ol>
+
+@code {
+    [Parameter] public MUNity.Schema.General.IBreadcrumbInfo Source { get; set; }
+
+    [Parameter] public string PageName { get; set; }
+}

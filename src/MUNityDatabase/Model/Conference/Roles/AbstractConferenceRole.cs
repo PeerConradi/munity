@@ -104,5 +104,7 @@ namespace MUNity.Database.Models.Conference.Roles
         /// </summary>
         [Timestamp]
         public byte[] RoleTimestamp { get; set; }
+
+        public List<Participation> Participations { get; set; }
     }
 }

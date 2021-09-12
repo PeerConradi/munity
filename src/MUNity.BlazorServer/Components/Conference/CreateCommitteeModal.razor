@@ -1,0 +1,158 @@
+﻿<!-- Create Project Modal -->
+@inject Services.ConferenceService conferenceService;
+
+@if (isVisible)
+{
+    <div class="modal fade show" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Neue Teamrolle</h4>
+                    <button type="button" class="btn-close" @onclick="() => Hide()"></button>
+                </div>
+                @if (response == null)
+                {
+                    <EditForm Model="request" OnValidSubmit="CreateRoleGroup">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="modal-body">
+                            <h3>Über Gremien</h3>
+                            <p>Gremien sind halt Gremien in denen dann Delegierte mittels den entsprechenden Rollen sitzen.</p>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Gremienname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Generalversammlung" @bind-Value="@request.Name" />
+                                    <small class="fs-12px text-gray-500-darker">Name z.B. Generalversammlung</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Vollständiger Gremienname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Generalversammlung der Vereinten Nationen" @bind-Value="@request.FullName" />
+                                    <small class="fs-12px text-gray-500-darker">Vollständiger Name z.B.: Generalversammlung bei MUNBW 2022</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Gremienkürzel</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="GV" @bind-Value="@request.Short" />
+                                    <small class="fs-12px text-gray-500-darker">Kurzform z.B.: GV</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Artikel</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="die" @bind-Value="@request.Article" />
+                                    <small class="fs-12px text-gray-500-darker">Der, die, das... wieso, weshalb, warum - wer nicht fragt bleibt dumm.</small>
+                                </div>
+                            </div>
+
+                            @if (Committees != null)
+                            {
+                                <div class="row mb-15px">
+                                    <label class="form-label col-form-label col-md-3">Übergeordnetes Gremium</label>
+                                    <div class="col-md-9">
+                                        <InputSelect @bind-Value="@request.ResolutlyCommitteeId" class="form-select">
+                                            <option value="">Kein übergeordnetes Gremium</option>
+                                            @foreach (var committee in Committees)
+                                                        {
+                                                <option value="@committee.CommitteeId">@committee.CommitteeName</option>
+                                                        }
+                                        </InputSelect>
+                                        <small class="fs-12px text-gray-500-darker">Eine Rolle, welcher diese Rolle untersteht. Achtung: Wenn es mehrere Rollen wie Projektleiter und Projektleiterin gibt, kann nur eine davon ausgewählt werden. Diese eingabe hat jedoch keine Auswirklung auf die Berechtigungen etc.</small>
+                                    </div>
+                                </div>
+                            }
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-white" @onclick="() => Hide()">Abbrechen</button>
+                            <button class="btn btn-success" type="submit">Gremium erstellen</button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    <div class="modal-body">
+                        <div class="col-12">
+                            @if (response.Status == Schema.Conference.CreateCommitteeResponse.StatusCodes.Success)
+                            {
+                                <div class="alert alert-success">Gremium erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weiteres Gremium erstellen</button></div>
+                            }
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-white" @onclick="() => Hide()">Schließen</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    private bool isVisible = false;
+
+    [CascadingParameter] public Task<AuthenticationState> authStateTask { get; set; }
+
+    [Parameter] public EventCallback RolesChanged { get; set; }
+
+    [Parameter] public List<MUNity.Schema.Conference.ManageCommitteeInfo> Committees { get; set; }
+
+    [Parameter] public string ConferenceId { get; set; }
+
+    private int groupId { get; set; }
+
+    private Schema.Conference.CreateCommitteeRequest request;
+
+    private Schema.Conference.CreateCommitteeResponse response;
+
+
+    protected override void OnInitialized()
+    {
+        this.request = new Schema.Conference.CreateCommitteeRequest();
+        this.request.ConferenceId = ConferenceId;
+    }
+
+    public void Show()
+    {
+        isVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        isVisible = false;
+    }
+
+    public async Task CreateRoleGroup()
+    {
+        var claim = (await authStateTask)?.User;
+        if (claim != null)
+        {
+            this.response = await conferenceService.CreateCommitteeAsync(request, claim);
+            if (response.Status == Schema.Conference.CreateCommitteeResponse.StatusCodes.Success)
+                await RolesChanged.InvokeAsync();
+        }
+
+    }
+
+    private void Reset()
+    {
+        request.Article = null;
+        request.FullName = null;
+        request.Name = null;
+        request.ResolutlyCommitteeId = null;
+        request.Short = null;
+        response = null;
+    }
+}

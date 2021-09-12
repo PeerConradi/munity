@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Organization;
@@ -19,6 +20,8 @@ namespace MUNity.Services
         private readonly MunityContext context;
 
         ILogger<OrganizationService> log;
+
+        private UserManager<MunityUser> userManager;
 
         public bool IsNameAvailable(string name)
         {
@@ -71,7 +74,7 @@ namespace MUNity.Services
             return organization;
         }
 
-        public CreateOrganizationResponse CreateOrganization(CreateOrganizationRequest request, ClaimsPrincipal claim)
+        public async Task<CreateOrganizationResponse> CreateOrganizationAsync(CreateOrganizationRequest request, ClaimsPrincipal claim)
         {
             log?.LogDebug("Request creating an organization!");
 
@@ -86,8 +89,7 @@ namespace MUNity.Services
 
             log?.LogInformation($"{claim.Identity.Name} wants to create the organization {request.Name}");
 
-
-            var user = context.Users.AsNoTracking().FirstOrDefault(n => n.UserName == claim.Identity.Name);
+            var user = await userManager.GetUserAsync(claim);
             if (user == null)
             {
                 response.Status = CreateOrganizationResponse.CreateOrgaStatusCodes.Error;
@@ -225,10 +227,11 @@ namespace MUNity.Services
             return info;
         }
 
-        public OrganizationService(MunityContext context, ILogger<OrganizationService> logger)
+        public OrganizationService(MunityContext context, ILogger<OrganizationService> logger, UserManager<MunityUser> userManager)
         {
             this.context = context;
             this.log = logger;
+            this.userManager = userManager;
         }
     }
 }

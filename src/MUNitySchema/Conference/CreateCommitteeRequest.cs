@@ -5,7 +5,7 @@ namespace MUNity.Schema.Conference
     /// <summary>
     /// A request body used when creating a new committee for a conference.
     /// </summary>
-    public class CreateCommittee
+    public class CreateCommitteeRequest
     {
         /// <summary>
         /// The id of the conference that you want to create the committee at.
@@ -36,7 +36,7 @@ namespace MUNity.Schema.Conference
         /// </summary>
         [Required]
         [MaxLength(10)]
-        public string Abbreviation { get; set; }
+        public string Short { get; set; }
 
         /// <summary>
         /// The article of the committe for example: the, der, die, le, la...
@@ -50,5 +50,24 @@ namespace MUNity.Schema.Conference
         /// An id of a parent committee. Leave this property null if you dont want to set any.
         /// </summary>
         public string ResolutlyCommitteeId { get; set; }
+    }
+
+    public class CreateCommitteeResponse
+    {
+        public enum StatusCodes
+        {
+            Success,
+            Error,
+            NoPermission,
+            ConferenceNotFound,
+            NameTaken,
+            FullNameTaken,
+            ShortTaken,
+            ResolutlyCommitteeNotFound
+        }
+
+        public StatusCodes Status { get; set; }
+
+        public string NewCommitteeId { get; set; }
     }
 }

@@ -18,16 +18,16 @@
     </div>
     <!-- end news-feed -->
     <!-- begin right-content -->
-    <div class="right-content">
+    <div class="register-container">
         <!-- begin register-header -->
-        <h1 class="register-header">
-            Regsitrierung
-            <small>Kostenlos ein Konto erstellen.</small>
-        </h1>
+        <div class="register-header mb-25px h1">
+            <div class="mb-1">Regsitrierung</div>
+            <small class="d-block fs-15px lh-16">Kostenlos ein Konto erstellen.</small>
+        </div>
         <!-- end register-header -->
         <!-- begin register-content -->
         <div class="register-content">
-            <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="margin-bottom-0">
+            <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="fs-13px">
                 @*<label class="control-label">Name <span class="text-danger">*</span></label>
         <div class="row row-space-10">
             <div class="col-md-6 m-b-15">

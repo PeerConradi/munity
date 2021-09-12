@@ -42,14 +42,14 @@ namespace MUNity.Schema.Conference
         /// allowed format you can find here: https://docs.microsoft.com/de-de/dotnet/api/system.datetime.parse?view=net-5.0#
         /// <see cref="DateTime.Parse(string)"/>
         /// </summary>
-        public string StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         /// <summary>
         /// The end Date of the Conference. Note that the Schema should be 08/18/2018 07:22:16, 08/18/2018, 2018-08-18T07:22:16.0000000Z or any other
         /// allowed format you can find here: https://docs.microsoft.com/de-de/dotnet/api/system.datetime.parse?view=net-5.0#
         /// <see cref="DateTime.Parse(string)"/>
         /// </summary>
-        public string EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 
     public class CreateConferenceResponse

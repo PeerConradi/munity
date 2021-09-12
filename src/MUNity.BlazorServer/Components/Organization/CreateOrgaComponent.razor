@@ -78,7 +78,7 @@ else
     private async Task Submit()
     {
         var user = (await authenticationStateTask).User;
-        this.response = orgaService.CreateOrganization(createRequest, user);
+        this.response = await orgaService.CreateOrganizationAsync(createRequest, user);
 
 
     }

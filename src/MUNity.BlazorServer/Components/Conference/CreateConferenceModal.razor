@@ -22,7 +22,7 @@
                             <div class="row mb-15px">
                                 <label class="form-label col-form-label col-md-3">Konferenzname</label>
                                 <div class="col-md-9">
-                                    <InputText type="text" class="form-control mb-5px" placeholder="Model United Nations ..." @bind-Value="@request.Name" />
+                                    <InputText type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.Name" />
                                     <small class="fs-12px text-gray-500-darker">Ein kurzer Name für die Konferenz. Zum Beispiel MUN Berlin 2011</small>
                                 </div>
                             </div>
@@ -30,13 +30,13 @@
                             <div class="row mb-15px">
                                 <label class="form-label col-form-label col-md-3">Vollständiger Konferenzname</label>
                                 <div class="col-md-9">
-                                    <InputText type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.FullName" />
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Model United Nations ..." @bind-Value="@request.FullName" />
                                     <small class="fs-12px text-gray-500-darker">Der komplette name der Konferenz zum Beispiel Model United Nations Berlin 2011</small>
                                 </div>
                             </div>
 
                             <div class="row mb-15px">
-                                <label class="form-label col-form-label col-md-3">Vollständiger Konferenzname</label>
+                                <label class="form-label col-form-label col-md-3">Kürzel</label>
                                 <div class="col-md-9">
                                     <InputText type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.ConferenceShort" />
                                     <small class="fs-12px text-gray-500-darker">Ein Kürzel für diese Konferenz. Dieses leitet sich meistens durch das Projekt ab. Zum Beispiel: MUN-BER 2021</small>
@@ -46,16 +46,16 @@
                             <div class="row mb-15px">
                                 <label class="form-label col-form-label col-md-3">Startdatum</label>
                                 <div class="col-md-9">
-                                    <InputDate type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.StartDate" />
-                                    <small class="fs-12px text-gray-500-darker">Startdatum für die Konferenz</small>
+                                    <InputDate type="text" class="form-control mb-5px" @bind-Value="@request.StartDate" />
+                                    <small class="fs-12px text-gray-500-darker">Startdatum für die Konferenz. Darf auch frei gelassen werden, falls das Datum noch nicht fest steht.</small>
                                 </div>
                             </div>
 
                             <div class="row mb-15px">
                                 <label class="form-label col-form-label col-md-3">Endatum</label>
                                 <div class="col-md-9">
-                                    <InputDate type="text" class="form-control mb-5px" placeholder="MUN ..." @bind-Value="@request.EndDate" />
-                                    <small class="fs-12px text-gray-500-darker">Edndatum für die Konferenz</small>
+                                    <InputDate type="text" class="form-control mb-5px" @bind-Value="@request.EndDate" />
+                                    <small class="fs-12px text-gray-500-darker">Enddatum für die Konferenz. Darf auch frei gelassen werden, falls das Datum noch nicht fest steht.</small>
                                 </div>
                             </div>
                         </div>

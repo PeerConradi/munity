@@ -1,0 +1,39 @@
+﻿<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Sitze bearbeiten</h3>
+            </div>
+            <div class="card-body">
+                <p>Diese Tabelle zeigt einen Teil der Delegationen an, indem es die Sitze des Gremiums: GREMIUMNAME anzeigt.</p>
+                <p><b>Rollenname</b> ist der angezeigte Name einer Rolle zum Beispiel: Abgeordnete*r Deutschlands. Es kann sich auch um den Präsidenten, Außenminister etc. handeln.</p>
+                <p><b>Staat</b> gibt den Staat an, mit welchen diese Rolle identifiziert werden soll. Eine Rolle muss nicht zwangsläufig einen Staat angeben.</p>
+                <p><b>Delegation</b> Die Delegation ist eine Gruppe, welche sich dieser Sitz zugehörig fühlt. Eine Delegation kann jeweils ein Land sein (Deutschland) oder auch eine eigene Gruppe/Schulklasse etc. abbilden. Delegationen können an anderer Stelle angelegt und konfiguriert werden.</p>
+                <p><b>Subtype</b> Subtypes Kategorisieren den Sitz weiter. Diese dient vorallem um zwischen Delegierten, Nichtregierungsorganisationen, Nichtstaatlichen Akteuren oder Presse zu unterscheiden. Subtypes werden von der Plattform über den eingegebenen Namen zusammengefasst, ein Subtype sollte daher einheitlich und in der Schreibweise identisch sein.</p>
+                
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Rollenname</th>
+                                <th>Staat</th>
+                                <th>Delegation</th>
+                                <th>Subtype</th>
+                                <th>Teilnehmende</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ManageCommiteeSeatsTableRow />
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public string CommitteeId { get; set; }
+}

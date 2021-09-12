@@ -1,5 +1,6 @@
 ﻿@page "/project/{Id}"
-@inject Services.ProjectService projectService;
+@inject Services.ProjectService projectService
+@inject NavigationManager navManager
 
 @if (info != null)
 {
@@ -11,7 +12,7 @@
 <div class="row">
     @foreach (var conference in info.Conferences)
     {
-        <div class="card border-0 mb-3 overflow-hidden bg-gray-900 text-white">
+        <div @onclick="() => OpenConferenceDashboard(conference.ConferenceId)" class="card border-0 mb-3 overflow-hidden bg-gray-900 text-white" style="cursor: pointer">
             <!-- BEGIN card-body -->
             <div class="card-body">
                 <!-- BEGIN row -->
@@ -94,5 +95,10 @@
     protected override void OnInitialized()
     {
         info = projectService.GetDashboardInfo(Id);
+    }
+
+    private void OpenConferenceDashboard(string id)
+    {
+        navManager.NavigateTo($"/c/dashboard/{id}");
     }
 }

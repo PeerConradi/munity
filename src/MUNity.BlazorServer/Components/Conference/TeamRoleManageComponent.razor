@@ -1,0 +1,29 @@
+﻿@if (Role != null)
+{
+    <div class="col-4">
+        <div class="card border-1 m-15px">
+            <div class="card-body">
+                <h4 class="card-title">@Role.Name</h4>
+                <h6 class="card-subtitle mb-10px text-muted">Untersteht: @Role.ParentName</h6>
+                <h6 class="card-subtitle mb-10px text-muted">Berechtigung: BERECHTIGUNGSNAME</h6>
+                <h5 class="card-subtitle mb-10px text-muted">Eingesetzte Personen</h5>
+                
+                <div class="list-group">
+                    @if (Role.Participants != null && Role.Participants.Count > 0)
+                    {
+                        foreach (var participant in Role.Participants)
+                        {
+                            <a href="/u/@participant.ParticipantUsername" class="list-group-item">@participant.ParticipantDisplayName (@@@participant.ParticipantUsername)</a>
+                        }
+                    }
+
+                    <a href="#" class="list-group-item active">Person Hinzufügen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public MUNity.Schema.Conference.TeamRoleInfo Role { get; set; }
+}

@@ -1,0 +1,87 @@
+﻿@page "/c/managecommittees/{Id}"
+@inject Services.ConferenceService conferenceService
+
+@if (info != null)
+{
+    <BreadcrumbComponent Source="@info" PageName="Gremien" />
+}
+
+<h1 class="page-header">Gremien Bearbeiten</h1>
+
+@if (info != null)
+{
+    <div class="row mb-15px">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Kürzel</th>
+                                    <th>Beschlussfassendes Gremium</th>
+                                    <th>Sitze</th>
+                                    <th>Löschen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (info.Committees != null && info.Committees.Count > 0)
+                                {
+                                    @foreach (var committee in info.Committees)
+                                    {
+                                        <tr>
+                                            <td>@committee.CommitteeId</td>
+                                            <td>@committee.CommitteeName</td>
+                                            <td>@committee.CommitteeShort</td>
+                                            <td>@committee.ParentCommitteeName</td>
+                                            <td>@committee.SeatCount <a href="#">Sitze verwalten</a></td>
+                                            <td><a href="#">Gremium löschen</a></td>
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div class="card-footer">
+                    <button class="btn btn-primary" @onclick="() => createModal.Show()">Neues Gremium hinzufügen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <MUNity.BlazorServer.Components.Conference.ManageCommitteeSeatsComponent />
+
+    <MUNity.BlazorServer.Components.Conference.CreateCommitteeModal ConferenceId="@Id"
+                                                                    Committees="@info.Committees"
+                                                                    RolesChanged="() => ReloadData()"
+                                                                    @ref="createModal"/>
+}
+
+
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    private MUNity.Schema.Conference.ManageCommitteesInfo info;
+
+    private MUNity.BlazorServer.Components.Conference.CreateCommitteeModal createModal;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.info = conferenceService.GetManageInfo(Id);
+    }
+
+    private void ReloadData()
+    {
+        this.info = conferenceService.GetManageInfo(Id);
+        this.InvokeAsync(StateHasChanged);
+    }
+}

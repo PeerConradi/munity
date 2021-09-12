@@ -1,0 +1,158 @@
+﻿<!-- Create Project Modal -->
+@inject Services.ConferenceService conferenceService;
+
+@if (isVisible)
+{
+    <div class="modal fade show" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Neue Teamrolle</h4>
+                    <button type="button" class="btn-close" @onclick="() => Hide()"></button>
+                </div>
+                @if (response == null)
+                {
+                    <EditForm Model="request" OnValidSubmit="CreateRoleGroup">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="modal-body">
+                            <h3>Über Teamrollen</h3>
+                            <p>Um später MitgliederInnen zum Team hinzufügen zu können müssen hierfür Rollen definiert werden. Benutzer können mehrere dieser Rollen gleichzeitig haben.</p>
+                            <p>Im Gegensatz zu Gruppennamen ist es erlaubt, den gleichen Namen mehrfach zu vergeben. Rollennamen können hierbei auch verwendet werden um zu gendern, hierfür zum Beispiel in der Gruppe Projektleitung die Rollen Projektleiter und Projektleiterin erstellen.</p>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Rollenname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Projektleitung" @bind-Value="@request.RoleName" />
+                                    <small class="fs-12px text-gray-500-darker">Der Name der Role. Zum Beispiel Projektleitung. Es kann auch zwei Rollen für Projektleiter und Projektleiterin geben.</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Vollständiger Rollenname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Projektleitung MUN..." @bind-Value="@request.RoleFullName" />
+                                    <small class="fs-12px text-gray-500-darker">Ein erweiterter Name für die Gruppe. Zum Beispiel: Projektleitung MUN-Berlin 2012.</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Rollenkürzel</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="PL" @bind-Value="@request.RoleShort" />
+                                    <small class="fs-12px text-gray-500-darker">Eine Kurzform für die Rolle zum Beispiel PL, GS, Tech, Chair WiSo etc.</small>
+                                </div>
+                            </div>
+
+                            @if (GroupInfos != null)
+                {
+                        <div class="row mb-15px">
+                            <label class="form-label col-form-label col-md-3">Übergeordnete Rolle</label>
+                            <div class="col-md-9">
+                                <InputSelect @bind-Value="@request.ParentRoleId" class="form-select">
+                                    <option value="-1">Keine</option>
+                                    @foreach (var group in GroupInfos)
+                                                {
+                                <optgroup label="@group.Name">
+                                    @if (group.Roles != null && group.Roles.Count > 0)
+                                                {
+                                        foreach (var role in group.Roles)
+                                                    {
+                                            <option value="@role.TeamRoleId">@role.Name</option>
+
+                                                    }
+                                                }
+
+                                </optgroup>
+                                                }
+                                </InputSelect>
+                                <small class="fs-12px text-gray-500-darker">Eine Rolle, welcher diese Rolle untersteht. Achtung: Wenn es mehrere Rollen wie Projektleiter und Projektleiterin gibt, kann nur eine davon ausgewählt werden. Diese eingabe hat jedoch keine Auswirklung auf die Berechtigungen etc.</small>
+                            </div>
+                        </div>
+                }
+                            
+
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-white" @onclick="() => Hide()">Abbrechen</button>
+                            <button class="btn btn-success" type="submit">Rolle erstellen</button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    <div class="modal-body">
+                        <div class="col-12">
+                            @if (response.Status == Schema.Conference.CreateTeamRoleResponse.StatusCodes.Success)
+                            {
+                                <div class="alert alert-success">Die Rolle wurde erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weitere Gruppe erstellen</button></div>
+                            }
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-white" @onclick="() => Hide()">Schließen</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    private bool isVisible = false;
+
+    [CascadingParameter] public Task<AuthenticationState> authStateTask { get; set; }
+
+    [Parameter] public EventCallback RolesChanged { get; set; }
+
+    [Parameter] public List<MUNity.Schema.Conference.TeamRoleGroupInfo> GroupInfos { get; set; }
+
+    private int groupId { get; set; }
+
+    private Schema.Conference.CreateTeamRoleRequest request;
+
+    private Schema.Conference.CreateTeamRoleResponse response;
+
+
+    protected override void OnInitialized()
+    {
+        this.request = new Schema.Conference.CreateTeamRoleRequest();
+    }
+
+    public void Show(int groupId)
+    {
+        isVisible = true;
+        this.request.RoleGroupId = groupId;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        isVisible = false;
+    }
+
+    public async Task CreateRoleGroup()
+    {
+        var claim = (await authStateTask)?.User;
+        if (claim != null)
+        {
+            this.response = await conferenceService.CreateTeamRoleAsync(request, claim);
+            if (response.Status == Schema.Conference.CreateTeamRoleResponse.StatusCodes.Success)
+                await RolesChanged.InvokeAsync();
+        }
+
+    }
+
+    private void Reset()
+    {
+        request.ParentRoleId = -1;
+        request.RoleFullName = null;
+        request.RoleName = null;
+        request.RoleShort = null;
+        response = null;
+    }
+}

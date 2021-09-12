@@ -184,6 +184,9 @@ namespace MUNity.Database.Context
                 .HasValue<ConferenceTeamRole>("TeamRole")
                 .HasValue<ConferenceVisitorRole>("VisitorRole");
 
+            modelBuilder.Entity<AbstractConferenceRole>().HasMany(n => n.Participations)
+                .WithOne(n => n.Role);
+
 
             modelBuilder.Entity<Committee>().HasMany(n => n.Sessions).WithOne(n =>
                 n.Committee);

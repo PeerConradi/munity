@@ -1,0 +1,14 @@
+﻿@page "/c/dashboard/{Id}"
+
+<h3>Conference</h3>
+
+<div class="d-flex flex-wrap">
+    <a class="btn btn-primary me-1 mb-1" href="/c/manageteam/@Id">Team bearbeiten</a>
+    <a class="btn btn-primary me-1 mb-1" href="/c/managecommittees/@Id">Gremien bearbeiten</a>
+    <button class="btn btn-primary me-1 mb-1">Teilnehmenden-Rollen bearbeiten</button>
+    <button class="btn btn-primary me-1 mb-1">Bewerbungen/Anmeldungen</button>
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; }
+}
