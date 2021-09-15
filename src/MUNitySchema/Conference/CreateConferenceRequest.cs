@@ -52,19 +52,8 @@ namespace MUNity.Schema.Conference
         public DateTime? EndDate { get; set; }
     }
 
-    public class CreateConferenceResponse
+    public class CreateConferenceResponse : AbstractResponse
     {
-        public enum CreateConferecenStatuses
-        {
-            Success,
-            Error,
-            NameTaken,
-            ShortTaken,
-            NoPermission,
-            ProjectNotFound
-        }
-
-        public CreateConferecenStatuses Status { get; set; }
 
         public string ConferenceId { get; set; }
     }

@@ -83,7 +83,7 @@
                 {
                     <div class="modal-body">
                         <div class="col-12">
-                            @if (response.Status == Schema.Conference.CreateTeamRoleResponse.StatusCodes.Success)
+                            @if (!response.HasError)
                             {
                                 <div class="alert alert-success">Die Rolle wurde erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weitere Gruppe erstellen</button></div>
                             }
@@ -141,7 +141,7 @@
         if (claim != null)
         {
             this.response = await conferenceService.CreateTeamRoleAsync(request, claim);
-            if (response.Status == Schema.Conference.CreateTeamRoleResponse.StatusCodes.Success)
+            if (!response.HasError)
                 await RolesChanged.InvokeAsync();
         }
 

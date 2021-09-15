@@ -62,7 +62,7 @@
                 {
                     <div class="modal-body">
                         <div class="col-12">
-                            @if (response.Status == Schema.Conference.CreateTeamRoleGroupResponse.ResponseStatuses.Success)
+                            @if (!response.HasError)
                             {
                                 <div class="alert alert-success">Die Gruppe wurde erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weitere Gruppe erstellen</button></div>
                             }
@@ -119,7 +119,7 @@
         if (claim != null)
         {
             this.response = await conferenceService.CreateRoleGroupAsync(request, claim);
-            if (response.Status == Schema.Conference.CreateTeamRoleGroupResponse.ResponseStatuses.Success)
+            if (!response.HasError)
                 await GroupCreated.InvokeAsync();
         }
 

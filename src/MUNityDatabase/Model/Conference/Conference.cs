@@ -43,6 +43,8 @@ namespace MUNity.Database.Models.Conference
 
         public List<AbstractConferenceRole> Roles { get; set; }
 
+        public List<Delegation> Delegations { get; set; }
+
         public Project ConferenceProject { get; set; }
 
         public EConferenceVisibilityMode Visibility { get; set; }

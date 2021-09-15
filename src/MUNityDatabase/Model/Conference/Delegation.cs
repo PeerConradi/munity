@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNity.Database.Models.Conference.Roles;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -33,6 +34,8 @@ namespace MUNity.Database.Models.Conference
         public string DelegationShort { get; set; }
 
         public Conference Conference { get; set; }
+
+        public List<ConferenceDelegateRole> Roles { get; set; }
 
         public Delegation()
         {

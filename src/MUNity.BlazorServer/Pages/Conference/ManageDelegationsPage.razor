@@ -1,0 +1,59 @@
+﻿@page "/c/managedelegations/{Id}"
+@inject Services.DelegationService delegationsService
+
+@if (info != null)
+{
+    <BreadcrumbComponent Source="@info" PageName="Delegations" />
+
+}
+
+<h1 class="page-header mb-3">Delegationen bearbeiten</h1>
+
+@if (info != null)
+{
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <button class="btn btn-primary" @onclick="() => createModal.Show()">Neue Delegation erstellen</button>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach (var delegation in info.Delegations)
+        {
+            <MUNity.BlazorServer.Components.Conference.ManageDelegationComponent Info="@delegation"
+                                                                                 ConferenceId="@Id"/>
+        }
+
+    </div>
+
+    <MUNity.BlazorServer.Components.Conference.CreateDelegationModal @ref="createModal"
+                                                                     ConferenceId="@Id" 
+                                                                     DelegationsChanged="RefreshData"/>
+}
+
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private MUNity.Schema.Conference.ManageDelegationsInfo info;
+
+    MUNity.BlazorServer.Components.Conference.CreateDelegationModal createModal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            info = await delegationsService.GetManageDelegationsInfo(Id, claim);
+        }
+    }
+}

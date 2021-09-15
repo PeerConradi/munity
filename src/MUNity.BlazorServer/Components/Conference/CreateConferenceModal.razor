@@ -69,7 +69,7 @@
                 {
                     <div class="modal-body">
                         <div class="col-12">
-                            @if (response.Status == Schema.Conference.CreateConferenceResponse.CreateConferecenStatuses.Success)
+                            @if (!response.HasError)
                             {
                                 <div class="alert alert-success">Das Porjekt wurde erfolgreich erstellt. <button class="btn btn-sm btn-secondary">Konferenz öffnen</button></div>
                             }

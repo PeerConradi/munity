@@ -7,7 +7,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Neue Teamrolle</h4>
+                    <h4 class="modal-title">Neues Gremium</h4>
                     <button type="button" class="btn-close" @onclick="() => Hide()"></button>
                 </div>
                 @if (response == null)
@@ -80,7 +80,7 @@
                 {
                     <div class="modal-body">
                         <div class="col-12">
-                            @if (response.Status == Schema.Conference.CreateCommitteeResponse.StatusCodes.Success)
+                            @if (!response.HasError)
                             {
                                 <div class="alert alert-success">Gremium erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weiteres Gremium erstellen</button></div>
                             }
@@ -140,7 +140,7 @@
         if (claim != null)
         {
             this.response = await conferenceService.CreateCommitteeAsync(request, claim);
-            if (response.Status == Schema.Conference.CreateCommitteeResponse.StatusCodes.Success)
+            if (!response.HasError)
                 await RolesChanged.InvokeAsync();
         }
 

@@ -1,0 +1,154 @@
+﻿<!-- Create Project Modal -->
+@inject Services.ConferenceService conferenceService;
+
+@if (isVisible)
+{
+    <div class="modal fade show" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Neuen Sitz in @CommitteeName</h4>
+                    <button type="button" class="btn-close" @onclick="() => Hide()"></button>
+                </div>
+                @if (response == null)
+                {
+                    <EditForm Model="request" OnValidSubmit="CreateRoleGroup">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="modal-body">
+                            <h3>Über Sitze</h3>
+                            <p>Über diesen Dialog kann @CommitteeName ein Sitz in Form einer Rolle hinzugefügt werden. Diese Rolle kann in diesem Fall alles sein. Ein/e Abgeordnete/r, Vorsitzende/r etc. Empfohlen sind über diese Einstellung jedoch die Abgeordneten anzulegen und nicht die Presse oder NGOs, da diese ggf. auch Gremienübergreifend arbeiten können sollen.</p>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Rollenname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Generalversammlung" @bind-Value="@request.RoleName" />
+                                    <small class="fs-12px text-gray-500-darker">z.B. Abgeordneter Deutschland/ Präsident Deutschland etc.</small>
+                                </div>
+                            </div>
+
+                            @if (Countries != null)
+                            {
+                                <div class="row mb-15px">
+                                    <label class="form-label col-form-label col-md-3">Repräsentiertes Land</label>
+                                    <div class="col-md-9">
+                                        <InputSelect @bind-Value="@request.CountryId" class="form-select">
+                                            <option value="-1">Keinem Land zugehörig</option>
+                                            @foreach (var country in Countries)
+                                                        {
+                                                <option value="@country.CountryId">@country.Name</option>
+                                                        }
+                                        </InputSelect>
+                                        <small class="fs-12px text-gray-500-darker"></small>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Delegations != null)
+                            {
+                                <div class="row mb-15px">
+                                    <label class="form-label col-form-label col-md-3">Delegation</label>
+                                    <div class="col-md-9">
+                                        <InputSelect @bind-Value="@request.DelegationId" class="form-select">
+                                            <option value="">Keine Delegation</option>
+                                            @foreach (var delegation in Delegations)
+                                                        {
+                                                <option value="@delegation.DelegationId">@delegation.DelegationName</option>
+                                                        }
+                                        </InputSelect>
+                                        <small class="fs-12px text-gray-500-darker"></small>
+                                    </div>
+                                </div>
+                            }
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-white" @onclick="() => Hide()">Abbrechen</button>
+                            <button class="btn btn-success" type="submit">Sitz erstellen</button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    <div class="modal-body">
+                        <div class="col-12">
+                            @if (!response.HasError)
+                            {
+                                <div class="alert alert-success">Sitz erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weiteren Sitz erstellen</button></div>
+                            }
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-white" @onclick="() => Hide()">Schließen</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    private bool isVisible = false;
+
+    [CascadingParameter] public Task<AuthenticationState> authStateTask { get; set; }
+
+    [Parameter] public string CommitteeId { get; set; }
+
+    [Parameter] public string CommitteeName { get; set; }
+
+    [Parameter] public EventCallback SeatCreated { get; set; }
+
+    [Parameter] public List<MUNity.Schema.Conference.CountryInfo> Countries { get; set; }
+
+    [Parameter] public List<MUNity.Schema.Conference.DelegationInfo> Delegations { get; set; }
+
+    private int groupId { get; set; }
+
+    private Schema.Conference.CreateCommitteeSeatRequest request;
+
+    private Schema.Conference.CreateCommitteeSeatResponse response;
+
+
+    protected override void OnInitialized()
+    {
+        this.request = new Schema.Conference.CreateCommitteeSeatRequest();
+        this.request.CommitteeId = CommitteeId;
+    }
+
+    public void Show()
+    {
+        isVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        isVisible = false;
+    }
+
+    public async Task CreateRoleGroup()
+    {
+        var claim = (await authStateTask)?.User;
+        if (claim != null)
+        {
+            this.response = await conferenceService.CreateCommitteeSeat(request, claim);
+            if (!response.HasError)
+                await SeatCreated.InvokeAsync();
+        }
+
+    }
+
+    private void Reset()
+    {
+        request.CountryId = -1;
+        request.DelegationId = null;
+        request.RoleName = null;
+        request.Subtype = null;
+        response = null;
+    }
+}

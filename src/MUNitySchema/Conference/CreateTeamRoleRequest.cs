@@ -17,18 +17,8 @@ namespace MUNity.Schema.Conference
         public int ParentRoleId { get; set; } = -1;
     }
 
-    public class CreateTeamRoleResponse
+    public class CreateTeamRoleResponse : AbstractResponse
     {
-        public enum StatusCodes
-        {
-            Success,
-            Error,
-            NoPermission,
-            GroupNotFound,
-            InvalidParentRoleId
-        }
-
-        public StatusCodes Status { get; set; }
 
         public int RoleId { get; set; }
     }

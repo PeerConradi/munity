@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using MUNity.Schema.Extensions;
 
 namespace MUNity.Services
 {
@@ -18,7 +19,7 @@ namespace MUNity.Services
     {
         private readonly MunityContext context;
 
-        private UserManager<MunityUser> userManager;
+        private UserConferenceAuthService authService;
 
         public CreateConferenceResponse CreateConference(CreateConferenceRequest request, ClaimsPrincipal claim)
         {
@@ -26,14 +27,14 @@ namespace MUNity.Services
             var user = context.Users.FirstOrDefault(n => n.UserName == claim.Identity.Name);
             if (user == null)
             {
-                response.Status = CreateConferenceResponse.CreateConferecenStatuses.NoPermission;
+                response.AddNoPermissionError("You are not allowed to create a conference.");
                 return response;
             }
 
             var project = context.Projects.FirstOrDefault(n => n.ProjectId == request.ProjectId);
             if (project == null)
             {
-                response.Status = CreateConferenceResponse.CreateConferecenStatuses.ProjectNotFound;
+                response.AddInvalidDataError("The Project was not found.", nameof(request.ProjectId));
                 return response;
             }
 
@@ -111,38 +112,32 @@ namespace MUNity.Services
         public async Task<CreateTeamRoleGroupResponse> CreateRoleGroupAsync(CreateTeamRoleGroupRequest request, ClaimsPrincipal claim)
         {
             var response = new CreateTeamRoleGroupResponse();
-            var user = await userManager.GetUserAsync(claim);
-            var isAllowed = user != null && IsUserAllowedToEditTeam(request.ConferenceId, user.UserName);
+            var isAllowed = await authService.IsUserAllowedToEditTeam(request.ConferenceId, claim);
             if (!isAllowed)
             {
-                response.Status = CreateTeamRoleGroupResponse.ResponseStatuses.NoPermission;
+                response.AddNoPermissionError();
                 return response;
             }
 
             var conference = context.Conferences.FirstOrDefault(n => n.ConferenceId == request.ConferenceId);
             if (conference == null)
-            {
-                response.Status = CreateTeamRoleGroupResponse.ResponseStatuses.ConferenceNotFound;
-                return response;
-            }
+                response.AddNotFoundError(nameof(request.ConferenceId));
+            
 
             if (context.TeamRoleGroups.Any(n => n.Conference.ConferenceId == request.ConferenceId && n.Name == request.GroupName))
-            {
-                response.Status = CreateTeamRoleGroupResponse.ResponseStatuses.NameTaken;
-                return response;
-            }
+                response.AddNotFoundError(nameof(request.GroupName));
+            
 
             if (context.TeamRoleGroups.Any(n => n.Conference.ConferenceId == request.ConferenceId && n.FullName == request.GroupFullName))
-            {
-                response.Status = CreateTeamRoleGroupResponse.ResponseStatuses.FullNameTaken;
-                return response;
-            }
+                response.AddNotFoundError(nameof(request.GroupFullName));
+            
 
             if (context.TeamRoleGroups.Any(n => n.Conference.ConferenceId == request.ConferenceId && n.TeamRoleGroupShort == request.GroupShort))
-            {
-                response.Status = CreateTeamRoleGroupResponse.ResponseStatuses.ShortTaken;
+                response.AddNotFoundError(nameof(request.GroupShort));
+            
+
+            if (response.HasError)
                 return response;
-            }
 
             var group = new TeamRoleGroup()
             {
@@ -155,7 +150,6 @@ namespace MUNity.Services
 
             context.TeamRoleGroups.Add(group);
             context.SaveChanges();
-            response.Status = CreateTeamRoleGroupResponse.ResponseStatuses.Success;
             response.CreatedGroupId = group.TeamRoleGroupId;
             return response;
         }
@@ -168,14 +162,14 @@ namespace MUNity.Services
 
             if (group == null)
             {
-                response.Status = CreateTeamRoleResponse.StatusCodes.GroupNotFound;
+                response.AddInvalidDataError("The given group was not found", nameof(request.RoleGroupId));
                 return response;
             }
-            var user = await userManager.GetUserAsync(claim);
-            var isAllowed = user != null && IsUserAllowedToEditTeam(group.Conference.ConferenceId, user.UserName);
+
+            var isAllowed = await authService.IsUserAllowedToEditTeam(group.Conference.ConferenceId, claim);
             if (!isAllowed)
             {
-                response.Status = CreateTeamRoleResponse.StatusCodes.NoPermission;
+                response.AddNoPermissionError("You don't have permission to create a Team role");
                 return response;
             }
 
@@ -202,7 +196,6 @@ namespace MUNity.Services
             };
             context.TeamRoles.Add(role);
             context.SaveChanges();
-            response.Status = CreateTeamRoleResponse.StatusCodes.Success;
             response.RoleId = role.RoleId;
 
             return response;
@@ -256,38 +249,11 @@ namespace MUNity.Services
             return dashboardInfo;
         }
 
-        public bool IsUserAllowedToEditTeam(string conferenceId, string username)
-        {
-            var isCreator = context.Conferences.Any(n => n.ConferenceId == conferenceId && n.CreationUser.UserName == username);
-            if (isCreator)
-                return true;
-
-            var isAllowedTeamMember = context.Participations.Any(n => n.User.UserName == username && n.Role.Conference.ConferenceId == conferenceId && n.Role.RoleAuth.CanEditConferenceSettings == true);
-            return isAllowedTeamMember;
-        }
-
-        public bool IsUserAllowedToEditConference(string conferenceId, string username)
-        {
-            var isCreator = context.Conferences.Any(n => n.ConferenceId == conferenceId && n.CreationUser.UserName == username);
-            if (isCreator)
-                return true;
-
-            var isAllowedTeamMember = context.Participations.Any(n => n.User.UserName == username && n.Role.Conference.ConferenceId == conferenceId && n.Role.RoleAuth.CanEditConferenceSettings == true);
-            return isAllowedTeamMember;
-        }
-
-        public async Task<bool> IsUserAllowedToEditConference(string conferenceId, ClaimsPrincipal claim)
-        {
-            var user = await userManager.GetUserAsync(claim);
-            if (user == null)
-                return false;
-
-            return IsUserAllowedToEditConference(conferenceId, user.UserName);
-        }
+        
 
         public async Task<List<ParticipatingConferenceInfo>> GetParticipatingConferencesAsync(ClaimsPrincipal claim)
         {
-            var user = await userManager.GetUserAsync(claim);
+            var user = await authService.GetUserAsync(claim);
             if (user == null)
                 return null;
 
@@ -335,19 +301,18 @@ namespace MUNity.Services
         public async Task<CreateCommitteeResponse> CreateCommitteeAsync(CreateCommitteeRequest request, ClaimsPrincipal claim)
         {
             var response = new CreateCommitteeResponse();
-            var user = await userManager.GetUserAsync(claim);
-            var isAllowed = user != null && IsUserAllowedToEditConference(request.ConferenceId, user.UserName);
+            var user = await authService.GetUserAsync(claim);
+            var isAllowed = user != null && authService.IsUserAllowedToEditConference(request.ConferenceId, user.UserName);
             if (!isAllowed)
             {
-                response.Status = CreateCommitteeResponse.StatusCodes.NoPermission;
+                response.AddNoPermissionError();
                 return response;
             }
 
             var conference = context.Conferences.FirstOrDefault(n => n.ConferenceId == request.ConferenceId);
             if (conference == null)
             {
-                response.Status = CreateCommitteeResponse.StatusCodes.ConferenceNotFound;
-                return response;
+                response.AddConferenceNotFoundError();
             }
 
             Committee parentCommittee = null;
@@ -356,10 +321,12 @@ namespace MUNity.Services
                 parentCommittee = context.Committees.FirstOrDefault(n => n.CommitteeId == request.ResolutlyCommitteeId);
                 if (parentCommittee == null)
                 {
-                    response.Status = CreateCommitteeResponse.StatusCodes.ResolutlyCommitteeNotFound;
-                    return response;
+                    response.AddCommitteeNotFoundError();
                 }
             }
+
+            if (response.HasError)
+                return response;
 
             var committee = new Committee()
             {
@@ -379,7 +346,6 @@ namespace MUNity.Services
             }
             context.Committees.Add(committee);
             context.SaveChanges();
-            response.Status = CreateCommitteeResponse.StatusCodes.Success;
             response.NewCommitteeId = committee.CommitteeId;
             return response;
         }
@@ -389,7 +355,9 @@ namespace MUNity.Services
             var conference = context.Committees
                 .Include(n => n.Conference)
                 .FirstOrDefault(n => n.CommitteeId == committeeId).Conference;
-            var isAllowed = await IsUserAllowedToEditConference(conference.ConferenceId, claim);
+            if (conference == null)
+                return null;
+            var isAllowed = await authService.IsUserAllowedToEditConference(conference.ConferenceId, claim);
             if (!isAllowed)
                 return null;
 
@@ -443,10 +411,66 @@ namespace MUNity.Services
             return info;
         }
 
-        public ConferenceService(MunityContext context, UserManager<MunityUser> userManager)
+        public async Task<CreateCommitteeSeatResponse> CreateCommitteeSeat(CreateCommitteeSeatRequest request, ClaimsPrincipal claim)
+        {
+            var response = new CreateCommitteeSeatResponse();
+            var committee = context.Committees
+                .Include(n => n.Conference)
+                .FirstOrDefault(n => n.CommitteeId == request.CommitteeId);
+            var isAllowed = await authService.IsUserAllowedToEditConference(committee.Conference.ConferenceId, claim);
+            if (!isAllowed)
+            {
+                response.AddNoPermissionError();
+                return response;
+            }
+
+            Country country = null;
+            if (request.CountryId != -1)
+            {
+                country = context.Countries.FirstOrDefault(n => n.CountryId == request.CountryId);
+                if (country == null)
+                {
+                    response.AddNotFoundError(nameof(request.CountryId));
+                }
+            }
+
+            Delegation delegation = null;
+            if (!string.IsNullOrEmpty(request.DelegationId))
+            {
+                delegation = context.Delegation.FirstOrDefault(n => n.DelegationId == request.DelegationId);
+                if (delegation == null)
+                {
+                    response.AddNotFoundError(nameof(request.DelegationId));
+                }
+            }
+
+            if (response.HasError)
+                return response;
+
+            var role = new ConferenceDelegateRole()
+            {
+                Committee = committee,
+                Conference = committee.Conference,
+                DelegateState = country,
+                DelegateType = request.Subtype,
+                Delegation = delegation,
+                RoleName = request.RoleName,
+                RoleFullName = request.RoleName,
+                Title = request.RoleName
+            };
+
+            context.Delegates.Add(role);
+            context.SaveChanges();
+            response.CreatedRoleId = role.RoleId;
+            return response;
+        }
+
+        
+
+        public ConferenceService(MunityContext context, UserConferenceAuthService authService)
         {
             this.context = context;
-            this.userManager = userManager;
+            this.authService = authService;
         }
     }
 }

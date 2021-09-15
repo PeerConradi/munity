@@ -52,21 +52,8 @@ namespace MUNity.Schema.Conference
         public string ResolutlyCommitteeId { get; set; }
     }
 
-    public class CreateCommitteeResponse
+    public class CreateCommitteeResponse : AbstractResponse
     {
-        public enum StatusCodes
-        {
-            Success,
-            Error,
-            NoPermission,
-            ConferenceNotFound,
-            NameTaken,
-            FullNameTaken,
-            ShortTaken,
-            ResolutlyCommitteeNotFound
-        }
-
-        public StatusCodes Status { get; set; }
 
         public string NewCommitteeId { get; set; }
     }

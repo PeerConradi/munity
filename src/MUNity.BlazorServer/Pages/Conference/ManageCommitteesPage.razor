@@ -37,7 +37,7 @@
                                             <td>@committee.CommitteeName</td>
                                             <td>@committee.CommitteeShort</td>
                                             <td>@committee.ParentCommitteeName</td>
-                                            <td>@committee.SeatCount <a href="#">Sitze verwalten</a></td>
+                                            <td>@committee.SeatCount <button class="btn btn-primary btn-sm" @onclick="() => LoadCommitteeDetails(committee.CommitteeId)">Sitze verwalten</button></td>
                                             <td><a href="#">Gremium löschen</a></td>
                                         </tr>
                                     }
@@ -56,12 +56,17 @@
         </div>
     </div>
 
-    <MUNity.BlazorServer.Components.Conference.ManageCommitteeSeatsComponent />
+    @if (!string.IsNullOrEmpty(selectedCommitteeId))
+    {
+        <MUNity.BlazorServer.Components.Conference.ManageCommitteeSeatsComponent CommitteeId="@selectedCommitteeId"
+                                                                                 @ref="committeeSeatsRef"/>
+
+    }
 
     <MUNity.BlazorServer.Components.Conference.CreateCommitteeModal ConferenceId="@Id"
                                                                     Committees="@info.Committees"
                                                                     RolesChanged="() => ReloadData()"
-                                                                    @ref="createModal"/>
+                                                                    @ref="createModal" />
 }
 
 
@@ -71,7 +76,11 @@
 
     private MUNity.Schema.Conference.ManageCommitteesInfo info;
 
+    private string selectedCommitteeId;
+
     private MUNity.BlazorServer.Components.Conference.CreateCommitteeModal createModal;
+
+    private MUNity.BlazorServer.Components.Conference.ManageCommitteeSeatsComponent committeeSeatsRef;
 
     protected override void OnInitialized()
     {
@@ -83,5 +92,14 @@
     {
         this.info = conferenceService.GetManageInfo(Id);
         this.InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadCommitteeDetails(string id)
+    {
+        this.selectedCommitteeId = id;
+        if (committeeSeatsRef != null)
+        {
+            await committeeSeatsRef.LoadDataForId(id);
+        }
     }
 }

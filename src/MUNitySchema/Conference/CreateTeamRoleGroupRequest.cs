@@ -23,20 +23,8 @@ namespace MUNity.Schema.Conference
         public int GroupLevel { get; set; } = 1;
     }
 
-    public class CreateTeamRoleGroupResponse
+    public class CreateTeamRoleGroupResponse : AbstractResponse
     {
-        public enum ResponseStatuses
-        {
-            Success,
-            Error,
-            NameTaken,
-            FullNameTaken,
-            ShortTaken,
-            NoPermission,
-            ConferenceNotFound
-        }
-
-        public ResponseStatuses Status { get; set; }
 
         public int CreatedGroupId { get; set; }
     }

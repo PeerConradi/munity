@@ -70,12 +70,13 @@ namespace MUNity.BlazorServer
             
             //services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<MunityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            
 
+            services.AddScoped<UserConferenceAuthService>();
             services.AddScoped<UserService>();
             services.AddScoped<OrganizationService>();
             services.AddScoped<ProjectService>();
             services.AddScoped<ConferenceService>();
+            services.AddScoped<DelegationService>();
 
             services.AddLogging();
             

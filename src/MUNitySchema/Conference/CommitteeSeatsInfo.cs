@@ -27,7 +27,7 @@ namespace MUNity.Schema.Conference
 
         public string RoleName { get; set; }
 
-        public int CountryId { get; set; }
+        public int? CountryId { get; set; }
 
         public string CountryName { get; set; }
 
