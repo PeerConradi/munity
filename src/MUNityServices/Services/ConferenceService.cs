@@ -411,9 +411,9 @@ namespace MUNity.Services
             return info;
         }
 
-        public async Task<CreateCommitteeSeatResponse> CreateCommitteeSeat(CreateCommitteeSeatRequest request, ClaimsPrincipal claim)
+        public async Task<CreateSeatResponse> CreateCommitteeSeat(CreateCommitteeSeatRequest request, ClaimsPrincipal claim)
         {
-            var response = new CreateCommitteeSeatResponse();
+            var response = new CreateSeatResponse();
             var committee = context.Committees
                 .Include(n => n.Conference)
                 .FirstOrDefault(n => n.CommitteeId == request.CommitteeId);
@@ -460,12 +460,113 @@ namespace MUNity.Services
             };
 
             context.Delegates.Add(role);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             response.CreatedRoleId = role.RoleId;
             return response;
         }
 
-        
+        public async Task<CreateSeatResponse> CreateFreeSeat(CreateFreeSeatRequest request,
+            ClaimsPrincipal claim)
+        {
+            var response = new CreateSeatResponse();
+            var isAllowed = await authService.IsUserAllowedToEditConference(request.ConferenceId, claim);
+            if (!isAllowed)
+            {
+                response.AddNoPermissionError();
+                return response;
+            }
+
+            var conference = context.Conferences.FirstOrDefault(n => n.ConferenceId == request.ConferenceId);
+            if (conference == null)
+            {
+                response.AddNotFoundError(nameof(request.ConferenceId));
+            }
+
+            Country country = null;
+            if (request.CountryId != -1)
+            {
+                country = context.Countries.FirstOrDefault(n => n.CountryId == request.CountryId);
+                if (country == null)
+                {
+                    response.AddNotFoundError(nameof(request.CountryId));
+                }
+            }
+
+            Delegation delegation = null;
+            if (!string.IsNullOrEmpty(request.DelegationId))
+            {
+                delegation = context.Delegation.FirstOrDefault(n => n.DelegationId == request.DelegationId);
+                if (delegation == null)
+                {
+                    response.AddNotFoundError(nameof(request.DelegationId));
+                }
+            }
+
+            if (response.HasError)
+                return response;
+
+            var role = new ConferenceDelegateRole()
+            {
+                Committee = null,
+                Conference = conference,
+                DelegateState = country,
+                DelegateType = request.Subtype,
+                Delegation = delegation,
+                RoleName = request.RoleName,
+                RoleFullName = request.RoleName,
+                Title = request.RoleName
+            };
+
+            context.Delegates.Add(role);
+            await context.SaveChangesAsync();
+            response.CreatedRoleId = role.RoleId;
+            return response;
+        }
+
+        public async Task<ConferenceRolesInfo> GetRolesInfo(string conferenceId, ClaimsPrincipal claim)
+        {
+            var isAllowed = await authService.IsUserAllowedToEditConference(conferenceId, claim);
+            if (!isAllowed)
+                return null;
+
+            var mdl = context.Conferences
+                .Select(conf => new ConferenceRolesInfo()
+                {
+                    ConferenceId = conf.ConferenceId,
+                    ConferenceName = conf.Name,
+                    ConferenceShort = conf.ConferenceShort,
+                    OrganizationId = conf.ConferenceProject.ProjectOrganization.OrganizationId,
+                    OrganizationName = conf.ConferenceProject.ProjectOrganization.OrganizationName,
+                    OrganizationShort = conf.ConferenceProject.ProjectOrganization.OrganizationShort,
+                    ProjectId = conf.ConferenceProject.ProjectId,
+                    ProjectName = conf.ConferenceProject.ProjectName,
+                    ProjectShort = conf.ConferenceProject.ProjectShort,
+                    Roles = conf.Roles.OfType<ConferenceDelegateRole>()
+                        .Select(role => new ManageDelegationRoleInfo()
+                        {
+                            ApplicationState = role.ApplicationState,
+                            HasParicipant = role.Participations.Any(),
+                            RoleCommitteeId = role.Committee.CommitteeId,
+                            RoleCommitteeName = role.Committee.Name,
+                            RoleId = role.RoleId,
+                            RoleName = role.RoleName,
+                            Subtype = role.DelegateType
+                        }).ToList(),
+                    Delegations = conf.Delegations.Select(del => new DelegationInfo()
+                    {
+                        DelegationId = del.DelegationId,
+                        DelegationName = del.Name
+                    }).ToList()
+                }).FirstOrDefault(n => n.ConferenceId == conferenceId);
+
+            mdl.Countries = context.Countries.Select(n => new CountryInfo()
+            {
+                Name = n.Name,
+                CountryId = n.CountryId
+            }).ToList();
+
+            return mdl;
+        }
 
         public ConferenceService(MunityContext context, UserConferenceAuthService authService)
         {

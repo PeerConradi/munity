@@ -7,7 +7,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Neuen Sitz in @CommitteeName</h4>
+                    <h4 class="modal-title">Neue freie Rolle</h4>
                     <button type="button" class="btn-close" @onclick="() => Hide()"></button>
                 </div>
                 @if (response == null)
@@ -16,14 +16,14 @@
                         <DataAnnotationsValidator />
                         <ValidationSummary />
                         <div class="modal-body">
-                            <h3>Über Sitze</h3>
-                            <p>Über diesen Dialog kann @CommitteeName ein Sitz in Form einer Rolle hinzugefügt werden. Diese Rolle kann in diesem Fall alles sein. Ein/e Abgeordnete/r, Vorsitzende/r etc. Empfohlen sind über diese Einstellung jedoch die Abgeordneten anzulegen und nicht die Presse oder NGOs, da diese ggf. auch Gremienübergreifend arbeiten können sollen.</p>
-
+                            <h3>Über freie Rollen</h3>
+                            <p>Freie Rollen sind für Teilnehmende gedacht, welche nicht fester Bestandteil eines Gremiums sind. Zum Beispiel Presse, Nicht-Regierungs-Organisationen welche an kein Gremium gebunden sein sollen etc. Auch Lehrkräfte können dieser Art von Rolle angehören.</p>
+                            <p class="text-warning">Teammitglieder gehören nicht zu dieser Art von Rolle. Das Team hat einen eigenen Typ.</p>
                             <div class="row mb-15px">
                                 <label class="form-label col-form-label col-md-3">Rollenname</label>
                                 <div class="col-md-9">
-                                    <InputText type="text" class="form-control mb-5px" placeholder="Generalversammlung" @bind-Value="@request.RoleName" />
-                                    <small class="fs-12px text-gray-500-darker">z.B. Abgeordneter Deutschland/ Präsident Deutschland etc.</small>
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Rollenname" @bind-Value="@request.RoleName" />
+                                    <small class="fs-12px text-gray-500-darker">RedakteurIn, Kameramann/frau, Lehrkraft Musterschule etc.</small>
                                 </div>
                             </div>
 
@@ -61,7 +61,13 @@
                                 </div>
                             }
 
-
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Subkategorie</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Presse" @bind-Value="@request.Subtype" />
+                                    <small class="fs-12px text-gray-500-darker">Hier kann eine Art erweiterte Gruppe angegeben werden: PRESSE, NGO, LEHRKRAFT...</small>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-white" @onclick="() => Hide()">Abbrechen</button>
@@ -75,7 +81,7 @@
                         <div class="col-12">
                             @if (!response.HasError)
                             {
-                                <div class="alert alert-success">Sitz erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weiteren Sitz erstellen</button></div>
+                                <div class="alert alert-success">Rolle erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weiteren Sitz erstellen</button></div>
                             }
                         </div>
 
@@ -97,9 +103,7 @@
 
     [CascadingParameter] public Task<AuthenticationState> authStateTask { get; set; }
 
-    [Parameter] public string CommitteeId { get; set; }
-
-    [Parameter] public string CommitteeName { get; set; }
+    [Parameter] public string ConferenceId { get; set; }
 
     [Parameter] public EventCallback SeatCreated { get; set; }
 
@@ -109,15 +113,15 @@
 
     private int groupId { get; set; }
 
-    private Schema.Conference.CreateCommitteeSeatRequest request;
+    private Schema.Conference.CreateFreeSeatRequest request;
 
     private Schema.Conference.CreateSeatResponse response;
 
 
     protected override void OnInitialized()
     {
-        this.request = new Schema.Conference.CreateCommitteeSeatRequest();
-        this.request.CommitteeId = CommitteeId;
+        this.request = new Schema.Conference.CreateFreeSeatRequest();
+        this.request.ConferenceId = ConferenceId;
     }
 
     public void Show()
@@ -136,7 +140,7 @@
         var claim = (await authStateTask)?.User;
         if (claim != null)
         {
-            this.response = await conferenceService.CreateCommitteeSeat(request, claim);
+            this.response = await conferenceService.CreateFreeSeat(request, claim);
             if (!response.HasError)
                 await SeatCreated.InvokeAsync();
         }

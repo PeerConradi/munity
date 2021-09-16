@@ -1,0 +1,100 @@
+﻿@page "/c/manageroles/{Id}"
+@inject Services.ConferenceService conferenceService
+
+@if (info != null)
+{
+    <BreadcrumbComponent PageName="Rollen" Source="@info"></BreadcrumbComponent>
+}
+
+<h1 class="page-header">Rollen bearbeiten</h1>
+
+<h3>Rollen in Gremien</h3>
+<p>Die gelisteten Rollen sind alle Teil eines Gremiums. Hierbei kann es sich um Vertreter von Staaten, allerdings auch um Nichtstaatliche Akteure handeln, sofern das geünscht ist.</p>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Gremium</th>
+        <th>Ist belegt</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (info?.Roles != null && info.Roles.Any())
+    {
+        foreach (var role in info.Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId)))
+        {
+            <tr>
+                <td>@role.RoleId</td>
+                <td>@role.RoleName</td>
+                <td>@role.RoleCommitteeName</td>
+                <td>@((role.HasParicipant) ? "Ja" : "Nein")</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+<h3>Freie Rollen</h3>
+<p>Diese Rollen sind lediglich der Konferenz, nicht aber einen Gremium zugeordnet. Auch diese Rollen können Teil einer Delegation sein.</p>
+
+@if (info != null)
+{
+    <button class="btn btn-primary mb-2" @onclick="() => createFreeRoleModal.Show()">Neue freie Rolle</button>
+}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Subtype</th>
+        <th>Ist belegt</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (info?.Roles != null && info.Roles.Any())
+    {
+        foreach (var role in info.Roles.Where(n => string.IsNullOrEmpty(n.RoleCommitteeId)))
+        {
+            <tr>
+                <td>@role.RoleId</td>
+                <td>@role.RoleName</td>
+                <td>@role.Subtype</td>
+                <td>@((role.HasParicipant) ? "Ja" : "Nein")</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+@if (info != null)
+{
+    <MUNity.BlazorServer.Components.Conference.CreateFreeRoleModal ConferenceId="@Id"
+                                                                   @ref="createFreeRoleModal"
+                                                                   Countries="@info.Countries"
+                                                                   Delegations="@info.Delegations" />
+}
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState>
+    AuthStateTask { get; set; }
+
+    private MUNity.Schema.Conference.ConferenceRolesInfo info;
+
+    private MUNity.BlazorServer.Components.Conference.CreateFreeRoleModal createFreeRoleModal;
+
+    protected override async Task OnInitializedAsync()
+    {
+    await base.OnInitializedAsync();
+    var claim = (await AuthStateTask)?.User;
+    if (claim != null)
+    {
+    info = await conferenceService.GetRolesInfo(Id, claim);
+    }
+    }
+
+    }

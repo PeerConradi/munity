@@ -43,6 +43,8 @@ namespace MUNity.Schema.Conference
 
         public bool HasParicipant { get; set; }
 
+        public string Subtype { get; set; }
+
         public MUNityBase.EApplicationStates ApplicationState { get; set; }
     }
 }
