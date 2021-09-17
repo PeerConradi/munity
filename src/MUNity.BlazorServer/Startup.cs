@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Radzen;
 
 namespace MUNity.BlazorServer
 {
@@ -71,6 +72,13 @@ namespace MUNity.BlazorServer
             //services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<MunityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+            // Radzen.Blazor
+            services.AddScoped<DialogService>();
+            services.AddScoped<NotificationService>();
+            services.AddScoped<TooltipService>();
+            services.AddScoped<ContextMenuService>();
+
+            // MUNity Services
             services.AddScoped<UserConferenceAuthService>();
             services.AddScoped<UserService>();
             services.AddScoped<OrganizationService>();
