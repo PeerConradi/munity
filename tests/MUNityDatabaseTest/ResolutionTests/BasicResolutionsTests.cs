@@ -127,14 +127,15 @@ namespace MUNityDatabaseTest.ResolutionTests
         {
             _context.Resolutions.Add(resolution);
             var remark = _context.SaveChanges();
-            Assert.AreEqual(1, remark);
+            // Two because the Auth is now created with this Resolution
+            Assert.AreEqual(2, remark);
         }
 
         [Test]
         [Order(15)]
         public void TestLoadingResolutionKeptValues()
         {
-            var loadedResolution = _context.Resolutions.FirstOrDefault();
+            var loadedResolution = _context.Resolutions.First();
             Assert.AreEqual(loadedResolution.ResaElementId, resolution.ResaElementId);
             Assert.AreEqual(loadedResolution.Topic, resolution.Topic);
             Assert.AreEqual(loadedResolution.Name, resolution.Name);

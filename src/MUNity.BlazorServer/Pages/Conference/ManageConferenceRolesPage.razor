@@ -1,5 +1,7 @@
 ﻿@page "/c/manageroles/{Id}"
+@using MUNity.Schema.Conference
 @inject Services.ConferenceService conferenceService
+@inject Services.ConferenceRoleService conferenceRoleService
 
 @if (info != null)
 {
@@ -51,6 +53,7 @@
         <th>Name</th>
         <th>Subtype</th>
         <th>Ist belegt</th>
+        <th>Löschen</th>
     </tr>
     </thead>
     <tbody>
@@ -63,6 +66,7 @@
                 <td>@role.RoleName</td>
                 <td>@role.Subtype</td>
                 <td>@((role.HasParicipant) ? "Ja" : "Nein")</td>
+                <td><button class="btn btn-danger" @onclick="() => RequestRemoveFreeRole(role)">Löschen</button></td>
             </tr>
         }
     }
@@ -74,7 +78,10 @@
     <MUNity.BlazorServer.Components.Conference.CreateFreeRoleModal ConferenceId="@Id"
                                                                    @ref="createFreeRoleModal"
                                                                    Countries="@info.Countries"
-                                                                   Delegations="@info.Delegations" />
+                                                                   Delegations="@info.Delegations"
+                                                                   SeatCreated="LoadData"/>
+
+    <MUNity.BlazorServer.Components.General.DeleteWarningModal @ref="deleteWarningModal" />
 }
 
 @code {
@@ -87,14 +94,43 @@
 
     private MUNity.BlazorServer.Components.Conference.CreateFreeRoleModal createFreeRoleModal;
 
+    private MUNity.BlazorServer.Components.General.DeleteWarningModal deleteWarningModal;
+
     protected override async Task OnInitializedAsync()
     {
-    await base.OnInitializedAsync();
-    var claim = (await AuthStateTask)?.User;
-    if (claim != null)
-    {
-    info = await conferenceService.GetRolesInfo(Id, claim);
-    }
+        await base.OnInitializedAsync();
+        await LoadData();
     }
 
+    private async Task LoadData()
+    {
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            info = await conferenceService.GetRolesInfo(Id, claim);
+        }
     }
+
+    private void RequestRemoveFreeRole(ManageDelegationRoleInfo role)
+    {
+        deleteWarningModal.Title = $"{role.RoleName} löschen?";
+        deleteWarningModal.Warning =  $"Soll die Rolle {role.RoleName} wirklich gelöscht werden?";
+        deleteWarningModal.OnAccepted = new Task(() => RemoveDelegateRole(role));
+        deleteWarningModal.Show();
+    }
+
+    private async Task RemoveDelegateRole(ManageDelegationRoleInfo role)
+    {
+        var claim = (await AuthStateTask)?.User;
+        if (claim == null)
+            return;
+
+        var result = await conferenceRoleService.RemoveDelegateRole(role.RoleId, claim);
+        if (result)
+        {
+            info.Roles.Remove(role);
+            this.InvokeAsync(this.StateHasChanged);
+        }
+    }
+
+}

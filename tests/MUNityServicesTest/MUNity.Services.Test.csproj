@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -17,8 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MUNityBase\MUNityBase.csproj" />
-    <ProjectReference Include="..\..\src\MUNityDatabase\MUNityDatabase.csproj" />
+    <ProjectReference Include="..\..\src\MUNityServices\MUNity.Services.csproj" />
   </ItemGroup>
 
 </Project>

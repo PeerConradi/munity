@@ -39,6 +39,10 @@ namespace MUNity.Database.Models.Resolution
         public ResaOperativeParagraph()
         {
             ResaOperativeParagraphId = Guid.NewGuid().ToString();
+            Children = new List<ResaOperativeParagraph>();
+            DeleteAmendments = new List<ResaDeleteAmendment>();
+            ChangeAmendments = new List<ResaChangeAmendment>();
+            MoveAmendments = new List<ResaMoveAmendment>();
         }
     }
 }

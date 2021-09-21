@@ -1,6 +1,7 @@
 ﻿using MUNity.Database.Models.User;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,10 +17,9 @@ namespace MUNity.Database.Models.Resolution
     /// </summary>
     public class ResolutionAuth
     {
-
+        [Key]
+        [ForeignKey(nameof(Resolution))]
         public string ResolutionId { get; set; }
-
-        public string Name { get; set; }
 
         public MunityUser CreationUser { get; set; }
 
@@ -52,7 +52,6 @@ namespace MUNity.Database.Models.Resolution
 
         public Simulation.Simulation Simulation { get; set; }
 
-        [ForeignKey(nameof(ResolutionId))]
         public ResaElement Resolution { get; set; }
 
         public ResolutionAuth()

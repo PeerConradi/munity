@@ -8,25 +8,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityBase", "src\MUNityBase\MUNityBase.csproj", "{A48485D6-5EB8-4532-B594-0778F8897F1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.Base", "src\MUNityBase\MUNity.Base.csproj", "{A48485D6-5EB8-4532-B594-0778F8897F1C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityBaseTest", "tests\MUNityBaseTest\MUNityBaseTest.csproj", "{E9B2EA74-609D-4C7A-8333-C489E72EC147}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.Base.Test", "tests\MUNityBaseTest\MUNity.Base.Test.csproj", "{E9B2EA74-609D-4C7A-8333-C489E72EC147}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNitySchema", "src\MUNitySchema\MUNitySchema.csproj", "{EE46279E-C1B5-4DD8-8AAB-D1F29AD5A940}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.Schema", "src\MUNitySchema\MUNity.Schema.csproj", "{EE46279E-C1B5-4DD8-8AAB-D1F29AD5A940}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MunitySchemaTest", "tests\MUNitySchemaTests\MunitySchemaTest.csproj", "{81E97937-CFEA-4844-8E91-5970C4243706}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Munity.Schema.Test", "tests\MUNitySchemaTests\Munity.Schema.Test.csproj", "{81E97937-CFEA-4844-8E91-5970C4243706}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityDatabase", "src\MUNityDatabase\MUNityDatabase.csproj", "{413D18C0-5D3D-4279-856E-BB9E5BC42399}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.Database", "src\MUNityDatabase\MUNity.Database.csproj", "{413D18C0-5D3D-4279-856E-BB9E5BC42399}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityDatabaseTest", "tests\MUNityDatabaseTest\MUNityDatabaseTest.csproj", "{767A0AA9-01B3-4004-A1B9-61F08E8D5210}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.Database.Test", "tests\MUNityDatabaseTest\MUNity.Database.Test.csproj", "{767A0AA9-01B3-4004-A1B9-61F08E8D5210}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityServices", "src\MUNityServices\MUNityServices.csproj", "{D0944819-E4A8-49B3-A4BD-259897E17E62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.Services", "src\MUNityServices\MUNity.Services.csproj", "{D0944819-E4A8-49B3-A4BD-259897E17E62}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityWebAPI_old", "src\MUNityCore\MUNityWebAPI_old.csproj", "{5FC8AD2A-CF67-4917-B486-9CE6F8350099}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityCoreTest", "tests\MUNityCoreTest\MUNityCoreTest.csproj", "{C0AA847C-E9B1-487A-88C8-8CED62F4F0FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNityServicesTest", "tests\MUNityServicesTest\MUNityServicesTest.csproj", "{763767D8-11CE-49AC-B69D-82657561BF93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.Services.Test", "tests\MUNityServicesTest\MUNity.Services.Test.csproj", "{763767D8-11CE-49AC-B69D-82657561BF93}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.BlazorServer", "src\MUNity.BlazorServer\MUNity.BlazorServer.csproj", "{8A10B274-155D-4F5E-96C5-6F6BB223C4AD}"
 EndProject

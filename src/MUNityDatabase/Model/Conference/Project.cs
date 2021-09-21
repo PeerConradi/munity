@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using MUNity.Database.Interfaces;
 
 namespace MUNity.Database.Models.Conference
 {
@@ -21,7 +22,7 @@ namespace MUNity.Database.Models.Conference
     /// Model United Nations in the classroom
     /// Model United Nations in the university
     /// </summary>
-    public class Project
+    public class Project : IIsDeleted
     {
         public string ProjectId { get; set; }
 
@@ -42,5 +43,7 @@ namespace MUNity.Database.Models.Conference
         {
             ProjectId = Guid.NewGuid().ToString();
         }
+
+        public bool IsDeleted { get; set; }
     }
 }

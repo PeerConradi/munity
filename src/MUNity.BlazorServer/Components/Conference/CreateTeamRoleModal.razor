@@ -1,5 +1,5 @@
 ﻿<!-- Create Project Modal -->
-@inject Services.ConferenceService conferenceService;
+@inject Services.ConferenceRoleService _conferenceRoleService
 
 @if (isVisible)
 {
@@ -105,7 +105,7 @@
 @code {
     private bool isVisible = false;
 
-    [CascadingParameter] public Task<AuthenticationState> authStateTask { get; set; }
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
     [Parameter] public EventCallback RolesChanged { get; set; }
 
@@ -137,10 +137,10 @@
 
     public async Task CreateRoleGroup()
     {
-        var claim = (await authStateTask)?.User;
+        var claim = (await AuthStateTask)?.User;
         if (claim != null)
         {
-            this.response = await conferenceService.CreateTeamRoleAsync(request, claim);
+            this.response = await _conferenceRoleService.CreateTeamRoleAsync(request, claim);
             if (!response.HasError)
                 await RolesChanged.InvokeAsync();
         }

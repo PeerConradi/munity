@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MUNityCore.Models.User;
 using MUNityCore.Models;
@@ -16,6 +17,7 @@ using MUNity.Database.Models.LoS;
 using MUNity.Database.Models;
 using MUNity.Database.Models.Resolution;
 using MUNity.Database.Models.Session;
+using MUNity.Database.Interfaces;
 
 namespace MUNity.Database.Context
 {
@@ -137,39 +139,6 @@ namespace MUNity.Database.Context
 
             modelBuilder.Entity<MunityUser>().HasKey(n => n.Id);
 
-            //modelBuilder.Entity<IdentityUserLogin<string>>().HasKey(n => n.UserId);
-
-            //modelBuilder.Entity<IdentityUserRole<string>>().HasKey(n => n.UserId);
-
-            //modelBuilder.Entity<IdentityUserToken<string>>().HasKey(n => n.UserId);
-
-            modelBuilder.Entity<Committee>().HasOne(n => n.Conference)
-                .WithMany(a => a.Committees).OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Committee>().HasMany(n => n.Resolutions)
-                .WithOne(a => a.Committee).IsRequired(false);
-
-            modelBuilder.Entity<Committee>().HasOne(n => n.ResolutlyCommittee)
-                .WithMany(n => n.ChildCommittees).IsRequired(false);
-
-            modelBuilder.Entity<OrganizationRole>().HasOne(n => n.Organization)
-                .WithMany(a => a.Roles);
-
-            modelBuilder.Entity<OrganizationMember>().HasOne(n => n.Organization)
-                .WithMany(n => n.Member);
-
-            modelBuilder.Entity<OrganizationRole>().HasMany(n => n.MembersWithRole).WithOne(n => n.Role);
-
-            modelBuilder.Entity<Project>().HasOne(n => n.ProjectOrganization)
-                .WithMany(n => n.Projects);
-
-            modelBuilder.Entity<Conference>().HasOne(n => n.ConferenceProject)
-                .WithMany(n => n.Conferences);
-
-            modelBuilder.Entity<AbstractConferenceRole>().HasOne(n => n.Conference).WithMany(n => n.Roles);
-
-            modelBuilder.Entity<ConferenceTeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
-
             modelBuilder.Entity<MunityUser>().HasMany(n => n.CreatedResolutions).WithOne(a => a.CreationUser).IsRequired(false);
 
             // Each User can have many entries in the UserRole join table
@@ -177,6 +146,32 @@ namespace MUNity.Database.Context
                 .WithOne()
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
+
+
+
+            modelBuilder.Entity<OrganizationRole>()
+                .HasOne(n => n.Organization)
+                .WithMany(a => a.Roles);
+
+            modelBuilder.Entity<OrganizationMember>()
+                .HasOne(n => n.Organization)
+                .WithMany(n => n.Member);
+
+            modelBuilder.Entity<OrganizationRole>()
+                .HasMany(n => n.MembersWithRole)
+                .WithOne(n => n.Role);
+
+            modelBuilder.Entity<Project>()
+                .HasOne(n => n.ProjectOrganization)
+                .WithMany(n => n.Projects)
+                .IsRequired();
+
+
+            // Conference
+            modelBuilder.Entity<Conference>().HasOne(n => n.ConferenceProject)
+                .WithMany(n => n.Conferences);
+
+            modelBuilder.Entity<AbstractConferenceRole>().HasOne(n => n.Conference).WithMany(n => n.Roles);
 
             modelBuilder.Entity<AbstractConferenceRole>().HasDiscriminator(n => n.RoleType)
                 .HasValue<ConferenceDelegateRole>("DelegateRole")
@@ -187,16 +182,35 @@ namespace MUNity.Database.Context
             modelBuilder.Entity<AbstractConferenceRole>().HasMany(n => n.Participations)
                 .WithOne(n => n.Role);
 
+            modelBuilder.Entity<ConferenceTeamRole>().HasOne(n => n.TeamRoleGroup).WithMany(n => n.TeamRoles);
+
 
             modelBuilder.Entity<Committee>().HasMany(n => n.Sessions).WithOne(n =>
                 n.Committee);
 
+            modelBuilder.Entity<Committee>().HasOne(n => n.Conference)
+                .WithMany(a => a.Committees).OnDelete(DeleteBehavior.Cascade);
 
-            // The ResolutionId is also the Primary Key.
-            modelBuilder.Entity<ResolutionAuth>().HasKey(n => n.ResolutionId);
+            modelBuilder.Entity<Committee>().HasMany(n => n.Resolutions)
+                .WithOne(a => a.Committee).IsRequired(false);
 
-            //modelBuilder.Entity<ResolutionUser>().HasKey(n => new { n.Auth.ResolutionId, n.CoreUserId });
+            modelBuilder.Entity<Committee>().HasOne(n => n.ResolutlyCommittee)
+                .WithMany(n => n.ChildCommittees).IsRequired(false);
 
+            modelBuilder.Entity<Delegation>()
+                .HasOne(n => n.ParentDelegation)
+                .WithMany(a => a.ChildDelegations)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            
+            //modelBuilder.Entity<SimulationUser>().HasOne(n => n.Simulation).WithMany(n =>
+            //    n.Users);
+
+            modelBuilder.Entity<ListOfSpeakers>().HasMany(n => n.AllSpeakers).WithOne(n => n.ListOfSpeakers);
+
+            modelBuilder.Entity<Speaker>().HasKey(n => n.Id);
+
+            // Resolution
             modelBuilder.Entity<ResolutionAuth>()
                 .HasMany(n => n.Users).WithOne(n => n.Auth);
 
@@ -205,31 +219,57 @@ namespace MUNity.Database.Context
                 .HasOne(n => n.Simulation)
                 .WithMany(n => n.Resolutions);
 
+            modelBuilder.Entity<ResaElement>()
+                .HasMany(n => n.PreambleParagraphs)
+                .WithOne(n => n.ResaElement)
+                .IsRequired();
+
+            modelBuilder.Entity<ResaElement>()
+                .HasMany(n => n.OperativeParagraphs)
+                .WithOne(n => n.Resolution)
+                .IsRequired();
+
+            modelBuilder.Entity<ResaElement>()
+                .HasOne(n => n.Authorization)
+                .WithOne(n => n.Resolution)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ResaOperativeParagraph>()
+                .HasOne(n => n.Parent)
+                .WithMany(n => n.Children)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ResaOperativeParagraph>()
+                .HasMany(n => n.DeleteAmendments)
+                .WithOne(n => n.TargetParagraph)
+                .IsRequired();
+
+            modelBuilder.Entity<ResaOperativeParagraph>()
+                .HasMany(n => n.ChangeAmendments)
+                .WithOne(n => n.TargetParagraph)
+                .IsRequired();
+
+            modelBuilder.Entity<ResaOperativeParagraph>()
+                .HasMany(n => n.MoveAmendments)
+                .WithOne(n => n.SourceParagraph)
+                .IsRequired();
+
+            modelBuilder.Entity<ResaElement>()
+                .HasMany(n => n.AddAmendments)
+                .WithOne(n => n.Resolution);
+
+            // Simulations
             modelBuilder.Entity<SimulationRole>().HasOne(n => n.Simulation).WithMany(n =>
                 n.Roles);
 
             modelBuilder.Entity<Simulation>().HasMany(n => n.Users).WithOne(n => n.Simulation);
 
-            //modelBuilder.Entity<SimulationUser>().HasOne(n => n.Simulation).WithMany(n =>
-            //    n.Users);
 
-            modelBuilder.Entity<ListOfSpeakers>().HasMany(n => n.AllSpeakers).WithOne(n => n.ListOfSpeakers);
-
-            modelBuilder.Entity<Speaker>().HasKey(n => n.Id);
-
-            modelBuilder.Entity<ResaElement>().HasMany(n => n.PreambleParagraphs).WithOne(n => n.ResaElement);
-
-            modelBuilder.Entity<ResaElement>().HasMany(n => n.OperativeParagraphs).WithOne(n => n.Resolution);
-
-            modelBuilder.Entity<ResaOperativeParagraph>().HasOne(n => n.Parent).WithMany(n => n.Children);
-
-            modelBuilder.Entity<ResaOperativeParagraph>().HasMany(n => n.DeleteAmendments).WithOne(n => n.TargetParagraph);
-
-            modelBuilder.Entity<ResaOperativeParagraph>().HasMany(n => n.MoveAmendments).WithOne(n => n.SourceParagraph);
-
-            modelBuilder.Entity<ResaElement>().HasMany(n => n.AddAmendments).WithOne(n => n.Resolution);
-
-            modelBuilder.Entity<SimulationPresents>().HasMany(n => n.CheckedUsers).WithOne(n => n.SimulationPresents);
+            modelBuilder.Entity<SimulationPresents>()
+                .HasMany(n => n.CheckedUsers)
+                .WithOne(n => n.SimulationPresents);
 
             modelBuilder.Entity<Simulation>().HasMany(n => n.PresentChecks).WithOne(n => n.Simulation);
         }
@@ -237,6 +277,64 @@ namespace MUNity.Database.Context
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)
         {
 
+        }
+
+        public override int SaveChanges()
+        {
+            ChangeTracker.DetectChanges();
+
+            var markedAsDeleted = ChangeTracker.Entries().Where(x => x.State == EntityState.Deleted);
+
+            foreach (var item in markedAsDeleted)
+            {
+                if (item.Entity is IIsDeleted entity)
+                {
+                    // Set the entity to unchanged (if we mark the whole entity as Modified, every field gets sent to Db as an update)
+                    item.State = EntityState.Unchanged;
+                    // Only update the IsDeleted flag - only this will get sent to the Db
+                    entity.IsDeleted = true;
+                }
+            }
+            return base.SaveChanges();
+        }
+
+        /// <summary>
+        /// Saves the Database Changes but ignores all elements that are protected by soft-deletion.
+        /// This will completely remove these elements
+        /// </summary>
+        /// <returns></returns>
+        public int SaveChangesWithoutSoftDelete()
+        {
+            return base.SaveChanges();
+        }
+
+        /// <summary>
+        /// Saves the Database Changes but ignores all elements that are protected by soft-deletion.
+        /// This will completely remove these elements
+        /// </summary>
+        /// <returns></returns>
+        public Task<int> SaveChangesWithoutSoftDeleteAsync()
+        {
+            return base.SaveChangesAsync();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            ChangeTracker.DetectChanges();
+            var markedAsDeleted = ChangeTracker.Entries().Where(x => x.State == EntityState.Deleted);
+
+            foreach (var item in markedAsDeleted)
+            {
+                if (item.Entity is IIsDeleted entity)
+                {
+                    // Set the entity to unchanged (if we mark the whole entity as Modified, every field gets sent to Db as an update)
+                    item.State = EntityState.Unchanged;
+                    // Only update the IsDeleted flag - only this will get sent to the Db
+                    entity.IsDeleted = true;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

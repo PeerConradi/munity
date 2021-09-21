@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using MUNity.Database.Interfaces;
 using MUNity.Database.Models.Conference;
 using MUNityCore.Models;
 
@@ -12,7 +13,7 @@ namespace MUNity.Database.Models.Organization
 {
 
     [DataContract]
-    public class Organization
+    public class Organization : IIsDeleted
     {
         public string OrganizationId { get; set; }
 
@@ -38,5 +39,7 @@ namespace MUNity.Database.Models.Organization
             Member = new List<OrganizationMember>();
             Projects = new List<Project>();
         }
+
+        public bool IsDeleted { get; set; }
     }
 }

@@ -1,0 +1,55 @@
+﻿<!-- Create Project Modal -->
+@inject Services.ConferenceService conferenceService;
+
+@if (isVisible)
+{
+    <div class="modal fade show" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">@Title</h4>
+                    <button type="button" class="btn-close" @onclick="Hide"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="oi oi-info"></i> @Title</h5>
+                        <p>@Warning</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-white" @onclick="this.Hide">Close</button>
+                    <button class="btn btn-danger" @onclick="this.Confirm" >Bestätigen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    private bool isVisible = false;
+
+    [Parameter] public string Title { get; set; }
+
+    [Parameter] public string Warning { get; set; }
+
+    [Parameter] public Task OnAccepted { get; set; }
+
+    public void Show()
+    {
+        isVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        isVisible = false;
+    }
+
+    private void Confirm()
+    {
+        OnAccepted.Start();
+        this.Hide();
+    }
+}

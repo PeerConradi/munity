@@ -35,6 +35,10 @@ namespace MUNity.Database.Models.Conference
 
         public Conference Conference { get; set; }
 
+        public Delegation ParentDelegation { get; set; }
+
+        public List<Delegation> ChildDelegations { get; set; }
+
         public List<ConferenceDelegateRole> Roles { get; set; }
 
         public Delegation()

@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MUNityServices\MUNityServices.csproj" />
+    <ProjectReference Include="..\MUNityServices\MUNity.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -109,97 +109,7 @@ namespace MUNity.Services
             context.RoleAuths.Add(defaultParticipantAuth);
         }
 
-        public async Task<CreateTeamRoleGroupResponse> CreateRoleGroupAsync(CreateTeamRoleGroupRequest request, ClaimsPrincipal claim)
-        {
-            var response = new CreateTeamRoleGroupResponse();
-            var isAllowed = await authService.IsUserAllowedToEditTeam(request.ConferenceId, claim);
-            if (!isAllowed)
-            {
-                response.AddNoPermissionError();
-                return response;
-            }
-
-            var conference = context.Conferences.FirstOrDefault(n => n.ConferenceId == request.ConferenceId);
-            if (conference == null)
-                response.AddNotFoundError(nameof(request.ConferenceId));
-            
-
-            if (context.TeamRoleGroups.Any(n => n.Conference.ConferenceId == request.ConferenceId && n.Name == request.GroupName))
-                response.AddNotFoundError(nameof(request.GroupName));
-            
-
-            if (context.TeamRoleGroups.Any(n => n.Conference.ConferenceId == request.ConferenceId && n.FullName == request.GroupFullName))
-                response.AddNotFoundError(nameof(request.GroupFullName));
-            
-
-            if (context.TeamRoleGroups.Any(n => n.Conference.ConferenceId == request.ConferenceId && n.TeamRoleGroupShort == request.GroupShort))
-                response.AddNotFoundError(nameof(request.GroupShort));
-            
-
-            if (response.HasError)
-                return response;
-
-            var group = new TeamRoleGroup()
-            {
-                Conference = conference,
-                FullName = request.GroupFullName,
-                GroupLevel = request.GroupLevel,
-                Name = request.GroupName,
-                TeamRoleGroupShort = request.GroupShort
-            };
-
-            context.TeamRoleGroups.Add(group);
-            context.SaveChanges();
-            response.CreatedGroupId = group.TeamRoleGroupId;
-            return response;
-        }
-
-        public async Task<CreateTeamRoleResponse> CreateTeamRoleAsync(CreateTeamRoleRequest request, ClaimsPrincipal claim)
-        {
-            var response = new CreateTeamRoleResponse();
-            var group = context.TeamRoleGroups.Include(n => n.Conference)
-                .FirstOrDefault(n => n.TeamRoleGroupId == request.RoleGroupId);
-
-            if (group == null)
-            {
-                response.AddInvalidDataError("The given group was not found", nameof(request.RoleGroupId));
-                return response;
-            }
-
-            var isAllowed = await authService.IsUserAllowedToEditTeam(group.Conference.ConferenceId, claim);
-            if (!isAllowed)
-            {
-                response.AddNoPermissionError("You don't have permission to create a Team role");
-                return response;
-            }
-
-            ConferenceTeamRole parentRole = null;
-            if (request.ParentRoleId != -1)
-            {
-                // We are also checking for the ConferenceId to make sure that the given Parent role is in
-                // the same conference!
-                parentRole = context.TeamRoles.FirstOrDefault(n =>
-                n.RoleId == request.ParentRoleId &&
-                n.Conference.ConferenceId == group.Conference.ConferenceId);
-            }
-
-
-            var role = new ConferenceTeamRole()
-            {
-                Conference = group.Conference,
-                ParentTeamRole = parentRole,
-                RoleName = request.RoleName,
-                RoleShort = request.RoleShort,
-                RoleFullName = request.RoleFullName,
-                TeamRoleGroup = group,
-                TeamRoleLevel = 0
-            };
-            context.TeamRoles.Add(role);
-            context.SaveChanges();
-            response.RoleId = role.RoleId;
-
-            return response;
-        }
+        
 
         public ManageTeamInfo GetTeamDashboard(string conferenceId)
         {
@@ -530,6 +440,12 @@ namespace MUNity.Services
                 return null;
 
             var mdl = context.Conferences
+                .Include(n => n.ConferenceProject)
+                .ThenInclude(n => n.ProjectOrganization)
+                .Include(n => n.Roles)
+                .Include(n => n.Delegations)
+                .AsSingleQuery()
+                .AsNoTracking()
                 .Select(conf => new ConferenceRolesInfo()
                 {
                     ConferenceId = conf.ConferenceId,
@@ -559,7 +475,7 @@ namespace MUNity.Services
                     }).ToList()
                 }).FirstOrDefault(n => n.ConferenceId == conferenceId);
 
-            mdl.Countries = context.Countries.Select(n => new CountryInfo()
+            mdl.Countries = context.Countries.AsNoTracking().Select(n => new CountryInfo()
             {
                 Name = n.Name,
                 CountryId = n.CountryId

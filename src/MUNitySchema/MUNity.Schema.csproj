@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MUNityBase\MUNityBase.csproj" />
+    <ProjectReference Include="..\MUNityBase\MUNity.Base.csproj" />
   </ItemGroup>
 
   <ItemGroup>

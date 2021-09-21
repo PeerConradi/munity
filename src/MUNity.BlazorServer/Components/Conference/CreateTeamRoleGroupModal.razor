@@ -1,5 +1,5 @@
 ﻿<!-- Create Project Modal -->
-@inject Services.ConferenceService conferenceService;
+@inject Services.ConferenceRoleService _conferenceRoleService
 
 @if (isVisible)
 {
@@ -118,7 +118,7 @@
         var claim = (await authStateTask)?.User;
         if (claim != null)
         {
-            this.response = await conferenceService.CreateRoleGroupAsync(request, claim);
+            this.response = await _conferenceRoleService.CreateTeamRoleGroupAsync(request, claim);
             if (!response.HasError)
                 await GroupCreated.InvokeAsync();
         }
