@@ -69,7 +69,7 @@ namespace MUNity.Services
 
             context.Organizations.Add(organization);
             context.OrganizationRoles.Add(orgaAdminRole);
-            context.OrganizationMember.Add(membership);
+            context.OrganizationMembers.Add(membership);
             context.SaveChanges();
             return organization;
         }
@@ -129,7 +129,7 @@ namespace MUNity.Services
 
         public bool IsUsernameMemberOfOrganiation(string username, string organizationId)
         {
-            return context.OrganizationMember.AsNoTracking().Any(n => n.User.UserName == username && n.Organization.OrganizationId == organizationId);
+            return context.OrganizationMembers.AsNoTracking().Any(n => n.User.UserName == username && n.Organization.OrganizationId == organizationId);
         }
 
         public bool IsMemberOfOrganization(ClaimsPrincipal principal, string organizationId)
@@ -213,7 +213,7 @@ namespace MUNity.Services
                     }).ToList()
                 })
                 .FirstOrDefault(n => n.OrganizationId == organizationId);
-            info.Memebrs = context.OrganizationMember
+            info.Memebrs = context.OrganizationMembers
                 .Where(n => n.Organization.OrganizationId == organizationId)
                 .Take(8)
                 .Select(a => new OrganizationMemberInfo()

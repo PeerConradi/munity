@@ -13,9 +13,10 @@ namespace MUNity.Database.Models.Conference
     /// <summary>
     /// The authorizations of a role inside a conference.
     /// </summary>
-    public class RoleAuth
+    public class ConferenceRoleAuth
     {
-        public int RoleAuthId { get; set; }
+        [Key]
+        public int ConferenceRoleAuthId { get; set; }
 
         [MaxLength(150)]
         public string RoleAuthName { get; set; }

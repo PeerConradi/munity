@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MUNity.Database.General;
+using MUNityBase;
 
 namespace MUNityDatabaseTest
 {
@@ -152,12 +154,12 @@ namespace MUNityDatabaseTest
             return user;
         }
 
-        public RoleAuth EnsureProjectOwnerAuth()
+        public ConferenceRoleAuth EnsureProjectOwnerAuth()
         {
-            var ownerAuth = _context.RoleAuths.FirstOrDefault(n => n.RoleAuthName == "Project-Owner");
+            var ownerAuth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.RoleAuthName == "Project-Owner");
             if (ownerAuth == null)
             {
-                ownerAuth = new RoleAuth()
+                ownerAuth = new ConferenceRoleAuth()
                 {
                     Conference = TestConference,
                     CanEditConferenceSettings = true,
@@ -166,18 +168,18 @@ namespace MUNityDatabaseTest
                     PowerLevel = 1,
                     RoleAuthName = "Project-Owner"
                 };
-                _context.RoleAuths.Add(ownerAuth);
+                _context.ConferenceRoleAuthorizations.Add(ownerAuth);
                 _context.SaveChanges();
             }
             return ownerAuth;
         }
 
-        public RoleAuth EnsureParticipantAuth()
+        public ConferenceRoleAuth EnsureParticipantAuth()
         {
-            var memberAuth = _context.RoleAuths.FirstOrDefault(n => n.RoleAuthName == "Participant");
+            var memberAuth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.RoleAuthName == "Participant");
             if (memberAuth == null)
             {
-                memberAuth = new RoleAuth()
+                memberAuth = new ConferenceRoleAuth()
                 {
                     Conference = TestConference,
                     CanEditConferenceSettings = true,
@@ -186,7 +188,7 @@ namespace MUNityDatabaseTest
                     PowerLevel = 1,
                     RoleAuthName = "Participant"
                 };
-                _context.RoleAuths.Add(memberAuth);
+                _context.ConferenceRoleAuthorizations.Add(memberAuth);
                 _context.SaveChanges();
             }
             return memberAuth;
@@ -194,7 +196,7 @@ namespace MUNityDatabaseTest
 
         public Delegation EnsureDelegation(string name, string fullName, string shortName)
         {
-            var delegation = _context.Delegation.FirstOrDefault(n => n.Name == name);
+            var delegation = _context.Delegations.FirstOrDefault(n => n.Name == name);
             if (delegation == null)
             {
                 delegation = new Delegation()
@@ -204,7 +206,7 @@ namespace MUNityDatabaseTest
                     FullName = fullName,
                     Name = name
                 };
-                _context.Delegation.Add(delegation);
+                _context.Delegations.Add(delegation);
                 _context.SaveChanges();
             }
             return delegation;
@@ -217,7 +219,7 @@ namespace MUNityDatabaseTest
             {
                 country = new Country()
                 {
-                    Continent = Country.EContinent.Europe,
+                    Continent = EContinent.Europe,
                     FullName = "Bundesrepublik Deutschland",
                     Iso = "de",
                     Name = "Deutschland"
@@ -241,13 +243,13 @@ namespace MUNityDatabaseTest
                     Conference = TestConference,
                     IconName = "de",
                     Delegation = EnsureDelegation("Deutschland", "Deutschland", "de"),
-                    RoleAuth = EnsureParticipantAuth(),
+                    ConferenceRoleAuth = EnsureParticipantAuth(),
                     IsDelegationLeader = true,
                     RoleFullName = "Abgeordneter Deutschlands",
                     RoleName = "Deutschland",
                     RoleShort = "DE",
                     Title = "Abgeordneter Deutschlands in der Generalversammlung",
-                    DelegateState = EnsureGermany()
+                    DelegateCountry = EnsureGermany()
                 };
 
                 _context.Delegates.Add(delegateRole);
@@ -264,13 +266,13 @@ namespace MUNityDatabaseTest
                 Conference = TestConference,
                 IconName = "de",
                 Delegation = delegation,
-                RoleAuth = EnsureParticipantAuth(),
+                ConferenceRoleAuth = EnsureParticipantAuth(),
                 IsDelegationLeader = true,
                 RoleFullName = "Abgeordneter Deutschlands",
                 RoleName = "Deutschland",
                 RoleShort = "DE",
                 Title = "Abgeordneter Deutschlands in der Generalversammlung",
-                DelegateState = EnsureGermany()
+                DelegateCountry = EnsureGermany()
             };
 
             _context.Delegates.Add(delegateRole);
@@ -309,7 +311,7 @@ namespace MUNityDatabaseTest
                     Conference = TestConference,
                     IconName = "pl",
                     RoleFullName = "Projektleiter",
-                    RoleAuth = leaderAuth,
+                    ConferenceRoleAuth = leaderAuth,
                     RoleName = "Projektleiter",
                     RoleShort = "PL",
                     TeamRoleGroup = leaderRoleGroup,

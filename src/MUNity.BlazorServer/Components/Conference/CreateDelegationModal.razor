@@ -7,7 +7,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Neue Delegation</h4>
+                    <h4 class="modal-title">Neue Delegations</h4>
                     <button type="button" class="btn-close" @onclick="() => Hide()"></button>
                 </div>
                 @if (response == null)
@@ -16,22 +16,22 @@
                         <DataAnnotationsValidator />
                         <ValidationSummary />
                         <div class="modal-body">
-                            <h3>Über Delegationen</h3>
-                            <p>Delegationen sind Gruppen, in welcher mehrere Delegationsrollen zusammengefasst werden können. Delegationen können hierbei sowohl Delegierte in Gremien wie auch Presse und andere Rollen enthalten.</p>
+                            <h3>Über Delegationsen</h3>
+                            <p>Delegationsen sind Gruppen, in welcher mehrere Delegationssrollen zusammengefasst werden können. Delegationsen können hierbei sowohl Delegierte in Gremien wie auch Presse und andere Rollen enthalten.</p>
 
                             <div class="row mb-15px">
-                                <label class="form-label col-form-label col-md-3">Delegationsname</label>
+                                <label class="form-label col-form-label col-md-3">Delegationssname</label>
                                 <div class="col-md-9">
                                     <InputText type="text" class="form-control mb-5px" placeholder="Name" @bind-Value="@request.DelegationName" />
-                                    <small class="fs-12px text-gray-500-darker">Ein Name für die Delegation</small>
+                                    <small class="fs-12px text-gray-500-darker">Ein Name für die Delegations</small>
                                 </div>
                             </div>
 
                             <div class="row mb-15px">
-                                <label class="form-label col-form-label col-md-3">Vollständiger Delegationsname</label>
+                                <label class="form-label col-form-label col-md-3">Vollständiger Delegationssname</label>
                                 <div class="col-md-9">
                                     <InputText type="text" class="form-control mb-5px" placeholder="Name" @bind-Value="@request.DelegationFullName" />
-                                    <small class="fs-12px text-gray-500-darker">Ein Name, welcher die Delegation genauer beschreibt, kann aber auch wie der Delegationsname sein.</small>
+                                    <small class="fs-12px text-gray-500-darker">Ein Name, welcher die Delegations genauer beschreibt, kann aber auch wie der Delegationssname sein.</small>
                                 </div>
                             </div>
 
@@ -39,14 +39,14 @@
                                 <label class="form-label col-form-label col-md-3">Kürzel</label>
                                 <div class="col-md-9">
                                     <InputText type="text" class="form-control mb-5px" placeholder="KURZ" @bind-Value="@request.DelegationShort" />
-                                    <small class="fs-12px text-gray-500-darker">Ein Kürzel für die Delegation</small>
+                                    <small class="fs-12px text-gray-500-darker">Ein Kürzel für die Delegations</small>
                                 </div>
                             </div>
 
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-white" @onclick="() => Hide()">Abbrechen</button>
-                            <button class="btn btn-success" type="submit">Delegation erstellen</button>
+                            <button class="btn btn-success" type="submit">Delegations erstellen</button>
                         </div>
                     </EditForm>
                 }
@@ -56,7 +56,7 @@
                         <div class="col-12">
                             @if (!response.HasError)
                             {
-                                <div class="alert alert-success">Delegation erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weitere Delegation erstellen</button></div>
+                                <div class="alert alert-success">Delegations erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weitere Delegations erstellen</button></div>
                             }
                         </div>
 

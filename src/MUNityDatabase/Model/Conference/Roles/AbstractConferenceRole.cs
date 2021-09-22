@@ -60,7 +60,7 @@ namespace MUNity.Database.Models.Conference.Roles
         /// <summary>
         /// the authorization of this role.
         /// </summary>
-        public RoleAuth RoleAuth { get; set; }
+        public ConferenceRoleAuth ConferenceRoleAuth { get; set; }
 
         /// <summary>
         /// an icon name for the role. the icon that will be displayed has to be chosen by

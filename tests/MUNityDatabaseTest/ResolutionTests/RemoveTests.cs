@@ -114,14 +114,14 @@ namespace MUNityDatabaseTest.ResolutionTests
 
             Assert.AreEqual(1, _context.Resolutions.Count());
             Assert.AreEqual(1, _context.OperativeParagraphs.Count());
-            Assert.AreEqual(1, _context.DeleteAmendments.Count());
+            Assert.AreEqual(1, _context.ResolutionDeleteAmendments.Count());
 
             _context.OperativeParagraphs.Remove(operativeParaph);
             _context.SaveChanges();
 
             Assert.AreEqual(1, _context.Resolutions.Count());
             Assert.AreEqual(0, _context.OperativeParagraphs.Count());
-            Assert.AreEqual(0, _context.DeleteAmendments.Count());
+            Assert.AreEqual(0, _context.ResolutionDeleteAmendments.Count());
         }
 
         [Test]
@@ -137,15 +137,15 @@ namespace MUNityDatabaseTest.ResolutionTests
             _context.SaveChanges();
 
             Assert.AreEqual(1, _context.Resolutions.Count());
-            Assert.AreEqual(1, _context.MoveAmendments.Count());
+            Assert.AreEqual(1, _context.ResolutionMoveAmendments.Count());
             Assert.AreEqual(1, _context.OperativeParagraphs.Count());
 
             _context.OperativeParagraphs.Remove(operativeParaph);
             _context.SaveChanges();
 
             Assert.AreEqual(1, _context.Resolutions.Count());
-            Assert.AreEqual(0, _context.MoveAmendments.Count());
-            Assert.AreEqual(0, _context.DeleteAmendments.Count());
+            Assert.AreEqual(0, _context.ResolutionMoveAmendments.Count());
+            Assert.AreEqual(0, _context.ResolutionDeleteAmendments.Count());
         }
 
         [Test]
@@ -162,14 +162,14 @@ namespace MUNityDatabaseTest.ResolutionTests
 
             Assert.AreEqual(1, _context.Resolutions.Count());
             Assert.AreEqual(1, _context.OperativeParagraphs.Count());
-            Assert.AreEqual(1, _context.ChangeAmendments.Count());
+            Assert.AreEqual(1, _context.ResolutionChangeAmendments.Count());
 
             _context.OperativeParagraphs.Remove(operativeParagraph);
             _context.SaveChanges();
 
             Assert.AreEqual(1, _context.Resolutions.Count());
             Assert.AreEqual(0, _context.OperativeParagraphs.Count());
-            Assert.AreEqual(0, _context.ChangeAmendments.Count());
+            Assert.AreEqual(0, _context.ResolutionChangeAmendments.Count());
 
         }
     }

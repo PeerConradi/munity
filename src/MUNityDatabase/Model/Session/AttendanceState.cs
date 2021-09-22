@@ -15,7 +15,7 @@ namespace MUNity.Database.Models.Session
             NotChecked
         }
 
-        public int AttendanceStateId { get; set; }
+        public long AttendanceStateId { get; set; }
 
         public AttendanceCheck AttendanceCheck { get; set; }
 

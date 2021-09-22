@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MUNity.Database.General;
+using MUNityBase;
 
 namespace MUNityDatabaseTest.ConferenceTests
 {
@@ -85,7 +87,7 @@ namespace MUNityDatabaseTest.ConferenceTests
         [Order(1)]
         public void TestCreateTeamRoleProjectLeader()
         {
-            var leaderAuth = new RoleAuth()
+            var leaderAuth = new ConferenceRoleAuth()
             {
                 Conference = conference,
                 CanEditConferenceSettings = true,
@@ -94,7 +96,7 @@ namespace MUNityDatabaseTest.ConferenceTests
                 PowerLevel = 1,
                 RoleAuthName = "Project-Owner"
             };
-            _context.RoleAuths.Add(leaderAuth);
+            _context.ConferenceRoleAuthorizations.Add(leaderAuth);
 
             var leaderRoleGroup = new TeamRoleGroup()
             {
@@ -110,7 +112,7 @@ namespace MUNityDatabaseTest.ConferenceTests
                 Conference = conference,
                 IconName = "pl",
                 RoleFullName = "Projektleiter",
-                RoleAuth = leaderAuth,
+                ConferenceRoleAuth = leaderAuth,
                 RoleName = "Projektleiter",
                 RoleShort = "PL",
                 TeamRoleGroup = leaderRoleGroup,
@@ -122,7 +124,7 @@ namespace MUNityDatabaseTest.ConferenceTests
 
             var leaderRoleCallback = _context.TeamRoles.FirstOrDefault();
             Assert.NotNull(leaderRoleCallback);
-            Assert.AreEqual(1, _context.RoleAuths.Count());
+            Assert.AreEqual(1, _context.ConferenceRoleAuthorizations.Count());
             Assert.AreEqual(1, _context.TeamRoles.Count());
             Assert.AreEqual(1, _context.TeamRoleGroups.Count());
             Assert.AreEqual("TeamRole", leaderRoleCallback.RoleType);
@@ -137,7 +139,7 @@ namespace MUNityDatabaseTest.ConferenceTests
 
             Assert.NotNull(leaderRole);
 
-            var firstLevelAuth = new RoleAuth()
+            var firstLevelAuth = new ConferenceRoleAuth()
             {
                 CanEditConferenceSettings = false,
                 CanEditParticipations = false,
@@ -147,7 +149,7 @@ namespace MUNityDatabaseTest.ConferenceTests
                 RoleAuthName = "Erweiterte Projektleitung",
             };
 
-            _context.RoleAuths.Add(firstLevelAuth);
+            _context.ConferenceRoleAuthorizations.Add(firstLevelAuth);
 
             var firstLevelGroup = new TeamRoleGroup()
             {
@@ -164,7 +166,7 @@ namespace MUNityDatabaseTest.ConferenceTests
                 Conference = conference,
                 IconName = "un",
                 ParentTeamRole = leaderRole,
-                RoleAuth = firstLevelAuth,
+                ConferenceRoleAuth = firstLevelAuth,
                 RoleFullName = "Team- und Materialkoordination",
                 RoleName = "Team- und Materialkoordination",
                 RoleShort = "TMK",
@@ -177,7 +179,7 @@ namespace MUNityDatabaseTest.ConferenceTests
                 Conference = conference,
                 IconName = "un",
                 ParentTeamRole = leaderRole,
-                RoleAuth = firstLevelAuth,
+                ConferenceRoleAuth = firstLevelAuth,
                 RoleFullName = "Finanzen",
                 RoleName = "Finanzen",
                 RoleShort = "CASH",
@@ -195,7 +197,7 @@ namespace MUNityDatabaseTest.ConferenceTests
         [Order(3)]
         public void TestCreateSecretaryGeneralRole()
         {
-            var participantAuth = new RoleAuth()
+            var participantAuth = new ConferenceRoleAuth()
             {
                 CanEditConferenceSettings = false,
                 CanEditParticipations = false,
@@ -204,13 +206,13 @@ namespace MUNityDatabaseTest.ConferenceTests
                 PowerLevel = 3,
                 RoleAuthName = "Teilnehmende"
             };
-            _context.RoleAuths.Add(participantAuth);
+            _context.ConferenceRoleAuthorizations.Add(participantAuth);
 
             var sgRole = new ConferenceSecretaryGeneralRole()
             {
                 Conference = conference,
                 IconName = "un",
-                RoleAuth = participantAuth,
+                ConferenceRoleAuth = participantAuth,
                 RoleFullName = "GeneralsekretärIn",
                 RoleName = "GeneralsekretärIn",
                 RoleShort = "GS",
@@ -228,7 +230,7 @@ namespace MUNityDatabaseTest.ConferenceTests
         [Order(4)]
         public void TestCreateDelegateRole()
         {
-            var auth = _context.RoleAuths.FirstOrDefault(n => n.Conference == conference && n.RoleAuthName == "Teilnehmende");
+            var auth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.Conference == conference && n.RoleAuthName == "Teilnehmende");
             Assert.NotNull(auth);
 
             var committee = _context.Committees.FirstOrDefault(n => n.Conference.ConferenceId == conference.ConferenceId);
@@ -238,15 +240,15 @@ namespace MUNityDatabaseTest.ConferenceTests
             {
                 Conference = conference,
                 DelegationShort = "DE",
-                FullName = "Delegation Deutschland",
+                FullName = "Delegations Deutschland",
                 Name = "Deutschland"
             };
 
-            _context.Delegation.Add(delegation);
+            _context.Delegations.Add(delegation);
 
             var country = new Country()
             {
-                Continent = Country.EContinent.Europe,
+                Continent = EContinent.Europe,
                 FullName = "Bundesrepublik Deutschland",
                 Iso = "de",
                 Name = "Deutschland"
@@ -260,13 +262,13 @@ namespace MUNityDatabaseTest.ConferenceTests
                 Conference = conference,
                 IconName = "de",
                 Delegation = delegation,
-                RoleAuth = auth,
+                ConferenceRoleAuth = auth,
                 IsDelegationLeader = true,
                 RoleFullName = "Abgeordneter Deutschlands",
                 RoleName = "Deutschland",
                 RoleShort = "DE",
                 Title = "Abgeordneter Deutschlands in der Generalversammlung",
-                DelegateState = country
+                DelegateCountry = country
             };
 
             _context.Delegates.Add(delegateRole);
@@ -278,7 +280,7 @@ namespace MUNityDatabaseTest.ConferenceTests
         [Order(5)]
         public void CreatePressRole()
         {
-            var auth = _context.RoleAuths.FirstOrDefault(n => n.Conference == conference && n.RoleAuthName == "Teilnehmende");
+            var auth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.Conference == conference && n.RoleAuthName == "Teilnehmende");
             Assert.NotNull(auth);
 
             var delegation = new Delegation()
@@ -289,17 +291,17 @@ namespace MUNityDatabaseTest.ConferenceTests
                 Name = "Presse"
             };
 
-            _context.Delegation.Add(delegation);
+            _context.Delegations.Add(delegation);
 
             var pressRole = new ConferenceDelegateRole()
             {
                 Committee = null,
                 Conference = conference,
-                DelegateState = null,
+                DelegateCountry = null,
                 Delegation = delegation,
                 IconName = "un",
                 IsDelegationLeader = true,
-                RoleAuth = auth,
+                ConferenceRoleAuth = auth,
                 RoleFullName = "Redaktionsleitung",
                 RoleName = "Redaktionsleitung",
                 RoleShort = "RL",
@@ -307,7 +309,7 @@ namespace MUNityDatabaseTest.ConferenceTests
             };
             _context.Delegates.Add(pressRole);
             _context.SaveChanges();
-            Assert.AreEqual(2, _context.Delegation.Count());
+            Assert.AreEqual(2, _context.Delegations.Count());
             Assert.AreEqual(2, _context.Delegates.Count());
         }
 
@@ -315,7 +317,7 @@ namespace MUNityDatabaseTest.ConferenceTests
         [Order(6)]
         public void CreateNonGovernmentRole()
         {
-            var auth = _context.RoleAuths.FirstOrDefault(n => n.Conference == conference && n.RoleAuthName == "Teilnehmende");
+            var auth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.Conference == conference && n.RoleAuthName == "Teilnehmende");
             Assert.NotNull(auth);
 
             var delegation = new Delegation()
@@ -326,21 +328,21 @@ namespace MUNityDatabaseTest.ConferenceTests
                 Name = "Amnesty International"
             };
 
-            _context.Delegation.Add(delegation);
+            _context.Delegations.Add(delegation);
 
             var role = new ConferenceDelegateRole()
             {
                 Delegation = delegation,
                 Committee = null,
                 Conference = conference,
-                DelegateState = null,
+                DelegateCountry = null,
                 IconName = "ai",
                 IsDelegationLeader = true,
                 RoleFullName = "Vertreter Amnesty International",
                 RoleName = "Amnesty International",
                 RoleShort = "Amnesty",
                 Title = "Nichtstaatlicher Akteur für Amnesty International",
-                RoleAuth = auth,
+                ConferenceRoleAuth = auth,
             };
 
             _context.Delegates.Add(role);

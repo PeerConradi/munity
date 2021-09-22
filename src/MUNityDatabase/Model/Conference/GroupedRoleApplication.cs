@@ -12,7 +12,7 @@ namespace MUNity.Database.Models.Conference
     /// <summary>
     /// Use this if you want a group of users make custom applications but every one of this applications
     /// should be collected in one giant stack and looked at together in one big bundle.
-    /// If you want multiple users to apply to the same Role or Delegation you can also use
+    /// If you want multiple users to apply to the same Role or Delegations you can also use
     /// GroupApplication.
     /// <see cref="GroupApplication"/>
     ///

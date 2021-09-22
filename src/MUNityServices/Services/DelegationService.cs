@@ -88,10 +88,10 @@ namespace MUNity.Services
             };
 
             string easyId = conference.ConferenceId + "-" + Util.IdGenerator.AsPrimaryKey(request.DelegationShort);
-            if (context.Delegation.All(n => n.DelegationId != easyId))
+            if (context.Delegations.All(n => n.DelegationId != easyId))
                 delegation.DelegationId = easyId;
 
-            context.Delegation.Add(delegation);
+            context.Delegations.Add(delegation);
             context.SaveChanges();
 
             return response;
@@ -130,7 +130,7 @@ namespace MUNity.Services
             if (!isAllowed)
                 return false;
 
-            var delegation = context.Delegation
+            var delegation = context.Delegations
                 .Include(n => n.Conference)
                 .FirstOrDefault(n => n.DelegationId == delegationId);
 

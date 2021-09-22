@@ -8,6 +8,7 @@ using MUNityCore.Models.User;
 using MUNityCore.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using MUNity.Database.General;
 using MUNity.Database.Models.User;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Organization;
@@ -34,19 +35,19 @@ namespace MUNity.Database.Context
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<CountryNameTranslation> CountryNameTranslations { get; set; }
+
         public DbSet<Organization> Organizations { get; set; }
 
         public DbSet<OrganizationRole> OrganizationRoles { get; set; }
 
-        public DbSet<OrganizationMember> OrganizationMember { get; set; }
+        public DbSet<OrganizationMember> OrganizationMembers { get; set; }
 
         public DbSet<Project> Projects { get; set; }
 
         public DbSet<Committee> Committees { get; set; }
 
-        public DbSet<Delegation> Delegation { get; set; }
-
-        public DbSet<ConferenceVisitorRole> Visitors { get; set; }
+        public DbSet<Delegation> Delegations { get; set; }
 
         public DbSet<ConferenceDelegateRole> Delegates { get; set; }
 
@@ -66,13 +67,9 @@ namespace MUNity.Database.Context
 
         public DbSet<Participation> Participations { get; set; }
 
-        public DbSet<RoleAuth> RoleAuths { get; set; }
+        public DbSet<ConferenceRoleAuth> ConferenceRoleAuthorizations { get; set; }
 
         public DbSet<RoleApplication> RoleApplications { get; set; }
-
-        public DbSet<GroupApplication> GroupApplications { get; set; }
-
-        public DbSet<GroupedRoleApplication> GroupedRoleApplications { get; set; }
 
         public DbSet<DelegationApplication> DelegationApplications { get; set; }
 
@@ -82,27 +79,41 @@ namespace MUNity.Database.Context
 
         public DbSet<ResolutionUser> ResolutionUsers { get; set; }
 
-        public DbSet<Simulation> Simulations { get; set; }
+        //public DbSet<Simulation> Simulations { get; set; }
 
-        public DbSet<SimulationRole> SimulationRoles { get; set; }
+        //public DbSet<SimulationRole> SimulationRoles { get; set; }
 
-        public DbSet<SimulationUser> SimulationUser { get; set; }
+        //public DbSet<SimulationUser> SimulationUser { get; set; }
+
+        //public DbSet<SimulationVoting> SimulationVotings { get; set; }
+
+        //public DbSet<SimulationVotingSlot> VotingSlots { get; set; }
+
+        //public DbSet<SimulationLog> SimulationLog { get; set; }
+
+        //public DbSet<SimulationInvite> SimulationInvites { get; set; }
+
+        //public DbSet<AgendaItem> AgendaItems { get; set; }
+
+        //public DbSet<PetitionType> PetitionTypes { get; set; }
+
+        //public DbSet<Petition> Petitions { get; set; }
+
+        //public DbSet<PetitionTypeSimulation> SimulationPetitionTypes { get; set; }
+
+        //public DbSet<SimulationStatus> SimulationStatuses { get; set; }
+
+        //public DbSet<SimulationPresents> PresentChecks { get; set; }
+
+        //public DbSet<PresentsState> PresentStates { get; set; }
 
         public DbSet<ListOfSpeakers> ListOfSpeakers { get; set; }
 
-        public DbSet<AgendaItem> AgendaItems { get; set; }
-
-        public DbSet<PetitionType> PetitionTypes { get; set; }
-
-        public DbSet<Petition> Petitions { get; set; }
-
-        public DbSet<PetitionTypeSimulation> SimulationPetitionTypes { get; set; }
-
         public DbSet<Speaker> Speakers { get; set; }
 
-        public DbSet<MunitySetting> Settings { get; set; }
+        public DbSet<ListOfSpeakersLog> ListOfSpeakersLogs { get; set; }
 
-        public DbSet<SimulationStatus> SimulationStatuses { get; set; }
+        public DbSet<MunitySetting> Settings { get; set; }
 
         public DbSet<ResaElement> Resolutions { get; set; }
 
@@ -112,30 +123,21 @@ namespace MUNity.Database.Context
 
         public DbSet<ResaSupporter> ResolutionSupporters { get; set; }
 
-        public DbSet<ResaAmendment> Amendments { get; set; }
-
-        public DbSet<ResaDeleteAmendment> DeleteAmendments { get; set; }
-        public DbSet<ResaChangeAmendment> ChangeAmendments { get; set; }
-        public DbSet<ResaMoveAmendment> MoveAmendments { get; set; }
-        public DbSet<ResaAddAmendment> AddAmendments { get; set; }
-
-        public DbSet<SimulationVoting> SimulationVotings { get; set; }
-
-        public DbSet<SimulationVotingSlot> VotingSlots { get; set; }
-
-        public DbSet<SimulationLog> SimulationLog { get; set; }
-
-        public DbSet<SimulationInvite> SimulationInvites { get; set; }
-
-        public DbSet<SimulationPresents> PresentChecks { get; set; }
-
-        public DbSet<PresentsState> PresentStates { get; set; }
-
-        public DbSet<ListOfSpeakersLog> ListOfSpeakersLog { get; set; }
+        public DbSet<ResaDeleteAmendment> ResolutionDeleteAmendments { get; set; }
+        public DbSet<ResaChangeAmendment> ResolutionChangeAmendments { get; set; }
+        public DbSet<ResaMoveAmendment> ResolutionMoveAmendments { get; set; }
+        public DbSet<ResaAddAmendment> ResolutionAddAmendments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Country>().HasMany(n => n.Translations)
+                .WithOne(n => n.Country)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CountryNameTranslation>()
+                .HasKey(n => new {n.CountryId, n.LanguageCode});
 
             modelBuilder.Entity<MunityUser>().HasKey(n => n.Id);
 

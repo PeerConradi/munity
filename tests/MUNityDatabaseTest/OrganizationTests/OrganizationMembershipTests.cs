@@ -53,7 +53,7 @@ namespace MUNityDatabaseTest.OrganizationTests
                 Role = role,
                 User = user
             };
-            _context.OrganizationMember.Add(membership);
+            _context.OrganizationMembers.Add(membership);
             _context.SaveChanges();
             Assert.NotNull(membership);
         }
@@ -62,7 +62,7 @@ namespace MUNityDatabaseTest.OrganizationTests
         [Order(3)]
         public void TestGetUsersOfOrganization()
         {
-            var users = _context.OrganizationMember.Where(n => n.Organization.OrganizationId == TestOrganization.OrganizationId);
+            var users = _context.OrganizationMembers.Where(n => n.Organization.OrganizationId == TestOrganization.OrganizationId);
             Assert.AreEqual(1, users.Count());
         }
 
@@ -86,7 +86,7 @@ namespace MUNityDatabaseTest.OrganizationTests
         [Order(6)]
         public void TestMember()
         {
-            var member = _context.OrganizationMember
+            var member = _context.OrganizationMembers
                 .Include(n => n.Organization)
                 .Include(n => n.User)
                 .Include(n => n.Role)

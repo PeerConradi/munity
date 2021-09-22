@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using MUNity.Database.Models.Resolution;
 
 namespace MUNity.Database.Models.Conference
 {
@@ -30,6 +31,8 @@ namespace MUNity.Database.Models.Conference
         public double Cost { get; set; }
 
         public double Paid { get; set; }
+
+        public List<ResaSupporter> SupportingResolutions { get; set; }
 
         /// <summary>
         /// The ParticipationSecret is a Key that can identify the user as a participant

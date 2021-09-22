@@ -47,10 +47,10 @@
                             @if (Delegations != null)
                             {
                                 <div class="row mb-15px">
-                                    <label class="form-label col-form-label col-md-3">Delegation</label>
+                                    <label class="form-label col-form-label col-md-3">Delegations</label>
                                     <div class="col-md-9">
                                         <InputSelect @bind-Value="@request.DelegationId" class="form-select">
-                                            <option value="">Keine Delegation</option>
+                                            <option value="">Keine Delegations</option>
                                             @foreach (var delegation in Delegations)
                                                         {
                                                 <option value="@delegation.DelegationId">@delegation.DelegationName</option>

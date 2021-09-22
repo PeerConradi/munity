@@ -22,7 +22,7 @@ namespace MUNity.Services
             if (isCreator)
                 return true;
 
-            var isAllowedTeamMember = context.Participations.Any(n => n.User.UserName == username && n.Role.Conference.ConferenceId == conferenceId && n.Role.RoleAuth.CanEditConferenceSettings == true);
+            var isAllowedTeamMember = context.Participations.Any(n => n.User.UserName == username && n.Role.Conference.ConferenceId == conferenceId && n.Role.ConferenceRoleAuth.CanEditConferenceSettings == true);
             return isAllowedTeamMember;
         }
 
@@ -40,7 +40,7 @@ namespace MUNity.Services
             if (isCreator)
                 return true;
 
-            var isAllowedTeamMember = context.Participations.Any(n => n.User.UserName == username && n.Role.Conference.ConferenceId == conferenceId && n.Role.RoleAuth.CanEditConferenceSettings == true);
+            var isAllowedTeamMember = context.Participations.Any(n => n.User.UserName == username && n.Role.Conference.ConferenceId == conferenceId && n.Role.ConferenceRoleAuth.CanEditConferenceSettings == true);
             return isAllowedTeamMember;
         }
 

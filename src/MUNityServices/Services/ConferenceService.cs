@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using MUNity.Database.General;
 using MUNity.Schema.Extensions;
 
 namespace MUNity.Services
@@ -75,7 +76,7 @@ namespace MUNity.Services
 
         private void CreateDefaultConferenceAuths(Conference conference)
         {
-            var defaultOwnerAuth = new RoleAuth()
+            var defaultOwnerAuth = new ConferenceRoleAuth()
             {
                 Conference = conference,
                 CanEditConferenceSettings = true,
@@ -84,9 +85,9 @@ namespace MUNity.Services
                 PowerLevel = 1,
                 RoleAuthName = "Conference-Admin",
             };
-            context.RoleAuths.Add(defaultOwnerAuth);
+            context.ConferenceRoleAuthorizations.Add(defaultOwnerAuth);
 
-            var defaultTeamMemberAuth = new RoleAuth()
+            var defaultTeamMemberAuth = new ConferenceRoleAuth()
             {
                 Conference = conference,
                 CanEditConferenceSettings = false,
@@ -95,9 +96,9 @@ namespace MUNity.Services
                 PowerLevel = 2,
                 RoleAuthName = "Team-Member"
             };
-            context.RoleAuths.Add(defaultTeamMemberAuth);
+            context.ConferenceRoleAuthorizations.Add(defaultTeamMemberAuth);
 
-            var defaultParticipantAuth = new RoleAuth()
+            var defaultParticipantAuth = new ConferenceRoleAuth()
             {
                 Conference = conference,
                 CanEditConferenceSettings = false,
@@ -106,7 +107,7 @@ namespace MUNity.Services
                 PowerLevel = 5,
                 RoleAuthName = "Participant"
             };
-            context.RoleAuths.Add(defaultParticipantAuth);
+            context.ConferenceRoleAuthorizations.Add(defaultParticipantAuth);
         }
 
         
@@ -291,7 +292,7 @@ namespace MUNity.Services
                     Name = a.Name
                 }).ToList();
 
-            info.Delegations = context.Delegation
+            info.Delegations = context.Delegations
                 .Where(n => n.Conference.ConferenceId == conference.ConferenceId)
                 .Select(n => new DelegationInfo()
                 {
@@ -303,8 +304,8 @@ namespace MUNity.Services
                 .Where(n => n.Committee.CommitteeId == committeeId)
                 .Select(n => new CommitteeSeatInfo()
                 {
-                    CountryId = n.DelegateState.CountryId,
-                    CountryName = n.DelegateState.Name,
+                    CountryId = n.DelegateCountry.CountryId,
+                    CountryName = n.DelegateCountry.Name,
                     DelegationId = n.Delegation.DelegationId,
                     DelegationName = n.Delegation.Name,
                     RoleId = n.RoleId,
@@ -347,7 +348,7 @@ namespace MUNity.Services
             Delegation delegation = null;
             if (!string.IsNullOrEmpty(request.DelegationId))
             {
-                delegation = context.Delegation.FirstOrDefault(n => n.DelegationId == request.DelegationId);
+                delegation = context.Delegations.FirstOrDefault(n => n.DelegationId == request.DelegationId);
                 if (delegation == null)
                 {
                     response.AddNotFoundError(nameof(request.DelegationId));
@@ -361,7 +362,7 @@ namespace MUNity.Services
             {
                 Committee = committee,
                 Conference = committee.Conference,
-                DelegateState = country,
+                DelegateCountry = country,
                 DelegateType = request.Subtype,
                 Delegation = delegation,
                 RoleName = request.RoleName,
@@ -405,7 +406,7 @@ namespace MUNity.Services
             Delegation delegation = null;
             if (!string.IsNullOrEmpty(request.DelegationId))
             {
-                delegation = context.Delegation.FirstOrDefault(n => n.DelegationId == request.DelegationId);
+                delegation = context.Delegations.FirstOrDefault(n => n.DelegationId == request.DelegationId);
                 if (delegation == null)
                 {
                     response.AddNotFoundError(nameof(request.DelegationId));
@@ -419,7 +420,7 @@ namespace MUNity.Services
             {
                 Committee = null,
                 Conference = conference,
-                DelegateState = country,
+                DelegateCountry = country,
                 DelegateType = request.Subtype,
                 Delegation = delegation,
                 RoleName = request.RoleName,

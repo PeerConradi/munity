@@ -1,4 +1,5 @@
 ﻿using System;
+using MUNity.Database.Models.Conference;
 
 namespace MUNity.Database.Models.Resolution
 {
@@ -7,6 +8,8 @@ namespace MUNity.Database.Models.Resolution
         public string ResaSupporterId { get; set; }
 
         public string Name { get; set; }
+
+        public Participation Participation { get; set; }
 
         public ResaElement Resolution { get; set; }
 

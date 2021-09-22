@@ -13,9 +13,9 @@ namespace MUNity.Database.Models.Conference
     {
         public int DelegationApplicationId { get; set; }
 
-        public DelegationApplicationPickedDelegation Delegations { get; set; }
+        public List<DelegationApplicationPickedDelegation> Delegations { get; set; }
 
-        public DelegationApplicationUserEntry Users { get; set; }
+        public List<DelegationApplicationUserEntry> Users { get; set; }
 
         public DateTime ApplyDate { get; set; }
 
@@ -24,6 +24,7 @@ namespace MUNity.Database.Models.Conference
         public string Motivation { get; set; }
 
         public ApplicationStatuses Status { get; set; }
+
     }
 
     public class DelegationApplicationUserEntry

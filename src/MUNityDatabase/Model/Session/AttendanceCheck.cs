@@ -8,7 +8,7 @@ namespace MUNity.Database.Models.Session
 {
     public class AttendanceCheck
     {
-        public int AttendanceCheckId { get; set; }
+        public long AttendanceCheckId { get; set; }
 
         public DateTime AttendanceDate { get; set; }
 
