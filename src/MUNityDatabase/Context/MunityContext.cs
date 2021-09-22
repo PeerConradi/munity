@@ -136,6 +136,8 @@ namespace MUNity.Database.Context
                 .WithOne(n => n.Country)
                 .OnDelete(DeleteBehavior.Cascade);
 
+           
+
             modelBuilder.Entity<CountryNameTranslation>()
                 .HasKey(n => new {n.CountryId, n.LanguageCode});
 
@@ -337,6 +339,15 @@ namespace MUNity.Database.Context
             }
 
             return base.SaveChangesAsync(cancellationToken);
+        }
+
+        public static MunityContext FromSqlLite(string databaseName)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
+            optionsBuilder.UseSqlite($"Data Source={databaseName}.db");
+            var context = new MunityContext(optionsBuilder.Options);
+            context.Database.EnsureCreated();
+            return context;
         }
     }
 }

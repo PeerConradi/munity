@@ -29,8 +29,6 @@ namespace MUNity.Database.Models.Organization
 
         public List<Project> Projects { get; set; }
 
-        [Timestamp]
-        public byte[] OrganizationTimestamp { get; set; }
 
         public Organization()
         {

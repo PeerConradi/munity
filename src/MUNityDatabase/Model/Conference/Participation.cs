@@ -42,7 +42,5 @@ namespace MUNity.Database.Models.Conference
         [MaxLength(200)]
         public string ParticipationSecret { get; set; }
 
-        [Timestamp]
-        public byte[] ParticipationTimestamp { get; set; }
     }
 }

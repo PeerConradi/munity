@@ -93,7 +93,7 @@ namespace MUNity.Database.Test.GeneralTests
         }
 
         [Test]
-        [Order(10)]
+        [Order(11)]
         public void TestTranslationHasCountry()
         {
             var translation = _context.CountryNameTranslations
@@ -102,7 +102,7 @@ namespace MUNity.Database.Test.GeneralTests
         }
 
         [Test]
-        [Order(11)]
+        [Order(12)]
         public void TestTranslationHasLanguageCode()
         {
             var translation = _context.CountryNameTranslations
@@ -111,7 +111,7 @@ namespace MUNity.Database.Test.GeneralTests
         }
 
         [Test]
-        [Order(12)]
+        [Order(13)]
         public void TestTranslationHasName()
         {
             var translation = _context.CountryNameTranslations
@@ -120,7 +120,7 @@ namespace MUNity.Database.Test.GeneralTests
         }
 
         [Test]
-        [Order(13)]
+        [Order(14)]
         public void TestTranslationHasFullName()
         {
             var translation = _context.CountryNameTranslations
@@ -129,7 +129,7 @@ namespace MUNity.Database.Test.GeneralTests
         }
 
         [Test]
-        [Order(14)]
+        [Order(15)]
         public void TestRemovingCountry()
         {
             var country = _context.Countries.First();
@@ -140,7 +140,7 @@ namespace MUNity.Database.Test.GeneralTests
         }
 
         [Test]
-        [Order(15)]
+        [Order(16)]
         public void TestAddBaseCountries()
         {
             foreach (var baseCountry in MUNity.Database.BaseData.Countries.BaseCountries)

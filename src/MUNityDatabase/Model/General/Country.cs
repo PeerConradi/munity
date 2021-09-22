@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic.CompilerServices;
 using MUNityBase;
 
 namespace MUNity.Database.General
@@ -32,9 +33,6 @@ namespace MUNity.Database.General
         public string Iso { get; set; }
 
         public bool IsAccredited { get; set; }
-
-        [Timestamp]
-        public byte[] CountryTimestamp { get; set; }
 
         public List<CountryNameTranslation> Translations { get; set; }
 

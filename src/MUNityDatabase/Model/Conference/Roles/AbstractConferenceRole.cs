@@ -99,11 +99,6 @@ namespace MUNity.Database.Models.Conference.Roles
        
         public string RoleType { get; [Obsolete("This is the concurrencyToken please only read")]set; }
 
-        /// <summary>
-        /// The timestamp when this role had been created or last changed.
-        /// </summary>
-        [Timestamp]
-        public byte[] RoleTimestamp { get; set; }
 
         public List<Participation> Participations { get; set; }
     }

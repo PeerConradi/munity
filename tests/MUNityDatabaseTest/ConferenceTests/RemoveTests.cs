@@ -71,5 +71,19 @@ namespace MUNityDatabaseTest.ConferenceTests
             Assert.AreEqual(1, _context.Organizations.Where(n => n.IsDeleted).Count());
             Assert.AreEqual(1, _context.Projects.Where(n => n.IsDeleted).Count());
         }
+
+        [Test]
+        public async Task TestRemoveOrganizationAsync()
+        {
+            var organization = new Organization();
+            _context.Organizations.Add(organization);
+            await _context.SaveChangesAsync();
+
+            Assert.AreEqual(1, _context.Organizations.Count());
+
+            _context.Organizations.Remove(organization);
+            await _context.SaveChangesAsync();
+            Assert.AreEqual(1, _context.Organizations.Count(n => n.IsDeleted));
+        }
     }
 }

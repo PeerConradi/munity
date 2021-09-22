@@ -76,12 +76,6 @@ namespace MUNity.Database.Models.Conference
         /// </summary>
         public List<Session.CommitteeSession> Sessions { get; set; }
 
-        /// <summary>
-        /// The timestamp when this committee has been created or last changed.
-        /// </summary>
-        [Timestamp]
-        public byte[] CommitteeTimestamp { get; set; }
-
         public List <Resolution.ResolutionAuth> Resolutions { get; set; }
 
 

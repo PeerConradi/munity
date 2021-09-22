@@ -38,8 +38,6 @@ namespace MUNity.Database.Models.Conference
 
         public DateTime ApplicationDate { get; set; }
 
-        [Timestamp]
-        public byte[] GroupApplicationTimestamp { get; set; }
 
         public GroupApplication()
         {

@@ -28,7 +28,5 @@ namespace MUNity.Database.Models.Conference
 
         public DateTime CreateTime { get; set; }
 
-        [Timestamp]
-        public byte[] GroupedRoleApplicationTimestamp { get; set; }
     }
 }

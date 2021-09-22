@@ -56,7 +56,6 @@ namespace MUNity.Database.Models.Conference
         /// </summary>
         public bool CanEditParticipations { get; set; }
 
-        [Timestamp]
-        public byte[] RoleAuthTimestamp { get; set; }
+
     }
 }

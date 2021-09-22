@@ -36,7 +36,6 @@ namespace MUNity.Database.Models.Conference
         
         public string Content { get; set; }
 
-        [Timestamp]
-        public byte[] RoleApplicationTimestamp { get; set; }
+
     }
 }
