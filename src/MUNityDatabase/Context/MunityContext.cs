@@ -8,6 +8,7 @@ using MUNityCore.Models.User;
 using MUNityCore.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MUNity.Database.General;
 using MUNity.Database.Models.User;
 using MUNity.Database.Models.Conference;
@@ -299,7 +300,79 @@ namespace MUNity.Database.Context
                     entity.IsDeleted = true;
                 }
             }
+
+            HandleEasyId();
+
+            
             return base.SaveChanges();
+        }
+
+        private void HandleEasyId()
+        {
+            var markedAsNew = ChangeTracker.Entries().Where(x => x.State == EntityState.Added);
+            foreach (var entityEntry in markedAsNew)
+            {
+                switch (entityEntry.Entity)
+                {
+                    case Organization organization:
+                        HandleEasyIdOrganization(organization);
+                        break;
+                    case Project project:
+                        HandleEasyIdProject(project);
+                        break;
+                    case Conference conference:
+                        HandleEasyIdConference(conference);
+                        break;
+                    case Committee committee:
+                        HandleEasyIdCommittee(committee);
+                        break;
+                    
+                }
+            }
+        }
+
+        
+
+        private void HandleEasyIdOrganization(Organization organization)
+        {
+            var easyId = Util.IdGenerator.AsPrimaryKey(organization.OrganizationShort);
+            if (string.IsNullOrWhiteSpace(easyId)) return;
+
+            if (Organizations.All(n => n.OrganizationId != easyId))
+                organization.OrganizationId = easyId;
+        }
+
+        private void HandleEasyIdProject(Project project)
+        {
+            var easyId = Util.IdGenerator.AsPrimaryKey(project.ProjectShort);
+            if (string.IsNullOrWhiteSpace(easyId)) return;
+
+            if (Projects.All(n => n.ProjectId != easyId))
+                project.ProjectId = easyId;
+        }
+
+        private void HandleEasyIdConference(Conference conference)
+        {
+            if (string.IsNullOrWhiteSpace(conference.ConferenceShort)) return;
+
+            var easyId = Util.IdGenerator.AsPrimaryKey(conference.ConferenceShort);
+            if (string.IsNullOrWhiteSpace(easyId)) return;
+
+            if (Conferences.All(n => n.ConferenceId != easyId))
+                conference.ConferenceId = easyId;
+        }
+
+        private void HandleEasyIdCommittee(Committee committee)
+        {
+            if (committee.Conference == null || string.IsNullOrEmpty(committee.CommitteeShort)) return;
+
+            var committeeEasy = Util.IdGenerator.AsPrimaryKey(committee.CommitteeShort);
+            if (string.IsNullOrWhiteSpace(committeeEasy)) return;
+
+            var easyCommitteeId = committee.Conference.ConferenceId + "-" +
+                                  committeeEasy;
+            if (this.Committees.All(n => n.CommitteeId != easyCommitteeId))
+                committee.CommitteeId = easyCommitteeId;
         }
 
         /// <summary>
@@ -337,6 +410,8 @@ namespace MUNity.Database.Context
                     entity.IsDeleted = true;
                 }
             }
+
+            HandleEasyId();
 
             return base.SaveChangesAsync(cancellationToken);
         }

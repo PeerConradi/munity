@@ -69,19 +69,21 @@ namespace MUNity.Database.Models.Conference
         /// <summary>
         /// Topics of this committee.
         /// </summary>
-        public List<CommitteeTopic> Topics { get; set; }
+        public ICollection<CommitteeTopic> Topics { get; set; }
 
         /// <summary>
         /// List of sessions of the committee.
         /// </summary>
-        public List<Session.CommitteeSession> Sessions { get; set; }
+        public ICollection<Session.CommitteeSession> Sessions { get; set; }
 
-        public List <Resolution.ResolutionAuth> Resolutions { get; set; }
+        public ICollection <Resolution.ResolutionAuth> Resolutions { get; set; }
 
 
         public Committee()
         {
             CommitteeId = Guid.NewGuid().ToString();
+            Topics = new List<CommitteeTopic>();
+            ChildCommittees = new List<Committee>();
         }
     }
 }

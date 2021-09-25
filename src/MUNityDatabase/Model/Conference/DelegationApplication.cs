@@ -23,6 +23,17 @@ namespace MUNity.Database.Models.Conference
 
         public string Motivation { get; set; }
 
+        public string Experience { get; set; }
+
+        public string SchoolName { get; set; }
+
+        public int? SchoolId { get; set; }
+
+        /// <summary>
+        /// Are Others able to see this application and add themselfs to it.
+        /// </summary>
+        public bool OpenToPublic { get; set; }
+
         public ApplicationStatuses Status { get; set; }
 
     }

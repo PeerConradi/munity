@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Fluent\" />
     <Folder Include="Interfaces\" />
   </ItemGroup>
 

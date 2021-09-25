@@ -25,12 +25,8 @@ namespace MUNity.Database.Models.Conference
 
         public string TopicDescription { get; set; }
 
-        [MaxLength(18)]
+        [MaxLength(32)]
         public string TopicCode { get; set; }
-
-        [Timestamp]
-        public byte[] CommitteeTopicTimestamp { get; set; }
-
 
         public Committee Committee { get; set; }
     }

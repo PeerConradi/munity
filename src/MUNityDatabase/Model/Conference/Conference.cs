@@ -43,6 +43,8 @@ namespace MUNity.Database.Models.Conference
 
         public List<AbstractConferenceRole> Roles { get; set; }
 
+        public ICollection<TeamRoleGroup> TeamRoleGroups { get; set; }
+
         public List<Delegation> Delegations { get; set; }
 
         public Project ConferenceProject { get; set; }
@@ -56,6 +58,8 @@ namespace MUNity.Database.Models.Conference
         {
             ConferenceId = Guid.NewGuid().ToString();
             Committees = new List<Committee>();
+            TeamRoleGroups = new List<TeamRoleGroup>();
+            Roles = new List<AbstractConferenceRole>();
             Visibility = EConferenceVisibilityMode.Users;
             CreationDate = DateTime.Now;
         }

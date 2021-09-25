@@ -36,7 +36,5 @@ namespace MUNity.Database.Models.Conference
 
         public List<ConferenceTeamRole> TeamRoles { get; set; } = new List<ConferenceTeamRole>();
 
-        [Timestamp]
-        public byte[] TeamRoleGroupTimestamp { get; set; }
     }
 }
