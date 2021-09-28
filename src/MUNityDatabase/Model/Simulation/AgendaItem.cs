@@ -27,7 +27,7 @@ namespace MUNity.Database.Models.Simulation
         public DateTime? DueDate { get; set; }
         public DateTime? DoneDate { get; set; }
         public int OrderIndex { get; set; }
-        public List<Petition> Petitions { get; set; }
+        public ICollection<Petition> Petitions { get; set; }
 
         public Simulation Simulation { get; set; }
 

@@ -34,7 +34,7 @@ namespace MUNity.Database.General
 
         public bool IsAccredited { get; set; }
 
-        public List<CountryNameTranslation> Translations { get; set; }
+        public ICollection<CountryNameTranslation> Translations { get; set; }
 
         public Country(short id, EContinent continent, string name, string fullName, string iso, bool isAccredited = true)
         {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using MUNityCore.Models.User;
 using MUNityCore.Models;
@@ -335,24 +336,35 @@ namespace MUNity.Database.Context
 
         private void HandleEasyIdOrganization(Organization organization)
         {
+            if (!string.IsNullOrWhiteSpace(organization.OrganizationId)) return;
+
             var easyId = Util.IdGenerator.AsPrimaryKey(organization.OrganizationShort);
             if (string.IsNullOrWhiteSpace(easyId)) return;
 
             if (Organizations.All(n => n.OrganizationId != easyId))
                 organization.OrganizationId = easyId;
+            else
+                organization.OrganizationId = Guid.NewGuid().ToString();
+            
         }
 
         private void HandleEasyIdProject(Project project)
         {
+            if (!string.IsNullOrWhiteSpace(project.ProjectId)) return;
+
             var easyId = Util.IdGenerator.AsPrimaryKey(project.ProjectShort);
             if (string.IsNullOrWhiteSpace(easyId)) return;
 
             if (Projects.All(n => n.ProjectId != easyId))
                 project.ProjectId = easyId;
+            else
+                project.ProjectId = Guid.NewGuid().ToString();
         }
 
         private void HandleEasyIdConference(Conference conference)
         {
+            if (!string.IsNullOrWhiteSpace(conference.ConferenceId)) return;
+
             if (string.IsNullOrWhiteSpace(conference.ConferenceShort)) return;
 
             var easyId = Util.IdGenerator.AsPrimaryKey(conference.ConferenceShort);
@@ -360,19 +372,30 @@ namespace MUNity.Database.Context
 
             if (Conferences.All(n => n.ConferenceId != easyId))
                 conference.ConferenceId = easyId;
+            else
+                conference.ConferenceId = Guid.NewGuid().ToString();
         }
 
         private void HandleEasyIdCommittee(Committee committee)
         {
-            if (committee.Conference == null || string.IsNullOrEmpty(committee.CommitteeShort)) return;
+            if (!string.IsNullOrWhiteSpace(committee.CommitteeId)) return;
+
+            if (committee.Conference == null || string.IsNullOrEmpty(committee.CommitteeShort))
+            {
+                committee.CommitteeId = Guid.NewGuid().ToString();
+                return;
+            }
 
             var committeeEasy = Util.IdGenerator.AsPrimaryKey(committee.CommitteeShort);
             if (string.IsNullOrWhiteSpace(committeeEasy)) return;
 
             var easyCommitteeId = committee.Conference.ConferenceId + "-" +
                                   committeeEasy;
+            Console.WriteLine("Generated Easy Id: " + easyCommitteeId);
             if (this.Committees.All(n => n.CommitteeId != easyCommitteeId))
                 committee.CommitteeId = easyCommitteeId;
+            else
+                committee.CommitteeId = Guid.NewGuid().ToString();
         }
 
         /// <summary>
@@ -420,6 +443,8 @@ namespace MUNity.Database.Context
         {
             var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
             optionsBuilder.UseSqlite($"Data Source={databaseName}.db");
+            optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.LogTo(Console.WriteLine);
             var context = new MunityContext(optionsBuilder.Options);
             context.Database.EnsureCreated();
             return context;

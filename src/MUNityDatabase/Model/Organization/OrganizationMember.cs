@@ -30,7 +30,5 @@ namespace MUNity.Database.Models.Organization
 
         public DateTime JoinedDate { get; set; }
 
-        [Timestamp]
-        public byte[] OrganizationMemberTimestamp { get; set; }
     }
 }

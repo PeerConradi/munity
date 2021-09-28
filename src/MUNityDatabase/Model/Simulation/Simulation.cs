@@ -26,18 +26,18 @@ namespace MUNity.Database.Models.Simulation
         /// </summary>
         public string Password { get; set; }
 
-        public List<SimulationRole> Roles { get; set; }
+        public ICollection<SimulationRole> Roles { get; set; }
 
-        public List<SimulationUser> Users { get; set; }
+        public ICollection<SimulationUser> Users { get; set; }
 
         // Chat vorerst nicht speichern.
         //public List<AllChatMessage> AllChat { get; set; }
 
-        public List<SimulationStatus> Statuses { get; set; }
+        public ICollection<SimulationStatus> Statuses { get; set; }
 
-        public List<AgendaItem> AgendaItems { get; set; }
+        public ICollection<AgendaItem> AgendaItems { get; set; }
 
-        public List<PetitionTypeSimulation> PetitionTypes { get; set; }
+        public ICollection<PetitionTypeSimulation> PetitionTypes { get; set; }
 
         /// <summary>
         /// Die Redner in diesem Gremium.
@@ -46,9 +46,9 @@ namespace MUNity.Database.Models.Simulation
 
         public string CurrentResolutionId { get; set; }
 
-        public List<Resolution.ResolutionAuth> Resolutions { get; set; }
+        public ICollection<Resolution.ResolutionAuth> Resolutions { get; set; }
 
-        public List<SimulationPresents> PresentChecks { get; set; }
+        public ICollection<SimulationPresents> PresentChecks { get; set; }
 
 
         public Simulation()

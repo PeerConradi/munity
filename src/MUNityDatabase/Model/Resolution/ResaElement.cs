@@ -29,13 +29,13 @@ namespace MUNity.Database.Models.Resolution
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        public List<ResaPreambleParagraph> PreambleParagraphs { get; set; }
+        public ICollection<ResaPreambleParagraph> PreambleParagraphs { get; set; }
 
-        public List<ResaOperativeParagraph> OperativeParagraphs { get; set; }
+        public ICollection<ResaOperativeParagraph> OperativeParagraphs { get; set; }
 
         public string SupporterNames { get; set; }
 
-        public List<ResaAddAmendment> AddAmendments { get; set; }
+        public ICollection<ResaAddAmendment> AddAmendments { get; set; }
 
         public ResolutionAuth Authorization { get; set; }
 

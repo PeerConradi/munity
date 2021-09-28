@@ -24,7 +24,7 @@ namespace MUNity.Database.Models.Conference
 
         public string GroupName { get; set; }
 
-        public List<RoleApplication> Applications { get; set; }
+        public ICollection<RoleApplication> Applications { get; set; }
 
         public DateTime CreateTime { get; set; }
 

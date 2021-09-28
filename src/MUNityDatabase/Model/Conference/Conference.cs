@@ -19,8 +19,7 @@ namespace MUNity.Database.Models.Conference
     public class Conference
     {
 
-        [MaxLength(80)]
-        public string ConferenceId { get; set; }
+        [MaxLength(80)] public string ConferenceId { get; set; } = "";
         
         [MaxLength(150)]
         public string Name { get; set; }
@@ -39,24 +38,21 @@ namespace MUNity.Database.Models.Conference
 
         public MunityUser CreationUser { get; set; }
 
-        public List<Committee> Committees { get; set; }
+        public ICollection<Committee> Committees { get; set; }
 
-        public List<AbstractConferenceRole> Roles { get; set; }
+        public ICollection<AbstractConferenceRole> Roles { get; set; }
 
         public ICollection<TeamRoleGroup> TeamRoleGroups { get; set; }
 
-        public List<Delegation> Delegations { get; set; }
+        public ICollection<Delegation> Delegations { get; set; }
 
         public Project ConferenceProject { get; set; }
 
         public EConferenceVisibilityMode Visibility { get; set; }
 
-        [Timestamp]
-        public byte[] ConferenceTimestamp { get; set; }
 
         public Conference()
         {
-            ConferenceId = Guid.NewGuid().ToString();
             Committees = new List<Committee>();
             TeamRoleGroups = new List<TeamRoleGroup>();
             Roles = new List<AbstractConferenceRole>();

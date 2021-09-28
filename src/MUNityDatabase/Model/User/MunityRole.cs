@@ -11,6 +11,8 @@ namespace MUNity.Database.Models.User
 
         public bool CanCreateNewOrganizations { get; set; }
 
+        public bool IsPlatformAdmin { get; set; }
+
         public MunityRole()
         {
             this.Id = Guid.NewGuid().ToString();

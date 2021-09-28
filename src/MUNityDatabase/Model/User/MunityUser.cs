@@ -64,14 +64,12 @@ namespace MUNity.Database.Models.User
 
         public EUserState UserState { get; set; }
 
-        public List<MunityUser> Friends { get; set; }
+        public ICollection<MunityUser> Friends { get; set; }
 
-        public List<Resolution.ResolutionAuth> CreatedResolutions { get; set; }
+        public ICollection<Resolution.ResolutionAuth> CreatedResolutions { get; set; }
 
-        public List<MunityUserRole> UserRoles { get; set; }
+        public ICollection<MunityUserRole> UserRoles { get; set; }
 
-        [Timestamp]
-        public byte[] UserTimestamp { get; set; }
 
         public ENameDisplayMode PublicNameDisplayMode { get; set; }
         public ENameDisplayMode InternalNameDisplayMode { get; set; }
@@ -86,9 +84,15 @@ namespace MUNity.Database.Models.User
             this.Id = Guid.NewGuid().ToString();
         }
 
-        public MunityUser(string id)
+        public MunityUser(string username, string email)
         {
-            this.Id = id ?? Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
+            this.UserName = username;
+            this.NormalizedUserName = username.ToUpper();
+            this.Email = email;
+            this.NormalizedEmail = email.ToUpper();
         }
+
+
     }
 }

@@ -127,7 +127,7 @@ namespace MUNity.Extensions.CastExtensions
             return mdl;
         }
 
-        public static List<PetitionDto> ToPetitionDtoList(this List<Petition> petitions)
+        public static List<PetitionDto> ToPetitionDtoList(this ICollection<Petition> petitions)
         {
             if (petitions == null)
                 return new List<PetitionDto>();

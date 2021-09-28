@@ -15,7 +15,7 @@ namespace MUNity.Database.Models.Organization
     [DataContract]
     public class Organization : IIsDeleted
     {
-        public string OrganizationId { get; set; }
+        public string OrganizationId { get; set; } = "";
 
         [MaxLength(150)]
         public string OrganizationName { get; set; }
@@ -23,16 +23,15 @@ namespace MUNity.Database.Models.Organization
         [MaxLength(18)]
         public string OrganizationShort { get; set; }
 
-        public List<OrganizationRole> Roles { get; set; }
+        public ICollection<OrganizationRole> Roles { get; set; }
 
-        public List<OrganizationMember> Member { get; set; }
+        public ICollection<OrganizationMember> Member { get; set; }
 
-        public List<Project> Projects { get; set; }
+        public ICollection<Project> Projects { get; set; }
 
 
         public Organization()
         {
-            this.OrganizationId = Guid.NewGuid().ToString();
             Roles = new List<OrganizationRole>();
             Member = new List<OrganizationMember>();
             Projects = new List<Project>();

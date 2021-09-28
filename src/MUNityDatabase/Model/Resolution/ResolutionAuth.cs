@@ -27,7 +27,7 @@ namespace MUNity.Database.Models.Resolution
 
         public DateTime LastChangeTime { get; set; }
 
-        public List<ResolutionUser> Users { get; set; }
+        public ICollection<ResolutionUser> Users { get; set; }
 
         public bool AllowPublicRead { get; set; }
 

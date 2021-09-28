@@ -18,7 +18,7 @@ namespace MUNity.Database.Models.Organization
 
         public Organization Organization { get; set; }
 
-        public List<OrganizationMember> MembersWithRole { get; set; }
+        public ICollection<OrganizationMember> MembersWithRole { get; set; }
 
         public bool CanCreateProject { get; set; }
 

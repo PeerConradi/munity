@@ -80,7 +80,7 @@ namespace MUNityDatabaseTest.ConferenceTests
                 .ThenInclude(n => n.Conferences)
                 .FirstOrDefault();
             Assert.AreEqual(1, orga.Projects.Count);
-            Assert.AreEqual(1, orga.Projects[0].Conferences.Count);
+            Assert.AreEqual(1, orga.Projects.ElementAt(0).Conferences.Count);
         }
 
         [Test]

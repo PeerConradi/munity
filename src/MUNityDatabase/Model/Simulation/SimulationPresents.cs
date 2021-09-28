@@ -15,7 +15,7 @@ namespace MUNity.Database.Models.Simulation
 
         public DateTime? CheckedDate { get; set; } = null;
 
-        public List<PresentsState> CheckedUsers { get; set; }
+        public ICollection<PresentsState> CheckedUsers { get; set; }
 
         public bool MarkedFinished { get; set; }
 

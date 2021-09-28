@@ -25,7 +25,7 @@ namespace MUNity.Database.Models.Conference
         /// <summary>
         /// The id of the committee.
         /// </summary>
-        public string CommitteeId { get; set; }
+        public string CommitteeId { get; set; } = "";
 
         /// <summary>
         /// The short name of the committee
@@ -59,7 +59,7 @@ namespace MUNity.Database.Models.Conference
         /// </summary>
         public Committee ResolutlyCommittee { get; set; }
 
-        public List<Committee> ChildCommittees { get; set; }
+        public ICollection<Committee> ChildCommittees { get; set; }
 
         /// <summary>
         /// The conference of this committee.
@@ -81,7 +81,6 @@ namespace MUNity.Database.Models.Conference
 
         public Committee()
         {
-            CommitteeId = Guid.NewGuid().ToString();
             Topics = new List<CommitteeTopic>();
             ChildCommittees = new List<Committee>();
         }

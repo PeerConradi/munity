@@ -36,7 +36,7 @@ namespace MUNity.Database.Models.Simulation
 
         public Simulation Simulation { get; set; }
 
-        public List<Petition> Petitions { get; set; }
+        public ICollection<Petition> Petitions { get; set; }
 
         public SimulationUser()
         {

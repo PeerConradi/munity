@@ -12,7 +12,7 @@ namespace MUNity.Database.Models.Simulation
 
         public string TemplateName { get; set; }
 
-        public List<PetitionTemplateEntry> Entries { get; set; }
+        public ICollection<PetitionTemplateEntry> Entries { get; set; }
 
 
     }

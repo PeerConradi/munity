@@ -32,7 +32,7 @@ namespace MUNity.Database.Models.Conference
 
         public double Paid { get; set; }
 
-        public List<ResaSupporter> SupportingResolutions { get; set; }
+        public ICollection<ResaSupporter> SupportingResolutions { get; set; }
 
         /// <summary>
         /// The ParticipationSecret is a Key that can identify the user as a participant

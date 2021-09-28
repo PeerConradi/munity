@@ -24,7 +24,7 @@ namespace MUNity.Database.Models.Conference
     /// </summary>
     public class Project : IIsDeleted
     {
-        public string ProjectId { get; set; }
+        public string ProjectId { get; set; } = "";
 
         [MaxLength(250)]
         public string ProjectName { get; set; }
@@ -34,14 +34,11 @@ namespace MUNity.Database.Models.Conference
 
         public Organization.Organization ProjectOrganization { get; set; }
 
-        public List<Conference> Conferences { get; set; }
-
-        [Timestamp]
-        public byte[] ProjectTimestamp { get; set; }
+        public ICollection<Conference> Conferences { get; set; }
 
         public Project()
         {
-            ProjectId = Guid.NewGuid().ToString();
+            
         }
 
         public bool IsDeleted { get; set; }

@@ -60,7 +60,7 @@ namespace MUNity.Database.Models.LoS
         /// <summary>
         /// List that holds all Speakers that are inside the Speakers or Questions List and also the Current Speaker/Question.
         /// </summary>
-        public List<Speaker> AllSpeakers { get; set; }
+        public ICollection<Speaker> AllSpeakers { get; set; }
 
         /// <summary>
         /// Is the List of Speakers closed. If this is true you should not add people to the Speakers.

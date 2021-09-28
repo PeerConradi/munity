@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Database.Context;
+using MUNity.Database.General;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.Organization;
@@ -20,6 +21,30 @@ namespace MUNity.Database.Extensions
             context.Organizations.Add(orga);
             context.SaveChanges();
             return orga;
+        }
+
+        public static OrganizationMember AddMemberIntoRole(this OrganizationRole role, MunityUser user)
+        {
+            var membership = new OrganizationMember();
+            membership.Role = role;
+            membership.User = user;
+            membership.JoinedDate = DateTime.Now;
+            return membership;
+        }
+
+        public static OrganizationMember AddMemberIntoRole(this MunityContext context, OrganizationRole role,
+            MunityUser user)
+        {
+            var membership = context.OrganizationMembers.FirstOrDefault(n => n.User.Id == user.Id &&
+                                                                          n.Role.OrganizationRoleId ==
+                                                                          role.OrganizationRoleId);
+            if (membership != null)
+                return membership;
+
+            membership = role.AddMemberIntoRole(user);
+            context.OrganizationMembers.Add(membership);
+            context.SaveChanges();
+            return membership;
         }
 
         public static Project AddProject(this MunityContext context, Action<ProjectOptionsBuilder> options)
@@ -48,7 +73,10 @@ namespace MUNity.Database.Extensions
             conference.TeamRoleGroups.Add(builder.Group);
             if (builder.Group.TeamRoles.Count > 0)
             {
-                builder.Group.TeamRoles.ForEach(n => n.Conference = conference);
+                foreach (var conferenceTeamRole in builder.Group.TeamRoles)
+                {
+                    conferenceTeamRole.Conference = conference;
+                }
             }
             return builder.Group;
         }
@@ -58,13 +86,118 @@ namespace MUNity.Database.Extensions
             var builder = new CommitteeOptionsBuilder();
             options(builder);
             builder.Committee.Conference = conference;
+
+            var committeeEasy = Util.IdGenerator.AsPrimaryKey(builder.Committee.CommitteeShort);
+            builder.Committee.CommitteeId = conference.ConferenceId + "-" + committeeEasy;
+
             if (builder.Committee.ChildCommittees.Count > 0)
             {
-                builder.Committee.ChildCommittees.ForEach(n => n.Conference = conference);
+                foreach (var committeeChildCommittee in builder.Committee.ChildCommittees)
+                {
+                    committeeChildCommittee.Conference = conference;
+                }
             }
             conference.Committees.Add(builder.Committee);
             return builder.Committee;
         }
+
+        public static int AddBasicConferenceAuthorizations(this MunityContext context, string conferenceId)
+        {
+            var conference = context.Conferences.FirstOrDefault(n => n.ConferenceId == conferenceId);
+            var ownerAuth = new ConferenceRoleAuth()
+            {
+                Conference = conference,
+                CanEditConferenceSettings = true,
+                CanEditParticipations = true,
+                CanSeeApplications = true,
+                PowerLevel = 1,
+                RoleAuthName = "Project-Owner"
+            };
+            context.ConferenceRoleAuthorizations.Add(ownerAuth);
+
+            var participantControllingTeamAuth = new ConferenceRoleAuth()
+            {
+                Conference = conference,
+                CanEditConferenceSettings = false,
+                CanEditParticipations = true,
+                CanSeeApplications = true,
+                PowerLevel = 2,
+                RoleAuthName = "Team (Participant Management)"
+            };
+            context.ConferenceRoleAuthorizations.Add(participantControllingTeamAuth);
+
+            var teamAuth = new ConferenceRoleAuth()
+            {
+                Conference = conference,
+                CanEditConferenceSettings = false,
+                CanEditParticipations = false,
+                CanSeeApplications = true,
+                RoleAuthName = "Team (Basic)",
+                PowerLevel = 3,
+            };
+            context.ConferenceRoleAuthorizations.Add(teamAuth);
+
+            var participantAuth = new ConferenceRoleAuth()
+            {
+                Conference = conference,
+                CanEditConferenceSettings = false,
+                RoleAuthName = "Participant",
+                PowerLevel = 4,
+                CanSeeApplications = false,
+                CanEditParticipations = false
+            };
+            context.ConferenceRoleAuthorizations.Add(participantAuth);
+
+            return context.SaveChanges();
+        }
+
+        public static ConferenceDelegateRole AddSeat(this MunityContext context, string committeeId, string name, int? countryId = null, string roleName = "Participant")
+        {
+            var committee = context.Committees.Include(n => n.Conference)
+                .FirstOrDefault(n => n.CommitteeId == committeeId);
+
+            if (committee == null)
+                throw new ArgumentException($"The committe with the given id {committeeId} was not found!");
+
+            var participantAuth = context.ConferenceRoleAuthorizations.FirstOrDefault(n =>
+                n.RoleAuthName == roleName && n.Conference.ConferenceId == committee.Conference.ConferenceId);
+
+            Country country = null;
+            if (countryId.HasValue)
+            {
+                country = context.Countries.FirstOrDefault(n => n.CountryId == countryId);
+                if (country == null)
+                    throw new ArgumentException($"The given country with id: {countryId} was not found!");
+            }
+
+            if (participantAuth == null)
+                throw new ArgumentException($"The given authorization was not found!");
+
+            var role = new ConferenceDelegateRole()
+            {
+                Committee = committee,
+                Conference = committee.Conference,
+                ConferenceRoleAuth = participantAuth,
+                RoleName = roleName,
+                DelegateCountry = country,
+                RoleFullName = roleName,
+            };
+            context.Delegates.Add(role);
+            context.SaveChanges();
+            return role;
+        }
+
+
+    }
+
+
+    public class CommitteeSeatOptions
+    {
+        public string CommitteeId { get; set; }
+
+        public int CountryId { get; set; }
+
+        public string SeatName { get; set; }
     }
 
 
@@ -86,6 +219,17 @@ namespace MUNity.Database.Extensions
             return this;
         }
 
+        public OrganizationOptionsBuilder WithAdminRole()
+        {
+            var adminRole = new OrganizationRole();
+            adminRole.Organization = this.Organization;
+            this.Organization.Roles.Add(adminRole);
+            adminRole.RoleName = "Admin";
+            adminRole.CanCreateProject = true;
+            adminRole.CanManageMembers = true;
+            return this;
+        }
+
         public OrganizationOptionsBuilder(MunityContext context)
         {
             this._context = context;
@@ -96,6 +240,7 @@ namespace MUNity.Database.Extensions
         {
             var builder = new ProjectOptionsBuilder(this._context, this.Organization);
             options(builder);
+            this.Organization.Projects.Add(builder.Project);
             return this;
         }
 

@@ -34,7 +34,7 @@ namespace MUNity.Database.Models.Conference
 
         public Conference Conference { get; set; }
 
-        public List<ConferenceTeamRole> TeamRoles { get; set; } = new List<ConferenceTeamRole>();
+        public ICollection<ConferenceTeamRole> TeamRoles { get; set; } = new List<ConferenceTeamRole>();
 
     }
 }

@@ -18,7 +18,7 @@ namespace MUNity.Database.Models.Session
 
         public AttendanceCheck AttendanceCheck { get; set; }
 
-        public List<ProtocolEntry> ProtocolEntries { get; set; }
+        public ICollection<ProtocolEntry> ProtocolEntries { get; set; }
 
         public DateTime StartDate { get; set; }
 

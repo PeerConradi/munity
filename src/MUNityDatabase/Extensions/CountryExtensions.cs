@@ -63,7 +63,6 @@ namespace MUNity.Database.Extensions
             return context.SaveChanges();
         }
 
-        public static int AddBaseCountries(this MunityContext context)
-            => AddBaseCountries(context, BaseData.Countries.BaseCountries);
+        
     }
 }

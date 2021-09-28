@@ -100,6 +100,6 @@ namespace MUNity.Database.Models.Conference.Roles
         public string RoleType { get; [Obsolete("This is the concurrencyToken please only read")]set; }
 
 
-        public List<Participation> Participations { get; set; }
+        public ICollection<Participation> Participations { get; set; }
     }
 }

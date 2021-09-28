@@ -83,7 +83,7 @@ namespace MUNityDatabaseTest.UserTests
         {
             var user = _context.Users.Include(n => n.UserRoles).ThenInclude(a => a.Role).FirstOrDefault();
             Assert.IsTrue(user.UserRoles.Any());
-            Assert.AreEqual("Head-Admin", user.UserRoles[0].Role.Name);
+            Assert.AreEqual("Head-Admin", user.UserRoles.ElementAt(0).Role.Name);
         }
 
         public MunityUserTests() : base ("user_tests.db")

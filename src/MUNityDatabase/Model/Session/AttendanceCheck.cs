@@ -12,6 +12,6 @@ namespace MUNity.Database.Models.Session
 
         public DateTime AttendanceDate { get; set; }
 
-        public List<AttendanceState> Attendances { get; set; }
+        public ICollection<AttendanceState> Attendances { get; set; }
     }
 }

@@ -49,8 +49,8 @@ namespace MUNity.Database.Test.FluentTest
                         projectBuilder
                             .WithName("Model United Nations Baden-Würrtemberg")
                             .WithShort("MUNBW")));
-            Assert.NotZero(_context.Organizations.Count());
-            Assert.NotZero(_context.Projects.Count());
+            Assert.NotZero(_context.Organizations.Count(), "The context should contain an organization but it doesnt");
+            Assert.NotZero(_context.Projects.Count(), "The context should contain a project, but it didnt");
 
             var refetchProject = _context.Projects.First();
             Assert.AreEqual("Model United Nations Baden-Würrtemberg", refetchProject.ProjectName);

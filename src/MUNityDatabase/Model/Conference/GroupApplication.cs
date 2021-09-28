@@ -24,7 +24,7 @@ namespace MUNity.Database.Models.Conference
         public int GroupApplicationId { get; set; }
 
 
-        public List<MunityUser> Users { get; set; }
+        public ICollection<MunityUser> Users { get; set; }
 
         public AbstractConferenceRole Role { get; set; }
 

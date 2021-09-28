@@ -21,7 +21,7 @@ namespace MUNity.Database.Models.Resolution
 
         public bool Corrected { get; set; } = false;
 
-        public List<ResaOperativeParagraph> Children { get; set; }
+        public ICollection<ResaOperativeParagraph> Children { get; set; }
 
         public string Comment { get; set; } = "";
 
@@ -31,10 +31,10 @@ namespace MUNity.Database.Models.Resolution
 
         public ResaOperativeParagraph Parent { get; set; }
 
-        public List<ResaDeleteAmendment> DeleteAmendments { get; set; }
-        public List<ResaChangeAmendment> ChangeAmendments { get; set; }
+        public ICollection<ResaDeleteAmendment> DeleteAmendments { get; set; }
+        public ICollection<ResaChangeAmendment> ChangeAmendments { get; set; }
 
-        public List<ResaMoveAmendment> MoveAmendments { get; set; }
+        public ICollection<ResaMoveAmendment> MoveAmendments { get; set; }
 
         public ResaOperativeParagraph()
         {
