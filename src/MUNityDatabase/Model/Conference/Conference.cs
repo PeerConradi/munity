@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MUNity.Database.Model.Conference;
 using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.User;
 using MUNityBase;
@@ -50,6 +51,7 @@ namespace MUNity.Database.Models.Conference
 
         public EConferenceVisibilityMode Visibility { get; set; }
 
+        public decimal GeneralParticipationCost { get; set; }
 
         public Conference()
         {

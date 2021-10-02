@@ -187,6 +187,29 @@ namespace MUNity.Database.Extensions
             return role;
         }
 
+        public static void GroupRolesOfCountryIntoADelegation(this MunityContext context, string conferenceId, int countryId,
+            string delegationName, string delegationFullName = null, string delegationShortName = null)
+        {
+            var conference = context.Conferences.FirstOrDefault(n => n.ConferenceId == conferenceId);
+            if (conference == null)
+                throw new NullReferenceException($"The conference with id '{conferenceId}' was not found!");
+
+            if (delegationFullName == null)
+                delegationFullName = "Delegation " + delegationName;
+
+            var delgation = new Delegation()
+            {
+                Conference = conference,
+                Name = delegationName,
+                Roles = context.Delegates
+                    .Where(n => n.DelegateCountry.CountryId == countryId && n.Conference.ConferenceId == conferenceId).ToList(),
+                FullName = "Delegation Deutschland",
+                DelegationShort = "DE"
+            };
+            context.Delegations.Add(delgation);
+            context.SaveChanges();
+        }
+
 
     }
 
@@ -336,6 +359,12 @@ namespace MUNity.Database.Extensions
         public ConferenceOptionsBuilder WithEndDate(DateTime endDate)
         {
             this._conference.EndDate = endDate;
+            return this;
+        }
+
+        public ConferenceOptionsBuilder WithBasePrice(decimal price)
+        {
+            this._conference.GeneralParticipationCost = price;
             return this;
         }
 

@@ -21,6 +21,8 @@ using MUNity.Database.Models;
 using MUNity.Database.Models.Resolution;
 using MUNity.Database.Models.Session;
 using MUNity.Database.Interfaces;
+using MUNity.Database.Model.Conference;
+using MUNity.Database.Model.Website;
 
 namespace MUNity.Database.Context
 {
@@ -59,6 +61,8 @@ namespace MUNity.Database.Context
 
         public DbSet<Conference> Conferences { get; set; }
 
+        public DbSet<ConferenceParticipationCostRule> ConferenceParticipationCostRules { get; set; }
+
         public DbSet<CommitteeTopic> CommitteeTopics { get; set; }
 
         public DbSet<AttendanceState> AttendanceStates { get; set; }
@@ -74,6 +78,10 @@ namespace MUNity.Database.Context
         public DbSet<RoleApplication> RoleApplications { get; set; }
 
         public DbSet<DelegationApplication> DelegationApplications { get; set; }
+
+        public DbSet<DelegationApplicationUserEntry> DelegationApplicationUserEntries { get; set; }
+
+        public DbSet<DelegationApplicationPickedDelegation> DelegationApplicationPickedDelegations { get; set; }
 
         public DbSet<TeamRoleGroup> TeamRoleGroups { get; set; }
 
@@ -129,6 +137,8 @@ namespace MUNity.Database.Context
         public DbSet<ResaChangeAmendment> ResolutionChangeAmendments { get; set; }
         public DbSet<ResaMoveAmendment> ResolutionMoveAmendments { get; set; }
         public DbSet<ResaAddAmendment> ResolutionAddAmendments { get; set; }
+
+        public DbSet<WebPage> WebPages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -338,6 +348,12 @@ namespace MUNity.Database.Context
         {
             if (!string.IsNullOrWhiteSpace(organization.OrganizationId)) return;
 
+            if (string.IsNullOrWhiteSpace(organization.OrganizationShort))
+            {
+                organization.OrganizationId = Guid.NewGuid().ToString();
+                return;
+            }
+
             var easyId = Util.IdGenerator.AsPrimaryKey(organization.OrganizationShort);
             if (string.IsNullOrWhiteSpace(easyId)) return;
 
@@ -352,6 +368,12 @@ namespace MUNity.Database.Context
         {
             if (!string.IsNullOrWhiteSpace(project.ProjectId)) return;
 
+            if (string.IsNullOrWhiteSpace(project.ProjectShort))
+            {
+                project.ProjectId = Guid.NewGuid().ToString();
+                return;
+            }
+
             var easyId = Util.IdGenerator.AsPrimaryKey(project.ProjectShort);
             if (string.IsNullOrWhiteSpace(easyId)) return;
 
@@ -365,7 +387,11 @@ namespace MUNity.Database.Context
         {
             if (!string.IsNullOrWhiteSpace(conference.ConferenceId)) return;
 
-            if (string.IsNullOrWhiteSpace(conference.ConferenceShort)) return;
+            if (string.IsNullOrWhiteSpace(conference.ConferenceShort))
+            {
+                conference.ConferenceId = Guid.NewGuid().ToString();
+                return;
+            }
 
             var easyId = Util.IdGenerator.AsPrimaryKey(conference.ConferenceShort);
             if (string.IsNullOrWhiteSpace(easyId)) return;
@@ -443,8 +469,8 @@ namespace MUNity.Database.Context
         {
             var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
             optionsBuilder.UseSqlite($"Data Source={databaseName}.db");
-            optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.LogTo(Console.WriteLine);
+            //optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.LogTo(Console.WriteLine);
             var context = new MunityContext(optionsBuilder.Options);
             context.Database.EnsureCreated();
             return context;

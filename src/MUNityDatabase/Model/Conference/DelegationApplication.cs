@@ -47,6 +47,10 @@ namespace MUNity.Database.Models.Conference
         public MunityUser User { get; set; }
 
         public DelegationApplicationUserEntryStatuses Status { get; set; }
+
+        public bool CanWrite { get; set; }
+
+        public string Message { get; set; }
     }
 
     public class DelegationApplicationPickedDelegation
