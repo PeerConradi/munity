@@ -4,8 +4,10 @@ using MUNity.Database.Models.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace MUNity.Services
 {
@@ -14,6 +16,8 @@ namespace MUNity.Services
         private MunityContext context;
 
         private UserManager<MunityUser> userManager;
+
+        private ILogger<UserService> _logger;
 
         public async Task<MunityUser> CreateUser(string username, string mail, string password)
         {
@@ -57,15 +61,32 @@ namespace MUNity.Services
             return result == PasswordVerificationResult.Success;
         }
 
+        public async Task<string> GetForeAndLastNameAsync(ClaimsPrincipal claim)
+        {
+            if (claim == null)
+            {
+                _logger.LogWarning($"GetForeAndLastNameAsync was called with a null claim principal. Make sure you make valid calls to this method.");
+                return "-";
+            }
+            var user = await userManager.GetUserAsync(claim);
+            if (user == null) return "-";
+
+            if (!string.IsNullOrEmpty(user.Forename) || !string.IsNullOrEmpty(user.Lastname))
+                return user.Forename + " " + user.Lastname;
+
+            return "-";
+        }
+
         //public async Task<object> Login(MunityUser user)
         //{
         //    var signIn = await signInManager.SignIn(user, true);
         //}
 
-        public UserService(MunityContext context, UserManager<MunityUser> userManager)
+        public UserService(MunityContext context, UserManager<MunityUser> userManager, ILogger<UserService> logger)
         {
             this.context = context;
             this.userManager = userManager;
+            this._logger = logger;
         }
     }
 }

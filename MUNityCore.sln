@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.Services.Test", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.BlazorServer", "src\MUNity.BlazorServer\MUNity.BlazorServer.csproj", "{8A10B274-155D-4F5E-96C5-6F6BB223C4AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MUNity.BlazorServer.Tests", "tests\MUNity.BlazorServer.Tests\MUNity.BlazorServer.Tests.csproj", "{2E5B512D-84D8-4D9B-9948-3D8A79DDD2B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MUNity.BlazorServer.Tests", "tests\MUNity.BlazorServer.Tests\MUNity.BlazorServer.Tests.csproj", "{2E5B512D-84D8-4D9B-9948-3D8A79DDD2B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

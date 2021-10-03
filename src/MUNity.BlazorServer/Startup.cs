@@ -86,6 +86,7 @@ namespace MUNity.BlazorServer
             services.AddScoped<ConferenceService>();
             services.AddScoped<DelegationService>();
             services.AddScoped<ConferenceRoleService>();
+            services.AddScoped<UserNotificationService>();
 
             services.AddLogging();
             

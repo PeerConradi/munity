@@ -22,6 +22,7 @@ using MUNity.Database.Models.Resolution;
 using MUNity.Database.Models.Session;
 using MUNity.Database.Interfaces;
 using MUNity.Database.Model.Conference;
+using MUNity.Database.Model.User;
 using MUNity.Database.Model.Website;
 
 namespace MUNity.Database.Context
@@ -139,6 +140,11 @@ namespace MUNity.Database.Context
         public DbSet<ResaAddAmendment> ResolutionAddAmendments { get; set; }
 
         public DbSet<WebPage> WebPages { get; set; }
+
+
+        public DbSet<UserNotification> UserNotifications { get; set; }
+
+        public DbSet<UserNotificationCategory> UserNotificationCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

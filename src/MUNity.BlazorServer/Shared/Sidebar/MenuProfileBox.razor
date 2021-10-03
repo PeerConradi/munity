@@ -1,4 +1,6 @@
-﻿<AuthorizeView>
+﻿@inject Services.UserService userService
+
+<AuthorizeView>
     <Authorized>
         <div class="menu-profile @((IsExpanded) ? "active" : null)" @onclick="() => ToggleExpand()">
             <a class="menu-profile-link">
@@ -9,11 +11,11 @@
                 <div class="menu-profile-info">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
-                            @context.User.Identity.Name
+                            
                         </div>
                         <div class="menu-caret ms-auto"></div>
                     </div>
-                    <small>MUNity-User</small>
+                    <small>@@@context.User.Identity.Name</small>
                 </div>
             </a>
         </div>
@@ -45,6 +47,10 @@
 
 
 @code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+    
+    string userForeAndLastName = "";
+
     public bool IsExpanded { get; set; }
 
     private string expandedStyle = "display: block;";
@@ -53,4 +59,14 @@
     {
         this.IsExpanded = !IsExpanded;
     }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var claim = (await AuthStateTask).User;
+        userForeAndLastName = await userService.GetForeAndLastNameAsync(claim);
+        base.OnInitialized();
+    }
+
 }

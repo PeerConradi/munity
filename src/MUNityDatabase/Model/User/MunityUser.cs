@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using MUNity.Database.Model.User;
 using MUNityBase;
 using MUNityCore.Models.User;
 
@@ -70,6 +71,7 @@ namespace MUNity.Database.Models.User
 
         public ICollection<MunityUserRole> UserRoles { get; set; }
 
+        public ICollection<UserNotification> Notifications { get; set; }
 
         public ENameDisplayMode PublicNameDisplayMode { get; set; }
         public ENameDisplayMode InternalNameDisplayMode { get; set; }

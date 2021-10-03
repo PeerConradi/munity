@@ -1,9 +1,11 @@
-﻿@page "/"
+﻿@layout MUNity.BlazorServer.Shared.FrontEndLayout
+@page "/"
 
-<h1>Hallo MUNity.</h1>
-
-<h3>Schön, dass du wieder da bist!</h3>
-
-<MUNity.BlazorServer.Shared.Elements.WidgetBox Title="Demo">
-    <p>Das hier ist nur eine Demo!</p>
-</MUNity.BlazorServer.Shared.Elements.WidgetBox>
+<div class="card border-0 text-white bg-dark-900">
+    <div class="h-250px rounded-top card-img" 
+     style="background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)), url(/img/logo/MUNityLogoNoBorder.png); background-position: center; background-size: cover; background-repeat: no-repeat; "></div>
+    <div class="card-img-overlay">
+        <h2 class="card-title fs-54px">MUNity</h2>
+        <p class="card-text fs-24px">MUNity ist zurück, mit vielen neuen Funktionen. Wir unterstützen euch gerne bei euren Model United Nations Konferenzen mit kostenfreien online Diensten.</p>
+    </div>
+</div>

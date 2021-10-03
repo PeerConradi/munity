@@ -1,7 +1,7 @@
 ﻿<div id="header" class="app-header">
     <!-- BEGIN navbar-header -->
     <div class="navbar-header">
-        <a href="index.html" class="navbar-brand"><span class="navbar-logo"></span> <b>MUNity</b> Web-Demo</a>
+        <a href="/" class="navbar-brand"><span class="navbar-logo"></span> <b>MUNity</b></a>
         <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -14,7 +14,7 @@
         <div class="navbar-item navbar-form">
             <form action="" method="POST" name="search">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Enter keyword">
+                    <input type="text" class="form-control" placeholder="Suchbegriff">
                     <button type="submit" class="btn btn-search"><i class="oi oi-magnifying-glass"></i></button>
                 </div>
             </form>
@@ -22,7 +22,6 @@
         <AuthorizeView>
             <Authorized>
                 <HeaderUserSection />
-
             </Authorized>
             <NotAuthorized>
                 <a href="/Identity/Account/Login" class="btn">Login</a>
