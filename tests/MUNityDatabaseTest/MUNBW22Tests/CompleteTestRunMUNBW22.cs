@@ -4,12 +4,16 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MUNity.Database.Context;
 using NUnit.Framework;
 using MUNity.Database.Extensions;
 using MUNity.Database.Model.Conference;
+using MUNity.Database.Model.Website;
 using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Organization;
 using MUNity.Database.Models.User;
 using MUNityBase;
 
@@ -20,20 +24,42 @@ namespace MUNity.Database.Test.MUNBW22Tests
     {
         private MunityContext _context;
 
+        private IServiceProvider _serviceProvider;
 
 
         [OneTimeSetUp]
         public void SetupDatabase()
         {
-            var tmpContext = MunityContext.FromSqlLite("testmunbw");
-            tmpContext.Database.EnsureDeleted();
-            tmpContext.Database.EnsureCreated();
+
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddDbContext<MunityContext>(options =>
+                options.UseSqlite("Data Source=testmunbw.db"));
+
+            serviceCollection.AddIdentity<MunityUser, MunityRole>(options =>
+                {
+                    options.User.RequireUniqueEmail = true;
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireNonAlphanumeric = false;
+                })
+                .AddEntityFrameworkStores<MunityContext>();
+
+            // Needed to get the Identity Provider to run!
+            serviceCollection.AddLogging();
+
+            this._serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // Reset the Database.
+            _context = _serviceProvider.GetRequiredService<MunityContext>();
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
         }
 
         [SetUp]
         public void ReloadContextToClearBuffer()
         {
-            _context = MunityContext.FromSqlLite("testmunbw");
+            _context = _serviceProvider.GetRequiredService<MunityContext>();
         }
 
         // Id 0-50 Tests
@@ -62,18 +88,8 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(3)]
         public void TestCreateSomeUsers()
         {
-            var user1 = new MunityUser("pparker", "parker@spiderman.com");
-            var user2 = new MunityUser("tonystark", "tony@stark-industries.com");
-            var user3 = new MunityUser("muricaboi", "captain@amrica.com");
-            var user4 = new MunityUser("blackwidow", "b.widow@avangers.com");
+            
 
-
-            _context.Users.Add(user1);
-            _context.Users.Add(user2);
-            _context.Users.Add(user3);
-            _context.Users.Add(user4);
-            _context.SaveChanges();
-            Assert.AreEqual(4, _context.Users.Count());
         }
 
         #endregion
@@ -81,13 +97,31 @@ namespace MUNity.Database.Test.MUNBW22Tests
         // ID 51 - 99 Tests
         #region Account Setup
 
+        [Test]
+        [Order(51)]
+        public async Task TestRegisterUsers()
+        {
+            var user1 = new MunityUser("pparker", "parker@spiderman.com") {Forename = "Peter", Lastname = "Parker"};
+            var user2 = new MunityUser("tonystark", "tony@stark-industries.com") {Forename = "Antony", Lastname = "Stark"};
+            var user3 = new MunityUser("muricaboi", "captain@amrica.com") { Forename = "Steve", Lastname = "Rogers"};
+            var user4 = new MunityUser("blackwidow", "b.widow@avangers.com") { Forename = "Natasha", Lastname = "Romanoff"};
+            var userManager = _serviceProvider.GetRequiredService<UserManager<MunityUser>>();
+            var resultPeterParker = await userManager.CreateAsync(user1, "Passwort123");
+            var resultTonyStark = await userManager.CreateAsync(user2, "Passwort123");
+            var resultSteveRodgers = await userManager.CreateAsync(user3, "Passwort123");
+            var resultNatashaRomanoff = await userManager.CreateAsync(user4, "Passwort123");
+            Assert.IsTrue(resultPeterParker.Succeeded);
+            Assert.IsTrue(resultTonyStark.Succeeded);
+            Assert.IsTrue(resultSteveRodgers.Succeeded);
+            Assert.IsTrue(resultNatashaRomanoff.Succeeded);
+        }
         #endregion
 
         // ID 100 Setup the Organization DMUN
         #region Organization Setup
         [Test]
         [Order(100)]
-        public void TestAddDMUNOrganiozation()
+        public void TestAddDMUNOrganization()
         {
             var orga = _context.AddOrganization(options =>
                 options.WithName("Deutsche Model United Nations e.V.")
@@ -108,10 +142,46 @@ namespace MUNity.Database.Test.MUNBW22Tests
                                      && n.Organization.OrganizationId == "dmunev");
             Assert.NotNull(role);
             var user = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
-            Assert.NotNull(user);
+            Assert.NotNull(user, "The required user was not found...");
             var membership = _context.AddMemberIntoRole(role, user);
             Assert.NotNull(membership);
             Assert.AreEqual(1, _context.OrganizationMembers.Count());
+        }
+
+        [Test]
+        [Order(102)]
+        public void TestCreateOrganizationMemberRole()
+        {
+            var organization = _context.Organizations.FirstOrDefault(n => n.OrganizationId == "dmunev");
+            Assert.NotNull(organization);
+            var memberRole = new OrganizationRole()
+            {
+                Organization = organization,
+                RoleName = "Mitglied",
+                CanCreateProject = false,
+                CanCreateRoles = false,
+                CanManageMembers = false
+            };
+            _context.OrganizationRoles.Add(memberRole);
+            _context.SaveChanges();
+            Assert.AreEqual(2, _context.OrganizationRoles.Count());
+            Assert.AreEqual(2,
+                _context.Organizations
+                    .Include(n => n.Roles)
+                    .FirstOrDefault(n => n.OrganizationId == "dmunev").Roles
+                    .Count);
+        }
+
+        [Test]
+        [Order(103)]
+        public void TestAddUsersToOrganizationAsMembers()
+        {
+            var peterParker = _context.Users.FirstOrDefault(n => n.UserName == "pparker");
+            var memberRole = _context.OrganizationRoles.FirstOrDefault(n => n.RoleName == "Mitglied" && n.Organization.OrganizationId == "dmunev");
+            Assert.NotNull(memberRole);
+            Assert.NotNull(peterParker);
+            _context.AddMemberIntoRole(memberRole, peterParker);
+            Assert.AreEqual(2, _context.OrganizationMembers.Count());
         }
         #endregion
 
@@ -121,10 +191,13 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(200)]
         public void TestAddMUNBWProject()
         {
+            var tonyStark = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
+            Assert.NotNull(tonyStark);
             var project = _context.AddProject(options =>
                 options.WithShort("MUNBW")
                     .WithName("Model United Nations Baden-Würrtemberg")
-                    .WithOrganization("dmunev"));
+                    .WithOrganization("dmunev")
+                    .WithCreationUser(tonyStark));
             Assert.NotNull(project);
             Assert.AreEqual(1, _context.Projects.Count());
             Assert.IsTrue(_context.Projects.Any(n => n.ProjectId == "munbw"));
@@ -147,6 +220,8 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(300)]
         public void TestAddConference()
         {
+            var tonyStark = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
+            Assert.NotNull(tonyStark);
             var conference = _context.AddConference(options =>
                 options.WithShort("MUNBW 22")
                     .WithName("Model United Nations Baden-Würrtemberg 2022")
@@ -154,7 +229,8 @@ namespace MUNity.Database.Test.MUNBW22Tests
                     .WithProject("munbw")
                     .WithStartDate(new DateTime(2022, 5, 12))
                     .WithEndDate(new DateTime(2022, 5, 16))
-                    .WithBasePrice(70m));
+                    .WithBasePrice(70m)
+                    .ByUser(tonyStark));
             Assert.NotNull(conference);
             Assert.AreEqual(1, _context.Conferences.Count());
             Assert.IsTrue(_context.Conferences.Any(n => n.ConferenceId == "munbw22"));
@@ -185,7 +261,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
                         .WithTopic("Koordinierung internationaler Zusammenarbeit in der humanitären Hilfe")
                         .WithTopic("Rückgabe von Kunstgegenständen und kulturellen Artefakten")));
             var recaff = _context.SaveChanges();
-            Assert.AreEqual(7, recaff);
             Assert.AreEqual(2, _context.Committees.Count());
             Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-gv"));
             Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-ha3"));
@@ -338,7 +413,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
             _context.SaveChanges();
             Assert.NotNull(role);
             Assert.AreEqual(1, _context.TeamRoleGroups.Count());
-            Assert.AreEqual(1, _context.TeamRoles.Count());
+            Assert.AreEqual(1, _context.ConferenceTeamRoles.Count());
         }
 
         [Test]
@@ -346,7 +421,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestAddErweiterteProjektleitung()
         {
             var conference = _context.Conferences.FirstOrDefault(n => n.ConferenceId == "munbw22");
-            var projektleitung = _context.TeamRoles.FirstOrDefault(n =>
+            var projektleitung = _context.ConferenceTeamRoles.FirstOrDefault(n =>
                 n.Conference.ConferenceId == "munbw22" && n.RoleName == "Projektleiter");
 
             Assert.NotNull(projektleitung);
@@ -372,7 +447,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
             _context.SaveChanges();
 
             Assert.AreEqual(2, _context.TeamRoleGroups.Count());
-            Assert.AreEqual(13, _context.TeamRoles.Count());
+            Assert.AreEqual(13, _context.ConferenceTeamRoles.Count());
         }
 
         [Test]
@@ -382,6 +457,32 @@ namespace MUNity.Database.Test.MUNBW22Tests
             var conference = _context.Conferences.Include(n => n.Roles)
                 .FirstOrDefault(n => n.ConferenceId == "munbw22");
             Assert.AreEqual(13, conference.Roles.Count);
+        }
+
+        [Test]
+        [Order(403)]
+        public void TestMakeTonyStarkProjektleiter()
+        {
+            var projektleitung = _context.ConferenceTeamRoles
+                .FirstOrDefault(n =>
+                n.RoleName == "Projektleiter" && n.Conference.ConferenceId == "munbw22");
+
+            var tonyStark = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
+            Assert.NotNull(tonyStark);
+
+            Assert.NotNull(projektleitung);
+            var participation = new Participation()
+            {
+                Role = projektleitung,
+                User = tonyStark,
+                Cost = 50,
+                IsMainRole = true,
+                Paid = 0,
+                ParticipationSecret = "GENERATE_SECRET"
+            };
+            _context.Participations.Add(participation);
+            _context.SaveChanges();
+            Assert.IsTrue(_context.Participations.Any(n => n.Role.Conference.ConferenceId == "munbw22" && n.User.UserName == "tonystark"));
         }
 
         #endregion
@@ -524,6 +625,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
             var delegationDeutschland = allDelegations.FirstOrDefault(n => n.Name == "Deutschland");
             Assert.NotNull(delegationDeutschland);
             Assert.AreEqual(9, delegationDeutschland.Roles.Count);
+            Assert.IsTrue(_context.Delegations.Any(n => n.DelegationId == "munbw22-deutschland"));
         }
 
         [Test]
@@ -556,6 +658,44 @@ namespace MUNity.Database.Test.MUNBW22Tests
 
         [Test]
         [Order(600)]
+        public void TestCreateTheApplicationPage()
+        {
+            var conference = _context.Conferences.Find("munbw22");
+            Assert.NotNull(conference);
+            var page = new ConferenceApplicationPage()
+            {
+                Conference = conference,
+                Title = "Anmeldung",
+                ApplicationEndDate = new DateTime(2022, 2, 20, 12, 0, 0),
+                ApplicationStartDate = new DateTime(2021, 12, 12, 12, 0, 0),
+                DescriptionExperience = "Giben Sie hier an, welche MUN Erfahrungen Sie/Ihr bereits mitbringt",
+                DescriptionMotivation =
+                    "Giben Sie hier an, warum gerade Sie/Ihr für diese Delegation/diese Rolle geeignet seid",
+                ExperienceMaxLength = 500,
+                ExperienceMinLength = 10,
+                ExperienceRequired = true,
+                IsActive = true,
+                MotivationMaxLength = 500,
+                MotivationMinLength = 10,
+                MotivationRequired = true,
+                PostContent =
+                    "Die Anmeldungen werden am 20.02.2022 abgeschlossen. Dann Erfahren Sie, welche Delegation und Rolle Sie bekommen",
+                PreContent = "Die Anmeldung bei Model United Nations Baden-Würrtemberg...",
+                SchoolRequired = false,
+                ShowExperienceField = true,
+                ShowMotivationField = true,
+                ShowSchoolField = true,
+                TitleChooseDelegation = "Wunschdelegation auswählen",
+                TitleExperience = "Erfahrung",
+                TitleMotivation = "Motivation"
+            };
+            _context.ConferenceApplicationPages.Add(page);
+            _context.SaveChanges();
+            Assert.IsTrue(_context.ConferenceApplicationPages.Any(n => n.Conference.ConferenceId == "munbw22"));
+        }
+
+        [Test]
+        [Order(610)]
         public void TestSetApplicationStateOnDelegations()
         {
             var delegationDeutschland = _context.Delegations
@@ -574,7 +714,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         }
 
         [Test]
-        [Order(601)]
+        [Order(611)]
         [Description("This test should show that an application can be added to a specific committee.")]
         public void TestCreateTheApplicationForGermany()
         {
@@ -644,7 +784,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         }
 
         [Test]
-        [Order(602)]
+        [Order(612)]
         [Description("This test ensures that the application has been created and can be found inside a list of all applications.")]
         public void TestThatConferenceHasOneApplication()
         {
@@ -659,7 +799,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         }
 
         [Test]
-        [Order(603)]
+        [Order(613)]
         [Description("This test should allow a user to become part of an application. This should only be allowed if the application is Open.")]
         public void TestUserCanApplyOnApplication()
         {
@@ -689,7 +829,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         }
 
         [Test]
-        [Order(604)]
+        [Order(614)]
         public void TestCalculateCostOfApplication()
         {
             var application = _context.DelegationApplications

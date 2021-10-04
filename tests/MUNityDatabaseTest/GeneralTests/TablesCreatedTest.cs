@@ -66,7 +66,7 @@ namespace MUNity.Database.Test.GeneralTests
         [Test]
         public void TestHasTeamRoles()
         {
-            Assert.IsFalse(_context.TeamRoles.Any());
+            Assert.IsFalse(_context.ConferenceTeamRoles.Any());
         }
 
         [Test]

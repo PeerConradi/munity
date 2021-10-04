@@ -18,7 +18,7 @@ namespace MUNity.Database.Models.Conference
     /// </summary>
     public class Delegation
     {
-        public string DelegationId { get; set; }
+        public string DelegationId { get; set; } = "";
 
         [MaxLength(150)]
         [Required]
@@ -43,7 +43,7 @@ namespace MUNity.Database.Models.Conference
 
         public Delegation()
         {
-            DelegationId = Guid.NewGuid().ToString();
+            
         }
     }
 }

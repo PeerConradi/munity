@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MUNity.Database.Interfaces;
+using MUNity.Database.Models.User;
 
 namespace MUNity.Database.Models.Conference
 {
@@ -35,6 +36,8 @@ namespace MUNity.Database.Models.Conference
         public Organization.Organization ProjectOrganization { get; set; }
 
         public ICollection<Conference> Conferences { get; set; }
+
+        public MunityUser CreationUser { get; set; }
 
         public Project()
         {

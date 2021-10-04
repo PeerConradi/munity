@@ -1,7 +1,9 @@
 ﻿@layout MUNity.BlazorServer.Shared.FrontEndLayout
 @page "/"
+@using MUNity.Schema.Conference
+@inject Services.ConferenceService conferenceService
 
-<div class="card border-0 text-white bg-dark-900">
+<div class="card border-0 text-white bg-dark-900 mb-3">
     <div class="h-250px rounded-top card-img" 
      style="background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)), url(/img/logo/MUNityLogoNoBorder.png); background-position: center; background-size: cover; background-repeat: no-repeat; "></div>
     <div class="card-img-overlay">
@@ -9,3 +11,49 @@
         <p class="card-text fs-24px">MUNity ist zurück, mit vielen neuen Funktionen. Wir unterstützen euch gerne bei euren Model United Nations Konferenzen mit kostenfreien online Diensten.</p>
     </div>
 </div>
+
+<AuthorizeView>
+    <Authorized>
+        @if (participatingConferences != null)
+        {
+            <div class="row">
+                @foreach (var conference in participatingConferences)
+                {
+                    <div class="col-xl-3 col-sm-6">
+                        <!-- BEGIN card -->
+                        <div class="card border-0">
+                            <div class="card-body">
+                                <h4 class="card-title mb-10px">@conference.ConferenceFullName</h4>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+
+                                <a href="/web/conference/@conference.ConferenceId/start" class="btn btn-sm btn-primary">Seite öffnen</a>
+                                @if (conference.IsTeamMember)
+                                {
+                                    <a href="/c/dashboard/@conference.ConferenceId" class="btn btn-sm btn-default ml-5">Team-Center öffnen</a>
+                                }
+                            </div>
+                        </div>
+                        <!-- END card -->
+                    </div>
+                }
+            </div>
+        }
+        
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private List<ParticipatingConferenceInfo> participatingConferences;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            participatingConferences = await conferenceService.GetParticipatingConferencesAsync(claim);
+        }
+    }
+}

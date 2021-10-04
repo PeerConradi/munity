@@ -21,7 +21,7 @@
     <div class="register-container">
         <!-- begin register-header -->
         <div class="register-header mb-25px h1">
-            <div class="mb-1">Regsitrierung</div>
+            <div class="mb-1">Registrierung</div>
             <small class="d-block fs-15px lh-16">Kostenlos ein Konto erstellen.</small>
         </div>
         <!-- end register-header -->
@@ -37,43 +37,38 @@
                 <input type="text" class="form-control" placeholder="Last name" required />
             </div>
         </div>*@
-                <label class="control-label">Username <span class="text-danger">*</span></label>
-                <div class="row m-b-15">
-                    <div class="col-md-12">
-                        <input class="form-control" asp-for="Input.Username" placeholder="Username" required />
-                    </div>
+                <div class="mb-3">
+                    <label class="mb-2">Benutzername <span class="text-danger">*</span></label>
+                    <input class="form-control fs-13px" asp-for="Input.Username" placeholder="Benutzername" required />
                 </div>
-                <label class="control-label">Email <span class="text-danger">*</span></label>
-                <div class="row m-b-15">
-                    <div class="col-md-12">
-                        <input class="form-control" asp-for="Input.Email" placeholder="Email address" required />
-                    </div>
+
+                <div class="mb-3">
+                    <label class="mb-2">E-Mail Adresse <span class="text-danger">*</span></label>
+                    <input class="form-control fs-13px" asp-for="Input.Email" placeholder="E-Mail" required />
                 </div>
-                <label class="control-label">Password <span class="text-danger">*</span></label>
-                <div class="row m-b-15">
-                    <div class="col-md-12">
-                        <input asp-for="Input.Password" class="form-control" placeholder="Password" type="password" required />
-                    </div>
+                
+                <div class="mb-3">
+                    <label class="mb-2">Passwort <span class="text-danger">*</span></label>
+                    <input class="form-control fs-13px" asp-for="Input.Password" type="password" placeholder="****" required />
                 </div>
-                <label class="control-label">Password wiederholen<span class="text-danger">*</span></label>
-                <div class="row m-b-15">
-                    <div class="col-md-12">
-                        <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Password" type="password" required />
-                    </div>
+                
+                <div class="mb-3">
+                    <label class="mb-2">Passwort wiederholen <span class="text-danger">*</span></label>
+                    <input class="form-control fs-13px" asp-for="Input.ConfirmPassword" type="password" placeholder="****" required />
+                    <small>Das Passwort muss mindestens 8 Zeichen Lang sein und Klein- / Großbuchstaben und Zahlen enthalten.</small>
                 </div>
-                <div class="checkbox checkbox-css m-b-30">
-                    <div class="checkbox checkbox-css m-b-30">
-                        <input type="checkbox" id="agreement_checkbox" value="">
-                        <label for="agreement_checkbox">
-                            Mit dem Erstellen eines Kontos stimmen Sie den <a href="javascript:;">Allgemeinden Geschäftsbedingungen</a>, sowie den <a href="javascript:;">Datenschutzbestimmungen</a> und der verwendung von <a href="javascript:;">Cookies</a> zu.
-                        </label>
-                    </div>
+
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="agreement_checkbox" value="">
+                    <label for="agreement_checkbox" class="form-check-label">
+                        Mit dem Erstellen eines Kontos stimmen Sie den <a href="javascript:;">Allgemeinden Geschäftsbedingungen</a>, sowie den <a href="javascript:;">Datenschutzbestimmungen</a> und der verwendung von <a href="javascript:;">Cookies</a> zu.
+                    </label>
                 </div>
-                <div class="register-buttons">
-                    <button type="submit" class="btn btn-primary btn-block btn-lg">Konto erstellen</button>
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-primary d-block w-100 btn-lg h-45px fs-13px">Konto erstellen</button>
                 </div>
                 <div class="m-t-30 m-b-30 p-b-30">
-                    Bereits einen Account? <a href="/Identity/Account/Login">hier</a> anmelden.
+                    Bereits einen Account? <a href="/Identity/Account/Login">Hier</a> anmelden.
                 </div>
                 <hr />
                 <p class="text-center mb-0">

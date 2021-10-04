@@ -88,7 +88,7 @@ namespace MUNity.Services
             {
                 // We are also checking for the ConferenceId to make sure that the given Parent role is in
                 // the same conference!
-                parentRole = _context.TeamRoles.FirstOrDefault(n =>
+                parentRole = _context.ConferenceTeamRoles.FirstOrDefault(n =>
                 n.RoleId == request.ParentRoleId &&
                 n.Conference.ConferenceId == group.Conference.ConferenceId);
             }
@@ -104,7 +104,7 @@ namespace MUNity.Services
                 TeamRoleGroup = group,
                 TeamRoleLevel = 0
             };
-            _context.TeamRoles.Add(role);
+            _context.ConferenceTeamRoles.Add(role);
             await _context.SaveChangesAsync();
             response.RoleId = role.RoleId;
 
@@ -132,7 +132,7 @@ namespace MUNity.Services
 
         public async Task<bool> RemoveTeamRole(int roleId, ClaimsPrincipal claim)
         {
-            var role = _context.TeamRoles
+            var role = _context.ConferenceTeamRoles
                 .Include(n => n.Conference)
                 .FirstOrDefault(n => n.RoleId == roleId);
 
@@ -143,7 +143,7 @@ namespace MUNity.Services
             if (!isAllowed)
                 return false;
 
-            _context.TeamRoles.Remove(role);
+            _context.ConferenceTeamRoles.Remove(role);
             await _context.SaveChangesAsync();
             return true;
         }

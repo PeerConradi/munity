@@ -301,7 +301,7 @@ namespace MUNityDatabaseTest
 
         public ConferenceTeamRole EnsureProjectOwnerRole()
         {
-            var leaderRole = _context.TeamRoles.FirstOrDefault(n => n.RoleName == "Projektleiter");
+            var leaderRole = _context.ConferenceTeamRoles.FirstOrDefault(n => n.RoleName == "Projektleiter");
             if (leaderRole == null)
             {
                 var leaderAuth = EnsureProjectOwnerAuth();
@@ -317,7 +317,7 @@ namespace MUNityDatabaseTest
                     TeamRoleGroup = leaderRoleGroup,
                     TeamRoleLevel = 1,
                 };
-                _context.TeamRoles.Add(leaderRole);
+                _context.ConferenceTeamRoles.Add(leaderRole);
                 _context.SaveChanges();
             }
             return leaderRole;

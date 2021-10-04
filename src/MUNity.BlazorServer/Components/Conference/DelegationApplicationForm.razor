@@ -1,0 +1,79 @@
+﻿<form class="bg-light p-3">
+    <div class="row mb-15px">
+        <label class="form-label col-form-label col-md-3">Wunsch-Delegation 1</label>
+        <div class="col-md-9">
+            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
+                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
+            <small class="fs-12px text-gray-500-darker">Die Delegation, welche ihr am Liebsten haben möchtet.</small>
+        </div>
+    </div>
+
+    <div class="row mb-15px">
+        <label class="form-label col-form-label col-md-3">Wunsch-Delegation 2</label>
+        <div class="col-md-9">
+            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
+                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
+            <small class="fs-12px text-gray-500-darker">Die Delegation, welche ihr an Stelle von Wunsch 1 gerne bekommen möchtet.</small>
+        </div>
+    </div>
+
+    <div class="row mb-15px">
+        <label class="form-label col-form-label col-md-3">Wunsch-Delegation 3</label>
+        <div class="col-md-9">
+            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
+                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
+            <small class="fs-12px text-gray-500-darker">Die Delegation, welche ihr an dritter Stelle nehmen würdet.</small>
+        </div>
+    </div>
+
+    <div class="row mb-15px">
+        <label class="form-label col-form-label col-md-3">Motivation</label>
+        <div class="col-md-9">
+            <textarea class="form-control" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row mb-15px">
+        <label class="form-label col-form-label col-md-3">Erfahrung</label>
+        <div class="col-md-9">
+            <textarea class="form-control" rows="3"></textarea>
+        </div>
+    </div>
+    
+    <div class="row mb-15px">
+        <label class="form-label col-form-label col-md-3">Schule</label>
+        <div class="col-md-9">
+            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
+                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
+            <small class="fs-12px text-gray-500-darker">Eine angabe der Schule welche ihr besucht.</small>
+        </div>
+    </div>
+    
+
+    <div class="row mb-15px">
+        <label class="form-label col-form-label col-md-3">Benutzer</label>
+        <div class="col-md-9">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Cras justo odio <a class="text-danger pull-right">entfernen</a></li>
+                <li class="list-group-item">Dapibus ac facilisis in</li>
+                <li class="list-group-item">Vestibulum at eros</li>
+            </ul>
+            <label class="form-label">Benutzer hinzufügen</label>
+            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
+                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
+        </div>
+    </div>
+    
+    <div class="row mb-3">
+        <label class="form-label col-form-label col-md-3"></label>
+        <div class="col-md-7">
+            <button class="btn btn-primary">Anmeldung absenden</button>
+            <button class="btn btn-secondary">Anmeldung speichern</button>
+        </div>
+    </div>
+
+</form>
+
+@code {
+
+}

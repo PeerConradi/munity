@@ -1,0 +1,10 @@
+﻿@layout MUNity.BlazorServer.Shared.FrontEndLayout
+@page "/web/conference/{ConferenceId}/{PageId}"
+
+<h3>Seite für eine Konferenz.</h3>
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    [Parameter] public string PageId { get; set; }
+}

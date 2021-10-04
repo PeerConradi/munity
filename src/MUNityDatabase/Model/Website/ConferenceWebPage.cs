@@ -8,9 +8,9 @@ using MUNity.Database.Models.User;
 
 namespace MUNity.Database.Model.Website
 {
-    public class WebPage
+    public class ConferenceWebPage
     {
-        public string WebPageId { get; set; }
+        public string ConferenceWebPageId { get; set; }
 
         public string Title { get; set; }
 
@@ -28,9 +28,11 @@ namespace MUNity.Database.Model.Website
 
         public DateTime LastUpdateDate { get; set; }
 
-        public WebPage()
+        public bool IsIndexPage { get; set; }
+
+        public ConferenceWebPage()
         {
-            WebPageId = Guid.NewGuid().ToString();
+            ConferenceWebPageId = Guid.NewGuid().ToString();
         }
     }
 }

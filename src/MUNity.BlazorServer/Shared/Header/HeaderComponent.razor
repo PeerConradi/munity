@@ -1,7 +1,9 @@
-﻿<div id="header" class="app-header">
+﻿@inject NavigationManager navManager
+
+<div id="header" class="app-header">
     <!-- BEGIN navbar-header -->
     <div class="navbar-header">
-        <a href="/" class="navbar-brand"><span class="navbar-logo"></span> <b>MUNity</b></a>
+        <a href="/" class="navbar-brand"><span class="navbar-logo"></span> <b>@title</b></a>
         <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -33,5 +35,21 @@
 </div>
 
 @code {
-    
+    private string title { get; set; } = "MUNity";
+
+    protected override Task OnInitializedAsync()
+    {
+        UpdateTitle();
+        navManager.LocationChanged += delegate { UpdateTitle(); };
+        return base.OnInitializedAsync();
+    }
+
+    private void UpdateTitle()
+    {
+        if (navManager.Uri.Contains("/web/conference/"))
+        {
+            title = "KONFERENZNAME";
+        }
+    }
+
 }

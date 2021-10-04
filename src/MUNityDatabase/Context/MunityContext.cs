@@ -56,7 +56,7 @@ namespace MUNity.Database.Context
 
         public DbSet<ConferenceDelegateRole> Delegates { get; set; }
 
-        public DbSet<ConferenceTeamRole> TeamRoles { get; set; }
+        public DbSet<ConferenceTeamRole> ConferenceTeamRoles { get; set; }
 
         public DbSet<ConferenceSecretaryGeneralRole> SecretaryGenerals { get; set; }
 
@@ -139,7 +139,11 @@ namespace MUNity.Database.Context
         public DbSet<ResaMoveAmendment> ResolutionMoveAmendments { get; set; }
         public DbSet<ResaAddAmendment> ResolutionAddAmendments { get; set; }
 
-        public DbSet<WebPage> WebPages { get; set; }
+        public DbSet<ConferenceWebPage> ConferenceWebPages { get; set; }
+
+        public DbSet<ConferenceApplicationPage> ConferenceApplicationPages { get; set; }
+
+        public DbSet<ConferencePageColorScheme> ConferencePageColorSchemes { get; set; }
 
 
         public DbSet<UserNotification> UserNotifications { get; set; }
@@ -343,7 +347,9 @@ namespace MUNity.Database.Context
                     case Committee committee:
                         HandleEasyIdCommittee(committee);
                         break;
-                    
+                    case Delegation delegation:
+                        HandleEasyDelegationId(delegation);
+                        break;
                 }
             }
         }
@@ -423,11 +429,31 @@ namespace MUNity.Database.Context
 
             var easyCommitteeId = committee.Conference.ConferenceId + "-" +
                                   committeeEasy;
-            Console.WriteLine("Generated Easy Id: " + easyCommitteeId);
+
             if (this.Committees.All(n => n.CommitteeId != easyCommitteeId))
                 committee.CommitteeId = easyCommitteeId;
             else
                 committee.CommitteeId = Guid.NewGuid().ToString();
+        }
+
+        private void HandleEasyDelegationId(Delegation delegation)
+        {
+            if (!string.IsNullOrWhiteSpace(delegation.DelegationId)) return;
+
+            if (delegation.Conference == null || string.IsNullOrWhiteSpace(delegation.Name))
+            {
+                delegation.DelegationId = Guid.NewGuid().ToString();
+                return;
+            }
+
+            var easyNameDelegation = Util.IdGenerator.AsPrimaryKey(delegation.Name);
+            var easyId = delegation.Conference.ConferenceId + "-" + easyNameDelegation;
+            if (this.Delegations.All(n => n.DelegationId != easyId))
+                delegation.DelegationId = easyId;
+            else
+                delegation.DelegationId = Guid.NewGuid().ToString();
+            
+
         }
 
         /// <summary>

@@ -119,13 +119,13 @@ namespace MUNityDatabaseTest.ConferenceTests
                 TeamRoleLevel = 1,
             };
 
-            _context.TeamRoles.Add(leaderRole);
+            _context.ConferenceTeamRoles.Add(leaderRole);
             _context.SaveChanges();
 
-            var leaderRoleCallback = _context.TeamRoles.FirstOrDefault();
+            var leaderRoleCallback = _context.ConferenceTeamRoles.FirstOrDefault();
             Assert.NotNull(leaderRoleCallback);
             Assert.AreEqual(1, _context.ConferenceRoleAuthorizations.Count());
-            Assert.AreEqual(1, _context.TeamRoles.Count());
+            Assert.AreEqual(1, _context.ConferenceTeamRoles.Count());
             Assert.AreEqual(1, _context.TeamRoleGroups.Count());
             Assert.AreEqual("TeamRole", leaderRoleCallback.RoleType);
         }
@@ -134,7 +134,7 @@ namespace MUNityDatabaseTest.ConferenceTests
         [Order(2)]
         public void TestGenerateFirstLevelTeam()
         {
-            var leaderRole = _context.TeamRoles.FirstOrDefault(n => n.Conference == conference &&
+            var leaderRole = _context.ConferenceTeamRoles.FirstOrDefault(n => n.Conference == conference &&
             n.TeamRoleLevel == 1);
 
             Assert.NotNull(leaderRole);
@@ -187,10 +187,10 @@ namespace MUNityDatabaseTest.ConferenceTests
                 TeamRoleLevel = 2
             };
 
-            _context.TeamRoles.Add(teamCoordinatorRole);
-            _context.TeamRoles.Add(financeManager);
+            _context.ConferenceTeamRoles.Add(teamCoordinatorRole);
+            _context.ConferenceTeamRoles.Add(financeManager);
             _context.SaveChanges();
-            Assert.AreEqual(3, _context.TeamRoles.Count(n => n.Conference.ConferenceId == conference.ConferenceId));
+            Assert.AreEqual(3, _context.ConferenceTeamRoles.Count(n => n.Conference.ConferenceId == conference.ConferenceId));
         }
 
         [Test]

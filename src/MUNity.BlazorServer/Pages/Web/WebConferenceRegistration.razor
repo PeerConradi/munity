@@ -1,0 +1,63 @@
+﻿@layout MUNity.BlazorServer.Shared.FrontEndLayout
+@page "/web/conference/{ConferenceId}/register"
+
+<AuthorizeView>
+    <Authorized>
+        <h1 class="page-header">Title</h1>
+        
+        <div class="panel panel-inverse" data-sortable-id="form-stuff-1">
+            <!-- BEGIN panel-heading -->
+            <div class="panel-heading ui-sortable-handle">
+                <h4 class="panel-title">Anmeldeformular</h4>
+            </div>
+            <!-- END panel-heading -->
+            <!-- BEGIN panel-body -->
+            <div class="panel-body">
+                <div class="alert alert-muted">
+                    PreContent
+                </div>
+                
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active">Auf Delegation bewerben</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Auf Rolle bewerben</a>
+                    </li>
+                </ul>
+                <div class="tab-content bg-white p-0 rounded-bottom mb-3">
+                    <div class="tab-pane fade active show" id="default-tab-1">
+                        <MUNity.BlazorServer.Components.Conference.DelegationApplicationForm />
+                    </div>
+                </div>
+
+                <div class="alert alert-muted">
+                    Post Content
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="error">
+            @*<div class="error-code">Nicht angemeldet</div>*@
+            <div class="error-content">
+                <div class="error-message">Hallo, schön dass du bei CONFERENCE_SHORT dabei sein willst.</div>
+                <div class="error-desc mb-4">
+                    Für die Anmeldung bei der Konferenz benötigst du ein MUNity-Konto.
+                    Melde dich bitte an oder erstelle dir ein neues Konto.
+                </div>
+                <div>
+                    <a href="/Identity/Account/Login" class="btn btn-success px-3">Anmelden</a>
+                    <a href="/Identity/Account/Register" class="btn btn-secondary px-3">Konto erstellen</a>
+                </div>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    
+}

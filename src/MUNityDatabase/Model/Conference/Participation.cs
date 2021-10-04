@@ -28,9 +28,9 @@ namespace MUNity.Database.Models.Conference
 
         public bool IsMainRole { get; set; }
 
-        public double Cost { get; set; }
+        public decimal Cost { get; set; }
 
-        public double Paid { get; set; }
+        public decimal Paid { get; set; }
 
         public ICollection<ResaSupporter> SupportingResolutions { get; set; }
 

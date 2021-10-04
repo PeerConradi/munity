@@ -19,11 +19,14 @@ namespace MUNity.Database.Model.Website
 
         public DateTime? ApplicationEndDate { get; set; }
 
+
         public string PreContent { get; set; }
 
         public string PostContent { get; set; }
 
         public string Title { get; set; }
+
+        public string TitleChooseDelegation { get; set; } = "Delegation auswählen";
 
         public string TitleMotivation { get; set; } = "Motivation";
 

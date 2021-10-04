@@ -151,7 +151,7 @@ namespace MUNity.Database.Extensions
             return context.SaveChanges();
         }
 
-        public static ConferenceDelegateRole AddSeat(this MunityContext context, string committeeId, string name, int? countryId = null, string roleName = "Participant")
+        public static ConferenceDelegateRole AddSeat(this MunityContext context, string committeeId, string name, int? countryId = null, string shortName = null, string subTypeName = "Participant")
         {
             var committee = context.Committees.Include(n => n.Conference)
                 .FirstOrDefault(n => n.CommitteeId == committeeId);
@@ -160,7 +160,7 @@ namespace MUNity.Database.Extensions
                 throw new ArgumentException($"The committe with the given id {committeeId} was not found!");
 
             var participantAuth = context.ConferenceRoleAuthorizations.FirstOrDefault(n =>
-                n.RoleAuthName == roleName && n.Conference.ConferenceId == committee.Conference.ConferenceId);
+                n.RoleAuthName == subTypeName && n.Conference.ConferenceId == committee.Conference.ConferenceId);
 
             Country country = null;
             if (countryId.HasValue)
@@ -178,10 +178,13 @@ namespace MUNity.Database.Extensions
                 Committee = committee,
                 Conference = committee.Conference,
                 ConferenceRoleAuth = participantAuth,
-                RoleName = roleName,
+                RoleName = name,
                 DelegateCountry = country,
-                RoleFullName = roleName,
+                RoleFullName = name,
+                DelegateType = subTypeName,
+                RoleShort = shortName
             };
+
             context.Delegates.Add(role);
             context.SaveChanges();
             return role;
@@ -287,6 +290,12 @@ namespace MUNity.Database.Extensions
         public ProjectOptionsBuilder WithShort(string shortName)
         {
             this.Project.ProjectShort = shortName;
+            return this;
+        }
+
+        public ProjectOptionsBuilder WithCreationUser(MunityUser user)
+        {
+            this.Project.CreationUser = user;
             return this;
         }
 
