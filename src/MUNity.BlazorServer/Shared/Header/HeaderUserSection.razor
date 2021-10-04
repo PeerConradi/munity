@@ -51,13 +51,10 @@
 
 
         <div class="navbar-item navbar-user dropdown" @onclick="() =>  ToggleUserMenu()">
-            <a class="navbar-link dropdown-toggle d-flex align-items-center @((ShowUserSubMenu) ? "show" : null)"
+            <a class="navbar-link dropdown-toggle d-flex @((ShowUserSubMenu) ? "show" : null)"
                style="cursor: pointer;">
+                <span class="d-none d-md-inline">@userDisplayName</span>
                 <img src="https://www.profielactueel.nl/content/modules/catalog/1/3800/3759/10_xx_2_1.png" alt="">
-                <span>
-                    <span class="d-none d-md-inline">@userDisplayName</span>
-                    <b class="caret"></b>
-                </span>
             </a>
             <div class="dropdown-menu dropdown-menu-end me-1 @((ShowUserSubMenu) ? "show" : null)" style="@((ShowUserSubMenu) ? SubMenuStyle : null)">
                 <a href="javascript:;" class="dropdown-item">Mein Profil</a>
@@ -80,7 +77,7 @@
 
     public bool ShowUserSubMenu { get; set; }
 
-    private string SubMenuStyle = "position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(-55px, 52px);";
+    private string SubMenuStyle = "position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(-20px, 52px);";
 
     public bool ShowNotifications { get; set; }
 
