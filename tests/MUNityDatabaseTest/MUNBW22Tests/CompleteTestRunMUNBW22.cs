@@ -662,36 +662,42 @@ namespace MUNity.Database.Test.MUNBW22Tests
         {
             var conference = _context.Conferences.Find("munbw22");
             Assert.NotNull(conference);
-            var page = new ConferenceApplicationPage()
+            var formula = new ConferenceApplicationFormula()
             {
                 Conference = conference,
                 Title = "Anmeldung",
                 ApplicationEndDate = new DateTime(2022, 2, 20, 12, 0, 0),
                 ApplicationStartDate = new DateTime(2021, 12, 12, 12, 0, 0),
-                DescriptionExperience = "Giben Sie hier an, welche MUN Erfahrungen Sie/Ihr bereits mitbringt",
-                DescriptionMotivation =
-                    "Giben Sie hier an, warum gerade Sie/Ihr für diese Delegation/diese Rolle geeignet seid",
-                ExperienceMaxLength = 500,
-                ExperienceMinLength = 10,
-                ExperienceRequired = true,
-                IsActive = true,
-                MotivationMaxLength = 500,
-                MotivationMinLength = 10,
-                MotivationRequired = true,
                 PostContent =
                     "Die Anmeldungen werden am 20.02.2022 abgeschlossen. Dann Erfahren Sie, welche Delegation und Rolle Sie bekommen",
                 PreContent = "Die Anmeldung bei Model United Nations Baden-Würrtemberg...",
-                SchoolRequired = false,
-                ShowExperienceField = true,
-                ShowMotivationField = true,
-                ShowSchoolField = true,
-                TitleChooseDelegation = "Wunschdelegation auswählen",
-                TitleExperience = "Erfahrung",
-                TitleMotivation = "Motivation"
             };
-            _context.ConferenceApplicationPages.Add(page);
+
+            formula.Fields = new List<ConferenceApplicationField>();
+
+            formula.Fields.Add(new ConferenceApplicationField()
+            {
+                IsRequired = true,
+                DefaultValue = null,
+                FieldName = "Motivation",
+                FieldDescription = "Tragen Sie hier ein, warum Sie unbedingt diese Rolle haben möchten.",
+                FieldType = ConferenceApplicationFieldTypes.MultiLineText,
+                Forumula = formula
+            });
+
+            formula.Fields.Add(new ConferenceApplicationField()
+            {
+                IsRequired = true,
+                DefaultValue = null,
+                FieldName = "Erfahrung",
+                FieldDescription = "Tragen Sie hier Ihre Erfahrung rund um das Thema Model United Nations und anderweitig ein.",
+                FieldType = ConferenceApplicationFieldTypes.MultiLineText,
+                Forumula = formula
+            });
+
+            _context.ConferenceApplicationFormulas.Add(formula);
             _context.SaveChanges();
-            Assert.IsTrue(_context.ConferenceApplicationPages.Any(n => n.Conference.ConferenceId == "munbw22"));
+            Assert.IsTrue(_context.ConferenceApplicationFormulas.Any(n => n.Conference.ConferenceId == "munbw22"));
         }
 
         [Test]
@@ -738,14 +744,28 @@ namespace MUNity.Database.Test.MUNBW22Tests
             {
                 Delegations = new List<DelegationApplicationPickedDelegation>(),
                 Users = new List<DelegationApplicationUserEntry>(),
-                Title = "Anmeldung der Schule 1",
+                FormulaInputs = new List<ConferenceDelegationApplicationFieldInput>(),
                 ApplyDate = DateTime.Now,
-                Experience = "Hier steht der Text über die Erfahrung der Bewerber",
-                Motivation = "Hier steht ein Absatz über die Motivation der Bewerber",
                 OpenToPublic = false,
-                SchoolName = "Schule 1",
                 Status = ApplicationStatuses.Writing
             };
+
+            var formula = _context.ConferenceApplicationFormulas
+                .Include(n => n.Fields)
+                .FirstOrDefault(n => n.FormulaType == ConferenceApplicationFormulaTypes.Delegation &&
+                                     n.Conference.ConferenceId == "munbw22");
+
+            Assert.NotNull(formula);
+
+            var motivationField = formula.Fields.FirstOrDefault(n => n.FieldName == "Motivation");
+            Assert.NotNull(motivationField);
+            
+            application.FormulaInputs.Add(new ConferenceDelegationApplicationFieldInput()
+            {
+                Value = "Ich bin sehr motiviert :)",
+                Application = application,
+                Field = motivationField
+            });
 
             application.Delegations.Add(new DelegationApplicationPickedDelegation()
             {

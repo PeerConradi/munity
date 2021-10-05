@@ -141,7 +141,9 @@ namespace MUNity.Database.Context
 
         public DbSet<ConferenceWebPage> ConferenceWebPages { get; set; }
 
-        public DbSet<ConferenceApplicationPage> ConferenceApplicationPages { get; set; }
+        public DbSet<ConferenceApplicationFormula> ConferenceApplicationFormulas { get; set; }
+        public DbSet<ConferenceApplicationField> ConferenceApplicationFields { get; set; }
+        public DbSet<ConferenceDelegationApplicationFieldInput> ConferenceDelegationApplicationFieldInputs { get; set; }
 
         public DbSet<ConferencePageColorScheme> ConferencePageColorSchemes { get; set; }
 

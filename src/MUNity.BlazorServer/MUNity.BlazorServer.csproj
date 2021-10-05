@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Pages\Shared\" />
+    <Folder Include="Pages\Game\Presenter\" />
   </ItemGroup>
 
 </Project>

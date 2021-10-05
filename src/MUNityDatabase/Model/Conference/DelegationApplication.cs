@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MUNity.Database.Model.Website;
 using MUNity.Database.Models.Conference.Roles;
 using MUNityBase;
 
@@ -19,15 +20,7 @@ namespace MUNity.Database.Models.Conference
 
         public DateTime ApplyDate { get; set; }
 
-        public string Title { get; set; }
-
-        public string Motivation { get; set; }
-
-        public string Experience { get; set; }
-
-        public string SchoolName { get; set; }
-
-        public int? SchoolId { get; set; }
+       public ICollection<ConferenceDelegationApplicationFieldInput> FormulaInputs { get; set; }
 
         /// <summary>
         /// Are Others able to see this application and add themselfs to it.
@@ -37,6 +30,8 @@ namespace MUNity.Database.Models.Conference
         public ApplicationStatuses Status { get; set; }
 
     }
+
+
 
     public class DelegationApplicationUserEntry
     {

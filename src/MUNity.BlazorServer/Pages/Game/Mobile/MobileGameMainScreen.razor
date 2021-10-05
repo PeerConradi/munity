@@ -1,0 +1,387 @@
+﻿@layout MUNity.BlazorServer.Shared.MobileGameLayout
+@page "/game/mobile/{GameId}"
+
+<div class="app-top-menu top-menu-sm" style="display: block !important;">
+    <!-- BEGIN menu -->
+    <div class="menu game-menu-center">
+
+        <div class="menu-item game-item-center">
+            <a href="javascript:;" class="menu-link">
+                <div class="menu-icon">
+                    <i class="oi oi-home"></i>
+                </div>
+                <div class="menu-text">Anmeldung <span class="menu-label">jetzt offen</span></div>
+            </a>
+        </div>
+
+
+        <!-- Start and Stop scroll Buttons -->
+        <div class="menu-item menu-control menu-control-start show" style="display: block !important;">
+            <a class="menu-link" ><i class="fa fa-angle-left"></i></a>
+        </div>
+        <div class="menu-item menu-control menu-control-end show"  style="display: block !important;">
+            <a class="menu-link" ><i class="fa fa-angle-right"></i></a>
+        </div>
+    </div>
+    <!-- END menu -->
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card border-0 mb-3 bg-gray-900 text-white">
+            <!-- BEGIN card-body -->
+            <div class="card-body p-0">
+                <!-- BEGIN title -->
+                <div class="mb-3 text-gray-300">
+                    <b>Abgeordnete</b>
+                </div>
+                <!-- END title -->
+                <!-- BEGIN product -->
+                <div class="d-flex align-items-center mb-15px border-1 border-dark bg-dark-900 pt-1 pb-1" style="height: 70px">
+                    <div class="widget-img w-60px">
+                        <div class="h-100 w-100" style="background: url(/img/flags/small/de.png) center no-repeat; background-size: auto 100%;"></div>
+                    </div>
+                    <div class="text-truncate" style="margin-left: 10px;">
+                        <div>Landname</div>
+                        <div class="text-gray-300">Anzeigename</div>
+                    </div>
+                    <div class="ms-auto mb-0" style="margin-bottom: 0px; margin-top: auto;">
+                        @*<div class="fs-13px"><span data-animation="number" data-value="195">195</span></div>*@
+                        <div class="row" style="margin-right: 10px; margin-bottom: 0px; margin-top: auto;">
+                            <div class="col">
+                                <div class="text-white"><i class="fa fa-volume-up"></i></div>
+                            </div>
+                            
+                            <div class="col">
+                                <div class="text-gray-600"><i class="oi oi-bell"></i></div>
+                            </div>
+                            
+                            <div class="col">
+                                <div class="text-gray-600"><i class="oi oi-flag"></i></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="block block-1">
+                    <div class="ribbon">Ribbon Nr.1</div>
+                    <div class="d-flex align-items-center mb-15px border-1 border-dark bg-dark-900 pt-1 pb-1" style="height: 70px">
+                        <div class="widget-img w-60px">
+                            <div class="h-100 w-100" style="background: url(/img/flags/small/de.png) center no-repeat; background-size: auto 100%;"></div>
+                        </div>
+                        <div class="text-truncate" style="margin-left: 10px;">
+                            <div>Landname</div>
+                            <div class="text-gray-300">Anzeigename</div>
+                        </div>
+                        <div class="ms-auto mb-0" style="margin-bottom: 0px; margin-top: auto;">
+                            @*<div class="fs-13px"><span data-animation="number" data-value="195">195</span></div>*@
+                            <div class="row" style="margin-right: 10px; margin-bottom: 0px; margin-top: auto;">
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+                            
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+                            
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="block block-2">
+                    <div class="ribbon"><span>Ribbon Nr.2</span></div>
+
+                    <div class="d-flex align-items-center mb-15px border-1 border-dark bg-dark-900 pt-1 pb-1" style="height: 70px">
+                        <div class="widget-img w-60px">
+                            <div class="h-100 w-100" style="background: url(/img/flags/small/de.png) center no-repeat; background-size: auto 100%;"></div>
+                        </div>
+                        <div class="text-truncate" style="margin-left: 10px;">
+                            <div>Landname</div>
+                            <div class="text-gray-300">Anzeigename</div>
+                        </div>
+                        <div class="ms-auto mb-0" style="margin-bottom: 0px; margin-top: auto;">
+                            @*<div class="fs-13px"><span data-animation="number" data-value="195">195</span></div>*@
+                            <div class="row" style="margin-right: 10px; margin-bottom: 0px; margin-top: auto;">
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="block block-3">
+                    <div class="ribbon">Ribbon Nr.3</div>
+                    
+                    <div class="d-flex align-items-center mb-15px border-1 border-dark bg-dark-900 pt-1 pb-1" style="height: 70px">
+                        <div class="widget-img w-60px">
+                            <div class="h-100 w-100" style="background: url(/img/flags/small/de.png) center no-repeat; background-size: auto 100%;"></div>
+                        </div>
+                        <div class="text-truncate" style="margin-left: 10px;">
+                            <div>Landname</div>
+                            <div class="text-gray-300">Anzeigename</div>
+                        </div>
+                        <div class="ms-auto mb-0" style="margin-bottom: 0px; margin-top: auto;">
+                            @*<div class="fs-13px"><span data-animation="number" data-value="195">195</span></div>*@
+                            <div class="row" style="margin-right: 10px; margin-bottom: 0px; margin-top: auto;">
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="block block-2">
+                    <div class="ribbon"><span class="icon">#</span></div>
+                    <div class="ribbon"><span>Ribbon Nr.2</span></div>
+                    
+                    <div class="d-flex align-items-center mb-15px border-1 border-dark bg-dark-900 pt-1 pb-1" style="height: 70px">
+                        <div class="widget-img w-60px">
+                            <div class="h-100 w-100" style="background: url(/img/flags/small/de.png) center no-repeat; background-size: auto 100%;"></div>
+                        </div>
+                        <div class="text-truncate" style="margin-left: 10px;">
+                            <div>Landname</div>
+                            <div class="text-gray-300">Anzeigename</div>
+                        </div>
+                        <div class="ms-auto mb-0" style="margin-bottom: 0px; margin-top: auto;">
+                            @*<div class="fs-13px"><span data-animation="number" data-value="195">195</span></div>*@
+                            <div class="row" style="margin-right: 10px; margin-bottom: 0px; margin-top: auto;">
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="text-gray-300"><i class="oi oi-home"></i></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                
+            </div>
+            <!-- END card-body -->
+        </div>
+    </div>
+</div>
+
+<style>
+    @@media (min-width: 768px) {
+        .top-menu-sm {
+            margin-top: -60px;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .game-menu-center {
+            padding: 0;
+            margin: auto !important;
+        }
+
+        
+    }
+    .game-item-center {
+        position: absolute;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        left: auto;
+        right: auto;
+        width: 60%
+    }
+
+
+    .block {
+        height: 75px;
+        background-color: lightgray;
+        position: relative;
+        margin: 0 0 10px;
+    }
+
+    /* Ribbon style 1 */
+    .block-1 {
+        border: 3px solid #c7111a;
+        background: #ffffff;
+        -webkit-box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+        -moz-box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+        box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+    }
+
+        .block-1 .ribbon {
+            background-color: #EA141F;
+            top: -12px;
+            left: 40px;
+            display: inline-block;
+            
+            text-align: center;
+            line-height: 24px;
+            color: #fff;
+            font-size: 0.688rem;
+            position: absolute;
+            padding: 0 10px;
+            font-weight: 600;
+            -webkit-box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+            -moz-box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+            box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+            z-index: 11;
+        }
+
+            .block-1 .ribbon::after {
+                content: "";
+                position: absolute;
+                left: -12px;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 0 0 12px 12px;
+                border-color: transparent transparent #c7111a transparent;
+                z-index: 10;
+            }
+
+    /* Ribbon style 2 */
+    .block-2 {
+        border: 3px solid #c7111a;
+        background: #ffffff;
+        -webkit-box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+        -moz-box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+        box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+    }
+
+        .block-2 .ribbon {
+            height: 75px;
+            left: -5px;
+            overflow: hidden;
+            position: absolute;
+            text-align: right;
+            top: -5px;
+            width: 75px;
+            z-index: 1;
+        }
+
+            .block-2 .ribbon span {
+                background-color: #EA141F;
+                box-shadow: 0 3px 10px -5px #000;
+                color: #fff;
+                display: block;
+                font-weight: 600;
+                left: -21px;
+                line-height: 20px;
+                position: absolute;
+                top: 19px;
+                -webkit-transform: rotate(-45deg);
+                transform: rotate(-45deg);
+                width: 100px;
+                text-align: center;
+                font-size: 0.688rem;
+            }
+
+                .block-2 .ribbon span.icon {
+                    background-color: #EA141F;
+                    box-shadow: 0 3px 10px -5px #000;
+                    color: #fff;
+                    display: block;
+                    font-weight: 600;
+                    left: -19px;
+                    line-height: 28px;
+                    position: absolute;
+                    top: -4px;
+                    -webkit-transform: rotate(-45deg);
+                    transform: rotate(-45deg);
+                    width: 56px;
+                    text-align: center;
+                    font-size: 0.688rem;
+                }
+
+                .block-2 .ribbon span::after,
+                .block-2 .ribbon span::before {
+                    border-bottom: 3px solid transparent;
+                    border-top: 3px solid #c7111a;
+                    content: " ";
+                    position: absolute;
+                    top: 100%;
+                    z-index: -1;
+                }
+
+                .block-2 .ribbon span::before {
+                    border-left: 3px solid #c7111a;
+                    border-top: 3px solid #c7111a;
+                    left: 0;
+                }
+
+                .block-2 .ribbon span::after {
+                    border-right: 3px solid #c7111a;
+                    border-top: 3px solid #c7111a;
+                    right: 0;
+                }
+
+    /* Ribbon style 2 */
+    .block-3 {
+        border: 3px solid #c7111a;
+        background: #ffffff;
+        -webkit-box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+        -moz-box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+        box-shadow: -3px 3px 3px 0px rgba(0,0,0,0.15);
+    }
+
+        .block-3 .ribbon {
+            left: -6px;
+            top: -6px;
+            padding: 5px 10px;
+            font-size: 0.688rem;
+            font-weight: 600;
+            padding-right: 30px;
+            letter-spacing: 0.1px;
+            color: hsla(0,0%,100%,.87);
+            background: linear-gradient(-66deg,transparent,transparent 19%,#EA141F 0%,#EA141F);
+            position: absolute;
+        }
+
+            .block-3 .ribbon::before {
+                border: 3px solid transparent;
+                content: " ";
+                position: absolute;
+                top: 100%;
+                z-index: 10;
+                border-right: 3px solid #c7111a;
+                border-top: 3px solid #c7111a;
+                left: 0;
+            }
+
+</style>
+
+@code {
+    [Parameter] public string GameId { get; set; }
+
+}
+
