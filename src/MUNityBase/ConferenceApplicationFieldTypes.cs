@@ -18,6 +18,7 @@
     public enum ConferenceApplicationFormulaTypes
     {
         Delegation,
-        Role
+        Role,
+        Team
     }
 }

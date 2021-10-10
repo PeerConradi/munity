@@ -36,9 +36,11 @@
 
     [Parameter] public Task OnAccepted { get; set; }
 
-    public void Show()
+    public void Show(string title, string warning)
     {
         isVisible = true;
+        this.Title = title;
+        this.Warning = warning;
         StateHasChanged();
     }
 

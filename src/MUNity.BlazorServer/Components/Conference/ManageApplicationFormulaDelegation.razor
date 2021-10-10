@@ -1,0 +1,196 @@
+﻿@using MUNity.Database.Models.Website
+@using MUNity.Database.Context
+@using Microsoft.EntityFrameworkCore
+@inject Services.UserConferenceAuthService conferenceAuthService
+@inject MunityContext dbContext
+
+@if (saved)
+{
+       <div class="alert alert-success fade show rounded-0 mb-0 animate__animated animate__delay-3s animate__fadeOutUp">
+    <div class="d-flex">
+        <i class="fa fa-check fa-2x me-1"></i>
+        <div class="mb-0 ps-2">
+            Änderungen gespeichert.
+        </div>
+    </div>
+</div> 
+}
+
+@if (_formula != null)
+{
+    <EditForm Model="_formula" OnValidSubmit="() => { dbContext.SaveChanges(); saved = true; Task.Run(async () => { await Task.Delay(3200); saved = false; InvokeAsync(StateHasChanged); }); }">
+    <div class="row mb-3">
+        <label class="form-label col-form-label col-md-3">Aktivieren</label>
+        <div class="col-md-9">
+            <RadzenSwitch @bind-Value=_formula.IsActive />
+        </div>
+    </div>
+
+    
+    
+    <div class="row mb-3">
+        <label class="form-label" >Titel</label>
+        <InputText @bind-Value="_formula.Title" class="form-control" />
+    </div>
+
+    <div class="row mb-3">
+        <label class="form-label col-form-label col-md-3">Startdatum</label>
+        <div class="col-md-9">
+            <RadzenDatePicker class="w-100" TValue="DateTime?" @bind-Value="_formula.ApplicationStartDate" ShowTime="true" ShowSeconds="true" HoursStep="1.5" MinutesStep="5" SecondsStep="10" DateFormat="dd.MM.yyyy HH:mm" />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="form-label col-form-label col-md-3">Enddatum</label>
+        <div class="col-md-9">
+            <RadzenDatePicker class="w-100" TValue="DateTime?" @bind-Value="_formula.ApplicationEndDate" ShowTime="true" ShowSeconds="true" HoursStep="1.5" MinutesStep="5" SecondsStep="10" DateFormat="dd.MM.yyyy HH:mm" />
+        </div>
+    </div>
+        
+    <div class="row mb-3">
+        <label class="form-label col-md-3" >BewerberInnen benötigen Namen im Profil</label>
+        <RadzenSwitch class="col-md-9" @bind-Value="_formula.RequiresName" />
+    </div>
+
+    <div class="row mb-3">
+        <label class="form-label col-md-3" >BewerberInnen benötigen Adressdaten im Profil</label>
+        <RadzenSwitch class="col-md-9" @bind-Value="_formula.RequiresAddress" />
+    </div>
+
+    <div class="row mb-3">
+        <label class="form-label col-md-3" >BewerberInnen benötigen angaben über eine Schule im Profil</label>
+        <RadzenSwitch class="col-md-9" @bind-Value="_formula.RequiresSchool" />
+    </div>
+
+    <div class="row mb-3">
+        <label class="form-label">Text vor der Anmeldung/Bewerbung</label>
+        <RadzenHtmlEditor @bind-Value=_formula.PreContent style="height: 250px; margin-bottom: 1rem;" >
+            <RadzenHtmlEditorBold />
+            <RadzenHtmlEditorItalic />
+            <RadzenHtmlEditorUnderline />
+            <RadzenHtmlEditorStrikeThrough />
+            <RadzenHtmlEditorSeparator />
+            <RadzenHtmlEditorColor />
+            <RadzenHtmlEditorBackground />
+            <RadzenHtmlEditorRemoveFormat />
+        </RadzenHtmlEditor>
+    </div>
+
+    @if (_formula.Fields != null)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Art</th>
+                    <th>Beschreibung</th>
+                    <th>Ist Pflichtfeld</th>
+                    <th>Standardwert</th>
+                    <th>Löschen</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+            @foreach(var field in _formula.Fields)
+            {
+                <tr>
+                    <td>
+                        <div class="form-floating">
+							<input type="text" class="form-control h-45px fs-13px" placeholder="@field.FieldName" @bind-value="@field.FieldName">
+							<label class="d-flex align-items-center fs-13px text-gray-600">Name</label>
+						</div>
+                    </td>
+                    <td>
+                        <select class="form-control" @bind="@field.FieldType">
+                            <option value="@MUNityBase.ConferenceApplicationFieldTypes.Text">Textfeld</option>
+                            <option value="@MUNityBase.ConferenceApplicationFieldTypes.MultiLineText">Mehrzeiliger Text</option>
+                            <option value="@MUNityBase.ConferenceApplicationFieldTypes.Number">Zahl</option>
+                            <option value="@MUNityBase.ConferenceApplicationFieldTypes.Date">Datum</option>
+                            <option value="@MUNityBase.ConferenceApplicationFieldTypes.Time">Uhrzeit</option>
+                            <option value="@MUNityBase.ConferenceApplicationFieldTypes.Check">Checkbox</option>
+                            <option value="@MUNityBase.ConferenceApplicationFieldTypes.Country">Land</option>
+                            <option value="@MUNityBase.ConferenceApplicationFieldTypes.School">Schule</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div class="form-floating">
+							<input type="text" class="form-control h-45px fs-13px" placeholder="@field.FieldDescription" @bind-value="@field.FieldDescription">
+							<label class="d-flex align-items-center fs-13px text-gray-600">Beschreibung</label>
+						</div>
+                    </td>
+
+                    <td>
+                        
+                        <RadzenSwitch @bind-Value="@field.IsRequired" />
+                    </td>
+
+                    <td>
+                        <div class="form-floating">
+							<input type="text" class="form-control h-45px fs-13px" placeholder="@field.DefaultValue" @bind-value="@field.DefaultValue">
+							<label class="d-flex align-items-center fs-13px text-gray-600">Standardwert</label>
+						</div>
+                    </td>
+
+                    <td>
+                        <a class="btn btn-danger" @onclick="() => _formula.Fields.Remove(field)">Löschen</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+                
+        </table>
+
+        <a class="btn btn-primary w-100 mb-3" @onclick="AddField">Feld hinzufügen</a>
+    }
+
+    <div class="row mb-3">
+        <label class="form-label">Text nach der Anmeldung/Bewerbung</label>
+        <RadzenHtmlEditor @bind-Value=_formula.PostContent style="height: 250px; margin-bottom: 1rem;" >
+            <RadzenHtmlEditorBold />
+            <RadzenHtmlEditorItalic />
+            <RadzenHtmlEditorUnderline />
+            <RadzenHtmlEditorStrikeThrough />
+            <RadzenHtmlEditorSeparator />
+            <RadzenHtmlEditorColor />
+            <RadzenHtmlEditorBackground />
+            <RadzenHtmlEditorRemoveFormat />
+        </RadzenHtmlEditor>
+    </div>
+        
+
+    <div class="row mb-3">
+        <button type="submit" class="btn btn-success w-100px me-5px">Speichern</button>
+    </div>
+</EditForm>
+}
+
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+    
+    ConferenceApplicationFormula _formula;
+    
+    private bool isLoaded = false;
+
+    private bool saved = false;
+
+    private void AddField()
+    {
+        if (_formula != null)
+        {
+            var newField = new MUNity.Database.Models.Website.ConferenceApplicationField()
+            {
+                Forumula = _formula
+            };
+            _formula.Fields.Add(newField);
+            this.StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _formula = dbContext.ConferenceApplicationFormulas.Include(n => n.Fields).FirstOrDefault(n => n.Conference.ConferenceId == ConferenceId);
+        isLoaded = true;
+    }
+}

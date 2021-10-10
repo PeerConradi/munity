@@ -1,0 +1,175 @@
+﻿@using Microsoft.EntityFrameworkCore
+
+@inject MUNity.Database.Context.MunityContext context
+
+@if (application != null)
+{
+    <div class="mailbox-content-header">
+        <div class="btn-toolbar">
+            <div class="btn-group me-2">
+                <a href="javascript:;" class="btn btn-white btn-sm"><i class="fa fa-fw fa-reply"></i> <span class="d-none d-lg-inline">Reply</span></a>
+            </div>
+            <div class="btn-group me-2">
+                <a href="javascript:;" class="btn btn-white btn-sm"><i class="fa fa-fw fa-trash"></i> <span class="d-none d-lg-inline">Delete</span></a>
+                <a href="javascript:;" class="btn btn-white btn-sm"><i class="fa fa-fw fa-archive"></i> <span class="d-none d-lg-inline">Archive</span></a>
+            </div>
+            <div class="btn-group ms-auto me-2">
+                <a href="email_inbox.html" class="btn btn-white btn-sm disabled"><i class="fa fa-fw fa-arrow-up"></i></a>
+                <a href="email_inbox.html" class="btn btn-white btn-sm"><i class="fa fa-fw fa-arrow-down"></i></a>
+            </div>
+            <div class="btn-group">
+                <a href="email_inbox.html" class="btn btn-white btn-sm"><i class="fa fa-fw fa-times"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="mailbox-content-body">
+        <!-- BEGIN scrollbar -->
+        <div data-scrollbar="true" data-height="100%" data-skip-mobile="true" class="ps" data-init="true" style="height: 100%;">
+            <div class="p-3">
+                <h3 class="mb-3">Bewerbung</h3>
+                <div class="d-flex mb-3">
+                    <div class="ps-3">
+                        <div class="email-from text-inverse fs-14px mb-3px fw-bold">
+                            Status 
+                            @if (application.Status == MUNityBase.ApplicationStatuses.Accepted)
+                            {
+                                <span class="text-success">Angenommen</span>
+                            }
+                            else if (application.Status == MUNityBase.ApplicationStatuses.Denied)
+                            {
+                                <span class="text-danger">Abgelehnt</span>
+                            }
+                            else if (application.Status == MUNityBase.ApplicationStatuses.Pending)
+                            {
+                                <span class="text-primary">Ausstehend</span>
+                            }
+                            else if (application.Status == MUNityBase.ApplicationStatuses.Writing)
+                            {
+                                <span class="text-warning">Noch nicht abgeschickt</span>
+                            }
+                        </div>
+                        <div class="mb-3px"><i class="fa fa-clock fa-fw"></i> @application.ApplyDate.ToLongDateString() @application.ApplyDate.ToShortTimeString()</div>
+                        <div class="email-to">
+                            @if (application.Users != null)
+                            {
+                                @string.Join(", ", application.Users.Where(n => n.CanWrite == true).Select(n => $"{n.User.Forename} {n.User.Lastname} (@{n.User.UserName})"))
+
+                            }
+                            else
+                {
+                    <span class="text-warning">Fehler beim Laden der Benutzer</span>
+                }
+                        </div>
+                    </div>
+                </div>
+                <hr class="bg-gray-500">
+                <ul class="attached-document clearfix">
+                    <li class="fa-file">
+                        <div class="document-file">
+                            <a href="javascript:;">
+                                <i class="fa fa-file-pdf"></i>
+                            </a>
+                        </div>
+                        <div class="document-name"><a href="javascript:;" class="text-decoration-none">flight_ticket.pdf</a></div>
+                    </li>
+                    <li class="fa-camera">
+                        <div class="document-file">
+                            <a href="javascript:;">
+                                <img src="../assets/img/gallery/gallery-11.jpg" alt="">
+                            </a>
+                        </div>
+                        <div class="document-name"><a href="javascript:;" class="text-decoration-none">front_end_mockup.jpg</a></div>
+                    </li>
+                </ul>
+
+                <h4>Benutzer</h4>
+                <ul class="text-inverse">
+                    @foreach (var userInApplication in application.Users)
+                    {
+                        <li>
+                            @userInApplication.User.Forename @userInApplication.User.Lastname
+                            @if (userInApplication.Status == MUNityBase.DelegationApplicationUserEntryStatuses.Joined)
+                            {
+                                <div class="badge badge-primary">Beigetreten</div>
+                            }
+                            else if (userInApplication.Status == MUNityBase.DelegationApplicationUserEntryStatuses.RequestJoining)
+                            {
+                                <div class="badge badge-secondary">Möchte an Bewerbung teilnehmen</div>
+                            }
+                        </li>
+                    }
+                </ul>
+
+                <h4>Gewünschte Delegationen</h4>
+                <ul class="text-inverse">
+                    @foreach(var preferedDelegation in application.Delegations.OrderBy(n => n.Priority))
+                    {
+                        <li>@preferedDelegation.Priority @preferedDelegation.Delegation.Name</li>
+                    }
+                </ul>
+                <p class="text-inverse">
+                    Curabitur auctor non orci a molestie. Nunc non justo quis orci viverra pretium id ut est. <br>
+                    Nullam vitae dolor id enim consequat fermentum. Ut vel nibh tellus. <br>
+                    Duis finibus ante et augue fringilla, vitae scelerisque tortor pretium. <br>
+                    Phasellus quis eros erat. Nam sed justo libero.
+                </p>
+                <p class="text-inverse">
+                    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.<br>
+                    Sed tempus dapibus libero ac commodo.
+                </p>
+                <br>
+                <br>
+                <p class="text-inverse">
+                    Best Regards,<br>
+                    Sean.<br><br>
+                    Information Technology Department,<br>
+                    Senior Front End Designer<br>
+                </p>
+            </div>
+            <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div>
+        </div>
+        <!-- END scrollbar -->
+    </div>
+    <div class="mailbox-content-footer d-flex align-items-center justify-content-end">
+        <div class="btn-group me-2">
+            <a href="email_inbox.html" class="btn btn-white btn-sm disabled"><i class="fa fa-fw fa-arrow-up"></i></a>
+            <a href="email_inbox.html" class="btn btn-white btn-sm"><i class="fa fa-fw fa-arrow-down"></i></a>
+        </div>
+        <div class="btn-group">
+            <a href="email_inbox.html" class="btn btn-white btn-sm"><i class="fa fa-fw fa-times"></i></a>
+        </div>
+    </div>
+}
+else
+{
+    @if (isLoaded)
+    {
+        <div class="alert alert-danger">Keine Bewerbung gefunden</div>
+    }
+    else
+    {
+        <div class="alert alert-primary">Wird geladen</div>
+    }
+}
+
+@code {
+    [Parameter] public int ApplicationId { get; set; }
+
+    private MUNity.Database.Models.Conference.DelegationApplication application;
+
+    private bool isLoaded = false;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        application = context.DelegationApplications
+            .Include(n => n.Users)
+            .ThenInclude(n => n.User)
+            .Include(n => n.FormulaInputs)
+            .Include(n => n.Delegations)
+            .ThenInclude(a => a.Delegation)
+            .FirstOrDefault(a => a.DelegationApplicationId == ApplicationId);
+
+        isLoaded = true;
+    }
+}

@@ -1,79 +1,292 @@
-﻿<form class="bg-light p-3">
-    <div class="row mb-15px">
-        <label class="form-label col-form-label col-md-3">Wunsch-Delegation 1</label>
-        <div class="col-md-9">
-            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
-                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
-            <small class="fs-12px text-gray-500-darker">Die Delegation, welche ihr am Liebsten haben möchtet.</small>
-        </div>
-    </div>
+﻿@using Microsoft.EntityFrameworkCore
+@inject MUNity.Database.Context.MunityContext context
+@inject UserManager<MUNity.Database.Models.User.MunityUser> userManager
 
-    <div class="row mb-15px">
-        <label class="form-label col-form-label col-md-3">Wunsch-Delegation 2</label>
-        <div class="col-md-9">
-            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
-                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
-            <small class="fs-12px text-gray-500-darker">Die Delegation, welche ihr an Stelle von Wunsch 1 gerne bekommen möchtet.</small>
-        </div>
-    </div>
+@if (!saved)
+{
+    @if (context.DelegationApplicationUserEntries.Any(n => n.User.UserName == me.UserName))
+    {
+        <div class="alert alert-warning">Hey, du bewirbst dich bereits auf diese Konferenz!</div>
+    }
 
-    <div class="row mb-15px">
-        <label class="form-label col-form-label col-md-3">Wunsch-Delegation 3</label>
-        <div class="col-md-9">
-            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
-                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
-            <small class="fs-12px text-gray-500-darker">Die Delegation, welche ihr an dritter Stelle nehmen würdet.</small>
-        </div>
-    </div>
+    @if (application != null)
+    {
+        <div class="bg-light p-3">
+            <div class="row mb-15-px">
+                @formula.PreContent
+            </div>
 
-    <div class="row mb-15px">
-        <label class="form-label col-form-label col-md-3">Motivation</label>
-        <div class="col-md-9">
-            <textarea class="form-control" rows="3"></textarea>
-        </div>
-    </div>
+            <div class="row mb-15px">
+                <label class="form-label col-form-label col-md-3">Benutzer</label>
+                <div class="col-md-9">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var user in application.Users)
+                        {
+                            <li class="list-group-item">
+                                @user.User.Forename @user.User.Lastname (@@@user.User.UserName)
+                                @if (user.User.UserName != me.UserName)
+                                {
+                                    <a class="text-danger pull-right">entfernen</a>
+                                }
 
-    <div class="row mb-15px">
-        <label class="form-label col-form-label col-md-3">Erfahrung</label>
-        <div class="col-md-9">
-            <textarea class="form-control" rows="3"></textarea>
-        </div>
-    </div>
-    
-    <div class="row mb-15px">
-        <label class="form-label col-form-label col-md-3">Schule</label>
-        <div class="col-md-9">
-            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
-                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
-            <small class="fs-12px text-gray-500-darker">Eine angabe der Schule welche ihr besucht.</small>
-        </div>
-    </div>
-    
+                            </li>
+                        }
+                    </ul>
+                    <label class="form-label">Benutzer hinzufügen</label>
+                    <RadzenDropDown AllowClear="true" TValue="string" class="w-100"
+                                    LoadData=@LoadUsers AllowFiltering="true"
+                                    Change="(args) => UserAdded(args)"
+                                    Data=@foundUsers TextProperty="UserName" ValueProperty="Id" />
+                </div>
+            </div>
 
-    <div class="row mb-15px">
-        <label class="form-label col-form-label col-md-3">Benutzer</label>
-        <div class="col-md-9">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">Cras justo odio <a class="text-danger pull-right">entfernen</a></li>
-                <li class="list-group-item">Dapibus ac facilisis in</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-            </ul>
-            <label class="form-label">Benutzer hinzufügen</label>
-            <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
-                            AllowFiltering="true" Data=@null TextProperty="CompanyName" ValueProperty="CustomerID" />
-        </div>
-    </div>
-    
-    <div class="row mb-3">
-        <label class="form-label col-form-label col-md-3"></label>
-        <div class="col-md-7">
-            <button class="btn btn-primary">Anmeldung absenden</button>
-            <button class="btn btn-secondary">Anmeldung speichern</button>
-        </div>
-    </div>
+            @for (byte i = 0; i < formula.MaxDelegationWishes; i++)
+            {
+                byte localIndex = i;
+                <div class="row mb-15px">
+                    <label class="form-label col-form-label col-md-3">Wunsch-Delegation @(i+1)</label>
+                    <div class="col-md-9">
+                        <RadzenDropDown AllowClear="true" TValue="string" AllowVirtualization="true" class="w-100 d-flex"
+                                        AllowFiltering="true" Data=@availableDelegations Change=@(args => DelegationPicked(args, localIndex)) TextProperty="Name" ValueProperty="DelegationId" />
+                    </div>
+                </div>
 
-</form>
+                @if (i < application.Delegations.Count && application.Delegations.ElementAt(i)?.Delegation != null)
+                {
+                    var localDelegation = application.Delegations.ElementAt(i);
+                    <div class="row mb-15px bg-light">
+                        <label class="form-label col-form-label col-md-3">Wunschrollen</label>
+                        <div class="col-md-9">
+                            <ul class="list-group list-group-flush">
+                                @foreach (var role in context.Delegates.Include(n => n.Committee).Where(n => n.Delegation.DelegationId == localDelegation.Delegation.DelegationId))
+                                {
+                                    <li class="list-group-item">@role.RoleName - @role.Committee.Name</li>
+                                }
+                            </ul>
+
+                        </div>
+                    </div>
+                }
+
+            }
+
+            @foreach (var field in formula.Fields)
+            {
+                var targetField = application.FormulaInputs.FirstOrDefault(n => n.Field == field);
+                <div class="row mb-15px">
+                    <label class="form-label col-form-label col-md-3">@field.FieldName</label>
+                    <div class="col-md-9">
+                        @if (field.FieldType == MUNityBase.ConferenceApplicationFieldTypes.MultiLineText)
+                        {
+                            <textarea @bind="targetField.Value" class="form-control" rows="3"></textarea>
+
+                        }
+                        @if (!string.IsNullOrEmpty(field.FieldDescription))
+                        {
+                            <small class="fs-12px text-gray-500-darker">@field.FieldDescription</small>
+                        }
+                    </div>
+                </div>
+            }
+
+
+
+
+            <div class="row mb-3">
+                <label class="form-label col-form-label col-md-3"></label>
+                <div class="col-md-7">
+                    <button class="btn btn-primary" @onclick="SendApplication">Anmeldung absenden</button>
+                    <button class="btn btn-secondary">Anmeldung speichern</button>
+                </div>
+            </div>
+
+            @if (error)
+            {
+                <div class="row mb-3">
+                    <div class="alert alert-danger">Absenden fehlgeschlagen :(</div>
+                </div>
+            }
+
+
+        </div>
+    }
+
+}
+else
+{
+    <div class="alert alert-success">Bewerbung abgeschickt</div>
+}
+
 
 @code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
+    [Parameter] public string ConferenceId { get; set; }
+
+    private MUNity.Database.Models.Website.ConferenceApplicationFormula formula;
+
+    private List<AvailableDelegation> availableDelegations
+    {
+        get
+        {
+            var list = context.Delegations
+                .Where(n => n.Roles.Any(a => a.ApplicationState == MUNityBase.EApplicationStates.DelegationApplication))
+                .Select(n => new AvailableDelegation()
+                {
+                    DelegationId = n.DelegationId,
+                    Name = $"{n.Name} ({n.Roles.Count(a => a.ApplicationState == MUNityBase.EApplicationStates.DelegationApplication)} Slots)"
+                })
+                .ToList();
+            if (application != null && application.Delegations.Any())
+            {
+                list = list.Where(n => !application.Delegations.Any(a => a.Delegation != null && a.Delegation.DelegationId == n.DelegationId)).ToList();
+
+            }
+
+            return list;
+
+        }
+    }
+
+    private List<MUNity.Database.Models.User.MunityUser> foundUsers;
+
+    private MUNity.Database.Models.Conference.DelegationApplication application;
+
+    private MUNity.Database.Models.User.MunityUser me;
+
+    private bool saved;
+
+    private bool error;
+
+    private class AvailableDelegation
+    {
+        public string DelegationId { get; set; }
+
+        public string Name { get; set; }
+    }
+
+    private void DelegationPicked(object value, byte index)
+    {
+        if (index >= formula.MaxDelegationWishes)
+        {
+            Console.WriteLine($"Index {index} is invalid, tha Max count is {formula.MaxDelegationWishes}");
+            return;
+        }
+
+        if (value == null)
+        {
+            application.Delegations.ElementAt(index).Delegation = null;
+            InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+
+            var delegation = context.Delegations.FirstOrDefault(n => n.DelegationId == value.ToString());
+
+            if (delegation != null)
+            {
+                application.Delegations.ElementAt(index).Delegation = delegation;
+                InvokeAsync(StateHasChanged);
+            }
+        }
+    }
+
+    private void UserAdded(object value)
+    {
+        var user = context.Users.FirstOrDefault(n => n.Id == value.ToString());
+        if (user != null)
+        {
+            application.Users.Add(new Database.Models.Conference.DelegationApplicationUserEntry()
+            {
+                Application = application,
+                CanWrite = false,
+                Status = MUNityBase.DelegationApplicationUserEntryStatuses.Joined,
+                User = user
+            });
+        }
+    }
+
+    void LoadUsers(LoadDataArgs args)
+    {
+        var query = context.Users.AsQueryable();
+
+        if (!string.IsNullOrEmpty(args.Filter))
+        {
+            query = query.Where(c => c.UserName.ToLower().Contains(args.Filter.ToLower()) ||
+            c.Forename.ToLower().Contains(args.Filter.ToLower()) ||
+            c.Lastname.ToLower().Contains(args.Filter.ToLower()))
+                .OrderBy(n => n.UserName)
+                .Take(20);
+        }
+
+        foundUsers = query.ToList();
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        formula = context.ConferenceApplicationFormulas
+            .Include(n => n.Fields)
+            .FirstOrDefault(n => n.Conference.ConferenceId == ConferenceId);
+
+        application = new Database.Models.Conference.DelegationApplication()
+        {
+            Status = MUNityBase.ApplicationStatuses.Writing
+        };
+
+        var claim = (await AuthStateTask)?.User;
+        this.me = await userManager.GetUserAsync(claim);
+
+        application.Users = new List<MUNity.Database.Models.Conference.DelegationApplicationUserEntry>();
+        application.Users.Add(new Database.Models.Conference.DelegationApplicationUserEntry()
+        {
+            Application = application,
+            CanWrite = true,
+            Status = MUNityBase.DelegationApplicationUserEntryStatuses.Joined,
+            User = me
+        });
+
+        application.Delegations = new List<MUNity.Database.Models.Conference.DelegationApplicationPickedDelegation>();
+
+        for (byte i = 0; i < formula.MaxDelegationWishes; i++)
+        {
+            application.Delegations.Add(new Database.Models.Conference.DelegationApplicationPickedDelegation()
+            {
+                Application = application,
+                Priority = i,
+                UserWishes = new List<MUNity.Database.Models.Conference.DelegationApplicationPickedDelegationUserWish>()
+            });
+        }
+
+        application.FormulaInputs = new List<Database.Models.Website.ConferenceDelegationApplicationFieldInput>();
+
+        foreach (var field in formula.Fields)
+        {
+            application.FormulaInputs.Add(new Database.Models.Website.ConferenceDelegationApplicationFieldInput()
+            {
+                Application = application,
+                Field = field,
+                Value = field.DefaultValue
+            });
+        }
+    }
+
+    private void SendApplication()
+    {
+        application.Status = MUNityBase.ApplicationStatuses.Pending;
+        application.ApplyDate = DateTime.Now;
+        context.DelegationApplications.Add(application);
+        var recaff = context.SaveChanges();
+        if (recaff > 0)
+        {
+            saved = true;
+        }
+        else
+        {
+            error = true;
+        }
+    }
 }

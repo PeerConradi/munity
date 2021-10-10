@@ -2,99 +2,32 @@
 @using MUNity.Schema.Conference
 @inject Services.ConferenceService conferenceService
 @inject Services.ConferenceRoleService conferenceRoleService
+@inject NotificationService NotificationService
 
 @if (info != null)
 {
     <BreadcrumbComponent PageName="Rollen" Source="@info"></BreadcrumbComponent>
-}
 
-<h1 class="page-header">Rollen bearbeiten</h1>
+    <h1 class="page-header">Rollen bearbeiten</h1>
 
-<h3>Rollen in Gremien</h3>
-<p>Die gelisteten Rollen sind alle Teil eines Gremiums. Hierbei kann es sich um Vertreter von Staaten, allerdings auch um Nichtstaatliche Akteure handeln, sofern das geünscht ist.</p>
+    <MUNity.BlazorServer.Components.Conference.ManageCommitteeRolesPanel Roles="@info.Roles" />
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Gremium</th>
-        <th>Ist belegt</th>
-    </tr>
-    </thead>
-    <tbody>
-    @if (info?.Roles != null && info.Roles.Any())
-    {
-        foreach (var role in info.Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId)))
-        {
-            <tr>
-                <td>@role.RoleId</td>
-                <td>@role.RoleName</td>
-                <td>@role.RoleCommitteeName</td>
-                <td>@((role.HasParicipant) ? "Ja" : "Nein")</td>
-            </tr>
-        }
-    }
-    </tbody>
-</table>
-
-<h3>Freie Rollen</h3>
-<p>Diese Rollen sind lediglich der Konferenz, nicht aber einen Gremium zugeordnet. Auch diese Rollen können Teil einer Delegations sein.</p>
-
-@if (info != null)
-{
-    <button class="btn btn-primary mb-2" @onclick="() => createFreeRoleModal.Show()">Neue freie Rolle</button>
-}
-
-<table class="table">
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Subtype</th>
-        <th>Ist belegt</th>
-        <th>Löschen</th>
-    </tr>
-    </thead>
-    <tbody>
-    @if (info?.Roles != null && info.Roles.Any())
-    {
-        foreach (var role in info.Roles.Where(n => string.IsNullOrEmpty(n.RoleCommitteeId)))
-        {
-            <tr>
-                <td>@role.RoleId</td>
-                <td>@role.RoleName</td>
-                <td>@role.Subtype</td>
-                <td>@((role.HasParicipant) ? "Ja" : "Nein")</td>
-                <td><button class="btn btn-danger" @onclick="() => RequestRemoveFreeRole(role)">Löschen</button></td>
-            </tr>
-        }
-    }
-    </tbody>
-</table>
-
-@if (info != null)
-{
-    <MUNity.BlazorServer.Components.Conference.CreateFreeRoleModal ConferenceId="@Id"
-                                                                   @ref="createFreeRoleModal"
-                                                                   Countries="@info.Countries"
-                                                                   Delegations="@info.Delegations"
-                                                                   SeatCreated="LoadData"/>
-
-    <MUNity.BlazorServer.Components.General.DeleteWarningModal @ref="deleteWarningModal" />
+    <MUNity.BlazorServer.Components.Conference.ManageFreeRolesPanel ConferenceId="@Id" 
+                                                                    Countries="@info.Countries" 
+                                                                    Delegations="@info.Delegations"
+                                                                    Roles="@info.Roles"/>
 }
 
 @code {
     [Parameter] public string Id { get; set; }
 
-    [CascadingParameter] public Task<AuthenticationState>
-    AuthStateTask { get; set; }
+    [CascadingParameter]
+    public Task<AuthenticationState>
+    AuthStateTask
+    { get; set; }
 
     private MUNity.Schema.Conference.ConferenceRolesInfo info;
 
-    private MUNity.BlazorServer.Components.Conference.CreateFreeRoleModal createFreeRoleModal;
-
-    private MUNity.BlazorServer.Components.General.DeleteWarningModal deleteWarningModal;
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,26 +44,7 @@
         }
     }
 
-    private void RequestRemoveFreeRole(ManageDelegationRoleInfo role)
-    {
-        deleteWarningModal.Title = $"{role.RoleName} löschen?";
-        deleteWarningModal.Warning =  $"Soll die Rolle {role.RoleName} wirklich gelöscht werden?";
-        deleteWarningModal.OnAccepted = new Task(() => RemoveDelegateRole(role));
-        deleteWarningModal.Show();
-    }
+    
 
-    private async Task RemoveDelegateRole(ManageDelegationRoleInfo role)
-    {
-        var claim = (await AuthStateTask)?.User;
-        if (claim == null)
-            return;
-
-        var result = await conferenceRoleService.RemoveDelegateRole(role.RoleId, claim);
-        if (result)
-        {
-            info.Roles.Remove(role);
-            this.InvokeAsync(this.StateHasChanged);
-        }
-    }
 
 }

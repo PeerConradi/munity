@@ -467,7 +467,9 @@ namespace MUNity.Services
                             RoleCommitteeName = role.Committee.Name,
                             RoleId = role.RoleId,
                             RoleName = role.RoleName,
-                            Subtype = role.DelegateType
+                            Subtype = role.DelegateType,
+                            DelegationId = role.Delegation.DelegationId,
+                            DelegationName = role.Delegation.Name
                         }).ToList(),
                     Delegations = conf.Delegations.Select(del => new DelegationInfo()
                     {

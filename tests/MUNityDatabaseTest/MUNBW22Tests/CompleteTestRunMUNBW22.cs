@@ -10,8 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MUNity.Database.Context;
 using NUnit.Framework;
 using MUNity.Database.Extensions;
-using MUNity.Database.Model.Conference;
-using MUNity.Database.Model.Website;
+using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Website;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Organization;
 using MUNity.Database.Models.User;
@@ -671,6 +671,9 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 PostContent =
                     "Die Anmeldungen werden am 20.02.2022 abgeschlossen. Dann Erfahren Sie, welche Delegation und Rolle Sie bekommen",
                 PreContent = "Die Anmeldung bei Model United Nations Baden-Würrtemberg...",
+                RequiresAddress = true,
+                RequiresName = true,
+                MaxDelegationWishes = 3
             };
 
             formula.Fields = new List<ConferenceApplicationField>();
@@ -698,6 +701,14 @@ namespace MUNity.Database.Test.MUNBW22Tests
             _context.ConferenceApplicationFormulas.Add(formula);
             _context.SaveChanges();
             Assert.IsTrue(_context.ConferenceApplicationFormulas.Any(n => n.Conference.ConferenceId == "munbw22"));
+            var formulaReload = _context.ConferenceApplicationFormulas
+                .Include(n => n.Fields)
+                .FirstOrDefault(n => n.Conference.ConferenceId == "munbw22" &&
+                n.FormulaType == ConferenceApplicationFormulaTypes.Delegation);
+
+            Assert.NotNull(formulaReload);
+            Assert.NotNull(formulaReload.Fields);
+            Assert.AreEqual(2, formulaReload.Fields.Count);
         }
 
         [Test]

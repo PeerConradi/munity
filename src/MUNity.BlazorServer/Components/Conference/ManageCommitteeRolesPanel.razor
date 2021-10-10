@@ -1,0 +1,211 @@
+﻿@using MUNity.Schema.Conference
+@inject Services.ConferenceRoleService conferenceRoleService
+@inject NotificationService NotificationService
+
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Rollen in Gremien</h4>
+        <div class="panel-heading-btn">
+            <a href="javascript:;" @onclick="() => showCommitteeRoles = !showCommitteeRoles" class="btn btn-xs btn-icon btn-warning"><i class="fa fa-minus"></i></a>
+        </div>
+    </div>
+
+    @if (showCommitteeRoles)
+    {
+        <div class="alert alert-warning rounded-0 mb-0 fade show">
+            An dieser Stelle können alle Rollen für Gremien eingesehen werden.
+        </div>
+
+        <div class="panel-body">
+            <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+                <table class="table table-striped table-bordered align-middle dataTable no-footer dtr-inline" role="grid">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th class="@committeeRolesNameOrderStyle" @onclick="SetCommitteeRolesOrderModeName">Name</th>
+                            <th class="@committeeRolesCommitteeOrderStyle" @onclick="SetCommitteeRolesOrderModeCommittee">Gremium</th>
+                            <th class="@committeeRolesDelegationOrderStyle" @onclick="SetCommitteeRolesOrderModeDelegation">Delegation</th>
+                            <th>Bewerbungstyp</th>
+                            <th>Ist belegt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Roles != null && Roles.Any())
+                        {
+                            foreach (var role in GetCommitteeRolesWithOrder())
+                            {
+                                <tr>
+                                    <td>@role.RoleId</td>
+                                    <td>@role.RoleName</td>
+                                    <td>@role.RoleCommitteeName</td>
+                                    <td>@role.DelegationName</td>
+                                    <td>
+                                        <select class="form-select" value="@role.ApplicationState" @onchange="(args) => ChangeApplicationMode(args, role)">
+                                            <option value="@MUNityBase.EApplicationStates.Closed">Anmeldung geschlossen</option>
+                                            <option value="@MUNityBase.EApplicationStates.DelegationApplication">Anmeldung auf Delegation (als Gruppe)</option>
+                                            <option value="@MUNityBase.EApplicationStates.DirectApplication">Anmeldung auf Rolle (direkt)</option>
+                                        </select>
+                                    </td>
+                                    <td>@((role.HasParicipant) ? "Ja" : "Nein")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@code {
+    [Parameter] public IEnumerable<ManageDelegationRoleInfo> Roles { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private bool showCommitteeRoles;
+
+    private string committeeRolesNameOrderStyle
+    {
+        get
+        {
+            if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByNameAscending)
+            {
+                return "text-nowrap sorting sorting_asc";
+            }
+            else if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByNameDescending)
+            {
+                return "text-nowrap sorting sorting_desc";
+            }
+            else
+            {
+                return "text-nowrap sorting";
+
+            }
+        }
+    }
+
+    private string committeeRolesCommitteeOrderStyle
+    {
+        get
+        {
+            if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByCommitteeAscending)
+            {
+                return "text-nowrap sorting sorting_asc";
+            }
+            else if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByCommitteeDescending)
+            {
+                return "text-nowrap sorting sorting_desc";
+            }
+            else
+            {
+                return "text-nowrap sorting";
+
+            }
+        }
+    }
+
+    private string committeeRolesDelegationOrderStyle
+    {
+        get
+        {
+            if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByCommitteeAscending)
+            {
+                return "text-nowrap sorting sorting_asc";
+            }
+            else if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByCommitteeDescending)
+            {
+                return "text-nowrap sorting sorting_desc";
+            }
+            else
+            {
+                return "text-nowrap sorting";
+
+            }
+        }
+    }
+
+    private enum CommitteeRolesOrderModes
+    {
+        Default,
+        ByNameAscending,
+        ByNameDescending,
+        ByCommitteeAscending,
+        ByCommitteeDescending,
+        ByDelegationAscending,
+        ByDelegationDescending
+    }
+
+    private CommitteeRolesOrderModes committeeRolesOrderMode;
+
+    private IEnumerable<ManageDelegationRoleInfo> GetCommitteeRolesWithOrder()
+    {
+        switch (committeeRolesOrderMode)
+        {
+            case CommitteeRolesOrderModes.Default:
+                return Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId));
+            case CommitteeRolesOrderModes.ByNameAscending:
+                return Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId)).OrderBy(n => n.RoleName);
+            case CommitteeRolesOrderModes.ByNameDescending:
+                return Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId)).OrderByDescending(n => n.RoleName);
+            case CommitteeRolesOrderModes.ByCommitteeAscending:
+                return Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId)).OrderBy(n => n.RoleCommitteeName);
+            case CommitteeRolesOrderModes.ByCommitteeDescending:
+                return Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId)).OrderByDescending(n => n.RoleCommitteeName);
+            case CommitteeRolesOrderModes.ByDelegationAscending:
+                return Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId)).OrderBy(n => n.DelegationName);
+            case CommitteeRolesOrderModes.ByDelegationDescending:
+                return Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId)).OrderByDescending(n => n.DelegationName);
+            default:
+                return Roles.Where(n => !string.IsNullOrEmpty(n.RoleCommitteeId));
+        }
+    }
+
+
+
+    private void SetCommitteeRolesOrderModeName()
+    {
+        if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByNameAscending)
+            committeeRolesOrderMode = CommitteeRolesOrderModes.ByNameDescending;
+        else
+            committeeRolesOrderMode = CommitteeRolesOrderModes.ByNameAscending;
+    }
+
+    private void SetCommitteeRolesOrderModeCommittee()
+    {
+        if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByCommitteeAscending)
+            committeeRolesOrderMode = CommitteeRolesOrderModes.ByCommitteeDescending;
+        else
+            committeeRolesOrderMode = CommitteeRolesOrderModes.ByCommitteeAscending;
+    }
+
+    private void SetCommitteeRolesOrderModeDelegation()
+    {
+        if (committeeRolesOrderMode == CommitteeRolesOrderModes.ByDelegationAscending)
+            committeeRolesOrderMode = CommitteeRolesOrderModes.ByDelegationDescending;
+        else
+            committeeRolesOrderMode = CommitteeRolesOrderModes.ByDelegationAscending;
+    }
+
+    private async Task ChangeApplicationMode(ChangeEventArgs args, ManageDelegationRoleInfo role)
+    {
+        var claim = (await AuthStateTask)?.User;
+        if (claim == null)
+            return;
+
+        var result = await conferenceRoleService.SetDelegateRoleApplicationState(role.RoleId, args.Value.ToString(), claim);
+        @if (!result)
+        {
+            var message = new NotificationMessage()
+            {
+                Detail = "Die Änderung konnte nicht übernommen werden.",
+                Duration = 5,
+                Severity = NotificationSeverity.Error,
+                Summary = "Fehler"
+            };
+            NotificationService.Notify(message);
+        }
+    }
+}

@@ -21,9 +21,10 @@ using MUNity.Database.Models;
 using MUNity.Database.Models.Resolution;
 using MUNity.Database.Models.Session;
 using MUNity.Database.Interfaces;
-using MUNity.Database.Model.Conference;
-using MUNity.Database.Model.User;
-using MUNity.Database.Model.Website;
+using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.User;
+using MUNity.Database.Models.Website;
+using MUNity.Database.Models.General;
 
 namespace MUNity.Database.Context
 {
@@ -151,6 +152,10 @@ namespace MUNity.Database.Context
         public DbSet<UserNotification> UserNotifications { get; set; }
 
         public DbSet<UserNotificationCategory> UserNotificationCategories { get; set; }
+
+        public DbSet<School> Schools { get; set; }
+
+        public DbSet<UserInSchool> UsersInSchools { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

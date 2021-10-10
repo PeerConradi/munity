@@ -45,6 +45,10 @@ namespace MUNity.Schema.Conference
 
         public string Subtype { get; set; }
 
+        public string DelegationId { get; set; }
+
+        public string DelegationName { get; set; }
+
         public MUNityBase.EApplicationStates ApplicationState { get; set; }
     }
 }

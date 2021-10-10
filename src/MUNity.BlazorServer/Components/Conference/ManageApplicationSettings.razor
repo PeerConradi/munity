@@ -1,64 +1,49 @@
-﻿@using MUNity.Database.Model.Website
+﻿@using MUNity.Database.Models.Website
 @using MUNity.Database.Context
 @inject Services.UserConferenceAuthService conferenceAuthService
 @inject MunityContext dbContext
 
-@if (isLoaded && _formula != null)
+@if (isAuthorized)
 {
-    @if (saved)
-    {
-        <div class="alert alert-success fade show rounded-0 mb-0 animate__animated animate__delay-3s animate__fadeOutUp">
-            <div class="d-flex">
-                <i class="fa fa-check fa-2x me-1"></i>
-                <div class="mb-0 ps-2">
-                    Änderungen gespeichert.
-                </div>
-            </div>
-        </div>
-    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Eigenschaft</th>
+                <th>Wert</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Bewerbung auf Delegation</td>
+                <td>@((dbContext.ConferenceApplicationFormulas.Any(a => a.Conference.ConferenceId == ConferenceId && a.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Delegation && a.IsActive)) ? "aktiv" : "deaktiviert")</td>
+            </tr>
+            <tr>
+                <td>Bewerbung auf Rollen</td>
+                <td>@((dbContext.ConferenceApplicationFormulas.Any(a => a.Conference.ConferenceId == ConferenceId && a.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Role && a.IsActive)) ? "aktiv" : "deaktiviert")</td>
+            </tr>
+            <tr>
+                <td>Bewerbung auf Team-Rollen</td>
+                <td>@((dbContext.ConferenceApplicationFormulas.Any(a => a.Conference.ConferenceId == ConferenceId && a.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Team && a.IsActive)) ? "aktiv" : "deaktiviert")</td>
+            </tr>
+            <tr>
+                <td>Anzahl Delegation-Slots</td>
+                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == MUNityBase.EApplicationStates.DelegationApplication)</td>
+            </tr>
+            <tr>
+                <td>Anzahl Rollen mit Direktbewerbung</td>
+                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == MUNityBase.EApplicationStates.DirectApplication)</td>
+            </tr>
+            <tr>
+                <td>Anzahl Rollen mit geschlossener Bewerbung</td>
+                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == MUNityBase.EApplicationStates.Closed)</td>
+            </tr>
+            <tr>
+                <td>Anzahl eingereichter Delegationsbewerbungen</td>
+                <td>@dbContext.DelegationApplications.Count(n => n.Delegations.Select(a => a.Delegation.Conference).First().ConferenceId == ConferenceId)</td>
+            </tr>
+        </tbody>
+    </table>
     
-
-<EditForm Model="_formula" OnValidSubmit="() => { dbContext.SaveChanges(); saved = true; Task.Run(async () => { await Task.Delay(3200); saved = false; InvokeAsync(StateHasChanged); }); }">
-    <div class="row mb-3">
-        <label class="form-label col-form-label col-md-3">Aktivieren</label>
-        <div class="col-md-9">
-            <RadzenSwitch @bind-Value=_formula.IsActive />
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <label class="form-label col-form-label col-md-3">Startdatum</label>
-        <div class="col-md-9">
-            <RadzenDatePicker class="w-100" TValue="DateTime?" @bind-Value="_formula.ApplicationStartDate" ShowTime="true" ShowSeconds="true" HoursStep="1.5" MinutesStep="5" SecondsStep="10" DateFormat="dd.MM.yyyy HH:mm" />
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <label class="form-label col-form-label col-md-3">Enddatum</label>
-        <div class="col-md-9">
-            <RadzenDatePicker class="w-100" TValue="DateTime?" @bind-Value="_formula.ApplicationEndDate" ShowTime="true" ShowSeconds="true" HoursStep="1.5" MinutesStep="5" SecondsStep="10" DateFormat="dd.MM.yyyy HH:mm" />
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-7 offset-md-3">
-            <button type="submit" class="btn btn-primary w-100px me-5px">Speichern</button>
-        </div>
-    </div>
-</EditForm>
-    
-}
-else if (isLoaded && _formula == null && isAuthorized)
-{
-    <div class="alert alert-muted">
-        Es liegt derzeit keine Konfiguration für eine Anmeldung vor.
-    </div>
-}
-else if (isLoaded && _formula == null && !isAuthorized)
-{
-    <div class="alert alert-danger">
-        Keine Berechtigung Änderungen vor zu nehmen!
-    </div>
 }
 else
 {
@@ -72,13 +57,8 @@ else
 
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
-    private bool isLoaded = false;
-
     private bool isAuthorized = false;
 
-    private bool saved = false;
-
-    ConferenceApplicationFormula _formula;
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,9 +67,7 @@ else
         if (claim != null)
         {
             this.isAuthorized = await conferenceAuthService.IsUserAllowedToEditConference(ConferenceId, claim);
-            _formula = dbContext.ConferenceApplicationFormulas.FirstOrDefault(n => n.Conference.ConferenceId == ConferenceId);
         }
-        isLoaded = true;
     }
 
 }

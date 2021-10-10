@@ -148,6 +148,69 @@ namespace MUNity.Services
             return true;
         }
 
+        public async Task<bool> SetDelegateRoleApplicationState(int roleId, MUNityBase.EApplicationStates state, ClaimsPrincipal claim)
+        {
+            var roleWithConference = _context.Delegates
+                .Include(n => n.Conference)
+                .FirstOrDefault(n => n.RoleId == roleId);
+
+            if (roleWithConference?.Conference == null)
+                return false;
+
+            var isAllowed = await _authService.IsUserAllowedToEditConference(roleWithConference.Conference.ConferenceId, claim);
+            if (!isAllowed)
+                return false;
+
+            roleWithConference.ApplicationState = state;
+            _context.SaveChanges();
+            return true;
+        }
+
+        public async Task<bool> SetDelegateRoleApplicationState(int roleId, string state, ClaimsPrincipal claim)
+        {
+            if (state == MUNityBase.EApplicationStates.Closed.ToString() || state.ToLower() == "closed")
+            {
+                return await SetDelegateRoleApplicationState(roleId, MUNityBase.EApplicationStates.Closed, claim);
+            }
+            else if (state == MUNityBase.EApplicationStates.Custom.ToString() || state.ToLower() == "custom")
+            {
+                return await SetDelegateRoleApplicationState(roleId, MUNityBase.EApplicationStates.Custom, claim);
+            }
+            else if (state == MUNityBase.EApplicationStates.DelegationApplication.ToString() || state.ToLower() == "delegationapplication" || state.ToLower() == "delegation")
+            {
+                return await SetDelegateRoleApplicationState(roleId, MUNityBase.EApplicationStates.DelegationApplication, claim);
+            }
+            else if (state == MUNityBase.EApplicationStates.DirectApplication.ToString() || state.ToLower() == "directapplication" || state.ToLower() == "role")
+            {
+                return await SetDelegateRoleApplicationState(roleId, MUNityBase.EApplicationStates.DirectApplication, claim);
+            }
+            else
+            {
+                throw new NotSupportedException($"{state} is not a known Application Type that can be read by string.");
+            }
+        }
+
+        public async Task<List<ManageDelegationRoleInfo>> GetRoleInfos(string conferenceId, ClaimsPrincipal claim)
+        {
+            var isAllowed = await _authService.IsUserAllowedToEditConference(conferenceId, claim);
+            if (!isAllowed)
+                return null;
+
+            return _context.Delegates.Where(n => n.Conference.ConferenceId == conferenceId)
+                .Select(role => new ManageDelegationRoleInfo()
+                {
+                    ApplicationState = role.ApplicationState,
+                    HasParicipant = role.Participations.Any(),
+                    RoleCommitteeId = role.Committee.CommitteeId,
+                    RoleCommitteeName = role.Committee.Name,
+                    RoleId = role.RoleId,
+                    RoleName = role.RoleName,
+                    Subtype = role.DelegateType,
+                    DelegationId = role.Delegation.DelegationId,
+                    DelegationName = role.Delegation.Name
+                }).ToList();
+        }
+
         public ConferenceRoleService(MunityContext context, UserConferenceAuthService authService)
         {
             _context = context;

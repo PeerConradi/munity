@@ -2,8 +2,13 @@
 {
     public enum DelegationApplicationUserEntryStatuses
     {
+        /// <summary>
+        /// User is inside the application
+        /// </summary>
         Joined,
-        RequestJoining,
-        RequestAccepting
+        /// <summary>
+        /// user wants to join the application
+        /// </summary>
+        RequestJoining
     }
 }

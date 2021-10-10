@@ -1,41 +1,128 @@
-﻿@layout MUNity.BlazorServer.Shared.FrontEndLayout
+﻿@using Microsoft.EntityFrameworkCore
+
+@layout MUNity.BlazorServer.Shared.FrontEndLayout
 @page "/web/conference/{ConferenceId}/register"
+
+@inject MUNity.Database.Context.MunityContext context;
 
 <AuthorizeView>
     <Authorized>
-        <h1 class="page-header">Title</h1>
-        
-        <div class="panel panel-inverse" data-sortable-id="form-stuff-1">
-            <!-- BEGIN panel-heading -->
-            <div class="panel-heading ui-sortable-handle">
-                <h4 class="panel-title">Anmeldeformular</h4>
-            </div>
-            <!-- END panel-heading -->
-            <!-- BEGIN panel-body -->
-            <div class="panel-body">
-                <div class="alert alert-muted">
-                    PreContent
-                </div>
-                
-                <ul class="nav nav-pills">
-                    <li class="nav-item">
-                        <a class="nav-link active">Auf Delegation bewerben</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link">Auf Rolle bewerben</a>
-                    </li>
-                </ul>
-                <div class="tab-content bg-white p-0 rounded-bottom mb-3">
-                    <div class="tab-pane fade active show" id="default-tab-1">
-                        <MUNity.BlazorServer.Components.Conference.DelegationApplicationForm />
-                    </div>
-                </div>
 
-                <div class="alert alert-muted">
-                    Post Content
+            
+
+            <div class="panel panel-inverse" data-sortable-id="form-stuff-1">
+                <!-- BEGIN panel-heading -->
+                <div class="panel-heading ui-sortable-handle">
+                    <h4 class="panel-title">Bewerbung</h4>
+                </div>
+                <!-- END panel-heading -->
+                <!-- BEGIN panel-body -->
+                <div class="panel-body">
+
+                    @if (!isDelegationApplicationAvailable && !isRoleApplicationAvailable)
+                    {
+                        <div class="alert alert-danger">Derzeit scheint keine Anmeldephase zu sein.</div>
+                    }
+
+                    <div class="nav-wizards-container">
+                        <nav class="nav nav-wizards-3 mb-2">
+                            <div class="nav-item col">
+                                <a class="nav-link cursor-pointer @((step == 0) ? "active" : null) @((step > 0) ? "completed" : null)" @onclick="() => step = 0">
+                                    <div class="nav-dot"></div>
+                                    <div class="nav-title">Schritt 1</div>
+                                    <div class="nav-text">Anwesenheit</div>
+                                </a>
+                            </div>
+                            <div class="nav-item col">
+                                <a class="nav-link cursor-pointer @((step == 1) ? "active" : null) @((step > 1) ? "completed" : null)"  @onclick="() => step = 1">
+                                    <div class="nav-dot"></div>
+                                    <div class="nav-title">Schritt 2</div>
+                                    <div class="nav-text">Art</div>
+                                </a>
+                            </div>
+                            <div class="nav-item col">
+                                <a class="nav-link cursor-pointer @((step == 2) ? "active" : null) @((step > 2) ? "completed" : null)"  @onclick="() => step = 2">
+                                    <div class="nav-dot"></div>
+                                    <div class="nav-title">Schritt 3</div>
+                                    <div class="nav-text">Eingabe</div>
+                                </a>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <div class="row">
+
+                        @if (step == 0)
+                        {
+                            <div class="col-6">
+                                <a class="widget-card rounded square mb-5px cursor-pointer" @onclick="() => step = 1" style="max-height: 400px">
+                                    <div class="widget-card-cover" style="background-image: url(../img/login-bg/login-bg-9.jpg)">
+                                        <div class="d-flex h-100 align-items-center justify-content-center">
+                                            <div class="text-center">
+                                                <div class="text-white fs-24px"><b>Online</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                             
+                            <div class="col-6">
+                                <a class="widget-card rounded square mb-5px cursor-pointer" @onclick="() => step = 1" style="max-height: 400px">
+                                    <div class="widget-card-cover" style="background-image: url(../img/login-bg/login-bg-17.jpg)">
+                                        <div class="d-flex h-100 align-items-center justify-content-center">
+                                            <div class="text-center">
+                                                <div class="text-white fs-24px"><b>In Präsenz</b></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                        }
+                        else if (step == 1)
+                        {
+                            @if (isRoleApplicationAvailable)
+                            {
+                                <div class="col-6 animate__animated animate__backInRight" >
+                                    <a href="#" class="widget-card rounded square mb-5px" style="max-height: 400px; max-width: 400px">
+                                        <div class="widget-card-cover" style="background-image: url(../img/gallery/gallery-1.jpg)">
+                                            <div class="d-flex h-100 align-items-center justify-content-center">
+                                                <div class="text-center">
+                                                    <div class="text-white fs-24px"><b>Einzelbewerbung</b></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+
+                            @if (isDelegationApplicationAvailable)
+                            {
+                                <div class="col-6 animate__animated animate__backInRight" >
+                                    <a class="widget-card rounded square mb-5px cursor-pointer" style="max-height: 400px; max-width: 400px"
+                                       @onclick="() => { step = 2; mode = Modes.Delegation; }">
+                                        <div class="widget-card-cover" style="background-image: url(../img/gallery/gallery-4.jpg)">
+                                            <div class="d-flex h-100 align-items-center justify-content-center">
+                                                <div class="text-center">
+                                                    <div class="text-white fs-24px"><b>Gruppenbewerbung</b></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        }
+                        else if (step == 2)
+                        {
+                            @if (mode == Modes.Delegation)
+                            {
+                                <MUNity.BlazorServer.Components.Conference.DelegationApplicationForm ConferenceId="@ConferenceId" />
+                            }
+                        }
+                    </div>
+
                 </div>
             </div>
-        </div>
     </Authorized>
     <NotAuthorized>
         <div class="error">
@@ -59,5 +146,49 @@
 @code {
     [Parameter] public string ConferenceId { get; set; }
 
-    
+    private bool isDelegationApplicationAvailable;
+
+    private bool isRoleApplicationAvailable;
+
+    private int step { get; set; } = 0;
+
+    private enum PresencePreferences
+    {
+        NotSelected,
+        Online,
+        OnLocation
+    }
+
+    private PresencePreferences presencePreference;
+
+    private enum Modes
+    {
+        None,
+        Delegation,
+        Role
+    }
+
+    private Modes mode;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        // TODO: If there are committees that are Online and offline inside this conference
+        // make take step 0, if not skip to step 1
+
+
+        isDelegationApplicationAvailable = context.ConferenceApplicationFormulas
+        .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Delegation);
+
+        isRoleApplicationAvailable = context.ConferenceApplicationFormulas
+            .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Role);
+
+        if (isDelegationApplicationAvailable)
+            mode = Modes.Delegation;
+
+        if (!isDelegationApplicationAvailable && isRoleApplicationAvailable)
+            mode = Modes.Role;
+
+    }
 }
