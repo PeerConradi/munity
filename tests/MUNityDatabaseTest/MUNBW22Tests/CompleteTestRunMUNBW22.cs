@@ -250,7 +250,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
                     .WithName("Generalversammlung")
                     .WithFullName("Generalversammlung")
                     .WithShort("GV")
-
+                    .WithType(CommitteeTypes.AtLocation)
                     .WithTopic("Nachhaltige soziale und wirtschaftliche Entwicklung nach Covid-19")
                     .WithTopic("Beschleunigung der Maßnahmen zur Umsetzung des Pariser Klimaabkommens")
 
@@ -287,6 +287,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .WithName("Sicherheitsrat")
                 .WithFullName("Sicherheitsrat")
                 .WithShort("SR")
+                .WithType(CommitteeTypes.AtLocation)
                 .WithTopic("Aktuelle Situation in Afghanistan")
                 .WithTopic("Nukleare Situation im Iran nach dem JCPOA")
                 .WithTopic("Bedrohung des internationalen Friedens durch nichtstaatliche Akteure")
@@ -313,6 +314,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .WithName("Wirtschafts- und Sozialrat")
                 .WithFullName("Wirtschafts- und Sozialrat")
                 .WithShort("WiSo")
+                .WithType(CommitteeTypes.AtLocation)
                 .WithTopic("Implementierung von Kreislaufwirtschaft zum Erreichen der nachhaltigen Entwicklungsziele")
                 .WithTopic("Einführung einer globalen Mindeststeuer")
 
@@ -338,6 +340,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .WithName("Rat der Internationalen Organisation für Migration")
                 .WithFullName("Rat der Internationalen Organisation für Migration")
                 .WithShort("Rat")
+                .WithType(CommitteeTypes.AtLocation)
                 .WithTopic("Implementierung des UN-Migrationspakts")
                 .WithTopic("Gesundheitsversorgung von Migrant*innen")
                 .WithTopic("Umgang mit traumatisierten Geflüchteten"));
@@ -355,6 +358,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .WithName("Klimakonferenz")
                 .WithFullName("Klimakonferenz")
                 .WithShort("KK")
+                .WithType(CommitteeTypes.AtLocation)
                 .WithTopic("Rolle der Jugend bei der Umsetzung des Pariser Klimaabkommens")
                 .WithTopic("Adaption an den Meeresspiegelanstieg in tiefliegenden Gebieten und Inselstaaten")
                 .WithTopic("Umsetzung von SDG 7: Nachhaltige Energie für alle"));
@@ -372,6 +376,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .WithName("Menschenrechtsrat")
                 .WithFullName("Menschenrechtsrat")
                 .WithShort("MRR")
+                .WithType(CommitteeTypes.Online)
                 .WithTopic("Menschenrechtslage in der Republik Myanmar")
                 .WithTopic("Bekämpfung der Diskriminierung aufgrund sexueller Orientierung und Identität")
                 .WithTopic("Pressefreiheit und Schutz von Journalist*innen"));
@@ -494,12 +499,14 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(500)]
         public void TestAddSeatsToGV()
         {
-            _context.AddSeat("munbw22-gv", "Abgeordnete*r Afghanistan", 2);
+            _context.AddSeatByCountryName("munbw22-gv", "Afghanistan");
+            _context.AddSeatByCountryName("munbw22-gv", "Italien");
+            _context.AddSeatByCountryName("munbw22-gv", "Spanien");
             _context.AddSeat("munbw22-gv", "Abgeordnete*r Deutschland", 38);
             _context.AddSeat("munbw22-gv", "Abgeordnete*r Frankreich", 50);
             _context.AddSeat("munbw22-gv", "Abgeordnete*r Vereinigte Staaten", 207);
 
-            Assert.AreEqual(4, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-gv"));
+            Assert.AreEqual(6, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-gv"));
         }
 
         [Test]

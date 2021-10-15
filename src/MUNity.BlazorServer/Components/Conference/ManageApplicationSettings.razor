@@ -41,6 +41,45 @@
                 <td>Anzahl eingereichter Delegationsbewerbungen</td>
                 <td>@dbContext.DelegationApplications.Count(n => n.Delegations.Select(a => a.Delegation.Conference).First().ConferenceId == ConferenceId)</td>
             </tr>
+            <tr>
+                <td>Delegationen welche durch Bewerbungen abgedeckt sind</td>
+                <td>
+                    @{
+                        var totalCount = dbContext.Delegations.Count(n => n.Conference.ConferenceId == ConferenceId);
+                        var coveredCount = dbContext.Delegations.Count(n => n.Conference.ConferenceId == ConferenceId && dbContext.DelegationApplicationPickedDelegations.Any(a => a.Delegation.DelegationId == n.DelegationId));
+                        int percentage = coveredCount * 100 / totalCount;
+
+                        <div class="widget-chart-info-progress">
+                            <b>Abdeckung</b>
+                            <span class="float-end">@percentage %</span>
+                        </div>
+                        <div class="progress h-10px">
+                            <div class="progress-bar rounded-pill" style="width:@(percentage)%;"></div>
+                        </div>
+                        <small class="text-secondary">Achtung, diese Zahl gibt nur an, wie auf welche Delegationen ein Beitrittswunsch vorliegt, aber nicht welche Delegationen alles abgedeckt sind.</small>
+                    }
+                </td>
+
+            </tr>
+            <tr>
+                <td>Delegationen welche durch erstwünsche abgedeckt sind</td>
+                <td>
+                    @{
+                        var coveredCountByPrioZero = dbContext.Delegations.Count(n => n.Conference.ConferenceId == ConferenceId && dbContext.DelegationApplicationPickedDelegations.Any(a => a.Delegation.DelegationId == n.DelegationId && a.Priority == 0));
+                        int percentagePrioZero = coveredCountByPrioZero * 100 / totalCount;
+
+                        <div class="widget-chart-info-progress">
+                            <b>Abdeckung</b>
+                            <span class="float-end">@percentagePrioZero %</span>
+                        </div>
+                        <div class="progress h-10px">
+                            <div class="progress-bar rounded-pill" style="width:@(percentagePrioZero)%;"></div>
+                        </div>
+                        <small class="text-secondary">Diese Zahl gibt an, wie viele Delegationen besetzt sind, wenn die Nutzer ihre Prio 1 bekommen.</small>
+                    }
+                </td>
+
+            </tr>
         </tbody>
     </table>
     

@@ -11,34 +11,80 @@
 
     @if (application != null)
     {
+
+        @if (step == 0)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Benutzer auswählen</h4>
+                </div>
+
+                <div class="card-body">
+                    <div class="row mb-15px">
+                        <label class="form-label col-form-label col-md-3">Benutzer</label>
+                        <div class="col-md-9">
+                            <ul class="list-group list-group-flush">
+                                @foreach (var user in application.Users)
+                                {
+                                    <li class="list-group-item">
+                                        @user.User.Forename @user.User.Lastname (@@@user.User.UserName)
+                                        @if (user.User.UserName != me.UserName)
+                                        {
+                                            <a class="text-danger pull-right">entfernen</a>
+                                        }
+
+                                    </li>
+                                }
+                            </ul>
+                            <label class="form-label">Benutzer hinzufügen</label>
+                            <RadzenDropDown AllowClear="true" TValue="string" class="w-100"
+                                            LoadData=@LoadUsers AllowFiltering="true"
+                                            Change="(args) => UserAdded(args)"
+                                            Data=@foundUsers TextProperty="UserName" ValueProperty="Id" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer text-end">
+                    <button class="btn btn-primary pull-right" @onclick="() => step = 1">weiter</button>
+                </div>
+            </div>
+        }
+        else if (step == 1)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Delegationen auswählen</h4>
+
+                    <p>TODO Selected here</p>
+
+                    <p>TODO Seach here</p>
+
+                    <div class="card-group">
+
+                        @foreach (var delegation in availableDelegations)
+                        {
+                            <div class="card">
+                                <img class="card-img-top" src="../img/gallery/gallery-6.jpg" alt="Card image cap">
+                                <div class="card-body">
+                                    <h4 class="card-title">@delegation.Name</h4>
+                                    <p class="card-text">@delegation.Roles</p>
+                                    <p class="card-text text-gray"></p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+
         <div class="bg-light p-3">
             <div class="row mb-15-px">
                 @formula.PreContent
             </div>
 
-            <div class="row mb-15px">
-                <label class="form-label col-form-label col-md-3">Benutzer</label>
-                <div class="col-md-9">
-                    <ul class="list-group list-group-flush">
-                        @foreach (var user in application.Users)
-                        {
-                            <li class="list-group-item">
-                                @user.User.Forename @user.User.Lastname (@@@user.User.UserName)
-                                @if (user.User.UserName != me.UserName)
-                                {
-                                    <a class="text-danger pull-right">entfernen</a>
-                                }
-
-                            </li>
-                        }
-                    </ul>
-                    <label class="form-label">Benutzer hinzufügen</label>
-                    <RadzenDropDown AllowClear="true" TValue="string" class="w-100"
-                                    LoadData=@LoadUsers AllowFiltering="true"
-                                    Change="(args) => UserAdded(args)"
-                                    Data=@foundUsers TextProperty="UserName" ValueProperty="Id" />
-                </div>
-            </div>
+            
 
             @for (byte i = 0; i < formula.MaxDelegationWishes; i++)
             {
@@ -123,6 +169,10 @@ else
 
     [Parameter] public string ConferenceId { get; set; }
 
+    private int step = 0;
+
+    [Parameter] public EventCallback<int> StepChanged { get; set; }
+
     private MUNity.Database.Models.Website.ConferenceApplicationFormula formula;
 
     private List<AvailableDelegation> availableDelegations
@@ -134,13 +184,13 @@ else
                 .Select(n => new AvailableDelegation()
                 {
                     DelegationId = n.DelegationId,
-                    Name = $"{n.Name} ({n.Roles.Count(a => a.ApplicationState == MUNityBase.EApplicationStates.DelegationApplication)} Slots)"
+                    Name = n.Name,
+                    Roles = string.Join(", ", n.Roles.Select(a => a.RoleName + " " + a.Committee.Name))
                 })
                 .ToList();
             if (application != null && application.Delegations.Any())
             {
                 list = list.Where(n => !application.Delegations.Any(a => a.Delegation != null && a.Delegation.DelegationId == n.DelegationId)).ToList();
-
             }
 
             return list;
@@ -163,13 +213,15 @@ else
         public string DelegationId { get; set; }
 
         public string Name { get; set; }
+
+        public string Roles { get; set; }
     }
 
     private void DelegationPicked(object value, byte index)
     {
         if (index >= formula.MaxDelegationWishes)
         {
-            Console.WriteLine($"Index {index} is invalid, tha Max count is {formula.MaxDelegationWishes}");
+            //Console.WriteLine($"Index {index} is invalid, tha Max count is {formula.MaxDelegationWishes}");
             return;
         }
 

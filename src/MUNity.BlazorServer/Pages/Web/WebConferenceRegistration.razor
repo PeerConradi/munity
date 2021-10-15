@@ -1,15 +1,12 @@
 ﻿@using Microsoft.EntityFrameworkCore
 
-@layout MUNity.BlazorServer.Shared.FrontEndLayout
+@layout MUNity.BlazorServer.Shared.ConferenceFrontEndLayout
 @page "/web/conference/{ConferenceId}/register"
 
 @inject MUNity.Database.Context.MunityContext context;
 
 <AuthorizeView>
     <Authorized>
-
-            
-
             <div class="panel panel-inverse" data-sortable-id="form-stuff-1">
                 <!-- BEGIN panel-heading -->
                 <div class="panel-heading ui-sortable-handle">
@@ -54,8 +51,8 @@
 
                         @if (step == 0)
                         {
-                            <div class="col-6">
-                                <a class="widget-card rounded square mb-5px cursor-pointer" @onclick="() => step = 1" style="max-height: 400px">
+                            <div class="col-6 padding-on-lg">
+                                <a class="widget-card rounded square mb-5px cursor-pointer " @onclick="() => step = 1">
                                     <div class="widget-card-cover" style="background-image: url(../img/login-bg/login-bg-9.jpg)">
                                         <div class="d-flex h-100 align-items-center justify-content-center">
                                             <div class="text-center">
@@ -66,8 +63,8 @@
                                 </a>
                             </div>
                              
-                            <div class="col-6">
-                                <a class="widget-card rounded square mb-5px cursor-pointer" @onclick="() => step = 1" style="max-height: 400px">
+                            <div class="col-6 padding-on-lg">
+                                <a class="widget-card rounded square mb-5px cursor-pointer" @onclick="() => step = 1">
                                     <div class="widget-card-cover" style="background-image: url(../img/login-bg/login-bg-17.jpg)">
                                         <div class="d-flex h-100 align-items-center justify-content-center">
                                             <div class="text-center">
@@ -83,8 +80,8 @@
                         {
                             @if (isRoleApplicationAvailable)
                             {
-                                <div class="col-6 animate__animated animate__backInRight" >
-                                    <a href="#" class="widget-card rounded square mb-5px" style="max-height: 400px; max-width: 400px">
+                                <div class="col-6 padding-on-lg animate__animated animate__backInRight" >
+                                    <a href="#" class="widget-card rounded square mb-5px">
                                         <div class="widget-card-cover" style="background-image: url(../img/gallery/gallery-1.jpg)">
                                             <div class="d-flex h-100 align-items-center justify-content-center">
                                                 <div class="text-center">
@@ -98,8 +95,8 @@
 
                             @if (isDelegationApplicationAvailable)
                             {
-                                <div class="col-6 animate__animated animate__backInRight" >
-                                    <a class="widget-card rounded square mb-5px cursor-pointer" style="max-height: 400px; max-width: 400px"
+                                <div class="col-6 padding-on-lg animate__animated animate__backInRight" >
+                                    <a class="widget-card rounded square mb-5px cursor-pointer"
                                        @onclick="() => { step = 2; mode = Modes.Delegation; }">
                                         <div class="widget-card-cover" style="background-image: url(../img/gallery/gallery-4.jpg)">
                                             <div class="d-flex h-100 align-items-center justify-content-center">
@@ -142,6 +139,14 @@
     </NotAuthorized>
 </AuthorizeView>
 
+<style>
+    @@media only screen and (min-width: 1200px) {
+        .padding-on-lg {
+            padding-left: 150px;
+            padding-right: 150px;
+        }
+    }
+</style>
 
 @code {
     [Parameter] public string ConferenceId { get; set; }
@@ -151,6 +156,8 @@
     private bool isRoleApplicationAvailable;
 
     private int step { get; set; } = 0;
+
+    private string conferenceShort = "Conference";
 
     private enum PresencePreferences
     {

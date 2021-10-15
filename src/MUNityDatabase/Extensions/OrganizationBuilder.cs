@@ -190,6 +190,47 @@ namespace MUNity.Database.Extensions
             return role;
         }
 
+        public static ConferenceDelegateRole AddSeatByCountryName(this MunityContext context, string committeeId, string countryName, string subTypeName = "Participant")
+        {
+            var committee = context.Committees.Include(n => n.Conference).FirstOrDefault(n => n.CommitteeId == committeeId);
+            if (committee == null)
+                throw new NullReferenceException($"The given Committee ({committeeId}) was not found.");
+
+            countryName = countryName.ToLower();
+
+            var country = context.Countries
+                .FirstOrDefault(n => n.Name.ToLower() == countryName ||
+                n.FullName.ToLower() == countryName);
+
+            if (country == null)
+            {
+                country = context.CountryNameTranslations.Where(n => n.TranslatedFullName.ToLower() == countryName ||
+                    n.TranslatedName.ToLower() == countryName).Select(a => a.Country).FirstOrDefault();
+            }
+
+            if (country == null)
+                throw new NullReferenceException($"No country with the name {countryName} was found...");
+
+            var participantAuth = context.ConferenceRoleAuthorizations.FirstOrDefault(n =>
+                n.RoleAuthName == subTypeName && n.Conference.ConferenceId == committee.Conference.ConferenceId);
+
+            var role = new ConferenceDelegateRole()
+            {
+                Committee = committee,
+                Conference = committee.Conference,
+                ConferenceRoleAuth = participantAuth,
+                RoleName = country.Name,
+                DelegateCountry = country,
+                RoleFullName = country.FullName,
+                DelegateType = subTypeName,
+                RoleShort = country.Iso
+            };
+
+            context.Delegates.Add(role);
+            context.SaveChanges();
+            return role;
+        }
+
         public static void GroupRolesOfCountryIntoADelegation(this MunityContext context, string conferenceId, int countryId,
             string delegationName, string delegationFullName = null, string delegationShortName = null)
         {
@@ -428,6 +469,12 @@ namespace MUNity.Database.Extensions
         public CommitteeOptionsBuilder WithShort(string shortName)
         {
             Committee.CommitteeShort = shortName;
+            return this;
+        }
+
+        public CommitteeOptionsBuilder WithType(MUNityBase.CommitteeTypes type)
+        {
+            Committee.CommitteeType = type;
             return this;
         }
 

@@ -1,4 +1,7 @@
-﻿@inject NavigationManager navManager
+﻿@using System.Linq 
+
+@inject NavigationManager navManager
+@inject MUNity.Database.Context.MunityContext context
 
 <div id="header" class="app-header">
     <!-- BEGIN navbar-header -->
@@ -49,6 +52,12 @@
         if (navManager.Uri.Contains("/web/conference/"))
         {
             title = "KONFERENZNAME";
+            var conferenceKeywordIndex = navManager.Uri.Split("/").ToList().IndexOf("conference");
+            var conferenceId = navManager.Uri.Split("/")[conferenceKeywordIndex + 1];
+            Console.WriteLine(conferenceId);
+            this.title = context.Conferences.AsNoTracking().Where(n => n.ConferenceId == conferenceId).Select(a => a.ConferenceShort).FirstOrDefault();
+
+
         }
     }
 
