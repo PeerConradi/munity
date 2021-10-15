@@ -196,16 +196,14 @@ namespace MUNity.Database.Extensions
             if (committee == null)
                 throw new NullReferenceException($"The given Committee ({committeeId}) was not found.");
 
-            countryName = countryName.ToLower();
-
             var country = context.Countries
-                .FirstOrDefault(n => n.Name.ToLower() == countryName ||
-                n.FullName.ToLower() == countryName);
+                .FirstOrDefault(n => n.Name == countryName ||
+                n.FullName == countryName);
 
             if (country == null)
             {
-                country = context.CountryNameTranslations.Where(n => n.TranslatedFullName.ToLower() == countryName ||
-                    n.TranslatedName.ToLower() == countryName).Select(a => a.Country).FirstOrDefault();
+                country = context.CountryNameTranslations.Where(n => n.TranslatedFullName == countryName ||
+                    n.TranslatedName == countryName).Select(a => a.Country).FirstOrDefault();
             }
 
             if (country == null)

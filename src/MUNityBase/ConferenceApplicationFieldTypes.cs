@@ -14,11 +14,4 @@
         Country,
         School
     }
-
-    public enum ConferenceApplicationFormulaTypes
-    {
-        Delegation,
-        Role,
-        Team
-    }
 }

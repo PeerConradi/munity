@@ -1,27 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MUNity.Database.Models.Conference;
 using MUNityBase;
 
-namespace MUNity.Database.Models.Website
+namespace MUNity.Database.Models.Conference
 {
     public class ConferenceApplicationFormula
     {
         public int ConferenceApplicationFormulaId { get; set; }
 
-        public Conference.Conference Conference { get; set; }
+        public ConferenceApplicationOptions Options { get; set; }
 
         public ConferenceApplicationFormulaTypes FormulaType { get; set; }
-
-        public bool IsActive { get; set; }
-
-        public DateTime? ApplicationStartDate { get; set; }
-
-        public DateTime? ApplicationEndDate { get; set; }
-
 
         public string PreContent { get; set; }
 

@@ -240,7 +240,7 @@ namespace MUNityDatabaseTest.ConferenceTests
             {
                 Conference = conference,
                 DelegationShort = "DE",
-                FullName = "Delegations Deutschland",
+                FullName = "DelegationWishes Deutschland",
                 Name = "Deutschland"
             };
 

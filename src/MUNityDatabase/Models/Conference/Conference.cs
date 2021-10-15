@@ -39,6 +39,8 @@ namespace MUNity.Database.Models.Conference
 
         public MunityUser CreationUser { get; set; }
 
+        public ConferenceApplicationOptions ApplicationOptions { get; set; }
+
         public ICollection<Committee> Committees { get; set; }
 
         public ICollection<AbstractConferenceRole> Roles { get; set; }

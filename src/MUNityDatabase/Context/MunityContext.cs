@@ -142,6 +142,8 @@ namespace MUNity.Database.Context
 
         public DbSet<ConferenceWebPage> ConferenceWebPages { get; set; }
 
+        public DbSet<ConferenceApplicationOptions> ConferenceApplicationOptions { get; set; }
+
         public DbSet<ConferenceApplicationFormula> ConferenceApplicationFormulas { get; set; }
         public DbSet<ConferenceApplicationField> ConferenceApplicationFields { get; set; }
         public DbSet<ConferenceDelegationApplicationFieldInput> ConferenceDelegationApplicationFieldInputs { get; set; }
@@ -180,8 +182,6 @@ namespace MUNity.Database.Context
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();
 
-
-
             modelBuilder.Entity<OrganizationRole>()
                 .HasOne(n => n.Organization)
                 .WithMany(a => a.Roles);
@@ -203,6 +203,7 @@ namespace MUNity.Database.Context
             // Conference
             modelBuilder.Entity<Conference>().HasOne(n => n.ConferenceProject)
                 .WithMany(n => n.Conferences);
+
 
             modelBuilder.Entity<AbstractConferenceRole>().HasOne(n => n.Conference).WithMany(n => n.Roles);
 

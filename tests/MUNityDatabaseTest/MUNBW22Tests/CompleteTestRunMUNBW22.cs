@@ -13,6 +13,7 @@ using MUNity.Database.Extensions;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Website;
 using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.Organization;
 using MUNity.Database.Models.User;
 using MUNityBase;
@@ -500,13 +501,27 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestAddSeatsToGV()
         {
             _context.AddSeatByCountryName("munbw22-gv", "Afghanistan");
+            _context.AddSeatByCountryName("munbw22-gv", "Ägypten");
+            _context.AddSeatByCountryName("munbw22-gv", "Albanien");
+            _context.AddSeatByCountryName("munbw22-gv", "Argentinien");
+            _context.AddSeatByCountryName("munbw22-gv", "Armenien");
+            _context.AddSeatByCountryName("munbw22-gv", "Australien");
+
+            _context.AddSeatByCountryName("munbw22-gv", "Bahrain");
+            _context.AddSeatByCountryName("munbw22-gv", "Belarus");
+            _context.AddSeatByCountryName("munbw22-gv", "Brasilien");
+            _context.AddSeatByCountryName("munbw22-gv", "Bulgarien");
+            _context.AddSeatByCountryName("munbw22-gv", "Burkina Faso");
+
+            _context.AddSeatByCountryName("munbw22-gv", "Deutschland");
+            _context.AddSeatByCountryName("munbw22-gv", "Frankreich");
+            _context.AddSeatByCountryName("munbw22-gv", "Vereinigte Staaten");
+
+
             _context.AddSeatByCountryName("munbw22-gv", "Italien");
             _context.AddSeatByCountryName("munbw22-gv", "Spanien");
-            _context.AddSeat("munbw22-gv", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-gv", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-gv", "Abgeordnete*r Vereinigte Staaten", 207);
 
-            Assert.AreEqual(6, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-gv"));
+            Assert.AreEqual(16, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-gv"));
         }
 
         [Test]
@@ -658,6 +673,65 @@ namespace MUNity.Database.Test.MUNBW22Tests
             Assert.AreEqual(1, _context.ConferenceParticipationCostRules.Count());
         }
 
+        [Test]
+        [Order(513)]
+        public void TestAddTeacherToDelegationDeutschland()
+        {
+            var deutschland =
+                _context.Delegations.FirstOrDefault(n =>
+                    n.Name == "Deutschland" && n.Conference.ConferenceId == "munbw22");
+            Assert.NotNull(deutschland);
+
+            var teacher = new ConferenceDelegateRole()
+            {
+                Conference = _context.Conferences.Find("munbw22"),
+                ApplicationState = EApplicationStates.Closed,
+                Committee = null,
+                DelegateCountry = null,
+                DelegateType = "Lehrkraft",
+                Delegation = deutschland,
+                IsDelegationLeader = true,
+                RoleName = "Lehrkraft",
+                RoleFullName = "Lehrkraft"
+            };
+
+            _context.Delegates.Add(teacher);
+            _context.SaveChanges();
+
+            var hasLehrkraft = _context.Delegations.Any(n =>
+                n.DelegationId == deutschland.DelegationId && n.Roles.Any(a => a.RoleName == "Lehrkraft"));
+            Assert.IsTrue(hasLehrkraft);
+        }
+
+        [Test]
+        [Order(514)]
+        public void TestAddCostRuleForTeacher()
+        {
+            var teachers = _context.Delegates.Where(n => n.DelegateType == "Lehrkraft");
+
+            foreach (var teacher in teachers)
+            {
+                var costRule = new ConferenceParticipationCostRule()
+                {
+                    Committee = null,
+                    Conference = null,
+                    Role = teacher,
+                    Delegation = null,
+                    AddPercentage = null,
+                    CostRuleTitle = "Preis für Lehrkraft",
+                    Costs = 0.00m,
+                    CutPercentage = null,
+                    UserMaxAge = null,
+                    UserMinAge = null
+                };
+
+                _context.ConferenceParticipationCostRules.Add(costRule);
+            }
+
+            _context.SaveChanges();
+
+        }
+
         #endregion
 
         // ID 600 Test Registration/Application
@@ -669,12 +743,24 @@ namespace MUNity.Database.Test.MUNBW22Tests
         {
             var conference = _context.Conferences.Find("munbw22");
             Assert.NotNull(conference);
-            var formula = new ConferenceApplicationFormula()
+
+            var options = new ConferenceApplicationOptions()
             {
                 Conference = conference,
-                Title = "Anmeldung",
+                AllowCountryWishApplication = false,
+                AllowDelegationApplication = true,
+                AllowDelegationWishApplication = true,
+                AllowRoleApplication = true,
                 ApplicationEndDate = new DateTime(2022, 2, 20, 12, 0, 0),
                 ApplicationStartDate = new DateTime(2021, 12, 12, 12, 0, 0),
+                Formulas = new List<ConferenceApplicationFormula>(),
+                IsActive = true
+            };
+
+            var formula = new ConferenceApplicationFormula()
+            {
+                Options = options,
+                Title = "Anmeldung",
                 PostContent =
                     "Die Anmeldungen werden am 20.02.2022 abgeschlossen. Dann Erfahren Sie, welche Delegation und Rolle Sie bekommen",
                 PreContent = "Die Anmeldung bei Model United Nations Baden-Würrtemberg...",
@@ -707,15 +793,16 @@ namespace MUNity.Database.Test.MUNBW22Tests
 
             _context.ConferenceApplicationFormulas.Add(formula);
             _context.SaveChanges();
-            Assert.IsTrue(_context.ConferenceApplicationFormulas.Any(n => n.Conference.ConferenceId == "munbw22"));
+            Assert.IsTrue(_context.ConferenceApplicationFormulas.Any(n => n.Options.Conference.ConferenceId == "munbw22"));
             var formulaReload = _context.ConferenceApplicationFormulas
                 .Include(n => n.Fields)
-                .FirstOrDefault(n => n.Conference.ConferenceId == "munbw22" &&
+                .FirstOrDefault(n => n.Options.Conference.ConferenceId == "munbw22" &&
                 n.FormulaType == ConferenceApplicationFormulaTypes.Delegation);
 
             Assert.NotNull(formulaReload);
             Assert.NotNull(formulaReload.Fields);
             Assert.AreEqual(2, formulaReload.Fields.Count);
+            Assert.IsTrue(_context.ConferenceApplicationOptions.Any(n => n.ConferenceId == "munbw22"));
         }
 
         [Test]
@@ -724,13 +811,15 @@ namespace MUNity.Database.Test.MUNBW22Tests
         {
             var delegationDeutschland = _context.Delegations
                 .Include(n => n.Roles)
+                .ThenInclude(n => n.DelegateCountry)
                 .FirstOrDefault(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Deutschland");
 
             Assert.NotNull(delegationDeutschland);
 
             foreach (var role in delegationDeutschland.Roles)
             {
-                role.ApplicationState = EApplicationStates.DelegationApplication;
+                if (role.DelegateCountry is not null)
+                    role.ApplicationState = EApplicationStates.DelegationApplication;
             }
 
             var result = _context.SaveChanges();
@@ -760,7 +849,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
 
             var application = new DelegationApplication()
             {
-                Delegations = new List<DelegationApplicationPickedDelegation>(),
+                DelegationWishes = new List<DelegationApplicationPickedDelegation>(),
                 Users = new List<DelegationApplicationUserEntry>(),
                 FormulaInputs = new List<ConferenceDelegationApplicationFieldInput>(),
                 ApplyDate = DateTime.Now,
@@ -771,7 +860,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
             var formula = _context.ConferenceApplicationFormulas
                 .Include(n => n.Fields)
                 .FirstOrDefault(n => n.FormulaType == ConferenceApplicationFormulaTypes.Delegation &&
-                                     n.Conference.ConferenceId == "munbw22");
+                                     n.Options.Conference.ConferenceId == "munbw22");
 
             Assert.NotNull(formula);
 
@@ -785,21 +874,21 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 Field = motivationField
             });
 
-            application.Delegations.Add(new DelegationApplicationPickedDelegation()
+            application.DelegationWishes.Add(new DelegationApplicationPickedDelegation()
             {
                 Delegation = delegationGermany,
                 Application = application,
                 Priority = 1
             });
 
-            application.Delegations.Add(new DelegationApplicationPickedDelegation()
+            application.DelegationWishes.Add(new DelegationApplicationPickedDelegation()
             {
                 Delegation = delegationFrance,
                 Application = application,
                 Priority = 2
             });
 
-            application.Delegations.Add(new DelegationApplicationPickedDelegation()
+            application.DelegationWishes.Add(new DelegationApplicationPickedDelegation()
             {
                 Delegation = delegationUSA,
                 Application = application,
@@ -827,7 +916,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestThatConferenceHasOneApplication()
         {
             var applications = _context.DelegationApplications
-                .Where(n => n.Delegations
+                .Where(n => n.DelegationWishes
                     .Any(a => a.Delegation.Conference.ConferenceId == "munbw22"))
                 .ToList();
 
@@ -871,77 +960,23 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestCalculateCostOfApplication()
         {
             var application = _context.DelegationApplications
-                .Include(n => n.Delegations)
+                .Include(n => n.DelegationWishes)
                 .ThenInclude(n => n.Delegation)
-                .ThenInclude(n => n.Roles)
-                .ThenInclude(n => n.Committee)
-                .ThenInclude(n => n.Conference)
                 .FirstOrDefault();
             Assert.NotNull(application);
 
-            var conferenceBasePrice = application.Delegations.First().Delegation.Conference.GeneralParticipationCost;
-            Assert.AreEqual(70, conferenceBasePrice);
 
-            Dictionary<string, decimal> priceDelegations = new Dictionary<string, decimal>();
+            var wishDeutschland = application.DelegationWishes.FirstOrDefault(n => n.Delegation.Name == "Deutschland");
+            
+            Assert.NotNull(wishDeutschland);
+            
+            var priceDeutschland = _context.CostsOfDelegation(wishDeutschland.Delegation.DelegationId);
 
-            // Durch alle Delegationen auf der Liste durchgehen
-            foreach (var delegation in application.Delegations.Select(a => a.Delegation))
-            {
-                Console.WriteLine($"Preisberechnung für {delegation.Name}");
-                decimal sumPriceDelegation = 0;
+            Assert.AreEqual(610, priceDeutschland.Sum(a => a.price));
 
-                // Als Standardpreis wird der Konferenzpreis angezogen
-                decimal tempPriceRole = conferenceBasePrice;
-                decimal priceDelegation = conferenceBasePrice;
-
-                // ggf. anfallender Sonderpreis auf die Delegation:
-                var costForDelegation =
-                    _context.ConferenceParticipationCostRules.FirstOrDefault(n =>
-                        n.Delegation.DelegationId == delegation.DelegationId);
-
-                if (costForDelegation?.Costs != null)
-                {
-                    priceDelegation = costForDelegation.Costs.Value;
-                }
-
-                // Dafür noch einmal alle Rollen durch gehen und ggf. anfallende Ausnahmen in 
-                // betracht ziehen
-                foreach (var role in delegation.Roles)
-                {
-                    tempPriceRole = priceDelegation;
-
-                    var costForCommittee =
-                        _context.ConferenceParticipationCostRules.FirstOrDefault(n =>
-                            n.Committee.CommitteeId == role.Committee.CommitteeId);
-
-                    if (costForCommittee?.Costs != null)
-                    {
-                        tempPriceRole = costForCommittee.Costs.Value;
-                    }
-
-                    var costForRole =
-                        _context.ConferenceParticipationCostRules.FirstOrDefault(n => n.Role.RoleId == role.RoleId);
-
-                    if (costForRole?.Costs != null)
-                    {
-                        tempPriceRole = costForRole.Costs.Value;
-                    }
-
-                    Console.WriteLine($"Teilnahme in {role.Committee.CommitteeId} kostet {tempPriceRole}");
-
-                    sumPriceDelegation += tempPriceRole;
-                }
-
-                // Preis für 8 normale Gremien (70€) und ein online Gremium (50€).
-                Console.WriteLine("---------------------");
-                Console.WriteLine($"Summe:\t{sumPriceDelegation}");
-                priceDelegations.Add(delegation.Name, sumPriceDelegation);
-                //Assert.AreEqual(610m, sumPriceDelegation);
-            }
-
-            Assert.AreEqual(610, priceDelegations["Deutschland"]);
-            Assert.AreEqual(610, priceDelegations["Frankreich"]);
-            Assert.AreEqual(610, priceDelegations["Vereinigte Staaten"]);
+            //Assert.AreEqual(610, priceDelegations["Deutschland"]);
+            //Assert.AreEqual(610, priceDelegations["Frankreich"]);
+            //Assert.AreEqual(610, priceDelegations["Vereinigte Staaten"]);
         }
 
         #endregion

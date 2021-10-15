@@ -32,12 +32,12 @@
         <!-- BEGIN list-email -->
         <ul class="list-group list-group-lg no-radius list-email">
             @foreach (var application in context.DelegationApplications
-              .Include(n => n.Delegations)
+              .Include(n => n.DelegationWishes)
               .ThenInclude(n => n.Delegation)
               .Include(n => n.FormulaInputs)
               .Include(n => n.Users)
               .ThenInclude(n => n.User)
-              .Where(n => n.Delegations.Any(a => a.Delegation.Conference.ConferenceId == ConferenceId)))
+              .Where(n => n.DelegationWishes.Any(a => a.Delegation.Conference.ConferenceId == ConferenceId)))
             {
                 <li class="list-group-item @((application.Status == MUNityBase.ApplicationStatuses.Pending) ? "unread" : null)">
                     @*<div class="email-checkbox">
@@ -51,7 +51,7 @@
                     </a>
                     <div class="email-info">
                         <a href="/c/manageapplications/@ConferenceId/application/@application.DelegationApplicationId">
-                            <span class="email-sender">Delegationsbewerbung @application.Users.Count Benutzer </span>
+                            <span class="email-sender">DelegationWishesbewerbung @application.Users.Count Benutzer </span>
                             <span class="email-title">@application.FormulaInputs?.FirstOrDefault()?.Value</span>
                             <span class="email-desc">@string.Join(", ", application.Users.Select(a => a.User.Forename + " " + a.User.Lastname))</span>
                             <span class="email-time">@application.ApplyDate.ToShortDateString()</span>
@@ -66,7 +66,7 @@
     </div>
 </div>
 <div class="mailbox-content-footer d-flex align-items-center">
-    <div class="text-inverse fw-bold">@context.DelegationApplications.Count(n => n.Delegations.Any(a => a.Delegation.Conference.ConferenceId == ConferenceId)) (Delegations) Bewerbungen</div>
+    <div class="text-inverse fw-bold">@context.DelegationApplications.Count(n => n.DelegationWishes.Any(a => a.Delegation.Conference.ConferenceId == ConferenceId)) (DelegationWishes) Bewerbungen</div>
     <div class="btn-group ms-auto">
         <button class="btn btn-white btn-sm">
             <i class="fa fa-fw fa-chevron-left"></i>

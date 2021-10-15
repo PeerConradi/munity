@@ -185,11 +185,11 @@
         // make take step 0, if not skip to step 1
 
 
-        isDelegationApplicationAvailable = context.ConferenceApplicationFormulas
-        .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Delegation);
+        isDelegationApplicationAvailable = context.ConferenceApplicationOptions
+        .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowDelegationApplication);
 
-        isRoleApplicationAvailable = context.ConferenceApplicationFormulas
-            .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Role);
+        isRoleApplicationAvailable = context.ConferenceApplicationOptions
+            .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowRoleApplication);
 
         if (isDelegationApplicationAvailable)
             mode = Modes.Delegation;

@@ -14,7 +14,7 @@ namespace MUNity.Database.Models.Conference
     {
         public int DelegationApplicationId { get; set; }
 
-        public ICollection<DelegationApplicationPickedDelegation> Delegations { get; set; }
+        public ICollection<DelegationApplicationPickedDelegation> DelegationWishes { get; set; }
 
         public ICollection<DelegationApplicationUserEntry> Users { get; set; }
 

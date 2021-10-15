@@ -15,15 +15,15 @@
         <tbody>
             <tr>
                 <td>Bewerbung auf Delegation</td>
-                <td>@((dbContext.ConferenceApplicationFormulas.Any(a => a.Conference.ConferenceId == ConferenceId && a.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Delegation && a.IsActive)) ? "aktiv" : "deaktiviert")</td>
+                <td>@((dbContext.ConferenceApplicationOptions.Any(a => a.Conference.ConferenceId == ConferenceId && a.AllowDelegationApplication) ? "aktiv" : "deaktiviert"))</td>
             </tr>
             <tr>
                 <td>Bewerbung auf Rollen</td>
-                <td>@((dbContext.ConferenceApplicationFormulas.Any(a => a.Conference.ConferenceId == ConferenceId && a.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Role && a.IsActive)) ? "aktiv" : "deaktiviert")</td>
+                <td>@((dbContext.ConferenceApplicationOptions.Any(a => a.Conference.ConferenceId == ConferenceId && a.AllowRoleApplication) ? "aktiv" : "deaktiviert"))</td>
             </tr>
             <tr>
                 <td>Bewerbung auf Team-Rollen</td>
-                <td>@((dbContext.ConferenceApplicationFormulas.Any(a => a.Conference.ConferenceId == ConferenceId && a.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Team && a.IsActive)) ? "aktiv" : "deaktiviert")</td>
+                <td>@((dbContext.ConferenceApplicationOptions.Any(a => a.Conference.ConferenceId == ConferenceId && a.AllowTeamApplication) ? "aktiv" : "deaktiviert"))</td>
             </tr>
             <tr>
                 <td>Anzahl Delegation-Slots</td>
@@ -38,8 +38,8 @@
                 <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == MUNityBase.EApplicationStates.Closed)</td>
             </tr>
             <tr>
-                <td>Anzahl eingereichter Delegationsbewerbungen</td>
-                <td>@dbContext.DelegationApplications.Count(n => n.Delegations.Select(a => a.Delegation.Conference).First().ConferenceId == ConferenceId)</td>
+                <td>Anzahl eingereichter DelegationWishesbewerbungen</td>
+                <td>@dbContext.DelegationApplications.Count(n => n.DelegationWishes.Select(a => a.Delegation.Conference).First().ConferenceId == ConferenceId)</td>
             </tr>
             <tr>
                 <td>Delegationen welche durch Bewerbungen abgedeckt sind</td>

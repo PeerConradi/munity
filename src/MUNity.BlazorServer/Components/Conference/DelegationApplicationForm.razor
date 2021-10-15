@@ -97,9 +97,9 @@
                     </div>
                 </div>
 
-                @if (i < application.Delegations.Count && application.Delegations.ElementAt(i)?.Delegation != null)
+                @if (i < application.DelegationWishes.Count && application.DelegationWishes.ElementAt(i)?.Delegation != null)
                 {
-                    var localDelegation = application.Delegations.ElementAt(i);
+                    var localDelegation = application.DelegationWishes.ElementAt(i);
                     <div class="row mb-15px bg-light">
                         <label class="form-label col-form-label col-md-3">Wunschrollen</label>
                         <div class="col-md-9">
@@ -173,7 +173,7 @@ else
 
     [Parameter] public EventCallback<int> StepChanged { get; set; }
 
-    private MUNity.Database.Models.Website.ConferenceApplicationFormula formula;
+    private MUNity.Database.Models.Conference.ConferenceApplicationFormula formula;
 
     private List<AvailableDelegation> availableDelegations
     {
@@ -188,9 +188,9 @@ else
                     Roles = string.Join(", ", n.Roles.Select(a => a.RoleName + " " + a.Committee.Name))
                 })
                 .ToList();
-            if (application != null && application.Delegations.Any())
+            if (application != null && application.DelegationWishes.Any())
             {
-                list = list.Where(n => !application.Delegations.Any(a => a.Delegation != null && a.Delegation.DelegationId == n.DelegationId)).ToList();
+                list = list.Where(n => !application.DelegationWishes.Any(a => a.Delegation != null && a.Delegation.DelegationId == n.DelegationId)).ToList();
             }
 
             return list;
@@ -227,7 +227,7 @@ else
 
         if (value == null)
         {
-            application.Delegations.ElementAt(index).Delegation = null;
+            application.DelegationWishes.ElementAt(index).Delegation = null;
             InvokeAsync(StateHasChanged);
         }
         else
@@ -237,7 +237,7 @@ else
 
             if (delegation != null)
             {
-                application.Delegations.ElementAt(index).Delegation = delegation;
+                application.DelegationWishes.ElementAt(index).Delegation = delegation;
                 InvokeAsync(StateHasChanged);
             }
         }
@@ -282,7 +282,7 @@ else
 
         formula = context.ConferenceApplicationFormulas
             .Include(n => n.Fields)
-            .FirstOrDefault(n => n.Conference.ConferenceId == ConferenceId);
+            .FirstOrDefault(n => n.Options.Conference.ConferenceId == ConferenceId);
 
         application = new Database.Models.Conference.DelegationApplication()
         {
@@ -301,11 +301,11 @@ else
             User = me
         });
 
-        application.Delegations = new List<MUNity.Database.Models.Conference.DelegationApplicationPickedDelegation>();
+        application.DelegationWishes = new List<MUNity.Database.Models.Conference.DelegationApplicationPickedDelegation>();
 
         for (byte i = 0; i < formula.MaxDelegationWishes; i++)
         {
-            application.Delegations.Add(new Database.Models.Conference.DelegationApplicationPickedDelegation()
+            application.DelegationWishes.Add(new Database.Models.Conference.DelegationApplicationPickedDelegation()
             {
                 Application = application,
                 Priority = i,
@@ -313,11 +313,11 @@ else
             });
         }
 
-        application.FormulaInputs = new List<Database.Models.Website.ConferenceDelegationApplicationFieldInput>();
+        application.FormulaInputs = new List<Database.Models.Conference.ConferenceDelegationApplicationFieldInput>();
 
         foreach (var field in formula.Fields)
         {
-            application.FormulaInputs.Add(new Database.Models.Website.ConferenceDelegationApplicationFieldInput()
+            application.FormulaInputs.Add(new Database.Models.Conference.ConferenceDelegationApplicationFieldInput()
             {
                 Application = application,
                 Field = field,
