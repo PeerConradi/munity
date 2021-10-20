@@ -739,7 +739,8 @@ namespace MUNity.Database.Test.MUNBW22Tests
 
         [Test]
         [Order(600)]
-        public void TestCreateTheApplicationPage()
+        [Description("This Test should show how the application phase is created within a conference.")]
+        public void TestSetupTheApplicationPhase()
         {
             var conference = _context.Conferences.Find("munbw22");
             Assert.NotNull(conference);
@@ -807,6 +808,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
 
         [Test]
         [Order(610)]
+        [Description("This test sets the application phase on all the roles that are linked to a country inside the Delegation named Deutschland.")]
         public void TestSetApplicationStateOnDelegations()
         {
             var delegationDeutschland = _context.Delegations
@@ -828,93 +830,24 @@ namespace MUNity.Database.Test.MUNBW22Tests
 
         [Test]
         [Order(611)]
-        [Description("This test should show that an application can be added to a specific committee.")]
-        public void TestCreateTheApplicationForGermany()
+        [Description("This test show how a delegation Application can be created, that is targeting three different Delegations.")]
+        public void TestCreateDelegationApplication()
         {
-            var delegationGermany =
-                _context.Delegations.FirstOrDefault(
-                    n => n.Conference.ConferenceId == "munbw22" && n.Name == "Deutschland");
 
-            var delegationFrance =
-                _context.Delegations.FirstOrDefault(
-                    n => n.Conference.ConferenceId == "munbw22" && n.Name == "Frankreich");
+            var application = _context.AddApplication()
+                .WithConference("munbw22")
+                .DelegationApplication()
+                .WithAuthor("muricaboi")
+                .WithPreferedDelegationByName("Deutschland")
+                .WithPreferedDelegationByName("Frankreich")
+                .WithPreferedDelegationByName("Vereinigte Staaten")
+                .WithFieldInput("Motivation", "Wir sind sehr Motiviert bei dieser Konferenz dabei zu sein :)")
+                .Build();
 
-            var delegationUSA =
-                _context.Delegations.FirstOrDefault(
-                    n => n.Conference.ConferenceId == "munbw22" && n.Name == "Vereinigte Staaten");
 
-            Assert.NotNull(delegationGermany);
-            Assert.NotNull(delegationFrance);
-            Assert.NotNull(delegationUSA);
+            Assert.NotNull(application);
+            Assert.AreEqual(1, _context.DelegationApplications.Count());
 
-            var application = new DelegationApplication()
-            {
-                DelegationWishes = new List<DelegationApplicationPickedDelegation>(),
-                Users = new List<DelegationApplicationUserEntry>(),
-                FormulaInputs = new List<ConferenceDelegationApplicationFieldInput>(),
-                ApplyDate = DateTime.Now,
-                OpenToPublic = false,
-                Status = ApplicationStatuses.Writing
-            };
-
-            var formula = _context.ConferenceApplicationFormulas
-                .Include(n => n.Fields)
-                .FirstOrDefault(n => n.FormulaType == ConferenceApplicationFormulaTypes.Delegation &&
-                                     n.Options.Conference.ConferenceId == "munbw22");
-
-            Assert.NotNull(formula);
-
-            var motivationField = formula.Fields.FirstOrDefault(n => n.FieldName == "Motivation");
-            Assert.NotNull(motivationField);
-            
-            application.FormulaInputs.Add(new ConferenceDelegationApplicationFieldInput()
-            {
-                Value = "Ich bin sehr motiviert :)",
-                Application = application,
-                Field = motivationField
-            });
-
-            application.DelegationWishes.Add(new DelegationApplicationPickedDelegation()
-            {
-                Delegation = delegationGermany,
-                Application = application,
-                Priority = 1
-            });
-
-            application.DelegationWishes.Add(new DelegationApplicationPickedDelegation()
-            {
-                Delegation = delegationFrance,
-                Application = application,
-                Priority = 2
-            });
-
-            application.DelegationWishes.Add(new DelegationApplicationPickedDelegation()
-            {
-                Delegation = delegationUSA,
-                Application = application,
-                Priority = 3
-            });
-
-            var user = _context.Users.FirstOrDefault(n => n.UserName == "muricaboi");
-            Assert.NotNull(user);
-
-            application.Users.Add(new DelegationApplicationUserEntry()
-            {
-                User = user,
-                Application = application,
-                Status = DelegationApplicationUserEntryStatuses.Joined,
-                CanWrite = true
-            });
-
-            _context.DelegationApplications.Add(application);
-            _context.SaveChanges();
-        }
-
-        [Test]
-        [Order(612)]
-        [Description("This test ensures that the application has been created and can be found inside a list of all applications.")]
-        public void TestThatConferenceHasOneApplication()
-        {
             var applications = _context.DelegationApplications
                 .Where(n => n.DelegationWishes
                     .Any(a => a.Delegation.Conference.ConferenceId == "munbw22"))
@@ -972,12 +905,14 @@ namespace MUNity.Database.Test.MUNBW22Tests
             
             var priceDeutschland = _context.CostsOfDelegation(wishDeutschland.Delegation.DelegationId);
 
-            Assert.AreEqual(610, priceDeutschland.Sum(a => a.price));
+            Assert.AreEqual(610, priceDeutschland.Costs.Sum(a => a.Cost));
 
             //Assert.AreEqual(610, priceDelegations["Deutschland"]);
             //Assert.AreEqual(610, priceDelegations["Frankreich"]);
             //Assert.AreEqual(610, priceDelegations["Vereinigte Staaten"]);
         }
+
+        
 
         #endregion
 

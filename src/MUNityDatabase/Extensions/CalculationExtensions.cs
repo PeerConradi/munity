@@ -6,14 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Database.Context;
+using MUNity.Database.Models.Conference;
 
 namespace MUNity.Database.Extensions
 {
     public static class CalculationExtensions
     {
-        public static List<(string name, decimal price)> CostsOfDelegation(this MunityContext context, string delegationId)
+        public static DelegationCostResult CostsOfDelegation(this MunityContext context, string delegationId)
         {
-            var costDictionary = new List<(string, decimal)>();
+            var result = new DelegationCostResult();
+
+
             var delegation = context.Delegations
                 .Include(n => n.Roles)
                 .Select(n => new
@@ -60,7 +63,13 @@ namespace MUNity.Database.Extensions
                     if (priceForDelegation != null)
                     {
                         // Prio 2: Price for the delegation
-                        costDictionary.Add(new ValueTuple<string, decimal>(role.RoleName, priceForDelegation.Value ));
+                        result.Costs.Add(new DelegationCostPoint()
+                        {
+                            CommitteeName = context.Delegates.Where(n => n.RoleId == role.RoleId).Select(n => n.Committee.Name).FirstOrDefault(),
+                            Cost = priceForDelegation.Value,
+                            RoleId = role.RoleId,
+                            RoleName = role.RoleName
+                        });
                     }
                     else
                     {
@@ -72,24 +81,41 @@ namespace MUNity.Database.Extensions
 
                         if (committeePrice != null)
                         {
-                            costDictionary.Add(new ValueTuple<string, decimal>(role.RoleName, committeePrice.Value));
+                            result.Costs.Add(new DelegationCostPoint()
+                            {
+                                CommitteeName = context.Delegates.Where(n => n.RoleId == role.RoleId).Select(n => n.Committee.Name).FirstOrDefault(),
+                                Cost = committeePrice.Value,
+                                RoleId = role.RoleId,
+                                RoleName = role.RoleName
+                            });
                         }
                         else
                         {
-
-                                costDictionary.Add(new ValueTuple<string, decimal>(role.RoleName, priceForConference));
+                            result.Costs.Add(new DelegationCostPoint()
+                            {
+                                CommitteeName = context.Delegates.Where(n => n.RoleId == role.RoleId).Select(n => n.Committee.Name).FirstOrDefault(),
+                                Cost = priceForConference,
+                                RoleId = role.RoleId,
+                                RoleName = role.RoleName
+                            });
                         }
                     }
                 }
                 else if (rolePrice != null)
                 {
                     // Prio 1: Role Price (Highest)
-                    costDictionary.Add(new ValueTuple<string, decimal>(role.RoleName, rolePrice.Value));
+                    result.Costs.Add(new DelegationCostPoint()
+                    {
+                        CommitteeName = context.Delegates.Where(n => n.RoleId == role.RoleId).Select(n => n.Committee.Name).FirstOrDefault(),
+                        Cost = rolePrice.Value,
+                        RoleId = role.RoleId,
+                        RoleName = role.RoleName
+                    });
                 }
 
             }
 
-            return costDictionary;
+            return result;
         }
 
     }
