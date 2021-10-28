@@ -1,0 +1,135 @@
+﻿@inject MUNity.Database.Context.MunityContext context
+
+<div class="invoice">
+    <!-- BEGIN invoice-company -->
+    <div class="invoice-company">
+        <span class="float-end hidden-print">
+            <a href="javascript:;" class="btn btn-sm btn-white mb-10px"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Export as PDF</a>
+            <a href="javascript:;" onclick="window.print()" class="btn btn-sm btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> Print</a>
+        </span>
+        Teilnahmebewerbung
+    </div>
+    <!-- END invoice-company -->
+    <!-- BEGIN invoice-header -->
+    <div class="invoice-header">
+        <div class="invoice-from">
+            <small>from</small>
+            <address class="mt-5px mb-5px">
+                <strong class="text-inverse">BewerberInnen</strong><br>
+                @foreach (var user in this.Application.Users)
+                {
+                    <span>@user.User.Forename @user.User.Lastname (@@@user.User.UserName)</span><br>
+                }
+            </address>
+
+        </div>
+
+        @*<div class="invoice-to">
+        <small>to</small>
+        <address class="mt-5px mb-5px">
+            <strong class="text-inverse">Company Name</strong><br>
+            Street Address<br>
+            City, Zip Code<br>
+            Phone: (123) 456-7890<br>
+            Fax: (123) 456-7890
+        </address></div>*@
+
+        <div class="invoice-date">
+            <small>Invoice / July period</small>
+            <div class="date text-inverse mt-5px">August 3,2021</div>
+            <div class="invoice-detail">
+                #0000123DSS<br>
+                Services Product
+            </div>
+        </div>
+    </div>
+    <!-- END invoice-header -->
+    <!-- BEGIN invoice-content -->
+    <div class="invoice-content">
+        <!-- BEGIN table-responsive -->
+        <div class="table-responsive">
+            <table class="table table-invoice">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th>Delegationen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var delegationWish in Application.DelegationWishes)
+            {
+                    <tr>
+                        <td>#@Application.DelegationWishes.ToList().IndexOf(delegationWish)</td>
+                        <td>
+                            <span class="text-inverse">@delegationWish.Delegation.Name</span><br>
+                        </td>
+                    </tr>
+            }
+                    
+                </tbody>
+            </table>
+        </div>
+        <!-- END table-responsive -->
+        <!-- BEGIN invoice-price -->
+        <div class="invoice-price">
+            <div class="invoice-price-left">
+                <div class="invoice-price-row">
+                    <div class="sub-price">
+                        <small>Erfüllt Delegationsgröße</small>
+                        <span class="@((sizeIsCorrect) ? "text-success" : "text-danger")"><i class="fa @((sizeIsCorrect) ? "fa-check" : "fa-times")"></i></span>
+                    </div>
+                    @if (!sizeIsCorrect)
+                    {
+                        <div class="sub-price">
+                            <i class="fa fa-plus text-muted"></i>
+                        </div>
+                        <div class="sub-price">
+                            <small>Öffentlich</small>
+                            <span class="@((Application.OpenToPublic) ? "text-success" : "text-danger")"><i class="fa @((Application.OpenToPublic) ? "fa-check" : "fa-times")"></i></span>
+                        </div>
+                    }
+
+                </div>
+            </div>
+            <div class="invoice-price-right @((IsApproved) ? "bg-success" : "bg-warning")">
+                <small>Status</small> <span class="fw-bold">@((IsApproved) ? "Gültig" : "Nicht Gültig")</span>
+            </div>
+        </div>
+        <!-- END invoice-price -->
+    </div>
+    <!-- END invoice-content -->
+    <!-- BEGIN invoice-note -->
+    <div class="invoice-note">
+        * Make all cheques payable to [Your Company Name]<br>
+        * Payment is due within 30 days<br>
+        * If you have any questions concerning this invoice, contact  [Name, Phone Number, Email]
+    </div>
+    <!-- END invoice-note -->
+    <!-- BEGIN invoice-footer -->
+    <div class="invoice-footer">
+        <p class="text-center mb-5px fw-bold">
+            Danke für Ihre Bewerbung
+        </p>
+        <p class="text-center">
+            <span class="me-10px"><i class="fa fa-fw fa-lg fa-globe"></i> munbw.de</span>
+            <span class="me-10px"><i class="fa fa-fw fa-lg fa-phone-volume"></i> T:016-18192302</span>
+            <span class="me-10px"><i class="fa fa-fw fa-lg fa-envelope"></i> teilnehmende@@munbw.de</span>
+        </p>
+    </div>
+    <!-- END invoice-footer -->
+</div>
+@code {
+    [Parameter] public MUNity.Database.Models.Conference.DelegationApplication Application { get; set; }
+
+    private bool IsApproved;
+
+    private bool sizeIsCorrect;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.sizeIsCorrect = Application.DelegationWishes.All(n => context.Delegates.Count(a => a.Delegation.DelegationId == n.Delegation.DelegationId) == Application.Users.Count);
+
+        this.IsApproved = this.sizeIsCorrect || (this.sizeIsCorrect && Application.OpenToPublic);
+    }
+}

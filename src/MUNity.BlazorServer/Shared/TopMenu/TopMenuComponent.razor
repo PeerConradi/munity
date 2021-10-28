@@ -1,4 +1,6 @@
-﻿<div id="top-menu" class="app-top-menu">
+﻿@inject NavigationManager navManager;
+
+<div id="top-menu" class="app-top-menu">
     <!-- BEGIN menu -->
 <div class="menu" style="margin-left: @(scrollMarginLeft)px;">
     <div class="menu-item has-sub">
@@ -42,7 +44,7 @@
 
 
     <div class="menu-item">
-        <a href="javascript:;" class="menu-link">
+        <a href="@($"/web/conference/{ConferenceId}/register")" class="menu-link">
             <div class="menu-icon">
                 <i class="oi oi-home"></i>
             </div>
@@ -64,4 +66,7 @@
 </div>
 @code {
     private int scrollMarginLeft = 0;
+
+    private string ConferenceId => navManager.Uri.Split("/")[5];
+
 }

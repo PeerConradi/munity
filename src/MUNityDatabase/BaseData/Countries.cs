@@ -39,7 +39,7 @@ namespace MUNity.Database.BaseData
                 yield return new Country(22, EContinent.NotSet, "Benin", "Republik Benin", "BJ", true).AddTranslation("en-EN", "Benin");
                 yield return new Country(23, EContinent.NotSet, "Bhutan", "Königreich Bhutan", "BT", true).AddTranslation("en-EN", "Bhutan");
                 yield return new Country(24, EContinent.NotSet, "Bolivien", "Plurinationaler Staat Bolivien", "BO", true).AddTranslation("en-EN", "Bolivia");
-                yield return new Country(25, EContinent.NotSet, "Bosnien und Herzegowina", "	Bosnien und Herzegowina", "BA", true).AddTranslation("en-EN", "Bosnia and Herzegovina");
+                yield return new Country(25, EContinent.NotSet, "Bosnien und Herzegowina", "Bosnien und Herzegowina", "BA", true).AddTranslation("en-EN", "Bosnia and Herzegovina");
                 yield return new Country(26, EContinent.NotSet, "Botswana", "Republik Botsuana", "BW", true).AddTranslation("en-EN", "Botswana");
                 yield return new Country(27, EContinent.NotSet, "Brasilien", "Föderative Republik Brasilien", "BR", true).AddTranslation("en-EN", "Brazil");
                 yield return new Country(28, EContinent.NotSet, "Brunei", "Brunei Darussalam", "BN", true).AddTranslation("en-EN", "Brunei Darussalam");
@@ -100,10 +100,10 @@ namespace MUNity.Database.BaseData
                 yield return new Country(83, EContinent.NotSet, "Kiribati", "Republik Kiribati", "KI", true).AddTranslation("en-EN", "Kiribati");
                 yield return new Country(84, EContinent.NotSet, "Kolumbien", "Republik Kolumbien", "CO", true).AddTranslation("en-EN", "Colombia");
                 yield return new Country(85, EContinent.NotSet, "Komoren", "Union der Komoren", "KM", true).AddTranslation("en-EN", "Comoros");
-                yield return new Country(86, EContinent.NotSet, "Kongo, Demokratische Republik", "Demokratische Republik Kongo", "CD", true).AddTranslation("en-EN", "Congo, Democratic Republic of the (Kinshasa)");
+                yield return new Country(86, EContinent.NotSet, "Demokratische Republik Kongo", "Demokratische Republik Kongo", "CD", true).AddTranslation("en-EN", "Congo, Democratic Republic of the (Kinshasa)");
                 yield return new Country(87, EContinent.NotSet, "Kongo, Republik", "Republik Kongo", "CG", true).AddTranslation("en-EN", "Congo, Republic of (Brazzaville)");
-                yield return new Country(88, EContinent.NotSet, "Korea, Nord", "Demokratische Volksrepublik Korea", "KP", true).AddTranslation("en-EN", "Korea, Democratic People's Republic of (North Korea)");
-                yield return new Country(89, EContinent.NotSet, "Korea, Süd", "Republik Korea", "KR", true).AddTranslation("en-EN", "Korea, Republic of (South Korea)");
+                yield return new Country(88, EContinent.NotSet, "Nordkorea", "Demokratische Volksrepublik Korea", "KP", true).AddTranslation("en-EN", "Korea, Democratic People's Republic of (North Korea)");
+                yield return new Country(89, EContinent.NotSet, "Südkorea", "Republik Korea", "KR", true).AddTranslation("en-EN", "Korea, Republic of (South Korea)");
                 yield return new Country(90, EContinent.NotSet, "Kosovo", "Republik Kosovo", "XK", false).AddTranslation("en-EN", "Kosovo");
                 yield return new Country(91, EContinent.NotSet, "Kroatien", "Republik Kroatien", "HR", true).AddTranslation("en-EN", "Croatia");
                 yield return new Country(92, EContinent.NotSet, "Kuba", "Republik Kuba", "CU", true).AddTranslation("en-EN", "Cuba");
@@ -217,9 +217,9 @@ namespace MUNity.Database.BaseData
                 yield return new Country(207, EContinent.NotSet, "Vereinigte Staaten", "Vereinigte Staaten von Amerika", "US", true).AddTranslation("en-EN", "United States");
                 yield return new Country(208, EContinent.NotSet, "Vereinigtes Königreich", "Vereinigtes Königreich Großbritannien und Nordirland", "GB", true).AddTranslation("en-EN", "United Kingdom");
                 yield return new Country(209, EContinent.NotSet, "Vietnam", "Sozialistische Republik Vietnam", "VN", true).AddTranslation("en-EN", "Vietnam");
-                yield return new Country(210, EContinent.NotSet, "Weißrussland", "Republik Belarus", "BY", true).AddTranslation("en-EN", "Belarus");
+                yield return new Country(210, EContinent.NotSet, "Belarus", "Republik Belarus", "BY", true).AddTranslation("en-EN", "Belarus");
                 yield return new Country(211, EContinent.NotSet, "Westsahara", "Demokratische Arabische Republik Sahara", "EH", false).AddTranslation("en-EN", "Western Sahara", "Sahrawi Arab Democratic Republic");
-                yield return new Country(212, EContinent.NotSet, "Zentral­afrikanische Republik", "Zentral­afrikanische Republik", "CF", true).AddTranslation("en-EN", "Central African Republic");
+                yield return new Country(212, EContinent.NotSet, "Zentralafrikanische Republik", "Zentralafrikanische Republik", "CF", true).AddTranslation("en-EN", "Central African Republic");
                 yield return new Country(213, EContinent.NotSet, "Zypern", "Republik Zypern", "CY", true).AddTranslation("en-EN", "Cyprus");
             }
         }

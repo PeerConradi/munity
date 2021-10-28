@@ -8,6 +8,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using MUNity.Schema.Conference;
+using Microsoft.EntityFrameworkCore;
 
 namespace MUNity.Services
 {
@@ -75,6 +77,19 @@ namespace MUNity.Services
                 return user.Forename + " " + user.Lastname;
 
             return "-";
+        }
+
+        public List<AddingToApplicationUser> GetUsersThatCanBeAddedToApplication(string conferenceId, string searchTerm)
+        {
+            var list = this.context.Users
+                .Where(n => EF.Functions.Like(n.UserName, $"%{searchTerm}%"))
+                .Select(n => new AddingToApplicationUser()
+                {
+                    UserName = n.UserName,
+                    DisplayName = n.GetDisplayNamePublic
+                });
+
+            return list.ToList();
         }
 
         //public async Task<object> Login(MunityUser user)

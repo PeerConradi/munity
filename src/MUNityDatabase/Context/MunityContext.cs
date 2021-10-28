@@ -21,10 +21,9 @@ using MUNity.Database.Models;
 using MUNity.Database.Models.Resolution;
 using MUNity.Database.Models.Session;
 using MUNity.Database.Interfaces;
-using MUNity.Database.Models.Conference;
-using MUNity.Database.Models.User;
 using MUNity.Database.Models.Website;
 using MUNity.Database.Models.General;
+using MUNity.Database.FluentAPI;
 
 namespace MUNity.Database.Context
 {
@@ -38,6 +37,8 @@ namespace MUNity.Database.Context
             IdentityRoleClaim<string>, 
             IdentityUserToken<string>>
     {
+
+        public FluentProvider Fluent { get; private set; }
 
         public DbSet<Country> Countries { get; set; }
 
@@ -84,6 +85,12 @@ namespace MUNity.Database.Context
         public DbSet<DelegationApplicationUserEntry> DelegationApplicationUserEntries { get; set; }
 
         public DbSet<DelegationApplicationPickedDelegation> DelegationApplicationPickedDelegations { get; set; }
+
+        public DbSet<ConferenceDelegationApplicationFieldInput> ConferenceDelegationApplicationFieldInputs { get; set; }
+
+        public DbSet<FillApplication> FillApplications { get; set; }
+
+        public DbSet<ConferenceFillApplicationFieldInput> ConferenceFillApplicationFieldInputs { get; set; }
 
         public DbSet<TeamRoleGroup> TeamRoleGroups { get; set; }
 
@@ -146,7 +153,6 @@ namespace MUNity.Database.Context
 
         public DbSet<ConferenceApplicationFormula> ConferenceApplicationFormulas { get; set; }
         public DbSet<ConferenceApplicationField> ConferenceApplicationFields { get; set; }
-        public DbSet<ConferenceDelegationApplicationFieldInput> ConferenceDelegationApplicationFieldInputs { get; set; }
 
         public DbSet<ConferencePageColorScheme> ConferencePageColorSchemes { get; set; }
 
@@ -310,7 +316,7 @@ namespace MUNity.Database.Context
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)
         {
-
+            this.Fluent = new FluentProvider(this);
         }
 
         public override int SaveChanges()
@@ -515,5 +521,6 @@ namespace MUNity.Database.Context
             context.Database.EnsureCreated();
             return context;
         }
+
     }
 }

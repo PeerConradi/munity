@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MUNity.Database.Context;
-using MUNity.Database.Extensions;
+using MUNity.Database.FluentAPI;
 using MUNity.Database.Models.Organization;
 using NUnit.Framework;
 
@@ -27,7 +27,7 @@ namespace MUNity.Database.Test.FluentTest
         {
             
             Assert.Zero(_context.Organizations.Count());
-            var orga = _context.AddOrganization(orga =>
+            var orga = _context.Fluent.Organization.AddOrganization(orga =>
                 orga.WithName("Deutsche Model United Nations e.V.")
                     .WithShort("DMUN e.V."));
             Assert.NotZero(_context.Organizations.Count());
@@ -42,7 +42,7 @@ namespace MUNity.Database.Test.FluentTest
         [Test]
         public void TestCanCreateOrganizationWithProject()
         {
-            var orga = _context.AddOrganization(orga =>
+            var orga = _context.Fluent.Organization.AddOrganization(orga =>
                 orga.WithShort("DMUN e.V.")
                     .WithName("Deutsche Model United Nations e.V.")
                     .WithProject(projectBuilder => 
@@ -60,7 +60,7 @@ namespace MUNity.Database.Test.FluentTest
         [Test]
         public void TestCanCreateWithConference()
         {
-            var orga = _context.AddOrganization(orga =>
+            var orga = _context.Fluent.Organization.AddOrganization(orga =>
                 orga.WithShort("DMUN e.V.")
                     .WithName("Deutsche Model United Nations e.V.")
                     .WithProject(projectBuilder =>
@@ -83,7 +83,7 @@ namespace MUNity.Database.Test.FluentTest
         [Test]
         public void TestCanCreateWithCommittee()
         {
-            var orga = _context.AddOrganization(orga =>
+            var orga = _context.Fluent.Organization.AddOrganization(orga =>
                 orga.WithShort("DMUN e.V.")
                     .WithName("Deutsche Model United Nations e.V.")
                     .WithProject(projectBuilder =>

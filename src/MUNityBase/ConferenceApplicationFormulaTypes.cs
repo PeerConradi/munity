@@ -5,6 +5,7 @@
         Delegation,
         Role,
         Team,
-        CountryWish
+        CountryWish,
+        Fill
     }
 }

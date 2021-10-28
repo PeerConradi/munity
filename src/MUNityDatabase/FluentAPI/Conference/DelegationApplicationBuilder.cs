@@ -7,54 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Extensions
+namespace MUNity.Database.FluentAPI
 {
-    public static class ApplicationFluentAPI
-    {
-
-        public static ConferenceApplicationBuilder AddApplication(this MunityContext context)
-        {
-            return new ConferenceApplicationBuilder(context);
-        }
-
-
-    }
-
-    public class ConferenceApplicationBuilder
-    {
-        private MunityContext _context;
-
-        public ApplicationBuilder WithConference(string conferenceId)
-        {
-            var applicationBuilder = new ApplicationBuilder(_context, conferenceId);
-            return applicationBuilder;
-        }
-
-        public ConferenceApplicationBuilder(MunityContext context)
-        {
-            this._context = context;
-        }
-    }
-
-    public class ApplicationBuilder
-    {
-
-        private MunityContext _context;
-
-        private string _conferenceId;
-
-        public DelegationApplicationBuilder DelegationApplication()
-        {
-            var builder = new DelegationApplicationBuilder(_context, _conferenceId);
-            return builder;
-        }
-
-        public ApplicationBuilder(MunityContext context, string conferenceId)
-        {
-            this._context = context;
-            this._conferenceId = conferenceId;
-        }
-    }
 
     public class DelegationApplicationBuilder
     {
@@ -108,6 +62,12 @@ namespace MUNity.Database.Extensions
             if (preferedDelegation == null)
                 throw new ArgumentException($"Unable to find a delegation with the name {name} inside the conference {conferenceId}");
 
+            var isAllowed = _context.Delegates.Any(n => n.Delegation.DelegationId == preferedDelegation.DelegationId &&
+            n.ApplicationState == EApplicationStates.DelegationApplication);
+
+            if (!isAllowed)
+                throw new ApplicationTypeNotAllowedException($"No Role inside the Delegation {preferedDelegation.Name} for conference {conferenceId} accepts a Delegation Application.");
+
             application.DelegationWishes.Add(new DelegationApplicationPickedDelegation()
             {
                 Delegation = preferedDelegation,
@@ -134,7 +94,7 @@ namespace MUNity.Database.Extensions
             return this;
         }
 
-        public DelegationApplication Build()
+        public DelegationApplication Submit()
         {
             _context.DelegationApplications.Add(this.application);
             _context.SaveChanges();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -81,14 +82,35 @@ namespace MUNity.Database.Models.User
         public EDisplayAuthMode PinboardDisplayMode { get; set; }
         public EDisplayAuthMode AgeDisplayMode { get; set; }
 
+        [NotMapped]
+        public string GetDisplayNamePublic
+        {
+            get
+            {
+                switch (PublicNameDisplayMode)
+                {
+                    case ENameDisplayMode.FullName:
+                        return $"{Forename} {Lastname}";
+                    case ENameDisplayMode.FullForenameAndFirstLetterLastName:
+                        return $"{Forename} " + (Lastname.Length > 0 ? Lastname[0] + "." : "");
+                    case ENameDisplayMode.FirstLetterForenameFullLastName:
+                        return (Forename.Length > 0 ? Forename[0] + "." : "") + $" {Lastname}";
+                    case ENameDisplayMode.Initals:
+                        return (Forename.Length > 0 ? Forename[0] + "." : "") + " " + (Lastname.Length > 0 ? Lastname[0] + "." : "");
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
+
         public MunityUser()
         {
-            this.Id = Guid.NewGuid().ToString();
+            //this.Id = Guid.NewGuid().ToString();
         }
 
         public MunityUser(string username, string email)
         {
-            Id = Guid.NewGuid().ToString();
+            //Id = Guid.NewGuid().ToString();
             this.UserName = username;
             this.NormalizedUserName = username.ToUpper();
             this.Email = email;

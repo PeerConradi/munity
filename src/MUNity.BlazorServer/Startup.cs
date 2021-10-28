@@ -40,20 +40,12 @@ namespace MUNity.BlazorServer
 
             // Database
             // To get more output add: .EnableSensitiveDataLogging().LogTo(Console.WriteLine) after Use...()
+            // Set the Data Source to: ../../tests/MUNityDatabaseTest/bin/Debug/net5.0/testmunbw.db
+            // to use the latest result of the MUNBW test 
             services.AddDbContext<MunityContext>(options =>
-                options.UseSqlite("Data Source=demo.db"));
+                options.UseSqlite("Data Source=../../tests/MUNityDatabaseTest/bin/Debug/net5.0/testmunbw.db"));
 
-            // Identity Stuff
-            //services.AddIdentity<MunityUser, MunityRole>(setup =>
-            //{
-            //    setup.User.RequireUniqueEmail = true;
-            //    setup.Password.RequireDigit = true;
-            //    setup.Password.RequireNonAlphanumeric = false;
-            //    setup.Password.RequireUppercase = true;
-            //    setup.Password.RequireLowercase = true;
-            //})
-            //    .AddEntityFrameworkStores<MunityContext>()
-            //    .AddDefaultUI();
+            // Identity
             services.AddAuthentication();
             services.AddIdentity<MunityUser, MunityRole>(options =>
             {
@@ -87,6 +79,7 @@ namespace MUNity.BlazorServer
             services.AddScoped<DelegationService>();
             services.AddScoped<ConferenceRoleService>();
             services.AddScoped<UserNotificationService>();
+            services.AddScoped<ConferenceApplicationService>();
 
             services.AddLogging();
             

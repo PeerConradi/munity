@@ -36,39 +36,8 @@ namespace MUNity.Database.Models.Conference
         /// </summary>
         public bool RequiresSchool { get; set; }
 
-        public byte? MaxDelegationWishes { get; set; }
+        public int? MaxWishes { get; set; }
 
         public ICollection<ConferenceApplicationField> Fields { get; set; }
-    }
-
-    public class ConferenceApplicationField
-    {
-
-        public int ConferenceApplicationFieldId { get; set; }
-
-        public ConferenceApplicationFormula Forumula { get; set; }
-
-        public string FieldName { get; set; }
-
-        public string FieldDescription { get; set; }
-
-        public bool IsRequired { get; set; }
-
-        public ConferenceApplicationFieldTypes FieldType { get; set; }
-
-        public string DefaultValue { get; set; }
-    }
-
-    public class ConferenceDelegationApplicationFieldInput
-    {
-        public long ConferenceDelegationApplicationFieldInputId { get; set; }
-
-        public DelegationApplication Application { get; set; }
-
-        public ConferenceApplicationField Field { get; set; }
-
-        public string Value { get; set; }
-
-        public string ValueSecondary { get; set; }
     }
 }

@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MUNity.Database.Context;
 using NUnit.Framework;
-using MUNity.Database.Extensions;
+using MUNity.Database.FluentAPI;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Website;
-using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.Organization;
 using MUNity.Database.Models.User;
 using MUNityBase;
+using MUNity.Database.Extensions;
 
 namespace MUNity.Database.Test.MUNBW22Tests
 {
@@ -26,6 +26,110 @@ namespace MUNity.Database.Test.MUNBW22Tests
         private MunityContext _context;
 
         private IServiceProvider _serviceProvider;
+
+        public static class TestUsers
+        {
+            public static IEnumerable<MunityUser> AllUsers
+            {
+                get
+                {
+                    yield return Avangers.FoundingMembers.TonyStark;
+
+                    yield return Avangers.SixtiesRecruits.CaptainAmerica;
+
+                    yield return Avangers.SeventiesRecruits.BlackWidow;
+
+                    yield return Avangers.NinetiesRecruits.PeterParker;
+
+                    yield return XMen.OriginalMembers.ProfessorX;
+                    yield return XMen.OriginalMembers.Cyclops;
+                    yield return XMen.OriginalMembers.Iceman;
+                    yield return XMen.OriginalMembers.Beast;
+                    yield return XMen.OriginalMembers.Angel;
+                    yield return XMen.OriginalMembers.MarvelGirl;
+                }
+            }
+
+            public static class Avangers
+            {
+                /// <summary>
+                ///  Use the founding members as EPL
+                /// </summary>
+                public static class FoundingMembers
+                {
+                    /// <summary>
+                    /// User is the owner of the Organization (Clemens)
+                    /// weitere Organisationsbenutzer sind in diesem Test nicht notwendig, da es hier um MUNBW und nicht um organisationen an sich geht...
+                    /// </summary>
+                    public static MunityUser TonyStark { get; set; } = new MunityUser("tonystark", "tony@stark-industries.com") { Forename = "Antony", Lastname = "Stark" };
+                    public static MunityUser HankPym { get; set; } = new MunityUser("hankpym", "hank-pym@avangers.com") { Forename = "Henry Jonathan", Lastname = "Pym" };
+                    
+                    /// <summary>
+                    /// Projektleiter 1 (J. T.)
+                    /// </summary>
+                    public static MunityUser JanetVanDyne { get; set; } = new MunityUser("jandyne", "janet-dyne@avangers.com") { Forename = "Janet", Lastname = "van Dyne" };
+                    
+                    /// <summary>
+                    /// Projektleiter 2 (M. I.)
+                    /// </summary>
+                    public static MunityUser TheHulk { get; set; } = new MunityUser("hulk", "hulk@avangers.com") { Forename = "Robert Bruce", Lastname = "Banner" };
+                    
+                    /// <summary>
+                    /// Projektleiter 3 (T. S.)
+                    /// </summary>
+                    public static MunityUser Thor { get; set; } = new MunityUser("rickjones", "rock@avangers.com") { Forename = "Richard Milhouse", Lastname = "Jones" };
+
+                }
+
+                public static class SixtiesRecruits
+                {
+                    /// <summary>
+                    /// Generalsekretär (J. M.)
+                    /// </summary>
+                    public static MunityUser CaptainAmerica { get; set; } = new MunityUser("muricaboi", "captain@amrica.com") { Forename = "Steve", Lastname = "Rogers" };
+                    
+                    /// <summary>
+                    /// Leitung Inhalt & Sekretariat (K. V.)
+                    /// </summary>
+                    public static MunityUser Hawkeye { get; set; } = new MunityUser("hawkeye", "hawkeye@amrica.com") { Forename = "Clinton Francis", Lastname = "Barton" };
+
+
+                }
+
+                public static class SeventiesRecruits
+                {
+                    public static MunityUser BlackWidow { get; set; } = new MunityUser("blackwidow", "b.widow@avangers.com") { Forename = "Natasha", Lastname = "Romanoff" };
+
+                }
+
+                public static class NinetiesRecruits
+                {
+                    public static MunityUser PeterParker { get; set; } = new MunityUser("pparker", "parker@spiderman.com") { Forename = "Peter Benjamin", Lastname = "Parker" };
+
+                }
+
+
+
+
+            }
+
+            public static class XMen
+            {
+                /// <summary>
+                /// Delegation aus 6
+                /// </summary>
+                public static class OriginalMembers
+                {
+                    public static MunityUser ProfessorX { get; set; } = new MunityUser("professorx", "professorx@x-men.com") { Forename = "Charles Francis", Lastname = "Xavier" };
+                    public static MunityUser Cyclops { get; set; } = new MunityUser("cyclops", "cyclops@x-men.com") { Forename = "Scott", Lastname = "Summers" };
+                    public static MunityUser Iceman { get; set; } = new MunityUser("iceman", "iceman@x-men.com") { Forename = "Robert Louis", Lastname = "Drake" };
+                    public static MunityUser Beast { get; set; } = new MunityUser("beast", "beast@x-men.com") { Forename = "Henry Philip", Lastname = "McCoy" };
+                    public static MunityUser Angel { get; set; } = new MunityUser("angel", "angel@x-men.com") { Forename = "Warren Kenneth", Lastname = "Worthington III" };
+                    public static MunityUser MarvelGirl { get; set; } = new MunityUser("marvelgirl", "marvel.girl@x-men.com") { Forename = "Jean Elaine", Lastname = "Grey" };
+
+                }
+            }
+        }
 
 
         [OneTimeSetUp]
@@ -85,14 +189,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
             Assert.NotZero(_context.Roles.Count());
         }
 
-        [Test]
-        [Order(3)]
-        public void TestCreateSomeUsers()
-        {
-            
-
-        }
-
         #endregion
 
         // ID 51 - 99 Tests
@@ -102,19 +198,13 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(51)]
         public async Task TestRegisterUsers()
         {
-            var user1 = new MunityUser("pparker", "parker@spiderman.com") {Forename = "Peter", Lastname = "Parker"};
-            var user2 = new MunityUser("tonystark", "tony@stark-industries.com") {Forename = "Antony", Lastname = "Stark"};
-            var user3 = new MunityUser("muricaboi", "captain@amrica.com") { Forename = "Steve", Lastname = "Rogers"};
-            var user4 = new MunityUser("blackwidow", "b.widow@avangers.com") { Forename = "Natasha", Lastname = "Romanoff"};
             var userManager = _serviceProvider.GetRequiredService<UserManager<MunityUser>>();
-            var resultPeterParker = await userManager.CreateAsync(user1, "Passwort123");
-            var resultTonyStark = await userManager.CreateAsync(user2, "Passwort123");
-            var resultSteveRodgers = await userManager.CreateAsync(user3, "Passwort123");
-            var resultNatashaRomanoff = await userManager.CreateAsync(user4, "Passwort123");
-            Assert.IsTrue(resultPeterParker.Succeeded);
-            Assert.IsTrue(resultTonyStark.Succeeded);
-            Assert.IsTrue(resultSteveRodgers.Succeeded);
-            Assert.IsTrue(resultNatashaRomanoff.Succeeded);
+
+            foreach(var user in TestUsers.AllUsers)
+            {
+                var creationResult = await userManager.CreateAsync(user, "Passwort123");
+                Assert.IsTrue(creationResult.Succeeded);
+            }
         }
         #endregion
 
@@ -124,66 +214,52 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(100)]
         public void TestAddDMUNOrganization()
         {
-            var orga = _context.AddOrganization(options =>
+            var orga = _context.Fluent.Organization.AddOrganization(options =>
                 options.WithName("Deutsche Model United Nations e.V.")
                     .WithShort("DMUN e.V.")
                     .WithAdminRole()
-                    );
+                    .WithMemberRole("Mitglied"));
+            // Assert that the organization exists
             Assert.NotNull(orga);
             Assert.AreEqual(1, _context.Organizations.Count());
             Assert.IsTrue(_context.Organizations.Any(n => n.OrganizationId == "dmunev"));
+
+            // Assert that the roles exist
+            Assert.AreEqual(2, _context.OrganizationRoles.Count(n => n.Organization.OrganizationId == "dmunev"));
         }
 
         [Test]
         [Order(101)]
         public void TestMakeUserTheOrganizationAdmin()
         {
-            var role = _context.OrganizationRoles
-                .FirstOrDefault(n => n.RoleName == "Admin"
-                                     && n.Organization.OrganizationId == "dmunev");
-            Assert.NotNull(role);
-            var user = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
-            Assert.NotNull(user, "The required user was not found...");
-            var membership = _context.AddMemberIntoRole(role, user);
+            var membership = _context.Fluent.ForOrganization("dmunev").AddUserIntoRole("tonystark", "Admin");
             Assert.NotNull(membership);
             Assert.AreEqual(1, _context.OrganizationMembers.Count());
-        }
-
-        [Test]
-        [Order(102)]
-        public void TestCreateOrganizationMemberRole()
-        {
-            var organization = _context.Organizations.FirstOrDefault(n => n.OrganizationId == "dmunev");
-            Assert.NotNull(organization);
-            var memberRole = new OrganizationRole()
-            {
-                Organization = organization,
-                RoleName = "Mitglied",
-                CanCreateProject = false,
-                CanCreateRoles = false,
-                CanManageMembers = false
-            };
-            _context.OrganizationRoles.Add(memberRole);
-            _context.SaveChanges();
-            Assert.AreEqual(2, _context.OrganizationRoles.Count());
-            Assert.AreEqual(2,
-                _context.Organizations
-                    .Include(n => n.Roles)
-                    .FirstOrDefault(n => n.OrganizationId == "dmunev").Roles
-                    .Count);
         }
 
         [Test]
         [Order(103)]
         public void TestAddUsersToOrganizationAsMembers()
         {
-            var peterParker = _context.Users.FirstOrDefault(n => n.UserName == "pparker");
-            var memberRole = _context.OrganizationRoles.FirstOrDefault(n => n.RoleName == "Mitglied" && n.Organization.OrganizationId == "dmunev");
-            Assert.NotNull(memberRole);
-            Assert.NotNull(peterParker);
-            _context.AddMemberIntoRole(memberRole, peterParker);
+            _context.Fluent.ForOrganization("dmunev").AddUserIntoRole("pparker", "Mitglied");
             Assert.AreEqual(2, _context.OrganizationMembers.Count());
+            Assert.IsTrue(_context.Fluent.ForOrganization("dmunev").HasUserMembership("pparker"));
         }
+
+        [Test]
+        [Order(104)]
+        public void TestAddUnknownUserThrowsException()
+        {
+            Assert.Throws<UserNotFoundException>(() => _context.Fluent.ForOrganization("dmunev").AddUserIntoRole("unknownUser", "Admin"));
+        }
+
+        [Test]
+        [Order(105)]
+        public void TestAddUserUnknowRoleThrowsException()
+        {
+            Assert.Throws<OrganizationRoleNotFoundException>(() => _context.Fluent.ForOrganization("dmunev").AddUserIntoRole("blackwidow", "NO ROLE"));
+        }
+
         #endregion
 
         // Id 200 Tests (Project)
@@ -194,7 +270,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         {
             var tonyStark = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
             Assert.NotNull(tonyStark);
-            var project = _context.AddProject(options =>
+            var project = _context.Fluent.Project.AddProject(options =>
                 options.WithShort("MUNBW")
                     .WithName("Model United Nations Baden-Würrtemberg")
                     .WithOrganization("dmunev")
@@ -223,7 +299,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         {
             var tonyStark = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
             Assert.NotNull(tonyStark);
-            var conference = _context.AddConference(options =>
+            var conference = _context.Fluent.Conference.AddConference(options =>
                 options.WithShort("MUNBW 22")
                     .WithName("Model United Nations Baden-Würrtemberg 2022")
                     .WithFullName("Model United Nations Baden-Würrtemberg 2022")
@@ -243,10 +319,8 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(310)]
         public void TestAddGeneralversammlungUndHA3()
         {
-            var conference = _context.Conferences.FirstOrDefault(n => n.ConferenceId == "munbw22");
-            Assert.NotNull(conference);
 
-            conference.AddCommittee(gv =>
+            _context.Fluent.ForConference("munbw22").AddCommittee(gv =>
                 gv
                     .WithName("Generalversammlung")
                     .WithFullName("Generalversammlung")
@@ -284,7 +358,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
             var conference = _context.Conferences.FirstOrDefault(n => n.ConferenceId == "munbw22");
             Assert.NotNull(conference);
 
-            conference.AddCommittee(sr => sr
+            _context.Fluent.ForConference("munbw22").AddCommittee(sr => sr
                 .WithName("Sicherheitsrat")
                 .WithFullName("Sicherheitsrat")
                 .WithShort("SR")
@@ -300,7 +374,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
                     .WithTopic("Einsatz robuster Mandate in der Friedenssicherung")
                     .WithTopic("Langfristiger Frieden in Zypern")
                     .WithTopic("Internationale Kooperation in der Krisenprävention")));
-            _context.SaveChanges();
             Assert.AreEqual(4, _context.Committees.Count());
             Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-sr"));
             Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kfk"));
@@ -310,8 +383,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(312)]
         public void TestAddWiSoUndKBE()
         {
-            var conference = _context.Conferences.Find("munbw22");
-            conference.AddCommittee(wiso => wiso
+            _context.Fluent.ForConference("munbw22").AddCommittee(wiso => wiso
                 .WithName("Wirtschafts- und Sozialrat")
                 .WithFullName("Wirtschafts- und Sozialrat")
                 .WithShort("WiSo")
@@ -326,7 +398,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
                     .WithTopic("Maßnahmen zur Bekämpfung der Luftverschmutzung")
                     .WithTopic("Tourismus und nachhaltige Entwicklung")
                     .WithTopic("Resiliente und nachhaltige Landwirtschaft")));
-            _context.SaveChanges();
             Assert.AreEqual(6, _context.Committees.Count());
             Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-wiso"));
             Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kbe"));
@@ -336,26 +407,23 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(313)]
         public void TestAddRatderInternationalenOrganisation()
         {
-            var conference = _context.Conferences.Find("munbw22");
-            conference.AddCommittee(rat => rat
+            _context.Fluent.ForConference("munbw22").AddCommittee(rat => rat
                 .WithName("Rat der Internationalen Organisation für Migration")
                 .WithFullName("Rat der Internationalen Organisation für Migration")
-                .WithShort("Rat")
+                .WithShort("IOM")
                 .WithType(CommitteeTypes.AtLocation)
                 .WithTopic("Implementierung des UN-Migrationspakts")
                 .WithTopic("Gesundheitsversorgung von Migrant*innen")
                 .WithTopic("Umgang mit traumatisierten Geflüchteten"));
-            _context.SaveChanges();
             Assert.AreEqual(7, _context.Committees.Count());
-            Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-rat"));
+            Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-iom"));
         }
 
         [Test]
         [Order(314)]
         public void TestAddKlimakonferenz()
         {
-            var conference = _context.Conferences.Find("munbw22");
-            conference.AddCommittee(kk => kk
+            _context.Fluent.ForConference("munbw22").AddCommittee(kk => kk
                 .WithName("Klimakonferenz")
                 .WithFullName("Klimakonferenz")
                 .WithShort("KK")
@@ -363,7 +431,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .WithTopic("Rolle der Jugend bei der Umsetzung des Pariser Klimaabkommens")
                 .WithTopic("Adaption an den Meeresspiegelanstieg in tiefliegenden Gebieten und Inselstaaten")
                 .WithTopic("Umsetzung von SDG 7: Nachhaltige Energie für alle"));
-            _context.SaveChanges();
             Assert.AreEqual(8, _context.Committees.Count());
             Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kk"));
         }
@@ -372,8 +439,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(315)]
         public void TestAddMenschenrechtsrat()
         {
-            var conference = _context.Conferences.Find("munbw22");
-            conference.AddCommittee(mrr => mrr
+            _context.Fluent.ForConference("munbw22").AddCommittee(mrr => mrr
                 .WithName("Menschenrechtsrat")
                 .WithFullName("Menschenrechtsrat")
                 .WithShort("MRR")
@@ -381,7 +447,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .WithTopic("Menschenrechtslage in der Republik Myanmar")
                 .WithTopic("Bekämpfung der Diskriminierung aufgrund sexueller Orientierung und Identität")
                 .WithTopic("Pressefreiheit und Schutz von Journalist*innen"));
-            _context.SaveChanges();
             Assert.AreEqual(9, _context.Committees.Count());
             Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-mrr"));
         }
@@ -406,8 +471,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(400)]
         public void TestAddProjektleitung()
         {
-            var conference = _context.Conferences.FirstOrDefault(n => n.ConferenceId == "munbw22");
-            var role = conference.AddTeamRoleGroup(options => 
+            var role = _context.Fluent.ForConference("munbw22").AddTeamRoleGroup(options => 
                 options.WithShort("PL")
                 .WithFullName("die  Projektleitung von MUNBW 2022")
                 .WithName("Projektleitung")
@@ -416,7 +480,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
                         .WithFullName("Projektleiter")
                         .WithName("Projektleiter")
                         .WithLevel(1)));
-            _context.SaveChanges();
             Assert.NotNull(role);
             Assert.AreEqual(1, _context.TeamRoleGroups.Count());
             Assert.AreEqual(1, _context.ConferenceTeamRoles.Count());
@@ -426,13 +489,12 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(401)]
         public void TestAddErweiterteProjektleitung()
         {
-            var conference = _context.Conferences.FirstOrDefault(n => n.ConferenceId == "munbw22");
             var projektleitung = _context.ConferenceTeamRoles.FirstOrDefault(n =>
                 n.Conference.ConferenceId == "munbw22" && n.RoleName == "Projektleiter");
 
             Assert.NotNull(projektleitung);
 
-            var group = conference.AddTeamRoleGroup(options =>
+            var group = _context.Fluent.ForConference("munbw22").AddTeamRoleGroup(options =>
                 options.WithShort("EPL")
                     .WithFullName("die  erweiterte Projektleitung von MUNBW 2022")
                     .WithName("Erweiterte Projektleitung")
@@ -450,7 +512,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
                     .WithRole("Fundraising")
                     .WithRoleLevel(2)
                     .WithParentRole(projektleitung));
-            _context.SaveChanges();
 
             Assert.AreEqual(2, _context.TeamRoleGroups.Count());
             Assert.AreEqual(13, _context.ConferenceTeamRoles.Count());
@@ -469,25 +530,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(403)]
         public void TestMakeTonyStarkProjektleiter()
         {
-            var projektleitung = _context.ConferenceTeamRoles
-                .FirstOrDefault(n =>
-                n.RoleName == "Projektleiter" && n.Conference.ConferenceId == "munbw22");
-
-            var tonyStark = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
-            Assert.NotNull(tonyStark);
-
-            Assert.NotNull(projektleitung);
-            var participation = new Participation()
-            {
-                Role = projektleitung,
-                User = tonyStark,
-                Cost = 50,
-                IsMainRole = true,
-                Paid = 0,
-                ParticipationSecret = "GENERATE_SECRET"
-            };
-            _context.Participations.Add(participation);
-            _context.SaveChanges();
+            _context.Fluent.ForConference("munbw22").MakeUserParticipateInTeamRole("tonystark", "Projektleiter");
             Assert.IsTrue(_context.Participations.Any(n => n.Role.Conference.ConferenceId == "munbw22" && n.User.UserName == "tonystark"));
         }
 
@@ -500,116 +543,362 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(500)]
         public void TestAddSeatsToGV()
         {
-            _context.AddSeatByCountryName("munbw22-gv", "Afghanistan");
-            _context.AddSeatByCountryName("munbw22-gv", "Ägypten");
-            _context.AddSeatByCountryName("munbw22-gv", "Albanien");
-            _context.AddSeatByCountryName("munbw22-gv", "Argentinien");
-            _context.AddSeatByCountryName("munbw22-gv", "Armenien");
-            _context.AddSeatByCountryName("munbw22-gv", "Australien");
+            // Afrika
+            _context.Fluent.ForCommittee("munbw22-gv").AddSeatsByCountryNames(
+                "Ägypten", "Algerien", "Angola", "Äthiopien",
+                "Burkina Faso", "Elfenbeinküste", "Eritrea", "Gabun",
+                "Ghana", "Kamerun", "Kenia", "Demokratische Republik Kongo",
+                "Republik Kongo", "Libyen", "Madagaskar", "Mosambik",
+                "Nigeria", "Ruanda", "Seychellen", "Südafrika",
+                "Sudan", "Südsudan", "Tschad", "Tunesien",
+                "Uganda", "Zentralafrikanische Republik",
 
-            _context.AddSeatByCountryName("munbw22-gv", "Bahrain");
-            _context.AddSeatByCountryName("munbw22-gv", "Belarus");
-            _context.AddSeatByCountryName("munbw22-gv", "Brasilien");
-            _context.AddSeatByCountryName("munbw22-gv", "Bulgarien");
-            _context.AddSeatByCountryName("munbw22-gv", "Burkina Faso");
+                // Asien
+                "Bangladesch", "Volksrepublik China", "Fidschi", "Indien",
+                "Indonesien", "Iran", "Japan", "Jemen",
+                "Kasachstan", "Katar", "Myanmar", "Pakistan",
+                "Palau", "Papua-Neuguinea", "Philippinen", "Samoa",
+                "Saudi-Arabien", "Singapur", "Südkorea", "Syrien",
+                "Thailand", "Usbekistan", "Vereinigte Arabische Emirate", "Vietnam",
+                "Zypern",
 
-            _context.AddSeatByCountryName("munbw22-gv", "Deutschland");
-            _context.AddSeatByCountryName("munbw22-gv", "Frankreich");
-            _context.AddSeatByCountryName("munbw22-gv", "Vereinigte Staaten");
+                // Osteuropa
+                "Albanien", "Bosnien und Herzegowina", "Estland", "Kroatien",
+                "Lettland", "Polen", "Rumänien", "Russland", "Ukraine",
+                "Ungarn", "Belarus",
 
+                // Lateinamerika
+                "Argentinien", "Brasilien", "Chile", "Costa Rica",
+                "Dominikanische Republik", "Ecuador", "Haiti", "Jamaika",
+                "Kolumbien", "Kuba", "Mexiko", "Nicaragua",
+                "Peru", "Trinidad und Tobago", "Uruguay", "Venezuela",
 
-            _context.AddSeatByCountryName("munbw22-gv", "Italien");
-            _context.AddSeatByCountryName("munbw22-gv", "Spanien");
+                // Westeuropa
+                "Australien", "Deutschland", "Frankreich", "Irland",
+                "Israel", "Italien", "Kanada", "Niederlande",
+                "Norwegen", "Schweden", "Schweiz", "Türkei",
+                "Vereinigte Staaten", "Vereinigtes Königreich"
+                );
 
-            Assert.AreEqual(16, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-gv"));
+            Assert.AreEqual(92, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-gv"));
         }
 
         [Test]
         [Order(501)]
         public void TestAddSeatsToHA3()
         {
-            _context.AddSeat("munbw22-ha3", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-ha3", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-ha3", "Abgeordnete*r Vereinigte Staaten", 207);
+            // Afrika
+            _context.Fluent.ForCommittee("munbw22-ha3").AddSeatsByCountryNames(
+                "Ägypten", "Angola", "Burkina Faso", "Ghana",
+                "Kamerun", "Nigeria","Südafrika", "Zentralafrikanische Republik",
 
-            Assert.AreEqual(3, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-ha3"));
+                // Asien
+                "Volksrepublik China", "Indien", "Indonesien", "Pakistan",
+                "Palau", "Papua-Neuguinea", "Syrien", "Vietnam",
+
+            // Osteuropa
+            "Albanien", "Kroatien", "Polen", "Russland",
+
+            // Lateinamerika
+            "Argentinien", "Brasilien", "Chile", "Peru",
+            "Venezuela",
+
+            // Westeuropa
+            "Deutschland", "Frankreich", "Türkei", "Vereinigte Staaten", 
+            "Vereinigtes Königreich");
+
+
+            Assert.AreEqual(30, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-ha3"));
         }
 
         [Test]
         [Order(502)]
         public void TestAddSeatsToSR()
         {
-            _context.AddSeat("munbw22-sr", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-sr", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-sr", "Abgeordnete*r Vereinigte Staaten", 207);
+            // Afrika
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Gabun");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Ghana");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Kenia");
 
-            Assert.AreEqual(3, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-sr"));
+            // Asien
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Volksrepublik China");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Indien");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Vereinigte Arabische Emirate");
+
+            // Osteuropa
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Albanien");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Russland");
+
+            // Lateinamerika
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Brasilien");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Mexiko");
+
+            // Westeuropa
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Frankreich");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Irland");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Norwegen");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Vereinigte Staaten");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Vereinigtes Königreich");
+
+
+            Assert.AreEqual(15, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-sr"));
         }
 
         [Test]
         [Order(503)]
         public void TestAddSeatsToKFK()
         {
-            _context.AddSeat("munbw22-kfk", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-kfk", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-kfk", "Abgeordnete*r Vereinigte Staaten", 207);
+            // Afrika
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Ägypten");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Äthiopien");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Kenia");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Nigeria");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Ruanda");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Südafrika");
 
-            Assert.AreEqual(3, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kfk"));
+            // Asien
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Bangladesch");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Volksrepublik China");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Indien");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Japan");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Jemen");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Myanmar");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Pakistan");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Südkorea");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Zypern");
+
+            // Osteuropa
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Russland");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Ukraine");
+
+            // Lateinamerika
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Brasilien");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Costa Rica");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Haiti");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Kolumbien");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Venezuela");
+
+            // Westeuropa
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Frankreich");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Kanada");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Niederlande");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Norwegen");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Schweiz");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Vereinigte Staaten");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Vereinigtes Königreich");
+
+            Assert.AreEqual(29, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kfk"));
         }
 
         [Test]
         [Order(504)]
         public void TestAddSeatsToWiSo()
         {
-            _context.AddSeat("munbw22-wiso", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-wiso", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-wiso", "Abgeordnete*r Vereinigte Staaten", 207);
+            // Afrika
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ägypten");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Algerien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Angola");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Äthiopien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Elfenbeinküste");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Gabun");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ghana");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kamerun");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kenia");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Demokratische Republik Kongo");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Republik Kongo");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Libyen");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Madagaskar");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Nigeria");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Tunesien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Uganda");
 
-            Assert.AreEqual(3, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-wiso"));
+            // Asien
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Bangladesch");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Volksrepublik China");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Indien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Indonesien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Japan");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kasachstan");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Katar");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Philippinen");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Saudi-Arabien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Singapur");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Südkorea");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Thailand");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Vereinigte Arabische Emirate");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Vietnam");
+
+            // Osteuropa
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kroatien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Lettland");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Polen");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Rumänien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Russland");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ukraine");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ungarn");
+
+            // Lateinamerika
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Argentinien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Brasilien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Chile");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ecuador");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Jamaika");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kolumbien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kuba");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Mexiko");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Nicaragua");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Peru");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Uruguay");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Venezuela");
+
+            // Westeuropa
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Australien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Deutschland");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Frankreich");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Irland");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Israel");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Italien");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kanada");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Niederlande");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Norwegen");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Schweden");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Schweiz");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Türkei");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Vereinigte Staaten");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Vereinigtes Königreich");
+
+
+
+            Assert.AreEqual(63, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-wiso"));
         }
 
         [Test]
         [Order(505)]
         public void TestAddSeatsToKBE()
         {
-            _context.AddSeat("munbw22-kbe", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-kbe", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-kbe", "Abgeordnete*r Vereinigte Staaten", 207);
+            // Afrika
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Ägypten");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Äthiopien");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Burkina Faso");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Elfenbeinküste");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Demokratische Republik Kongo");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Libyen");
 
-            Assert.AreEqual(3, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kbe"));
+            // Asien
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Bangladesch");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Volksrepublik China");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Indien");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Iran");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Japan");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Philippinen");
+
+            // Osteuropa
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Russland");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Ukraine");
+
+            // Lateinamerika
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Argentinien");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Haiti");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Kolumbien");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Mexiko");
+
+            // Westeuropa
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Australien");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Israel");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Niederlande");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Türkei");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Vereinigte Staaten");
+
+
+
+            Assert.AreEqual(23, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kbe"));
         }
 
         [Test]
         [Order(506)]
-        public void TestAddSeatsToRat()
+        public void TestAddSeatsToIOM()
         {
-            _context.AddSeat("munbw22-rat", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-rat", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-rat", "Abgeordnete*r Vereinigte Staaten", 207);
+            // Afrika
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Algerien");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Eritrea");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Libyen");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Ruanda");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Südafrika");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Sudan");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Südsudan");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Uganda");
 
-            Assert.AreEqual(3, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-rat"));
+            // Asien
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Bangladesch");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Volksrepublik China");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Iran");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Japan");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Jemen");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Myanmar");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Pakistan");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Usbekistan");
+
+            // Osteuropa
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Bosnien und Herzegowina");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Russland");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Ukraine");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Belarus");
+
+            // Lateinamerika
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Costa Rica");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Kolumbien");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Mexiko");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Nicaragua");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Venezuela");
+
+            // Westeuropa
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Deutschland");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Italien");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Kanada");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Türkei");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Vereinigte Staaten");
+
+
+            Assert.AreEqual(30, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-iom"));
         }
 
         [Test]
         [Order(507)]
         public void TestAddSeatsToKK()
         {
-            _context.AddSeat("munbw22-kk", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-kk", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-kk", "Abgeordnete*r Vereinigte Staaten", 207);
+            _context.Fluent.ForCommittee("munbw22-kk").AddSeatsByCountryNames("Ägypten", 
+                "Algerien",  "Angola", "Äthiopien", "Burkina Faso", "Elfenbeinküste",
+                "Ghana", "Kamerun", "Kenia", "Demokratische Republik Kongo", "Madagaskar", "Mosambik", "Nigeria",
+                "Ruanda", "Seychellen", "Südafrika", "Sudan", "Tschad", "Tunesien", "Uganda",
 
-            Assert.AreEqual(3, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kk"));
+                "Bangladesch", "Volksrepublik China", "Fidschi", "Indien",
+                "Indonesien", "Iran", "Japan", "Kasachstan",
+                "Katar", "Myanmar", "Pakistan", "Palau",
+                "Papua-Neuguinea", "Philippinen", "Samoa", "Saudi-Arabien",
+                "Südkorea", "Thailand", "Vereinigte Arabische Emirate", "Vietnam",
+
+                "Albanien", "Estland", "Kroatien", "Polen",
+                "Rumänien", "Russland", "Ungarn", "Belarus",
+
+                "Argentinien", "Brasilien", "Chile", "Costa Rica",
+                "Dominikanische Republik", "Ecuador", "Haiti", "Jamaika",
+                "Kuba", "Mexiko", "Trinidad und Tobago", "Uruguay",
+
+                "Australien", "Deutschland", "Frankreich", "Italien",
+                "Kanada", "Niederlande", "Norwegen", "Schweden",
+                "Türkei", "Vereinigte Staaten", "Vereinigtes Königreich"
+                );
+
+            Assert.AreEqual(71, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kk"));
         }
 
         [Test]
         [Order(508)]
         public void TestAddSeatsToMRR()
         {
-            _context.AddSeat("munbw22-mrr", "Abgeordnete*r Deutschland", 38);
-            _context.AddSeat("munbw22-mrr", "Abgeordnete*r Frankreich", 50);
-            _context.AddSeat("munbw22-mrr", "Abgeordnete*r Vereinigte Staaten", 207);
+            _context.Fluent.ForCommittee("munbw22-mrr").AddSeatsByCountryNames("Algerien", "Burkina Faso");
 
-            Assert.AreEqual(3, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-mrr"));
+            Assert.AreEqual(2, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-mrr"));
         }
 
         [Test]
@@ -630,11 +919,116 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(511)]
         public void TestCreateDelegations()
         {
+            // Afrika
+            _ = _context.Fluent.ForConference("munbw22")
+                .AddDelegation(options => options.WithName("Ägypten").WithCountry("Ägybpten").InsideAnyCommittee());
+
+            _ = _context.Fluent.ForConference("munbw22")
+                .AddDelegation(del => del.WithName("Algerien").WithCountry("Algerien").InsideCommittee("munbw22-gv", "munbw22-wiso", "munbw22-iom", "munbw-kk"));
+
+            _ = _context.Fluent.ForConference("munbw22")
+                .AddDelegation(del => del.WithName("Algerien (online)").WithCountry("Algerien").InsideCommittee("munbw22-mrr"));
+
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Angola");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Äthiopien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Burkina Faso");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Elfenbeinküste");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Eritrea");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Gabun");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ghana");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kamerun");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kenia");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Demokratische Republik Kongo");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Republik Kongo");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Libyen");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Madagaskar");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Mosambik");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Nigeria");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ruanda");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Seychellen");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Südafrika");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Sudan");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Südsudan");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Tschad");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Tunesien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Uganda");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Zentralafrikanische Republik");
+
+            // Asien
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Bangladesch");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Volksrepublik China");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Fidschi");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Indien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Indonesien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Iran");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Japan");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Jemen");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kasachstan");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Katar");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Myanmar");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Pakistan");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Palau");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Papua-Neuguinea");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Philippinen");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Samoa");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Saudi-Arabien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Singapur");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Südkorea");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Syrien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Thailand");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Usbekistan");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Vereinigte Arabische Emirate");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Vietnam");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Zypern");
+
+            // Osteuropa
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Albanien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Bosnien und Herzegowina");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Estland");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kroatien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Lettland");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Polen");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Rumänien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Russland");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ukraine");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ungarn");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Belarus");
+
+            // Lateinamerika
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Argentinien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Brasilien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Chile");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Costa Rica");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Dominikanische Republik");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ecuador");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Haiti");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Jamaika");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kolumbien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kuba");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Mexiko");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Nicaragua");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Peru");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Trinidad und Tobago");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Uruguay");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Venezuela");
+
+            // Westeuropa
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Australien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Deutschland");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Frankreich");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Irland");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Israel");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Italien");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kanada");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Niederlande");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Norwegen");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Schweden");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Schweiz");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Türkei");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Vereinigte Staaten");
+            _context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Vereinigtes Königreich");
 
 
-            _context.GroupRolesOfCountryIntoADelegation("munbw22", 38, "Deutschland");
-            _context.GroupRolesOfCountryIntoADelegation("munbw22", 50, "Frankreich");
-            _context.GroupRolesOfCountryIntoADelegation("munbw22", 207, "Vereinigte Staaten");
 
             var allDelegations = _context.Delegations
                 .Include(n => n.ChildDelegations)
@@ -642,11 +1036,13 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .Where(n => n.Conference.ConferenceId == "munbw22")
                 .ToList();
 
-            Assert.AreEqual(3, allDelegations.Count);
+            Assert.AreEqual(93, allDelegations.Count);
 
             var delegationDeutschland = allDelegations.FirstOrDefault(n => n.Name == "Deutschland");
-            Assert.NotNull(delegationDeutschland);
-            Assert.AreEqual(9, delegationDeutschland.Roles.Count);
+            Assert.NotNull(delegationDeutschland, "Expected to find a Delegation named Deutschland but none was found!");
+            // Vertreten in 5 Gremien
+            // + 1 Lehrkraft kommt in einem späteren Test hinzu
+            Assert.AreEqual(5, delegationDeutschland.Roles.Count);
             Assert.IsTrue(_context.Delegations.Any(n => n.DelegationId == "munbw22-deutschland"));
         }
 
@@ -654,22 +1050,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(512)]
         public void TestAddCostRuleForMrr()
         {
-            var mrr = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munbw22-mrr");
-            var costRule = new ConferenceParticipationCostRule()
-            {
-                Committee = mrr,
-                Conference = null,
-                Role = null,
-                Delegation = null,
-                AddPercentage = null,
-                CostRuleTitle = "Preis für Online-Gremien",
-                Costs = 50.00m,
-                CutPercentage = null,
-                UserMaxAge = null,
-                UserMinAge = null
-            };
-            _context.ConferenceParticipationCostRules.Add(costRule);
-            _context.SaveChanges();
+            _context.Fluent.ForCommittee("munbw22-mrr").AddCostRule(50, "Preis für ein Online Gremium");
             Assert.AreEqual(1, _context.ConferenceParticipationCostRules.Count());
         }
 
@@ -707,28 +1088,12 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(514)]
         public void TestAddCostRuleForTeacher()
         {
-            var teachers = _context.Delegates.Where(n => n.DelegateType == "Lehrkraft");
+            _context.Fluent.ForConference("munbw22").AddCostRuleForRolesOfSubType("Lehrkraft", 0, "Preis für Lehrkraft");
+            var lehrkraftRole = _context.Delegates.FirstOrDefault(n => n.RoleName == "Lehrkraft");
 
-            foreach (var teacher in teachers)
-            {
-                var costRule = new ConferenceParticipationCostRule()
-                {
-                    Committee = null,
-                    Conference = null,
-                    Role = teacher,
-                    Delegation = null,
-                    AddPercentage = null,
-                    CostRuleTitle = "Preis für Lehrkraft",
-                    Costs = 0.00m,
-                    CutPercentage = null,
-                    UserMaxAge = null,
-                    UserMinAge = null
-                };
-
-                _context.ConferenceParticipationCostRules.Add(costRule);
-            }
-
-            _context.SaveChanges();
+            Assert.NotNull(lehrkraftRole);
+            var costs = _context.Fluent.ForConference("munbw22").GetCostOfRole(lehrkraftRole.RoleId);
+            Assert.AreEqual(0, costs);
 
         }
 
@@ -767,7 +1132,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 PreContent = "Die Anmeldung bei Model United Nations Baden-Würrtemberg...",
                 RequiresAddress = true,
                 RequiresName = true,
-                MaxDelegationWishes = 3
+                MaxWishes = 3
             };
 
             formula.Fields = new List<ConferenceApplicationField>();
@@ -811,21 +1176,22 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Description("This test sets the application phase on all the roles that are linked to a country inside the Delegation named Deutschland.")]
         public void TestSetApplicationStateOnDelegations()
         {
-            var delegationDeutschland = _context.Delegations
+            var delegations = _context.Delegations
                 .Include(n => n.Roles)
                 .ThenInclude(n => n.DelegateCountry)
-                .FirstOrDefault(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Deutschland");
+                .Where(n => n.Conference.ConferenceId == "munbw22");
 
-            Assert.NotNull(delegationDeutschland);
 
-            foreach (var role in delegationDeutschland.Roles)
+            foreach(var delegation in delegations)
             {
-                if (role.DelegateCountry is not null)
-                    role.ApplicationState = EApplicationStates.DelegationApplication;
+                foreach (var role in delegation.Roles)
+                {
+                    if (role.DelegateCountry is not null)
+                        role.ApplicationState = EApplicationStates.DelegationApplication;
+                }
             }
 
             var result = _context.SaveChanges();
-            Assert.AreEqual(9, result);
         }
 
         [Test]
@@ -834,15 +1200,15 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestCreateDelegationApplication()
         {
 
-            var application = _context.AddApplication()
-                .WithConference("munbw22")
-                .DelegationApplication()
+            var application = _context.Fluent
+                .ForConference("munbw22")
+                .CreateDelegationApplication()
                 .WithAuthor("muricaboi")
                 .WithPreferedDelegationByName("Deutschland")
                 .WithPreferedDelegationByName("Frankreich")
                 .WithPreferedDelegationByName("Vereinigte Staaten")
                 .WithFieldInput("Motivation", "Wir sind sehr Motiviert bei dieser Konferenz dabei zu sein :)")
-                .Build();
+                .Submit();
 
 
             Assert.NotNull(application);
@@ -892,24 +1258,13 @@ namespace MUNity.Database.Test.MUNBW22Tests
         [Order(614)]
         public void TestCalculateCostOfApplication()
         {
-            var application = _context.DelegationApplications
-                .Include(n => n.DelegationWishes)
-                .ThenInclude(n => n.Delegation)
-                .FirstOrDefault();
-            Assert.NotNull(application);
 
+            var priceDeutschland = _context.Fluent.ForConference("munbw22").CostsOfDelegationByName("Deutschland");
 
-            var wishDeutschland = application.DelegationWishes.FirstOrDefault(n => n.Delegation.Name == "Deutschland");
-            
-            Assert.NotNull(wishDeutschland);
-            
-            var priceDeutschland = _context.CostsOfDelegation(wishDeutschland.Delegation.DelegationId);
-
-            Assert.AreEqual(610, priceDeutschland.Costs.Sum(a => a.Cost));
-
-            //Assert.AreEqual(610, priceDelegations["Deutschland"]);
-            //Assert.AreEqual(610, priceDelegations["Frankreich"]);
-            //Assert.AreEqual(610, priceDelegations["Vereinigte Staaten"]);
+            // Deutschland ist in 5 Gremien, Preis sollte 5 * 50
+            // Basispreis: 70 Euro
+            // Preis für Online-Gremien: 50 Euro
+            Assert.AreEqual(5 * 70, priceDeutschland.Costs.Sum(a => a.Cost));
         }
 
         

@@ -9,6 +9,11 @@
         /// <summary>
         /// user wants to join the application
         /// </summary>
-        RequestJoining
+        RequestJoining,
+        /// <summary>
+        /// Was added by the creator of the application but needs to accept this
+        /// invite.
+        /// </summary>
+        Invited
     }
 }

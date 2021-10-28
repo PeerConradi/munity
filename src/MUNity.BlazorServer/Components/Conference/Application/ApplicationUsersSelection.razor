@@ -1,0 +1,70 @@
+﻿@using Microsoft.EntityFrameworkCore 
+
+@inject Services.UserService userSerivce
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Benutzer auswählen</h4>
+    </div>
+
+    <div class="card-body">
+        <div class="row mb-15px">
+            <label class="form-label col-form-label col-md-3">Benutzer</label>
+            <div class="col-md-9">
+                <ul class="list-group list-group-flush">
+                    @foreach (var user in Application.Users)
+                    {
+                        <li class="list-group-item">
+                            @user.User.Forename (@@@user.User.UserName)
+                            <a class="text-danger pull-right">entfernen</a>
+                        </li>
+                    }
+                </ul>
+                <label class="form-label">Benutzer hinzufügen</label>
+                <RadzenDropDown AllowClear="true" TValue="string" class="w-100"
+                                LoadData=@LoadUsers AllowFiltering="true"
+                                Change="(args) => UserAdded(args)"
+                                Data=@foundUsers TextProperty="DisplayName" ValueProperty="UserName" />
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer text-end">
+        <button class="btn btn-primary pull-right" @onclick="() => UsersSelected.InvokeAsync()">weiter</button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public EventCallback UsersSelected { get; set; }
+
+    [Parameter] public string ConferenceId { get; set; }
+
+    [Parameter] public MUNity.Database.Models.Conference.DelegationApplication Application { get; set; }
+
+    private List<MUNity.Schema.Conference.AddingToApplicationUser> foundUsers;
+
+    void LoadUsers(LoadDataArgs args)
+    {
+        foundUsers = userSerivce.GetUsersThatCanBeAddedToApplication(ConferenceId, args.Filter);
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void UserAdded(object value)
+    {
+        // value is the Username as string
+        var user = userSerivce.GetUserByUsername(value.ToString());
+        if (user != null && !Application.Users.Any(n => n.User.UserName == user.UserName))
+        {
+            Application.Users.Add(new Database.Models.Conference.DelegationApplicationUserEntry()
+            {
+                Application = this.Application,
+                CanWrite = false,
+                Message = "Sie wurden eingeladen durch den/die Erstellerin dieser Anmeldung",
+                Status = MUNityBase.DelegationApplicationUserEntryStatuses.Invited,
+                User = user
+            });
+        }
+    }
+}

@@ -1,9 +1,12 @@
 ﻿@using Microsoft.EntityFrameworkCore
+@using MUNity.BlazorServer.Components.Conference.Application
 
 @layout MUNity.BlazorServer.Shared.ConferenceFrontEndLayout
 @page "/web/conference/{ConferenceId}/register"
+@page "/web/conference/{ConferenceId}/register/{Preference}"
 
-@inject MUNity.Database.Context.MunityContext context;
+@inject MUNity.Database.Context.MunityContext context
+@inject NavigationManager navManager
 
 <AuthorizeView>
     <Authorized>
@@ -15,105 +18,30 @@
                 <!-- END panel-heading -->
                 <!-- BEGIN panel-body -->
                 <div class="panel-body">
-
-                    @if (!isDelegationApplicationAvailable && !isRoleApplicationAvailable)
+                    @if (step == 1)
                     {
-                        <div class="alert alert-danger">Derzeit scheint keine Anmeldephase zu sein.</div>
+                        <div class="row">
+                            <div class="col-4">
+                                <button class="btn w-100 btn-primary" @onclick="() => presencePreference = SelectPresencePreferenceComponent.PresencePreferences.NotSelected">Zurück</button>
+                            </div>
+                        </div>
                     }
-
-                    <div class="nav-wizards-container">
-                        <nav class="nav nav-wizards-3 mb-2">
-                            <div class="nav-item col">
-                                <a class="nav-link cursor-pointer @((step == 0) ? "active" : null) @((step > 0) ? "completed" : null)" @onclick="() => step = 0">
-                                    <div class="nav-dot"></div>
-                                    <div class="nav-title">Schritt 1</div>
-                                    <div class="nav-text">Anwesenheit</div>
-                                </a>
-                            </div>
-                            <div class="nav-item col">
-                                <a class="nav-link cursor-pointer @((step == 1) ? "active" : null) @((step > 1) ? "completed" : null)"  @onclick="() => step = 1">
-                                    <div class="nav-dot"></div>
-                                    <div class="nav-title">Schritt 2</div>
-                                    <div class="nav-text">Art</div>
-                                </a>
-                            </div>
-                            <div class="nav-item col">
-                                <a class="nav-link cursor-pointer @((step == 2) ? "active" : null) @((step > 2) ? "completed" : null)"  @onclick="() => step = 2">
-                                    <div class="nav-dot"></div>
-                                    <div class="nav-title">Schritt 3</div>
-                                    <div class="nav-text">Eingabe</div>
-                                </a>
-                            </div>
-                        </nav>
-                    </div>
 
                     <div class="row">
 
                         @if (step == 0)
                         {
-                            <div class="col-6 padding-on-lg">
-                                <a class="widget-card rounded square mb-5px cursor-pointer " @onclick="() => step = 1">
-                                    <div class="widget-card-cover" style="background-image: url(../img/login-bg/login-bg-9.jpg)">
-                                        <div class="d-flex h-100 align-items-center justify-content-center">
-                                            <div class="text-center">
-                                                <div class="text-white fs-24px"><b>Online</b></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                             
-                            <div class="col-6 padding-on-lg">
-                                <a class="widget-card rounded square mb-5px cursor-pointer" @onclick="() => step = 1">
-                                    <div class="widget-card-cover" style="background-image: url(../img/login-bg/login-bg-17.jpg)">
-                                        <div class="d-flex h-100 align-items-center justify-content-center">
-                                            <div class="text-center">
-                                                <div class="text-white fs-24px"><b>In Präsenz</b></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            
+                            <SelectPresencePreferenceComponent PreferenceSelected="OnPreferenceSelected" />
                         }
                         else if (step == 1)
                         {
-                            @if (isRoleApplicationAvailable)
-                            {
-                                <div class="col-6 padding-on-lg animate__animated animate__backInRight" >
-                                    <a href="#" class="widget-card rounded square mb-5px">
-                                        <div class="widget-card-cover" style="background-image: url(../img/gallery/gallery-1.jpg)">
-                                            <div class="d-flex h-100 align-items-center justify-content-center">
-                                                <div class="text-center">
-                                                    <div class="text-white fs-24px"><b>Einzelbewerbung</b></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            }
-
-                            @if (isDelegationApplicationAvailable)
-                            {
-                                <div class="col-6 padding-on-lg animate__animated animate__backInRight" >
-                                    <a class="widget-card rounded square mb-5px cursor-pointer"
-                                       @onclick="() => { step = 2; mode = Modes.Delegation; }">
-                                        <div class="widget-card-cover" style="background-image: url(../img/gallery/gallery-4.jpg)">
-                                            <div class="d-flex h-100 align-items-center justify-content-center">
-                                                <div class="text-center">
-                                                    <div class="text-white fs-24px"><b>Gruppenbewerbung</b></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            }
+                            <SelectApplicationTypeComponent ApplicationTypeSelected="OnApplicationTypeSelected" />
                         }
                         else if (step == 2)
                         {
-                            @if (mode == Modes.Delegation)
+                            @if (applicationType == SelectApplicationTypeComponent.ApplicationType.Delegation)
                             {
-                                <MUNity.BlazorServer.Components.Conference.DelegationApplicationForm ConferenceId="@ConferenceId" />
+                                <DelegationApplicationForm ConferenceId="@ConferenceId" />
                             }
                         }
                     </div>
@@ -125,7 +53,7 @@
         <div class="error">
             @*<div class="error-code">Nicht angemeldet</div>*@
             <div class="error-content">
-                <div class="error-message">Hallo, schön dass du bei CONFERENCE_SHORT dabei sein willst.</div>
+                <div class="error-message">Hallo, schön dass du bei @conferenceShort dabei sein willst.</div>
                 <div class="error-desc mb-4">
                     Für die Anmeldung bei der Konferenz benötigst du ein MUNity-Konto.
                     Melde dich bitte an oder erstelle dir ein neues Konto.
@@ -151,31 +79,44 @@
 @code {
     [Parameter] public string ConferenceId { get; set; }
 
-    private bool isDelegationApplicationAvailable;
-
-    private bool isRoleApplicationAvailable;
-
-    private int step { get; set; } = 0;
+    [Parameter] public string Preference { get; set; }
 
     private string conferenceShort = "Conference";
 
-    private enum PresencePreferences
+
+    private int step
     {
-        NotSelected,
-        Online,
-        OnLocation
+        get
+        {
+            if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.NotSelected)
+                return 0;
+
+            if (presencePreference != SelectPresencePreferenceComponent.PresencePreferences.NotSelected &&
+                applicationType == SelectApplicationTypeComponent.ApplicationType.NotSelected)
+                return 1;
+
+            if (presencePreference != SelectPresencePreferenceComponent.PresencePreferences.NotSelected &&
+                applicationType != SelectApplicationTypeComponent.ApplicationType.NotSelected)
+                return 2;
+
+            return 0;
+        }
     }
 
-    private PresencePreferences presencePreference;
+    private SelectPresencePreferenceComponent.PresencePreferences presencePreference;
 
-    private enum Modes
+
+    private SelectApplicationTypeComponent.ApplicationType applicationType;
+
+    private void OnPreferenceSelected(SelectPresencePreferenceComponent.PresencePreferences preference)
     {
-        None,
-        Delegation,
-        Role
+        this.presencePreference = preference;
     }
 
-    private Modes mode;
+    private void OnApplicationTypeSelected(SelectApplicationTypeComponent.ApplicationType applicationType)
+    {
+        this.applicationType = applicationType;
+    }
 
     protected override void OnInitialized()
     {
@@ -185,17 +126,11 @@
         // make take step 0, if not skip to step 1
 
 
-        isDelegationApplicationAvailable = context.ConferenceApplicationOptions
-        .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowDelegationApplication);
+        //isDelegationApplicationAvailable = context.ConferenceApplicationOptions
+        //.Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowDelegationApplication);
 
-        isRoleApplicationAvailable = context.ConferenceApplicationOptions
-            .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowRoleApplication);
-
-        if (isDelegationApplicationAvailable)
-            mode = Modes.Delegation;
-
-        if (!isDelegationApplicationAvailable && isRoleApplicationAvailable)
-            mode = Modes.Role;
+        //isRoleApplicationAvailable = context.ConferenceApplicationOptions
+        //    .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowRoleApplication);
 
     }
 }

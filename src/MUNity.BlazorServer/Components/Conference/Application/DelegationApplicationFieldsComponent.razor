@@ -1,0 +1,54 @@
+﻿@inject MUNity.Database.Context.MunityContext context
+
+@foreach (var field in formula.Fields)
+{
+    var targetField = Application.FormulaInputs.FirstOrDefault(n => n.Field == field);
+    <div class="row mb-15px">
+        <label class="form-label col-form-label col-md-3">@field.FieldName</label>
+        <div class="col-md-9">
+            @if (field.FieldType == MUNityBase.ConferenceApplicationFieldTypes.MultiLineText)
+            {
+                <textarea @bind="targetField.Value" class="form-control" rows="3"></textarea>
+
+            }
+            @if (!string.IsNullOrEmpty(field.FieldDescription))
+            {
+                <small class="fs-12px text-gray-500-darker">@field.FieldDescription</small>
+            }
+        </div>
+    </div>
+}
+
+<div class="row">
+    <button class="btn btn-primary" @onclick="() => Finished.InvokeAsync()">Weiter</button>
+</div>
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    [Parameter] public MUNity.Database.Models.Conference.DelegationApplication Application { get; set; }
+
+    [Parameter] public EventCallback Finished { get; set; }
+
+    private MUNity.Database.Models.Conference.ConferenceApplicationFormula formula;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+
+        formula = context.ConferenceApplicationFormulas
+            .Include(n => n.Fields)
+            .FirstOrDefault(n => n.Options.Conference.ConferenceId == ConferenceId);
+
+        foreach (var field in formula.Fields)
+        {
+            Application.FormulaInputs.Add(new Database.Models.Conference.ConferenceDelegationApplicationFieldInput()
+            {
+                Application = Application,
+                Field = field,
+                Value = field.DefaultValue
+            });
+        }
+    }
+}

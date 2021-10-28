@@ -1,0 +1,34 @@
+﻿<div class="col-6 padding-on-lg">
+    <div class="card shadow shadow-sm cursor-pointer" @onclick="() => PreferenceSelected.InvokeAsync(PresencePreferences.Online)">
+        <img class="card-img-top" src="/img/cards/online_conference.png" alt="">
+        <div class="card-body">
+            <h4 class="card-title mb-10px">Online</h4>
+            <p class="card-text">MUNBW 2022 findet in Teilen auch online statt. Wenn Sie eine Konferenz von zu Hause aus miterleben wollen, können Sie sich für den Menschenrechtsrat bewerben.</p>
+            <a href="javascript:;" class="btn btn-sm btn-primary">Jetzt anmelden</a>
+        </div>
+    </div>
+</div>
+
+<div class="col-6 padding-on-lg">
+    <div class="card shadow shadow-sm  cursor-pointer" @onclick="() => PreferenceSelected.InvokeAsync(PresencePreferences.OnLocation)">
+        <img class="card-img-top" src="/img/cards/live_conference.png" alt="">
+        <div class="card-body">
+            <h4 class="card-title mb-10px">Präsenz</h4>
+            <p class="card-text">Wenn Sie live vor Ort an der Konferenz teilehmen möchten, haben Sie hier die Möglichkeit als Delegierte*r, Nichtstaatliche*r Akteur*in oder in der Konferenzpresse teil zu nehmen.</p>
+            <a href="javascript:;" class="btn btn-sm btn-primary">Für Delegierte</a>
+            <a href="javascript:;" class="btn btn-sm btn-primary">Für Presse</a>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public EventCallback<PresencePreferences> PreferenceSelected { get; set; }
+
+    public enum PresencePreferences
+    {
+        NotSelected,
+        Online,
+        OnLocation
+    }
+}
