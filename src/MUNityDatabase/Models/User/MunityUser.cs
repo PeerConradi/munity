@@ -82,6 +82,11 @@ namespace MUNity.Database.Models.User
         public EDisplayAuthMode PinboardDisplayMode { get; set; }
         public EDisplayAuthMode AgeDisplayMode { get; set; }
 
+        public bool IsShadowUser { get; set; }
+
+        [MaxLength(32)]
+        public string InviteSecret { get; set; }
+
         [NotMapped]
         public string GetDisplayNamePublic
         {

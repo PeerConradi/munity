@@ -167,7 +167,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
             _context = _serviceProvider.GetRequiredService<MunityContext>();
         }
 
-        // Id 0-50 Tests
+        // Id 0-50 Tests Plattform and installation
         #region Plattoform Setup
 
         [Test]
@@ -191,7 +191,7 @@ namespace MUNity.Database.Test.MUNBW22Tests
 
         #endregion
 
-        // ID 51 - 99 Tests
+        // ID 51 - 99 Tests Accounts
         #region Account Setup
 
         [Test]
@@ -205,6 +205,19 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 var creationResult = await userManager.CreateAsync(user, "Passwort123");
                 Assert.IsTrue(creationResult.Succeeded);
             }
+        }
+
+        [Test]
+        [Order(52)]
+        public async Task TestCreateShadowAccount()
+        {
+            var userManager = _serviceProvider.GetRequiredService<UserManager<MunityUser>>();
+
+            var result = await userManager.CreateShadowUser("invited@mail.com");
+            Assert.IsTrue(result.Result.Succeeded);
+            Assert.NotNull(result.User.UserName);
+            Assert.IsTrue(result.User.IsShadowUser, "Expected this user to be virtual.");
+            Assert.IsFalse(string.IsNullOrEmpty(result.User.InviteSecret), "Epected an invite key to be created, when creating a shadow user, so it can be send for the first login.");
         }
         #endregion
 
@@ -616,29 +629,21 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestAddSeatsToSR()
         {
             // Afrika
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Gabun");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Ghana");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Kenia");
+            _context.Fluent.ForCommittee("munbw22-sr").AddSeatsByCountryNames(
+                "Gabun", "Ghana", "Kenia",
 
             // Asien
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Volksrepublik China");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Indien");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Vereinigte Arabische Emirate");
+            "Volksrepublik China", "Indien", "Vereinigte Arabische Emirate",
 
             // Osteuropa
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Albanien");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Russland");
+            "Albanien", "Russland",
 
             // Lateinamerika
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Brasilien");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Mexiko");
+            "Brasilien", "Mexiko",
 
             // Westeuropa
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Frankreich");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Irland");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Norwegen");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Vereinigte Staaten");
-            _context.Fluent.ForCommittee("munbw22-sr").AddSeatByCountryName("Vereinigtes Königreich");
+            "Frankreich", "Irland", "Norwegen", "Vereinigte Staaten",
+            "Vereinigtes Königreich");
 
 
             Assert.AreEqual(15, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-sr"));
@@ -649,43 +654,25 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestAddSeatsToKFK()
         {
             // Afrika
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Ägypten");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Äthiopien");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Kenia");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Nigeria");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Ruanda");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Südafrika");
+            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatsByCountryNames(
+                "Ägypten", "Äthiopien", "Kenia", "Nigeria",
+            "Ruanda", "Südafrika",
 
             // Asien
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Bangladesch");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Volksrepublik China");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Indien");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Japan");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Jemen");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Myanmar");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Pakistan");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Südkorea");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Zypern");
+            "Bangladesch", "Volksrepublik China", "Indien", "Japan",
+            "Jemen", "Myanmar", "Pakistan", "Südkorea",
+            "Zypern",
 
             // Osteuropa
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Russland");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Ukraine");
+            "Russland", "Ukraine",
 
             // Lateinamerika
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Brasilien");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Costa Rica");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Haiti");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Kolumbien");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Venezuela");
+            "Brasilien", "Costa Rica", "Haiti", "Kolumbien",
+            "Venezuela",
 
             // Westeuropa
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Frankreich");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Kanada");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Niederlande");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Norwegen");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Schweiz");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Vereinigte Staaten");
-            _context.Fluent.ForCommittee("munbw22-kfk").AddSeatByCountryName("Vereinigtes Königreich");
+            "Frankreich", "Kanada", "Niederlande", "Norwegen",
+            "Schweiz", "Vereinigte Staaten", "Vereinigtes Königreich");
 
             Assert.AreEqual(29, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kfk"));
         }
@@ -695,77 +682,32 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestAddSeatsToWiSo()
         {
             // Afrika
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ägypten");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Algerien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Angola");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Äthiopien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Elfenbeinküste");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Gabun");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ghana");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kamerun");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kenia");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Demokratische Republik Kongo");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Republik Kongo");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Libyen");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Madagaskar");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Nigeria");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Tunesien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Uganda");
+            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatsByCountryNames(
+                "Ägypten", "Algerien", "Angola", "Äthiopien",
+            "Elfenbeinküste", "Gabun", "Ghana", "Kamerun",
+            "Kenia", "Demokratische Republik Kongo", "Republik Kongo", "Libyen",
+            "Madagaskar", "Nigeria", "Tunesien", "Uganda",
 
             // Asien
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Bangladesch");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Volksrepublik China");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Indien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Indonesien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Japan");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kasachstan");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Katar");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Philippinen");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Saudi-Arabien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Singapur");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Südkorea");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Thailand");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Vereinigte Arabische Emirate");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Vietnam");
-
+            "Bangladesch", "Volksrepublik China", "Indien", "Indonesien",
+            "Japan", "Kasachstan", "Katar", "Philippinen",
+            "Saudi-Arabien", "Singapur", "Südkorea", "Thailand",
+            "Vereinigte Arabische Emirate", "Vietnam",
+            
             // Osteuropa
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kroatien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Lettland");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Polen");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Rumänien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Russland");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ukraine");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ungarn");
+            "Kroatien", "Lettland", "Polen", "Rumänien",
+            "Russland", "Ukraine", "Ungarn",
 
             // Lateinamerika
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Argentinien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Brasilien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Chile");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Ecuador");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Jamaika");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kolumbien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kuba");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Mexiko");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Nicaragua");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Peru");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Uruguay");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Venezuela");
+            "Argentinien", "Brasilien", "Chile", "Ecuador",
+            "Jamaika", "Kolumbien","Kuba","Mexiko",
+            "Nicaragua", "Peru", "Uruguay", "Venezuela",
 
             // Westeuropa
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Australien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Deutschland");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Frankreich");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Irland");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Israel");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Italien");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Kanada");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Niederlande");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Norwegen");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Schweden");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Schweiz");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Türkei");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Vereinigte Staaten");
-            _context.Fluent.ForCommittee("munbw22-wiso").AddSeatByCountryName("Vereinigtes Königreich");
+            "Australien", "Deutschland", "Frankreich", "Irland",
+            "Israel", "Italien", "Kanada", "Niederlande",
+            "Norwegen", "Schweden", "Schweiz", "Türkei",
+            "Vereinigte Staaten", "Vereinigtes Königreich");
 
 
 
@@ -777,39 +719,23 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestAddSeatsToKBE()
         {
             // Afrika
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Ägypten");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Äthiopien");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Burkina Faso");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Elfenbeinküste");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Demokratische Republik Kongo");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Libyen");
+            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatsByCountryNames(
+                "Ägypten", "Äthiopien", "Burkina Faso", "Elfenbeinküste",
+            "Demokratische Republik Kongo", "Libyen",
 
             // Asien
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Bangladesch");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Volksrepublik China");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Indien");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Iran");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Japan");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Philippinen");
+            "Bangladesch", "Volksrepublik China", "Indien", "Iran",
+            "Japan", "Philippinen",
 
             // Osteuropa
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Russland");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Ukraine");
+            "Russland", "Ukraine",
 
             // Lateinamerika
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Argentinien");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Haiti");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Kolumbien");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Mexiko");
+            "Argentinien", "Haiti", "Kolumbien", "Mexiko",
 
             // Westeuropa
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Australien");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Israel");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Niederlande");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Türkei");
-            _context.Fluent.ForCommittee("munbw22-kbe").AddSeatByCountryName("Vereinigte Staaten");
-
-
+            "Australien", "Israel", "Niederlande", "Türkei",
+            "Vereinigte Staaten");
 
             Assert.AreEqual(23, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kbe"));
         }
@@ -819,44 +745,24 @@ namespace MUNity.Database.Test.MUNBW22Tests
         public void TestAddSeatsToIOM()
         {
             // Afrika
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Algerien");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Eritrea");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Libyen");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Ruanda");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Südafrika");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Sudan");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Südsudan");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Uganda");
+            _context.Fluent.ForCommittee("munbw22-iom").AddSeatsByCountryNames(
+                "Algerien", "Eritrea", "Libyen","Ruanda",
+            "Südafrika", "Sudan", "Südsudan", "Uganda",
 
             // Asien
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Bangladesch");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Volksrepublik China");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Iran");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Japan");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Jemen");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Myanmar");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Pakistan");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Usbekistan");
+            "Bangladesch", "Volksrepublik China", "Iran", "Japan",
+            "Jemen", "Myanmar", "Pakistan", "Usbekistan",
 
             // Osteuropa
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Bosnien und Herzegowina");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Russland");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Ukraine");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Belarus");
+            "Bosnien und Herzegowina", "Russland", "Ukraine", "Belarus",
 
             // Lateinamerika
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Costa Rica");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Kolumbien");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Mexiko");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Nicaragua");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Venezuela");
+            "Costa Rica", "Kolumbien", "Mexiko", "Nicaragua",
+            "Venezuela",
 
             // Westeuropa
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Deutschland");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Italien");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Kanada");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Türkei");
-            _context.Fluent.ForCommittee("munbw22-iom").AddSeatByCountryName("Vereinigte Staaten");
+            "Deutschland", "Italien", "Kanada","Türkei",
+            "Vereinigte Staaten");
 
 
             Assert.AreEqual(30, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-iom"));
@@ -1252,19 +1158,6 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .Include(n => n.Users)
                 .FirstOrDefault();
             Assert.AreEqual(2, reloadApplication.Users.Count);
-        }
-
-        [Test]
-        [Order(614)]
-        public void TestCalculateCostOfApplication()
-        {
-
-            var priceDeutschland = _context.Fluent.ForConference("munbw22").CostsOfDelegationByName("Deutschland");
-
-            // Deutschland ist in 5 Gremien, Preis sollte 5 * 50
-            // Basispreis: 70 Euro
-            // Preis für Online-Gremien: 50 Euro
-            Assert.AreEqual(5 * 70, priceDeutschland.Costs.Sum(a => a.Cost));
         }
 
         
