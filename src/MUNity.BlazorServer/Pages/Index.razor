@@ -14,10 +14,10 @@
 
 <AuthorizeView>
     <Authorized>
-        @if (participatingConferences != null)
+        @if (conferenceBoardInfos != null)
         {
             <div class="row">
-                @foreach (var conference in participatingConferences)
+                @foreach (var conference in conferenceBoardInfos)
                 {
                     <div class="col-xl-3 col-sm-6">
                         <!-- BEGIN card -->
@@ -27,7 +27,7 @@
                                 <p class="card-text">@conference.ConferenceShort</p>
 
                                 <a href="/web/conference/@conference.ConferenceId/start" class="btn btn-sm btn-primary">Seite öffnen</a>
-                                @if (conference.IsTeamMember)
+                                @if (conference.UserIsTeamMember || conference.UserIsOwner)
                                 {
                                     <a href="/c/dashboard/@conference.ConferenceId" class="btn btn-sm btn-default ml-5">Team-Center öffnen</a>
                                 }
@@ -46,14 +46,14 @@
 {
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
-    private List<ParticipatingConferenceInfo> participatingConferences;
+    private List<ConferenceBoardInfo> conferenceBoardInfos;
 
     protected override async Task OnInitializedAsync()
     {
         var claim = (await AuthStateTask)?.User;
         if (claim != null)
         {
-            participatingConferences = await conferenceService.GetParticipatingConferencesAsync(claim);
+            conferenceBoardInfos = await conferenceService.GetConferenceBoardInfosAsync(claim);
         }
     }
 }

@@ -113,7 +113,8 @@ namespace MUNity.Database.FluentAPI
                 FormulaInputs = new List<ConferenceDelegationApplicationFieldInput>(),
                 ApplyDate = DateTime.Now,
                 OpenToPublic = false,
-                Status = ApplicationStatuses.Writing
+                Status = ApplicationStatuses.Writing,
+                Conference = context.Conferences.Find(conferenceId)
             };
         }
     }

@@ -1,0 +1,22 @@
+﻿@page "/myapplications"
+
+@inject MUNity.Database.Context.MunityContext dbContext
+@inject Services.ConferenceApplicationService applicationSerivce
+
+<AuthorizeView>
+    <Authorized>
+        <h3>MyApplicationsPage</h3>
+        @foreach(var application in applicationSerivce.GetApplicationsOfUser(context.User))
+        {
+            <p><a href="@($"/conference/application/review/{application.ApplicationId}")">Bewerbung für: @application.ConferenceName</a></p>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>Sie müssen angemeldet sein um diese Seite zu verwenden.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+}

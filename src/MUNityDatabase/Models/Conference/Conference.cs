@@ -49,6 +49,8 @@ namespace MUNity.Database.Models.Conference
 
         public ICollection<Delegation> Delegations { get; set; }
 
+        public ICollection<DelegationApplication> DelegationApplications { get; set; }
+
         public Project ConferenceProject { get; set; }
 
         public EConferenceVisibilityMode Visibility { get; set; }

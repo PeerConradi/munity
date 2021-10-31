@@ -41,6 +41,8 @@ namespace MUNity.Database.Models.Conference
 
         public ICollection<ConferenceDelegateRole> Roles { get; set; }
 
+        public ICollection<DelegationApplicationPickedDelegation> DelegationApplications { get; set; }
+
         public Delegation()
         {
             

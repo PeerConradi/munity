@@ -14,7 +14,7 @@ namespace MUNity.Database.Extensions
         {
             var virtualUser = new MunityUser()
             {
-                Email = "invite@mail.com",
+                Email = mail,
                 UserName = "v-" + Util.IdGenerator.RandomString(6),   // possibility of collission: 1/26^6 = 1/308.915.776
                 IsShadowUser = true,
                 Forename = "-",

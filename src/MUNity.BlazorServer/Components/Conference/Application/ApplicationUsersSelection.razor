@@ -1,38 +1,84 @@
-﻿@using Microsoft.EntityFrameworkCore 
+﻿@using Microsoft.EntityFrameworkCore
+@using MUNity.Schema.Conference
 
 @inject Services.UserService userSerivce
+@inject Services.ConferenceApplicationService applicationService
+@inject Database.Context.MunityContext context
+@inject NotificationService notificationService
 
-<div class="card">
-    <div class="card-body">
-        <h4 class="card-title">Benutzer auswählen</h4>
-    </div>
+@if (Application != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Benutzereinstellungen</h4>
+        </div>
 
-    <div class="card-body">
-        <div class="row mb-15px">
-            <label class="form-label col-form-label col-md-3">Benutzer</label>
-            <div class="col-md-9">
-                <ul class="list-group list-group-flush">
+        <div class="card-body">
+            <div class="row mb-5px">
+                <label class="form-label col-form-label">Benutzer</label>
+            </div>
+            <div class="row mb-15px">
+                <div class="widget-list rounded mb-4 inverse-mode" data-id="widget">
                     @foreach (var user in Application.Users)
                     {
-                        <li class="list-group-item">
-                            @user.User.Forename (@@@user.User.UserName)
-                            <a class="text-danger pull-right">entfernen</a>
-                        </li>
+                        <ApplicationUserComponent User="@user" />
                     }
-                </ul>
-                <label class="form-label">Benutzer hinzufügen</label>
-                <RadzenDropDown AllowClear="true" TValue="string" class="w-100"
-                                LoadData=@LoadUsers AllowFiltering="true"
-                                Change="(args) => UserAdded(args)"
-                                Data=@foundUsers TextProperty="DisplayName" ValueProperty="UserName" />
+                </div>
+            </div>
+            <div class="row mb-5px">
+                <h4>Benutzer einladen</h4>
+            </div>
+            <div class="row mb-5px">
+                <div class="input-group">
+                    <div class="input-group-text">@@</div>
+                    <input type="text" class="form-control" @bind="searchInput">
+                    <button type="button" class="btn btn-indigo" @onclick="() => SearchUser()">Hinzufügen</button>
+                </div>
+            </div>
+            @if (searchResult != null)
+            {
+                <div class="row">
+                    @if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.AlreadyApplying)
+                    {
+                        <div class="alert alert-warning">Der/Die eigebene BenutzerIn kann nicht zur Bewerbung hinzugefügt werden, da er/sie sich bereits auf eine Rolle bei dieser Konferenz bewirbt.</div>
+                    }
+                    else if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.AlreadyParticipating)
+                    {
+                        <div class="alert alert-warning">Der/Die eingebene BenutzerIn kann nicht zur Bewerbung hinzugefügt werden, da er/sie bereits eine Rolle auf dieser Konferenz hat.</div>
+                    }
+                    else if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.NoUserFound)
+                    {
+                        <div class="alert alert-info">
+                            Der/Die eingebene BenuterIn ist diesem System nicht bekannt. Sollten Sie wissen, dass diese Person kein Konto hat, können Sie diese mit einem einfachen Klick
+                            <button class="btn btn-default" @onclick="() => AddShadowUser(searchInput)">Einladen.</button> Danach erhält er/sie eine E-Mail von uns mit einem Anmeldelink. Bitte achten Sie darauf, dass bis zum ablauf der Anmeldephase alle angegebenen
+                            Teilnehmenden dieser Bewerbung auch ein entsprechendes Konto benötigen.
+                        </div>
+                    }
+                </div>
+            }
+
+            <div class="row">
+                <RadzenCheckBox TValue="bool" @bind-Value="@guestsConverted" Name="WithTeacherCheckBox" />
+                <RadzenLabel Text="Delegation mit Lehrkraft" Component="WithTeacherCheckBox" />
+                <small>
+                    Sofern Sie mit einer Lehrkraft kommen, geben Sie dies bitte hier an. Die Lehrkraft brauchen Sie <b>nicht</b> in diese Bewerbung mit aufnehmen.
+                    Diese wird später durch ein dazu berechtigtes Teammitglied nach Annahme der Bewerbung in die Delegation, welche Sie dann erhalten mit aufgenommen.
+                </small>
             </div>
         </div>
-    </div>
 
-    <div class="card-footer text-end">
-        <button class="btn btn-primary pull-right" @onclick="() => UsersSelected.InvokeAsync()">weiter</button>
+
+
+        <div class="card-footer text-end">
+            <button class="btn btn-primary pull-right" @onclick="() => UsersSelected.InvokeAsync()">weiter</button>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="alert alert-warning">Error detected: There is no Application given to this component. Try to reload the page, you may need to restart to apply.</div>
+}
+
 
 @code {
 
@@ -42,20 +88,67 @@
 
     [Parameter] public MUNity.Database.Models.Conference.DelegationApplication Application { get; set; }
 
-    private List<MUNity.Schema.Conference.AddingToApplicationUser> foundUsers;
-
-    void LoadUsers(LoadDataArgs args)
+    private bool guestsConverted
     {
-        foundUsers = userSerivce.GetUsersThatCanBeAddedToApplication(ConferenceId, args.Filter);
-
-        InvokeAsync(StateHasChanged);
+        get => Application.GuestsCount != null && Application.GuestsCount.Value > 0;
+        set
+        {
+            if (value)
+                Application.GuestsCount = 1;
+            else
+                Application.GuestsCount = null;
+        }
     }
 
-    private void UserAdded(object value)
+    private FindUserForApplicationResult searchResult;
+
+    private string searchInput;
+
+    private void SearchUser()
     {
-        // value is the Username as string
-        var user = userSerivce.GetUserByUsername(value.ToString());
-        if (user != null && !Application.Users.Any(n => n.User.UserName == user.UserName))
+        searchResult = applicationService.FindUserToAddToDelegationApplication(searchInput, ConferenceId);
+        if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.CanBeAdded)
+        {
+            AddUser(searchResult.UserName);
+        }
+    }
+
+    private void AddUser(string username)
+    {
+        var user = userSerivce.GetUserByUsername(searchResult.UserName);
+        if (user == null)
+        {
+            notificationService.Notify(NotificationSeverity.Error, "Benutzer nicht gefunden", $"Es wurde kein Benutzer mit dem Benutzernamen: {searchResult.UserName} gefunden.");
+        }
+        else
+        {
+            if (Application.Users.All(n => n.User.UserName != user.UserName))
+            {
+                Application.Users.Add(new Database.Models.Conference.DelegationApplicationUserEntry()
+                {
+                    Application = this.Application,
+                    CanWrite = false,
+                    Message = "Sie wurden eingeladen durch den/die Erstellerin dieser Anmeldung",
+                    Status = MUNityBase.DelegationApplicationUserEntryStatuses.Invited,
+                    User = user
+                });
+
+                this.searchInput = "";
+                this.searchResult = null;
+            }
+            else
+            {
+                notificationService.Notify(NotificationSeverity.Warning, "Bereits vorhaden", "Die angegebene Person ist bereits Teil dieser Bewerbung");
+            }
+        }
+
+
+    }
+
+    private async Task AddShadowUser(string mail)
+    {
+        var shadowUser = await userSerivce.CreateShadowUser(mail);
+        if (shadowUser != null)
         {
             Application.Users.Add(new Database.Models.Conference.DelegationApplicationUserEntry()
             {
@@ -63,8 +156,21 @@
                 CanWrite = false,
                 Message = "Sie wurden eingeladen durch den/die Erstellerin dieser Anmeldung",
                 Status = MUNityBase.DelegationApplicationUserEntryStatuses.Invited,
-                User = user
+                User = shadowUser
             });
+
+            // Send a Mail
+
+            this.searchResult = null;
+            this.searchInput = "";
+
+            await this.InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            notificationService.Notify(NotificationSeverity.Error, "Einladung fehlgeschlagen", "Die Einladung des Benutzers ist fehlgeschlagen. Ursachen können eine ungültige oder gesperrte E-Mail Adresse sein.");
         }
     }
+
+
 }

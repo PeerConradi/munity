@@ -1,11 +1,9 @@
-﻿using MUNity.Database.Models.User;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MUNity.Database.Models.Website;
-using MUNity.Database.Models.Conference.Roles;
 using MUNityBase;
 
 namespace MUNity.Database.Models.Conference
@@ -29,53 +27,18 @@ namespace MUNity.Database.Models.Conference
 
         public ApplicationStatuses Status { get; set; }
 
-    }
+        /// <summary>
+        /// Guests are people like teachers etc.
+        /// when they are included a new empty Delegate Role needs to be created
+        /// for each guest.
+        /// </summary>
+        public int? GuestsCount { get; set; }
 
-
-
-    public class DelegationApplicationUserEntry
-    {
-        public int DelegationApplicationUserEntryId { get; set; }
-
-        public DelegationApplication Application { get; set; }
-
-        public MunityUser User { get; set; }
-
-        public DelegationApplicationUserEntryStatuses Status { get; set; }
-
-        public bool CanWrite { get; set; }
-
-        public string Message { get; set; }
-    }
-
-    public class DelegationApplicationPickedDelegation
-    {
-        public int DelegationApplicationPickedDelegationId { get; set; }
-
-        public DelegationApplication Application { get; set; }
-
-        public byte Priority { get; set; }
-
-        public Delegation Delegation { get; set; }
-
-        public ICollection<DelegationApplicationPickedDelegationUserWish> UserWishes { get; set; }
-
-        public string Comment { get; set; }
-    }
-
-    public class DelegationApplicationPickedDelegationUserWish
-    {
-        public long DelegationApplicationPickedDelegationUserWishId { get; set; }
-
-        public DelegationApplicationPickedDelegation DelegationApplicationPickedDelegation { get; set; }
-
-
-        public DelegationApplicationUserEntry UserEntry { get; set; }
-
-        public ConferenceDelegateRole Role { get; set; }
-
-        public byte Prio { get; set; }
-
-        public string Comment { get; set; }
+        /// <summary>
+        /// It is possible to get the Conference by using the Delegation Wishes,
+        /// but once an Applicaiton has no wishes on it, it can't be found anymore
+        /// Thats why there is also a Conference Tag here.
+        /// </summary>
+        public Conference Conference { get; set; }
     }
 }
