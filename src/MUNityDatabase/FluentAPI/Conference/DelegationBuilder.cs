@@ -64,30 +64,57 @@ namespace MUNity.Database.FluentAPI
 
         private int _countryId;
 
-        public DelegationBuilderCommitteeSelector InsideCommittee(params string[] committeeIds)
+        public BuildReadyDelegationBuilder InsideCommittee(params string[] committeeIds)
         {
-            var roles = _dbContext.Delegates.Where(n => n.Conference.ConferenceId == _conferenceId &&
-            committeeIds.ToArray().Contains(n.Committee.CommitteeId) &&
-            n.Delegation == null &&
-            n.DelegateCountry.CountryId == _countryId);
-
-            if (!roles.Any())
-                throw new ConferenceRoleNotFoundException($"No fitting role to add was found for committee {committeeIds}, countryId: {_countryId}. Maybe the given role is already attached to another delegation.");
-
-            foreach(var role in roles)
+                
+            foreach(var committeeId in committeeIds)
             {
-                Delegation.Roles.Add(role);
+                // Find a fitting role
+                var role = _dbContext.Delegates
+                    .Where(n => n.Delegation == null &&
+                    n.DelegateCountry.CountryId == _countryId &&
+                    n.Committee.CommitteeId == committeeId)
+                    .FirstOrDefault();
+                if (role == null)
+                    throw new ConferenceRoleNotFoundException($"No fitting role to add was found for committee {committeeId}, countryId: {_countryId}. Maybe the given role is already attached to another delegation.");
+                else
+                    Delegation.Roles.Add(role);
+
             }
-            return this;
+
+            return new BuildReadyDelegationBuilder(this._dbContext, Delegation);
         }
 
-        public void InsideAnyCommittee()
+        public BuildReadyDelegationBuilder InsideCommitteeByShort(params string[] committeeShorts)
+        {
+
+            foreach (var committeeShort in committeeShorts)
+            {
+                // Find a fitting role
+                var role = _dbContext.Delegates
+                    .Where(n => n.Delegation == null &&
+                    n.DelegateCountry.CountryId == _countryId &&
+                    n.Committee.CommitteeShort == committeeShort &&
+                    n.Conference.ConferenceId == _conferenceId)
+                    .FirstOrDefault();
+                if (role == null)
+                    throw new ConferenceRoleNotFoundException($"No fitting role to add was found for committee {committeeShort} in conference {_conferenceId}, countryId: {_countryId}. Maybe the given role is already attached to another delegation.");
+                else
+                    Delegation.Roles.Add(role);
+
+            }
+
+            return new BuildReadyDelegationBuilder(this._dbContext, Delegation);
+        }
+
+        public BuildReadyDelegationBuilder InsideAnyCommittee()
         {
             var roles = _dbContext.Delegates
                 .Where(n => n.DelegateCountry.CountryId == _countryId &&
                 n.Conference.ConferenceId == _conferenceId &&
                 n.Delegation == null).ToList();
             Delegation.Roles = roles;
+            return new BuildReadyDelegationBuilder(this._dbContext, Delegation);
         }
 
         public DelegationBuilderCommitteeSelector(MunityContext context, string conferenceId, int countryId, Delegation delegation)
@@ -96,6 +123,26 @@ namespace MUNity.Database.FluentAPI
             this._conferenceId = conferenceId;
             this.Delegation = delegation;
             this._countryId = countryId;
+        }
+    }
+
+    public class BuildReadyDelegationBuilder
+    {
+        private MunityContext _context;
+
+        public Delegation Delegation { get; private set; }
+
+        public Delegation Save()
+        {
+            _context.Delegations.Add(Delegation);
+            _context.SaveChanges();
+            return Delegation;
+        }
+
+        public BuildReadyDelegationBuilder(MunityContext context, Delegation delegation)
+        {
+            this._context = context;
+            this.Delegation = delegation;
         }
     }
 }

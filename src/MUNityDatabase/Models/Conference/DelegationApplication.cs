@@ -25,6 +25,8 @@ namespace MUNity.Database.Models.Conference
         /// </summary>
         public bool OpenToPublic { get; set; }
 
+        public string Expose { get; set; }
+
         public ApplicationStatuses Status { get; set; }
 
         /// <summary>

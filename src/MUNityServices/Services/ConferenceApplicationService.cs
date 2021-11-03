@@ -27,19 +27,25 @@ namespace MUNity.Services
 
         public List<ApplicationAvailableDelegation> AvailableDelegations(string conferenceId, int minRolesCount = 1, AvailableDelegationsTypes type = AvailableDelegationsTypes.All)
         {
-            var query = _dbContext.Delegations.Where(n => n.Conference.ConferenceId == conferenceId &&
-                n.Roles.Count >= minRolesCount);
+            IQueryable<Delegation> delegationsQuery;
 
-            if (type == AvailableDelegationsTypes.OnlineOnly)
+            switch (type)
             {
-                query = query.Where(n => n.Roles.All(a => a.Committee.CommitteeType == MUNityBase.CommitteeTypes.Online));
-            }
-            else if (type == AvailableDelegationsTypes.PresenceOnly)
-            {
-                query = query.Where(n => n.Roles.All(a => a.Committee.CommitteeType == MUNityBase.CommitteeTypes.AtLocation));
+                case AvailableDelegationsTypes.All:
+                    throw new NotImplementedException();
+                case AvailableDelegationsTypes.OnlineOnly:
+                    delegationsQuery = _dbContext.Fluent.ForConference(conferenceId)
+                .DelegationsWithOnlyOnlineRoles();
+                    break;
+                case AvailableDelegationsTypes.PresenceOnly:
+                    delegationsQuery = _dbContext.Fluent.ForConference(conferenceId)
+                .DelegationsWithOnlyAtLocationSlots();
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
 
-                return query.Select(n => new ApplicationAvailableDelegation()
+            return delegationsQuery.Select(n => new ApplicationAvailableDelegation()
                 {
                     DelegationId = n.DelegationId,
                     Name = n.Name,

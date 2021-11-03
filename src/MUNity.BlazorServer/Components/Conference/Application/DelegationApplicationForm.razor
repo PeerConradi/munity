@@ -16,7 +16,7 @@
         <div class="row">
             <button class="btn btn-primary" @onclick="() => step = 0">Zurück zur Benutzerauswahl</button>
         </div>
-        <SelectableDelegationsComponent Application="@application" ConferenceId="@ConferenceId" DelegationsAdded="() => step = 2" />
+        <SelectableDelegationsComponent Application="@application" ConferenceId="@ConferenceId" DelegationsAdded="() => step = 2" UseOnlineMode="@UseOnlineMode" />
     }
     else if (step == 2)
     {
@@ -37,6 +37,8 @@
     private int step = 0;
 
     [Parameter] public EventCallback<int> StepChanged { get; set; }
+
+    [Parameter] public bool UseOnlineMode { get; set; } = false;
 
     private MUNity.Database.Models.Conference.DelegationApplication application;
 
@@ -67,6 +69,10 @@
 
         application.FormulaInputs = new List<Database.Models.Conference.ConferenceDelegationApplicationFieldInput>();
 
-
+        // This is a quickfix to jump directly into the Delegation Selection
+        if (UseOnlineMode)
+        {
+            this.step = 1;
+        }
     }
 }

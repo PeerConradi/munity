@@ -1,0 +1,34 @@
+﻿@inject MUNity.Database.Context.MunityContext context
+<h3>TODO: Apply on Applicaiton</h3>
+
+<h5>Bewerbungen auf die man sich Bewerben kann:</h5>
+<div class="row">
+    @foreach (var applicaiton in context.Fluent.ForConference(ConferenceId).ApplicationsWithFreeSlots()
+        .Include(n => n.DelegationWishes)
+        .ThenInclude(n => n.Delegation)
+        .ThenInclude(n => n.Roles)
+        .Include(n => n.Users))
+    {
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">@applicaiton.DelegationApplicationId</h4>
+                    <p>@applicaiton.Expose</p>
+                    <h6>Gewünschte Delegationen</h6>
+                    <ul>
+                        @foreach(var delegation in applicaiton.DelegationWishes)
+                        {
+                            <li>@delegation.Delegation.Name (@delegation.Delegation.Roles.Count verfügbare Plätze)</li>
+                        }
+                    </ul>
+                    <h6>Anzahl BewerberInnen: @applicaiton.Users.Count</h6>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+}

@@ -21,7 +21,8 @@
                 </div>
 
 
-                @if (pickedDelegations.Count < this.maxPickDelegations && AllDeleations.Count >= this.maxPickDelegations)
+                @if (pickedDelegations.Count < this.maxPickDelegations && AllDeleations.Count >= this.maxPickDelegations ||
+                    (pickedDelegations.Count < this.AllDeleations.Count && this.AllDeleations.Count < this.maxPickDelegations))
                 {
                     <div class="d-md-flex align-items-center mb-4">
                         <div class="pos-booking-title flex-1">
@@ -104,6 +105,8 @@
 
     [Parameter] public EventCallback DelegationsAdded { get; set; }
 
+    [Parameter] public bool UseOnlineMode { get; set; }
+
     private List<MUNity.Schema.Conference.ApplicationAvailableDelegation> pickedDelegations = new List<Schema.Conference.ApplicationAvailableDelegation>();
 
     private int maxPickDelegations;
@@ -120,7 +123,7 @@
     {
         foreach(var delegation in pickedDelegations)
         {
-           
+
             var realDelegation = context.Delegations.Find(delegation.DelegationId);
             if (realDelegation != null)
             {
@@ -153,10 +156,14 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        AllDeleations = applicationService.AvailableDelegations(ConferenceId, Application.Users.Count, Services.ConferenceApplicationService.AvailableDelegationsTypes.PresenceOnly);
+        if (UseOnlineMode)
+            AllDeleations = applicationService.AvailableDelegations(ConferenceId, Application.Users.Count, Services.ConferenceApplicationService.AvailableDelegationsTypes.OnlineOnly);
+        else
+            AllDeleations = applicationService.AvailableDelegations(ConferenceId, Application.Users.Count, Services.ConferenceApplicationService.AvailableDelegationsTypes.PresenceOnly);
+
         maxPickDelegations = context.ConferenceApplicationFormulas.Where(n => n.Options.ConferenceId == this.ConferenceId &&
-        n.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Delegation)
-            .Select(n => n.MaxWishes)
-            .FirstOrDefault().Value;
+            n.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Delegation)
+        .Select(n => n.MaxWishes)
+        .FirstOrDefault().Value;
     }
 }

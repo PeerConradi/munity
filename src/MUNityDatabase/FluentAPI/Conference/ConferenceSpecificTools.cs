@@ -223,6 +223,22 @@ namespace MUNity.Database.FluentAPI
             return delegation;
         }
 
+        public bool HasDelegationByName(string name)
+        {
+            return _dbContext.Delegations.Any(n => n.Conference.ConferenceId == _conferenceId &&
+            n.Name == name || n.FullName == name);
+        }
+
+        public int DelegationSizeByName(string name)
+        {
+            var size = _dbContext.Delegates.Count(n => (n.Delegation.Name == name || n.Delegation.FullName == name &&
+                n.Conference.ConferenceId == _conferenceId));
+
+            if (size == 0)
+                size = _dbContext.Delegations.Any(n => n.Name == name || n.FullName == name) ? 0 : -1;
+            return size;
+        }
+
         public Delegation GroupRolesOfCountryIntoADelegationByCommitteeIds(string countryName, params string[] committees)
         {
             var country = _dbContext.Countries.AsNoTracking().FirstOrDefault(n => n.Name == countryName || n.FullName == countryName);
@@ -260,8 +276,6 @@ namespace MUNity.Database.FluentAPI
             DelegationBuilder builder = new DelegationBuilder(_dbContext, _conferenceId);
             options(builder);
             var delegation = builder.Delegation;
-            _dbContext.Delegations.Add(delegation);
-            _dbContext.SaveChanges();
             return delegation;
         }
 
@@ -418,6 +432,84 @@ namespace MUNity.Database.FluentAPI
             }
 
             return result;
+        }
+
+        public int AddBasicAuthorizations()
+        {
+            var conference = this._dbContext.Conferences.FirstOrDefault(n => n.ConferenceId == _conferenceId);
+            var ownerAuth = new ConferenceRoleAuth()
+            {
+                Conference = conference,
+                CanEditConferenceSettings = true,
+                CanEditParticipations = true,
+                CanSeeApplications = true,
+                PowerLevel = 1,
+                RoleAuthName = "Project-Owner"
+            };
+            _dbContext.ConferenceRoleAuthorizations.Add(ownerAuth);
+
+            var participantControllingTeamAuth = new ConferenceRoleAuth()
+            {
+                Conference = conference,
+                CanEditConferenceSettings = false,
+                CanEditParticipations = true,
+                CanSeeApplications = true,
+                PowerLevel = 2,
+                RoleAuthName = "Team (Participant Management)"
+            };
+            _dbContext.ConferenceRoleAuthorizations.Add(participantControllingTeamAuth);
+
+            var teamAuth = new ConferenceRoleAuth()
+            {
+                Conference = conference,
+                CanEditConferenceSettings = false,
+                CanEditParticipations = false,
+                CanSeeApplications = true,
+                RoleAuthName = "Team (Basic)",
+                PowerLevel = 3,
+            };
+            _dbContext.ConferenceRoleAuthorizations.Add(teamAuth);
+
+            var participantAuth = new ConferenceRoleAuth()
+            {
+                Conference = conference,
+                CanEditConferenceSettings = false,
+                RoleAuthName = "Participant",
+                PowerLevel = 4,
+                CanSeeApplications = false,
+                CanEditParticipations = false
+            };
+            _dbContext.ConferenceRoleAuthorizations.Add(participantAuth);
+
+            return _dbContext.SaveChanges();
+        }
+
+        public IQueryable<DelegationApplication> ApplicationsWithFreeSlots()
+        {
+            return _dbContext.DelegationApplications.Where(n => n.Conference.ConferenceId == _conferenceId &&
+                n.OpenToPublic &&
+                (n.Users.Count < n.DelegationWishes.Max(a => a.Delegation.Roles.Count)));
+        }
+
+        public IQueryable<Delegation> DelegationsWithOnlyAtLocationSlots(int minRolesCount = 0)
+        {
+            return _dbContext.Delegations.Where(n => n.Conference.ConferenceId == _conferenceId &&
+               n.Roles.Count >= minRolesCount &&
+               n.Roles.All(a => a.Committee.CommitteeType == MUNityBase.CommitteeTypes.AtLocation));
+        }
+
+        public IQueryable<Delegation> DelegationsWithOnlyAtLocationAndRoleCount(int roleCount)
+        {
+            return _dbContext.Delegations.Where(n => n.Conference.ConferenceId == _conferenceId &&
+               n.Roles.Count == roleCount &&
+               n.Roles.All(a => a.Committee.CommitteeType == MUNityBase.CommitteeTypes.AtLocation));
+        }
+
+        public IQueryable<Delegation> DelegationsWithOnlyOnlineRoles(int minRolesCount = 0)
+        {
+            return _dbContext.Delegations.Where(n => n.Conference.ConferenceId == _conferenceId &&
+               n.Roles.Count >= minRolesCount &&
+               n.Roles.All(a => a.Committee.CommitteeType == MUNityBase.CommitteeTypes.Online));
         }
 
         public ConferenceSpecificTools(MunityContext context, [NotNull]string conferenceId)

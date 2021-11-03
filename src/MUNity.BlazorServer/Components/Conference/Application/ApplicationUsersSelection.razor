@@ -65,6 +65,21 @@
                     Diese wird später durch ein dazu berechtigtes Teammitglied nach Annahme der Bewerbung in die Delegation, welche Sie dann erhalten mit aufgenommen.
                 </small>
             </div>
+
+            <div class="row">
+                <RadzenCheckBox TValue="bool" @bind-Value="@Application.OpenToPublic" Name="OpenToPublicCheckBox" />
+                <RadzenLabel Text="offene Bewerbung" Component="OpenToPublicCheckBox" />
+                <small>
+                    Wenn Sie die Bewerbung für andere öffnen, können sich diese Benutzer auf ihre Bewerbung/Anmeldung bewerben. Danach können Sie frei entscheiden, ob sie diese Bewerbung annehmen.
+                    Diese Funktion ist dann praktisch, wenn Sie mit ihrer momentanen Gruppe ihre Wunschdelegationen nicht voll bekommen.
+                </small>
+            </div>
+            <div class="row">
+                <span class="form-text">Expose</span>
+            </div>
+            <div class="row">
+                <RadzenTextArea class="form-control" Disabled="@(!Application.OpenToPublic)" @bind-Value="@Application.Expose" />
+            </div>
         </div>
 
 

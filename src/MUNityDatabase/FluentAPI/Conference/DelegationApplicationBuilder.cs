@@ -45,12 +45,27 @@ namespace MUNity.Database.FluentAPI
 
         public DelegationApplicationBuilder WithMember(string username)
         {
-            throw new NotImplementedException();
+            var user = _context.Users.FirstOrDefault(n => n.UserName == username);
+            if (user == null)
+                throw new ArgumentException($"No user with the username {username} was found.");
+
+            var alreadyInsideUser = application.Users.FirstOrDefault(a => a.User.UserName == username);
+            if (alreadyInsideUser == null)
+            {
+                application.Users.Add(new DelegationApplicationUserEntry()
+                {
+                    User = user,
+                    Application = application,
+                    Status = DelegationApplicationUserEntryStatuses.Invited,
+                    CanWrite = true
+                });
+            }
+            return this;
         }
 
         public DelegationApplicationBuilder WithPreferedDelegation(string delegationId)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException($"WithPreferedDelegation is not implemented yet.");
         }
 
         public DelegationApplicationBuilder WithPreferedDelegationByName(string name)
@@ -91,6 +106,12 @@ namespace MUNity.Database.FluentAPI
                 Application = application,
                 Field = field
             });
+            return this;
+        }
+
+        public DelegationApplicationBuilder IsOpenedToPublic()
+        {
+            this.application.OpenToPublic = true;
             return this;
         }
 

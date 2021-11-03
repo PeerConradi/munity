@@ -9,20 +9,36 @@
 
 <div class="row">
 
-    @if (step == 0)
+    @if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.NotSelected &&
+      applicationType == SelectApplicationTypeComponent.ApplicationType.NotSelected)
     {
+        <!-- Step 1 (Online OR at location)-->
         <SelectPresencePreferenceComponent PreferenceSelected="OnPreferenceSelected" />
     }
-    else if (step == 1)
+    else if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.OnLocation &&
+        applicationType == SelectApplicationTypeComponent.ApplicationType.NotSelected)
     {
+        <!-- If at location select an application type (As Group on delegation or alone)-->
         <SelectApplicationTypeComponent ApplicationTypeSelected="OnApplicationTypeSelected" />
     }
-    else if (step == 2)
+    else if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.Online)
     {
         @if (applicationType == SelectApplicationTypeComponent.ApplicationType.Delegation)
         {
-            <DelegationApplicationForm ConferenceId="@ConferenceId" />
+            <DelegationApplicationForm ConferenceId="@ConferenceId" UseOnlineMode="@(presencePreference == SelectPresencePreferenceComponent.PresencePreferences.Online)" />
         }
+    }
+    else if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.OnLocation &&
+        applicationType == SelectApplicationTypeComponent.ApplicationType.Delegation)
+    {
+
+        <DelegationApplicationForm ConferenceId="@ConferenceId" UseOnlineMode="@(presencePreference == SelectPresencePreferenceComponent.PresencePreferences.Online)" />
+    }
+    else if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.OnLocation &&
+        applicationType == SelectApplicationTypeComponent.ApplicationType.Role)
+    {
+
+        <ApplyOnApplicationComponent ConferenceId="@this.ConferenceId" />
     }
 </div>
 
@@ -37,7 +53,7 @@
             if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.NotSelected)
                 return 0;
 
-            if (presencePreference != SelectPresencePreferenceComponent.PresencePreferences.NotSelected &&
+            if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.OnLocation &&
                 applicationType == SelectApplicationTypeComponent.ApplicationType.NotSelected)
                 return 1;
 
@@ -57,6 +73,9 @@
     private void OnPreferenceSelected(SelectPresencePreferenceComponent.PresencePreferences preference)
     {
         this.presencePreference = preference;
+        // TODO: check if all the online committees only allow one member
+        if (this.presencePreference == SelectPresencePreferenceComponent.PresencePreferences.Online)
+            this.applicationType = SelectApplicationTypeComponent.ApplicationType.Delegation;
     }
 
     private void OnApplicationTypeSelected(SelectApplicationTypeComponent.ApplicationType applicationType)
