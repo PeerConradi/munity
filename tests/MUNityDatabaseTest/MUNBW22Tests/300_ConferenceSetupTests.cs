@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MUNity.Database.FluentAPI;
+using MUNity.Database.Models.Conference;
 using MUNityBase;
 using NUnit.Framework;
 using System;
@@ -175,6 +176,27 @@ namespace MUNity.Database.Test.MUNBW22Tests
                 .FirstOrDefault(n => n.ConferenceId == "munbw22");
 
             Assert.AreEqual(9, conference.Committees.Count);
+        }
+
+        [Test]
+        [Order(317)]
+        public void TestCreateDashboardCard()
+        {
+            var card = new ConferenceDashboardCard()
+            {
+                Active = true,
+                Conference = _context.Conferences.Find("munbw22"),
+                ExternalWebsiteLink = null,
+                LanguageCode = "de",
+                ShowToRegistrationButton = true,
+                ShowToWebsiteButton = true,
+                Title = "Konferenz im Landtag Stuttgart",
+                Text = "Diese Konferenz ist sehr gut."
+            };
+
+            _context.ConferenceDashboardCards.Add(card);
+            _context.SaveChanges();
+
         }
     }
 }

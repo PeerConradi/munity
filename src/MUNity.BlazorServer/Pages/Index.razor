@@ -2,6 +2,7 @@
 @page "/"
 @using MUNity.Schema.Conference
 @inject Services.ConferenceService conferenceService
+@inject MUNity.Database.Context.MunityContext context
 
 <div class="card border-0 text-white bg-dark-900 mb-3">
     <div class="h-250px rounded-top card-img" 
@@ -11,6 +12,24 @@
         <p class="card-text fs-24px">MUNity ist zurück, mit vielen neuen Funktionen. Wir unterstützen euch gerne bei euren Model United Nations Konferenzen mit kostenfreien online Diensten.</p>
     </div>
 </div>
+<div class="row">
+    @foreach (var conferenceCard in context.ConferenceDashboardCards
+        .Include(n => n.Conference)
+        .Where(n => n.Active))
+    {
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">@conferenceCard.Title</h4>
+                    <p>@conferenceCard.Text</p>
+                    <a href="/web/conference/@conferenceCard.Conference.ConferenceId/start" class="btn btn-sm btn-primary">Seite öffnen</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
 
 <AuthorizeView>
     <Authorized>

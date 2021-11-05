@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.User;
+using MUNity.Database.Models.Website;
 using MUNityBase;
 using MUNityCore.Models.User;
 
@@ -50,6 +51,8 @@ namespace MUNity.Database.Models.Conference
         public ICollection<Delegation> Delegations { get; set; }
 
         public ICollection<DelegationApplication> DelegationApplications { get; set; }
+
+        public ICollection<ConferenceWebPage> WebPages { get; set; }
 
         public Project ConferenceProject { get; set; }
 

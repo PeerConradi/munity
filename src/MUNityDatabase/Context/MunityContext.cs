@@ -165,6 +165,18 @@ namespace MUNity.Database.Context
 
         public DbSet<UserInSchool> UsersInSchools { get; set; }
 
+        public DbSet<ConferenceDashboardCard> ConferenceDashboardCards { get; set; }
+
+        public DbSet<ConferenceWebMenuEntry> ConferenceWebMenuEntries { get; set; }
+
+        public DbSet<CommitteeDelegatesElement> ConferenceWebPageDelegatesElements { get; set; }
+
+        public DbSet<CommitteeTopicsElement> ConferenceWebPageCommitteeTopicsElements { get; set; }
+
+        public DbSet<TeamCardsElement> ConferenceWebPageTeamCardsElements { get; set; }
+
+        public DbSet<WebPageTextElement> ConferenceWebPageTextElements { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
