@@ -7,12 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Start MongoDB
-      run: sudo docker run --name mongo -d -p 27017:27017 mongo
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-    - name: Run NUnit Tests
-      run: dotnet test tests/MUNityTest
+    - name: Run Base Tests
+      run: dotnet test tests/MUNityBaseTest
+    - name: Run Database Tests
+      run: dotnet test tests/MUNityDatabaseTest
+    - name: Run Schema Test
+      run: dotnet test tests/MUNitySchemaTests
+    - name: Run Service Tests
+      run: dotnet test tests/MUNityServicesTest
 
