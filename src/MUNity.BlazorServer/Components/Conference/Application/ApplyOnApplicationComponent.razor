@@ -48,7 +48,7 @@
                     </div>
                     <div class="modal-body">
                         <label>Nachricht</label>
-                        <textarea class="form-control"></textarea>
+                        <textarea class="form-control" @bind="this.message"></textarea>
                         <small>Hier können Sie eine kurze Nachricht eingeben, welche den anderen Teilnehmenden in dieser Bewerbung angezeigt wird.</small>
                     </div>
                     <div class="modal-footer">
@@ -78,8 +78,6 @@ else
     private Database.Models.Conference.DelegationApplication selectedApplication;
 
     private string message;
-
-    private bool enterAMessage;
 
     private bool finished;
 

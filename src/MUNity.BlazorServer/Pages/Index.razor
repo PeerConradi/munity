@@ -4,21 +4,22 @@
 @inject Services.ConferenceService conferenceService
 @inject MUNity.Database.Context.MunityContext context
 
-<div class="card border-0 text-white bg-dark-900 mb-3">
+@*<div class="card border-0 text-white bg-dark-900 mb-3">
     <div class="h-250px rounded-top card-img" 
      style="background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)), url(/img/logo/MUNityLogoNoBorder.png); background-position: center; background-size: cover; background-repeat: no-repeat; "></div>
     <div class="card-img-overlay">
         <h2 class="card-title fs-54px">MUNity</h2>
         <p class="card-text fs-24px">MUNity ist zurück, mit vielen neuen Funktionen. Wir unterstützen euch gerne bei euren Model United Nations Konferenzen mit kostenfreien online Diensten.</p>
     </div>
-</div>
+</div>*@
+
 <div class="row">
     @foreach (var conferenceCard in context.ConferenceDashboardCards
         .Include(n => n.Conference)
         .Where(n => n.Active))
     {
         <div class="col-6">
-            <div class="card">
+            <div class="card text-center">
                 <div class="card-body">
                     <h4 class="card-title">@conferenceCard.Title</h4>
                     <p>@conferenceCard.Text</p>
@@ -28,38 +29,6 @@
         </div>
     }
 </div>
-
-
-
-<AuthorizeView>
-    <Authorized>
-        @if (conferenceBoardInfos != null)
-        {
-            <div class="row">
-                @foreach (var conference in conferenceBoardInfos)
-                {
-                    <div class="col-xl-3 col-sm-6">
-                        <!-- BEGIN card -->
-                        <div class="card border-0">
-                            <div class="card-body">
-                                <h4 class="card-title mb-10px">@conference.ConferenceFullName</h4>
-                                <p class="card-text">@conference.ConferenceShort</p>
-
-                                <a href="/web/conference/@conference.ConferenceId/start" class="btn btn-sm btn-primary">Seite öffnen</a>
-                                @if (conference.UserIsTeamMember || conference.UserIsOwner)
-                                {
-                                    <a href="/c/dashboard/@conference.ConferenceId" class="btn btn-sm btn-default ml-5">Team-Center öffnen</a>
-                                }
-                            </div>
-                        </div>
-                        <!-- END card -->
-                    </div>
-                }
-            </div>
-        }
-        
-    </Authorized>
-</AuthorizeView>
 
 @code
 {

@@ -1,4 +1,5 @@
-﻿using MUNity.Database.Context;
+﻿using MUNity.Base;
+using MUNity.Database.Context;
 using MUNity.Database.Models.Conference;
 using MUNityBase;
 using System;

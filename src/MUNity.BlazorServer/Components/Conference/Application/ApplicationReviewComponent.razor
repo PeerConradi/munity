@@ -8,7 +8,7 @@
         <!-- BEGIN invoice-company -->
         <div class="invoice-company">
             <span class="float-end hidden-print">
-                @if (Application.Status == MUNityBase.ApplicationStatuses.Writing)
+                @if (Application.Status == MUNity.Base.ApplicationStatuses.Writing)
                 {
                     <button class="btn btn-outline-warning mb-10px" @onclick="() => FinishApplication()">
                         <i class="fa fa-arrow-right t-plus-1 text-warning fa-fw fa-lg"></i> Einreichen
@@ -106,28 +106,28 @@
 
                     </div>
                 </div>
-                @if (IsApproved && Application.Status == MUNityBase.ApplicationStatuses.Pending)
+                @if (IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Pending)
                 {
                     <div class="invoice-price-right bg-success">
                         <small>Status</small>
                         <span class="fw-bold">Gültig (eingereicht)</span>
                     </div>
                 }
-                else if (IsApproved && Application.Status == MUNityBase.ApplicationStatuses.Writing)
+                else if (IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Writing)
                 {
                     <div class="invoice-price-right bg-warning">
                         <small>Status</small>
                         <span class="fw-bold">Gültig (nicht eingereicht)</span>
                     </div>
                 }
-                else if (!IsApproved && Application.Status == MUNityBase.ApplicationStatuses.Pending)
+                else if (!IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Pending)
                 {
                     <div class="invoice-price-right bg-danger">
                         <small>Status</small>
                         <span class="fw-bold">nicht gültig (eingereicht)</span>
                     </div>
                 }
-                else if (!IsApproved && Application.Status == MUNityBase.ApplicationStatuses.Writing)
+                else if (!IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Writing)
                 {
                     <div class="invoice-price-right bg-danger">
                         <small>Status</small>
@@ -221,7 +221,7 @@ else
             this.context.DelegationApplications.Add(Application);
 
         }
-        Application.Status = MUNityBase.ApplicationStatuses.Pending;
+        Application.Status = MUNity.Base.ApplicationStatuses.Pending;
         var recaff = this.context.SaveChanges();
 
     }
