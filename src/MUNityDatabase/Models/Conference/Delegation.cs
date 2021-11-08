@@ -8,40 +8,44 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Conference;
-
-/// <summary>
-/// A delegation is a model that groups different types of delegate roles
-///
-/// <seealso cref="Roles.ConferenceDelegateRole"/>
-/// </summary>
-public class Delegation
+namespace MUNity.Database.Models.Conference
 {
-    public string DelegationId { get; set; } = "";
-
-    [MaxLength(150)]
-    [Required]
-    public string Name { get; set; }
-
-    [MaxLength(250)]
-    public string FullName { get; set; }
 
     /// <summary>
-    /// Short Term with a max length of 10 characters
+    /// A delegation is a model that groups different types of delegate roles
+    ///
+    /// <seealso cref="Roles.ConferenceDelegateRole"/>
     /// </summary>
-    [MaxLength(10)]
-    public string DelegationShort { get; set; }
-
-    public Conference Conference { get; set; }
-
-    public Delegation ParentDelegation { get; set; }
-
-    public ICollection<Delegation> ChildDelegations { get; set; }
-
-    public ICollection<ConferenceDelegateRole> Roles { get; set; }
-
-    public Delegation()
+    public class Delegation
     {
+        public string DelegationId { get; set; } = "";
 
+        [MaxLength(150)]
+        [Required]
+        public string Name { get; set; }
+
+        [MaxLength(250)]
+        public string FullName { get; set; }
+
+        /// <summary>
+        /// Short Term with a max length of 10 characters
+        /// </summary>
+        [MaxLength(10)]
+        public string DelegationShort { get; set; }
+
+        public Conference Conference { get; set; }
+
+        public Delegation ParentDelegation { get; set; }
+
+        public ICollection<Delegation> ChildDelegations { get; set; }
+
+        public ICollection<ConferenceDelegateRole> Roles { get; set; }
+
+        public ICollection<DelegationApplicationPickedDelegation> DelegationApplications { get; set; }
+
+        public Delegation()
+        {
+            
+        }
     }
 }

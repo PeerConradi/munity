@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MUNity.Database.General;
 using MUNity.Schema.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace MUNity.Services
 {
@@ -21,6 +22,8 @@ namespace MUNity.Services
         private readonly MunityContext context;
 
         private UserConferenceAuthService authService;
+
+        private ILogger<ConferenceService> _logger;
 
         public CreateConferenceResponse CreateConference(CreateConferenceRequest request, ClaimsPrincipal claim)
         {
@@ -487,10 +490,53 @@ namespace MUNity.Services
             return mdl;
         }
 
-        public ConferenceService(MunityContext context, UserConferenceAuthService authService)
+        public async Task<List<ConferenceBoardInfo>> GetConferenceBoardInfosAsync(ClaimsPrincipal claim)
+        {
+
+            try
+            {
+                var claimedUserName = claim.Identity?.Name?.ToUpper();
+                var infos = await this.context.Conferences.Select(n => new ConferenceBoardInfo()
+                {
+                    ConferenceFullName = n.FullName,
+                    ConferenceId = n.ConferenceId,
+                    ConferenceName = n.Name,
+                    ConferenceShort = n.ConferenceShort,
+                    DashboardText = "",
+                    EndDate = n.EndDate,
+                    StartDate = n.StartDate,
+                    UserIsOwner = claimedUserName != null && n.CreationUser.NormalizedUserName == claimedUserName
+                }).ToListAsync();
+
+                
+                if (claimedUserName != null)
+                {
+                    foreach (var info in infos)
+                    {
+                        info.UserIsParticipating = context.Participations.Any(n => n.User.NormalizedUserName == claimedUserName&&
+                    n.Role.Conference.ConferenceId == info.ConferenceId && n.Role is ConferenceDelegateRole);
+
+                        info.UserIsTeamMember = context.Participations.Any(n => n.User.NormalizedUserName == claimedUserName &&
+                        n.Role.Conference.ConferenceId == info.ConferenceId && n.Role is ConferenceTeamRole);
+                    }
+                }
+                return infos;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unable to get the list of conference.");
+                
+            }
+            return null;
+
+            
+        }
+
+        public ConferenceService(MunityContext context, UserConferenceAuthService authService, ILogger<ConferenceService> logger)
         {
             this.context = context;
             this.authService = authService;
+            this._logger = logger;
         }
     }
 }

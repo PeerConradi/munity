@@ -1,44 +1,31 @@
-﻿@    using Microsoft.EntityFrameworkCore
-@    using MUNity.BlazorServer.Components.Conference.Application
+﻿@using Microsoft.EntityFrameworkCore
+@using MUNity.BlazorServer.Components.Conference.Application
 
 @inject MUNity.Database.Context.MunityContext context
 @inject UserManager<MUNity.Database.Models.User.MunityUser> userManager
 
-@if (!saved)
+@if (application != null)
 {
 
-
-    @if (application != null)
+    @if (step == 0)
     {
-
-
-
-
-        @if (step == 0)
-        {
-            <ApplicationUsersSelection ConferenceId="@ConferenceId" Application="application" UsersSelected="() => step = 1" />
-        }
-        else if (step == 1)
-        {
-            <div class="row">
-                <button class="btn btn-primary" @onclick="() => step = 0">Zurück zur Benutzerauswahl</button>
-            </div>
-            <SelectableDelegationsComponent Application="@application" ConferenceId="@ConferenceId" DelegationsAdded="() => step = 2" />
-        }
-        else if (step == 2)
-        {
-            <DelegationApplicationFieldsComponent ConferenceId="@ConferenceId" Application="@application" Finished="() => step = 3" />
-        }
-        else if (step == 3)
-        {
-            <ApplicationReviewComponent Application="@application" />
-        }
+        <ApplicationUsersSelection ConferenceId="@ConferenceId" Application="application" UsersSelected="() => step = 1" />
     }
-
-}
-else
-{
-    <div class="alert alert-success">Bewerbung abgeschickt</div>
+    else if (step == 1)
+    {
+        <div class="row">
+            <button class="btn btn-primary" @onclick="() => step = 0">Zurück zur Benutzerauswahl</button>
+        </div>
+        <SelectableDelegationsComponent Application="@application" ConferenceId="@ConferenceId" DelegationsAdded="() => step = 2" UseOnlineMode="@UseOnlineMode" />
+    }
+    else if (step == 2)
+    {
+        <DelegationApplicationFieldsComponent ConferenceId="@ConferenceId" Application="@application" Finished="() => step = 3" />
+    }
+    else if (step == 3)
+    {
+        <ApplicationReviewComponent Application="@application" ConferenceId="@ConferenceId" />
+    }
 }
 
 
@@ -51,37 +38,23 @@ else
 
     [Parameter] public EventCallback<int> StepChanged { get; set; }
 
+    [Parameter] public bool UseOnlineMode { get; set; } = false;
+
     private MUNity.Database.Models.Conference.DelegationApplication application;
-
-    private MUNity.Database.Models.User.MunityUser me;
-
-    private bool saved;
-
-    private bool error;
-
-    private class AvailableDelegation
-    {
-        public string DelegationId { get; set; }
-
-        public string Name { get; set; }
-
-        public string Roles { get; set; }
-    }
 
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-
-
         application = new Database.Models.Conference.DelegationApplication()
         {
-            Status = ApplicationStatuses.Writing
+            Status = MUNityBase.ApplicationStatuses.Writing,
+            Conference = context.Conferences.Find(ConferenceId)
         };
 
         var claim = (await AuthStateTask)?.User;
-        this.me = await userManager.GetUserAsync(claim);
+        var me = await userManager.GetUserAsync(claim);
 
         application.Users = new List<MUNity.Database.Models.Conference.DelegationApplicationUserEntry>();
         application.Users.Add(new Database.Models.Conference.DelegationApplicationUserEntry()
@@ -96,22 +69,10 @@ else
 
         application.FormulaInputs = new List<Database.Models.Conference.ConferenceDelegationApplicationFieldInput>();
 
-
-    }
-
-    private void SendApplication()
-    {
-        application.Status = ApplicationStatuses.Pending;
-        application.ApplyDate = DateTime.Now;
-        context.DelegationApplications.Add(application);
-        var recaff = context.SaveChanges();
-        if (recaff > 0)
+        // This is a quickfix to jump directly into the Delegation Selection
+        if (UseOnlineMode)
         {
-            saved = true;
-        }
-        else
-        {
-            error = true;
+            this.step = 1;
         }
     }
 }

@@ -9,6 +9,12 @@ namespace MUNity.Util
     public class IdGenerator
     {
         private static readonly Random _random = new Random();
+        /// <summary>
+        /// Gemerates a Random string with all characters form A-Z, a-z and 0-9
+        /// Total length is 62
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";

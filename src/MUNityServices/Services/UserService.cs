@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MUNity.Schema.Conference;
 using Microsoft.EntityFrameworkCore;
+using MUNity.Database.Extensions;
 
 namespace MUNity.Services
 {
@@ -41,6 +42,18 @@ namespace MUNity.Services
                 return null;
             }
             return user;
+        }
+
+        public async Task<MunityUser> CreateShadowUser(string mail)
+        {
+            var result = await userManager.CreateShadowUser(mail);
+            if (result.Result.Succeeded)
+                return result.User;
+            else
+            {
+                _logger.LogWarning($"Unable to create shadow user {mail} codes: {string.Join(", ", result.Result.Errors.Select(n => n.Code))}");
+            }
+            return null;
         }
 
         public async Task<MunityUser> CreateUser(MUNity.Schema.Account.RegisterModel model)

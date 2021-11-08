@@ -3,51 +3,13 @@
 
 @layout MUNity.BlazorServer.Shared.ConferenceFrontEndLayout
 @page "/web/conference/{ConferenceId}/register"
-@page "/web/conference/{ConferenceId}/register/{Preference}"
 
 @inject MUNity.Database.Context.MunityContext context
 @inject NavigationManager navManager
 
 <AuthorizeView>
     <Authorized>
-            <div class="panel panel-inverse" data-sortable-id="form-stuff-1">
-                <!-- BEGIN panel-heading -->
-                <div class="panel-heading ui-sortable-handle">
-                    <h4 class="panel-title">Bewerbung</h4>
-                </div>
-                <!-- END panel-heading -->
-                <!-- BEGIN panel-body -->
-                <div class="panel-body">
-                    @if (step == 1)
-                    {
-                        <div class="row">
-                            <div class="col-4">
-                                <button class="btn w-100 btn-primary" @onclick="() => presencePreference = SelectPresencePreferenceComponent.PresencePreferences.NotSelected">Zurück</button>
-                            </div>
-                        </div>
-                    }
-
-                    <div class="row">
-
-                        @if (step == 0)
-                        {
-                            <SelectPresencePreferenceComponent PreferenceSelected="OnPreferenceSelected" />
-                        }
-                        else if (step == 1)
-                        {
-                            <SelectApplicationTypeComponent ApplicationTypeSelected="OnApplicationTypeSelected" />
-                        }
-                        else if (step == 2)
-                        {
-                            @if (applicationType == SelectApplicationTypeComponent.ApplicationType.Delegation)
-                            {
-                                <DelegationApplicationForm ConferenceId="@ConferenceId" />
-                            }
-                        }
-                    </div>
-
-                </div>
-            </div>
+            <ConferenceApplicationComponent ConferenceId="@ConferenceId" />
     </Authorized>
     <NotAuthorized>
         <div class="error">
@@ -79,58 +41,13 @@
 @code {
     [Parameter] public string ConferenceId { get; set; }
 
-    [Parameter] public string Preference { get; set; }
-
-    private string conferenceShort = "Conference";
-
-
-    private int step
-    {
-        get
-        {
-            if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.NotSelected)
-                return 0;
-
-            if (presencePreference != SelectPresencePreferenceComponent.PresencePreferences.NotSelected &&
-                applicationType == SelectApplicationTypeComponent.ApplicationType.NotSelected)
-                return 1;
-
-            if (presencePreference != SelectPresencePreferenceComponent.PresencePreferences.NotSelected &&
-                applicationType != SelectApplicationTypeComponent.ApplicationType.NotSelected)
-                return 2;
-
-            return 0;
-        }
-    }
-
-    private SelectPresencePreferenceComponent.PresencePreferences presencePreference;
-
-
-    private SelectApplicationTypeComponent.ApplicationType applicationType;
-
-    private void OnPreferenceSelected(SelectPresencePreferenceComponent.PresencePreferences preference)
-    {
-        this.presencePreference = preference;
-    }
-
-    private void OnApplicationTypeSelected(SelectApplicationTypeComponent.ApplicationType applicationType)
-    {
-        this.applicationType = applicationType;
-    }
+    private string conferenceShort;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-
-        // TODO: If there are committees that are Online and offline inside this conference
-        // make take step 0, if not skip to step 1
-
-
-        //isDelegationApplicationAvailable = context.ConferenceApplicationOptions
-        //.Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowDelegationApplication);
-
-        //isRoleApplicationAvailable = context.ConferenceApplicationOptions
-        //    .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowRoleApplication);
-
+        this.conferenceShort = context.Conferences.Where(n => n.ConferenceId == this.ConferenceId)
+            .Select(n => n.ConferenceShort)
+            .FirstOrDefault();
     }
 }

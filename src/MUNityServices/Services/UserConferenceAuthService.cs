@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using MUNity.Database.Context;
+using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.User;
 using System;
 using System.Collections.Generic;
@@ -51,6 +53,20 @@ namespace MUNity.Services
                 return false;
 
             return IsUserAllowedToEditConference(conferenceId, user.UserName);
+        }
+
+        public async Task<bool> IsUserAllowedToEditConference(string conferenceId, Task<AuthenticationState> authStateTask)
+        {
+            return await IsUserAllowedToEditConference(conferenceId, (await authStateTask)?.User);
+        }
+
+        public async Task<bool> IsUserTeamMember(string conferenceId, ClaimsPrincipal claim)
+        {
+            var user = await userManager.GetUserAsync(claim);
+            if (user == null)
+                return false;
+
+            return context.Participations.Any(n => n.Role is ConferenceTeamRole && n.User == user && n.Role.Conference.ConferenceId == conferenceId);
         }
 
         public Task<MunityUser> GetUserAsync(ClaimsPrincipal claim)

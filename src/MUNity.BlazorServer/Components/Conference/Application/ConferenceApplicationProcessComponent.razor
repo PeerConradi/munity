@@ -1,0 +1,101 @@
+﻿@if (step == 1)
+{
+    <div class="row">
+        <div class="col-4">
+            <button class="btn w-100 btn-primary" @onclick="() => presencePreference = SelectPresencePreferenceComponent.PresencePreferences.NotSelected">Zurück</button>
+        </div>
+    </div>
+}
+
+<div class="row">
+
+    @if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.NotSelected &&
+      applicationType == SelectApplicationTypeComponent.ApplicationType.NotSelected)
+    {
+        <!-- Step 1 (Online OR at location)-->
+        <SelectPresencePreferenceComponent PreferenceSelected="OnPreferenceSelected" />
+    }
+    else if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.OnLocation &&
+        applicationType == SelectApplicationTypeComponent.ApplicationType.NotSelected)
+    {
+        <!-- If at location select an application type (As Group on delegation or alone)-->
+        <SelectApplicationTypeComponent ApplicationTypeSelected="OnApplicationTypeSelected" />
+    }
+    else if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.Online)
+    {
+        @if (applicationType == SelectApplicationTypeComponent.ApplicationType.Delegation)
+        {
+            <DelegationApplicationForm ConferenceId="@ConferenceId" UseOnlineMode="@(presencePreference == SelectPresencePreferenceComponent.PresencePreferences.Online)" />
+        }
+    }
+    else if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.OnLocation &&
+        applicationType == SelectApplicationTypeComponent.ApplicationType.Delegation)
+    {
+
+        <DelegationApplicationForm ConferenceId="@ConferenceId" UseOnlineMode="@(presencePreference == SelectPresencePreferenceComponent.PresencePreferences.Online)" />
+    }
+    else if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.OnLocation &&
+        applicationType == SelectApplicationTypeComponent.ApplicationType.Role)
+    {
+
+        <ApplyOnApplicationComponent ConferenceId="@this.ConferenceId" />
+    }
+</div>
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+
+    private int step
+    {
+        get
+        {
+            if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.NotSelected)
+                return 0;
+
+            if (presencePreference == SelectPresencePreferenceComponent.PresencePreferences.OnLocation &&
+                applicationType == SelectApplicationTypeComponent.ApplicationType.NotSelected)
+                return 1;
+
+            if (presencePreference != SelectPresencePreferenceComponent.PresencePreferences.NotSelected &&
+                applicationType != SelectApplicationTypeComponent.ApplicationType.NotSelected)
+                return 2;
+
+            return 0;
+        }
+    }
+
+    private SelectPresencePreferenceComponent.PresencePreferences presencePreference;
+
+
+    private SelectApplicationTypeComponent.ApplicationType applicationType;
+
+    private void OnPreferenceSelected(SelectPresencePreferenceComponent.PresencePreferences preference)
+    {
+        this.presencePreference = preference;
+        // TODO: check if all the online committees only allow one member
+        if (this.presencePreference == SelectPresencePreferenceComponent.PresencePreferences.Online)
+            this.applicationType = SelectApplicationTypeComponent.ApplicationType.Delegation;
+    }
+
+    private void OnApplicationTypeSelected(SelectApplicationTypeComponent.ApplicationType applicationType)
+    {
+        this.applicationType = applicationType;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        // TODO: If there are committees that are Online and offline inside this conference
+        // make take step 0, if not skip to step 1
+
+
+        //isDelegationApplicationAvailable = context.ConferenceApplicationOptions
+        //.Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowDelegationApplication);
+
+        //isRoleApplicationAvailable = context.ConferenceApplicationOptions
+        //    .Any(n => n.Conference.ConferenceId == ConferenceId && n.IsActive && n.AllowRoleApplication);
+
+    }
+}
