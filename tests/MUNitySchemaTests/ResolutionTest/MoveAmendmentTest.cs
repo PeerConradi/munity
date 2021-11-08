@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using MUNity.Extensions.ResolutionExtensions;
 using System.Linq;
+using MUNity.Exceptions.Resolution;
 
 namespace MunityNUnitTest.ResolutionTest
 {
@@ -209,6 +210,35 @@ namespace MunityNUnitTest.ResolutionTest
             Assert.AreEqual("Paragraph 1.c", paragraphOne.Children[0].Text);
             Assert.AreEqual("Paragraph 1.a", paragraphOne.Children[1].Text);
             Assert.AreEqual("Paragraph 1.b", paragraphOne.Children[2].Text);
+        }
+
+        [Test]
+        public void TestParagraphNotFoundThrowsException()
+        {
+            var resolution = new Resolution();
+            Assert.Throws<OperativeParagraphNotFoundException>(() => resolution.OperativeSection.CreateMoveAmendment("", 1));
+        }
+
+        [Test]
+        public void TestRemoveOperativeParagraphRemovesAmendments()
+        {
+            var resolution = new Resolution();
+            var paragraphOne = resolution.OperativeSection.CreateOperativeParagraph("Test1");
+            var paragraphTwo = resolution.OperativeSection.CreateOperativeParagraph("Test 2");
+            var amendment = resolution.OperativeSection.CreateMoveAmendment(paragraphOne, 2);
+            resolution.OperativeSection.RemoveOperativeParagraph(paragraphOne);
+            Assert.AreEqual(0, resolution.OperativeSection.MoveAmendments.Count);
+        }
+
+        [Test]
+        public void TestRemoveOperativeParagraphShouldRemoveVirtual()
+        {
+            var resolution = new Resolution();
+            var paragraphOne = resolution.OperativeSection.CreateOperativeParagraph("Test1");
+            var paragraphTwo = resolution.OperativeSection.CreateOperativeParagraph("Test 2");
+            var amendment = resolution.OperativeSection.CreateMoveAmendment(paragraphOne, 2);
+            resolution.OperativeSection.RemoveOperativeParagraph(paragraphOne);
+            Assert.AreEqual(1, resolution.OperativeSection.Paragraphs.Count);
         }
     }
 }

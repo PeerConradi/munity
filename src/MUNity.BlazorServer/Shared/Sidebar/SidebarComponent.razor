@@ -1,0 +1,77 @@
+﻿@inject Services.ConferenceService conferenceService;
+
+<!-- BEGIN #sidebar -->
+<div id="sidebar" class="app-sidebar">
+    <!-- BEGIN scrollbar -->
+    <div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+        <!-- BEGIN menu -->
+        <div class="menu">
+            <AuthorizeView>
+                <Authorized>
+                    <MenuProfileBox />
+                </Authorized>
+            </AuthorizeView>
+            <div class="menu-header">Navigation</div>
+
+            <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Home" Url="/" IconName="oi-home" />
+            
+            <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="First Level" IconName="oi-home">
+                <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Sub Item 1" Url="/Demo" Badge="NEW" />
+                <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Sub Item 2" Url="/Demo" />
+
+            </MUNity.BlazorServer.Shared.Sidebar.MenuItem>
+
+            <AuthorizeView>
+                <Authorized>
+                    <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Organisationen" IconName="oi-shield">
+                        <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Organisation suchen" Url="/organizations" />
+                        <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Meine Organisationen" Url="/myOrganizations" />
+                        <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Organisation eintragen" Url="/createOrganization" />
+                    </MUNity.BlazorServer.Shared.Sidebar.MenuItem>
+
+                    @if (myConferences != null && myConferences.Count > 0)
+                {
+                <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Meine Konferenzen" IconName="oi-globe">
+                    @foreach (var conference in myConferences)
+                    {
+                        <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="@conference.ConferenceShort" Url="@($"/c/dashboard/{conference.ConferenceId}")" />
+                    }
+
+                </MUNity.BlazorServer.Shared.Sidebar.MenuItem>
+                }
+                    
+                </Authorized>
+            </AuthorizeView>
+
+
+            <!-- BEGIN minify-button -->
+            <div class="menu-item d-flex">
+                <a href="javascript:;" class="app-sidebar-minify-btn ms-auto" data-toggle="app-sidebar-minify"><i class="oi oi-align-right"></i></a>
+            </div>
+            <!-- END minify-button -->
+        </div>
+        <!-- END menu -->
+    </div>
+    <!-- END scrollbar -->
+</div>
+<div class="app-sidebar-bg"></div>
+<div class="app-sidebar-mobile-backdrop"><a href="#" data-dismiss="app-sidebar-mobile" class="stretched-link"></a></div>
+<!-- END #sidebar -->
+
+@code
+{
+    [CascadingParameter] public Task<AuthenticationState> authStateTask { get; set; }
+
+    private List<MUNity.Schema.Conference.ParticipatingConferenceInfo> myConferences;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await base.OnInitializedAsync();
+        var claim = (await authStateTask)?.User;
+        if (claim != null)
+        {
+            this.myConferences = await conferenceService.GetParticipatingConferencesAsync(claim);
+        }
+    }
+}

@@ -1,0 +1,24 @@
+﻿using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using MUNity.Extensions;
+
+namespace MunitySchemaTest.Extenstions
+{
+    public class ListExtensionTests
+    {
+        [Test]
+        public void TestSwap()
+        {
+            var list = new List<string>();
+            list.Add("Element 1");
+            list.Add("Element 2");
+            var swappedElement = list.Swap(0, 1);
+            Assert.AreEqual("Element 2", swappedElement[0]);
+            Assert.AreEqual("Element 1", swappedElement[1]);
+        }
+    }
+}

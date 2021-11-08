@@ -1,4 +1,5 @@
-﻿using MUNity.Schema.Simulation;
+﻿using MUNity.Base;
+using MUNity.Schema.Simulation;
 using MUNity.Schema.Simulation.Voting;
 using System;
 using System.Collections.Generic;

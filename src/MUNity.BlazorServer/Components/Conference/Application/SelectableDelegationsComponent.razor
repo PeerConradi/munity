@@ -1,0 +1,169 @@
+﻿@layout MUNity.BlazorServer.Shared.ConferenceFrontEndLayout
+@inject Services.ConferenceApplicationService applicationService
+@inject MUNity.Database.Context.MunityContext context
+
+<div class="pos-booking">
+    <div class="pos-booking-body" style="margin-top: 0px;">
+        <!-- BEGIN pos-booking-content -->
+        <div class="pos-booking-content" style="margin-top: 0px;">
+            <div class="pos-booking-content-container" style="margin-top: 0px;">
+                <div class="row">
+                    <h4>Bitte wählen Sie @maxPickDelegations Delegationen, welche sie gerne belegen möchten</h4>
+                    <p>Hierbei bitte die angezeigte Nummer beachten. Diese ist die Priorität mit welcher Sie diese Delegation bekommen möchten.</p>
+                </div>
+                <div class="row">
+                    @foreach (var delegation in pickedDelegations)
+                    {
+                        <SelectableDelegationComponent SelectionText="@((pickedDelegations.IndexOf(delegation) + 1).ToString())"
+                                                       Delegation="delegation"
+                                                       Clicked="(n) => this.pickedDelegations.Remove(n)"/>
+                    }
+                </div>
+
+
+                @if (pickedDelegations.Count < this.maxPickDelegations && AllDeleations.Count >= this.maxPickDelegations ||
+                    (pickedDelegations.Count < this.AllDeleations.Count && this.AllDeleations.Count < this.maxPickDelegations))
+                {
+                    <div class="d-md-flex align-items-center mb-4">
+                        <div class="pos-booking-title flex-1">
+                            <div class="fs-24px mb-1">Verfügbare Delegationen</div>
+                            <div class="mb-2 mb-md-0 d-flex">
+                                <div class="d-flex align-items-center me-3">
+                                    <i class="fa fa-circle fa-fw text-gray-700 fs-9px me-1"></i> Passend
+                                </div>
+                                <div class="d-flex align-items-center me-3">
+                                    <i class="fa fa-circle fa-fw text-warning fs-9px me-1"></i> Unzureichende Anzahl Plätze
+                                </div>
+                                <div class="d-flex align-items-center me-3">
+                                    <i class="fa fa-circle fa-fw text-success fs-9px me-1"></i> In-progress
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="input-group date mb-0">
+                                <input type="text" class="form-control" placeholder="Suchen" @bind="@searchTerm" @bind:event="oninput">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @if (AllDeleations != null && AllDeleations.Count > 0)
+                        {
+                            @foreach (var delegation in displayDelegation)
+                            {
+                                <SelectableDelegationComponent IsSelected="@(Application.DelegationWishes.Any(n => n.Delegation.DelegationId == delegation.DelegationId))"
+                                                               Delegation="delegation"
+                                                               Clicked="DelegationSelected" />
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">Es wurden keine Delegationen gefunden. Möglicherweise existieren keine Delegationen welche @Application.Users.Count Personen unterstützen.</div>
+                        }
+
+                    </div>
+                }
+                else
+                {
+
+                    @if (!Application.OpenToPublic && pickedDelegations.Any(n => n.Roles.Count > Application.Users.Count))
+                    {
+                        <div class="alert alert-warning">
+                            <h4>Warnung</h4>
+                            <p>
+                                @string.Join(", ", pickedDelegations.Where(n => n.Roles.Count > Application.Users.Count).Select(n => n.Name)) bestizen mehr Rollen, als in dieser Bewerbung Teilnehmende sind. Zusätzlich ist diese Bewerbung nicht für die
+                            Öffentlichkeit freigegeben. Wenn Sie diese Bewerbung freigeben, können andere Interessierte anfragen, ob sie Ihrer Delegation beitreten können.
+                        </p>
+                    </div>
+                    }
+
+                    @if (AllDeleations.Count < this.maxPickDelegations)
+                {
+                    <div class="alert alert-cyan">
+                        Offenbar stehen weniger Delegationen zur Verfügung als eigentlich angegeben werden sollten (@maxPickDelegations).
+                    </div>
+                }
+
+                    if (pickedDelegations.Count == maxPickDelegations || pickedDelegations.Count == AllDeleations.Count)
+                    {
+                        <button class="btn btn-primary" @onclick="Finish">Auswahl bestätigen</button>
+
+                    }
+                }
+
+            </div>
+        </div>
+        <!-- END pos-counter-content -->
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    [Parameter] public MUNity.Database.Models.Conference.DelegationApplication Application { get; set; }
+
+    [Parameter] public EventCallback DelegationsAdded { get; set; }
+
+    [Parameter] public bool UseOnlineMode { get; set; }
+
+    private List<MUNity.Schema.Conference.ApplicationAvailableDelegation> pickedDelegations = new List<Schema.Conference.ApplicationAvailableDelegation>();
+
+    private int maxPickDelegations;
+
+    private void DelegationSelected(MUNity.Schema.Conference.ApplicationAvailableDelegation delegation)
+    {
+        //
+        //InvokeAsync(StateHasChanged);
+        pickedDelegations.Add(delegation);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void Finish()
+    {
+        foreach(var delegation in pickedDelegations)
+        {
+
+            var realDelegation = context.Delegations.Find(delegation.DelegationId);
+            if (realDelegation != null)
+            {
+                this.Application.DelegationWishes.Add(new Database.Models.Conference.DelegationApplicationPickedDelegation()
+                {
+                    Application = this.Application,
+                    Delegation = realDelegation,
+                    Priority = (byte)this.Application.DelegationWishes.Count
+                });
+            }
+        }
+        DelegationsAdded.InvokeAsync();
+    }
+
+    private List<MUNity.Schema.Conference.ApplicationAvailableDelegation> AllDeleations;
+
+    private string searchTerm = "";
+
+    private IEnumerable<MUNity.Schema.Conference.ApplicationAvailableDelegation> displayDelegation
+    {
+        get
+        {
+            if (AllDeleations == null) return null;
+            var termLowered = searchTerm.ToLower();
+            var dels = searchTerm.Length > 2 ? AllDeleations.Where(n => n.Name.ToLower().Contains(termLowered)) : AllDeleations;
+            return dels.Except(pickedDelegations).OrderBy(n => n.Roles.Count).ThenBy(n => n.Name);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (UseOnlineMode)
+            AllDeleations = applicationService.AvailableDelegations(ConferenceId, Application.Users.Count, Services.ConferenceApplicationService.AvailableDelegationsTypes.OnlineOnly);
+        else
+            AllDeleations = applicationService.AvailableDelegations(ConferenceId, Application.Users.Count, Services.ConferenceApplicationService.AvailableDelegationsTypes.PresenceOnly);
+
+        maxPickDelegations = context.ConferenceApplicationFormulas.Where(n => n.Options.ConferenceId == this.ConferenceId &&
+            n.FormulaType == ConferenceApplicationFormulaTypes.Delegation)
+        .Select(n => n.MaxWishes)
+        .FirstOrDefault().Value;
+    }
+}

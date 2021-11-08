@@ -1,0 +1,87 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Konto erstellen";
+}
+
+<!-- begin register -->
+<div class="register register-with-news-feed">
+    <!-- begin news-feed -->
+    <div class="news-feed">
+        <div class="news-image" style="background-image: url(/img/login-bg/login-bg-15.jpg)"></div>
+        <div class="news-caption">
+            <h4 class="caption-title"><b>MUNity</b> Registrierung</h4>
+            <p>
+                Das Konto bei MUNity ermöglicht weitere Funktionen, wie dem anlegen von neuen Simulationen.
+            </p>
+        </div>
+    </div>
+    <!-- end news-feed -->
+    <!-- begin right-content -->
+    <div class="register-container">
+        <!-- begin register-header -->
+        <div class="register-header mb-25px h1">
+            <div class="mb-1">Registrierung</div>
+            <small class="d-block fs-15px lh-16">Kostenlos ein Konto erstellen.</small>
+        </div>
+        <!-- end register-header -->
+        <!-- begin register-content -->
+        <div class="register-content">
+            <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="fs-13px">
+                @*<label class="control-label">Name <span class="text-danger">*</span></label>
+        <div class="row row-space-10">
+            <div class="col-md-6 m-b-15">
+                <input type="text" class="form-control" placeholder="First name" required />
+            </div>
+            <div class="col-md-6 m-b-15">
+                <input type="text" class="form-control" placeholder="Last name" required />
+            </div>
+        </div>*@
+                <div class="mb-3">
+                    <label class="mb-2">Benutzername <span class="text-danger">*</span></label>
+                    <input class="form-control fs-13px" asp-for="Input.Username" placeholder="Benutzername" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="mb-2">E-Mail Adresse <span class="text-danger">*</span></label>
+                    <input class="form-control fs-13px" asp-for="Input.Email" placeholder="E-Mail" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="mb-2">Passwort <span class="text-danger">*</span></label>
+                    <input class="form-control fs-13px" asp-for="Input.Password" type="password" placeholder="****" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="mb-2">Passwort wiederholen <span class="text-danger">*</span></label>
+                    <input class="form-control fs-13px" asp-for="Input.ConfirmPassword" type="password" placeholder="****" required />
+                    <small>Das Passwort muss mindestens 8 Zeichen Lang sein und Klein- / Großbuchstaben und Zahlen enthalten.</small>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="agreement_checkbox" value="">
+                    <label for="agreement_checkbox" class="form-check-label">
+                        Mit dem Erstellen eines Kontos stimmen Sie den <a href="javascript:;">Allgemeinden Geschäftsbedingungen</a>, sowie den <a href="javascript:;">Datenschutzbestimmungen</a> und der verwendung von <a href="javascript:;">Cookies</a> zu.
+                    </label>
+                </div>
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-primary d-block w-100 btn-lg h-45px fs-13px">Konto erstellen</button>
+                </div>
+                <div class="m-t-30 m-b-30 p-b-30">
+                    Bereits einen Account? <a href="/Identity/Account/Login">Hier</a> anmelden.
+                </div>
+                <hr />
+                <p class="text-center mb-0">
+                    &copy; MUNity All Right Reserved 2021
+                </p>
+            </form>
+        </div>
+        <!-- end register-content -->
+    </div>
+    <!-- end right-content -->
+</div>
+<!-- end register -->
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

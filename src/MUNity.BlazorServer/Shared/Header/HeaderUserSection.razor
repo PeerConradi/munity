@@ -1,0 +1,125 @@
+﻿@inject Services.UserNotificationService userNotificationService
+@inject Services.UserService userService
+
+<AuthorizeView>
+    <Authorized>
+        <div class="navbar-item dropdown">
+            <a class="navbar-link dropdown-toggle icon @((ShowNotifications) ? "show" : null)" @onclick="() => ToggleNotifications()">
+                <i class="oi oi-bell"></i>
+                @if (unreadNotificationsCount > 0)
+                {
+                    <span class="badge">@unreadNotificationsCount</span>
+                }
+
+            </a>
+            <div class="dropdown-menu media-list dropdown-menu-end @((ShowNotifications) ? "show" : null)"
+                 style="@((ShowNotifications) ? NotificationStyle : null)">
+                <div class="dropdown-header">Benachrichtigungen (@totalNotificationsCount)</div>
+                
+                
+                @if (notifications.Count > 0)
+                {
+                    
+                    @foreach (var notification in notifications)
+                    {
+                        <a href="javascript:;" class="dropdown-item media">
+                            <div class="media-left">
+                                <i class="oi oi-bug media-object bg-gray-500"></i>
+                            </div>
+                            <div class="media-body">
+                                <h6 class="media-heading">@notification.Title</h6>
+                                <p>@notification.Text</p>
+                                <div class="text-muted fs-10px">@notification.Timestamp.ToString("dd.MM.yyyy HH:mm")</div>
+                            </div>
+                        </a>
+                    }
+
+                    <div class="dropdown-footer text-center">
+                        <a href="javascript:;" class="text-decoration-none">Mehr anzeigen</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="dropdown-footer text-center">
+                        <p>Es liegen keine Benachrichtigungen vor.</p>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+
+
+        <div class="navbar-item navbar-user dropdown" @onclick="() =>  ToggleUserMenu()">
+            <a class="navbar-link dropdown-toggle d-flex @((ShowUserSubMenu) ? "show" : null)"
+               style="cursor: pointer;">
+                <span class="d-none d-md-inline">@userDisplayName</span>
+                <img src="https://www.profielactueel.nl/content/modules/catalog/1/3800/3759/10_xx_2_1.png" alt="">
+            </a>
+            <div class="dropdown-menu dropdown-menu-end me-1 @((ShowUserSubMenu) ? "show" : null)" style="@((ShowUserSubMenu) ? SubMenuStyle : null)">
+                <a href="javascript:;" class="dropdown-item">Mein Profil</a>
+                <a href="javascript:;" class="dropdown-item"><span class="badge bg-danger float-end rounded-pill">2</span> Postfach</a>
+                <a href="javascript:;" class="dropdown-item">Meine Organisationen</a>
+                <a href="javascript:;" class="dropdown-item">Meine Projekte</a>
+                <a href="javascript:;" class="dropdown-item">Meine Konferenzen</a>
+                <a href="javascript:;" class="dropdown-item">Meine Resolutionen</a>
+                <a href="/myapplications" class="dropdown-item">Meine Bewerbungen</a>
+                <div class="dropdown-divider"></div>
+                <a href="/Identity/Account/LogOut" class="dropdown-item">Log Out</a>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    public bool ShowUserSubMenu { get; set; }
+
+    private string SubMenuStyle = "position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(-20px, 52px);";
+
+    public bool ShowNotifications { get; set; }
+
+    private string NotificationStyle = "position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(-316px, 52px); min-width: 400px";
+
+    private List<MUNity.Schema.UserNotification.UserNotificationItem> notifications;
+
+    private int unreadNotificationsCount;
+
+    private int totalNotificationsCount;
+
+    private string userDisplayName;
+
+    private void ToggleUserMenu()
+    {
+        this.ShowNotifications = false;
+        this.ShowUserSubMenu = !ShowUserSubMenu;
+    }
+
+    private void ToggleNotifications()
+    {
+        this.ShowUserSubMenu = false;
+        this.ShowNotifications = !ShowNotifications;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            notifications = await userNotificationService.GetLastFiveIntrestingNotifications(claim);
+            unreadNotificationsCount = await userNotificationService.GetCountOfUnreadNotifications(claim);
+            totalNotificationsCount = await userNotificationService.GetTotalCountOfNotifications(claim);
+            var userForeAndLastName = await userService.GetForeAndLastNameAsync(claim);
+            if (string.IsNullOrEmpty(userForeAndLastName) || userForeAndLastName == "-")
+                userDisplayName = claim.Identity?.Name ?? "-";
+            else
+
+                userDisplayName = userForeAndLastName;
+            
+        }
+    }
+
+}

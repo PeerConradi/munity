@@ -1,0 +1,128 @@
+﻿<!-- Create Project Modal -->
+@inject Services.DelegationService delegationService
+
+@if (isVisible)
+{
+    <div class="modal fade show" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Neue DelegationWishes</h4>
+                    <button type="button" class="btn-close" @onclick="() => Hide()"></button>
+                </div>
+                @if (response == null)
+                {
+                    <EditForm Model="request" OnValidSubmit="CreateRoleGroup">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="modal-body">
+                            <h3>Über DelegationWishesen</h3>
+                            <p>DelegationWishesen sind Gruppen, in welcher mehrere DelegationWishessrollen zusammengefasst werden können. DelegationWishesen können hierbei sowohl Delegierte in Gremien wie auch Presse und andere Rollen enthalten.</p>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">DelegationWishessname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Name" @bind-Value="@request.DelegationName" />
+                                    <small class="fs-12px text-gray-500-darker">Ein Name für die DelegationWishes</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Vollständiger DelegationWishessname</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="Name" @bind-Value="@request.DelegationFullName" />
+                                    <small class="fs-12px text-gray-500-darker">Ein Name, welcher die DelegationWishes genauer beschreibt, kann aber auch wie der DelegationWishessname sein.</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-15px">
+                                <label class="form-label col-form-label col-md-3">Kürzel</label>
+                                <div class="col-md-9">
+                                    <InputText type="text" class="form-control mb-5px" placeholder="KURZ" @bind-Value="@request.DelegationShort" />
+                                    <small class="fs-12px text-gray-500-darker">Ein Kürzel für die DelegationWishes</small>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-white" @onclick="() => Hide()">Abbrechen</button>
+                            <button class="btn btn-success" type="submit">DelegationWishes erstellen</button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    <div class="modal-body">
+                        <div class="col-12">
+                            @if (!response.HasError)
+                            {
+                                <div class="alert alert-success">DelegationWishes erfolgreich erstellt <button class="btn btn-sm btn-secondary" @onclick="() => Reset()">weitere DelegationWishes erstellen</button></div>
+                            }
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-white" @onclick="() => Hide()">Schließen</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    private bool isVisible = false;
+
+    [CascadingParameter] public Task<AuthenticationState> authStateTask { get; set; }
+
+    [Parameter] public EventCallback DelegationsChanged { get; set; }
+
+    [Parameter] public string ConferenceId { get; set; }
+
+    private int groupId { get; set; }
+
+    private Schema.Conference.CreateDelegationRequest request;
+
+    private Schema.Conference.CreateDelegationResponse response;
+
+
+    protected override void OnInitialized()
+    {
+        this.request = new Schema.Conference.CreateDelegationRequest();
+        this.request.ConferenceId = ConferenceId;
+    }
+
+    public void Show()
+    {
+        isVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        isVisible = false;
+    }
+
+    public async Task CreateRoleGroup()
+    {
+        var claim = (await authStateTask)?.User;
+        if (claim != null)
+        {
+            this.response = await delegationService.CreateDelegationAsync(request, claim);
+            if (!response.HasError)
+                await DelegationsChanged.InvokeAsync();
+        }
+
+    }
+
+    private void Reset()
+    {
+        request.DelegationFullName = null;
+        request.DelegationName = null;
+        request.DelegationShort = null;
+        response = null;
+    }
+}

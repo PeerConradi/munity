@@ -1,0 +1,45 @@
+﻿@if (Group != null)
+{
+    <div class="col-12 mb-15px">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">@Group.Name</h3>
+            </div>
+            <div class="body">
+                <div class="row">
+                    @if (Group.Roles != null && Group.Roles.Count > 0)
+                    {
+                        foreach (var role in Group.Roles)
+                        {
+                            <MUNity.BlazorServer.Components.Conference.TeamRoleManageComponent Role="role" />
+                        }
+                    }
+
+                    <div class="col-12">
+                        <div class="card border-1 m-15px text-center">
+                            <div class="card-body">
+                                <button class="btn btn-primary" @onclick="() => RequestAdd()">Rolle in @Group.Name Hinzufügen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter] public MUNity.Schema.Conference.TeamRoleGroupInfo Group { get; set; }
+
+    [Parameter] public EventCallback<int> RequestAddRole { get; set; }
+
+    private void RequestAdd()
+    {
+        if (Group != null)
+        {
+            RequestAddRole.InvokeAsync(this.Group.TeamRoleGroupId);
+
+        }
+    }
+}

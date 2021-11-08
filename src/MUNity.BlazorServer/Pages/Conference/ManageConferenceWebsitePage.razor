@@ -1,0 +1,198 @@
+﻿@page "/c/managewebsite/{ConferenceId}"
+
+@inject Services.UserConferenceAuthService conferenceAuthService
+@inject MUNity.Database.Context.MunityContext dbContext
+
+@if (isAllowed)
+{
+    <div class="row">
+        <div class="col-3">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Seiten und Menü</h4>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        @foreach (var menuItem in dbContext.ConferenceWebMenuEntries.Include(n => n.ChildEntries).Where(n => n.Conference.ConferenceId == ConferenceId && n.Parent == null))
+                        {
+                            @if (menuItem.ChildEntries.Count == 0)
+                            {
+                                <li>
+                                    <a class="cursor-pointer" @onclick="() => ChangeLoadedPage(menuItem)">
+                                        <i class="fa fa-file text-warning fa-lg"></i> @menuItem.Title
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+
+                                <li>
+                                    <span class="jstree-anchor" href="#">
+                                        <i class="fa fa-folder text-primary fa-lg"></i>
+                                        @menuItem.Title
+                                    </span>
+                                    <ul>
+                                        @foreach (var subItem in menuItem.ChildEntries)
+                                        {
+                                            <li><a class="cursor-pointer" @onclick="() => ChangeLoadedPage(subItem)"><i class="fa fa-file text-warning fa-lg"></i> @subItem.Title</a></li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+
+                        }
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-9">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Seite Bearbeiten</h4>
+                </div>
+                <div class="panel-body">
+                    @if (loadedPage != null)
+                    {
+                        <button class="btn btn-default" style="position: absolute; left: auto; right: 50px; top: 10px; bottom: auto;">Speichern</button>
+
+                        <div class="form-group">
+                            <label>Seitentitel</label>
+                            <input class="form-control" @bind="loadedPage.Title" />
+                            <small>Dieser Name ist nicht automatisch der gleiche, wie der Name im Menü.</small>
+                        </div>
+
+                        <div class="row">
+                            <p>Komponenten: @loadedPage.Components.Count</p>
+                        </div>
+
+                        @foreach (var component in loadedPage.Components.OrderBy(n => n.SortOrder))
+                        {
+                            if (component is MUNity.Database.Models.Website.WebPageTextElement textElement)
+                            {
+                                <div class="col-12">
+                                    <div class="panel panel-inverse">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">Text</h4>
+                                            <div class="panel-heading-btn">
+                                                <a @onclick="() => dbContext.Update(textElement)" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-save"></i></a>
+                                                <a href="javascript:;" class="btn btn-sm btn-icon btn-success"><i class="fa fa-arrow-up"></i></a>
+                                                <a href="javascript:;" class="btn btn-sm btn-icon btn-warning"><i class="fa fa-arrow-down"></i></a>
+                                                <a href="javascript:;" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <RadzenHtmlEditor @bind-Value=@textElement.Content style="height: 500px; margin-bottom: 1rem;" />
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (component is MUNity.Database.Models.Website.TeamCardsElement teamCard)
+                            {
+                                <div class="col-12">
+                                    <div class="panel panel-inverse">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">Text</h4>
+                                            <div class="panel-heading-btn">
+                                                <a @onclick="() => dbContext.Update(teamCard)" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-save"></i></a>
+                                                <a href="javascript:;" class="btn btn-sm btn-icon btn-success"><i class="fa fa-arrow-up"></i></a>
+                                                <a href="javascript:;" class="btn btn-sm btn-icon btn-warning"><i class="fa fa-arrow-down"></i></a>
+                                                <a href="javascript:;" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (component is MUNity.Database.Models.Website.CommitteeTopicsElement topcis)
+                            {
+                                topcis.Committee = dbContext.ConferenceWebPageCommitteeTopicsElements.Where(n => n.ConferenceWebPageComponentId == topcis.ConferenceWebPageComponentId).Select(n => n.Committee).FirstOrDefault();
+                <div class="col-12">
+                    <div class="panel panel-inverse">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Automatisch Generierte Komponente: Themen des Gremiums</h4>
+                            <div class="panel-heading-btn">
+                                <a @onclick="() => dbContext.Update(topcis)" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-save"></i></a>
+                                <a href="javascript:;" class="btn btn-sm btn-icon btn-success"><i class="fa fa-arrow-up"></i></a>
+                                <a href="javascript:;" class="btn btn-sm btn-icon btn-warning"><i class="fa fa-arrow-down"></i></a>
+                                <a href="javascript:;" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <label>Gremium</label>
+                            <RadzenDropDown class="form-control" TextProperty="Name" TValue="MUNity.Database.Models.Conference.Committee" Data="@dbContext.Committees.Where(n => n.Conference.ConferenceId == ConferenceId)" @bind-Value="topcis.Committee" />
+                        </div>
+                    </div>
+                </div>
+                            }
+                            else if (component is MUNity.Database.Models.Website.CommitteeDelegatesElement delegates)
+                            {
+                <div class="col-12">
+                    <div class="panel panel-inverse">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Automatisch Generierte Komponente: Liste von Sitzen</h4>
+                            <div class="panel-heading-btn">
+                                <a @onclick="() => dbContext.Update(delegates)" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-save"></i></a>
+                                <a href="javascript:;" class="btn btn-sm btn-icon btn-success"><i class="fa fa-arrow-up"></i></a>
+                                <a href="javascript:;" class="btn btn-sm btn-icon btn-warning"><i class="fa fa-arrow-down"></i></a>
+                                <a href="javascript:;" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            }
+                            else
+                        {
+                            <div class="col-12">
+                                <div class="alert alert-danger">Unbekanntes Element: @component.GetType().Name</div>
+                            </div>
+                        }
+                        }
+                    }
+                    else
+                {
+                    <p>Keine Seite geladen. Bitte im Menü eine Seite auswählen um diese zu bearbeiten!</p>
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+ else
+{
+    <p>Zugriff verweigert</p>
+}
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private bool isAllowed;
+
+    private MUNity.Database.Models.Website.ConferenceWebPage loadedPage;
+
+    private void ChangeLoadedPage(MUNity.Database.Models.Website.ConferenceWebMenuEntry selectedMenuEntry)
+    {
+        if (selectedMenuEntry == null)
+        {
+            loadedPage = null;
+            return;
+        }
+
+        this.loadedPage = dbContext.ConferenceWebMenuEntries.Where(n => n.ConferenceWebMenuEntryId == selectedMenuEntry.ConferenceWebMenuEntryId)
+            .Include(n => n.TargetedPage)
+            .ThenInclude(n => n.Components)
+            .Select(n => n.TargetedPage)
+            .FirstOrDefault();
+        if (this.loadedPage == null)
+            Console.WriteLine("Error loading page!");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        this.isAllowed = await conferenceAuthService.IsUserAllowedToEditConference(ConferenceId, AuthStateTask);
+    }
+}

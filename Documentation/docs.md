@@ -1,17 +1,17 @@
 # MUNity Docs
 
-## The Backend
+## MUNityBase
 
-### Database
+## MUNity Database
 
-For Database access MUNity uses the Entity Framework Core version 5.
+Learn how to load and store data inside the MUNity Database structure.
 
-The DbContextfile can be found [src/MUNityCore/DatabaseHandlers/EntityFramework](../src/MUNityCore/DataHandlers/EntityFramework/MunityContext.cs)
+### Basics
 
-### Services
+* [Create Models/Tables and edit them](database/database-basics.md)
 
-Between the REST API Controllers and the database munity uses the Services. They can be found under: src/MUNityCore/Services.
-
-## Frontend
-
-Learn about the frontend development [here](Forntend/startFrontend.md)
+### Conference
+* [Create a conference](database/conference/createconference.md)
+* [Add Committees to a conference](database/conference/committees.md)
+* [Add Roles to a conference](database/conferences/../conference/roles.md)
+* [Manage participations of users inside a conference](database/conference/participation.md)

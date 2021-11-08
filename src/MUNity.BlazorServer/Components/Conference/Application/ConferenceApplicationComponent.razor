@@ -1,0 +1,58 @@
+﻿@using MUNity.Schema.Conference
+
+@inject Services.ConferenceApplicationService applicationService
+
+<div class="panel panel-inverse" data-sortable-id="form-stuff-1">
+    <!-- BEGIN panel-heading -->
+    <div class="panel-heading ui-sortable-handle">
+        <h4 class="panel-title">Bewerbung</h4>
+    </div>
+    <!-- END panel-heading -->
+    <!-- BEGIN panel-body -->
+    <div class="panel-body">
+        @if (this.userState != null)
+        {
+            @if (this.userState.Status == FindUserForApplicationResult.ResultStatuses.CanBeAdded)
+            {
+                <ConferenceApplicationProcessComponent ConferenceId="@ConferenceId" />
+            }
+            else if (this.userState.Status == FindUserForApplicationResult.ResultStatuses.AlreadyApplying)
+            {
+                <div class="row">
+                    <div class="alert alert-info">
+                        <h4>Hallo @this.userState.ForeName @this.userState.LastName</h4>
+                        <p>
+                            Sie bewerben sich bereits auf diese Konferenz. Möglicherweise haben Sie diese Bewerbung nicht selbst eingereicht, sondern wurden in der Bewerbung einer anderen Person verlinkt.
+                            Falls Sie mehr dazu sehen wollen öffnen Sie <a>Meine Bewerbungen</a> und sehen Sie nach ob dort eine Bewerbung für diese Konferenz erscheint.
+                        </p>
+                    </div>
+                </div>
+            }
+            else if (this.userState.Status == FindUserForApplicationResult.ResultStatuses.AlreadyParticipating)
+            {
+                <div class="row">
+                    <div class="alert alert-info">
+                        <h4>Hallo @this.userState.ForeName @this.userState.LastName</h4>
+                        <p>
+                            Sie nehmen bereits an dieser Konferenz teil. Dadurch ist eine Bewerbung für Sie nicht mehr möglich.
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthState { get; set; }
+
+    private FindUserForApplicationResult userState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var claim = (await AuthState)?.User;
+        userState = this.applicationService.FindUserToAddToDelegationApplication(claim.Identity.Name, ConferenceId);
+    }
+}

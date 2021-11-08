@@ -1,5 +1,5 @@
-﻿using MUNity.Models.ListOfSpeakers;
-using MUNity.Schema.ListOfSpeakers;
+﻿using MUNity.Schema.ListOfSpeakers;
+using MUNity.ViewModels.ListOfSpeakers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,7 +30,7 @@ namespace MUNity.Hubs
         /// <returns></returns>
         Task QuestionTimerStarted(DateTime questionStartTime);
 
-        Task SpeakerAdded(Speaker speaker);
+        Task SpeakerAdded(SpeakerViewModel speaker);
 
         /// <summary>
         /// Gets called when a speaker or question gets removed

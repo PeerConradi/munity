@@ -1,0 +1,67 @@
+﻿@page "/c/manageteam/{Id}"
+
+@inject Services.ConferenceService conferenceService;
+
+@if (team != null)
+{
+    <BreadcrumbComponent Source="team" PageName="Team" />
+
+    <h1 class="page-header mb-3">@team.ConferenceName <small>Teamverwaltung</small></h1>
+
+    <div class="row">
+
+        @if (team.RoleGroups != null && team.RoleGroups.Count > 0)
+        {
+            foreach (var teamRoleGroup in team.RoleGroups)
+            {
+                <MUNity.BlazorServer.Components.Conference.TeamRoleGroupManageComponent Group="teamRoleGroup"
+                                                                                        RequestAddRole="(id) => createRoleModal.Show(id)"/>
+            }
+        }
+
+
+        <div class="col-12 mb-15px">
+            <div class="card">
+                <div class="card-header">
+                    <button class="btn btn-block w-100 btn-primary" @onclick="() => createGroupModal.Show()">Gruppe hinzufügen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Team wird geladen</p>
+}
+
+
+<MUNity.BlazorServer.Components.Conference.CreateTeamRoleGroupModal @ref="createGroupModal"
+                                                                    ConferenceId="@Id"
+                                                                    GroupCreated="ReloadData"
+                                                                    />
+
+<MUNity.BlazorServer.Components.Conference.CreateTeamRoleModal @ref="createRoleModal"
+                                                               GroupInfos="@team?.RoleGroups"
+                                                               RolesChanged="ReloadData"/>
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    private MUNity.Schema.Conference.ManageTeamInfo team;
+
+    MUNity.BlazorServer.Components.Conference.CreateTeamRoleGroupModal createGroupModal;
+
+    MUNity.BlazorServer.Components.Conference.CreateTeamRoleModal createRoleModal;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ReloadData();
+    }
+
+    private void ReloadData()
+    {
+        team = conferenceService.GetTeamDashboard(Id);
+        this.InvokeAsync(StateHasChanged);
+    }
+}

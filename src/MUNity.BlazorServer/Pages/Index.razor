@@ -1,0 +1,47 @@
+﻿@layout MUNity.BlazorServer.Shared.FrontEndLayout
+@page "/"
+@using MUNity.Schema.Conference
+@inject Services.ConferenceService conferenceService
+@inject MUNity.Database.Context.MunityContext context
+
+@*<div class="card border-0 text-white bg-dark-900 mb-3">
+    <div class="h-250px rounded-top card-img" 
+     style="background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)), url(/img/logo/MUNityLogoNoBorder.png); background-position: center; background-size: cover; background-repeat: no-repeat; "></div>
+    <div class="card-img-overlay">
+        <h2 class="card-title fs-54px">MUNity</h2>
+        <p class="card-text fs-24px">MUNity ist zurück, mit vielen neuen Funktionen. Wir unterstützen euch gerne bei euren Model United Nations Konferenzen mit kostenfreien online Diensten.</p>
+    </div>
+</div>*@
+
+<div class="row">
+    @foreach (var conferenceCard in context.ConferenceDashboardCards
+        .Include(n => n.Conference)
+        .Where(n => n.Active))
+    {
+        <div class="col-6">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="card-title">@conferenceCard.Title</h4>
+                    <p>@conferenceCard.Text</p>
+                    <a href="/web/conference/@conferenceCard.Conference.ConferenceId/start" class="btn btn-sm btn-primary">Seite öffnen</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code
+{
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private List<ConferenceBoardInfo> conferenceBoardInfos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            conferenceBoardInfos = await conferenceService.GetConferenceBoardInfosAsync(claim);
+        }
+    }
+}

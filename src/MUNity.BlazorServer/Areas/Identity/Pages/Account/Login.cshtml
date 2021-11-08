@@ -1,0 +1,74 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<!-- begin login -->
+<div class="login login-with-news-feed">
+	<!-- begin news-feed -->
+	<div class="news-feed">
+		<div class="news-image" style="background-image: url(/img/login-bg/login-bg-11.jpg)"></div>
+		<div class="news-caption">
+			<h4 class="caption-title"><b>MUNity</b> Login</h4>
+			<p>
+				Anmelden für erweiterte Funktionen.
+			</p>
+		</div>
+	</div>
+	<!-- end news-feed -->
+
+	<div class="login-container">
+		<!-- begin login-header -->
+		<div class="login-header mb-30px">
+            <div class="brand">
+                <div class="d-flex align-item-center">
+                    <span class="logo"></span> <b>MUNity</b> Login
+                </div>
+                <small>Anmledung für Pro-User</small>
+            </div>
+			<div class="icon">
+				<i class="oi oi-account-login"></i>
+			</div>
+		</div>
+		<!-- end login-header -->
+		<!-- begin login-content -->
+		<div class="login-content">
+			<form id="account" method="post" class="fs-13px">
+				<div class="form-floating mb-15px">
+					<input type="text" asp-for="Input.Username" class="form-control h-45px fs-13px" placeholder="Username" id="usernameInput" required />
+                    <label for="usernameInput" class="d-flex align-items-center fs-13px text-gray-600">Benutzername</label>
+				</div>
+                <div class="form-floating mb-15px">
+                    <input type="password" asp-for="Input.Password" class="form-control h-45px fs-13px" placeholder="Password" id="passwordInput" required />
+                    <label for="passwordInput" class="d-flex align-items-center fs-13px text-gray-600">Passwort</label>
+                </div>
+				<div class="form-check mb-30px">
+					<input asp-for="Input.RememberMe" class="form-check-input" type="checkbox" id="remember_me_checkbox" />
+					<label for="remember_me_checkbox" class="form-check-label">
+					Angemeldet bleiben
+					</label>
+				</div>
+				<div class="mb-15px">
+					<button type="submit" class="btn btn-cyan d-block h-45px w-100 btn-lg fs-14px" >Anmelden</button>
+				</div>
+				<div class="mb-40px pb-40px text-inverse">
+					Noch kein Konto? <a href="/Identity/Account/Register" class="text-primary">Jetzt registrieren!</a>
+				</div>
+				<hr />
+				<p class="text-center text-grey-darker mb-0">
+					&copy; MUNity All Right Reserved 2021
+				</p>
+			</form>
+		</div>
+		<!-- end login-content -->
+	</div>
+	<!-- end right-container -->
+</div>
+<!-- end login -->
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

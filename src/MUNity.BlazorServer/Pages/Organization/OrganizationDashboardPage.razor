@@ -1,0 +1,99 @@
+﻿@page "/Organization/{Id}"
+@inject Services.OrganizationService orgaService;
+
+@if (organization != null)
+{
+    <h1 class="page-header">@organization.Name <small>@organization.Short</small></h1>
+
+    <!-- Projekte Board -->
+    <h3>Projekte</h3>
+    @if (organization.Projects.Count == 0)
+    {
+        <p>Noch keine Projekte vorhanden. <button @onclick="() => createProjectModal.Show()" class="btn btn-primary">Projekt erstellen</button></p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var project in organization.Projects)
+            {
+                <div class="col-xl-3 col-md-6">
+                    <!-- Projekte könnten ein Corperate Design bekommen mit Farbcodes -->
+                    <!-- Diese könnten an dieser Stelle geladen werden um die Hintergrundfarbe des -->
+                    <!-- jeweiligen Projektes hier einzufügen. -->
+                    <div class="widget widget-stats bg-blue">
+                        <!-- Das Icon könnte auch durch eine Transparente Version des Logos des Projekts -->
+                        <!-- ausgetauscht werden. -->
+                        <div class="stats-icon"><i class="oi oi-globe"></i></div>
+                        <div class="stats-info">
+                            <h4>@project.Name</h4>
+                            <p>@project.ConferenceCount Konferenzen</p>
+                        </div>
+                        <div class="stats-link">
+                            <a href="/project/@project.ProjectId">Details ansehen <i class="oi oi-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+    }
+    <div class="row">
+        <!-- Memebrs -->
+        <div class="col-xl-4 col-lg-6">
+            <!-- BEGIN panel -->
+            <div class="panel panel-inverse" data-sortable-id="index-4" style="">
+                <div class="panel-heading ui-sortable-handle">
+                    <h4 class="panel-title">Mitglieder</h4>
+                    <span class="badge bg-teal">LoL</span>
+                </div>
+                <ul class="registered-users-list">
+                    @foreach (var member in organization.Memebrs)
+                    {
+                        <li>
+                            <a href="javascript:;"><img src="../assets/img/user/user-5.jpg" alt=""></a>
+                            <h4 class="username text-ellipsis">
+                                @member.Forename @member.LastName (@@@member.MemberUserName)
+                                <small>@member.RoleName</small>
+                            </h4>
+                        </li>
+                    }
+                </ul>
+                <div class="panel-footer text-center">
+                    <a href="javascript:;" class="text-decoration-none text-inverse">Alle Mitglieder anzeigen</a>
+                </div>
+            </div>
+            <!-- END panel -->
+        </div>
+    </div>
+
+
+    <MUNity.BlazorServer.Components.Project.CreateProjectModal
+                                                               OrganizationId="@organization.OrganizationId"
+                                                               @ref="createProjectModal" />
+}
+else
+{
+
+}
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
+
+    private MUNity.Schema.Organization.OrganizationDashboardInfo organization;
+
+    private MUNity.BlazorServer.Components.Project.CreateProjectModal createProjectModal;
+
+    [Parameter] public string Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var userClaim = (await authStateTask)?.User;
+        if (userClaim != null)
+        {
+            organization = orgaService.GetDashboardInfo(Id);
+        }
+        
+    }
+
+}

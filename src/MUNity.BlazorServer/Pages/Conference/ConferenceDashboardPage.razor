@@ -1,0 +1,97 @@
+﻿@page "/c/dashboard/{Id}"
+
+@inject Services.UserConferenceAuthService conferenceAuthService
+@inject MUNity.Database.Context.MunityContext dbContext
+
+@if (isTeamMember)
+{
+    <!-- Title -->
+    <h1 class="page-header">
+        @dbContext.Conferences.Where(n => n.ConferenceId == Id).Select(n => n.ConferenceShort).FirstOrDefault()
+        <small>@dbContext.Conferences.Where(n => n.ConferenceId == Id).Select(n => n.Name).FirstOrDefault()</small>
+    </h1>
+
+    <div class="row">
+        <!-- BEGIN col-3 -->
+        <div class="col-xl-3 col-md-6">
+            <div class="widget widget-stats bg-blue">
+                <div class="stats-icon"><i class="fa fa-desktop"></i></div>
+                <div class="stats-info">
+                    <h4>Gremien</h4>
+                    <p>@dbContext.Committees.Count(n => n.Conference.ConferenceId == Id) </p>
+                </div>
+                <div class="stats-link">
+                    <a href="/c/managecommittees/@Id">Gremien und Themen bearbeiten <i class="fa fa-arrow-alt-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- END col-3 -->
+        <!-- BEGIN col-3 -->
+        <div class="col-xl-3 col-md-6">
+            <div class="widget widget-stats bg-info">
+                <div class="stats-icon"><i class="fa fa-link"></i></div>
+                <div class="stats-info">
+                    <h4>Rollen</h4>
+                    <p>@dbContext.Conferences.Where(n => n.ConferenceId == Id).Select(n => n.Roles.Count).FirstOrDefault()  </p>
+                </div>
+                <div class="stats-link">
+                    <a href="javascript:;">Rollen bearbeiten <i class="fa fa-arrow-alt-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- END col-3 -->
+        <!-- BEGIN col-3 -->
+        <div class="col-xl-3 col-md-6">
+            <div class="widget widget-stats bg-orange">
+                <div class="stats-icon"><i class="fa fa-users"></i></div>
+                <div class="stats-info">
+                    <h4>Delegationen</h4>
+                    <p>@dbContext.Delegations.Count(n => n.Conference.ConferenceId == Id) </p>
+                </div>
+                <div class="stats-link">
+                    <a href="/c/managedelegations/@Id">Delegationen bearbeiten <i class="fa fa-arrow-alt-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- END col-3 -->
+        <!-- BEGIN col-3 -->
+        <div class="col-xl-3 col-md-6">
+            <div class="widget widget-stats bg-red">
+                <div class="stats-icon"><i class="fa fa-clock"></i></div>
+                <div class="stats-info">
+                    <h4>TODO</h4>
+                    <p>00:12:23</p>
+                </div>
+                <div class="stats-link">
+                    <a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- END col-3 -->
+    </div>
+}
+else
+{
+    <p>Zugriff verweigert!</p>
+}
+
+<div class="d-flex flex-wrap">
+    <a class="btn btn-primary me-1 mb-1" href="/c/manageteam/@Id">Team bearbeiten</a>
+    <a class="btn btn-primary me-1 mb-1" href="/c/manageroles/@Id">Teilnehmenden-Rollen bearbeiten</a>
+    <a class="btn btn-primary me-1 mb-1" href="/c/manageapplications/@Id">Bewerbungen/Anmeldungen</a>
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private bool isTeamMember;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var claim = (await AuthStateTask)?.User;
+        this.isTeamMember = await conferenceAuthService.IsUserTeamMember(Id, claim);
+    }
+}

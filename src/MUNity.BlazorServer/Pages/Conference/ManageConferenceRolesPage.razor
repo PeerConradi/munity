@@ -1,0 +1,50 @@
+﻿@page "/c/manageroles/{Id}"
+@using MUNity.Schema.Conference
+@inject Services.ConferenceService conferenceService
+@inject Services.ConferenceRoleService conferenceRoleService
+@inject NotificationService NotificationService
+
+@if (info != null)
+{
+    <BreadcrumbComponent PageName="Rollen" Source="@info"></BreadcrumbComponent>
+
+    <h1 class="page-header">Rollen bearbeiten</h1>
+
+    <MUNity.BlazorServer.Components.Conference.ManageCommitteeRolesPanel Roles="@info.Roles" />
+
+    <MUNity.BlazorServer.Components.Conference.ManageFreeRolesPanel ConferenceId="@Id" 
+                                                                    Countries="@info.Countries" 
+                                                                    Delegations="@info.Delegations"
+                                                                    Roles="@info.Roles"/>
+}
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    [CascadingParameter]
+    public Task<AuthenticationState>
+    AuthStateTask
+    { get; set; }
+
+    private MUNity.Schema.Conference.ConferenceRolesInfo info;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            info = await conferenceService.GetRolesInfo(Id, claim);
+        }
+    }
+
+    
+
+
+}

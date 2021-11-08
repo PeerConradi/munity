@@ -1,0 +1,98 @@
+﻿@page "/c/manageapplications/{Id}/{Tab1}/{Tab2}"
+@page  "/c/manageapplications/{Id}/{Tab1}"
+@page  "/c/manageapplications/{Id}"
+@page "/c/manageapplications/{Id}/application/{ApplicationId}"
+
+@inject NavigationManager navManager
+
+<div class="panel panel-default panel-with-tabs" data-sortable-id="ui-widget-10" data-init="true">
+    <div class="panel-heading ui-sortable-handle">
+        <h4 class="panel-title">Anmeldephase</h4>
+        <ul class="nav nav-tabs">
+            <li class="nav-item"><a @onclick="() => mode = Modes.General" class="nav-link @((mode == Modes.General) ? "active" : null)"><i class="fa fa-cogs"></i> <span class="d-none d-md-inline">Allgemein</span></a></li>
+            <li class="nav-item"><a @onclick="() => mode = Modes.Roles" class="nav-link @((mode == Modes.Roles) ? "active" : null)"><i class="fa fa-home"></i> <span class="d-none d-md-inline">Anmeldearten</span></a></li>
+            <li class="nav-item"><a @onclick="() => mode = Modes.Page" class="nav-link @((mode == Modes.Page) ? "active" : null)"><i class="fa fa-home"></i> <span class="d-none d-md-inline">Formulare</span></a></li>
+            <li class="nav-item"><a @onclick="() => mode = Modes.Invoice" class="nav-link @((mode == Modes.Invoice) ? "active" : null)"><i class="fa fa-user"></i> <span class="d-none d-md-inline">Anmeldungen (Eingang)</span></a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        @if (mode == Modes.General)
+        {
+            <MUNity.BlazorServer.Components.Conference.ManageApplicationSettings ConferenceId="@Id" />
+        }
+        else if (mode == Modes.Roles)
+        {
+
+        }
+        else if (mode == Modes.Page)
+        {
+            <MUNity.BlazorServer.Components.Conference.ManageApplicationFormula ConferenceId="@Id" />
+        }
+        else if (mode == Modes.Invoice)
+        {
+            <MUNity.BlazorServer.Components.Conference.ApplicationInvoice ConferenceId="@Id"
+                                                                          SelectedApplication="@selectedApplication"/>
+        }
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    [Parameter] public string Tab1 { get; set; }
+
+    [Parameter] public string Tab2 { get; set; }
+
+    [Parameter] public string ApplicationId { get; set; }
+
+    private int? selectedApplication { get; set; }
+
+    private enum Modes
+    {
+        General,
+        Roles,
+        Page,
+        Invoice
+    }
+
+    private Modes _mode;
+    private Modes mode
+    {
+        get => _mode;
+        set
+        {
+            if (_mode == value) return;
+            _mode = value;
+            // TODO: Set Uri
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (Tab1 != null)
+        {
+            if (Tab1.ToLower() == "general")
+                mode = Modes.General;
+            else if (Tab1.ToLower() == "roles")
+                mode = Modes.Roles;
+            else if (Tab1.ToLower() == "formula")
+                mode = Modes.Page;
+            else if (Tab1.ToLower() == "invoice")
+                mode = Modes.Invoice;
+        }
+
+        if (ApplicationId != null)
+        {
+            if (int.TryParse(ApplicationId, out int appId))
+            {
+                mode = Modes.Invoice;
+                selectedApplication = appId;
+                InvokeAsync(StateHasChanged);
+            }
+        }
+    }
+}

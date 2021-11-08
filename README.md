@@ -6,29 +6,23 @@ MUNity is a work in progress to create and manage Model United Nations Conferenc
 
 > Note that this Software is still under development.
 
-## General structure
+## Coverage
 
-There are 4 different projects in this project solution. 
-* The Backend, a WebAPI 2.0 (with a Test Project)
-* The MunitySchema, a shared code containing structures and logic that is shared between the FrontEnd and Backend. You can also find this one on nuget. (also with a Test Project)
+Last checked: 16.08.2021
 
-## Status
-This application is under development and cannot be used at the moment. Please check later to see some progress.
+| Project | Description | Status | Test-Coverage |
+|---------|----------|------------------|-----|
+| MUNityBase | Contains base enums and interfaces for the Database and Schema | Mostly done | 100% | 
+| MUNityDatabase | Contains the Database Model and Context | monstly done writing docs and tests | 37,77 % |
+| MUNitySchema | Contains the Data-Transfer-Objects and ViewModels | TODO | TODO |
+| MUNityServices | Contains logic to access the Database and generate Data-Transfer-Objects | TODO | TODO |
+| MUNityBlazorServer | A blazor Server UI for MUNity using the MUNityServices |TODO | TODO |
+| MUNityWebAPI  | A Web API for MUNity using the MUNityServices | TODO | TODO |
 
-
-| Name                | Status                              | Stage                                                            |
-| ------------------- | ----------------------------------- | ---------------------------------------------------------------- |
-| User Managment      | ![10%](https://progress-bar.dev/10) | Started                                                          |
-| ConferenceManagment | ![21%](https://progress-bar.dev/21) | API Routes needed                                                |
-| ResaEditor          | ![70%](https://progress-bar.dev/70) | Can't create sub operative paragraphs. |
-| Speakerlist         | ![100%](https://progress-bar.dev/100) | Done                                 |
-| Simulation          | ![90%](https://progress-bar.dev/90)   | Simulation internal done needs some more REST API Endpoints.                           |
-| Administration      | ![20%](https://progress-bar.dev/20)   | Base Administration done.                                            |
-| Dockerize           | ![80%](https://progress-bar.dev/80) | Environment Configurations needed for DbConnection Strings       |
 
 ## Documentation
 
-For the developer documentation see: [MUNIty Documentation](Documentation/docs.md)
+For the developer documentation see: [MUNity Documentation](Documentation/docs.md)
 
 ## Setup Development Environment
 
@@ -36,19 +30,7 @@ Check out the [Getting started](Documentation/GettingStarted.md) to learn how yo
 
 ## Installing MUNity on Linux
 
-A guide on how to install munity an an Ubuntu system without using docker can be found here: [here](Documentation/installation.md)
-
 If you want to you can also install munity using docker. Find a tutorial for that [here](Documentation/docker.md)
-
-## Swagger
-
-The project uses swagger. Go to localhost:[port]/swagger to see the auto generated API Documentation.
-
-## Demo
-
-Find a Demo here (MUN-TOOLS)[https://mun-tools.com/]
-
-_The Live Version may not match the current GitHub Version_
 
 ## License Information
 

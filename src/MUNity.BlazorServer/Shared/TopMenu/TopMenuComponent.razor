@@ -1,0 +1,75 @@
+﻿@inject NavigationManager navManager;
+@inject MUNity.Database.Context.MunityContext munityContext
+
+<div id="top-menu" class="app-top-menu">
+    <!-- BEGIN menu -->
+<div class="menu" style="margin-left: @(scrollMarginLeft)px;">
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link">
+            <div class="menu-icon">
+                <i class="oi oi-home"></i>
+            </div>
+            <div class="menu-text">Informationen</div>
+            <div class="menu-caret"></div>
+        </a>
+        <div class="menu-submenu">
+            <div class="menu-item">
+                <a href="index.html" class="menu-link"><div class="menu-text">Start</div></a>
+            </div>
+            <div class="menu-item">
+                <a href="index_v2.html" class="menu-link"><div class="menu-text">FAQ</div></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link">
+            <div class="menu-icon">
+                <i class="oi oi-home"></i>
+            </div>
+            <div class="menu-text">Gremien und Themen</div>
+            <div class="menu-caret"></div>
+        </a>
+        <div class="menu-submenu" style="width: 300px">
+            @foreach (var committee in munityContext.Committees.Where(n => n.Conference.ConferenceId == ConferenceId))
+            {
+                <div class="menu-item">
+                    <a href="index.html" class="menu-link text-wrap"><div class="menu-text">@committee.Name</div></a>
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <div class="menu-item">
+        <a href="@($"/web/conference/{ConferenceId}/register")" class="menu-link">
+            <div class="menu-icon">
+                <i class="oi oi-home"></i>
+            </div>
+            <div class="menu-text">Anmeldung <span class="menu-label">jetzt offen</span></div>
+        </a>
+    </div>
+
+
+    <!-- Start and Stop scroll Buttons -->
+    @*<div class="menu-item menu-control menu-control-start show">
+                <a class="menu-link" @onclick="() => scrollMarginLeft += 200"><i class="fa fa-angle-left"></i></a>
+            </div>
+            <div class="menu-item menu-control menu-control-end show">
+                <a class="menu-link"  @onclick="() => scrollMarginLeft -= 200"><i class="fa fa-angle-right"></i></a>
+            </div>
+        </div>*@
+    <!-- END menu -->
+</div>
+</div>
+@code {
+    private int scrollMarginLeft = 0;
+
+    private string ConferenceId => navManager.Uri.Split("/")[5];
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+        }
+}

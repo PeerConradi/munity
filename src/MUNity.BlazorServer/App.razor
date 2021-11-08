@@ -1,0 +1,22 @@
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <MUNity.BlazorServer.Components.General.ErrorComponent
+                                                                       Title="404"
+                                                                       SubTitle="We couldn't find it...">
+                    <div class="error-desc mb-4">
+                        The page you're looking for doesn't exist. <br>
+                        Perhaps, there pages will help find what you're looking for.
+                    </div>
+                    <div>
+                        <a href="/" class="btn btn-success px-3">Go Home</a>
+                    </div>
+                </MUNity.BlazorServer.Components.General.ErrorComponent>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

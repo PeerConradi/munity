@@ -1,0 +1,85 @@
+﻿@inject IAuthorizationService authService;
+@inject MUNity.Services.OrganizationService orgaService;
+
+
+@if (this.response == null)
+{
+    <EditForm Model="@createRequest" OnValidSubmit="Submit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        
+        <div class="row mb-15px">
+            <label class="form-label col-form-label col-md-3">Name</label>
+            <div class="col-md-9">
+                <InputText type="text" @bind-Value="@createRequest.Name" class="form-control mb-5px" placeholder="Name" />
+                <small class="fs-12px text-gray-500-darker">Der vollständige Name der anzulegenen Organisation wie: MUN-Muster e.V. oder Hochschule Musterstadt</small>
+            </div>
+        </div>
+
+        <div class="row mb-15px">
+            <label class="form-label col-form-label col-md-3">Kürzel</label>
+            <div class="col-md-9">
+                <InputText type="text" @bind-Value="@createRequest.ShortName" class="form-control mb-5px" placeholder="Kürzel" />
+                <small class="fs-12px text-gray-500-darker">Ein Kürzel für die Oganisation wie hsm. Diese wird ggf. als Id verwendet um lesbarere URLs zu generieren.</small>
+            </div>
+        </div>
+
+        <button class="btn btn-primary w-100px me-5ox">Erstellen</button>
+    </EditForm>
+}
+else
+{
+    if (response.Status == Schema.Organization.CreateOrganizationResponse.CreateOrgaStatusCodes.Success)
+    {
+        <div class="alert alert-success">
+            <strong>Erfolgreich</strong>
+            Juhu! Wir konnten deine Organisation mit bei uns aufnehmen. Diese darf nun auch Projekte und Konferenzen anlegen.
+            <a>Zur Organisationsseite</a>
+        </div>
+    }
+    else if (response.Status == Schema.Organization.CreateOrganizationResponse.CreateOrgaStatusCodes.NameTaken)
+    {
+        <div class="alert alert-danger">
+            <strong>Fehler</strong>
+            Oh nein :( Wir haben bei uns bereits eine Organisation mit diesem Namen gefunden. Um verwirrung zu vermeiden erlauben wir jeden Namen nur ein Mal.
+        </div>
+    }
+    else if (response.Status == Schema.Organization.CreateOrganizationResponse.CreateOrgaStatusCodes.ShortTaken)
+    {
+        <div class="alert alert-danger">
+            <strong>Fehler</strong>
+            Oh nein :( Das Kürzel welches du eingegeben hast wird bereits von einer Organisation verwendet. Damit keine Verwirrung aufkommt darf jedes Kürzel nur ein Mal verwendet werden.
+        </div>
+    }
+    else if (response.Status == Schema.Organization.CreateOrganizationResponse.CreateOrgaStatusCodes.Error)
+    {
+        <div class="alert alert-danger">
+            <strong>Fehler</strong>
+            Oh Schreck! Es ist ein unerwarteter Fehler aufgetreten. Wir können die leider nicht mehr dazu sagen, aber möglicherweise bist du nicht korrekt angemeldet.
+        </div>
+    }
+}
+
+
+@code {      
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    MUNity.Schema.Organization.CreateOrganizationRequest createRequest;
+
+    MUNity.Schema.Organization.CreateOrganizationResponse response;
+
+    protected override void OnInitialized()
+    {
+        createRequest = new Schema.Organization.CreateOrganizationRequest();
+        base.OnInitialized();
+    }
+
+    private async Task Submit()
+    {
+        var user = (await authenticationStateTask).User;
+        this.response = await orgaService.CreateOrganizationAsync(createRequest, user);
+
+
+    }
+}

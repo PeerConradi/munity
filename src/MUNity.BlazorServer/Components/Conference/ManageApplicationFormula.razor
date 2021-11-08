@@ -1,0 +1,53 @@
+﻿@using MUNity.Database.Models.Website
+@using MUNity.Database.Context
+@using Microsoft.EntityFrameworkCore
+@inject Services.UserConferenceAuthService conferenceAuthService
+@inject MunityContext dbContext
+
+@if (isAuthorized)
+{
+    <div class="row">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a href="#default-tab-1" data-bs-toggle="tab" class="nav-link active">
+                    <span class="d-sm-none">Auf Delegation</span>
+                    <span class="d-sm-block d-none">Auf Delegation</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#default-tab-2" data-bs-toggle="tab" class="nav-link">
+                    <span class="d-sm-none">Auf Rolle</span>
+                    <span class="d-sm-block d-none">Auf Rolle</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-pane fade active show" id="default-tab-1">
+        <ManageApplicationFormulaDelegation ConferenceId="@ConferenceId" />
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">
+        Keine Berechtigung Änderungen vor zu nehmen!
+    </div>
+}
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private bool isAuthorized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            this.isAuthorized = await conferenceAuthService.IsUserAllowedToEditConference(ConferenceId, claim);
+        }
+    }
+}

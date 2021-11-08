@@ -1,0 +1,16 @@
+﻿<tr>
+    <td>@Seat.RoleId</td>
+    <td>@Seat.RoleName</td>
+    <td>@Seat.CountryId</td>
+    <td>@Seat.DelegationId</td>
+    <td>@Seat.Subtypes</td>
+    <td>Max Mustermann <br /> Mike Litoris</td>
+</tr>
+
+@code {
+    [Parameter] public MUNity.Schema.Conference.CommitteeSeatInfo Seat { get; set; }
+
+    [Parameter] public List<MUNity.Schema.Conference.CountryInfo> Countries { get; set; }
+
+    [Parameter] public List<MUNity.Schema.Conference.DelegationInfo> Delegations { get; set; }
+}

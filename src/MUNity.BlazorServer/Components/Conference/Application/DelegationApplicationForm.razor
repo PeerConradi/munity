@@ -1,0 +1,79 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using MUNity.BlazorServer.Components.Conference.Application
+@using MUNity.Base
+
+@inject MUNity.Database.Context.MunityContext context
+@inject UserManager<MUNity.Database.Models.User.MunityUser> userManager
+
+@if (application != null)
+{
+
+    @if (step == 0)
+    {
+        <ApplicationUsersSelection ConferenceId="@ConferenceId" Application="application" UsersSelected="() => step = 1" />
+    }
+    else if (step == 1)
+    {
+        <div class="row">
+            <button class="btn btn-primary" @onclick="() => step = 0">Zurück zur Benutzerauswahl</button>
+        </div>
+        <SelectableDelegationsComponent Application="@application" ConferenceId="@ConferenceId" DelegationsAdded="() => step = 2" UseOnlineMode="@UseOnlineMode" />
+    }
+    else if (step == 2)
+    {
+        <DelegationApplicationFieldsComponent ConferenceId="@ConferenceId" Application="@application" Finished="() => step = 3" />
+    }
+    else if (step == 3)
+    {
+        <ApplicationReviewComponent Application="@application" ConferenceId="@ConferenceId" />
+    }
+}
+
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    [Parameter] public string ConferenceId { get; set; }
+
+    private int step = 0;
+
+    [Parameter] public EventCallback<int> StepChanged { get; set; }
+
+    [Parameter] public bool UseOnlineMode { get; set; } = false;
+
+    private MUNity.Database.Models.Conference.DelegationApplication application;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        application = new Database.Models.Conference.DelegationApplication()
+        {
+            Status = MUNity.Base.ApplicationStatuses.Writing,
+            Conference = context.Conferences.Find(ConferenceId)
+        };
+
+        var claim = (await AuthStateTask)?.User;
+        var me = await userManager.GetUserAsync(claim);
+
+        application.Users = new List<MUNity.Database.Models.Conference.DelegationApplicationUserEntry>();
+        application.Users.Add(new Database.Models.Conference.DelegationApplicationUserEntry()
+        {
+            Application = application,
+            CanWrite = true,
+            Status = DelegationApplicationUserEntryStatuses.Joined,
+            User = me
+        });
+
+        application.DelegationWishes = new List<MUNity.Database.Models.Conference.DelegationApplicationPickedDelegation>();
+
+        application.FormulaInputs = new List<Database.Models.Conference.ConferenceDelegationApplicationFieldInput>();
+
+        // This is a quickfix to jump directly into the Delegation Selection
+        if (UseOnlineMode)
+        {
+            this.step = 1;
+        }
+    }
+}

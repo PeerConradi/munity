@@ -140,5 +140,16 @@ namespace MunityNUnitTest.ResolutionTest
             amendment.Deny(resolution.OperativeSection);
             Assert.IsFalse(resolution.OperativeSection.Paragraphs.Any());
         }
+
+        [Test]
+        public void RemoveOperativeParagraphRemovedAmendment()
+        {
+            var resolution = new Resolution();
+            var amendment = resolution.OperativeSection.CreateAddAmendment(0, "Test");
+            var paragraph = resolution.OperativeSection.FindOperativeParagraph(amendment.TargetSectionId);
+            Assert.NotNull(paragraph);
+            resolution.OperativeSection.RemoveOperativeParagraph(paragraph);
+            Assert.AreEqual(0, resolution.OperativeSection.AddAmendments.Count);
+        }
     }
 }

@@ -1,11 +1,11 @@
-﻿using MUNity.Models.ListOfSpeakers;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MUNity.Extensions.LoSExtensions;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNity.ViewModels.ListOfSpeakers;
+using MUNity.Base;
 
 namespace MunityNUnitTest.ListOfSpeakerTest
 {
@@ -20,7 +20,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestCreate()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             Assert.NotNull(instance);
             Assert.NotNull(instance.Speakers);
             Assert.NotNull(instance.Questions);
@@ -34,7 +34,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestAddSpeaker()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             var speaker = instance.AddSpeaker("Speaker 1");
             Assert.NotNull(speaker);
             Assert.IsTrue(instance.Speakers.Any(n => n.Name == "Speaker 1"));
@@ -46,7 +46,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestNextSpeakerRemovesFromList()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             var speaker = instance.AddSpeaker("Speaker 1");
             instance.NextSpeaker();
             Assert.IsFalse(instance.Speakers.Any());
@@ -59,7 +59,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestNextSpeakerSetsCurrentSpeaker()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             var speaker = instance.AddSpeaker("Speaker 1");
             instance.NextSpeaker();
             Assert.AreEqual(speaker, instance.CurrentSpeaker);
@@ -72,18 +72,19 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestNextSpeakerSettingTime()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.SpeakerTime = new TimeSpan(0, 0, 0, 30);
             var speaker = instance.AddSpeaker("Speaker 1");
             instance.NextSpeaker();
             instance.ResumeSpeaker();
-            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds < 31);
+            Assert.AreEqual(30, instance.RemainingSpeakerTime.TotalSeconds, 1);
+            //Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds < 31);
         }
 
         [Test]
         public void TestAddQuestion()
         {
-            var myListOfSpeakers = new ListOfSpeakers();
+            var myListOfSpeakers = new ListOfSpeakersViewModel();
             var question = myListOfSpeakers.AddQuestion("Question 1");
             Assert.IsTrue(myListOfSpeakers.Questions.Any());
             Assert.IsTrue(myListOfSpeakers.Questions.Contains(question));
@@ -92,7 +93,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestNextQuestionsSetsCurrentQuestion()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             var question = instance.AddQuestion("Question");
             instance.NextQuestion();
             Assert.IsTrue(instance.CurrentQuestion == question);
@@ -101,7 +102,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestNextQuestionRemovesQuestionFromList()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             var question = instance.AddQuestion("Question");
             instance.NextQuestion();
             Assert.IsFalse(instance.Questions.Any());
@@ -110,7 +111,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestStartQuestionFromStopResetsTime()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.QuestionTime = new TimeSpan(0, 0, 30);
             var question = instance.AddQuestion("Question");
             instance.NextQuestion();
@@ -123,12 +124,13 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestAnswerSetsTimeToQuestionTime()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.QuestionTime = new TimeSpan(0, 0, 30);
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
             instance.StartAnswer();
-            Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds <= 30);
+            Assert.AreEqual(30, instance.RemainingSpeakerTime.TotalSeconds, 1);
+            //Assert.IsTrue(instance.RemainingSpeakerTime.TotalSeconds >= 29 && instance.RemainingSpeakerTime.TotalSeconds <= 30);
         }
 
 
@@ -136,7 +138,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestNextSpeakerEmptyListCearsCurrent()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
             instance.NextSpeaker();
@@ -147,7 +149,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestNextQuestionEmptyListClearsCurrent()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddQuestion("Question");
             instance.NextQuestion();
             instance.NextQuestion();
@@ -158,79 +160,79 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestNextSpeakerWhileActiveSpeakerPauses()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
             instance.ResumeSpeaker();
             instance.AddQuestion("New Question");
             instance.NextQuestion();
-            Assert.AreEqual(ListOfSpeakers.EStatus.SpeakerPaused, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.SpeakerPaused, instance.Status);
         }
 
         [Test]
         public void TestStartSpeakerWithoutCurrentStopsList()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.ResumeSpeaker();
-            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.Stopped, instance.Status);
         }
 
         [Test]
         public void TestStartAnswerWithoutCurrentSpeakerStopsList()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.StartAnswer();
-            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.Stopped, instance.Status);
         }
 
         [Test]
         public void TestStartQuestionWithoutCurrentStopsList()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.ResumeQuestion();
-            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.Stopped, instance.Status);
         }
 
         [Test]
         public void TestPauseWhileSpeakingPausesSpeaker()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
             instance.ResumeSpeaker();
-            Assert.AreEqual(ListOfSpeakers.EStatus.Speaking, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.Speaking, instance.Status);
             instance.Pause();
-            Assert.AreEqual(ListOfSpeakers.EStatus.SpeakerPaused, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.SpeakerPaused, instance.Status);
         }
 
         [Test]
         public void TestPauseWHileQUestionPausesQuestion()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddQuestion("Question");
             instance.NextQuestion();
             instance.ResumeQuestion();
-            Assert.AreEqual(ListOfSpeakers.EStatus.Question, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.Question, instance.Status);
             instance.Pause();
-            Assert.AreEqual(ListOfSpeakers.EStatus.QuestionPaused, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.QuestionPaused, instance.Status);
         }
 
         [Test]
         public void TestPauseWhileAnswerPausesAnswer()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
             instance.StartAnswer();
-            Assert.AreEqual(ListOfSpeakers.EStatus.Answer, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.Answer, instance.Status);
             instance.Pause();
-            Assert.AreEqual(ListOfSpeakers.EStatus.AnswerPaused, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.AnswerPaused, instance.Status);
         }
 
         [Test]
         public void TestResumeSpeakerAsStartResetsTime()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.SpeakerTime = new TimeSpan(0, 0, 30);
             instance.AddSpeaker("Speaker One");
             instance.NextSpeaker();
@@ -246,7 +248,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestAddedQuestionKeepsOrder()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddQuestion("Question 1");
             instance.AddQuestion("Question 2");
             Assert.AreEqual(0, instance.Questions.ElementAt(0).OrdnerIndex);
@@ -258,7 +260,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestAddedSpeakerKeepsOrder()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddSpeaker("Speaker 1");
             instance.AddSpeaker("Speaker 2");
             Assert.AreEqual(0, instance.Speakers.ElementAt(0).OrdnerIndex);
@@ -270,7 +272,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestResetSpeakerTime()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.SpeakerTime = new TimeSpan(0, 0, 30);
             instance.AddSpeaker("Speaker 1");
             instance.NextSpeaker();
@@ -284,7 +286,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestResetQuestionTIme()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddQuestion("Question 1");
             instance.NextQuestion();
             instance.ResumeQuestion();
@@ -297,7 +299,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestResumePausedSpeaker()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.SpeakerTime = new TimeSpan(0, 0, 30);
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
@@ -312,7 +314,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestResumePausedAnswer()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.QuestionTime = new TimeSpan(0, 0, 30);
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
@@ -327,7 +329,7 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestResumePausedQuestion()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.QuestionTime = new TimeSpan(0, 0, 30);
             instance.AddQuestion("Speaker");
             instance.NextQuestion();
@@ -342,24 +344,24 @@ namespace MunityNUnitTest.ListOfSpeakerTest
         [Test]
         public void TestClearCurrentSpeakerWhileSpeaking()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.SpeakerTime = new TimeSpan(0, 0, 30);
             instance.AddSpeaker("Speaker");
             instance.NextSpeaker();
             instance.ResumeSpeaker();
             instance.ClearCurrentSpeaker();
-            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.Stopped, instance.Status);
         }
 
         [Test]
         public void TestClearCurrentQuestionWhileQuestionActive()
         {
-            var instance = new ListOfSpeakers();
+            var instance = new ListOfSpeakersViewModel();
             instance.AddQuestion("Question");
             instance.NextQuestion();
             instance.ResumeQuestion();
             instance.ClearCurrentQuestion();
-            Assert.AreEqual(ListOfSpeakers.EStatus.Stopped, instance.Status);
+            Assert.AreEqual(ESpeakerListStatus.Stopped, instance.Status);
         }
     }
 }

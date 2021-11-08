@@ -1,0 +1,33 @@
+﻿<div class="col-6 padding-on-lg animate__animated animate__fadeInUp">
+    <div class="card shadow shadow-sm cursor-pointer"  @onclick="() => ApplicationTypeSelected.InvokeAsync(ApplicationType.Role)">
+        <img class="card-img-top" src="/img/cards/conference_alone2.png" alt="">
+        <div class="card-body">
+            <h4 class="card-title mb-10px">Einzelbewerbung</h4>
+            <p class="card-text">Ich möchte alleine zur Konferenz kommen.</p>
+            <a href="javascript:;" class="btn btn-sm btn-primary">Mögliche Rollen finden</a>
+        </div>
+    </div>
+</div>
+
+<div class="col-6 padding-on-lg animate__animated animate__fadeInUp">
+    <div class="card shadow shadow-sm  cursor-pointer" @onclick="() => ApplicationTypeSelected.InvokeAsync(ApplicationType.Delegation)">
+        <img class="card-img-top" src="/img/cards/live_group.png" alt="">
+        <div class="card-body">
+            <h4 class="card-title mb-10px">Gruppenbewerbung</h4>
+            <p class="card-text">Ich komme mit Freunden/Mitschülern o.ä. als Gruppe</p>
+            <a href="javascript:;" class="btn btn-sm btn-primary">Gruppe erstellen</a>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public EventCallback<ApplicationType> ApplicationTypeSelected { get; set; }
+
+    public enum ApplicationType
+    {
+        NotSelected,
+        Delegation,
+        Role
+    }
+}

@@ -1,0 +1,228 @@
+﻿@inject MUNity.Database.Context.MunityContext context
+
+@page "/conference/application/review/{ApplicationId:int}"
+
+@if (Application != null && isAllowedToSee)
+{
+    <div class="invoice">
+        <!-- BEGIN invoice-company -->
+        <div class="invoice-company">
+            <span class="float-end hidden-print">
+                @if (Application.Status == MUNity.Base.ApplicationStatuses.Writing)
+                {
+                    <button class="btn btn-outline-warning mb-10px" @onclick="() => FinishApplication()">
+                        <i class="fa fa-arrow-right t-plus-1 text-warning fa-fw fa-lg"></i> Einreichen
+                    </button>
+                }
+                @*<a href="javascript:;" class="btn btn-sm btn-white mb-10px"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Export as PDF</a>
+                    <a href="javascript:;" onclick="window.print()" class="btn btn-sm btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> Print</a>*@
+            </span>
+            Teilnahmebewerbung
+        </div>
+        <!-- END invoice-company -->
+        <!-- BEGIN invoice-header -->
+        <div class="invoice-header">
+            <div class="invoice-from">
+                <small>Von:</small>
+                <address class="mt-5px mb-5px">
+                    <strong class="text-inverse">BewerberInnen</strong><br>
+                    @foreach (var user in this.Application.Users)
+                    {
+                        <span>@user.User.Forename @user.User.Lastname (@@@user.User.UserName)</span><br>
+                    }
+                </address>
+
+            </div>
+
+            <div class="invoice-to">
+                <small>Für</small>
+                @if (conference != null)
+                {
+                    <address class="mt-5px mb-5px">
+                        <strong class="text-inverse">@conference.ConferenceShort</strong><br>
+                        @conference.FullName<br>
+                        @if (conference.StartDate != null && conference.EndDate != null)
+                        {
+                            <span>@conference.StartDate.Value.ToShortDateString() - @conference.EndDate.Value.ToShortDateString()</span>
+                        }<br>
+                    </address>
+                }
+            </div>
+
+            <div class="invoice-date">
+                <small>Invoice / July period</small>
+                <div class="date text-inverse mt-5px">@Application.ApplyDate.ToString("MMMM dd, yyyy")</div>
+                <div class="invoice-detail">
+                    #@Application.DelegationApplicationId<br>
+                    Delegationsbewerbung
+                </div>
+            </div>
+        </div>
+        <!-- END invoice-header -->
+        <!-- BEGIN invoice-content -->
+        <div class="invoice-content">
+            <!-- BEGIN table-responsive -->
+            <div class="table-responsive">
+                <table class="table table-invoice">
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th>Delegationen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var delegationWish in Application.DelegationWishes)
+                        {
+                            <tr>
+                                <td>#@Application.DelegationWishes.ToList().IndexOf(delegationWish)</td>
+                                <td>
+                                    <span class="text-inverse">@delegationWish.Delegation.Name</span><br>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- END table-responsive -->
+            <!-- BEGIN invoice-price -->
+            <div class="invoice-price">
+                <div class="invoice-price-left">
+                    <div class="invoice-price-row">
+                        <div class="sub-price">
+                            <small>Erfüllt Delegationsgröße</small>
+                            <span class="@((sizeIsCorrect) ? "text-success" : "text-danger")"><i class="fa @((sizeIsCorrect) ? "fa-check" : "fa-times")"></i></span>
+                        </div>
+                        @if (!sizeIsCorrect)
+                        {
+                            <div class="sub-price">
+                                <i class="fa fa-plus text-muted"></i>
+                            </div>
+                            <div class="sub-price">
+                                <small>Öffentlich</small>
+                                <span class="@((Application.OpenToPublic) ? "text-success" : "text-danger")"><i class="fa @((Application.OpenToPublic) ? "fa-check" : "fa-times")"></i></span>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                @if (IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Pending)
+                {
+                    <div class="invoice-price-right bg-success">
+                        <small>Status</small>
+                        <span class="fw-bold">Gültig (eingereicht)</span>
+                    </div>
+                }
+                else if (IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Writing)
+                {
+                    <div class="invoice-price-right bg-warning">
+                        <small>Status</small>
+                        <span class="fw-bold">Gültig (nicht eingereicht)</span>
+                    </div>
+                }
+                else if (!IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Pending)
+                {
+                    <div class="invoice-price-right bg-danger">
+                        <small>Status</small>
+                        <span class="fw-bold">nicht gültig (eingereicht)</span>
+                    </div>
+                }
+                else if (!IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Writing)
+                {
+                    <div class="invoice-price-right bg-danger">
+                        <small>Status</small>
+                        <span class="fw-bold">nicht gültig (nicht eingereicht)</span>
+                    </div>
+                }
+
+            </div>
+            <!-- END invoice-price -->
+        </div>
+        <!-- END invoice-content -->
+        <!-- BEGIN invoice-note -->
+        <div class="invoice-note">
+            * Die zu der Bewerbung eingeladenen Benutzer müssen bis zum Ende der Anmeldephase die Bewerbung bestätigen. Hierfür die Webseite öffnen, einloggen und auf Meine Bewerbungen gehen.<br>
+            * Bei Fragen zu Ihrer Anmeldung können Sie sich jederzeit an unsere Teilnehmendenbetreuung wenden.<br>
+            * Sie können diese Bewerbung unter dem Menüpunkt ,,Meine Bewerbungen´´ jederzeit zurückziehen oder bearbeiten.
+        </div>
+        <!-- END invoice-note -->
+        <!-- BEGIN invoice-footer -->
+        <div class="invoice-footer">
+            <p class="text-center mb-5px fw-bold">
+                Danke für Ihre Bewerbung
+            </p>
+            <p class="text-center">
+                <span class="me-10px"><i class="fa fa-fw fa-lg fa-globe"></i> munbw.de</span>
+                <span class="me-10px"><i class="fa fa-fw fa-lg fa-phone-volume"></i> T:016-18192302</span>
+                <span class="me-10px"><i class="fa fa-fw fa-lg fa-envelope"></i> teilnehmende@@munbw.de</span>
+            </p>
+        </div>
+        <!-- END invoice-footer -->
+    </div>
+}
+else
+{
+    <p>Bewerbung nicht korrekt geladen!</p>
+}
+
+
+
+@code {
+    [Parameter] public MUNity.Database.Models.Conference.DelegationApplication Application { get; set; }
+
+    [Parameter] public string ConferenceId { get; set; }
+
+    [Parameter] public int ApplicationId { get; set; }
+
+    [CascadingParameter] Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private bool IsApproved;
+
+    private bool isAllowedToSee = false;
+
+    private bool sizeIsCorrect;
+
+    private MUNity.Database.Models.Conference.Conference conference;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (Application == null)
+        {
+            Application = context.DelegationApplications
+                .Include(n => n.DelegationWishes)
+                .ThenInclude(n => n.Delegation)
+                .Include(n => n.Users)
+                .ThenInclude(n => n.User)
+                .FirstOrDefault(n => n.DelegationApplicationId == ApplicationId);
+
+            isAllowedToSee = true;  //ToDo: check that only allowed users are able to see the
+                                    // application (if they are in it or have a team role that allows them to see it.
+        }
+        else
+        {
+            isAllowedToSee = true;
+        }
+
+        this.sizeIsCorrect = Application.DelegationWishes.All(n => context.Delegates.Count(a => a.Delegation.DelegationId == n.Delegation.DelegationId) == Application.Users.Count);
+
+        this.IsApproved = this.sizeIsCorrect || (this.sizeIsCorrect && Application.OpenToPublic);
+
+
+        this.conference = context.Conferences.AsNoTracking().FirstOrDefault(n => n.ConferenceId == ConferenceId);
+
+    }
+
+    private void FinishApplication()
+    {
+        if (!this.context.DelegationApplications.Contains(Application))
+        {
+            this.context.DelegationApplications.Add(Application);
+
+        }
+        Application.Status = MUNity.Base.ApplicationStatuses.Pending;
+        var recaff = this.context.SaveChanges();
+
+    }
+}

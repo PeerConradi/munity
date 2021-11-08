@@ -1,0 +1,110 @@
+﻿@using MUNity.Database.Models.Conference
+@using MUNity.Base
+
+@inject MUNity.Database.Context.MunityContext context
+@inject UserManager<MUNity.Database.Models.User.MunityUser> userManager
+
+@if (!finished)
+{
+    <h3>Verfügbare Bewerbungen</h3>
+
+    <h5>Bewerbungen auf die man sich Bewerben kann:</h5>
+    <div class="row">
+        @foreach (var application in context.Fluent.ForConference(ConferenceId).ApplicationsWithFreeSlots()
+         .Include(n => n.DelegationWishes)
+         .ThenInclude(n => n.Delegation)
+         .ThenInclude(n => n.Roles)
+         .Include(n => n.Users))
+        {
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">@application.DelegationApplicationId</h4>
+                        <p>@application.Expose</p>
+                        <h6>Gewünschte Delegationen</h6>
+                        <ul>
+                            @foreach (var delegation in application.DelegationWishes)
+                            {
+                                <li>@delegation.Delegation.Name (@delegation.Delegation.Roles.Count verfügbare Plätze)</li>
+                            }
+                        </ul>
+                        <h6>Anzahl BewerberInnen: @application.Users.Count</h6>
+                        <button class="btn btn-primary" @onclick="() => selectedApplication = application">Anfrage an diese Bewerbung</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (selectedApplication != null)
+    {
+        <div class="modal-backdrop opacity-5"></div>
+        <div class="modal fade show" id="modal-dialog" style="display: block;" aria-modal="true" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal Dialog</h4>
+                        <button type="button" class="btn-close" @onclick="() => selectedApplication = null"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label>Nachricht</label>
+                        <textarea class="form-control" @bind="this.message"></textarea>
+                        <small>Hier können Sie eine kurze Nachricht eingeben, welche den anderen Teilnehmenden in dieser Bewerbung angezeigt wird.</small>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-white" @onclick="() => selectedApplication = null">Close</a>
+                        <a href="javascript:;" class="btn btn-success" @onclick="() => ApplyToSeelctedApplication()">Action</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-success"><b>Erfolgreich!</b> Ihre Anfrage wurde gespeichert.</div>
+                    </div>
+                </div>
+            }
+
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private Database.Models.Conference.DelegationApplication selectedApplication;
+
+    private string message;
+
+    private bool finished;
+
+    private async Task ApplyToSeelctedApplication()
+    {
+        var claim = (await AuthStateTask)?.User;
+
+        if (claim != null && selectedApplication != null)
+        {
+            var user = await userManager.FindByNameAsync(claim.Identity.Name);
+            if (user != null)
+            {
+                var entry = new DelegationApplicationUserEntry()
+                {
+                    User = user,
+                    Application = selectedApplication,
+                    Status = DelegationApplicationUserEntryStatuses.RequestJoining,
+                    CanWrite = false,
+                    Message = message
+                };
+
+                context.DelegationApplicationUserEntries.Add(entry);
+                context.SaveChanges();
+
+                selectedApplication = null;
+                finished = true;
+            }
+        }
+    }
+}

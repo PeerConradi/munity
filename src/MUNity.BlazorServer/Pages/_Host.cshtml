@@ -1,0 +1,84 @@
+﻿@page "/"
+@namespace MUNity.BlazorServer.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MUNity</title>
+    <base href="~/" />
+    @*<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />*@
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="css/site.css" rel="stylesheet" />
+    @*<link href="MUNity.BlazorServer.styles.css" rel="stylesheet" />*@
+    <link href="css/material/app.min.css" rel="stylesheet" />
+    <link href="css/vendor.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
+</head>
+<body>
+    <h3 style="padding: 10%" id="incompatibleBrowser">
+        Ihr Browser ist inkompatibel. Bitte wechseln Sie auf einen moderneren Browser.
+        <br />
+        <a href="https://brave.com/">Brave</a> <br />
+        <a href="https://www.mozilla.org/de/firefox/new/">Firefox</a> <br />
+        <a href="https://www.microsoft.com/de-de/edge">Edge</a> <br />
+        <a href="https://www.google.com/intl/de/chrome/">Chrome</a> <br />
+    </h3>
+
+    <!-- Blazor overlay -->
+    <div id="components-reconnect-modal" class="my-reconnect-modal components-reconnect-hide">
+        <div class="show">
+            <div class="connectionError">
+                <div class="alert alert-danger">Verbindungsabbruch - Verbindung wird wiederhergestellt</div>
+            </div>
+
+        </div>
+        <div class="failed">
+        </div>
+        <div class="rejected">
+        </div>
+    </div>
+
+    @*render-mode="Server"*@
+    <component type="typeof(App)" render-mode="Server" />
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            Es ist ein Fehler aufgetreten. Bitte die Seite neu laden, sollte der Fehler weiterhin bestehen den Support kontaktieren.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Neu laden</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script defer>
+        const supported = (() => {
+            try {
+                if (typeof WebAssembly === "object"
+                    && typeof WebAssembly.instantiate === "function") {
+                    const module = new WebAssembly.Module(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+                    if (module instanceof WebAssembly.Module)
+                        return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
+                }
+            } catch (e) {
+            }
+            return false;
+        })();
+        if (supported) {
+            document.getElementById('incompatibleBrowser').style.display = "none";
+        }
+    </script>
+    
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+
+<script src="_framework/blazor.server.js"></script>
+</body>
+</html>

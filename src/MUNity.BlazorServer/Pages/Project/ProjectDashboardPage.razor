@@ -1,0 +1,104 @@
+﻿@page "/project/{Id}"
+@inject Services.ProjectService projectService
+@inject NavigationManager navManager
+
+@if (info != null)
+{
+    <h1 class="page-header mb-3">@info.Name <small>@info.Short</small></h1>
+
+    <h1 class="page-header mb-3">Konferenzen <small><button class="btn btn-sm btn-primary" @onclick="() => createConferenceModal.Show()">Konferenz hinzufügen</button></small> </h1>
+
+    <!-- Conferences -->
+<div class="row">
+    @foreach (var conference in info.Conferences)
+    {
+        <div @onclick="() => OpenConferenceDashboard(conference.ConferenceId)" class="card border-0 mb-3 overflow-hidden bg-gray-900 text-white" style="cursor: pointer">
+            <!-- BEGIN card-body -->
+            <div class="card-body">
+                <!-- BEGIN row -->
+                <div class="row">
+                    <!-- BEGIN col-7 -->
+                    <div class="col-xl-7 col-lg-8">
+                        <!-- BEGIN title -->
+                        <div class="mb-3 text-gray-300">
+                            <b>@conference.FullName</b>
+                        </div>
+                        <!-- END title -->
+                        <!-- BEGIN total-sales -->
+                        <div class="d-flex mb-1">
+                            @if (conference.StartDate.HasValue && conference.EndDate.HasValue)
+                            {
+                                <h2 class="mb-0">@conference.StartDate.Value.ToShortDateString() - @conference.EndDate.Value.ToShortDateString()</h2>
+                            }
+                            else
+                            {
+                                <h2 class="mb-0">Zeitraum noch nicht festgelegt</h2>
+
+                            }
+                            <div class="ms-auto mt-n1 mb-n1" style="position: relative;">Was kann das hier?</div>
+                        </div>
+                        <!-- END total-sales -->
+                        <!-- BEGIN percentage -->
+                        <div class="mb-3 text-gray-300">
+                            <i class="oi oi-clock"></i> Eingetragen am @conference.CreationDate.ToShortDateString() durch @@@conference.CreationUserUsername
+                        </div>
+                        <!-- END percentage -->
+                        <hr class="bg-white-transparent-5">
+                        <!-- BEGIN row -->
+                        <div class="row text-truncate">
+
+                            <div class="col-4">
+                                <div class="fs-12px text-gray-300">Gremien</div>
+                                <div class="fs-18px mb-5px fw-bold">8</div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="fs-12px text-gray-300">Teilnehmende</div>
+                                <div class="fs-18px mb-5px fw-bold">12</div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="fs-12px text-gray-300">Teammitglieder</div>
+                                <div class="fs-18px mb-5px fw-bold">12</div>
+                            </div>
+                            <!-- END col-6 -->
+                        </div>
+                        <!-- END row -->
+                    </div>
+                    <!-- END col-7 -->
+                    <!-- BEGIN col-5 -->
+                    <div class="col-xl-5 col-lg-4 align-items-center d-flex justify-content-center">
+                        <img src="/img/svg/img-1.svg" height="150px" class="d-none d-lg-block">
+                    </div>
+                    <!-- END col-5 -->
+                </div>
+                <!-- END row -->
+            </div>
+            <!-- END card-body -->
+        </div>
+    }
+
+</div>
+
+    <MUNity.BlazorServer.Components.Conference.CreateConferenceModal @ref="createConferenceModal"
+                                                                     ProjectId="@Id" />
+}
+
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    private MUNity.Schema.Project.ProjectDashboardInfo info;
+
+    private MUNity.BlazorServer.Components.Conference.CreateConferenceModal createConferenceModal;
+
+    protected override void OnInitialized()
+    {
+        info = projectService.GetDashboardInfo(Id);
+    }
+
+    private void OpenConferenceDashboard(string id)
+    {
+        navManager.NavigateTo($"/c/dashboard/{id}");
+    }
+}

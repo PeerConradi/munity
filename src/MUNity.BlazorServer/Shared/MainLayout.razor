@@ -1,0 +1,14 @@
+﻿@inherits LayoutComponentBase
+@*@((mainViewService.ShowSidebar) ? "page-sidebar-toggled" : null)*@
+<div id="app" class="app app-header-fixed app-sidebar-fixed app-content-full-height">
+    <MUNity.BlazorServer.Shared.Header.HeaderComponent />
+    <MUNity.BlazorServer.Shared.Sidebar.SidebarComponent />
+    <div id="content" class="app-content">
+        @Body
+    </div>
+</div>
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenContextMenu />
+<RadzenTooltip />

@@ -1,0 +1,16 @@
+﻿<div class="error">
+    <div class="error-code">@Title</div>
+    <div class="error-content">
+        <div class="error-message">@SubTitle</div>
+        @ChildContent
+        
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; }
+
+    [Parameter] public string SubTitle { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
