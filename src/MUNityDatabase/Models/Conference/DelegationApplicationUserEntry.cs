@@ -1,5 +1,5 @@
-﻿using MUNity.Database.Models.User;
-using MUNityBase;
+﻿using MUNity.Base;
+using MUNity.Database.Models.User;
 
 namespace MUNity.Database.Models.Conference
 {

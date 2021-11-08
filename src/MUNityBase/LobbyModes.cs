@@ -1,4 +1,4 @@
-﻿namespace MUNityBase
+﻿namespace MUNity.Base
 {
     /// <summary>
     /// The different modes the lobby phase can have.

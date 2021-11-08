@@ -1,5 +1,6 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @using MUNity.BlazorServer.Components.Conference.Application
+@using MUNity.Base
 
 @inject MUNity.Database.Context.MunityContext context
 @inject UserManager<MUNity.Database.Models.User.MunityUser> userManager
@@ -61,7 +62,7 @@
         {
             Application = application,
             CanWrite = true,
-            Status = MUNityBase.DelegationApplicationUserEntryStatuses.Joined,
+            Status = DelegationApplicationUserEntryStatuses.Joined,
             User = me
         });
 

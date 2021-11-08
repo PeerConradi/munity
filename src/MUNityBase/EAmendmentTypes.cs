@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNityBase
+namespace MUNity.Base
 {
     public enum EAmendmentTypes
     {

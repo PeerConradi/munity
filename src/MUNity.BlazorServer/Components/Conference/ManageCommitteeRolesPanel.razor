@@ -41,9 +41,9 @@
                                     <td>@role.DelegationName</td>
                                     <td>
                                         <select class="form-select" value="@role.ApplicationState" @onchange="(args) => ChangeApplicationMode(args, role)">
-                                            <option value="@MUNityBase.EApplicationStates.Closed">Anmeldung geschlossen</option>
-                                            <option value="@MUNityBase.EApplicationStates.DelegationApplication">Anmeldung auf Delegation (als Gruppe)</option>
-                                            <option value="@MUNityBase.EApplicationStates.DirectApplication">Anmeldung auf Rolle (direkt)</option>
+                                            <option value="@EApplicationStates.Closed">Anmeldung geschlossen</option>
+                                            <option value="@EApplicationStates.DelegationApplication">Anmeldung auf Delegation (als Gruppe)</option>
+                                            <option value="@EApplicationStates.DirectApplication">Anmeldung auf Rolle (direkt)</option>
                                         </select>
                                     </td>
                                     <td>@((role.HasParicipant) ? "Ja" : "Nein")</td>

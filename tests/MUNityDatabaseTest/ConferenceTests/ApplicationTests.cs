@@ -1,4 +1,5 @@
-﻿using MUNity.Database.Models.Conference;
+﻿using MUNity.Base;
+using MUNity.Database.Models.Conference;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,9 @@ namespace MUNityDatabaseTest.ConferenceTests
             //ResetDatabase();
             var country = EnsureGermany();
             var delegateRole = EnsureGermanyDelegateRole();
-            Assert.AreEqual(MUNityBase.EApplicationStates.Closed, delegateRole.ApplicationState);
+            Assert.AreEqual(EApplicationStates.Closed, delegateRole.ApplicationState);
             var delegateRolesWithClosedApplications = _context.Delegates
-                .Where(n => n.ApplicationState == MUNityBase.EApplicationStates.Closed &&
+                .Where(n => n.ApplicationState == EApplicationStates.Closed &&
                 n.Conference.ConferenceId == TestConference.ConferenceId);
             Assert.AreEqual(1, delegateRolesWithClosedApplications.Count());
         }

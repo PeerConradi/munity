@@ -1,4 +1,4 @@
-﻿namespace MUNityBase
+﻿namespace MUNity.Base
 {
     /// <summary>
     /// The Mode with what the Speaker is handled

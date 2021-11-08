@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MUNityCore.Models.User;
 using MUNity.Schema.User;
 using MUNity.Database.Models.User;
-using MUNityBase;
+using MUNity.Base;
 
 namespace MUNity.Extensions.CastExtensions
 {

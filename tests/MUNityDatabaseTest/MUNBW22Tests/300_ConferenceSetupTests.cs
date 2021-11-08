@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MUNity.Base;
 using MUNity.Database.FluentAPI;
 using MUNity.Database.Models.Conference;
-using MUNityBase;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

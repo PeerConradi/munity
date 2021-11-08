@@ -5,9 +5,9 @@ using System.ComponentModel;
 using System.Text;
 using System.Linq;
 using System.Text.Json.Serialization;
-using MUNityBase;
 using MUNityBase.Interfances;
 using System.Runtime.CompilerServices;
+using MUNity.Base;
 
 namespace MUNity.ViewModels.ListOfSpeakers
 {

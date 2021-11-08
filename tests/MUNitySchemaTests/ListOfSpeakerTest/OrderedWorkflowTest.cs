@@ -4,8 +4,8 @@ using System.Text;
 using NUnit.Framework;
 using System.Linq;
 using System.Threading.Tasks;
-using MUNityBase;
 using MUNity.ViewModels.ListOfSpeakers;
+using MUNity.Base;
 
 namespace MunityNUnitTest.ListOfSpeakerTest
 {

@@ -1,4 +1,4 @@
-﻿namespace MUNityBase
+﻿namespace MUNity.Base
 {
     /// <summary>
     /// Indicated a way a user can apply to a role.

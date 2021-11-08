@@ -1,5 +1,5 @@
-﻿using MUNity.Database.Models.User;
-using MUNityBase;
+﻿using MUNity.Base;
+using MUNity.Database.Models.User;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;

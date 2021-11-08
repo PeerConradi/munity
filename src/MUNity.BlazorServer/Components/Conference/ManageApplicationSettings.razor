@@ -27,15 +27,15 @@
             </tr>
             <tr>
                 <td>Anzahl Delegation-Slots</td>
-                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == MUNityBase.EApplicationStates.DelegationApplication)</td>
+                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == EApplicationStates.DelegationApplication)</td>
             </tr>
             <tr>
                 <td>Anzahl Rollen mit Direktbewerbung</td>
-                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == MUNityBase.EApplicationStates.DirectApplication)</td>
+                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == EApplicationStates.DirectApplication)</td>
             </tr>
             <tr>
                 <td>Anzahl Rollen mit geschlossener Bewerbung</td>
-                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == MUNityBase.EApplicationStates.Closed)</td>
+                <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == EApplicationStates.Closed)</td>
             </tr>
             <tr>
                 <td>Anzahl eingereichter DelegationWishesbewerbungen</td>

@@ -1,4 +1,5 @@
 ﻿using System;
+using MUNity.Base;
 using MUNity.Database.Models.Conference;
 
 namespace MUNity.Database.FluentAPI;
@@ -25,7 +26,7 @@ public class CommitteeOptionsBuilder
         return this;
     }
 
-    public CommitteeOptionsBuilder WithType(MUNityBase.CommitteeTypes type)
+    public CommitteeOptionsBuilder WithType(CommitteeTypes type)
     {
         Committee.CommitteeType = type;
         return this;

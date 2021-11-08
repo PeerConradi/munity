@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using MUNity.Base;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Conference.Roles;
@@ -148,7 +149,7 @@ namespace MUNity.Services
             return true;
         }
 
-        public async Task<bool> SetDelegateRoleApplicationState(int roleId, MUNityBase.EApplicationStates state, ClaimsPrincipal claim)
+        public async Task<bool> SetDelegateRoleApplicationState(int roleId, EApplicationStates state, ClaimsPrincipal claim)
         {
             var roleWithConference = _context.Delegates
                 .Include(n => n.Conference)
@@ -168,21 +169,21 @@ namespace MUNity.Services
 
         public async Task<bool> SetDelegateRoleApplicationState(int roleId, string state, ClaimsPrincipal claim)
         {
-            if (state == MUNityBase.EApplicationStates.Closed.ToString() || state.ToLower() == "closed")
+            if (state == EApplicationStates.Closed.ToString() || state.ToLower() == "closed")
             {
-                return await SetDelegateRoleApplicationState(roleId, MUNityBase.EApplicationStates.Closed, claim);
+                return await SetDelegateRoleApplicationState(roleId, EApplicationStates.Closed, claim);
             }
-            else if (state == MUNityBase.EApplicationStates.Custom.ToString() || state.ToLower() == "custom")
+            else if (state == EApplicationStates.Custom.ToString() || state.ToLower() == "custom")
             {
-                return await SetDelegateRoleApplicationState(roleId, MUNityBase.EApplicationStates.Custom, claim);
+                return await SetDelegateRoleApplicationState(roleId, EApplicationStates.Custom, claim);
             }
-            else if (state == MUNityBase.EApplicationStates.DelegationApplication.ToString() || state.ToLower() == "delegationapplication" || state.ToLower() == "delegation")
+            else if (state == EApplicationStates.DelegationApplication.ToString() || state.ToLower() == "delegationapplication" || state.ToLower() == "delegation")
             {
-                return await SetDelegateRoleApplicationState(roleId, MUNityBase.EApplicationStates.DelegationApplication, claim);
+                return await SetDelegateRoleApplicationState(roleId, EApplicationStates.DelegationApplication, claim);
             }
-            else if (state == MUNityBase.EApplicationStates.DirectApplication.ToString() || state.ToLower() == "directapplication" || state.ToLower() == "role")
+            else if (state == EApplicationStates.DirectApplication.ToString() || state.ToLower() == "directapplication" || state.ToLower() == "role")
             {
-                return await SetDelegateRoleApplicationState(roleId, MUNityBase.EApplicationStates.DirectApplication, claim);
+                return await SetDelegateRoleApplicationState(roleId, EApplicationStates.DirectApplication, claim);
             }
             else
             {

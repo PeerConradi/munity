@@ -1,4 +1,4 @@
-﻿namespace MUNityBase
+﻿namespace MUNity.Base
 {
     /// <summary>
     /// The privacy settings of an user. This is privacy by default so everything should be kept as low

@@ -1,4 +1,4 @@
-﻿namespace MUNityBase
+﻿namespace MUNity.Base
 {
     /// <summary>
     /// The roles a user can take when inside a simulation / virtual committee.

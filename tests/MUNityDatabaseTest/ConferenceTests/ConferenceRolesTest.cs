@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MUNity.Database.General;
-using MUNityBase;
+using MUNity.Base;
 
 namespace MUNityDatabaseTest.ConferenceTests
 {

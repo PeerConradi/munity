@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MUNityBase
+namespace MUNity.Base
 {
     /// <summary>
     /// The different phases of the simulation.

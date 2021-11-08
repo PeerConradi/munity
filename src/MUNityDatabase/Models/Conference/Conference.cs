@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MUNity.Base;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.User;
 using MUNity.Database.Models.Website;
-using MUNityBase;
 using MUNityCore.Models.User;
 
 namespace MUNity.Database.Models.Conference

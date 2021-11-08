@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using MUNity.Base;
 using MUNity.Database.Context;
 using MUNity.Database.General;
-using MUNityBase;
 
 namespace MUNity.Database.Extensions;
 

@@ -1,7 +1,6 @@
 ﻿using MUNity.Base;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Conference;
-using MUNityBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;

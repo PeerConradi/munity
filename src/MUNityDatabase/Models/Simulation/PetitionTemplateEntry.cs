@@ -1,4 +1,4 @@
-﻿using MUNityBase;
+﻿using MUNity.Base;
 
 namespace MUNity.Database.Models.Simulation;
 

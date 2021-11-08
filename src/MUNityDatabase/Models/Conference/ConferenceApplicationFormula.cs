@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MUNity.Base;
 using MUNity.Database.Models.Conference;
-using MUNityBase;
 
 namespace MUNity.Database.Models.Conference;
 

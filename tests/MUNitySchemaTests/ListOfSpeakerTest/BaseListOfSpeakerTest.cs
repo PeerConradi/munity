@@ -5,7 +5,7 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using MUNity.ViewModels.ListOfSpeakers;
-using MUNityBase;
+using MUNity.Base;
 
 namespace MunityNUnitTest.ListOfSpeakerTest
 {

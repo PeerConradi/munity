@@ -1,5 +1,5 @@
-﻿using MUNity.Models.Simulation;
-using MUNityBase;
+﻿using MUNity.Base;
+using MUNity.Models.Simulation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

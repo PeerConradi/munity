@@ -1,4 +1,5 @@
 ﻿@using MUNity.Database.Models.Conference
+@using MUNity.Base
 
 @if (User != null)
 {
@@ -13,15 +14,15 @@
             <div class="mr-5" style="margin-right: 25px">
                 @((User.CanWrite) ? "Autor " : null)
                 @((User.User.IsShadowUser) ? "zu Munity eingeladen " : null)
-                @((User.Status == MUNityBase.DelegationApplicationUserEntryStatuses.Invited) ? "Eingeladen " : null)
-                @((User.Status == MUNityBase.DelegationApplicationUserEntryStatuses.RequestJoining) ? "Möchte beitreten " : null)
+                @((User.Status == DelegationApplicationUserEntryStatuses.Invited) ? "Eingeladen " : null)
+                @((User.Status == DelegationApplicationUserEntryStatuses.RequestJoining) ? "Möchte beitreten " : null)
             </div>
 
             <i class="fa fa-ellipsis-h fs-14px cursor-pointer" @onclick="ToggleMenu"></i>
             @if (showDrowdown)
             {
                 <div class="dropdown-menu dropdown-menu-end show" style="@dropDownStyle">
-                    @if (User.Status == MUNityBase.DelegationApplicationUserEntryStatuses.RequestJoining)
+                    @if (User.Status == DelegationApplicationUserEntryStatuses.RequestJoining)
                     {
                         <a href="#" class="dropdown-item">Annehmen</a>
                     }

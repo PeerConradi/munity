@@ -89,11 +89,11 @@
                     {
                         <li>
                             @userInApplication.User.Forename @userInApplication.User.Lastname
-                            @if (userInApplication.Status == MUNityBase.DelegationApplicationUserEntryStatuses.Joined)
+                            @if (userInApplication.Status == DelegationApplicationUserEntryStatuses.Joined)
                             {
                                 <div class="badge badge-primary">Beigetreten</div>
                             }
-                            else if (userInApplication.Status == MUNityBase.DelegationApplicationUserEntryStatuses.RequestJoining)
+                            else if (userInApplication.Status == DelegationApplicationUserEntryStatuses.RequestJoining)
                             {
                                 <div class="badge badge-secondary">Möchte an Bewerbung teilnehmen</div>
                             }

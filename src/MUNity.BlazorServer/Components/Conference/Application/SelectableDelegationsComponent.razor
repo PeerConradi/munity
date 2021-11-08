@@ -162,7 +162,7 @@
             AllDeleations = applicationService.AvailableDelegations(ConferenceId, Application.Users.Count, Services.ConferenceApplicationService.AvailableDelegationsTypes.PresenceOnly);
 
         maxPickDelegations = context.ConferenceApplicationFormulas.Where(n => n.Options.ConferenceId == this.ConferenceId &&
-            n.FormulaType == MUNityBase.ConferenceApplicationFormulaTypes.Delegation)
+            n.FormulaType == ConferenceApplicationFormulaTypes.Delegation)
         .Select(n => n.MaxWishes)
         .FirstOrDefault().Value;
     }

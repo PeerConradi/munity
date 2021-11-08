@@ -1,4 +1,5 @@
-﻿using MUNity.Schema.General;
+﻿using MUNity.Base;
+using MUNity.Schema.General;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -49,6 +50,6 @@ namespace MUNity.Schema.Conference
 
         public string DelegationName { get; set; }
 
-        public MUNityBase.EApplicationStates ApplicationState { get; set; }
+        public EApplicationStates ApplicationState { get; set; }
     }
 }

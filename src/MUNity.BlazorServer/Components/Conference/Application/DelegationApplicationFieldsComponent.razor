@@ -6,7 +6,7 @@
     <div class="row mb-15px">
         <label class="form-label col-form-label col-md-3">@field.FieldName</label>
         <div class="col-md-9">
-            @if (field.FieldType == MUNityBase.ConferenceApplicationFieldTypes.MultiLineText)
+            @if (field.FieldType == ConferenceApplicationFieldTypes.MultiLineText)
             {
                 <textarea @bind="targetField.Value" class="form-control" rows="3"></textarea>
 

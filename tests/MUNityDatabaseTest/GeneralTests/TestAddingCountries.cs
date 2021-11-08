@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MUNity.Database.General;
-using MUNityBase;
 using MUNityDatabaseTest;
 using NUnit.Framework;
 using MUNity.Database.FluentAPI;
 using MUNity.Database.Extensions;
+using MUNity.Base;
 
 namespace MUNity.Database.Test.GeneralTests
 {

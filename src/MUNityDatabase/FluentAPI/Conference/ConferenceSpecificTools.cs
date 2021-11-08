@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MUNity.Base;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Conference.Roles;
@@ -495,21 +496,21 @@ namespace MUNity.Database.FluentAPI
         {
             return _dbContext.Delegations.Where(n => n.Conference.ConferenceId == _conferenceId &&
                n.Roles.Count >= minRolesCount &&
-               n.Roles.All(a => a.Committee.CommitteeType == MUNityBase.CommitteeTypes.AtLocation));
+               n.Roles.All(a => a.Committee.CommitteeType == CommitteeTypes.AtLocation));
         }
 
         public IQueryable<Delegation> DelegationsWithOnlyAtLocationAndRoleCount(int roleCount)
         {
             return _dbContext.Delegations.Where(n => n.Conference.ConferenceId == _conferenceId &&
                n.Roles.Count == roleCount &&
-               n.Roles.All(a => a.Committee.CommitteeType == MUNityBase.CommitteeTypes.AtLocation));
+               n.Roles.All(a => a.Committee.CommitteeType == CommitteeTypes.AtLocation));
         }
 
         public IQueryable<Delegation> DelegationsWithOnlyOnlineRoles(int minRolesCount = 0)
         {
             return _dbContext.Delegations.Where(n => n.Conference.ConferenceId == _conferenceId &&
                n.Roles.Count >= minRolesCount &&
-               n.Roles.All(a => a.Committee.CommitteeType == MUNityBase.CommitteeTypes.Online));
+               n.Roles.All(a => a.Committee.CommitteeType == CommitteeTypes.Online));
         }
 
         public ConferenceSpecificTools(MunityContext context, [NotNull]string conferenceId)

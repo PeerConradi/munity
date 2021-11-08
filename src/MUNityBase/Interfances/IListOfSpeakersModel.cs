@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNity.Base;
+using System;
 
 namespace MUNityBase.Interfances
 {

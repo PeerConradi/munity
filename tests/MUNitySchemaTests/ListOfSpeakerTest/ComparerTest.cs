@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using MUNity.ViewModels.ListOfSpeakers;
+using MUNity.Base;
 
 namespace MunityNUnitTest.ListOfSpeakerTest
 {
@@ -329,12 +330,12 @@ namespace MunityNUnitTest.ListOfSpeakerTest
             var listOne = new ListOfSpeakersViewModel()
             {
                 ListOfSpeakersId = "fixedId",
-                Status = MUNityBase.ESpeakerListStatus.Answer
+                Status = ESpeakerListStatus.Answer
             };
             var listTwo = new ListOfSpeakersViewModel()
             {
                 ListOfSpeakersId = "fixedId",
-                Status = MUNityBase.ESpeakerListStatus.Stopped
+                Status = ESpeakerListStatus.Stopped
             };
 
             var result = listOne.CompareTo(listTwo);

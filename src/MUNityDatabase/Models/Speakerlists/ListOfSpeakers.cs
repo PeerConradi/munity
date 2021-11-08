@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using System.Linq;
-using MUNityBase;
 using MUNityBase.Interfances;
+using MUNity.Base;
 
 namespace MUNity.Database.Models.LoS;
 

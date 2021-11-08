@@ -1,4 +1,5 @@
 ﻿@using MUNity.Schema.Conference
+@using MUNity.Base
 @inject Services.ConferenceRoleService conferenceRoleService
 @inject Services.ConferenceService conferenceService
 
@@ -44,9 +45,9 @@
                                 <td>@role.Subtype</td>
                                 <td>
                                     <select class="form-select" @bind="@role.ApplicationState">
-                                        <option value="@MUNityBase.EApplicationStates.Closed">Anmeldung geschlossen</option>
-                                        <option value="@MUNityBase.EApplicationStates.Closed">Anmeldung auf Delegation (als Gruppe)</option>
-                                        <option value="@MUNityBase.EApplicationStates.Closed">Anmeldung auf Rolle (direkt)</option>
+                                        <option value="@EApplicationStates.Closed">Anmeldung geschlossen</option>
+                                        <option value="@EApplicationStates.Closed">Anmeldung auf Delegation (als Gruppe)</option>
+                                        <option value="@EApplicationStates.Closed">Anmeldung auf Rolle (direkt)</option>
                                     </select>
                                 </td>
                                 <td>@((role.HasParicipant) ? "Ja" : "Nein")</td>

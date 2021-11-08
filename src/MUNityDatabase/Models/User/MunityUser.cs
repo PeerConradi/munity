@@ -7,8 +7,8 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using MUNity.Base;
 using MUNity.Database.Models.User;
-using MUNityBase;
 using MUNityCore.Models.User;
 
 
