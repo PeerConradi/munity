@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Resolution
+namespace MUNity.Database.Models.Resolution;
+
+public class ResaAddAmendment : ResaAmendment
 {
-    public class ResaAddAmendment : ResaAmendment
-    {
-        public override string ResaAmendmentType => "ADD";
+    public override string ResaAmendmentType => "ADD";
 
-        public ResaOperativeParagraph VirtualParagraph { get; set; }
+    public ResaOperativeParagraph VirtualParagraph { get; set; }
 
-    }
 }

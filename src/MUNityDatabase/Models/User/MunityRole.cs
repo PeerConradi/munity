@@ -4,18 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.User
+namespace MUNity.Database.Models.User;
+
+public class MunityRole : IdentityRole<string>
 {
-    public class MunityRole : IdentityRole<string>
+
+    public bool CanCreateNewOrganizations { get; set; }
+
+    public bool IsPlatformAdmin { get; set; }
+
+    public MunityRole()
     {
-
-        public bool CanCreateNewOrganizations { get; set; }
-
-        public bool IsPlatformAdmin { get; set; }
-
-        public MunityRole()
-        {
-            this.Id = Guid.NewGuid().ToString();
-        }
+        this.Id = Guid.NewGuid().ToString();
     }
 }

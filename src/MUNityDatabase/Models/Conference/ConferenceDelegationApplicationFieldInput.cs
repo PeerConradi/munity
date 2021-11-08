@@ -1,15 +1,14 @@
-﻿namespace MUNity.Database.Models.Conference
+﻿namespace MUNity.Database.Models.Conference;
+
+public class ConferenceDelegationApplicationFieldInput
 {
-    public class ConferenceDelegationApplicationFieldInput
-    {
-        public long ConferenceDelegationApplicationFieldInputId { get; set; }
+    public long ConferenceDelegationApplicationFieldInputId { get; set; }
 
-        public DelegationApplication Application { get; set; }
+    public DelegationApplication Application { get; set; }
 
-        public ConferenceApplicationField Field { get; set; }
+    public ConferenceApplicationField Field { get; set; }
 
-        public string Value { get; set; }
+    public string Value { get; set; }
 
-        public string ValueSecondary { get; set; }
-    }
+    public string ValueSecondary { get; set; }
 }

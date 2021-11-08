@@ -4,15 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Simulation
+namespace MUNity.Database.Models.Simulation;
+
+public class SimulationInvite
 {
-    public class SimulationInvite
-    {
-        [MaxLength(100)]
-        public string SimulationInviteId { get; set; }
+    [MaxLength(100)]
+    public string SimulationInviteId { get; set; }
 
-        public SimulationUser User { get; set; }
+    public SimulationUser User { get; set; }
 
-        public DateTime ExpireDate { get; set; }
-    }
+    public DateTime ExpireDate { get; set; }
 }

@@ -1,44 +1,43 @@
 ﻿using MUNity.Database.Models.Conference;
 
-namespace MUNity.Database.FluentAPI
+namespace MUNity.Database.FluentAPI;
+
+public class CommitteeTopicOptionsBuilder
 {
-    public class CommitteeTopicOptionsBuilder
+    public CommitteeTopic Topic { get; }
+
+    public CommitteeTopicOptionsBuilder WithName(string name)
     {
-        public CommitteeTopic Topic { get; }
+        if (string.IsNullOrEmpty(Topic.TopicFullName))
+            Topic.TopicFullName = name;
 
-        public CommitteeTopicOptionsBuilder WithName(string name)
-        {
-            if (string.IsNullOrEmpty(Topic.TopicFullName))
-                Topic.TopicFullName = name;
+        Topic.TopicName = name;
+        return this;
+    }
 
-            Topic.TopicName = name;
-            return this;
-        }
+    public CommitteeTopicOptionsBuilder WithFullName(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(Topic.TopicName))
+            Topic.TopicName = fullName;
 
-        public CommitteeTopicOptionsBuilder WithFullName(string fullName)
-        {
-            if (string.IsNullOrWhiteSpace(Topic.TopicName))
-                Topic.TopicName = fullName;
+        Topic.TopicFullName = fullName;
+        return this;
+    }
 
-            Topic.TopicFullName = fullName;
-            return this;
-        }
+    public CommitteeTopicOptionsBuilder WithDescription(string description)
+    {
+        Topic.TopicDescription = description;
+        return this;
+    }
 
-        public CommitteeTopicOptionsBuilder WithDescription(string description)
-        {
-            Topic.TopicDescription = description;
-            return this;
-        }
+    public CommitteeTopicOptionsBuilder WithCode(string code)
+    {
+        Topic.TopicCode = code;
+        return this;
+    }
 
-        public CommitteeTopicOptionsBuilder WithCode(string code)
-        {
-            Topic.TopicCode = code;
-            return this;
-        }
-
-        public CommitteeTopicOptionsBuilder()
-        {
-            this.Topic = new CommitteeTopic();
-        }
+    public CommitteeTopicOptionsBuilder()
+    {
+        this.Topic = new CommitteeTopic();
     }
 }

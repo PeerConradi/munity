@@ -5,28 +5,27 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Session
+namespace MUNity.Database.Models.Session;
+
+public class CommitteeSession
 {
-    public class CommitteeSession
+    [MaxLength(80)]
+    public string CommitteeSessionId { get; set; }
+
+    public string Name { get; set; }
+
+    public Committee Committee { get; set; }
+
+    public AttendanceCheck AttendanceCheck { get; set; }
+
+    public ICollection<ProtocolEntry> ProtocolEntries { get; set; }
+
+    public DateTime StartDate { get; set; }
+
+    public DateTime EndDate { get; set; }
+
+    public CommitteeSession()
     {
-        [MaxLength(80)]
-        public string CommitteeSessionId { get; set; }
-
-        public string Name { get; set; }
-
-        public Committee Committee { get; set; }
-
-        public AttendanceCheck AttendanceCheck { get; set; }
-
-        public ICollection<ProtocolEntry> ProtocolEntries { get; set; }
-
-        public DateTime StartDate { get; set; }
-
-        public DateTime EndDate { get; set; }
-
-        public CommitteeSession()
-        {
-            this.CommitteeSessionId = Guid.NewGuid().ToString();
-        }
+        this.CommitteeSessionId = Guid.NewGuid().ToString();
     }
 }

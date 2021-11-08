@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Simulation
+namespace MUNity.Database.Models.Simulation;
+
+public class SimulationStatus
 {
-    public class SimulationStatus
-    {
-        public int SimulationStatusId { get; set; }
+    public int SimulationStatusId { get; set; }
 
-        public string StatusText { get; set; }
+    public string StatusText { get; set; }
 
-        public DateTime StatusTime { get; set; }
+    public DateTime StatusTime { get; set; }
 
-        public Simulation Simulation { get; set; }
-    }
+    public Simulation Simulation { get; set; }
 }

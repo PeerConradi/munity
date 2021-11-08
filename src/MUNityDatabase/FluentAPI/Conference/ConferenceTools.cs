@@ -6,24 +6,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.FluentAPI
+namespace MUNity.Database.FluentAPI;
+
+public class ConferenceTools
 {
-    public class ConferenceTools
+    private MunityContext _dbContext;
+
+    public Conference AddConference(Action<ConferenceOptionsBuilder> options)
     {
-        private MunityContext _dbContext;
+        var builder = new ConferenceOptionsBuilder(_dbContext);
+        options(builder);
+        _dbContext.Conferences.Add(builder.Conference);
+        _dbContext.SaveChanges();
+        return builder.Conference;
+    }
 
-        public Conference AddConference(Action<ConferenceOptionsBuilder> options)
-        {
-            var builder = new ConferenceOptionsBuilder(_dbContext);
-            options(builder);
-            _dbContext.Conferences.Add(builder.Conference);
-            _dbContext.SaveChanges();
-            return builder.Conference;
-        }
-
-        public ConferenceTools(MunityContext context)
-        {
-            this._dbContext = context;
-        }
+    public ConferenceTools(MunityContext context)
+    {
+        this._dbContext = context;
     }
 }

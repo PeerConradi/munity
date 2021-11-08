@@ -1,4 +1,4 @@
-﻿@using Microsoft.EntityFrameworkCore
+﻿@    using Microsoft.EntityFrameworkCore
 
 @inject MUNity.Database.Context.MunityContext context
 
@@ -39,7 +39,7 @@
               .ThenInclude(n => n.User)
               .Where(n => n.DelegationWishes.Any(a => a.Delegation.Conference.ConferenceId == ConferenceId)))
             {
-                <li class="list-group-item @((application.Status == MUNityBase.ApplicationStatuses.Pending) ? "unread" : null)">
+                <li class="list-group-item @((application.Status == ApplicationStatuses.Pending) ? "unread" : null)">
                     @*<div class="email-checkbox">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" data-checked="email-checkbox" id="emailCheckbox1">

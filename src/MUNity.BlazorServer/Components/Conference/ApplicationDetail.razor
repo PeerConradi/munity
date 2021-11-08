@@ -1,4 +1,4 @@
-﻿@using Microsoft.EntityFrameworkCore
+﻿@    using Microsoft.EntityFrameworkCore
 
 @inject MUNity.Database.Context.MunityContext context
 
@@ -31,19 +31,19 @@
                     <div class="ps-3">
                         <div class="email-from text-inverse fs-14px mb-3px fw-bold">
                             Status 
-                            @if (application.Status == MUNityBase.ApplicationStatuses.Accepted)
+                            @if (application.Status == ApplicationStatuses.Accepted)
                             {
                                 <span class="text-success">Angenommen</span>
                             }
-                            else if (application.Status == MUNityBase.ApplicationStatuses.Denied)
+                            else if (application.Status == ApplicationStatuses.Denied)
                             {
                                 <span class="text-danger">Abgelehnt</span>
                             }
-                            else if (application.Status == MUNityBase.ApplicationStatuses.Pending)
+                            else if (application.Status == ApplicationStatuses.Pending)
                             {
                                 <span class="text-primary">Ausstehend</span>
                             }
-                            else if (application.Status == MUNityBase.ApplicationStatuses.Writing)
+                            else if (application.Status == ApplicationStatuses.Writing)
                             {
                                 <span class="text-warning">Noch nicht abgeschickt</span>
                             }

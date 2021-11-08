@@ -1,5 +1,5 @@
-﻿@using Microsoft.EntityFrameworkCore
-@using MUNity.BlazorServer.Components.Conference.Application
+﻿@    using Microsoft.EntityFrameworkCore
+@    using MUNity.BlazorServer.Components.Conference.Application
 
 @inject MUNity.Database.Context.MunityContext context
 @inject UserManager<MUNity.Database.Models.User.MunityUser> userManager
@@ -77,7 +77,7 @@ else
 
         application = new Database.Models.Conference.DelegationApplication()
         {
-            Status = MUNityBase.ApplicationStatuses.Writing
+            Status = ApplicationStatuses.Writing
         };
 
         var claim = (await AuthStateTask)?.User;
@@ -101,7 +101,7 @@ else
 
     private void SendApplication()
     {
-        application.Status = MUNityBase.ApplicationStatuses.Pending;
+        application.Status = ApplicationStatuses.Pending;
         application.ApplyDate = DateTime.Now;
         context.DelegationApplications.Add(application);
         var recaff = context.SaveChanges();

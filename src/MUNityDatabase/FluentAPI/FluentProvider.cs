@@ -5,33 +5,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.FluentAPI
+namespace MUNity.Database.FluentAPI;
+
+public class FluentProvider
 {
-    public class FluentProvider
+    public MunityContext DbContext { get; private set; }
+
+    public OrganizationTools Organization => new OrganizationTools(DbContext);
+
+    public OrganizationSpecificTools ForOrganization(string organizationId)
     {
-        public MunityContext DbContext { get; private set; }
+        return new OrganizationSpecificTools(DbContext, organizationId);
+    }
 
-        public OrganizationTools Organization => new OrganizationTools(DbContext);
-
-        public OrganizationSpecificTools ForOrganization(string organizationId)
-        {
-            return new OrganizationSpecificTools(DbContext, organizationId);
-        }
-
-        public ProjectTools Project => new ProjectTools(this.DbContext);
+    public ProjectTools Project => new ProjectTools(this.DbContext);
 
 
-        public ConferenceTools Conference => new ConferenceTools(DbContext);
+    public ConferenceTools Conference => new ConferenceTools(DbContext);
 
-        public ConferenceSpecificTools ForConference(string conferenceId) =>
-            new ConferenceSpecificTools(this.DbContext, conferenceId);
+    public ConferenceSpecificTools ForConference(string conferenceId) =>
+        new ConferenceSpecificTools(this.DbContext, conferenceId);
 
-        public CommitteeSpecificTools ForCommittee(string committeeId) =>
-            new CommitteeSpecificTools(this.DbContext, committeeId);
+    public CommitteeSpecificTools ForCommittee(string committeeId) =>
+        new CommitteeSpecificTools(this.DbContext, committeeId);
 
-        public FluentProvider(MunityContext context)
-        {
-            this.DbContext = context;
-        }
+    public FluentProvider(MunityContext context)
+    {
+        this.DbContext = context;
     }
 }

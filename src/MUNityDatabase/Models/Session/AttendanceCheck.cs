@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Session
+namespace MUNity.Database.Models.Session;
+
+public class AttendanceCheck
 {
-    public class AttendanceCheck
-    {
-        public long AttendanceCheckId { get; set; }
+    public long AttendanceCheckId { get; set; }
 
-        public DateTime AttendanceDate { get; set; }
+    public DateTime AttendanceDate { get; set; }
 
-        public ICollection<AttendanceState> Attendances { get; set; }
-    }
+    public ICollection<AttendanceState> Attendances { get; set; }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace MUNity.Database.FluentAPI
-{
-    public interface ITeamRoleBuilderWithRole
-    {
-        IRolesContainingTeamRoleBuilder WithRole(Action<TeamRoleBuilder> options);
+namespace MUNity.Database.FluentAPI;
 
-        IRolesContainingTeamRoleBuilder WithRole(string name, string shortName = "");
-    }
+public interface ITeamRoleBuilderWithRole
+{
+    IRolesContainingTeamRoleBuilder WithRole(Action<TeamRoleBuilder> options);
+
+    IRolesContainingTeamRoleBuilder WithRole(string name, string shortName = "");
 }

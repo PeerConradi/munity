@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Resolution
+namespace MUNity.Database.Models.Resolution;
+
+public class ResaDeleteAmendment : ResaAmendment
 {
-    public class ResaDeleteAmendment : ResaAmendment
+
+    public override string ResaAmendmentType => "DELETE";
+
+    public ResaOperativeParagraph TargetParagraph { get; set; }
+
+    public ResaDeleteAmendment()
     {
-
-        public override string ResaAmendmentType => "DELETE";
-
-        public ResaOperativeParagraph TargetParagraph { get; set; }
-
-        public ResaDeleteAmendment()
-        {
-            this.ResaAmendmentId = Guid.NewGuid().ToString();
-        }
+        this.ResaAmendmentId = Guid.NewGuid().ToString();
     }
 }

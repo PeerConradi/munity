@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Simulation
+namespace MUNity.Database.Models.Simulation;
+
+public class PetitionTypeSimulation
 {
-    public class PetitionTypeSimulation
-    {
-        public long PetitionTypeSimulationId { get; set; }
+    public long PetitionTypeSimulationId { get; set; }
 
-        public Simulation Simulation { get; set; }
+    public Simulation Simulation { get; set; }
 
-        public PetitionType PetitionType { get; set; }
+    public PetitionType PetitionType { get; set; }
 
-        public int OrderIndex { get; set; }
+    public int OrderIndex { get; set; }
 
-        public bool AllowChairs { get; set; } = false;
+    public bool AllowChairs { get; set; } = false;
 
-        public bool AllowDelegates { get; set; } = true;
+    public bool AllowDelegates { get; set; } = true;
 
-        public bool AllowNgo { get; set; } = false;
+    public bool AllowNgo { get; set; } = false;
 
-        public bool AllowSpectator { get; set; } = false;
-    }
+    public bool AllowSpectator { get; set; } = false;
 }

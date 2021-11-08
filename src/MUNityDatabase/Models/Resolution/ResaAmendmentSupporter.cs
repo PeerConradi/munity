@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Resolution
-{
-    public class ResaAmendmentSupporter
-    {
+namespace MUNity.Database.Models.Resolution;
 
-    }
+public class ResaAmendmentSupporter
+{
+
 }

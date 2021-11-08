@@ -1,9 +1,8 @@
-﻿namespace MUNity.Database.Models.User
-{
-    public class UserNotificationCategory
-    {
-        public int UserNotificationCategoryId { get; set; }
+﻿namespace MUNity.Database.Models.User;
 
-        public string CategoryName { get; set; }
-    }
+public class UserNotificationCategory
+{
+    public int UserNotificationCategoryId { get; set; }
+
+    public string CategoryName { get; set; }
 }
