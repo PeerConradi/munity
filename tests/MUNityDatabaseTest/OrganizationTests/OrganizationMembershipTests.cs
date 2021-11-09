@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MUNityDatabaseTest.OrganizationTests
+namespace MUNity.Database.Test.OrganizationTests
 {
     public class OrganizationMembershipTests : AbstractDatabaseTests
     {
@@ -113,7 +113,7 @@ namespace MUNityDatabaseTest.OrganizationTests
             Assert.AreEqual(1, role.MembersWithRole.Count);
         }
 
-        public OrganizationMembershipTests() : base ("organizationtest.db")
+        public OrganizationMembershipTests() : base("organizationtest.db")
         {
 
         }

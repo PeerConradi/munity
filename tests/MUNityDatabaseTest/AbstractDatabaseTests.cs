@@ -13,259 +13,239 @@ using System.Threading.Tasks;
 using MUNity.Database.General;
 using MUNity.Base;
 
-namespace MUNityDatabaseTest
+namespace MUNity.Database.Test;
+
+public abstract class AbstractDatabaseTests
 {
-    public abstract class AbstractDatabaseTests
+    public MunityContext _context;
+
+    private Organization testOrganization;
+    public Organization TestOrganization
     {
-        public MunityContext _context;
-
-        private Organization testOrganization;
-        public Organization TestOrganization { 
-            get
-            {
-                if (testOrganization == null)
-                    testOrganization = CreateTestOrganization();
-                return testOrganization;
-            }
-        }
-
-        private Project testProject;
-        public Project TestProject { 
-            get
-            {
-                if (testProject == null)
-                    testProject = CreateTestProject();
-                return testProject;
-            }
-        }
-
-        private Conference testConference;
-        public Conference TestConference { 
-            get
-            {
-                if (testConference == null)
-                    testConference = CreateTestConference();
-                return testConference;
-            }
-        }
-
-        private Committee testCommittee;
-        public Committee TestCommittee
+        get
         {
-            get
-            {
-                if (testCommittee == null)
-                    testCommittee = CreateTestCommittee();
-                return testCommittee;
-            }
+            if (testOrganization == null)
+                testOrganization = CreateTestOrganization();
+            return testOrganization;
         }
+    }
 
-        public Committee TestCommitteeGV { get;  }
-
-        string dbName = "munity_test.db";
-
-        [OneTimeSetUp]
-        public void Setup()
+    private Project testProject;
+    public Project TestProject
+    {
+        get
         {
-            // Datenbank für den Test erzeugen und falls vorhanden erst einmal leeren und neu erstellen!
-            var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
-            optionsBuilder.UseSqlite("Data Source=test_conference.db");
-            _context = new MunityContext(optionsBuilder.Options);
-            ResetDatabase();   
+            if (testProject == null)
+                testProject = CreateTestProject();
+            return testProject;
         }
+    }
 
-        public void ResetDatabase()
+    private Conference testConference;
+    public Conference TestConference
+    {
+        get
         {
-            _context.Database.EnsureDeleted();
-            _context.Database.EnsureCreated();
+            if (testConference == null)
+                testConference = CreateTestConference();
+            return testConference;
         }
+    }
 
-        private Organization CreateTestOrganization()
+    private Committee testCommittee;
+    public Committee TestCommittee
+    {
+        get
         {
-            var organization = new Organization()
-            {
-                OrganizationName = "Deutsche Model United Nations e.V.",
-                OrganizationShort = "DMUN e.V."
-            };
-            _context.Organizations.Add(organization);
-            _context.SaveChanges();
-            return organization;
+            if (testCommittee == null)
+                testCommittee = CreateTestCommittee();
+            return testCommittee;
         }
+    }
 
-        private Project CreateTestProject()
-        {
-            var project = new Project()
-            {
-                ProjectName = "MUN Schleswig-Holstein 2022",
-                ProjectOrganization = TestOrganization,
-                ProjectShort = "MUN-SH 2022",
-            };
-            _context.Projects.Add(project);
-            _context.SaveChanges();
-            return project;
-        }
+    public Committee TestCommitteeGV { get; }
 
-        private Conference CreateTestConference()
-        {
-            var conference = new Conference()
-            {
-                ConferenceProject = TestProject,
-                ConferenceShort = "MUN-SH 2022",
-                Name = "MUN Schleswig-Holstein 2022",
-                FullName = "Model United Nations Schleswig-Holstein 2022"
-            };
-            _context.Conferences.Add(conference);
-            _context.SaveChanges();
-            return conference;
-        }
+    string dbName = "munity_test.db";
 
-        private Committee CreateTestCommittee()
-        {
-            return CreateCommittee("Generalversammlung", "Generalversammlung", "GV");
-        }
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        // Datenbank für den Test erzeugen und falls vorhanden erst einmal leeren und neu erstellen!
+        var optionsBuilder = new DbContextOptionsBuilder<MunityContext>();
+        optionsBuilder.UseSqlite("Data Source=test_conference.db");
+        _context = new MunityContext(optionsBuilder.Options);
+        ResetDatabase();
+    }
 
-        public Committee CreateCommittee(string name, string fullName, string committeeShort)
+    public void ResetDatabase()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Database.EnsureCreated();
+    }
+
+    private Organization CreateTestOrganization()
+    {
+        var organization = new Organization()
         {
-            var committee = new Committee()
+            OrganizationName = "Deutsche Model United Nations e.V.",
+            OrganizationShort = "DMUN e.V."
+        };
+        _context.Organizations.Add(organization);
+        _context.SaveChanges();
+        return organization;
+    }
+
+    private Project CreateTestProject()
+    {
+        var project = new Project()
+        {
+            ProjectName = "MUN Schleswig-Holstein 2022",
+            ProjectOrganization = TestOrganization,
+            ProjectShort = "MUN-SH 2022",
+        };
+        _context.Projects.Add(project);
+        _context.SaveChanges();
+        return project;
+    }
+
+    private Conference CreateTestConference()
+    {
+        var conference = new Conference()
+        {
+            ConferenceProject = TestProject,
+            ConferenceShort = "MUN-SH 2022",
+            Name = "MUN Schleswig-Holstein 2022",
+            FullName = "Model United Nations Schleswig-Holstein 2022"
+        };
+        _context.Conferences.Add(conference);
+        _context.SaveChanges();
+        return conference;
+    }
+
+    private Committee CreateTestCommittee()
+    {
+        return CreateCommittee("Generalversammlung", "Generalversammlung", "GV");
+    }
+
+    public Committee CreateCommittee(string name, string fullName, string committeeShort)
+    {
+        var committee = new Committee()
+        {
+            Conference = TestConference,
+            Article = "die",
+            FullName = "Generalversammlung",
+            Name = "Generalversammlung"
+        };
+        _context.Committees.Add(committee);
+        _context.SaveChanges();
+        return committee;
+    }
+
+    public MunityUser CreateATestUser(string username)
+    {
+        var user = new MunityUser()
+        {
+            AccessFailedCount = 0,
+            Email = $"{username}@mail.com",
+            EmailConfirmed = true,
+            Forename = "",
+            Lastname = "",
+            NormalizedUserName = username.ToUpper(),
+            NormalizedEmail = $"{username.ToUpper()}@MAIL.COM",
+        };
+        _context.Users.Add(user);
+        return user;
+    }
+
+    public ConferenceRoleAuth EnsureProjectOwnerAuth()
+    {
+        var ownerAuth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.RoleAuthName == "Project-Owner");
+        if (ownerAuth == null)
+        {
+            ownerAuth = new ConferenceRoleAuth()
             {
                 Conference = TestConference,
-                Article = "die",
-                FullName = "Generalversammlung",
-                Name = "Generalversammlung"
+                CanEditConferenceSettings = true,
+                CanEditParticipations = true,
+                CanSeeApplications = true,
+                PowerLevel = 1,
+                RoleAuthName = "Project-Owner"
             };
-            _context.Committees.Add(committee);
+            _context.ConferenceRoleAuthorizations.Add(ownerAuth);
             _context.SaveChanges();
-            return committee;
         }
+        return ownerAuth;
+    }
 
-        public MunityUser CreateATestUser(string username)
+    public ConferenceRoleAuth EnsureParticipantAuth()
+    {
+        var memberAuth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.RoleAuthName == "Participant");
+        if (memberAuth == null)
         {
-            var user = new MunityUser()
+            memberAuth = new ConferenceRoleAuth()
             {
-                AccessFailedCount = 0,
-                Email = $"{username}@mail.com",
-                EmailConfirmed = true,
-                Forename = "",
-                Lastname = "",
-                NormalizedUserName = username.ToUpper(),
-                NormalizedEmail = $"{username.ToUpper()}@MAIL.COM",
+                Conference = TestConference,
+                CanEditConferenceSettings = true,
+                CanEditParticipations = true,
+                CanSeeApplications = true,
+                PowerLevel = 1,
+                RoleAuthName = "Participant"
             };
-            _context.Users.Add(user);
-            return user;
+            _context.ConferenceRoleAuthorizations.Add(memberAuth);
+            _context.SaveChanges();
         }
+        return memberAuth;
+    }
 
-        public ConferenceRoleAuth EnsureProjectOwnerAuth()
+    public Delegation EnsureDelegation(string name, string fullName, string shortName)
+    {
+        var delegation = _context.Delegations.FirstOrDefault(n => n.Name == name);
+        if (delegation == null)
         {
-            var ownerAuth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.RoleAuthName == "Project-Owner");
-            if (ownerAuth == null)
+            delegation = new Delegation()
             {
-                ownerAuth = new ConferenceRoleAuth()
-                {
-                    Conference = TestConference,
-                    CanEditConferenceSettings = true,
-                    CanEditParticipations = true,
-                    CanSeeApplications = true,
-                    PowerLevel = 1,
-                    RoleAuthName = "Project-Owner"
-                };
-                _context.ConferenceRoleAuthorizations.Add(ownerAuth);
-                _context.SaveChanges();
-            }
-            return ownerAuth;
+                Conference = TestConference,
+                DelegationShort = shortName,
+                FullName = fullName,
+                Name = name
+            };
+            _context.Delegations.Add(delegation);
+            _context.SaveChanges();
         }
+        return delegation;
+    }
 
-        public ConferenceRoleAuth EnsureParticipantAuth()
+    public Country EnsureGermany()
+    {
+        var country = _context.Countries.FirstOrDefault(n => n.Name == "Deutschland");
+        if (country == null)
         {
-            var memberAuth = _context.ConferenceRoleAuthorizations.FirstOrDefault(n => n.RoleAuthName == "Participant");
-            if (memberAuth == null)
+            country = new Country()
             {
-                memberAuth = new ConferenceRoleAuth()
-                {
-                    Conference = TestConference,
-                    CanEditConferenceSettings = true,
-                    CanEditParticipations = true,
-                    CanSeeApplications = true,
-                    PowerLevel = 1,
-                    RoleAuthName = "Participant"
-                };
-                _context.ConferenceRoleAuthorizations.Add(memberAuth);
-                _context.SaveChanges();
-            }
-            return memberAuth;
+                Continent = EContinent.Europe,
+                FullName = "Bundesrepublik Deutschland",
+                Iso = "de",
+                Name = "Deutschland"
+            };
+
+            _context.Countries.Add(country);
+            _context.SaveChanges();
         }
+        return country;
+    }
 
-        public Delegation EnsureDelegation(string name, string fullName, string shortName)
+
+    public ConferenceDelegateRole EnsureGermanyDelegateRole()
+    {
+        var delegateRole = _context.Delegates.FirstOrDefault(n => n.RoleName == "Deutschland");
+        if (delegateRole == null)
         {
-            var delegation = _context.Delegations.FirstOrDefault(n => n.Name == name);
-            if (delegation == null)
+            delegateRole = new ConferenceDelegateRole()
             {
-                delegation = new Delegation()
-                {
-                    Conference = TestConference,
-                    DelegationShort = shortName,
-                    FullName = fullName,
-                    Name = name
-                };
-                _context.Delegations.Add(delegation);
-                _context.SaveChanges();
-            }
-            return delegation;
-        }
-
-        public Country EnsureGermany()
-        {
-            var country = _context.Countries.FirstOrDefault(n => n.Name == "Deutschland");
-            if (country == null)
-            {
-                country = new Country()
-                {
-                    Continent = EContinent.Europe,
-                    FullName = "Bundesrepublik Deutschland",
-                    Iso = "de",
-                    Name = "Deutschland"
-                };
-
-                _context.Countries.Add(country);
-                _context.SaveChanges();
-            }
-            return country;
-        }
-
-
-        public ConferenceDelegateRole EnsureGermanyDelegateRole()
-        {
-            var delegateRole = _context.Delegates.FirstOrDefault(n => n.RoleName == "Deutschland");
-            if (delegateRole == null)
-            {
-                delegateRole = new ConferenceDelegateRole()
-                {
-                    Committee = TestCommittee,
-                    Conference = TestConference,
-                    IconName = "de",
-                    Delegation = EnsureDelegation("Deutschland", "Deutschland", "de"),
-                    ConferenceRoleAuth = EnsureParticipantAuth(),
-                    IsDelegationLeader = true,
-                    RoleFullName = "Abgeordneter Deutschlands",
-                    RoleName = "Deutschland",
-                    RoleShort = "DE",
-                    Title = "Abgeordneter Deutschlands in der Generalversammlung",
-                    DelegateCountry = EnsureGermany()
-                };
-
-                _context.Delegates.Add(delegateRole);
-                _context.SaveChanges();
-            }
-            return delegateRole;
-        }
-
-        public ConferenceDelegateRole CreateDelegateRole(Delegation delegation, Committee committee, string fullName, string name, string shortName)
-        {
-            var delegateRole = new ConferenceDelegateRole()
-            {
-                Committee = committee,
+                Committee = TestCommittee,
                 Conference = TestConference,
                 IconName = "de",
-                Delegation = delegation,
+                Delegation = EnsureDelegation("Deutschland", "Deutschland", "de"),
                 ConferenceRoleAuth = EnsureParticipantAuth(),
                 IsDelegationLeader = true,
                 RoleFullName = "Abgeordneter Deutschlands",
@@ -277,56 +257,78 @@ namespace MUNityDatabaseTest
 
             _context.Delegates.Add(delegateRole);
             _context.SaveChanges();
-            return delegateRole;
         }
-        
+        return delegateRole;
+    }
 
-        public TeamRoleGroup EnsureOwnerTeamRoleGroup()
+    public ConferenceDelegateRole CreateDelegateRole(Delegation delegation, Committee committee, string fullName, string name, string shortName)
+    {
+        var delegateRole = new ConferenceDelegateRole()
         {
-            var leaderRoleGroup = _context.TeamRoleGroups.FirstOrDefault(n => n.Name == "Projektleitung");
-            if (leaderRoleGroup == null)
+            Committee = committee,
+            Conference = TestConference,
+            IconName = "de",
+            Delegation = delegation,
+            ConferenceRoleAuth = EnsureParticipantAuth(),
+            IsDelegationLeader = true,
+            RoleFullName = "Abgeordneter Deutschlands",
+            RoleName = "Deutschland",
+            RoleShort = "DE",
+            Title = "Abgeordneter Deutschlands in der Generalversammlung",
+            DelegateCountry = EnsureGermany()
+        };
+
+        _context.Delegates.Add(delegateRole);
+        _context.SaveChanges();
+        return delegateRole;
+    }
+
+
+    public TeamRoleGroup EnsureOwnerTeamRoleGroup()
+    {
+        var leaderRoleGroup = _context.TeamRoleGroups.FirstOrDefault(n => n.Name == "Projektleitung");
+        if (leaderRoleGroup == null)
+        {
+            leaderRoleGroup = new TeamRoleGroup()
             {
-                leaderRoleGroup = new TeamRoleGroup()
-                {
-                    FullName = "die Projektleitung",
-                    Name = "Projektleitung",
-                    TeamRoleGroupShort = "PL",
-                    GroupLevel = 1
-                };
-                _context.TeamRoleGroups.Add(leaderRoleGroup);
-                _context.SaveChanges();
-            }
-            return leaderRoleGroup;
+                FullName = "die Projektleitung",
+                Name = "Projektleitung",
+                TeamRoleGroupShort = "PL",
+                GroupLevel = 1
+            };
+            _context.TeamRoleGroups.Add(leaderRoleGroup);
+            _context.SaveChanges();
         }
+        return leaderRoleGroup;
+    }
 
-        public ConferenceTeamRole EnsureProjectOwnerRole()
+    public ConferenceTeamRole EnsureProjectOwnerRole()
+    {
+        var leaderRole = _context.ConferenceTeamRoles.FirstOrDefault(n => n.RoleName == "Projektleiter");
+        if (leaderRole == null)
         {
-            var leaderRole = _context.ConferenceTeamRoles.FirstOrDefault(n => n.RoleName == "Projektleiter");
-            if (leaderRole == null)
+            var leaderAuth = EnsureProjectOwnerAuth();
+            var leaderRoleGroup = EnsureOwnerTeamRoleGroup();
+            leaderRole = new ConferenceTeamRole()
             {
-                var leaderAuth = EnsureProjectOwnerAuth();
-                var leaderRoleGroup = EnsureOwnerTeamRoleGroup();
-                leaderRole = new ConferenceTeamRole()
-                {
-                    Conference = TestConference,
-                    IconName = "pl",
-                    RoleFullName = "Projektleiter",
-                    ConferenceRoleAuth = leaderAuth,
-                    RoleName = "Projektleiter",
-                    RoleShort = "PL",
-                    TeamRoleGroup = leaderRoleGroup,
-                    TeamRoleLevel = 1,
-                };
-                _context.ConferenceTeamRoles.Add(leaderRole);
-                _context.SaveChanges();
-            }
-            return leaderRole;
+                Conference = TestConference,
+                IconName = "pl",
+                RoleFullName = "Projektleiter",
+                ConferenceRoleAuth = leaderAuth,
+                RoleName = "Projektleiter",
+                RoleShort = "PL",
+                TeamRoleGroup = leaderRoleGroup,
+                TeamRoleLevel = 1,
+            };
+            _context.ConferenceTeamRoles.Add(leaderRole);
+            _context.SaveChanges();
         }
+        return leaderRole;
+    }
 
 
-        public AbstractDatabaseTests(string dataSourceName)
-        {
-            this.dbName = dataSourceName;
-        }
+    public AbstractDatabaseTests(string dataSourceName)
+    {
+        dbName = dataSourceName;
     }
 }

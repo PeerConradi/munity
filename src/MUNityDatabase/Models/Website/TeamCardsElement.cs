@@ -1,7 +1,6 @@
-﻿namespace MUNity.Database.Models.Website
-{
-    public class TeamCardsElement : AbstractConferenceWebPageElement
-    {
+﻿namespace MUNity.Database.Models.Website;
 
-    }
+public class TeamCardsElement : AbstractConferenceWebPageElement
+{
+
 }

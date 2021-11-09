@@ -1,21 +1,15 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MUNity.Extensions.Conversion;
+﻿using MUNity.Extensions.Conversion;
+using NUnit.Framework;
 
-namespace MunitySchemaTest.Conversions
+namespace Munity.Schema.Test.Conversions;
+
+public class PathNameTests
 {
-    public class PathNameTests
+    [Test]
+    public void TestToPathNameEmptyArray()
     {
-        [Test]
-        public void TestToPathNameEmptyArray()
-        {
-            int[] array = new int[0];
-            var pathname = array.ToPathname();
-            Assert.AreEqual("", pathname);
-        }
+        int[] array = new int[0];
+        var pathname = array.ToPathname();
+        Assert.AreEqual("", pathname);
     }
 }
