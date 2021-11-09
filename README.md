@@ -8,17 +8,8 @@ MUNity is a work in progress to create and manage Model United Nations Conferenc
 
 ## Coverage
 
-Last checked: 16.08.2021
-
-| Project | Description | Status | Test-Coverage |
-|---------|----------|------------------|-----|
-| MUNityBase | Contains base enums and interfaces for the Database and Schema | Mostly done | 100% | 
-| MUNityDatabase | Contains the Database Model and Context | monstly done writing docs and tests | 37,77 % |
-| MUNitySchema | Contains the Data-Transfer-Objects and ViewModels | TODO | TODO |
-| MUNityServices | Contains logic to access the Database and generate Data-Transfer-Objects | TODO | TODO |
-| MUNityBlazorServer | A blazor Server UI for MUNity using the MUNityServices |TODO | TODO |
-| MUNityWebAPI  | A Web API for MUNity using the MUNityServices | TODO | TODO |
-
+To get the latest coverage result execute the generatecoverage.sh file inside the root folder.
+The report should be generated a folder higher than the munity folder with the name: MunityCoverageReport
 
 ## Documentation
 
