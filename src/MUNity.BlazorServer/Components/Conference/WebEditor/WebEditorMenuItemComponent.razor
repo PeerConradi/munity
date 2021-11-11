@@ -1,0 +1,55 @@
+﻿@inject MUNity.Database.Context.MunityContext dbContext
+@inject Services.ConferenceWebsiteService websiteService
+
+@if (MenuItem != null)
+{
+    if (MenuItem.Items == null || MenuItem.Items.Count == 0)
+    {
+        <li>
+            <i class="fa fa-file text-warning fa-lg"></i>
+            @if (rename)
+            {
+                <input @bind="@MenuItem.Title" />
+                <button class="btn btn-sm btn-success" @onclick="() => { websiteService.RenameMenuEntry(MenuItem.Id, MenuItem.Title); rename = false; }">Speichern</button>
+            }
+            else
+            {
+                <a class="cursor-pointer" @onclick="() => PageSelected.InvokeAsync(MenuItem)">@MenuItem.Title</a>
+                <i class="fa fa-pen" @onclick="() => rename = true"></i>
+            }
+        </li>
+    
+    }
+    else
+    {
+        <li>
+            <i class="fa fa-folder text-primary fa-lg"></i>
+            @MenuItem.Title
+            <ul>
+                @foreach (var subItem in MenuItem.Items)
+                {
+                    <WebEditorMenuItemComponent MenuItem="@subItem"
+                                                AddPage="(i) => AddPage.InvokeAsync(i)"
+                                                PageSelected="(i) => PageSelected.InvokeAsync(i)" />
+                
+                }
+                <li class="cursor-pointer" @onclick="() => AddPage.InvokeAsync(this.MenuItem)"><i class="fa fa-plus text-success fa-lg"></i> Neue Seite</li>
+            </ul>
+        </li>
+    }
+}
+else
+{
+    <li>ERR 52534</li>
+}
+
+
+@code {
+    [Parameter] public MUNity.Schema.Conference.Website.MenuItem MenuItem { get; set; }
+
+    [Parameter] public EventCallback<MUNity.Schema.Conference.Website.MenuItem> AddPage { get; set; }
+
+    [Parameter] public EventCallback<MUNity.Schema.Conference.Website.MenuItem> PageSelected { get; set; }
+
+    private bool rename;
+}

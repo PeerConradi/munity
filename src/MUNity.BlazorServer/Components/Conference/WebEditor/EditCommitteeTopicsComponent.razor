@@ -1,0 +1,37 @@
+﻿@using MUNity.Database.Models.Website
+
+@inject MUNity.Database.Context.MunityContext dbContext
+
+
+<div class="col-12">
+    <div class="panel panel-inverse">
+        <div class="panel-heading bg-info">
+            <h4 class="panel-title">Automatisch Generierte Komponente: Themen des Gremiums</h4>
+            <div class="panel-heading-btn">
+                @*<a @onclick="() => dbContext.Update(topcis)" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-save"></i></a>
+                <a href="javascript:;" class="btn btn-sm btn-icon btn-success"><i class="fa fa-arrow-up"></i></a>
+                <a href="javascript:;" class="btn btn-sm btn-icon btn-warning"><i class="fa fa-arrow-down"></i></a>
+                <a href="javascript:;" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-trash"></i></a>*@
+            </div>
+        </div>
+        <div class="panel-body">
+            <label>Gremium</label>
+            <RadzenDropDown class="form-control" TextProperty="Name" TValue="MUNity.Database.Models.Conference.Committee" Data="@dbContext.Committees.Where(n => n.Conference.ConferenceId == ConferenceId)" @bind-Value="Element.Committee" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public CommitteeTopicsElement Element { get; set; }
+
+    [Parameter] public string ConferenceId { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (Element != null)
+        {
+            Element.Committee = dbContext.ConferenceWebPageCommitteeTopicsElements.Where(n => n.ConferenceWebPageComponentId == Element.ConferenceWebPageComponentId).Select(n => n.Committee).FirstOrDefault();
+        }
+    }
+}

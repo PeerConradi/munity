@@ -1,75 +1,101 @@
 ﻿@inject NavigationManager navManager;
 @inject MUNity.Database.Context.MunityContext munityContext
 
-<div id="top-menu" class="app-top-menu">
+@if (menuItems != null)
+{
+    <div id="top-menu" class="app-top-menu">
     <!-- BEGIN menu -->
-<div class="menu" style="margin-left: @(scrollMarginLeft)px;">
-    <div class="menu-item has-sub">
-        <a href="javascript:;" class="menu-link">
-            <div class="menu-icon">
-                <i class="oi oi-home"></i>
-            </div>
-            <div class="menu-text">Informationen</div>
-            <div class="menu-caret"></div>
-        </a>
-        <div class="menu-submenu">
-            <div class="menu-item">
-                <a href="index.html" class="menu-link"><div class="menu-text">Start</div></a>
-            </div>
-            <div class="menu-item">
-                <a href="index_v2.html" class="menu-link"><div class="menu-text">FAQ</div></a>
-            </div>
-        </div>
-    </div>
+        <div class="menu" style="margin-left: @(scrollMarginLeft)px;">
 
-    <div class="menu-item has-sub">
-        <a href="javascript:;" class="menu-link">
-            <div class="menu-icon">
-                <i class="oi oi-home"></i>
-            </div>
-            <div class="menu-text">Gremien und Themen</div>
-            <div class="menu-caret"></div>
-        </a>
-        <div class="menu-submenu" style="width: 300px">
-            @foreach (var committee in munityContext.Committees.Where(n => n.Conference.ConferenceId == ConferenceId))
+            @foreach (var menuItem in menuItems)
             {
-                <div class="menu-item">
-                    <a href="index.html" class="menu-link text-wrap"><div class="menu-text">@committee.Name</div></a>
-                </div>
+                @if (menuItem.SubItems.Count == 0)
+                {
+                    <div class="menu-item">
+                        <a href="@($"/web/conference/{ConferenceId}/{menuItem.PageId}")" class="menu-link">
+                            <div class="menu-icon">
+                                <i class="oi oi-home"></i>
+                            </div>
+                            <div class="menu-text">@menuItem.Title</div>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="menu-item has-sub">
+                        <a href="javascript:;" class="menu-link">
+                            <div class="menu-icon">
+                                <i class="oi oi-home"></i>
+                            </div>
+                            <div class="menu-text">@menuItem.Title</div>
+                            <div class="menu-caret"></div>
+                        </a>
+                        <div class="menu-submenu">
+                            @foreach (var subMenuItem in menuItem.SubItems)
+                            {
+                                <div class="menu-item">
+                                    <a href="@($"/web/conference/{ConferenceId}/{subMenuItem.PageId}")" class="menu-link"><div class="menu-text">@subMenuItem.Title</div></a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
             }
+
+
+            <div class="menu-item">
+                <a href="@($"/web/conference/{ConferenceId}/register")" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="oi oi-home"></i>
+                    </div>
+                    <div class="menu-text">Anmeldung <span class="menu-label">jetzt offen</span></div>
+                </a>
+            </div>
+
+
+            <!-- Start and Stop scroll Buttons -->
+            @*<div class="menu-item menu-control menu-control-start show">
+                        <a class="menu-link" @onclick="() => scrollMarginLeft += 200"><i class="fa fa-angle-left"></i></a>
+                    </div>
+                    <div class="menu-item menu-control menu-control-end show">
+                        <a class="menu-link"  @onclick="() => scrollMarginLeft -= 200"><i class="fa fa-angle-right"></i></a>
+                    </div>
+                </div>*@
+            <!-- END menu -->
         </div>
     </div>
+}
 
-
-    <div class="menu-item">
-        <a href="@($"/web/conference/{ConferenceId}/register")" class="menu-link">
-            <div class="menu-icon">
-                <i class="oi oi-home"></i>
-            </div>
-            <div class="menu-text">Anmeldung <span class="menu-label">jetzt offen</span></div>
-        </a>
-    </div>
-
-
-    <!-- Start and Stop scroll Buttons -->
-    @*<div class="menu-item menu-control menu-control-start show">
-                <a class="menu-link" @onclick="() => scrollMarginLeft += 200"><i class="fa fa-angle-left"></i></a>
-            </div>
-            <div class="menu-item menu-control menu-control-end show">
-                <a class="menu-link"  @onclick="() => scrollMarginLeft -= 200"><i class="fa fa-angle-right"></i></a>
-            </div>
-        </div>*@
-    <!-- END menu -->
-</div>
-</div>
 @code {
     private int scrollMarginLeft = 0;
 
+    private class menuItemStruct
+    {
+        public string Title { get; set; }
+
+        public string PageId { get; set; }
+
+        public List<menuItemStruct> SubItems { get; set; }
+    }
+
+    private List<menuItemStruct> menuItems;
+
     private string ConferenceId => navManager.Uri.Split("/")[5];
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-        }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.menuItems = munityContext.ConferenceWebMenuEntries
+        .Where(n => n.Conference.ConferenceId == ConferenceId && n.Parent == null)
+        .Select(n => new menuItemStruct()
+            {
+                PageId = n.TargetedPage.ConferenceWebPageId,
+                Title = n.Title,
+                SubItems = n.ChildEntries.Select(a => new menuItemStruct()
+                {
+                    PageId = a.TargetedPage.ConferenceWebPageId,
+                    Title = a.Title
+                }).ToList()
+        }).ToList();
+    }
 }

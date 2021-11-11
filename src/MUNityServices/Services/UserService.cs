@@ -22,6 +22,8 @@ namespace MUNity.Services
 
         private ILogger<UserService> _logger;
 
+        private IMailService _mailService;
+
         public async Task<MunityUser> CreateUser(string username, string mail, string password)
         {
             var hasher = userManager.PasswordHasher;
@@ -48,7 +50,11 @@ namespace MUNity.Services
         {
             var result = await userManager.CreateShadowUser(mail);
             if (result.Result.Succeeded)
+            {
+                _mailService.SendMail(mail, "Eingeladen", "Guten Tag, <br> Sie wurden zur Konferenz... eingeladen.");
                 return result.User;
+
+            }
             else
             {
                 _logger.LogWarning($"Unable to create shadow user {mail} codes: {string.Join(", ", result.Result.Errors.Select(n => n.Code))}");
@@ -110,11 +116,12 @@ namespace MUNity.Services
         //    var signIn = await signInManager.SignIn(user, true);
         //}
 
-        public UserService(MunityContext context, UserManager<MunityUser> userManager, ILogger<UserService> logger)
+        public UserService(MunityContext context, UserManager<MunityUser> userManager, IMailService mailService, ILogger<UserService> logger)
         {
             this.context = context;
             this.userManager = userManager;
             this._logger = logger;
+            this._mailService = mailService;
         }
     }
 }

@@ -1,0 +1,91 @@
+﻿@using MUNity.Database.Models.Website
+
+@layout MUNity.BlazorServer.Shared.ConferenceFrontEndLayout
+@page "/web/conference/{ConferenceId}/{PageId}"
+@page "/web/conference/{ConferenceId}"
+
+@inject MUNity.Database.Context.MunityContext dbContext
+@inject Services.UserConferenceAuthService conferenceAuthService
+
+@if (loadedPage == null)
+{
+    <p>Seite nicht gefunden</p>
+}
+else
+{
+    @if (isAllowedToEdit)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning">Hallo, Sie sind bereichtigt diese Seite zu <a href="@($"/c/managewebsite/{ConferenceId}/{PageId}")">bearbeiten</a> </div>
+            </div>
+        </div>
+    }
+
+    <h1>@loadedPage.Title</h1>
+    @foreach(var comp in loadedPage.Components.OrderBy(n => n.SortOrder))
+    {
+        if (comp is WebPageTextElement textElement)
+        {
+            <div class="card col-12 p-3">@((MarkupString)textElement.Content)</div>
+        }
+        else if (comp is CommitteeTopicsElement topicsElement)
+        {
+            var committeeId = dbContext.ConferenceWebPageCommitteeTopicsElements.Where(n => n.ConferenceWebPageComponentId == topicsElement.ConferenceWebPageComponentId).Select(n => n.Committee.CommitteeId).FirstOrDefault();
+            <div class="card col-12 p-3">
+                <h4>Themen</h4>
+                <ul>
+                    @foreach(var topic in dbContext.CommitteeTopics.Where(n => n.Committee.CommitteeId == committeeId))
+                    {
+                        <li>@topic.TopicFullName</li>
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            <p>Unknown or unimplemented type @comp.GetType().Name</p>
+            
+
+        }
+    }
+}
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    [Parameter] public string PageId { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private MUNity.Database.Models.Website.ConferenceWebPage loadedPage;
+
+    private bool isAllowedToEdit = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (string.IsNullOrEmpty(PageId))
+        {
+            // Load index page
+            this.loadedPage = await dbContext.ConferenceWebPages
+                .Include(n => n.Components)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(n => n.Conference.ConferenceId == ConferenceId && n.IsIndexPage);
+        }
+        else
+        {
+            // Load custom page
+            this.loadedPage = await dbContext.ConferenceWebPages
+                .Include(n => n.Components)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(n => n.Conference.ConferenceId == ConferenceId && n.ConferenceWebPageId == PageId);
+        }
+
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            this.isAllowedToEdit = await conferenceAuthService.IsUserAllowedToEditConference(ConferenceId, claim);  
+        }
+    }
+}

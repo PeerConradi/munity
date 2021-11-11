@@ -80,6 +80,8 @@ public class Startup
         services.AddScoped<ConferenceRoleService>();
         services.AddScoped<UserNotificationService>();
         services.AddScoped<ConferenceApplicationService>();
+        services.AddScoped<IMailService, MailService>();
+        services.AddScoped<ConferenceWebsiteService>();
 
         services.AddLogging();
 

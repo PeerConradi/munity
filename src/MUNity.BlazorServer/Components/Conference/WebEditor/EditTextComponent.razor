@@ -1,0 +1,22 @@
+﻿@using MUNity.Database.Models.Website
+
+<div class="col-12">
+    <div class="panel panel-inverse">
+        <div class="panel-heading bg-primary">
+            <h4 class="panel-title">Text</h4>
+            <div class="panel-heading-btn">
+                @*<a href="javascript:;" class="btn btn-sm btn-icon btn-success"><i class="fa fa-arrow-up"></i></a>
+                <a href="javascript:;" class="btn btn-sm btn-icon btn-warning"><i class="fa fa-arrow-down"></i></a>
+                <a href="javascript:;" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-trash"></i></a>*@
+            </div>
+        </div>
+        <div class="panel-body">
+            <RadzenHtmlEditor @bind-Value=@Element.Content style="height: 500px; margin-bottom: 1rem;" />
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public WebPageTextElement Element { get; set; }
+}
