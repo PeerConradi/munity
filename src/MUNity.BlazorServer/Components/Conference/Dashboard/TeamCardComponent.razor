@@ -1,0 +1,50 @@
+﻿@using MUNity.Schema.Conference;
+
+@inject Services.ConferenceRoleService conferenceRoleService
+@inject MunityContext dbContext
+
+<!-- BEGIN panel -->
+<div class="panel panel-inverse" data-sortable-id="index-4">
+	<div class="panel-heading ui-sortable-handle">
+		<h4 class="panel-title">Teammitglieder</h4>
+		<span class="badge bg-teal">@dbContext.Participations.Count(n => n.Role is MUNity.Database.Models.Conference.Roles.ConferenceTeamRole && n.Role.Conference.ConferenceId == this.ConferenceId) BenutzerInnen</span>
+	</div>
+
+	@if (team != null)
+	{
+		<ul class="registered-users-list">
+			@foreach(var member in team)
+			{
+				<li>
+					<a href="javascript:;"><img src="/img/user/user-5.jpg" alt=""></a>
+					<h4 class="username text-ellipsis">
+						@member.DisplayName
+						<small>@member.RoleName</small>
+					</h4>
+				</li>
+			}
+		</ul>
+	}
+	else
+	{
+		<div class="panel-body">
+			<p>Team Wird geladen</p>
+		</div>
+	}
+
+	<div class="panel-footer text-center">
+		<a  href="/c/manageteam/@ConferenceId" class="text-decoration-none text-inverse">Team anzeigen</a>
+	</div>
+</div>
+
+@code {
+	[Parameter] public string ConferenceId { get; set; }
+
+	private List<TeamMemberInfo> team;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		this.team = await conferenceRoleService.GetTeamMembers(ConferenceId);
+	}
+}

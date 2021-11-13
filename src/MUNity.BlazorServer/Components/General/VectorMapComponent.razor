@@ -1,0 +1,49 @@
+﻿@if (mapReady)
+{
+	<div id="visitors-map" class="bg-gray-900" style="height: 170px;">
+		<div class="jvectormap-container" style="background-color: transparent;">
+			<svg width="@Width" height="@Height">
+				<defs></defs>
+				<g transform="scale(0.4) translate(@TranslateX, @TranslateY)">
+					<VectorMapCountryComponent Country="@KnownVectoryMapCountries.Afghanistan" />
+					<g>
+					<path d="M531.15,258.94l1.51,0.12l5.13,-0.95l5.3,-1.48l-0.01,4.4l-2.67,3.39l-1.85,0.01l-8.04,-2.94l-2.55,-3.17l1.12,-1.71l2.04,2.34Z" fill="red" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
+					<path d="M531.15,258.94l1.51,0.12l5.13,-0.95l5.3,-1.48l-0.01,4.4l-2.67,3.39l-1.85,0.01l-8.04,-2.94l-2.55,-3.17l1.12,-1.71l2.04,2.34Z" data-code="XS" fill="transparent" stroke="transparent" stroke-width="0" fill-rule="evenodd" class="jvectormap-region jvectormap-element"></path>
+					</g>
+					<g>
+					<path d="M472.77,172.64l-1.08,-1.29l0.96,-0.77l0.29,-0.83l1.98,1.64l-0.36,0.67l-1.79,0.58Z" fill="#455A64" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
+					<path d="M472.77,172.64l-1.08,-1.29l0.96,-0.77l0.29,-0.83l1.98,1.64l-0.36,0.67l-1.79,0.58Z" data-code="XK" fill="transparent" stroke="transparent" stroke-width="0" fill-rule="evenodd" class="jvectormap-region jvectormap-element"></path>
+					</g>
+					<g>
+					<path d="M504.91,192.87l0.34,0.01l0.27,-0.07l-0.29,0.26l-0.31,-0.2Z" fill="#455A64" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
+					<path d="M504.91,192.87l0.34,0.01l0.27,-0.07l-0.29,0.26l-0.31,-0.2Z" data-code="XC" fill="transparent" stroke="transparent" stroke-width="0" fill-rule="evenodd" class="jvectormap-region jvectormap-element"></path>
+					</g>
+				</g>
+			</svg><div class="jvectormap-zoomin">+</div><div class="jvectormap-zoomout">−</div><div class="jvectormap-legend-cnt jvectormap-legend-cnt-h"></div>
+			<div class="jvectormap-legend-cnt jvectormap-legend-cnt-v"></div>
+		</div>
+	</div>
+}
+@code {
+
+
+	[Parameter] public double Width { get; set; } = 332.656;
+
+	[Parameter] public double Height { get; set; } = 170;
+
+	[Parameter] public double TranslateX { get; set; } = 0;
+
+	[Parameter] public double TranslateY { get; set; } = 0;
+
+	[Parameter] public double ZoomFactor { get; set; } = 0.4d;
+
+	[Parameter] public string BaseColor { get; set; } = "#455A64";
+
+	private bool mapReady;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		mapReady = true;
+	}
+}

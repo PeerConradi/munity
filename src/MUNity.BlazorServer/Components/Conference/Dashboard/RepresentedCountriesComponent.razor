@@ -1,0 +1,40 @@
+﻿@using MUNity.Database.Models.Conference.Roles
+
+@inject MunityContext dbContext
+
+<div class="panel panel-inverse" data-sortable-id="index-1">
+	<div class="panel-heading ui-sortable-handle">
+		<h4 class="panel-title">
+			Weltkarte
+		</h4>
+	</div>
+	<MUNity.BlazorServer.Components.General.VectorMapComponent />
+	<div class="list-group">
+		<a href="javascript:;" class="list-group-item rounded-0 list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			North America
+			<span class="badge bg-teal fs-10px">
+				@dbContext.Participations.Count(n => n.Role is ConferenceDelegateRole && (n.Role as ConferenceDelegateRole).DelegateCountry.Continent == EContinent.NorthAmerica && n.Role.Conference.ConferenceId == this.ConferenceId) 
+			</span>
+		</a>
+		<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			South America
+			<span class="badge bg-blue fs-10px">16.12%</span>
+		</a>
+		<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			Europa
+			<span class="badge bg-gray-600 fs-10px">14.99%</span>
+		</a>
+		<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			Afrika
+			<span class="badge bg-gray-600 fs-10px">14.99%</span>
+		</a>
+		<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			Asien
+			<span class="badge bg-gray-600 fs-10px">14.99%</span>
+		</a>
+	</div>
+</div>
+
+@code {
+	[Parameter] public string ConferenceId { get; set; }
+}

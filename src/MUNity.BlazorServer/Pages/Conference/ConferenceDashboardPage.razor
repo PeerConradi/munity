@@ -1,7 +1,9 @@
-﻿@page "/c/dashboard/{Id}"
+﻿@using MUNity.BlazorServer.Components.Conference.Dashboard
+
+@page "/c/dashboard/{Id}"
 
 @inject Services.UserConferenceAuthService conferenceAuthService
-@inject MUNity.Database.Context.MunityContext dbContext
+@inject MunityContext dbContext
 
 @if (isTeamMember)
 {
@@ -68,6 +70,20 @@
             </div>
         </div>
         <!-- END col-3 -->
+
+        <div class="col-xl-4 col-lg-6">
+            <TeamCardComponent ConferenceId=@this.Id />
+        </div>
+
+        <div class="col-3">
+            <RepresentedCountriesComponent ConferenceId=@this.Id />
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap">
+        <a class="btn btn-primary me-1 mb-1" href="/c/manageroles/@Id">Teilnehmenden-Rollen bearbeiten</a>
+        <a class="btn btn-primary me-1 mb-1" href="/c/manageapplications/@Id">Bewerbungen/Anmeldungen</a>
+        <a class="btn btn-primary me-1 mb-1" href="/c/managewebsite/@Id">Website bearbeiten</a>
     </div>
 }
 else
@@ -75,12 +91,7 @@ else
     <p>Zugriff verweigert!</p>
 }
 
-<div class="d-flex flex-wrap">
-    <a class="btn btn-primary me-1 mb-1" href="/c/manageteam/@Id">Team bearbeiten</a>
-    <a class="btn btn-primary me-1 mb-1" href="/c/manageroles/@Id">Teilnehmenden-Rollen bearbeiten</a>
-    <a class="btn btn-primary me-1 mb-1" href="/c/manageapplications/@Id">Bewerbungen/Anmeldungen</a>
-    <a class="btn btn-primary me-1 mb-1" href="/c/managewebsite/@Id">Website bearbeiten</a>
-</div>
+
 
 @code {
     [Parameter] public string Id { get; set; }

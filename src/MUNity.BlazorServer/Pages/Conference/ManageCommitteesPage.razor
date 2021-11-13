@@ -37,7 +37,7 @@
                                             <td>@committee.CommitteeName</td>
                                             <td>@committee.CommitteeShort</td>
                                             <td>@committee.ParentCommitteeName</td>
-                                            <td>@committee.SeatCount <button class="btn btn-primary btn-sm" @onclick="() => LoadCommitteeDetails(committee.CommitteeId)">Sitze verwalten</button></td>
+                                            <td>@committee.SeatCount <button class="btn btn-primary btn-sm" @onclick="() => selectedCommitteeId = committee.CommitteeId">Sitze verwalten</button></td>
                                             <td><a href="#">Gremium löschen</a></td>
                                         </tr>
                                     }
@@ -92,14 +92,5 @@
     {
         this.info = conferenceService.GetManageInfo(Id);
         this.InvokeAsync(StateHasChanged);
-    }
-
-    private async Task LoadCommitteeDetails(string id)
-    {
-        this.selectedCommitteeId = id;
-        if (committeeSeatsRef != null)
-        {
-            await committeeSeatsRef.LoadDataForId(id);
-        }
     }
 }

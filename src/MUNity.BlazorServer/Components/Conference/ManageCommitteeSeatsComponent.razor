@@ -10,7 +10,7 @@
                 <p>Diese Tabelle zeigt einen Teil der DelegationWishesen an, indem es die Sitze des Gremiums: GREMIUMNAME anzeigt.</p>
                 <p><b>Rollenname</b> ist der angezeigte Name einer Rolle zum Beispiel: Abgeordnete*r Deutschlands. Es kann sich auch um den Präsidenten, Außenminister etc. handeln.</p>
                 <p><b>Staat</b> gibt den Staat an, mit welchen diese Rolle identifiziert werden soll. Eine Rolle muss nicht zwangsläufig einen Staat angeben.</p>
-                <p><b>DelegationWishes</b> Die DelegationWishes ist eine Gruppe, welche sich dieser Sitz zugehörig fühlt. Eine DelegationWishes kann jeweils ein Land sein (Deutschland) oder auch eine eigene Gruppe/Schulklasse etc. abbilden. DelegationWishesen können an anderer Stelle angelegt und konfiguriert werden.</p>
+                <p><b>Delegation</b> Die DelegationWishes ist eine Gruppe, welche sich dieser Sitz zugehörig fühlt. Eine DelegationWishes kann jeweils ein Land sein (Deutschland) oder auch eine eigene Gruppe/Schulklasse etc. abbilden. DelegationWishesen können an anderer Stelle angelegt und konfiguriert werden.</p>
                 <p><b>Subtype</b> Subtypes Kategorisieren den Sitz weiter. Diese dient vorallem um zwischen Delegierten, Nichtregierungsorganisationen, Nichtstaatlichen Akteuren oder Presse zu unterscheiden. Subtypes werden von der Plattform über den eingegebenen Namen zusammengefasst, ein Subtype sollte daher einheitlich und in der Schreibweise identisch sein.</p>
 
                 <div class="table-responsive">
@@ -20,7 +20,7 @@
                                 <th>#</th>
                                 <th>Rollenname</th>
                                 <th>Staat</th>
-                                <th>DelegationWishes</th>
+                                <th>Delegation</th>
                                 <th>Subtype</th>
                                 <th>Teilnehmende</th>
                             </tr>
@@ -66,9 +66,9 @@
 
     CreateCommitteeSeatModal createSeatModal;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await base.OnInitializedAsync();
+        await base.OnParametersSetAsync();
         await LoadData();
     }
 
@@ -79,17 +79,7 @@
         {
             this.info = await conferenceService.GetCommitteeSeatsInfo(CommitteeId, claim);
             await this.InvokeAsync(this.StateHasChanged);
-            Console.WriteLine($"Reloaded Data for {CommitteeId} {info.CommitteeName}");
         }
     }
 
-    public async Task LoadDataForId(string commId)
-    {
-            CommitteeId = commId;
-        var claim = (await authStateTask)?.User;
-        if (claim != null && !string.IsNullOrEmpty(CommitteeId))
-        {
-            this.info = await conferenceService.GetCommitteeSeatsInfo(CommitteeId, claim);
-        }
-    }
 }

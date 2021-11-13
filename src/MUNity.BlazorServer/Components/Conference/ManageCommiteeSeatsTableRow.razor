@@ -4,7 +4,7 @@
     <td>@Seat.CountryId</td>
     <td>@Seat.DelegationId</td>
     <td>@Seat.Subtypes</td>
-    <td>Max Mustermann <br /> Mike Litoris</td>
+    <td>@string.Join(", ", Seat.Participants.Select(n => n.DisplayName))</td>
 </tr>
 
 @code {

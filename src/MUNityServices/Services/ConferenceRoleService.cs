@@ -212,6 +212,17 @@ namespace MUNity.Services
                 }).ToList();
         }
 
+        public async Task<List<TeamMemberInfo>> GetTeamMembers(string conferenceId)
+		{
+            return await _context.Participations.Where(n => n.Role is ConferenceTeamRole && n.Role.Conference.ConferenceId == conferenceId)
+                .Select(n => new TeamMemberInfo()
+                {
+                    UserName = n.User.UserName,
+                    DisplayName = n.User.GetDisplayNamePublic,
+                    RoleName = n.Role.RoleName
+                }).ToListAsync();
+		}
+
         public ConferenceRoleService(MunityContext context, UserConferenceAuthService authService)
         {
             _context = context;

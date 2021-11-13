@@ -10,6 +10,7 @@
         NorthAmerica,
         SouthAmerica,
         NotSet,
-        EuropeAndAsia
+        TransitionState,
+        Oceania
     }
 }

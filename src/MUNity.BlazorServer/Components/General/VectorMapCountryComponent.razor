@@ -1,0 +1,17 @@
+﻿<g @onclick="LogOnClick">
+    <path d="@Country.Path" fill="@FillColor" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
+    <path d="@Country.Path" data-code="BD" fill="transparent" stroke="transparent" stroke-width="0" fill-rule="evenodd" class="jvectormap-region jvectormap-element"></path>
+</g>
+@code {
+    [Parameter] public string FillColor { get; set; } = "#455A64";
+
+    [Parameter] public VectorMapCountry Country { get; set; }
+
+    private string Path;
+
+    private void LogOnClick()
+    {
+        Console.WriteLine($"Clicked on {Country.Name}");
+
+    }
+}
