@@ -11,26 +11,45 @@
 	<MUNity.BlazorServer.Components.General.VectorMapComponent />
 	<div class="list-group">
 		<a href="javascript:;" class="list-group-item rounded-0 list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
-			North America
+			Afrika
 			<span class="badge bg-teal fs-10px">
-				@dbContext.Participations.Count(n => n.Role is ConferenceDelegateRole && (n.Role as ConferenceDelegateRole).DelegateCountry.Continent == EContinent.NorthAmerica && n.Role.Conference.ConferenceId == this.ConferenceId) 
+				@dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId && n.DelegateCountry.Continent == EContinent.Africa).Select(n => n.DelegateCountry).Distinct().Count() 
 			</span>
 		</a>
-		<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
-			South America
-			<span class="badge bg-blue fs-10px">16.12%</span>
-		</a>
-		<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
-			Europa
-			<span class="badge bg-gray-600 fs-10px">14.99%</span>
-		</a>
-		<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
-			Afrika
-			<span class="badge bg-gray-600 fs-10px">14.99%</span>
-		</a>
-		<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+
+		<a href="javascript:;" class="list-group-item rounded-0 list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
 			Asien
-			<span class="badge bg-gray-600 fs-10px">14.99%</span>
+			<span class="badge bg-teal fs-10px">
+				@dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId && n.DelegateCountry.Continent == EContinent.Asia).Select(n => n.DelegateCountry).Distinct().Count() 
+			</span>
+		</a>
+
+		<a href="javascript:;" class="list-group-item rounded-0 list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			Europa
+			<span class="badge bg-teal fs-10px">
+				@dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId && n.DelegateCountry.Continent == EContinent.Europe).Select(n => n.DelegateCountry).Distinct().Count() 
+			</span>
+		</a>
+
+		<a href="javascript:;" class="list-group-item rounded-0 list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			North America
+			<span class="badge bg-teal fs-10px">
+				@dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId && n.DelegateCountry.Continent == EContinent.NorthAmerica).Select(n => n.DelegateCountry).Distinct().Count() 
+			</span>
+		</a>
+
+		<a href="javascript:;" class="list-group-item rounded-0 list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			Ozeianien
+			<span class="badge bg-teal fs-10px">
+				@dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId && n.DelegateCountry.Continent == EContinent.Oceania).Select(n => n.DelegateCountry).Distinct().Count() 
+			</span>
+		</a>
+
+		<a href="javascript:;" class="list-group-item rounded-0 list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
+			Südameria
+			<span class="badge bg-teal fs-10px">
+				@dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId && n.DelegateCountry.Continent == EContinent.SouthAmerica).Select(n => n.DelegateCountry).Distinct().Count() 
+			</span>
 		</a>
 	</div>
 </div>
