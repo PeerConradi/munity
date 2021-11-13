@@ -2,11 +2,27 @@
 using Microsoft.Extensions.DependencyInjection;
 using MUNity.Database.Context;
 using MUNity.Database.Models.User;
+using Moq;
 
 namespace MUNity.Services.Test;
 
 public class TestHelpers
 {
+    private static Mock<IMailService> mockedMailService;
+
+    public static Mock<IMailService> MockedMailService
+    {
+        get
+        {
+            if (mockedMailService == null)
+            {
+                mockedMailService = new Mock<IMailService>();
+                mockedMailService.Setup(n => n.SendMail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            }
+            return mockedMailService;
+        }
+    }
+
     public static MunityContext CreateSQLiteContext(string name)
     {
         // Datenbank für den Test erzeugen und falls vorhanden erst einmal leeren und neu erstellen!
@@ -20,6 +36,8 @@ public class TestHelpers
 
     public static ServiceProvider GetCompleteProvider()
     {
+        var mail = MockedMailService.Object;
+
         var services = new ServiceCollection();
         //this.context = TestHelpers.CreateSQLiteContext("orga_tests");
         services.AddDbContext<MunityContext>(options =>
@@ -31,6 +49,7 @@ public class TestHelpers
         services.AddSingleton(orgaLogger);
         services.AddScoped<UserService>();
         services.AddScoped<OrganizationService>();
+        services.AddSingleton(mail);
         services.AddIdentityCore<MunityUser>()
             .AddRoles<MunityRole>()
             .AddEntityFrameworkStores<MunityContext>();

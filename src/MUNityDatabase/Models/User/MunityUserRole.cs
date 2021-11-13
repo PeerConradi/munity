@@ -10,10 +10,8 @@ namespace MUNity.Database.Models.User;
 
 public class MunityUserRole : IdentityUserRole<string>
 {
-    [ForeignKey(nameof(UserId))]
     public virtual MunityUser User { get; set; }
 
-    [ForeignKey(nameof(RoleId))]
     public virtual MunityRole Role { get; set; }
 
     public MunityUserRole()

@@ -1,0 +1,113 @@
+﻿@using MUNity.BlazorServer.Components.User.Profile
+@using MUNity.Database.Models.User
+
+@page "/profile/{UserName}"
+@page "/profile/{UserName}/{Tab}"
+
+@inject NavigationManager navManager
+@inject UserManager<MunityUser> userManager;
+
+	@if (user != null)
+	{
+		<div class="profile">
+		<div class="profile-header">
+			<!-- BEGIN profile-header-cover -->
+			<div class="profile-header-cover"></div>
+			<!-- END profile-header-cover -->
+			<!-- BEGIN profile-header-content -->
+			<div class="profile-header-content">
+				<!-- BEGIN profile-header-img -->
+				<div class="profile-header-img">
+					<img src="/img/user/user-13.jpg" alt="">
+				</div>
+				<!-- END profile-header-img -->
+				<!-- BEGIN profile-header-info -->
+				<div class="profile-header-info">
+					<h4 class="mt-0 mb-1">@((isMe) ? $"{user.Forename} {user.Lastname}" : user.GetDisplayNamePublic)</h4>
+					<p class="mb-2">@@@user.UserName</p>
+					@if (isMe)
+					{
+						<a href="#" class="btn btn-xs btn-yellow">Edit Profile</a>
+					}
+				</div>
+				<!-- END profile-header-info -->
+			</div>
+			<!-- END profile-header-content -->
+			<!-- BEGIN profile-header-tab -->
+			<ul class="profile-header-tab nav nav-tabs">
+				<li class="nav-item"><a class="nav-link cursor-pointer @((tab == Tabs.Posts) ? "active" : null)" @onclick="() => tab = Tabs.Posts">POSTS</a></li>
+				<li class="nav-item"><a class="nav-link cursor-pointer @((tab == Tabs.About) ? "active" : null)" @onclick="() => tab = Tabs.About">ABOUT</a></li>
+				@*<li class="nav-item"><a href="#profile-photos" class="nav-link" data-bs-toggle="tab">PHOTOS</a></li>
+				<li class="nav-item"><a href="#profile-videos" class="nav-link" data-bs-toggle="tab">VIDEOS</a></li>
+				<li class="nav-item"><a href="#profile-friends" class="nav-link" data-bs-toggle="tab">FRIENDS</a></li>*@
+			</ul>
+			<!-- END profile-header-tab -->
+		</div>
+
+		<div class="profile-content">
+			@if (tab == Tabs.Posts)
+			{
+				<PostHistoryComponent />
+			}
+			else if (tab == Tabs.About)
+			{
+				<AboutComponent UserName=@UserName IsMe=@isMe />
+			}
+		</div>
+	</div>
+}
+else
+{
+	<p>Hoppla! Benutzer wurde nicht gefunden.</p>
+}
+
+@code {
+	[Parameter] public string UserName { get; set; }
+
+	[Parameter] public string Tab { get; set; }
+
+	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+	private enum Tabs
+	{
+		Posts,
+		About
+	}
+
+	private Tabs tab = Tabs.Posts;
+
+	private MunityUser user;
+
+	private bool isMe;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		user = await userManager.FindByNameAsync(UserName);
+		var claim = (await AuthStateTask)?.User;
+		if (claim != null)
+		{
+			var signedInUser = await userManager.GetUserAsync(claim);
+			if (signedInUser != null)
+				isMe = signedInUser.Id == user.Id;
+			else
+				isMe = false;
+		}
+
+
+		OpenTabByNameIfGiven();
+	}
+
+	private void OpenTabByNameIfGiven()
+	{
+		if (Tab != null)
+		{
+			var tabText = Tab.ToLower();
+			if (tabText == "posts")
+				tab = Tabs.Posts;
+			else if (tabText == "about")
+				tab = Tabs.About;
+
+		}
+	}
+}

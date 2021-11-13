@@ -89,23 +89,23 @@ public partial class FullMUNBW22Tests
                 /// User is the owner of the Organization (Clemens)
                 /// weitere Organisationsbenutzer sind in diesem Test nicht notwendig, da es hier um MUNBW und nicht um organisationen an sich geht...
                 /// </summary>
-                public static MunityUser TonyStark { get; set; } = new MunityUser("tonystark", "tony@stark-industries.com") { Forename = "Antony", Lastname = "Stark" };
-                public static MunityUser HankPym { get; set; } = new MunityUser("hankpym", "hank-pym@avangers.com") { Forename = "Henry Jonathan", Lastname = "Pym" };
+                public static MunityUser TonyStark { get; set; } = new MunityUser("tonystark", "tony@stark-industries.com") { Forename = "Antony", Lastname = "Stark", Birthday = new DateOnly(1970, 5, 29), Country = "Vereinigte Staaten", City="California", Zipcode = "10880", HouseNumber = "90265" };
+                public static MunityUser HankPym { get; set; } = new MunityUser("hankpym", "hank-pym@avangers.com") { Forename = "Henry Jonathan", Lastname = "Pym", Birthday = new DateOnly(1976, 3, 8) };
 
                 /// <summary>
                 /// Projektleiter 1 (J. T.)
                 /// </summary>
-                public static MunityUser JanetVanDyne { get; set; } = new MunityUser("jandyne", "janet-dyne@avangers.com") { Forename = "Janet", Lastname = "van Dyne" };
+                public static MunityUser JanetVanDyne { get; set; } = new MunityUser("jandyne", "janet-dyne@avangers.com") { Forename = "Janet", Lastname = "van Dyne", Birthday = new DateOnly(1973, 4, 12) };
 
                 /// <summary>
                 /// Projektleiter 2 (M. I.)
                 /// </summary>
-                public static MunityUser TheHulk { get; set; } = new MunityUser("hulk", "hulk@avangers.com") { Forename = "Robert Bruce", Lastname = "Banner" };
+                public static MunityUser TheHulk { get; set; } = new MunityUser("hulk", "hulk@avangers.com") { Forename = "Robert Bruce", Lastname = "Banner", Birthday = new DateOnly(1969, 12, 18) };
 
                 /// <summary>
                 /// Projektleiter 3 (T. S.)
                 /// </summary>
-                public static MunityUser Thor { get; set; } = new MunityUser("rickjones", "rock@avangers.com") { Forename = "Richard Milhouse", Lastname = "Jones" };
+                public static MunityUser Thor { get; set; } = new MunityUser("rickjones", "rock@avangers.com") { Forename = "Richard Milhouse", Lastname = "Jones", Birthday = new DateOnly(1964, 6, 18) };
 
             }
 
@@ -114,7 +114,7 @@ public partial class FullMUNBW22Tests
                 /// <summary>
                 /// Generalsekretär (J. M.)
                 /// </summary>
-                public static MunityUser CaptainAmerica { get; set; } = new MunityUser("muricaboi", "captain@amrica.com") { Forename = "Steve", Lastname = "Rogers" };
+                public static MunityUser CaptainAmerica { get; set; } = new MunityUser("muricaboi", "captain@amrica.com") { Forename = "Steve", Lastname = "Rogers", Birthday = new DateOnly(1918, 7, 4) };
 
                 /// <summary>
                 /// Leitung Inhalt & Sekretariat (K. V.)

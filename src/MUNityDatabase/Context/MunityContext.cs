@@ -177,6 +177,10 @@ namespace MUNity.Database.Context
 
         public DbSet<WebPageTextElement> ConferenceWebPageTextElements { get; set; }
 
+        public DbSet<UserFriend> UserFriends { get; set; }
+
+        public DbSet<UserBlocked> UserBlockedUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -193,12 +197,6 @@ namespace MUNity.Database.Context
             modelBuilder.Entity<MunityUser>().HasKey(n => n.Id);
 
             modelBuilder.Entity<MunityUser>().HasMany(n => n.CreatedResolutions).WithOne(a => a.CreationUser).IsRequired(false);
-
-            // Each User can have many entries in the UserRole join table
-            modelBuilder.Entity<MunityUser>().HasMany(e => e.UserRoles)
-                .WithOne()
-                .HasForeignKey(ur => ur.UserId)
-                .IsRequired();
 
             modelBuilder.Entity<OrganizationRole>()
                 .HasOne(n => n.Organization)

@@ -1,0 +1,162 @@
+﻿@using MUNity.Database.Models.User
+@using MUNity.Schema.Account
+
+@inject NavigationManager navManager
+@inject UserManager<MunityUser> userManager
+@inject MUNity.Database.Context.MunityContext dbContext
+
+<div class="table-responsive form-inline">
+	<table class="table table-profile align-middle">
+		<thead>
+			<tr>
+				<th></th>
+				<th>
+					<h4>@((IsMe.HasValue && IsMe.Value) ? $"{user.Forename} {user.Lastname}" : null) 
+							<small>@@@user.UserName</small>
+					</h4>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="divider">
+				<td colspan="2"></td>
+			</tr>
+			@if (IsMe.HasValue && IsMe.Value)
+			{
+
+				<tr>
+					<td></td>
+					<td><h5>Persönliche Daten</h5> <small>Nur Sie können diese Angaben sehen.</small></td>
+				</tr>
+
+				<tr>
+					<td class="field">Land</td>
+					<td>
+						<select class="form-select w-200px" name="region" @bind=request.UpdatedCountry>
+							<option value="@string.Empty">Keine Angabe</option>
+							@foreach(var countryName in dbContext.Countries.Select(n => n.Name))
+							{
+								<option value="@countryName">@countryName</option>
+							}
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="field">PLZ und Stadt</td>
+					<td>
+						<div class="d-flex align-items-center">
+							<input class="form-control w-100px" @bind=request.UpdatedZipCode />
+							<span class="mx-2">-</span>
+							<input class="form-control w-200px" @bind=request.UpdatedCity />
+						</div>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="field">Straße und Hausnummer</td>
+					<td>
+						<div class="d-flex align-items-center">
+
+							<input class="form-control w-200px" @bind=request.UpdatedStreet />
+							<span class="mx-2">-</span>
+							<input class="form-control w-75px" @bind=request.UpdatedHouseNumber />
+
+						</div>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="field">Geburtstag</td>
+					<td>
+						<div class="d-flex align-items-center">
+							<select class="form-select w-80px" @bind=request.UpdatedBirthdayDay>
+								@for(int i=1;i < DateTime.DaysInMonth(request.UpdatedBirthdayYear, request.UpdatedBirthdayMonth);  i++)
+								{
+									<option value="@i">@i</option>
+								}
+							</select>
+							<span class="mx-2">-</span>
+							<select class="form-select w-80px" name="month" @bind=request.UpdatedBirthdayMonth>
+								@for (int i=1;i<12;i++)
+								{
+									<option value="@i">@i</option>
+								}
+							</select>
+							<span class="mx-2">-</span>
+							<select class="form-select w-100px" name="year" @bind=request.UpdatedBirthdayYear>
+								@for(int i=DateTime.Now.Year - 130;i<DateTime.Now.Year; i++)
+								{
+									<option value="@i">@i</option>
+									
+								}
+							</select>
+						</div>
+					</td>
+				</tr>
+
+				<tr class="divider">
+					<td colspan="2"></td>
+				</tr>
+				<tr class="highlight">
+					<td class="field">&nbsp;</td>
+					<td class="">
+						<button type="submit" class="btn btn-primary w-150px">Update</button>
+						<button type="submit" class="btn btn-white border-0 w-150px ms-5px">Cancel</button>
+					</td>
+				</tr>
+			}
+			
+			
+		</tbody>
+	</table>
+</div>
+
+@code {
+	[Parameter] public string UserName { get; set; }
+
+	[Parameter] public bool? IsMe { get; set; }
+
+	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+	private MunityUser user;
+
+	private UpdateProfileRequest request; 
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		user = await userManager.FindByNameAsync(UserName);
+		if (user != null)
+		{
+			request = new UpdateProfileRequest()
+			{
+				UserName = this.UserName,
+				UpdatedBirthdayDay = user.Birthday.Day,
+				UpdatedBirthdayMonth = user.Birthday.Month,
+				UpdatedBirthdayYear = user.Birthday.Year,
+				UpdatedCity = user.City,
+				UpdatedCountry = user.Country,
+				UpdatedHouseNumber = user.HouseNumber,
+				UpdatedStreet = user.Street,
+				UpdatedZipCode = user.Zipcode
+			};
+		}
+
+		if (!IsMe.HasValue)
+		{
+			await CheckIfUserIsSignedInUser();
+		}
+		
+	}
+
+	private async Task CheckIfUserIsSignedInUser()
+	{
+		
+		var claim = (await AuthStateTask)?.User;
+		if (claim != null)
+		{
+			var signedInUser = await userManager.GetUserAsync(claim);
+			IsMe = signedInUser.Id == user.Id;
+		}
+	}
+}

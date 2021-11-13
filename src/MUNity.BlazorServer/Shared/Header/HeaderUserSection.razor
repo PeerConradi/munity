@@ -57,7 +57,7 @@
                 <img src="https://www.profielactueel.nl/content/modules/catalog/1/3800/3759/10_xx_2_1.png" alt="">
             </a>
             <div class="dropdown-menu dropdown-menu-end me-1 @((ShowUserSubMenu) ? "show" : null)" style="@((ShowUserSubMenu) ? SubMenuStyle : null)">
-                <a href="javascript:;" class="dropdown-item">Mein Profil</a>
+                <a href="@($"/profile/{userName}")" class="dropdown-item">Mein Profil</a>
                 <a href="javascript:;" class="dropdown-item"><span class="badge bg-danger float-end rounded-pill">2</span> Postfach</a>
                 <a href="javascript:;" class="dropdown-item">Meine Organisationen</a>
                 <a href="javascript:;" class="dropdown-item">Meine Projekte</a>
@@ -91,6 +91,8 @@
 
     private string userDisplayName;
 
+    private string userName;
+
     private void ToggleUserMenu()
     {
         this.ShowNotifications = false;
@@ -109,6 +111,7 @@
         var claim = (await AuthStateTask)?.User;
         if (claim != null)
         {
+            this.userName = claim.Identity.Name;
             notifications = await userNotificationService.GetLastFiveIntrestingNotifications(claim);
             unreadNotificationsCount = await userNotificationService.GetCountOfUnreadNotifications(claim);
             totalNotificationsCount = await userNotificationService.GetTotalCountOfNotifications(claim);

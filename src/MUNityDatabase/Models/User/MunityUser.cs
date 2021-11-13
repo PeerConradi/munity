@@ -22,11 +22,6 @@ namespace MUNity.Database.Models.User
     /// </summary>
     public class MunityUser : IdentityUser, IUserPrivacySettings
     {
-        public enum EUserState
-        {
-            OK,
-            BANNED
-        }
 
         [MaxLength(100)]
         public string Title { get; set; }
@@ -40,7 +35,7 @@ namespace MUNity.Database.Models.User
         [MaxLength(250)]
         public string Gender { get; set; }
 
-        public DateTime Birthday { get; set; }
+        public DateOnly Birthday { get; set; }  // TODO: Change to DateOnly
 
         [MaxLength(300)]
         public string Country { get; set; }
@@ -66,13 +61,19 @@ namespace MUNity.Database.Models.User
 
         public EUserState UserState { get; set; }
 
-        public ICollection<MunityUser> Friends { get; set; }
-
         public ICollection<Resolution.ResolutionAuth> CreatedResolutions { get; set; }
 
-        public ICollection<MunityUserRole> UserRoles { get; set; }
+        //public ICollection<MunityUserRole> UserRoles { get; set; }
 
         public ICollection<UserNotification> Notifications { get; set; }
+
+        public ICollection<UserFriend> Friends { get; set; } = new List<UserFriend>();
+
+        public ICollection<UserFriend> InverseFriends { get; set; } = new List<UserFriend>();
+
+        public ICollection<UserBlocked> BlockedUsers { get; set; } = new List<UserBlocked>();
+
+        public ICollection<UserBlocked> BlockedBy { get; set; } = new List<UserBlocked>();
 
         public ENameDisplayMode PublicNameDisplayMode { get; set; }
         public ENameDisplayMode InternalNameDisplayMode { get; set; }
