@@ -37,7 +37,7 @@ public class Startup
         // Blazor stuff
         services.AddRazorPages();
         services.AddServerSideBlazor();
-
+        //Trigger deploy
         // Database
         // To get more output add: .EnableSensitiveDataLogging().LogTo(Console.WriteLine) after Use...()
         // Set the Data Source to: ../../tests/MUNityDatabaseTest/bin/Debug/net6.0/testmunbw.db
