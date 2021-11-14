@@ -284,185 +284,44 @@ public partial class FullMUNBW22Tests
     public void TestCreateDelegations()
     {
         // Afrika
-        // Ägypten
-        var aegypten = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(options => options
-                .WithName("Ägypten")
-                .WithCountry("Ägypten")
-                .InsideAnyCommittee()
-                .Save());
-        Assert.AreEqual(4, aegypten.Roles.Count);
-
-        // Algerien
-        var algerien = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(del => del
-                .WithName("Algerien")
-                .WithCountry("Algerien")
-                .InsideCommitteeByShort("GV", "IOM")
-                .Save());
-        Assert.AreEqual(2, algerien.Roles.Count);
-
-        var algerienOnline = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(del => del
-            .WithName("Algerien (online)")
-            .WithCountry("Algerien")
-            .InsideCommittee("munbw22-mrr")
-            .Save());
-        Assert.AreEqual(1, algerienOnline.Roles.Count);
-
-        // Angola
-        var angola = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(options => options
-                .WithName("Angola")
-                .WithCountry("Angola")
-                .InsideCommitteeByShort("GV", "WiSo")
-                .Save());
-        Assert.AreEqual(2, angola.Roles.Count);
-
-        // Äthiopien
-        var aetiopien = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(options => options
-                .WithName("Äthiopien")
-                .WithCountry("Äthiopien")
-                .InsideCommitteeByShort("GV", "KFK", "WiSo", "KK")
-                .Save());
-        Assert.AreEqual(4, aetiopien.Roles.Count);
-
-        // Burkina Faso
-        var burkinaFaso = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(options => options
-                .WithName("Burkina Faso")
-                .WithCountry("Burkina Faso")
-                .InsideCommitteeByShort("GV", "HA3")
-                .Save());
-        Assert.AreEqual(2, burkinaFaso.Roles.Count);
-
-        var burkinaFasoOnline = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(options => options
-                .WithName("Burkina Faso (online)")
-                .WithCountry("Burkina Faso")
-                .InsideCommitteeByShort("MRR")
-                .Save());
-        Assert.AreEqual(1, burkinaFasoOnline.Roles.Count);
-
-        // Elfenbenküste
-        var elfenbeimkueste = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(options => options
-                .WithName("Elfenbeinküste")
-                .WithCountry("Elfenbeinküste")
-                .InsideCommitteeByShort("GV", "WiSo", "KK")
-                .Save());
-
-        var elfenbeinkuesteOnline = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(options => options
-                .WithName("Elfenbeinküsten (online)")
-                .WithCountry("Elfenbeinküste")
-                .InsideCommitteeByShort("MRR")
-                .Save());
-
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Elfenbeinküste");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Eritrea");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Gabun");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ghana");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kamerun");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kenia");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Demokratische Republik Kongo");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Republik Kongo");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Libyen");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Madagaskar");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Mosambik");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Nigeria");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ruanda");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Seychellen");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Südafrika");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Sudan");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Südsudan");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Tschad");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Tunesien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Uganda");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Zentralafrikanische Republik");
-
-        //// Asien
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Bangladesch");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Volksrepublik China");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Fidschi");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Indien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Indonesien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Iran");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Japan");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Jemen");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kasachstan");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Katar");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Myanmar");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Pakistan");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Palau");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Papua-Neuguinea");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Philippinen");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Samoa");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Saudi-Arabien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Singapur");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Südkorea");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Syrien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Thailand");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Usbekistan");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Vereinigte Arabische Emirate");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Vietnam");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Zypern");
-
-        //// Osteuropa
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Albanien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Bosnien und Herzegowina");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Estland");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kroatien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Lettland");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Polen");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Rumänien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Russland");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ukraine");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ungarn");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Belarus");
-
-        //// Lateinamerika
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Argentinien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Brasilien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Chile");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Costa Rica");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Dominikanische Republik");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Ecuador");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Haiti");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Jamaika");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kolumbien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kuba");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Mexiko");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Nicaragua");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Peru");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Trinidad und Tobago");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Uruguay");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Venezuela");
+        // Save after every insert, otherwise the change-tracker that assignes the easy ids cant handle it...
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Ägypten").WithCountry("Ägypten").InsideAnyCommittee().Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Algerien").WithCountry("Algerien").InsideCommitteeByShort("GV", "IOM").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Algerien (online)").WithCountry("Algerien").InsideCommittee("munbw22-mrr").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Angola").WithCountry("Angola").InsideCommitteeByShort("GV", "WiSo").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Äthiopien").WithCountry("Äthiopien").InsideCommitteeByShort("GV", "KFK", "WiSo", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Burkina Faso").WithCountry("Burkina Faso").InsideCommitteeByShort("GV", "HA3").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Burkina Faso (online)").WithCountry("Burkina Faso").InsideCommitteeByShort("MRR").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Elfenbeinküste").WithCountry("Elfenbeinküste").InsideCommitteeByShort("GV", "WiSo", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Elfenbeinküsten (online)").WithCountry("Elfenbeinküste").InsideCommitteeByShort("MRR").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Eritrea").WithCountry("Eritrea").InsideCommitteeByShort("GV", "IOM").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Eritrea (online)").WithCountry("Eritrea").InsideCommitteeByShort("MRR").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Gabun").WithCountry("Gabun").InsideCommitteeByShort("GV", "SR").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Ghana").WithCountry("Ghana").InsideCommitteeByShort("GV", "HA3", "SR").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Kamerun").WithCountry("Kamerun").InsideCommitteeByShort("GV", "HA3", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Kenia").WithCountry("Kenia").InsideCommitteeByShort("GV", "SR", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Demokratische Republik Kongo").WithCountry("Demokratische Republik Kongo").InsideCommitteeByShort("GV", "WiSo", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Republik Kongo").WithCountry("Republik Kongo").InsideCommitteeByShort("GV").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Libyen").WithCountry("Libyen").InsideCommitteeByShort("GV", "WiSo", "IOM").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Libyen (online)").WithCountry("Libyen").InsideCommitteeByShort("MRR").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Madagaskar").WithCountry("Madagaskar").InsideCommitteeByShort("GV", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Mosambik").WithCountry("Mosambik").InsideCommitteeByShort("GV").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Nigeria").WithCountry("Nigeria").InsideCommitteeByShort("GV", "HA3", "KFK", "WiSo").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Ruanda").WithCountry("Ruanda").InsideCommitteeByShort("GV", "IOM", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Seychellen").WithCountry("Seychellen").InsideCommitteeByShort("GV", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Südafrika").WithCountry("Südafrika").InsideCommitteeByShort("GV", "HA3", "KFK", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Sudan").WithCountry("Sudan").InsideCommitteeByShort("GV", "IOM", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Sudan (online)").WithCountry("Sudan").InsideCommitteeByShort("MRR").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Südsudan").WithCountry("Südsudan").InsideCommitteeByShort("GV", "IOM").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Tschad").WithCountry("Tschad").InsideCommitteeByShort("GV", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Tschad (online)").WithCountry("Tschad").InsideCommitteeByShort("MRR").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Tunesien").WithCountry("Tunesien").InsideCommitteeByShort("GV", "KK").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Uganda").WithCountry("Uganda").InsideCommitteeByShort("GV", "IOM").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Zentralafrikanische Republik").WithCountry("Zentralafrikanische Republik").InsideCommitteeByShort("GV", "HA3").Save());
+        _context.Fluent.ForConference("munbw22").AddDelegation(n => n.WithName("Zentralafrikanische Republik (online)").WithCountry("Zentralafrikanische Republik").InsideCommitteeByShort("MRR").Save());
 
         //// Westeuropa
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Australien");
-        var deutschland = _context.Fluent.ForConference("munbw22")
-            .AddDelegation(options => options
-                .WithName("Deutschland")
-                .WithCountry("Deutschland")
-                .InsideAnyCommittee()
-                .Save());
-        Assert.AreEqual(4, aetiopien.Roles.Count);
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Frankreich");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Irland");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Israel");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Italien");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Kanada");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Niederlande");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Norwegen");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Schweden");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Schweiz");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Türkei");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Vereinigte Staaten");
-        //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Vereinigtes Königreich");
-
-
+        _context.Fluent.ForConference("munbw22").AddDelegation(options => options.WithName("Deutschland").WithCountry("Deutschland").InsideAnyCommittee().Save());
 
         //var allDelegations = _context.Delegations
         //    .Include(n => n.ChildDelegations)
@@ -474,12 +333,33 @@ public partial class FullMUNBW22Tests
 
 
         Assert.IsTrue(_context.Delegations.Any(n => n.DelegationId == "munbw22-deutschland"));
+        // Check for all Delegations in Africa
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Ägypten"));
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Algerien"));
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Angola"));
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Äthiopien"));
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Burkina Faso"));
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Elfenbeinküste"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Eritrea"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Gabun"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Ghana"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Kamerun"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Kenia"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Demokratische Republik Kongo"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Republik Kongo"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Libyen"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Madagaskar"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Mosambik"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Nigeria"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Ruanda"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Seychellen"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Südafrika"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Sudan"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Südsudan"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Tschad"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Tunesien"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Uganda"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Zentralafrikanische Republik"));
     }
 
     [Test]

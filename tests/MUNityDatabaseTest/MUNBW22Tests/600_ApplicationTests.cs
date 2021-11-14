@@ -86,7 +86,7 @@ public partial class FullMUNBW22Tests
     public void CheckDelegationForApplicationCount()
     {
         var allDelegationsAtLocation = _context.Fluent.ForConference("munbw22").DelegationsWithOnlyAtLocationSlots().ToList();
-        Assert.AreEqual(7, allDelegationsAtLocation.Count, "Expected another total of Delegations at location!");
+        Assert.AreEqual(27, allDelegationsAtLocation.Count, "Expected another total of Delegations at location!");
 
 
         // Delegationsgrößen Test
@@ -134,9 +134,9 @@ public partial class FullMUNBW22Tests
             .CreateDelegationApplication()
             .WithAuthor(TestUsers.XMen.OriginalMembers.ProfessorX.UserName)
             .WithMember(TestUsers.XMen.OriginalMembers.Angel.UserName)
-            .WithPreferedDelegationByName("Algerien")
-            .WithPreferedDelegationByName("Angola")
-            .WithPreferedDelegationByName("Burkina Faso")
+            .WithPreferedDelegationByName("Elfenbeinküste")
+            .WithPreferedDelegationByName("Ghana")
+            .WithPreferedDelegationByName("Kenia")
             .WithFieldInput("Motivation", "Wir sind sehr Motiviert bei dieser Konferenz dabei zu sein :)")
             .IsOpenedToPublic()
             .Submit();

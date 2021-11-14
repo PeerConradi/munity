@@ -26,7 +26,8 @@ public partial class FullMUNBW22Tests
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddDbContext<MunityContext>(options =>
-            options.UseSqlite("Data Source=testmunbw.db"));
+            options.UseSqlite("Data Source=testmunbw.db")
+            .EnableSensitiveDataLogging().LogTo(Console.WriteLine));
 
         serviceCollection.AddIdentity<MunityUser, MunityRole>(options =>
         {

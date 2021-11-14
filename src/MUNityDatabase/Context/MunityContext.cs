@@ -24,6 +24,7 @@ using MUNity.Database.Interfaces;
 using MUNity.Database.Models.Website;
 using MUNity.Database.Models.General;
 using MUNity.Database.FluentAPI;
+using System.Diagnostics;
 
 namespace MUNity.Database.Context
 {
@@ -474,8 +475,12 @@ namespace MUNity.Database.Context
 
             var easyNameDelegation = Util.IdGenerator.AsPrimaryKey(delegation.Name);
             var easyId = delegation.Conference.ConferenceId + "-" + easyNameDelegation;
-            if (this.Delegations.All(n => n.DelegationId != easyId))
+            if (this.Delegations.All(n => n.DelegationId != easyId) && this.ChangeTracker.Entries<Delegation>().All(n => n.Entity.DelegationId != easyId))
+            {
+                Debug.WriteLine($"Assigning EasyId to Delegation {delegation.Name}: {easyId}");
                 delegation.DelegationId = easyId;
+
+            }
             else
                 delegation.DelegationId = Guid.NewGuid().ToString();
             

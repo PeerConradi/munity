@@ -489,7 +489,7 @@ namespace MUNity.Database.FluentAPI
         {
             return _dbContext.DelegationApplications.Where(n => n.Conference.ConferenceId == _conferenceId &&
                 n.OpenToPublic &&
-                (n.Users.Count < n.DelegationWishes.Max(a => a.Delegation.Roles.Count)));
+                (n.Users.Count(n => n.Status == DelegationApplicationUserEntryStatuses.Joined || n.Status == DelegationApplicationUserEntryStatuses.Invited) < n.DelegationWishes.Max(a => a.Delegation.Roles.Count)));
         }
 
         public IQueryable<Delegation> DelegationsWithOnlyAtLocationSlots(int minRolesCount = 0)

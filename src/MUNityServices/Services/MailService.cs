@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,6 +11,11 @@ namespace MUNity.Services
 {
     public class MailService : IMailService
     {
+        public Task SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SendMail(string target, string title, string content)
         {
             var client = new SmtpClient("smtp.mailtrap.io", 2525)

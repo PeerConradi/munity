@@ -3,51 +3,28 @@
 
 @if (User != null)
 {
-    <div class="widget-list-item">
-        <div class="widget-list-media icon">
-            <i class="fa fa-user bg-inverse text-white"></i>
-        </div>
-        <div class="widget-list-content">
-            <h4 class="widget-list-title">@((!User.User.IsShadowUser) ? $"{User.User.Forename} {User.User.Lastname}" : User.User.Email)</h4>
-        </div>
-        <div class="widget-list-action text-nowrap text-gray-200 fw-bold text-decoration-none">
-            <div class="mr-5" style="margin-right: 25px">
-                @((User.CanWrite) ? "Autor " : null)
-                @((User.User.IsShadowUser) ? "zu Munity eingeladen " : null)
-                @((User.Status == DelegationApplicationUserEntryStatuses.Invited) ? "Eingeladen " : null)
-                @((User.Status == DelegationApplicationUserEntryStatuses.RequestJoining) ? "Möchte beitreten " : null)
-            </div>
 
-            <i class="fa fa-ellipsis-h fs-14px cursor-pointer" @onclick="ToggleMenu"></i>
-            @if (showDrowdown)
-            {
-                <div class="dropdown-menu dropdown-menu-end show" style="@dropDownStyle">
-                    @if (User.Status == DelegationApplicationUserEntryStatuses.RequestJoining)
-                    {
-                        <a href="#" class="dropdown-item">Annehmen</a>
-                    }
-                    @if (!User.CanWrite)
-                    {
-                        <a href="#" class="dropdown-item">Bearbeitung erlauben</a>
-                    }
-                    else
-                    {
-                        <a href="#" class="dropdown-item">Bearbeitung verbieten</a>
-
-                    }
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item text-danger">Entfernen</a>
-                </div>
-            }
-
-        </div>
-    </div>
+    <tr>
+		<td class="field">
+            @((User.CanWrite) ? "Autor " : null)
+            @((User.User.IsShadowUser) ? "zu Munity eingeladen " : null)
+            @((User.Status == DelegationApplicationUserEntryStatuses.Invited && !User.User.IsShadowUser) ? "Eingeladen " : null)
+            @((User.Status == DelegationApplicationUserEntryStatuses.RequestJoining) ? "Möchte beitreten " : null)
+        </td>
+		<td>
+            @((User.User.IsShadowUser) ? (User.User.Email) : $"{User.User.Forename} {User.User.Lastname}")
+            <a href="javascript:;" class="text-decoration-none text-danger fw-bold"><i class="fa fa-minus fa-fw"></i> Entfernen</a>
+        </td>
+	</tr>
 }
 else
 {
     <div class="widget-list-item">
         ERROR LOADING A USER
     </div>
+    <tr>
+        <td colspan="2">ERROR LOADING USER</td>
+    </tr>
 }
 
 

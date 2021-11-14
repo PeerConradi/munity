@@ -8,85 +8,119 @@
 
 @if (Application != null)
 {
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">Benutzereinstellungen</h4>
-        </div>
 
-        <div class="card-body">
-            <div class="row mb-5px">
-                <label class="form-label col-form-label">Benutzer</label>
-            </div>
-            <div class="row mb-15px">
-                <div class="widget-list rounded mb-4 inverse-mode" data-id="widget">
-                    @foreach (var user in Application.Users)
+    @if (searchResult != null)
+    {
+        <div class="row">
+            @if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.AlreadyApplying)
+            {
+                <div class="alert alert-warning">Der/Die eigebene BenutzerIn kann nicht zur Bewerbung hinzugefügt werden, da er/sie sich bereits auf eine Rolle bei dieser Konferenz bewirbt.</div>
+            }
+            else if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.AlreadyParticipating)
+            {
+                <div class="alert alert-warning">Der/Die eingebene BenutzerIn kann nicht zur Bewerbung hinzugefügt werden, da er/sie bereits eine Rolle auf dieser Konferenz hat.</div>
+            }
+            else if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.NoUserFound)
+            {
+                <div class="alert alert-info">
+                    Der/Die eingebene BenuterIn ist diesem System nicht bekannt. Sollten Sie wissen, dass diese Person kein Konto hat, können Sie diese mit einem einfachen Klick
+                    <button class="btn btn-default" @onclick="() => AddShadowUser(searchInput)">Einladen.</button> Danach erhält er/sie eine E-Mail von uns mit einem Anmeldelink. Bitte achten Sie darauf, dass bis zum Ablauf der Anmeldephase alle angegebenen
+                    Teilnehmenden dieser Bewerbung auch ein entsprechendes Konto benötigen.
+                </div>
+            }
+        </div>
+    }
+
+    <div class="row profile-content">
+        <div class="table-responsive form-inline">
+			<table class="table table-profile align-middle">
+				<thead>
+					<tr>
+						<th></th>
+						<th>
+							<h4>BenutzerInnen <small>An dieser Stelle können Personen zu der Bewerbung hinzugefügt werden.</small></h4>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+                    @foreach(var user in Application.Users)
                     {
                         <ApplicationUserComponent User="@user" />
                     }
-                </div>
-            </div>
-            <div class="row mb-5px">
-                <h4>Benutzer einladen</h4>
-            </div>
-            <div class="row mb-5px">
-                <div class="input-group">
-                    <div class="input-group-text">@@</div>
-                    <input type="text" class="form-control" @bind="searchInput">
-                    <button type="button" class="btn btn-indigo" @onclick="() => SearchUser()">Hinzufügen</button>
-                </div>
-            </div>
-            @if (searchResult != null)
-            {
-                <div class="row">
-                    @if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.AlreadyApplying)
-                    {
-                        <div class="alert alert-warning">Der/Die eigebene BenutzerIn kann nicht zur Bewerbung hinzugefügt werden, da er/sie sich bereits auf eine Rolle bei dieser Konferenz bewirbt.</div>
-                    }
-                    else if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.AlreadyParticipating)
-                    {
-                        <div class="alert alert-warning">Der/Die eingebene BenutzerIn kann nicht zur Bewerbung hinzugefügt werden, da er/sie bereits eine Rolle auf dieser Konferenz hat.</div>
-                    }
-                    else if (searchResult.Status == FindUserForApplicationResult.ResultStatuses.NoUserFound)
-                    {
-                        <div class="alert alert-info">
-                            Der/Die eingebene BenuterIn ist diesem System nicht bekannt. Sollten Sie wissen, dass diese Person kein Konto hat, können Sie diese mit einem einfachen Klick
-                            <button class="btn btn-default" @onclick="() => AddShadowUser(searchInput)">Einladen.</button> Danach erhält er/sie eine E-Mail von uns mit einem Anmeldelink. Bitte achten Sie darauf, dass bis zum ablauf der Anmeldephase alle angegebenen
-                            Teilnehmenden dieser Bewerbung auch ein entsprechendes Konto benötigen.
-                        </div>
-                    }
-                </div>
-            }
 
-            <div class="row">
-                <RadzenCheckBox TValue="bool" @bind-Value="@guestsConverted" Name="WithTeacherCheckBox" />
-                <RadzenLabel Text="Delegation mit Lehrkraft" Component="WithTeacherCheckBox" />
-                <small>
-                    Sofern Sie mit einer Lehrkraft kommen, geben Sie dies bitte hier an. Die Lehrkraft brauchen Sie <b>nicht</b> in diese Bewerbung mit aufnehmen.
-                    Diese wird später durch ein dazu berechtigtes Teammitglied nach Annahme der Bewerbung in die Delegation, welche Sie dann erhalten mit aufgenommen.
-                </small>
-            </div>
+                    <tr>
+						<td class="field">Einladen</td>
+						<td>
+                            <div class="input-group">
+                                <div class="input-group-text">@@</div>
+                                <input type="text" class="form-control" @bind="searchInput">
+                                <button type="button" class="btn btn-indigo" @onclick="() => SearchUser()">Hinzufügen</button>
+                            </div>
+                        </td>
+					</tr>
+					<tr class="divider highlight">
+						<td colspan="2"></td>
+					</tr>
+									
+					<tr>
+						<td class="field">Lehrkraft</td>
+						<td>
+                            <RadzenCheckBox TValue="bool" @bind-Value="@guestsConverted" Name="WithTeacherCheckBox" />
+                            <RadzenLabel Text="Delegation mit Lehrkraft" Component="WithTeacherCheckBox" />
+                        </td>
+					</tr>
 
-            <div class="row">
-                <RadzenCheckBox TValue="bool" @bind-Value="@Application.OpenToPublic" Name="OpenToPublicCheckBox" />
-                <RadzenLabel Text="offene Bewerbung" Component="OpenToPublicCheckBox" />
-                <small>
-                    Wenn Sie die Bewerbung für andere öffnen, können sich diese Benutzer auf ihre Bewerbung/Anmeldung bewerben. Danach können Sie frei entscheiden, ob sie diese Bewerbung annehmen.
-                    Diese Funktion ist dann praktisch, wenn Sie mit ihrer momentanen Gruppe ihre Wunschdelegationen nicht voll bekommen.
-                </small>
-            </div>
-            <div class="row">
-                <span class="form-text">Expose</span>
-            </div>
-            <div class="row">
-                <RadzenTextArea class="form-control" Disabled="@(!Application.OpenToPublic)" @bind-Value="@Application.Expose" />
-            </div>
-        </div>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <small>
+                                Sofern Sie mit einer Lehrkraft kommen, geben Sie dies bitte hier an. Die Lehrkraft brauchen Sie <b>nicht</b> in diese Bewerbung mit aufnehmen.
+                                Diese wird später durch ein dazu berechtigtes Teammitglied nach Annahme der Bewerbung in die Delegation, welche Sie dann erhalten mit aufgenommen.
+                            </small>
+                        </td>
+                    </tr>
 
 
+					<tr class="divider">
+						<td colspan="2"></td>
+					</tr>
 
-        <div class="card-footer text-end">
-            <button class="btn btn-primary pull-right" @onclick="() => UsersSelected.InvokeAsync()">weiter</button>
-        </div>
+
+					<tr>
+						<td class="field">Offene Bewerbung</td>
+						<td>
+                            <RadzenCheckBox TValue="bool" @bind-Value="@Application.OpenToPublic" Name="OpenToPublicCheckBox" />
+                            <RadzenLabel Text="offene Bewerbung" Component="OpenToPublicCheckBox" />
+                        </td>
+					</tr>
+
+                    <tr>
+                        <td></td>
+                        <td>
+                            <small>
+                                Wenn Sie die Bewerbung für andere öffnen, können sich diese Benutzer auf ihre Bewerbung/Anmeldung bewerben. Danach können Sie frei entscheiden, ob sie diese Bewerbung annehmen.
+                                Diese Funktion ist dann praktisch, wenn Sie mit ihrer momentanen Gruppe ihre Wunschdelegationen nicht voll bekommen.
+                            </small>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="field">Expose</td>
+                        <td>
+                            <RadzenTextArea class="form-control" Disabled="@(!Application.OpenToPublic)" @bind-Value="@Application.Expose" />
+                        </td>
+                    </tr>
+
+
+					<tr class="highlight">
+						<td class="field">&nbsp;</td>
+						<td class="">
+							<button type="submit" class="btn btn-primary" @onclick="() => UsersSelected.InvokeAsync()">Weiter zur Delegationsauswahl</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
     </div>
 }
 else

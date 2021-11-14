@@ -28,7 +28,7 @@
                                 <li>@delegation.Delegation.Name (@delegation.Delegation.Roles.Count verfügbare Plätze)</li>
                             }
                         </ul>
-                        <h6>Anzahl BewerberInnen: @application.Users.Count</h6>
+                        <h6>Anzahl BewerberInnen: @application.Users.Count(n => n.Status == DelegationApplicationUserEntryStatuses.Invited || n.Status == DelegationApplicationUserEntryStatuses.Joined)</h6>
                         <button class="btn btn-primary" @onclick="() => selectedApplication = application">Anfrage an diese Bewerbung</button>
                     </div>
                 </div>

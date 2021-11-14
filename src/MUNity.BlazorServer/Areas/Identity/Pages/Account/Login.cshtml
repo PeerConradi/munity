@@ -9,11 +9,12 @@
 <div class="login login-with-news-feed">
 	<!-- begin news-feed -->
 	<div class="news-feed">
-		<div class="news-image" style="background-image: url(/img/login-bg/login-bg-11.jpg)"></div>
+		<div class="news-image" style="background-image: url(/img/login-bg/mun-bg-01.jpg)"></div>
 		<div class="news-caption">
-			<h4 class="caption-title"><b>MUNity</b> Login</h4>
+			<h4 class="caption-title"><b>MUNity</b></h4>
+			<small>@System.Reflection.Assembly.GetEntryAssembly().GetName().Version</small>
 			<p>
-				Anmelden für erweiterte Funktionen.
+				
 			</p>
 		</div>
 	</div>
@@ -24,9 +25,9 @@
 		<div class="login-header mb-30px">
             <div class="brand">
                 <div class="d-flex align-item-center">
-                    <span class="logo"></span> <b>MUNity</b> Login
+                    @*<img src="/img/logo/icon_blue_small.png" height="25"/>*@ Login
                 </div>
-                <small>Anmledung für Pro-User</small>
+                <small>Anmledung in ein MUNity Account</small>
             </div>
 			<div class="icon">
 				<i class="oi oi-account-login"></i>
@@ -58,7 +59,7 @@
 				</div>
 				<hr />
 				<p class="text-center text-grey-darker mb-0">
-					&copy; MUNity All Right Reserved 2021
+					&copy; MUNity All Right Reserved @DateTime.Now.Year
 				</p>
 			</form>
 		</div>

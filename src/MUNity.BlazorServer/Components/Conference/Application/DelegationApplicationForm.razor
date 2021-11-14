@@ -51,7 +51,8 @@
         application = new Database.Models.Conference.DelegationApplication()
         {
             Status = MUNity.Base.ApplicationStatuses.Writing,
-            Conference = context.Conferences.Find(ConferenceId)
+            Conference = context.Conferences.Find(ConferenceId),
+            ApplyDate = DateTime.Now
         };
 
         var claim = (await AuthStateTask)?.User;

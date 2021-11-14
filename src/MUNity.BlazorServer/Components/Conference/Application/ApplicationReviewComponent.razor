@@ -8,12 +8,23 @@
         <!-- BEGIN invoice-company -->
         <div class="invoice-company">
             <span class="float-end hidden-print">
-                @if (Application.Status == MUNity.Base.ApplicationStatuses.Writing)
+                @if (Application.DelegationApplicationId == 0)
                 {
-                    <button class="btn btn-outline-warning mb-10px" @onclick="() => FinishApplication()">
-                        <i class="fa fa-arrow-right t-plus-1 text-warning fa-fw fa-lg"></i> Einreichen
+                    
+                }
+                @if (Application.Status == MUNity.Base.ApplicationStatuses.Writing && IsApproved)
+                {
+                    <button class="btn btn-outline-success mb-10px" @onclick="() => FinishApplication()">
+                        <i class="fa fa-arrow-right t-plus-1 text-success fa-fw fa-lg"></i> Einreichen
                     </button>
                 }
+                else if (Application.Status == MUNity.Base.ApplicationStatuses.Writing && !IsApproved)
+                {
+                    <button class="btn btn-outline-info mb-10px" @onclick="() => FinishApplication()">
+                        <i class="fa fa-save t-plus-1 fa-fw fa-lg"></i> Speichern
+                    </button>
+                }
+                
                 @*<a href="javascript:;" class="btn btn-sm btn-white mb-10px"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Export as PDF</a>
                     <a href="javascript:;" onclick="window.print()" class="btn btn-sm btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> Print</a>*@
             </span>
@@ -50,8 +61,8 @@
             </div>
 
             <div class="invoice-date">
-                <small>Invoice / July period</small>
-                <div class="date text-inverse mt-5px">@Application.ApplyDate.ToString("MMMM dd, yyyy")</div>
+                <small>Bewerbungsinfo</small>
+                <div class="date text-inverse mt-5px">@Application.ApplyDate.ToString("dd MMMM yyyy")</div>
                 <div class="invoice-detail">
                     #@Application.DelegationApplicationId<br>
                     Delegationsbewerbung
@@ -138,15 +149,23 @@
             </div>
             <!-- END invoice-price -->
         </div>
-        <!-- END invoice-content -->
-        <!-- BEGIN invoice-note -->
+
+        @if (Application.DelegationApplicationId == 0)
+        {
+            <div class="invoice-note">
+                <div class="alert alert-warning">
+                    Die Bewerbung wurde noch nicht gespeichert/eingereicht. Gehen Sie oben auf Speichern/Einreichen um den Bewerbungsprozess abzuschließen oder die Bewerbung zu speichern um sie später bearbeiten zu können.
+                </div>
+            </div>
+        }
+        
+
         <div class="invoice-note">
             * Die zu der Bewerbung eingeladenen Benutzer müssen bis zum Ende der Anmeldephase die Bewerbung bestätigen. Hierfür die Webseite öffnen, einloggen und auf Meine Bewerbungen gehen.<br>
             * Bei Fragen zu Ihrer Anmeldung können Sie sich jederzeit an unsere Teilnehmendenbetreuung wenden.<br>
             * Sie können diese Bewerbung unter dem Menüpunkt ,,Meine Bewerbungen´´ jederzeit zurückziehen oder bearbeiten.
         </div>
-        <!-- END invoice-note -->
-        <!-- BEGIN invoice-footer -->
+
         <div class="invoice-footer">
             <p class="text-center mb-5px fw-bold">
                 Danke für Ihre Bewerbung

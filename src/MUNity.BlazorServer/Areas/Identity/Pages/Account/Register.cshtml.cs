@@ -13,7 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using MUNity.Database.Context;
 using MUNity.Database.Models.User;
+using MUNity.Services;
 
 namespace MUNityCore.Areas.Identity.Pages.Account
 {
@@ -23,22 +25,32 @@ namespace MUNityCore.Areas.Identity.Pages.Account
         private readonly SignInManager<MunityUser> _signInManager;
         private readonly UserManager<MunityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IMailService _emailSender;
+        private readonly MunityContext _dbContext;
 
         public RegisterModel(
             UserManager<MunityUser> userManager,
             SignInManager<MunityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IMailService emailSender,
+            MunityContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _dbContext = context;
         }
 
         [BindProperty]
         public InputModel Input { get; set; }
+
+        public enum RegistrationStates
+        {
+            Waiting,
+            Success,
+            FollowedInvitation
+        }
 
         public string ReturnUrl { get; set; }
 
@@ -57,15 +69,30 @@ namespace MUNityCore.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
+            [MaxLength(200)]
+            public string Forename { get; set; }
+
+            [Required]
+            [MaxLength(200)]
+            public string Lastname { get; set; }
+
+            [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
+            [Required]
+            [Display(Name = "Birthday Year")]
+            public int BirthdayYear { get; set; } = DateTime.Now.Year - 13;
+
+            [Required]
+            [Display(Name = "Birthday Month")]
+            public int BirthdayMonth { get; set; } = 1;
+
+            [Required]
+            [Display(Name = "Birthday Day")]
+            public int BirthdayDay { get; set; } = 1;
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -80,37 +107,58 @@ namespace MUNityCore.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new MunityUser { UserName = Input.Username, Email = Input.Email, RegistrationDate = DateTime.UtcNow };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded)
+                var user = new MunityUser { UserName = Input.Username, Email = Input.Email, RegistrationDate = DateTime.UtcNow, Birthday = new DateOnly(Input.BirthdayYear, Input.BirthdayMonth, Input.BirthdayDay) };
+                
+                var userFound = await _userManager.FindByEmailAsync(Input.Email);
+                if (userFound != null)
                 {
-                    _logger.LogInformation("User created a new account with password.");
-
-                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    //var callbackUrl = Url.Page(
-                    //    "/Account/ConfirmEmail",
-                    //    pageHandler: null,
-                    //    values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
-                    //    protocol: Request.Scheme);
-
-                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    //{
-                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    //}
-                    //else
-                    //{
+                    if (userFound.IsShadowUser)
+                    {
+                        userFound.UserName = Input.Username;
+                        userFound.Forename = Input.Forename;
+                        userFound.Lastname = Input.Lastname;
+                        await _userManager.RemovePasswordAsync(userFound);
+                        await _userManager.ChangePasswordAsync(userFound, String.Empty, Input.Password);
+                        _dbContext.Update(userFound);
+                        _dbContext.SaveChanges();
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
-                    //}
+                    }
                 }
-                foreach (var error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    var result = await _userManager.CreateAsync(user, Input.Password);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("User created a new account with password.");
+
+                        //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                        //var callbackUrl = Url.Page(
+                        //    "/Account/ConfirmEmail",
+                        //    pageHandler: null,
+                        //    values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
+                        //    protocol: Request.Scheme);
+
+                        //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                        //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                        //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        //{
+                        //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        //}
+                        //else
+                        //{
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                        //}
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
+                
             }
 
             // If we got this far, something failed, redisplay form

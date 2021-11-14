@@ -20,20 +20,38 @@ namespace MUNity.Database.FluentAPI
 
         public DelegationBuilder WithName(string name)
         {
+            // Handle easyId
+            
             Delegation.Name = name;
+            //SetIdAsEasyIdByName();
             return this;
+        }
+
+        private void SetIdAsEasyIdByName()
+        {
+            if (!string.IsNullOrWhiteSpace(Delegation.DelegationId)) return;
+
+            var easyNameDelegation = Util.IdGenerator.AsPrimaryKey(Delegation.Name);
+            var easyId = _conferenceId + "-" + easyNameDelegation;
+            if (_dbContext.Delegations.All(n => n.DelegationId != easyId) && _dbContext.ChangeTracker.Entries<Delegation>().All(n => n.Entity.DelegationId != easyId))
+            {
+                Console.WriteLine($"Assign easy id to Delegation {Delegation.Name}: {easyId}");
+                Delegation.DelegationId = easyId;
+            }
+            else
+                Delegation.DelegationId = Guid.NewGuid().ToString();
         }
 
         public DelegationBuilderCommitteeSelector WithCountry(string countryName)
         {
-            short? countryId = _dbContext.Countries.AsNoTracking()
+            short countryId = _dbContext.Countries.AsNoTracking()
                 .Where(n => n.Name == countryName || n.FullName == countryName)
                 .Select(n => n.CountryId)
                 .FirstOrDefault();
-            if (countryId == null)
+            if (countryId == 0)
                 throw new CountryNotFoundException($"No country with the name {countryName} found!");
 
-            return new DelegationBuilderCommitteeSelector(_dbContext, _conferenceId, countryId.Value, Delegation);
+            return new DelegationBuilderCommitteeSelector(_dbContext, _conferenceId, countryId, Delegation);
         }
 
         public DelegationBuilder(MunityContext context, string conferenceId)
@@ -76,7 +94,15 @@ namespace MUNity.Database.FluentAPI
                     n.Committee.CommitteeId == committeeId)
                     .FirstOrDefault();
                 if (role == null)
-                    throw new ConferenceRoleNotFoundException($"No fitting role to add was found for committee {committeeId}, countryId: {_countryId}. Maybe the given role is already attached to another delegation.");
+                {
+                    var isCountryRepresentedInsideCommittee = _dbContext.Delegates.Any(n => n.DelegateCountry.CountryId == _countryId && n.Committee.CommitteeId == committeeId);
+                    var msg = $"No fitting role to add was found for committee id: {committeeId} in conference {_conferenceId}, countryId: {_countryId}.";
+                    if (!isCountryRepresentedInsideCommittee)
+                        msg += $" The country {_dbContext.Countries.Find((short)_countryId)?.Name} is not represented inside the committee";
+                    else
+                        msg += $" The country seems to be represented inside the given committee, but it seems to already be assigned to delegation {_dbContext.Delegates.Where(n => n.DelegateCountry.CountryId == _countryId && n.Committee.CommitteeId == committeeId && n.Delegation != null).Select(n => n.Delegation.Name).FirstOrDefault()}";
+                    throw new ConferenceRoleNotFoundException(msg);
+                }
                 else
                     Delegation.Roles.Add(role);
 
@@ -98,7 +124,15 @@ namespace MUNity.Database.FluentAPI
                     n.Conference.ConferenceId == _conferenceId)
                     .FirstOrDefault();
                 if (role == null)
-                    throw new ConferenceRoleNotFoundException($"No fitting role to add was found for committee {committeeShort} in conference {_conferenceId}, countryId: {_countryId}. Maybe the given role is already attached to another delegation.");
+                {
+                    var isCountryRepresentedInsideCommittee = _dbContext.Delegates.Any(n => n.DelegateCountry.CountryId == _countryId && n.Committee.CommitteeShort == committeeShort);
+                    var msg = $"No fitting role to add was found for committee short: {committeeShort} in conference {_conferenceId}, countryId: {_countryId}.";
+                    if (!isCountryRepresentedInsideCommittee)
+                        msg += $" The country {_dbContext.Countries.Find((short)_countryId)?.Name} is not represented inside the committee!";
+                    else
+                        msg += $" The country seems to be represented inside the given committee, but it seems to already be assigned to delegation {_dbContext.Delegates.Where(n => n.DelegateCountry.CountryId == _countryId && n.Committee.CommitteeShort == committeeShort && n.Delegation != null).Select(n => n.Delegation.Name).FirstOrDefault()}";
+                    throw new ConferenceRoleNotFoundException(msg);
+                }
                 else
                     Delegation.Roles.Add(role);
 

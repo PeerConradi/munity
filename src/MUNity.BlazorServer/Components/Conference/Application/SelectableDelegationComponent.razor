@@ -7,9 +7,9 @@
                 <div style="position: initial; display:block; left: 0; right: 0; top:0; bottom: 0; @UseFlagStyle"></div>
                 <div class="d-flex align-items-center">
                     <div class="flex-1">
-                        <div class="title text-white">@Delegation.Name</div>
-                        <div class="no">@Delegation.Roles.Sum(n => n.Costs) €</div>
-                        <div class="desc">@Delegation.Roles.Count Personen</div>
+                        <div class="title fs-16px text-black" style="-webkit-text-stroke-width: 0.5px; -webkit-text-stroke-color: white;">@Delegation.Name</div>
+                        <div class="no text-black" style="-webkit-text-stroke-width: 0.5px; -webkit-text-stroke-color: white;">@Delegation.Roles.Sum(n => n.Costs) €</div>
+                        <div class="desc" style="-webkit-text-stroke-width: 0.5px; -webkit-text-stroke-color: black;">@Delegation.Roles.Count Personen</div>
                     </div>
                     @*@if (IsSelected)
                         {
@@ -81,9 +81,9 @@
             if (flagIso != null)
             {
                 @if (SelectionText == null)
-                    return $"background: url(/img/flags/medium/{flagIso}.png) #333 no-repeat top center;background-blend-mode:luminosity;";
+                    return $"background: url(/img/flags/medium/{flagIso}.png) #aaa no-repeat center center;background-blend-mode:lighten;";
                 else
-                    return $"background: url(/img/flags/medium/{flagIso}.png) #333 no-repeat top center;background-blend-mode:lighten;";
+                    return $"background: url(/img/flags/medium/{flagIso}.png) #333 no-repeat center center;background-blend-mode:lighten;";
             }
 
             return null;

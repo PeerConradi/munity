@@ -57,7 +57,7 @@ namespace MUNity.Services
                         CountryName = role.DelegateCountry.Name,
                         CountryIso = role.DelegateCountry.Iso
                     }).ToList()
-                }).ToList();
+                }).Where(n => n.Roles.Count >= minRolesCount).ToList();
         }
 
         public FindUserForApplicationResult FindUserToAddToDelegationApplication(string mailOrUsername, string conferenceId)
