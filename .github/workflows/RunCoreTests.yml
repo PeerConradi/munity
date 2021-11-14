@@ -1,4 +1,4 @@
-name: Test MUNityCore
+name: BuildTestAndDeploy
 
 on: [push]
 
@@ -11,12 +11,18 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
     - name: Run Base Tests
-      run: dotnet test tests/MUNityBaseTest
+      run: dotnet test tests/MUNityBaseTest --no-build --verbosity normal
     - name: Run Database Tests
-      run: dotnet test tests/MUNityDatabaseTest
+      run: dotnet test tests/MUNityDatabaseTest --no-build --verbosity normal
     - name: Run Schema Test
-      run: dotnet test tests/MUNitySchemaTests
+      run: dotnet test tests/MUNitySchemaTests --no-build --verbosity normal
     - name: Run Service Tests
-      run: dotnet test tests/MUNityServicesTest
+      run: dotnet test tests/MUNityServicesTest --no-build --verbosity normal
+    - name: Move TestDatabase to main-project
+      run: rm src/MUNity.BlazorServer/demo.db && cp tests/MUNityDatabaseTest/bin/Debug/.net6.0/testmunbw.db src/MUNity.BlazorServer/demo.db
 
