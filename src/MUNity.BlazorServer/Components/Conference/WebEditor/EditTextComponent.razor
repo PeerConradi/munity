@@ -2,21 +2,32 @@
 
 <div class="col-12">
     <div class="panel panel-inverse">
-        <div class="panel-heading bg-primary">
+        <div class="panel-heading">
             <h4 class="panel-title">Text</h4>
             <div class="panel-heading-btn">
                 @*<a href="javascript:;" class="btn btn-sm btn-icon btn-success"><i class="fa fa-arrow-up"></i></a>
                 <a href="javascript:;" class="btn btn-sm btn-icon btn-warning"><i class="fa fa-arrow-down"></i></a>
                 <a href="javascript:;" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-trash"></i></a>*@
+
+                <button class="btn btn-sm btn-teal mr-3" @onclick="() => showBody = !showBody"><i class="fa fa-minimize"></i> @((showBody) ? "Einklappen" : "Ausklappen") </button>
+                <button class="btn btn-sm btn-danger ml-3" @onclick="() => RequestRemove.InvokeAsync(this.Element)"><i class="fa fa-trash"></i> Löschen</button>
             </div>
         </div>
-        <div class="panel-body">
+        @if (showBody)
+        {
+            <div class="panel-body">
             <RadzenHtmlEditor @bind-Value=@Element.Content style="height: 500px; margin-bottom: 1rem;" />
 
         </div>
+        }
+        
     </div>
 </div>
 
 @code {
     [Parameter] public WebPageTextElement Element { get; set; }
+
+    private bool showBody = true;
+
+    [Parameter] public EventCallback<AbstractConferenceWebPageElement> RequestRemove { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿@using MUNity.BlazorServer.Components.Conference.WebEditor
 @using MUNity.Schema.Conference.Website
+@using MUNity.Database.Models.Website
 
 @page "/c/managewebsite/{ConferenceId}"
 @page "/c/managewebsite/{ConferenceId}/{PageId}"
@@ -59,7 +60,7 @@
                         {
                             if (component is MUNity.Database.Models.Website.WebPageTextElement textElement)
                             {
-                                <EditTextComponent Element="@textElement" />
+                                <EditTextComponent Element="@textElement" RequestRemove=OnRemoveComponent />
                             }
                             else if (component is MUNity.Database.Models.Website.TeamCardsElement teamCard)
                             {
@@ -71,27 +72,26 @@
                             }
                             else if (component is MUNity.Database.Models.Website.CommitteeDelegatesElement delegates)
                             {
-                <div class="col-12">
-                    <div class="panel panel-inverse">
-                        <div class="panel-heading bg-warning">
-                            <h4 class="panel-title">Automatisch Generierte Komponente: Liste von Sitzen</h4>
-                            <div class="panel-heading-btn">
-                                <a @onclick="() => dbContext.Update(delegates)" class="btn btn-sm btn-icon btn-primary"><i class="fa fa-save"></i></a>
-                                <a href="javascript:;" class="btn btn-sm btn-icon btn-success"><i class="fa fa-arrow-up"></i></a>
-                                <a href="javascript:;" class="btn btn-sm btn-icon btn-warning"><i class="fa fa-arrow-down"></i></a>
-                                <a href="javascript:;" class="btn btn-sm btn-icon btn-danger"><i class="fa fa-trash"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                <EditCommitteeSeatsComponent Element=@delegates ConferenceId=@ConferenceId />
                             }
                             else
-                        {
-                            <div class="col-12">
-                                <div class="alert alert-danger">Unbekanntes Element: @component.GetType().Name</div>
+                            {
+                                <div class="col-12">
+                                    <div class="alert alert-danger">Unbekanntes Element: @component.GetType().Name</div>
+                                </div>
+                            }
+                            
+                        }
+
+                        <div class="row">
+                            <div class="card text-center border-0">
+                                <div class="card-body">
+                                <button class="btn btn-success btn-icon" @onclick="() => showAddItemModal = true"><i class="fa fa-plus"></i></button>
+
+                                </div>
+
                             </div>
-                        }
-                        }
+                        </div>
                     }
                     else
                 {
@@ -109,21 +109,44 @@
 
 @if (showAddItemModal)
 {
-    <div class="modal fade show" id="modal-dialog" aria-modal="true" role="dialog" style="display: block;">
+    <div class="modal-backdrop opacity-7"></div>
+    <div class="modal fade show" id="modal-dialog" aria-modal="true" role="dialog" style="display: block">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title">Modal Dialog</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+						<button type="button" class="btn-close" @onclick="() => showAddItemModal = false"></button>
 					</div>
 					<div class="modal-body">
-						<p>
-							Modal body content here...
-						</p>
-					</div>
-					<div class="modal-footer">
-						<a href="javascript:;" class="btn btn-white" data-bs-dismiss="modal">Close</a>
-						<a href="javascript:;" class="btn btn-success">Action</a>
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="card cursor-pointer" @onclick=AddTextComponent>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Text</h5>
+                                        <p>Eine Komponente zur Darstellung von Texten und Bildern.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Gremien-Themen</h5>
+                                        <p>Automatisch generierte Komponente, welche die Themen eines ausgewählten Gremiums anzeigt.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Gremien-Sitze</h5>
+                                        <p>Automatisch generierte Komponente, welche die Sitze in einem Gremium anzeigt.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						
 					</div>
 				</div>
 			</div>
@@ -162,7 +185,7 @@
             else
                 this.menuItems.Add(newMenuItem);
 
-    }
+        }
     }
 
     private void ChangeLoadedPage(MUNity.Schema.Conference.Website.MenuItem selectedMenuEntry)
@@ -186,6 +209,22 @@
     {
         await base.OnInitializedAsync();
         this.isAllowed = await conferenceAuthService.IsUserAllowedToEditConference(ConferenceId, AuthStateTask);
+    }
+
+    private void OnRemoveComponent(AbstractConferenceWebPageElement element)
+    {
+        this.loadedPage.Components.Remove(element);
+        InvokeAsync(this.StateHasChanged);
+    }
+
+    private void AddTextComponent()
+    {
+        this.loadedPage.Components.Add(new WebPageTextElement()
+        {
+            SortOrder = loadedPage.Components.Count,
+            Page = loadedPage
+        });
+        showAddItemModal = false;
     }
 
     protected override async Task OnParametersSetAsync()

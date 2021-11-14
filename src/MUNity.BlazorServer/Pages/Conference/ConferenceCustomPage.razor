@@ -27,7 +27,8 @@ else
     {
         if (comp is WebPageTextElement textElement)
         {
-            <div class="card col-12 p-3">@((MarkupString)textElement.Content)</div>
+            <div class="card col-12 p-3"><p>@((MarkupString)textElement.Content)</p></div>
+
         }
         else if (comp is CommitteeTopicsElement topicsElement)
         {
@@ -38,6 +39,19 @@ else
                     @foreach(var topic in dbContext.CommitteeTopics.Where(n => n.Committee.CommitteeId == committeeId))
                     {
                         <li>@topic.TopicFullName</li>
+                    }
+                </ul>
+            </div>
+        }
+        else if (comp is CommitteeDelegatesElement seatsElement)
+        {
+            var committeeId = dbContext.ConferenceWebPageDelegatesElements.Where(n => n.ConferenceWebPageComponentId == seatsElement.ConferenceWebPageComponentId).Select(n => n.Committee.CommitteeId).FirstOrDefault();
+            <div class="card col-12 p-3">
+                <h4>Delegationen</h4>
+                <ul>
+                    @foreach(var del in dbContext.Delegates.Where(n => n.Committee.CommitteeId == committeeId))
+                    {
+                        <li>@del.RoleName</li>
                     }
                 </ul>
             </div>
