@@ -5,6 +5,9 @@
     <UserSecretsId>aspnet-MUNity.BlazorServer-D5D9D744-C064-475D-866E-51888C925800</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <SignAssembly>False</SignAssembly>
+    <AssemblyVersion>1.0.5.1</AssemblyVersion>
+    <FileVersion>1.0.5.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
