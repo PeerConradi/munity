@@ -30,6 +30,16 @@
 				</tr>
 
 				<tr>
+					<td class="field">Vorname</td>
+					<td><input class="form-control w-300px" @bind=request.UpdateForename /></td>
+				</tr>
+
+				<tr>
+					<td class="field">Nachname</td>
+					<td><input class="form-control w-300px" @bind=request.UpdateLastname /></td>
+				</tr>
+
+				<tr>
 					<td class="field">Land</td>
 					<td>
 						<select class="form-select w-200px" name="region" @bind=request.UpdatedCountry>
@@ -100,8 +110,8 @@
 				<tr class="highlight">
 					<td class="field">&nbsp;</td>
 					<td class="">
-						<button type="submit" class="btn btn-primary w-150px">Update</button>
-						<button type="submit" class="btn btn-white border-0 w-150px ms-5px">Cancel</button>
+						<button type="submit" class="btn btn-primary w-150px" @onclick=UpdateUser>Update</button>
+						<button type="submit" class="btn btn-white border-0 w-150px ms-5px" @onclick=ResetRequest>Cancel</button>
 					</td>
 				</tr>
 			}
@@ -125,28 +135,58 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		user = await userManager.FindByNameAsync(UserName);
-		if (user != null)
-		{
-			request = new UpdateProfileRequest()
-			{
-				UserName = this.UserName,
-				UpdatedBirthdayDay = user.Birthday.Day,
-				UpdatedBirthdayMonth = user.Birthday.Month,
-				UpdatedBirthdayYear = user.Birthday.Year,
-				UpdatedCity = user.City,
-				UpdatedCountry = user.Country,
-				UpdatedHouseNumber = user.HouseNumber,
-				UpdatedStreet = user.Street,
-				UpdatedZipCode = user.Zipcode
-			};
-		}
+		await ResetRequest();
 
 		if (!IsMe.HasValue)
 		{
 			await CheckIfUserIsSignedInUser();
 		}
-		
+
+	}
+
+	private async Task ResetRequest()
+	{
+		user = await userManager.FindByNameAsync(UserName);
+		if (user != null)
+		{
+			if (user != null)
+			{
+				request = new UpdateProfileRequest()
+				{
+					UserName = this.UserName,
+					UpdatedBirthdayDay = user.Birthday.Day,
+					UpdatedBirthdayMonth = user.Birthday.Month,
+					UpdatedBirthdayYear = user.Birthday.Year,
+					UpdatedCity = user.City,
+					UpdatedCountry = user.Country,
+					UpdatedHouseNumber = user.HouseNumber,
+					UpdatedStreet = user.Street,
+					UpdatedZipCode = user.Zipcode,
+					UpdateForename = user.Forename,
+					UpdateLastname = user.Lastname,
+				};
+			}
+		}
+	}
+
+	private async Task UpdateUser()
+	{
+		if (request.UpdatedBirthdayDay != user.Birthday.Day || request.UpdatedBirthdayMonth != user.Birthday.Month ||request.UpdatedBirthdayYear != user.Birthday.Year)
+		{
+			user.Birthday = new DateOnly(request.UpdatedBirthdayYear, request.UpdatedBirthdayMonth, request.UpdatedBirthdayDay);
+		}
+		user.City = request.UpdatedCity;
+		user.Country = request.UpdatedCountry;
+		user.HouseNumber = request.UpdatedHouseNumber;
+		user.Street = request.UpdatedStreet;
+		user.Zipcode = request.UpdatedZipCode;
+		if (!string.IsNullOrEmpty(request.UpdateForename))
+			user.Forename = request.UpdateForename;
+		if (!string.IsNullOrEmpty(request.UpdateLastname))
+			user.Lastname = request.UpdateLastname;
+
+		dbContext.Update(user);
+		await dbContext.SaveChangesAsync();
 	}
 
 	private async Task CheckIfUserIsSignedInUser()

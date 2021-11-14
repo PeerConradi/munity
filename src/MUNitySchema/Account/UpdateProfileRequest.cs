@@ -23,5 +23,9 @@ namespace MUNity.Schema.Account
         public string UpdatedStreet { get; set; }
 
         public string UpdatedHouseNumber { get; set; }
+
+        public string UpdateForename { get; set; }
+
+        public string UpdateLastname { get; set; }
     }
 }

@@ -107,7 +107,14 @@ namespace MUNityCore.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new MunityUser { UserName = Input.Username, Email = Input.Email, RegistrationDate = DateTime.UtcNow, Birthday = new DateOnly(Input.BirthdayYear, Input.BirthdayMonth, Input.BirthdayDay) };
+                var user = new MunityUser { 
+                    UserName = Input.Username, 
+                    Email = Input.Email, 
+                    RegistrationDate = DateTime.UtcNow, 
+                    Birthday = new DateOnly(Input.BirthdayYear, Input.BirthdayMonth, Input.BirthdayDay),
+                    Forename = Input.Forename,
+                    Lastname = Input.Lastname
+                };
                 
                 var userFound = await _userManager.FindByEmailAsync(Input.Email);
                 if (userFound != null)
