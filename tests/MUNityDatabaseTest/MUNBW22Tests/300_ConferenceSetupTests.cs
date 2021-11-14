@@ -106,17 +106,18 @@ public partial class FullMUNBW22Tests
             .WithTopic("Implementierung von Kreislaufwirtschaft zum Erreichen der nachhaltigen Entwicklungsziele")
             .WithTopic("Einführung einer globalen Mindeststeuer")
 
-            .WithSubCommittee(kbe => kbe
-                .WithName("Komission für Bevölkerung und Entwicklung")
-                .WithFullName("Komission für Bevölkerung und Entwicklung")
-                .WithShort("KBE")
-                .WithType(CommitteeTypes.AtLocation)
-                .WithTopic("Maßnahmen zur Bekämpfung der Luftverschmutzung")
-                .WithTopic("Tourismus und nachhaltige Entwicklung")
-                .WithTopic("Resiliente und nachhaltige Landwirtschaft")));
-        Assert.AreEqual(6, _context.Committees.Count());
+            //.WithSubCommittee(kbe => kbe
+            //    .WithName("Komission für Bevölkerung und Entwicklung")
+            //    .WithFullName("Komission für Bevölkerung und Entwicklung")
+            //    .WithShort("KBE")
+            //    .WithType(CommitteeTypes.AtLocation)
+            //    .WithTopic("Maßnahmen zur Bekämpfung der Luftverschmutzung")
+            //    .WithTopic("Tourismus und nachhaltige Entwicklung")
+            //    .WithTopic("Resiliente und nachhaltige Landwirtschaft"))
+            );
+        Assert.AreEqual(5, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-wiso"));
-        Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kbe"));
+        //Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kbe"));
     }
 
     [Test]
@@ -131,7 +132,7 @@ public partial class FullMUNBW22Tests
             .WithTopic("Implementierung des UN-Migrationspakts")
             .WithTopic("Gesundheitsversorgung von Migrant*innen")
             .WithTopic("Umgang mit traumatisierten Geflüchteten"));
-        Assert.AreEqual(7, _context.Committees.Count());
+        Assert.AreEqual(6, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-iom"));
     }
 
@@ -147,7 +148,7 @@ public partial class FullMUNBW22Tests
             .WithTopic("Rolle der Jugend bei der Umsetzung des Pariser Klimaabkommens")
             .WithTopic("Adaption an den Meeresspiegelanstieg in tiefliegenden Gebieten und Inselstaaten")
             .WithTopic("Umsetzung von SDG 7: Nachhaltige Energie für alle"));
-        Assert.AreEqual(8, _context.Committees.Count());
+        Assert.AreEqual(7, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kk"));
     }
 
@@ -163,19 +164,19 @@ public partial class FullMUNBW22Tests
             .WithTopic("Menschenrechtslage in der Republik Myanmar")
             .WithTopic("Bekämpfung der Diskriminierung aufgrund sexueller Orientierung und Identität")
             .WithTopic("Pressefreiheit und Schutz von Journalist*innen"));
-        Assert.AreEqual(9, _context.Committees.Count());
+        Assert.AreEqual(8, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-mrr"));
     }
 
     [Test]
     [Order(316)]
-    public void TestConferenceHasNineCommittees()
+    public void TestConferenceHas8Committees()
     {
         var conference = _context.Conferences
             .Include(n => n.Committees)
             .FirstOrDefault(n => n.ConferenceId == "munbw22");
 
-        Assert.AreEqual(9, conference.Committees.Count);
+        Assert.AreEqual(8, conference.Committees.Count);
     }
 
     [Test]

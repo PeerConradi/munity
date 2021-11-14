@@ -177,6 +177,8 @@ namespace MUNity.Database.Context
 
         public DbSet<WebPageTextElement> ConferenceWebPageTextElements { get; set; }
 
+        public DbSet<ConferenceRegisterElement> ConferenceWebPageRegisterElements { get; set; }
+
         public DbSet<UserFriend> UserFriends { get; set; }
 
         public DbSet<UserBlocked> UserBlockedUsers { get; set; }

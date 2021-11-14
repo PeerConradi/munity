@@ -62,26 +62,24 @@ public partial class FullMUNBW22Tests
     {
         // Afrika
         _context.Fluent.ForCommittee("munbw22-ha3").AddSeatsByCountryNames(
-            "Ägypten", "Angola", "Burkina Faso", "Ghana",
-            "Kamerun", "Nigeria", "Südafrika", "Zentralafrikanische Republik",
+        "Ägypten", "Burkina Faso", "Ghana", "Kamerun", 
+        "Nigeria", "Südafrika", "Zentralafrikanische Republik",
 
-            // Asien
-            "Volksrepublik China", "Indien", "Indonesien", "Pakistan",
-            "Palau", "Papua-Neuguinea", "Syrien", "Vietnam",
+        // Asien
+        "Volksrepublik China", "Indien", "Indonesien", "Pakistan",
+        "Papua-Neuguinea", "Syrien", "Vietnam",
 
         // Osteuropa
-        "Albanien", "Kroatien", "Polen", "Russland",
+        "Kroatien", "Polen", "Russland",
 
         // Lateinamerika
-        "Argentinien", "Brasilien", "Chile", "Peru",
-        "Venezuela",
+        "Argentinien", "Chile", "Peru",
 
         // Westeuropa
-        "Deutschland", "Frankreich", "Türkei", "Vereinigte Staaten",
-        "Vereinigtes Königreich");
+        "Frankreich", "Türkei", "Vereinigte Staaten", "Vereinigtes Königreich");
 
 
-        Assert.AreEqual(30, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-ha3"));
+        Assert.AreEqual(24, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-ha3"));
     }
 
     [Test]
@@ -115,26 +113,23 @@ public partial class FullMUNBW22Tests
     {
         // Afrika
         _context.Fluent.ForCommittee("munbw22-kfk").AddSeatsByCountryNames(
-            "Ägypten", "Äthiopien", "Kenia", "Nigeria",
-        "Ruanda", "Südafrika",
+        "Äthiopien", "Nigeria", "Südafrika",
 
         // Asien
-        "Bangladesch", "Volksrepublik China", "Indien", "Japan",
-        "Jemen", "Myanmar", "Pakistan", "Südkorea",
+        "Bangladesch", "Volksrepublik China", "Indien",  "Jemen", 
         "Zypern",
 
         // Osteuropa
         "Russland", "Ukraine",
 
         // Lateinamerika
-        "Brasilien", "Costa Rica", "Haiti", "Kolumbien",
-        "Venezuela",
+        "Haiti", "Kolumbien", "Venezuela",
 
         // Westeuropa
-        "Frankreich", "Kanada", "Niederlande", "Norwegen",
-        "Schweiz", "Vereinigte Staaten", "Vereinigtes Königreich");
+        "Frankreich", "Kanada", "Norwegen", "Vereinigte Staaten", 
+        "Vereinigtes Königreich");
 
-        Assert.AreEqual(29, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kfk"));
+        Assert.AreEqual(18, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kfk"));
     }
 
     [Test]
@@ -143,62 +138,54 @@ public partial class FullMUNBW22Tests
     {
         // Afrika
         _context.Fluent.ForCommittee("munbw22-wiso").AddSeatsByCountryNames(
-            "Ägypten", "Algerien", "Angola", "Äthiopien",
-        "Elfenbeinküste", "Gabun", "Ghana", "Kamerun",
-        "Kenia", "Demokratische Republik Kongo", "Republik Kongo", "Libyen",
-        "Madagaskar", "Nigeria", "Tunesien", "Uganda",
+        "Ägypten", "Angola", "Äthiopien", "Elfenbeinküste", 
+        "Demokratische Republik Kongo", "Libyen", "Nigeria",
 
         // Asien
-        "Bangladesch", "Volksrepublik China", "Indien", "Indonesien",
-        "Japan", "Kasachstan", "Katar", "Philippinen",
-        "Saudi-Arabien", "Singapur", "Südkorea", "Thailand",
-        "Vereinigte Arabische Emirate", "Vietnam",
+        "Volksrepublik China", "Indien", "Indonesien", "Japan", 
+        "Saudi-Arabien", "Singapur", "Thailand",
 
         // Osteuropa
-        "Kroatien", "Lettland", "Polen", "Rumänien",
-        "Russland", "Ukraine", "Ungarn",
+        "Lettland", "Polen", "Russland", 
 
         // Lateinamerika
-        "Argentinien", "Brasilien", "Chile", "Ecuador",
-        "Jamaika", "Kolumbien", "Kuba", "Mexiko",
-        "Nicaragua", "Peru", "Uruguay", "Venezuela",
+        "Brasilien", "Kuba", "Mexiko", "Nicaragua", 
+        "Peru", "Uruguay",
 
         // Westeuropa
-        "Australien", "Deutschland", "Frankreich", "Irland",
-        "Israel", "Italien", "Kanada", "Niederlande",
-        "Norwegen", "Schweden", "Schweiz", "Türkei",
+        "Deutschland", "Frankreich", "Niederlande", "Schweiz", 
         "Vereinigte Staaten", "Vereinigtes Königreich");
 
 
 
-        Assert.AreEqual(63, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-wiso"));
+        Assert.AreEqual(29, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-wiso"));
     }
 
-    [Test]
-    [Order(505)]
-    public void TestAddSeatsToKBE()
-    {
-        // Afrika
-        _context.Fluent.ForCommittee("munbw22-kbe").AddSeatsByCountryNames(
-            "Ägypten", "Äthiopien", "Burkina Faso", "Elfenbeinküste",
-        "Demokratische Republik Kongo", "Libyen",
+    //[Test]
+    //[Order(505)]
+    //public void TestAddSeatsToKBE()
+    //{
+    //    // Afrika
+    //    _context.Fluent.ForCommittee("munbw22-kbe").AddSeatsByCountryNames(
+    //        "Ägypten", "Äthiopien", "Burkina Faso", "Elfenbeinküste",
+    //    "Demokratische Republik Kongo", "Libyen",
 
-        // Asien
-        "Bangladesch", "Volksrepublik China", "Indien", "Iran",
-        "Japan", "Philippinen",
+    //    // Asien
+    //    "Bangladesch", "Volksrepublik China", "Indien", "Iran",
+    //    "Japan", "Philippinen",
 
-        // Osteuropa
-        "Russland", "Ukraine",
+    //    // Osteuropa
+    //    "Russland", "Ukraine",
 
-        // Lateinamerika
-        "Argentinien", "Haiti", "Kolumbien", "Mexiko",
+    //    // Lateinamerika
+    //    "Argentinien", "Haiti", "Kolumbien", "Mexiko",
 
-        // Westeuropa
-        "Australien", "Israel", "Niederlande", "Türkei",
-        "Vereinigte Staaten");
+    //    // Westeuropa
+    //    "Australien", "Israel", "Niederlande", "Türkei",
+    //    "Vereinigte Staaten");
 
-        Assert.AreEqual(23, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kbe"));
-    }
+    //    Assert.AreEqual(23, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kbe"));
+    //}
 
     [Test]
     [Order(506)]
@@ -206,57 +193,54 @@ public partial class FullMUNBW22Tests
     {
         // Afrika
         _context.Fluent.ForCommittee("munbw22-iom").AddSeatsByCountryNames(
-            "Algerien", "Eritrea", "Libyen", "Ruanda",
-        "Südafrika", "Sudan", "Südsudan", "Uganda",
+        "Algerien", "Eritrea", "Libyen", "Ruanda",
+        "Sudan", "Südsudan", "Uganda",
 
         // Asien
         "Bangladesch", "Volksrepublik China", "Iran", "Japan",
         "Jemen", "Myanmar", "Pakistan", "Usbekistan",
 
         // Osteuropa
-        "Bosnien und Herzegowina", "Russland", "Ukraine", "Belarus",
+        "Russland", "Ukraine", "Belarus",
 
         // Lateinamerika
-        "Costa Rica", "Kolumbien", "Mexiko", "Nicaragua",
-        "Venezuela",
+        "Kolumbien", "Mexiko", "Nicaragua", "Venezuela",
 
         // Westeuropa
         "Deutschland", "Italien", "Kanada", "Türkei",
         "Vereinigte Staaten");
 
 
-        Assert.AreEqual(30, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-iom"));
+        Assert.AreEqual(27, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-iom"));
     }
 
     [Test]
     [Order(507)]
     public void TestAddSeatsToKK()
     {
-        _context.Fluent.ForCommittee("munbw22-kk").AddSeatsByCountryNames("Ägypten",
-            "Algerien", "Angola", "Äthiopien", "Burkina Faso", "Elfenbeinküste",
-            "Ghana", "Kamerun", "Kenia", "Demokratische Republik Kongo", "Madagaskar", "Mosambik", "Nigeria",
-            "Ruanda", "Seychellen", "Südafrika", "Sudan", "Tschad", "Tunesien", "Uganda",
+        _context.Fluent.ForCommittee("munbw22-kk").AddSeatsByCountryNames(
+            "Ägypten", "Äthiopien", "Elfenbeinküste", "Kamerun", 
+            "Kenia", "Demokratische Republik Kongo", "Madagaskar", "Ruanda", 
+            "Seychellen", "Südafrika", "Sudan", "Tschad", 
+            "Tunesien",
 
             "Bangladesch", "Volksrepublik China", "Fidschi", "Indien",
-            "Indonesien", "Iran", "Japan", "Kasachstan",
-            "Katar", "Myanmar", "Pakistan", "Palau",
+            "Indonesien", "Japan", "Kasachstan",
             "Papua-Neuguinea", "Philippinen", "Samoa", "Saudi-Arabien",
-            "Südkorea", "Thailand", "Vereinigte Arabische Emirate", "Vietnam",
+            "Südkorea", "Thailand", "Vereinigte Arabische Emirate",
 
-            "Albanien", "Estland", "Kroatien", "Polen",
-            "Rumänien", "Russland", "Ungarn", "Belarus",
+            "Estland", "Kroatien", "Polen", "Rumänien", 
+            "Russland", "Ungarn",
 
-            "Argentinien", "Brasilien", "Chile", "Costa Rica",
-            "Dominikanische Republik", "Ecuador", "Haiti", "Jamaika",
-            "Kuba", "Mexiko", "Trinidad und Tobago", "Uruguay",
+            "Argentinien", "Brasilien", "Costa Rica", "Dominikanische Republik", 
+            "Ecuador", "Haiti", "Mexiko", "Trinidad und Tobago", 
 
-            "Australien", "Deutschland", "Frankreich", "Italien",
-            "Kanada", "Niederlande", "Norwegen", "Schweden",
-            "Türkei", "Vereinigte Staaten", "Vereinigtes Königreich"
+            "Australien", "Deutschland", "Frankreich",
+            "Kanada", "Niederlande", "Schweden", "Vereinigte Staaten", 
+            "Vereinigtes Königreich"
             );
 
-        Assert.AreEqual(71, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kk"));
-        Assert.IsTrue(_context.Delegates.Any(n => n.DelegateCountry.Name == "Angola" && n.Committee.CommitteeId == "munbw22-kk"));
+        Assert.AreEqual(49, _context.Delegates.Count(n => n.Committee.CommitteeId == "munbw22-kk"));
     }
 
     [Test]
@@ -307,16 +291,16 @@ public partial class FullMUNBW22Tests
                 .WithCountry("Ägypten")
                 .InsideAnyCommittee()
                 .Save());
-        Assert.AreEqual(6, aegypten.Roles.Count);
+        Assert.AreEqual(4, aegypten.Roles.Count);
 
         // Algerien
         var algerien = _context.Fluent.ForConference("munbw22")
             .AddDelegation(del => del
                 .WithName("Algerien")
                 .WithCountry("Algerien")
-                .InsideCommitteeByShort("GV", "WiSo", "IOM", "KK")
+                .InsideCommitteeByShort("GV", "IOM")
                 .Save());
-        Assert.AreEqual(4, algerien.Roles.Count);
+        Assert.AreEqual(2, algerien.Roles.Count);
 
         var algerienOnline = _context.Fluent.ForConference("munbw22")
             .AddDelegation(del => del
@@ -331,27 +315,27 @@ public partial class FullMUNBW22Tests
             .AddDelegation(options => options
                 .WithName("Angola")
                 .WithCountry("Angola")
-                .InsideCommitteeByShort("GV", "HA3", "WiSo", "KK")
+                .InsideCommitteeByShort("GV", "WiSo")
                 .Save());
-        Assert.AreEqual(4, angola.Roles.Count);
+        Assert.AreEqual(2, angola.Roles.Count);
 
         // Äthiopien
         var aetiopien = _context.Fluent.ForConference("munbw22")
             .AddDelegation(options => options
                 .WithName("Äthiopien")
                 .WithCountry("Äthiopien")
-                .InsideCommitteeByShort("GV", "KFK", "WiSo", "KBE", "KK")
+                .InsideCommitteeByShort("GV", "KFK", "WiSo", "KK")
                 .Save());
-        Assert.AreEqual(5, aetiopien.Roles.Count);
+        Assert.AreEqual(4, aetiopien.Roles.Count);
 
         // Burkina Faso
         var burkinaFaso = _context.Fluent.ForConference("munbw22")
             .AddDelegation(options => options
                 .WithName("Burkina Faso")
                 .WithCountry("Burkina Faso")
-                .InsideCommitteeByShort("GV", "HA3", "KBE", "KK")
+                .InsideCommitteeByShort("GV", "HA3")
                 .Save());
-        Assert.AreEqual(4, burkinaFaso.Roles.Count);
+        Assert.AreEqual(2, burkinaFaso.Roles.Count);
 
         var burkinaFasoOnline = _context.Fluent.ForConference("munbw22")
             .AddDelegation(options => options
@@ -360,6 +344,21 @@ public partial class FullMUNBW22Tests
                 .InsideCommitteeByShort("MRR")
                 .Save());
         Assert.AreEqual(1, burkinaFasoOnline.Roles.Count);
+
+        // Elfenbenküste
+        var elfenbeimkueste = _context.Fluent.ForConference("munbw22")
+            .AddDelegation(options => options
+                .WithName("Elfenbeinküste")
+                .WithCountry("Elfenbeinküste")
+                .InsideCommitteeByShort("GV", "WiSo", "KK")
+                .Save());
+
+        var elfenbeinkuesteOnline = _context.Fluent.ForConference("munbw22")
+            .AddDelegation(options => options
+                .WithName("Elfenbeinküsten (online)")
+                .WithCountry("Elfenbeinküste")
+                .InsideCommitteeByShort("MRR")
+                .Save());
 
         //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Elfenbeinküste");
         //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Eritrea");
@@ -449,7 +448,7 @@ public partial class FullMUNBW22Tests
                 .WithCountry("Deutschland")
                 .InsideAnyCommittee()
                 .Save());
-        Assert.AreEqual(5, aetiopien.Roles.Count);
+        Assert.AreEqual(4, aetiopien.Roles.Count);
         //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Frankreich");
         //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Irland");
         //_context.Fluent.ForConference("munbw22").GroupRolesOfCountryIntoADelegation("Israel");
@@ -480,6 +479,7 @@ public partial class FullMUNBW22Tests
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Angola"));
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Äthiopien"));
         Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Burkina Faso"));
+        Assert.IsTrue(_context.Delegations.Any(n => n.Conference.ConferenceId == "munbw22" && n.Name == "Elfenbeinküste"));
     }
 
     [Test]
