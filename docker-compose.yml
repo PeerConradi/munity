@@ -12,7 +12,7 @@ services:
     networks:
       - munity
 
-  munity-backend:
+  munity-server:
 #    image: munity-backend
     restart: unless-stopped
     build:
