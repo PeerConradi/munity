@@ -20,10 +20,15 @@
     {
         <div class="col-6">
             <div class="card text-center">
+                <div class="h-250px rounded-top" style="background-image: url(/img/munstock/munbw-01.jpg); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
                 <div class="card-body">
                     <h4 class="card-title">@conferenceCard.Title</h4>
                     <p>@conferenceCard.Text</p>
                     <a href="/web/conference/@conferenceCard.Conference.ConferenceId" class="btn btn-sm btn-primary">Seite öffnen</a>
+                    @if (conferenceBoardInfos != null && conferenceBoardInfos.Any(n => (n.UserIsOwner || n.UserIsTeamMember) && n.ConferenceId == conferenceCard.Conference.ConferenceId))
+                    {
+                        <a href="/c/dashboard/@conferenceCard.Conference.ConferenceId" class="btn btn-sm btn-default">Team-Center öffnen</a>
+                    }
                 </div>
             </div>
         </div>

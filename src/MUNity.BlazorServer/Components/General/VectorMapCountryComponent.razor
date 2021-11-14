@@ -3,6 +3,8 @@
     <path d="@Country.Path" data-code="BD" fill="transparent" stroke="transparent" stroke-width="0" fill-rule="evenodd" class="jvectormap-region jvectormap-element"></path>
 </g>
 @code {
+    public const string DefaultFillColor = "#455A64";
+
     [Parameter] public string FillColor { get; set; } = "#455A64";
 
     [Parameter] public VectorMapCountry Country { get; set; }

@@ -1,0 +1,30 @@
+﻿@inject MunityContext dbContext
+
+@if (card != null)
+{
+    <div class="form-group mb-3">
+        <label>Titel</label>
+        <input class="form-control" @bind=card.Title />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Text</label>
+        <textarea class="form-control" @bind=card.Text />
+    </div>
+
+    <button class="btn btn-primary" @onclick="() => dbContext.SaveChanges()">Speichern</button>
+}
+
+
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    private MUNity.Database.Models.Conference.ConferenceDashboardCard card;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.card = dbContext.ConferenceDashboardCards.FirstOrDefault(n => n.Conference.ConferenceId == ConferenceId);
+    }
+}

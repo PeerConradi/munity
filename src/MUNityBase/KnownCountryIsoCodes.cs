@@ -144,6 +144,7 @@ namespace MUNity.Base
 		public static string Paraguay => "PY";
 		public static string Peru => "PE";
 		public static string Philippines => "PH";
+		public const string PuertoRico = "PR";
 		public static string Poland => "PL";
 		public static string Portugal => "PT";
 		public static string Qatar => "QA";
@@ -175,6 +176,7 @@ namespace MUNity.Base
 		public static string Sweden => "SE";
 		public static string Switzerland => "CH";
 		public static string SyrianArabRepublic => "SY";
+		public const string Taiwan = "TW";
 		public static string Tajikistan => "TJ";
 		public static string Tanzania => "TZ";
 		public static string Thailand => "TH";
@@ -196,6 +198,7 @@ namespace MUNity.Base
 		public static string Vanuatu => "VU";
 		public static string Venezuela => "VE";
 		public static string VietNam => "VN";
+		public const string WesternSahara = "EH";
 		public static string Yemen => "YE";
 		public static string Zambia => "ZM";
 		public static string Zimbabwe => "ZW";

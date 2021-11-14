@@ -5,17 +5,20 @@
 			<svg width="@Width" height="@Height">
 				<defs></defs>
 				<g transform="scale(0.4) translate(@TranslateX, @TranslateY)">
-					<VectorMapCountryComponent Country="@KnownVectoryMapCountries.Afghanistan" />
+					@foreach(var knownCountry in KnownVectoryMapCountries.All)
+					{
+						<VectorMapCountryComponent Country="@knownCountry" FillColor="@((IsoToColor.Any(n => n == knownCountry.Iso)) ? "#2196F3" : VectorMapCountryComponent.DefaultFillColor)" />
+					}
 					<g>
 					<path d="M531.15,258.94l1.51,0.12l5.13,-0.95l5.3,-1.48l-0.01,4.4l-2.67,3.39l-1.85,0.01l-8.04,-2.94l-2.55,-3.17l1.12,-1.71l2.04,2.34Z" fill="red" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
 					<path d="M531.15,258.94l1.51,0.12l5.13,-0.95l5.3,-1.48l-0.01,4.4l-2.67,3.39l-1.85,0.01l-8.04,-2.94l-2.55,-3.17l1.12,-1.71l2.04,2.34Z" data-code="XS" fill="transparent" stroke="transparent" stroke-width="0" fill-rule="evenodd" class="jvectormap-region jvectormap-element"></path>
 					</g>
 					<g>
-					<path d="M472.77,172.64l-1.08,-1.29l0.96,-0.77l0.29,-0.83l1.98,1.64l-0.36,0.67l-1.79,0.58Z" fill="#455A64" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
+					<path d="M472.77,172.64l-1.08,-1.29l0.96,-0.77l0.29,-0.83l1.98,1.64l-0.36,0.67l-1.79,0.58Z" fill="red" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
 					<path d="M472.77,172.64l-1.08,-1.29l0.96,-0.77l0.29,-0.83l1.98,1.64l-0.36,0.67l-1.79,0.58Z" data-code="XK" fill="transparent" stroke="transparent" stroke-width="0" fill-rule="evenodd" class="jvectormap-region jvectormap-element"></path>
 					</g>
 					<g>
-					<path d="M504.91,192.87l0.34,0.01l0.27,-0.07l-0.29,0.26l-0.31,-0.2Z" fill="#455A64" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
+					<path d="M504.91,192.87l0.34,0.01l0.27,-0.07l-0.29,0.26l-0.31,-0.2Z" fill="red" fill-opacity="1" stroke="none" stroke-width="0.4" stroke-opacity="1" fill-rule="evenodd"></path>
 					<path d="M504.91,192.87l0.34,0.01l0.27,-0.07l-0.29,0.26l-0.31,-0.2Z" data-code="XC" fill="transparent" stroke="transparent" stroke-width="0" fill-rule="evenodd" class="jvectormap-region jvectormap-element"></path>
 					</g>
 				</g>
@@ -38,6 +41,8 @@
 	[Parameter] public double ZoomFactor { get; set; } = 0.4d;
 
 	[Parameter] public string BaseColor { get; set; } = "#455A64";
+
+	[Parameter] public List<string> IsoToColor { get; set; } = new();
 
 	private bool mapReady;
 

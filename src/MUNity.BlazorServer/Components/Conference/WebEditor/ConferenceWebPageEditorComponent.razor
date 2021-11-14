@@ -1,0 +1,150 @@
+﻿@using MUNity.Schema.Conference.Website
+@using MUNity.Database.Models.Website
+
+@inject Services.UserConferenceAuthService conferenceAuthService
+@inject MUNity.Database.Context.MunityContext dbContext
+@inject Services.ConferenceWebsiteService websiteService
+
+<button class="btn btn-default" style="position: absolute; left: auto; right: 50px; top: 10px; bottom: auto;">Speichern</button>
+
+<div class="form-group">
+    <label>Seitentitel</label>
+    <input class="form-control" @bind="loadedPage.Title" />
+    <small>Dieser Name ist nicht automatisch der gleiche, wie der Name im Menü.</small>
+</div>
+
+<div class="row">
+    <p>Komponenten: @loadedPage.Components.Count</p>
+    <div class="float-right">
+        <button class="btn btn-primary" @onclick="() => dbContext.SaveChanges()"><i class="fa fa-save"></i> Änderungen speichern</button>
+    </div>
+</div>
+
+@foreach (var component in loadedPage.Components.OrderBy(n => n.SortOrder))
+{
+    if (component is MUNity.Database.Models.Website.WebPageTextElement textElement)
+    {
+        <EditTextComponent Element="@textElement" RequestRemove=OnRemoveComponent />
+    }
+    else if (component is MUNity.Database.Models.Website.TeamCardsElement teamCard)
+    {
+        <EditTeamCardComponent Element="@teamCard" />
+    }
+    else if (component is MUNity.Database.Models.Website.CommitteeTopicsElement topics)
+    {
+        <EditCommitteeTopicsComponent Element="@topics" ConferenceId="@ConferenceId" />
+    }
+    else if (component is MUNity.Database.Models.Website.CommitteeDelegatesElement delegates)
+    {
+        <EditCommitteeSeatsComponent Element=@delegates ConferenceId=@ConferenceId />
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-danger">Unbekanntes Element: @component.GetType().Name</div>
+        </div>
+    }
+                            
+}
+
+<div class="row">
+    <div class="card text-center border-0">
+        <div class="card-body">
+        <button class="btn btn-success btn-icon" @onclick="() => showAddItemModal = true"><i class="fa fa-plus"></i></button>
+
+        </div>
+
+    </div>
+</div>
+
+@if (showAddItemModal)
+{
+    <div class="modal-backdrop opacity-7"></div>
+    <div class="modal fade show" id="modal-dialog" aria-modal="true" role="dialog" style="display: block">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Modal Dialog</h4>
+						<button type="button" class="btn-close" @onclick="() => showAddItemModal = false"></button>
+					</div>
+					<div class="modal-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="card cursor-pointer" @onclick=AddTextComponent>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Text</h5>
+                                        <p>Eine Komponente zur Darstellung von Texten und Bildern.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Gremien-Themen</h5>
+                                        <p>Automatisch generierte Komponente, welche die Themen eines ausgewählten Gremiums anzeigt.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Gremien-Sitze</h5>
+                                        <p>Automatisch generierte Komponente, welche die Sitze in einem Gremium anzeigt.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+}
+
+@code {
+    [Parameter] public string PageId { get; set; }
+
+    [Parameter] public string ConferenceId { get; set; }
+
+
+    private MUNity.Database.Models.Website.ConferenceWebPage loadedPage;
+
+    private bool showAddItemModal;
+
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (!string.IsNullOrEmpty(PageId))
+        {
+            this.loadedPage = dbContext.ConferenceWebPages
+                .Include(n => n.Components)
+                .FirstOrDefault(n => n.ConferenceWebPageId == PageId);
+        }
+        else
+        {
+            this.loadedPage = dbContext.ConferenceWebPages
+               .Include(n => n.Components)
+               .FirstOrDefault(n => n.Conference.ConferenceId == ConferenceId && n.IsIndexPage);
+        }
+        this.InvokeAsync(StateHasChanged);
+    }
+
+     private void OnRemoveComponent(AbstractConferenceWebPageElement element)
+    {
+        this.loadedPage.Components.Remove(element);
+        InvokeAsync(this.StateHasChanged);
+    }
+
+    private void AddTextComponent()
+    {
+        this.loadedPage.Components.Add(new WebPageTextElement()
+        {
+            SortOrder = loadedPage.Components.Count,
+            Page = loadedPage
+        });
+        showAddItemModal = false;
+    }
+}

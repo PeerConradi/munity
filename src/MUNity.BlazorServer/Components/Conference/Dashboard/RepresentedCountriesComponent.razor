@@ -5,10 +5,10 @@
 <div class="panel panel-inverse" data-sortable-id="index-1">
 	<div class="panel-heading ui-sortable-handle">
 		<h4 class="panel-title">
-			Weltkarte
+			Weltkarte vertretene Staaten
 		</h4>
 	</div>
-	<MUNity.BlazorServer.Components.General.VectorMapComponent />
+	<MUNity.BlazorServer.Components.General.VectorMapComponent IsoToColor="@dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId && n.DelegateCountry != null).Select(n => n.DelegateCountry.Iso).ToList()" />
 	<div class="list-group">
 		<a href="javascript:;" class="list-group-item rounded-0 list-group-item-action list-group-item-inverse d-flex justify-content-between align-items-center text-ellipsis">
 			Afrika
