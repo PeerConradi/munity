@@ -25,4 +25,14 @@ jobs:
       run: dotnet test tests/MUNityServicesTest --no-build --verbosity normal
     - name: Move TestDatabase to main-project
       run: rm src/MUNity.BlazorServer/demo.db && cp tests/MUNityDatabaseTest/bin/Debug/net6.0/testmunbw.db src/MUNity.BlazorServer/demo.db
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSHKEY }}
+        script: | 
+          cd munity 
+          git pull
+          docker-compose up -d --build
 
