@@ -41,9 +41,10 @@ public class Startup
         // Database
         // To get more output add: .EnableSensitiveDataLogging().LogTo(Console.WriteLine) after Use...()
         // Set the Data Source to: ../../tests/MUNityDatabaseTest/bin/Debug/net6.0/testmunbw.db
+        // For demo use the name demo.db
         // to use the latest result of the MUNBW test 
         services.AddDbContext<MunityContext>(options =>
-            options.UseSqlite("Data Source=../../tests/MUNityDatabaseTest/bin/Debug/net6.0/testmunbw.db"));
+            options.UseSqlite("Data Source=demo.db"));
 
         // Identity
         services.AddAuthentication();
