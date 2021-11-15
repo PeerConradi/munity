@@ -1,0 +1,37 @@
+﻿@inject MunityContext dbContext
+
+@page "/admin/users"
+
+<AuthorizeView Roles="Head-Admin, Admin">
+    <Authorized>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Vorname</th>
+                    <th>Nachname</th>
+                    <th>Mail</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var user in dbContext.Users.OrderBy(n => n.UserName).Take(100))
+                {
+                    <tr class="@((user.IsShadowUser) ? "table-warning" : null)">
+                        <td>@user.UserName</td>
+                        <td>@user.Forename</td>
+                        <td>@user.Lastname</td>
+                        <td>@user.Email</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </Authorized>
+    <NotAuthorized>
+        <p>Zugriff verweigert!</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

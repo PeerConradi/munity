@@ -1,0 +1,25 @@
+﻿@page "/myconferences"
+
+@inject MunityContext dbContext
+
+<AuthorizeView>
+    <Authorized>
+        <div class="row">
+            @foreach(var conference in dbContext.Participations.Where(n => n.User.UserName == context.User.Identity.Name).Select(n => n.Role.Conference).Distinct())
+            {
+                <div class="card col-6">
+                    <div class="card-body">
+                        <h5 class="card-title">@conference.Name</h5>
+                    </div>
+                </div>
+            }
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <p>Sie müssen angemeldet sein um diesen Bereich zu öffnen.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

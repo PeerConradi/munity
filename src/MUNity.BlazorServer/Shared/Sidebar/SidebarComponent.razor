@@ -14,15 +14,19 @@
             <div class="menu-header">Navigation</div>
 
             <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Home" Url="/" IconName="oi-home" />
-            
-            <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="First Level" IconName="oi-home">
-                <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Sub Item 1" Url="/Demo" Badge="NEW" />
-                <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Sub Item 2" Url="/Demo" />
-
-            </MUNity.BlazorServer.Shared.Sidebar.MenuItem>
 
             <AuthorizeView>
                 <Authorized>
+
+                    @if (context.User.IsInRole("Head-Admin") || context.User.IsInRole("Admin"))
+                    {
+                        <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Admin" IconName="oi-shield">
+                            <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Dashboard" Url="/admin/dashboard" />
+                            <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Benutzerverwaltung" Url="/admin/users" />
+                        </MUNity.BlazorServer.Shared.Sidebar.MenuItem>
+
+                    }
+
                     <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Organisationen" IconName="oi-shield">
                         <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Organisation suchen" Url="/organizations" />
                         <MUNity.BlazorServer.Shared.Sidebar.MenuItem Title="Meine Organisationen" Url="/myOrganizations" />

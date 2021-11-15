@@ -38,4 +38,15 @@ public partial class FullMUNBW22Tests
         Assert.IsTrue(result.User.IsShadowUser, "Expected this user to be virtual.");
         Assert.IsFalse(string.IsNullOrEmpty(result.User.InviteSecret), "Epected an invite key to be created, when creating a shadow user, so it can be send for the first login.");
     }
+
+    [Test]
+    [Order(53)]
+    public async Task TestMakeTonyStarkAHeadAdmin()
+	{
+        var userManager = _serviceProvider.GetRequiredService<UserManager<MunityUser>>();
+        var roleManager = _serviceProvider.GetRequiredService<RoleManager<MunityRole>>();
+        var tony = await userManager.FindByNameAsync("tonystark");
+        var result = await userManager.AddToRoleAsync(tony, "Head-Admin");
+        Assert.IsTrue(result.Succeeded);
+	}
 }

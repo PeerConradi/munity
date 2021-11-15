@@ -58,12 +58,17 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end me-1 @((ShowUserSubMenu) ? "show" : null)" style="@((ShowUserSubMenu) ? SubMenuStyle : null)">
                 <a href="@($"/profile/{userName}")" class="dropdown-item">Mein Profil</a>
-                <a href="javascript:;" class="dropdown-item"><span class="badge bg-danger float-end rounded-pill">2</span> Postfach</a>
-                <a href="javascript:;" class="dropdown-item">Meine Organisationen</a>
-                <a href="javascript:;" class="dropdown-item">Meine Projekte</a>
-                <a href="javascript:;" class="dropdown-item">Meine Konferenzen</a>
-                <a href="javascript:;" class="dropdown-item">Meine Resolutionen</a>
+                
+                <a href="/myinbox" class="dropdown-item"><span class="badge bg-danger float-end rounded-pill">2</span> Postfach</a>
+                <a href="/myOrganizations" class="dropdown-item">Meine Organisationen</a>
+                <a href="/myconferences" class="dropdown-item">Meine Konferenzen</a>
+                <a href="/myresolutions" class="dropdown-item">Meine Resolutionen</a>
                 <a href="/myapplications" class="dropdown-item">Meine Bewerbungen</a>
+                @if (context.User.IsInRole("Head-Admin") || context.User.IsInRole("Admin"))
+                {
+                    <div class="dropdown-divider"></div>
+                    <a href="/admin/dashboard" class="dropdown-item text-danger">Admin Center</a>
+                }
                 <div class="dropdown-divider"></div>
                 <a href="/Identity/Account/LogOut" class="dropdown-item">Log Out</a>
             </div>

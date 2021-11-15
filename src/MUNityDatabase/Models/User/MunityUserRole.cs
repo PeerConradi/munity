@@ -10,9 +10,9 @@ namespace MUNity.Database.Models.User;
 
 public class MunityUserRole : IdentityUserRole<string>
 {
-    public virtual MunityUser User { get; set; }
+    //public virtual MunityUser User { get; set; }
 
-    public virtual MunityRole Role { get; set; }
+    //public virtual MunityRole Role { get; set; }
 
     public MunityUserRole()
     {

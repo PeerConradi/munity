@@ -5,11 +5,14 @@
 
 <AuthorizeView>
     <Authorized>
-        <h3>MyApplicationsPage</h3>
-        @foreach(var application in applicationSerivce.GetApplicationsOfUser(context.User))
-        {
-            <p><a href="@($"/conference/application/review/{application.ApplicationId}")">Bewerbung für: @application.ConferenceName</a></p>
-        }
+        <h3>Anmeldungen/Bewerbungen</h3>
+        <ul>
+            @foreach(var application in applicationSerivce.GetApplicationsOfUser(context.User))
+            {
+                <li><a href="@($"/conference/application/review/{application.ApplicationId}")">Bewerbung für: @application.ConferenceName</a></li>
+            }
+        </ul>
+        
     </Authorized>
     <NotAuthorized>
         <p>Sie müssen angemeldet sein um diese Seite zu verwenden.</p>
@@ -18,5 +21,6 @@
 
 
 @code {
+
 
 }

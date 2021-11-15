@@ -1,0 +1,74 @@
+﻿@page "/admin/dashboard"
+
+@inject MunityContext dbContext
+
+<AuthorizeView Roles="Head-Admin, Admin">
+    <Authorized>
+        <div class="row">
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-md-6">
+					<div class="widget widget-stats bg-blue">
+						<div class="stats-icon"><i class="fa fa-user"></i></div>
+						<div class="stats-info">
+							<h4>Benutzer</h4>
+							<p>@dbContext.Users.Count()</p>	
+						</div>
+						<div class="stats-link">
+							<a href="javascript:;">Benutzerverwaltung <i class="fa fa-arrow-alt-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<!-- END col-3 -->
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-md-6">
+					<div class="widget widget-stats bg-info">
+						<div class="stats-icon"><i class="fa fa-globe"></i></div>
+						<div class="stats-info">
+							<h4>Organisationen</h4>
+							<p>@dbContext.Organizations.Count()</p>	
+						</div>
+						<div class="stats-link">
+							<a href="javascript:;">Organisationen verwalten <i class="fa fa-arrow-alt-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<!-- END col-3 -->
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-md-6">
+					<div class="widget widget-stats bg-orange">
+						<div class="stats-icon"><i class="fa fa-users"></i></div>
+						<div class="stats-info">
+							<h4>Projekte</h4>
+							<p>@dbContext.Projects.Count()</p>	
+						</div>
+						<div class="stats-link">
+							<a href="javascript:;">Projekte anzeigen <i class="fa fa-arrow-alt-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<!-- END col-3 -->
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-md-6">
+					<div class="widget widget-stats bg-red">
+						<div class="stats-icon"><i class="fa fa-clock"></i></div>
+						<div class="stats-info">
+							<h4>Konferenzen</h4>
+							<p>@dbContext.Conferences.Count()</p>	
+						</div>
+						<div class="stats-link">
+							<a href="javascript:;">Konferenzen verwalten <i class="fa fa-arrow-alt-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<!-- END col-3 -->
+			</div>
+    </Authorized>
+    <NotAuthorized>
+        <p>Zugriff verweigert!</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+}
