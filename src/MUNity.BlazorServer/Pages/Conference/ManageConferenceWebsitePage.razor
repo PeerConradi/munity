@@ -34,6 +34,7 @@
                     <h5>Weitere Funktionen</h5>
                     <ul>
                         <li><a class="cursor-pointer" @onclick="() => this.editingItem = EditItems.DashboardCard">Karte auf der Startseite</a></li>
+                        <li><a class="cursor-pointer" @onclick="() => this.editingItem = EditItems.Footer">Footer</a></li>
                     </ul>
                 </div>
             </div>
@@ -52,6 +53,10 @@
                     else if (this.editingItem == EditItems.DashboardCard)
                     {
                         <EditConferenceDashboardCardComponent ConferenceId=@ConferenceId />
+                    }
+                    else if (this.editingItem == EditItems.Footer)
+                    {
+                        <EditFooterComponent ConferenceId=@ConferenceId />
                     }
                     else if (this.editingItem == EditItems.None)
                     {
@@ -84,7 +89,8 @@
     {
         None,
         Page,
-        DashboardCard
+        DashboardCard,
+        Footer
     }
 
     private EditItems editingItem;

@@ -1,0 +1,72 @@
+﻿@inject Services.UserConferenceAuthService conferenceAuthService
+
+@inject MunityContext dbContext
+
+
+@if (footer == null)
+{
+    @if (dbContext.Conferences.Any(n => n.ConferenceId == ConferenceId))
+    {
+        <div class="row">
+            <p>Es sieht so aus, als wurde noch kein Footer für die Webseite angelegt.</p>
+            <button class="btn btn-primary" @onclick=CreateFooter>Einen Footer erstellen</button>
+        </div>
+    }
+    else
+    {
+        <p>The conference with id @ConferenceId was not found.</p>
+    }
+}
+else
+{
+    <div class="row">
+        @if (editMode)
+        {
+            <div class="form-group">
+                <label>Inhalt</label>
+                <RadzenHtmlEditor @bind-Value=@footer.FooterContent />
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" @onclick=Save>Speichern</button>
+            </div>
+        }
+        else
+        {
+            <p>@((MarkupString)footer.FooterContent) <a class="cursor-pointer" @onclick="() => editMode = true">bearbeiten</a></p>
+        }
+        
+    </div>
+
+}
+
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+
+    private MUNity.Database.Models.Website.ConferenceWebsiteFooter footer;
+
+    private bool editMode = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        this.footer = await dbContext.ConferenceWebsiteFooters.FirstOrDefaultAsync(n => n.ConferenceId == ConferenceId);
+
+    }
+
+    private async Task Save()
+    {
+        await dbContext.SaveChangesAsync();
+        this.editMode = false;
+    }
+
+    private async Task CreateFooter()
+    {
+        this.footer = new MUNity.Database.Models.Website.ConferenceWebsiteFooter()
+        {
+            ConferenceId = ConferenceId,
+        };
+        dbContext.ConferenceWebsiteFooters.Add(footer);
+        await dbContext.SaveChangesAsync();
+    }
+}

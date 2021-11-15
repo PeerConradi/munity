@@ -1,12 +1,30 @@
 ﻿@inherits LayoutComponentBase
 
+@inject NavigationManager navManager
+@inject MunityContext dbContext
 
 @*@((mainViewService.ShowSidebar) ? "page-sidebar-toggled" : null)*@
-<div id="app" class="app app-header-fixed app-content-full-height app-with-top-menu">
+<div id="app" class="app app-header-fixed app-content-full-height app-with-top-menu app-sidebar-fixed app-without-sidebar">
     <MUNity.BlazorServer.Shared.Header.HeaderComponent />
     <MUNity.BlazorServer.Shared.TopMenu.TopMenuComponent />
-    <div id="content" class="p-20px">
+    <div id="content" class="app-content d-flex flex-column">
+        <div class="app-content-padding flex-grow-1 overflow-hidden ps" data-scrollbar="true" data-height="100%" data-init="true" style="height: 100%;">
         @Body
+
+        </div>
+
+        @if (conferenceId != null)
+        {
+            var footer = dbContext.ConferenceWebsiteFooters.FirstOrDefault(n => n.ConferenceId == conferenceId);
+            if (footer != null)
+            {
+                <div id="footer" class="app-footer m-0">
+			        <p>@((MarkupString)footer.FooterContent)</p>
+		        </div>
+            }
+        }
+
+        
     </div>
 </div>
 
@@ -14,3 +32,27 @@
 <RadzenNotification />
 <RadzenContextMenu />
 <RadzenTooltip />
+
+@code {
+    private string conferenceId;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        navManager.LocationChanged += delegate { ParseConferenceId(); };
+        ParseConferenceId();
+    }
+
+    private void ParseConferenceId()
+    {
+        if (navManager.Uri.Count(n => n == '/') >= 5)
+        {
+            conferenceId = navManager.Uri.Split("/")[5];
+        }
+        else
+        {
+            conferenceId = null;
+        }
+        this.InvokeAsync(StateHasChanged);
+    }
+}
