@@ -51,6 +51,9 @@
 					Angemeldet bleiben
 					</label>
 				</div>
+
+				@Html.ValidationSummary(true, "", new { @class = "text-danger"})
+				
 				<div class="mb-15px">
 					<button type="submit" class="btn btn-cyan d-block h-45px w-100 btn-lg fs-14px" >Anmelden</button>
 				</div>

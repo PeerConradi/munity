@@ -93,6 +93,9 @@ namespace MUNityCore.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Birthday Day")]
             public int BirthdayDay { get; set; } = 1;
+
+            [Required]
+            public bool AcceptedAGB { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -104,18 +107,9 @@ namespace MUNityCore.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
+            //ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            if (ModelState.IsValid && Input.AcceptedAGB)
             {
-                var user = new MunityUser { 
-                    UserName = Input.Username, 
-                    Email = Input.Email, 
-                    RegistrationDate = DateTime.UtcNow, 
-                    Birthday = new DateOnly(Input.BirthdayYear, Input.BirthdayMonth, Input.BirthdayDay),
-                    Forename = Input.Forename,
-                    Lastname = Input.Lastname
-                };
-                
                 var userFound = await _userManager.FindByEmailAsync(Input.Email);
                 if (userFound != null)
                 {
@@ -128,12 +122,23 @@ namespace MUNityCore.Areas.Identity.Pages.Account
                         await _userManager.ChangePasswordAsync(userFound, String.Empty, Input.Password);
                         _dbContext.Update(userFound);
                         _dbContext.SaveChanges();
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.SignInAsync(userFound, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
+                    _logger.LogWarning($"User already exisits and was not a shadow user: {Input.Username}");
                 }
                 else
                 {
+                    var user = new MunityUser
+                    {
+                        UserName = Input.Username,
+                        Email = Input.Email,
+                        RegistrationDate = DateTime.UtcNow,
+                        Birthday = new DateOnly(Input.BirthdayYear, Input.BirthdayMonth, Input.BirthdayDay),
+                        Forename = Input.Forename,
+                        Lastname = Input.Lastname
+                    };
+
                     var result = await _userManager.CreateAsync(user, Input.Password);
                     if (result.Succeeded)
                     {
@@ -166,6 +171,10 @@ namespace MUNityCore.Areas.Identity.Pages.Account
                     }
                 }
                 
+            }
+            else
+            {
+                Console.WriteLine("AGB not accepted!");
             }
 
             // If we got this far, something failed, redisplay form

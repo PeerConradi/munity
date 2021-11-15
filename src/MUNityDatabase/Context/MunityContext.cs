@@ -180,6 +180,8 @@ namespace MUNity.Database.Context
 
         public DbSet<ConferenceRegisterElement> ConferenceWebPageRegisterElements { get; set; }
 
+        public DbSet<ConferenceWebsiteFooter> ConferenceWebsiteFooters { get; set; }
+
         public DbSet<UserFriend> UserFriends { get; set; }
 
         public DbSet<UserBlocked> UserBlockedUsers { get; set; }

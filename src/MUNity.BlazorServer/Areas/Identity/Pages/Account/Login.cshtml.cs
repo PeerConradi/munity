@@ -34,6 +34,9 @@ namespace MUNityCore.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
+        [BindProperty]
+        public OutputModel LoginOutput { get; set; }
+
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         public string ReturnUrl { get; set; }
@@ -52,6 +55,11 @@ namespace MUNityCore.Areas.Identity.Pages.Account
 
             [Display(Name = "Remember me?")]
             public bool RememberMe { get; set; }
+        }
+
+        public class OutputModel
+        {
+            public bool InvalidInput { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -101,6 +109,10 @@ namespace MUNityCore.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }
+            }
+            else
+            {
+                LoginOutput.InvalidInput = true;
             }
 
             // If we got this far, something failed, redisplay form
