@@ -8,8 +8,7 @@ MUNity is a work in progress to create and manage Model United Nations Conferenc
 
 ## Coverage
 
-To get the latest coverage result execute the generatecoverage.sh file inside the root folder.
-The report should be generated a folder higher than the munity folder with the name: MunityCoverageReport
+The coverage report can be found here: https://peerconradi.github.io/munity/index.html
 
 ## Documentation
 
