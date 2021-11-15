@@ -25,18 +25,18 @@
 				<div class="profile-header-info">
 					<h4 class="mt-0 mb-1">@((isMe) ? $"{user.Forename} {user.Lastname}" : user.GetDisplayNamePublic)</h4>
 					<p class="mb-2">@@@user.UserName</p>
-					@if (isMe)
+					@*@if (isMe)
 					{
 						<a href="#" class="btn btn-xs btn-yellow">Edit Profile</a>
-					}
+					}*@
 				</div>
 				<!-- END profile-header-info -->
 			</div>
 			<!-- END profile-header-content -->
 			<!-- BEGIN profile-header-tab -->
 			<ul class="profile-header-tab nav nav-tabs">
-				<li class="nav-item"><a class="nav-link cursor-pointer @((tab == Tabs.Posts) ? "active" : null)" @onclick="() => tab = Tabs.Posts">POSTS</a></li>
-				<li class="nav-item"><a class="nav-link cursor-pointer @((tab == Tabs.About) ? "active" : null)" @onclick="() => tab = Tabs.About">ABOUT</a></li>
+				<li class="nav-item"><a class="nav-link cursor-pointer @((tab == Tabs.Posts) ? "active" : null)" @onclick="() => tab = Tabs.Posts">Timeline (Demo)</a></li>
+				<li class="nav-item"><a class="nav-link cursor-pointer @((tab == Tabs.About) ? "active" : null)" @onclick="() => tab = Tabs.About">Daten</a></li>
 				@*<li class="nav-item"><a href="#profile-photos" class="nav-link" data-bs-toggle="tab">PHOTOS</a></li>
 				<li class="nav-item"><a href="#profile-videos" class="nav-link" data-bs-toggle="tab">VIDEOS</a></li>
 				<li class="nav-item"><a href="#profile-friends" class="nav-link" data-bs-toggle="tab">FRIENDS</a></li>*@
