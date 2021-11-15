@@ -1,5 +1,11 @@
-﻿@page "/Organization/{Id}"
-@inject Services.OrganizationService orgaService;
+﻿@using MUNity.Database.Models.User
+
+@page "/Organization/{Id}"
+
+@inject Services.OrganizationService orgaService
+@inject UserManager<MunityUser> userManager
+@inject MunityContext dbContext
+
 
 @if (organization != null)
 {
@@ -73,7 +79,7 @@
 }
 else
 {
-
+    <p>Organisation nicht gefunden oder keine Berechtigung.</p>
 }
 
 @code {
@@ -91,7 +97,11 @@ else
         var userClaim = (await authStateTask)?.User;
         if (userClaim != null)
         {
-            organization = orgaService.GetDashboardInfo(Id);
+            var user = await userManager.GetUserAsync(userClaim);
+            if (user != null && dbContext.OrganizationMembers.Any(n => n.User.Id == user.Id && n.Organization.OrganizationId == Id))
+            {
+                organization = orgaService.GetDashboardInfo(Id);
+            }
         }
         
     }
