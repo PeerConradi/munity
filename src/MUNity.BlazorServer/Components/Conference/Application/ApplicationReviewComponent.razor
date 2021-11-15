@@ -2,7 +2,7 @@
 
 @page "/conference/application/review/{ApplicationId:int}"
 
-@if (Application != null && isAllowedToSee)
+@if (Application != null && isAllowedAccess.Value)
 {
     <div class="invoice">
         <!-- BEGIN invoice-company -->
@@ -179,9 +179,13 @@
         <!-- END invoice-footer -->
     </div>
 }
+else if (!isAllowedAccess.Value)
+{
+    <p>Keine Berechtigung diese Bewerbung zu sehen!</p>
+}
 else
 {
-    <p>Bewerbung nicht korrekt geladen!</p>
+    <p>Anmeldung wird geladen.</p>
 }
 
 
@@ -195,9 +199,9 @@ else
 
     [CascadingParameter] Task<AuthenticationState> AuthStateTask { get; set; }
 
-    private bool IsApproved;
+    private bool? isAllowedAccess;
 
-    private bool isAllowedToSee = false;
+    private bool IsApproved;
 
     private bool sizeIsCorrect;
 
@@ -207,22 +211,18 @@ else
     {
         await base.OnInitializedAsync();
 
-        if (Application == null)
-        {
-            Application = context.DelegationApplications
-                .Include(n => n.DelegationWishes)
-                .ThenInclude(n => n.Delegation)
-                .Include(n => n.Users)
-                .ThenInclude(n => n.User)
-                .FirstOrDefault(n => n.DelegationApplicationId == ApplicationId);
+    }
 
-            isAllowedToSee = true;  //ToDo: check that only allowed users are able to see the
-                                    // application (if they are in it or have a team role that allows them to see it.
-        }
-        else
-        {
-            isAllowedToSee = true;
-        }
+    private async Task LoadApplication()
+    {
+
+        Application = await context.DelegationApplications
+            .Include(n => n.DelegationWishes)
+            .ThenInclude(n => n.Delegation)
+            .Include(n => n.Users)
+            .ThenInclude(n => n.User)
+            .FirstOrDefaultAsync(n => n.DelegationApplicationId == ApplicationId);
+
 
         this.sizeIsCorrect = Application.DelegationWishes.All(n => context.Delegates.Count(a => a.Delegation.DelegationId == n.Delegation.DelegationId) == Application.Users.Count);
 
@@ -231,6 +231,26 @@ else
 
         this.conference = context.Conferences.AsNoTracking().FirstOrDefault(n => n.ConferenceId == ConferenceId);
 
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        var claim = (await AuthStateTask)?.User;
+        if (claim == null)
+        {
+            this.isAllowedAccess = false;
+        }
+        else
+        {
+            this.isAllowedAccess = await context.DelegationApplicationUserEntries
+                .AnyAsync(n => n.User.UserName == claim.Identity.Name && n.Application.DelegationApplicationId == ApplicationId);
+        }
+
+        if (this.isAllowedAccess.HasValue && this.isAllowedAccess.Value)
+        {
+            await LoadApplication();
+        }
     }
 
     private void FinishApplication()

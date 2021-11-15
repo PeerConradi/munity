@@ -13,7 +13,7 @@
         </td>
 		<td>
             @((User.User.IsShadowUser) ? (User.User.Email) : $"{User.User.Forename} {User.User.Lastname}")
-            <a href="javascript:;" class="text-decoration-none text-danger fw-bold"><i class="fa fa-minus fa-fw"></i> Entfernen</a>
+            <a href="javascript:;" @onclick="() => RemoveUser.InvokeAsync(this.User)" class="text-decoration-none text-danger fw-bold"><i class="fa fa-minus fa-fw"></i> Entfernen</a>
         </td>
 	</tr>
 }
@@ -29,10 +29,15 @@ else
 
 
 @code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
     [Parameter] public DelegationApplicationUserEntry User { get; set; }
 
+    [Parameter] public EventCallback<DelegationApplicationUserEntry> RemoveUser { get; set; }
+
     private bool showDrowdown = false;
+
+    private bool? isMe;
 
     private string dropDownStyle = "";
 
@@ -42,4 +47,13 @@ else
         dropDownStyle = $"position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate({args.ClientX - 200}px, {args.ClientY - 250}px);";
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        var claim = (await AuthStateTask)?.User;
+        if (claim != null)
+        {
+            isMe = claim.Identity.Name == User.User.UserName;
+        }
+    }
 }

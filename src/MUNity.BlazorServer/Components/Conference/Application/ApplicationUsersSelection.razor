@@ -45,7 +45,7 @@
 				<tbody>
                     @foreach(var user in Application.Users)
                     {
-                        <ApplicationUserComponent User="@user" />
+                        <ApplicationUserComponent User="@user" RemoveUser=RemoveUser />
                     }
 
                     <tr>
@@ -219,6 +219,11 @@ else
         {
             notificationService.Notify(NotificationSeverity.Error, "Einladung fehlgeschlagen", "Die Einladung des Benutzers ist fehlgeschlagen. Ursachen können eine ungültige oder gesperrte E-Mail Adresse sein.");
         }
+    }
+
+    private async Task RemoveUser(Database.Models.Conference.DelegationApplicationUserEntry user)
+    {
+        this.Application.Users.Remove(user);
     }
 
 
