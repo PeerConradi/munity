@@ -5,6 +5,7 @@
         Writing,
         Pending,
         Accepted,
-        Denied
+        Denied,
+        Saved
     }
 }

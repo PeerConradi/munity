@@ -20,7 +20,7 @@
                 }
                 else if (Application.Status == MUNity.Base.ApplicationStatuses.Writing && !IsApproved)
                 {
-                    <button class="btn btn-outline-info mb-10px" @onclick="() => FinishApplication()">
+                    <button class="btn btn-outline-info mb-10px" @onclick="() => SaveApplication()">
                         <i class="fa fa-save t-plus-1 fa-fw fa-lg"></i> Speichern
                     </button>
                 }
@@ -145,6 +145,20 @@
                         <span class="fw-bold">nicht gültig (nicht eingereicht)</span>
                     </div>
                 }
+                else if (IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Saved)
+                {
+                    <div class="invoice-price-right bg-info">
+                        <small>Status</small>
+                        <span class="fw-bold">Gültig (gespeichert)</span>
+                    </div>
+                }
+                else if (!IsApproved && Application.Status == MUNity.Base.ApplicationStatuses.Saved)
+                {
+                    <div class="invoice-price-right bg-warning">
+                        <small>Status</small>
+                        <span class="fw-bold">nicht gültig (gespeichert)</span>
+                    </div>
+                }
 
             </div>
             <!-- END invoice-price -->
@@ -261,6 +275,17 @@ else
 
         }
         Application.Status = MUNity.Base.ApplicationStatuses.Pending;
+        var recaff = this.context.SaveChanges();
+
+    }
+
+    private void SaveApplication()
+    {
+        if (!this.context.DelegationApplications.Contains(Application))
+        {
+            this.context.DelegationApplications.Add(Application);
+        }
+        Application.Status = MUNity.Base.ApplicationStatuses.Saved;
         var recaff = this.context.SaveChanges();
 
     }
