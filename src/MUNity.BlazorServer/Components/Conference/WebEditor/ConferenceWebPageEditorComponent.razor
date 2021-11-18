@@ -10,7 +10,7 @@
 <div class="form-group">
     <label>Seitentitel</label>
     <input class="form-control" @bind="loadedPage.Title" />
-    <small>Dieser Name ist nicht automatisch der gleiche, wie der Name im Menü.</small>
+heightht<small>Dieser Name ist nicht automatisch der gleiche, wie der Name im Menü.</small>
 </div>
 
 <div class="row">
@@ -37,6 +37,10 @@
     else if (component is MUNity.Database.Models.Website.CommitteeDelegatesElement delegates)
     {
         <EditCommitteeSeatsComponent Element=@delegates ConferenceId=@ConferenceId />
+    }
+    else if (component is MUNity.Database.Models.Website.ConferenceRegisterElement application)
+    {
+        <EditConfereceApplicationComponent Element=@application />
     }
     else
     {
@@ -67,7 +71,7 @@
 						<h4 class="modal-title">Modal Dialog</h4>
 						<button type="button" class="btn-close" @onclick="() => showAddItemModal = false"></button>
 					</div>
-					<div class="modal-body">
+					<div class="modal-body" style="max-height: 400px; overflow-y: scroll;">
                         <div class="row">
                             <div class="col-4">
                                 <div class="card cursor-pointer" @onclick=AddTextComponent>
@@ -92,6 +96,15 @@
                                     <div class="card-body">
                                         <h5 class="card-title">Gremien-Sitze</h5>
                                         <p>Automatisch generierte Komponente, welche die Sitze in einem Gremium anzeigt.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="card cursor-pointer" @onclick=AddApplicationComponent>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Anmeldung</h5>
+                                        <p>Eine Komponente über welche eine Anmeldung bei der Konferenz möglich ist.</p>
                                     </div>
                                 </div>
                             </div>
@@ -132,7 +145,7 @@
         this.InvokeAsync(StateHasChanged);
     }
 
-     private void OnRemoveComponent(AbstractConferenceWebPageElement element)
+    private void OnRemoveComponent(AbstractConferenceWebPageElement element)
     {
         this.loadedPage.Components.Remove(element);
         InvokeAsync(this.StateHasChanged);
@@ -144,6 +157,16 @@
         {
             SortOrder = loadedPage.Components.Count,
             Page = loadedPage
+        });
+        showAddItemModal = false;
+    }
+
+    private void AddApplicationComponent()
+    {
+        this.loadedPage.Components.Add(new ConferenceRegisterElement()
+        {
+            SortOrder = loadedPage.Components.Count,
+            Conference = dbContext.Conferences.Find(ConferenceId)
         });
         showAddItemModal = false;
     }

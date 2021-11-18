@@ -56,6 +56,11 @@ else
                 </ul>
             </div>
         }
+        else if (comp is ConferenceRegisterElement registration)
+        {
+            var conferenceId = dbContext.ConferenceWebPageRegisterElements.Where(n => n.ConferenceWebPageComponentId == registration.ConferenceWebPageComponentId).Select(n => n.Conference.ConferenceId).FirstOrDefault();
+            <MUNity.BlazorServer.Pages.Web.WebConferenceRegistration ConferenceId=@conferenceId />
+        }
         else
         {
             <p>Unknown or unimplemented type @comp.GetType().Name</p>

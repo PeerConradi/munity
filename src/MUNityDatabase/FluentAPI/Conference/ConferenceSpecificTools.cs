@@ -513,6 +513,15 @@ namespace MUNity.Database.FluentAPI
                n.Roles.All(a => a.Committee.CommitteeType == CommitteeTypes.Online));
         }
 
+        public bool HasOnLocationAndOnlineCommittees()
+        {
+            var modes = _dbContext.Committees.Where(n => n.Conference.ConferenceId == _conferenceId)
+                .Select(n => n.CommitteeType)
+                .Distinct()
+                .ToList();
+            return modes.Contains(CommitteeTypes.Online) && (modes.Contains(CommitteeTypes.AtLocation) || modes.Contains(CommitteeTypes.Default));
+        }
+
         public ConferenceSpecificTools(MunityContext context, [NotNull]string conferenceId)
         {
             this._dbContext = context;

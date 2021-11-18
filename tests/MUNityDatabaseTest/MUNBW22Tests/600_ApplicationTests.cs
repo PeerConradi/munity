@@ -37,9 +37,6 @@ public partial class FullMUNBW22Tests
         {
             Options = options,
             Title = "Anmeldung",
-            PostContent =
-                "Die Anmeldungen werden am 20.02.2022 abgeschlossen. Dann Erfahren Sie, welche Delegation und Rolle Sie bekommen",
-            PreContent = "Die Anmeldung bei Model United Nations Baden-Würrtemberg...",
             RequiresAddress = true,
             RequiresName = true,
             MaxWishes = 3

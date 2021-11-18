@@ -15,10 +15,6 @@ public class ConferenceApplicationFormula
 
     public ConferenceApplicationFormulaTypes FormulaType { get; set; }
 
-    public string PreContent { get; set; }
-
-    public string PostContent { get; set; }
-
     public string Title { get; set; }
 
     /// <summary>

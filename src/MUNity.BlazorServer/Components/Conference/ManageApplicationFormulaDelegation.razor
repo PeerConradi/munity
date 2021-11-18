@@ -66,22 +66,9 @@
             <RadzenSwitch class="col-md-9" @bind-Value="_formula.RequiresSchool"/>
         </div>
 
-        <div class="row mb-3">
-            <label class="form-label">Text vor der Anmeldung/Bewerbung</label>
-            <RadzenHtmlEditor @bind-Value=_formula.PreContent style="height: 250px; margin-bottom: 1rem;">
-                <RadzenHtmlEditorBold/>
-                <RadzenHtmlEditorItalic/>
-                <RadzenHtmlEditorUnderline/>
-                <RadzenHtmlEditorStrikeThrough/>
-                <RadzenHtmlEditorSeparator/>
-                <RadzenHtmlEditorColor/>
-                <RadzenHtmlEditorBackground/>
-                <RadzenHtmlEditorRemoveFormat/>
-            </RadzenHtmlEditor>
-        </div>
-
         @if (_formula.Fields != null)
         {
+            <h3>Felder</h3>
             <table class="table">
                 <thead>
                 <tr>
@@ -113,7 +100,6 @@
                                 <option value="@ConferenceApplicationFieldTypes.Time">Uhrzeit</option>
                                 <option value="@ConferenceApplicationFieldTypes.Check">Checkbox</option>
                                 <option value="@ConferenceApplicationFieldTypes.Country">Land</option>
-                                <option value="@ConferenceApplicationFieldTypes.School">Schule</option>
                             </select>
                         </td>
                         <td>
@@ -146,20 +132,6 @@
 
             <a class="btn btn-primary w-100 mb-3" @onclick="AddField">Feld hinzufügen</a>
         }
-
-        <div class="row mb-3">
-            <label class="form-label">Text nach der Anmeldung/Bewerbung</label>
-            <RadzenHtmlEditor @bind-Value=_formula.PostContent style="height: 250px; margin-bottom: 1rem;">
-                <RadzenHtmlEditorBold/>
-                <RadzenHtmlEditorItalic/>
-                <RadzenHtmlEditorUnderline/>
-                <RadzenHtmlEditorStrikeThrough/>
-                <RadzenHtmlEditorSeparator/>
-                <RadzenHtmlEditorColor/>
-                <RadzenHtmlEditorBackground/>
-                <RadzenHtmlEditorRemoveFormat/>
-            </RadzenHtmlEditor>
-        </div>
 
 
         <div class="row mb-3">
