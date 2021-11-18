@@ -237,12 +237,14 @@ else
             .ThenInclude(n => n.User)
             .FirstOrDefaultAsync(n => n.DelegationApplicationId == ApplicationId);
 
+        CheckApplication();
 
+    }
+
+    private void CheckApplication()
+    {
         this.sizeIsCorrect = Application.DelegationWishes.All(n => context.Delegates.Count(a => a.Delegation.DelegationId == n.Delegation.DelegationId) == Application.Users.Count);
-
         this.IsApproved = this.sizeIsCorrect || (this.sizeIsCorrect && Application.OpenToPublic);
-
-
         this.conference = context.Conferences.AsNoTracking().FirstOrDefault(n => n.ConferenceId == ConferenceId);
 
     }
@@ -257,11 +259,19 @@ else
         }
         else
         {
-            this.isAllowedAccess = await context.DelegationApplicationUserEntries
-                .AnyAsync(n => n.User.UserName == claim.Identity.Name && n.Application.DelegationApplicationId == ApplicationId);
+            if (Application != null)
+            {
+                this.isAllowedAccess = Application.Users.Any(n => n.User.UserName == claim.Identity.Name);
+                CheckApplication();
+            }
+            else
+            {
+                this.isAllowedAccess = await context.DelegationApplicationUserEntries
+                    .AnyAsync(n => n.User.UserName == claim.Identity.Name && n.Application.DelegationApplicationId == ApplicationId);
+            }
         }
 
-        if (this.isAllowedAccess.HasValue && this.isAllowedAccess.Value)
+        if (this.isAllowedAccess.HasValue && this.isAllowedAccess.Value && this.Application == null)
         {
             await LoadApplication();
         }
