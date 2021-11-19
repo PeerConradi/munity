@@ -21,8 +21,8 @@ COPY --from=publish /app/publish .
 # this when going into production it will take a demo database that is
 # filled with test users.
 COPY src/MUNity.BlazorServer/demo.db .
-COPY src/MUNity.BlazorServer/demo.db-shm .
-COPY src/MUNity.BlazorServer/demo.db-wal .
+# COPY src/MUNity.BlazorServer/demo.db-shm .
+# COPY src/MUNity.BlazorServer/demo.db-wal .
 ENV ASPNETCORE_URLS http://*:5000
 EXPOSE 5000
 ENTRYPOINT ["dotnet", "MUNity.BlazorServer.dll"]

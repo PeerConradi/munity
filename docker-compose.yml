@@ -12,6 +12,17 @@ services:
     networks:
       - munity
 
+  mail:
+    image: bytemark/smtp
+    restart: always
+    environment:
+      RELAY_HOST: smtp.mun-tools.com
+      RELAY_PORT: 587
+      RELAY_USERNAME: no-reply@mun-tools.com
+      RELAY_PASSWORD: ${SMTP_PASS}
+    networks:
+      - traefik
+
   munity-server:
 #    image: munity-backend
     restart: unless-stopped
