@@ -1,0 +1,123 @@
+﻿@using MUNity.Schema.Conference.Application
+@inject Services.ConferenceApplicationSortingService appSortingService
+@inject Services.UserConferenceAuthService conferenceAuthService
+@inject MunityContext dbContext
+
+@page "/c/sortapplications/{ConferenceId}"
+
+@if (!isAllowed.HasValue)
+{
+    <p>Daten werden geladen</p>
+}
+else if (isAllowed.HasValue && isAllowed.Value == true && session == null)
+{
+    <p>Daten werden vorbereitet</p>
+}
+else if (isAllowed.HasValue && isAllowed == false)
+{
+    <p>Keine Berechtigung!</p>
+}
+else if (isAllowed.HasValue && isAllowed == true && session != null)
+{
+    <h1>Anmeldungen verwalten</h1>
+    <h5>Demo Version des Tools zur Verwaltung von Anmeldungen</h5>
+
+    <h3>@session.Applications.Count vorliegende Bewerbung</h3>
+    <h5>@session.Applications.Count(n => !n.IsAccepted) ausstehend</h5>
+
+    <div class="row">
+        <div class="col-5">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Delegationen und Bewerbungen</h4>
+                </div>
+                <div class="panel-body">
+                    <ApplicationsByDelegationsListComponent ConferenceId=@ConferenceId Session=@session WishChanged=OnWishAccepted WishSelected=OnWishSelected/>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-7">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Bewerbungsdetails</h4>
+                </div>
+                <div class="panel-body">
+                    @if (SelectedApplication != null)
+                    {
+                        <div class="row">
+                            <h4>Ausgewähltes Gremium</h4>
+                            <div class="btn-group w-100">
+                                @foreach(var wish in SelectedApplication.DelegationWishes)
+                                {
+                                    <a class="btn btn-outline-inverse @((session.Applications.Any(n => n.DelegationWishes.Any(a => a.DelegationId == wish.DelegationId && a.Accepted && a != wish))) ? "disabled" : null) @((wish.Accepted) ? "active" : null)" @onclick="() => ToggleWish(wish)">@wish.DelegationName</a>
+                                }
+                            </div>
+                        </div>
+                        <ApplicationReviewComponent ApplicationId=@SelectedApplication.ApplicationId ConferenceId=@ConferenceId />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+}
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    [Parameter] public string ConferenceId { get; set; }
+
+    private ApplicationSortingSession session;
+
+    private bool? isAllowed;
+
+    private SortableApplication SelectedApplication { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        var claim = (await AuthStateTask).User;
+        this.isAllowed = await conferenceAuthService.IsUserTeamMember(ConferenceId, claim);
+        if (isAllowed.HasValue && isAllowed == true)
+        {
+            this.session = appSortingService.GetOrCreateSessionForConference(ConferenceId);
+        }
+    }
+
+    private async Task OnWishAccepted()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnWishSelected(DelegationWish wish)
+    {
+        var application = session.Applications.FirstOrDefault(n => n.DelegationWishes.Contains(wish));
+        if (application != null)
+        {
+            this.SelectedApplication = application;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task ToggleWish(DelegationWish wish)
+    {
+        wish.Accepted = !wish.Accepted;
+        if (wish.Accepted)
+        {
+            var application = session.Applications.FirstOrDefault(n => n.DelegationWishes.Contains(wish));
+            if (application != null)
+            {
+                foreach(var w2 in application.DelegationWishes)
+                {
+                    if (w2 != wish)
+                    {
+                        w2.Accepted = false;
+                    }
+                }
+            }
+        }
+        
+    }
+}

@@ -1,4 +1,6 @@
-﻿@inject MunityContext dbContext
+﻿@using MUNity.Schema.Conference.Application
+
+@inject MunityContext dbContext
 
 @if (!string.IsNullOrEmpty(ConferenceId))
 {
@@ -7,48 +9,96 @@
         <thead>
             <tr>
                 <th>Delegation</th>
-                <th>WÜnsche</th>
+                <th>Größe</th>
+                <th>Bewerbungsmodus</th>
+                <th>Wünsche (Personenzahl)</th>
             </tr>
         </thead>
         <tbody>
-            @foreach(var delegation in dbContext.Delegations.Where(n => n.Conference.ConferenceId == ConferenceId))
+            @foreach(var delegation in dbContext.Delegations.AsNoTracking().Where(n => n.Conference.ConferenceId == ConferenceId).Select(n => new { DelegationId = n.DelegationId, RoleCount = n.Roles.Count(), Name = n.Name}))
             {
-                <tr>
+                <tr class="@((Session.Applications.Any(n => n.DelegationWishes.Any(a => a.DelegationId== delegation.DelegationId && a.Accepted))) ? "table-success" : null)">
                     <td>@delegation.Name</td>
+                    <td>@delegation.RoleCount</td>
                     <td>
-                        @foreach(var application in dbContext.DelegationApplicationPickedDelegations.Where(n => n.Delegation.DelegationId == delegation.DelegationId))
+                        @foreach(var applicationState in dbContext.Delegates.Where(n => n.Delegation.DelegationId == delegation.DelegationId).Select(n => n.ApplicationState).Distinct())
                         {
-                            @if (application.Priority == 0)
+                            if (applicationState == MUNity.Base.EApplicationStates.DelegationApplication)
                             {
-                                <span class="badge bg-success">Erstwunsch</span>
+                                <span class="badge bg-success">offen für Delegationsbewerbung.</span>
                             }
-                            else if (application.Priority == 1)
+                            else if (applicationState == EApplicationStates.DirectApplication)
                             {
-                                <span class="badge bg-primary">Zweitwunsch</span>
-                                
+                                <span class="badge bg-secondary">offen für Direktbewerbung.</span>
                             }
-                            else if (application.Priority == 2)
+                            else if (applicationState == EApplicationStates.Closed)
                             {
-                                <span class="badge bg-info">Drittwunsch</span>
-                                
+                                <span class="badge bg-warning">teilweise oder vollständig geschlossen</span>
                             }
                         }
+                    </td>
+                    
+                    <td>
+                        @foreach(var application in Session.Applications)
+                        {
+                            @foreach(var wish in application.DelegationWishes)
+                            {
+                                
+                                @if (wish.DelegationId == delegation.DelegationId)
+                                {
+                                    @if (!application.IsAccepted && !wish.Accepted)
+                                    {
+                                        <a @onclick="() => WishSelected.InvokeAsync(wish)" class="btn btn-lg @((wish.Accepted) ? "btn-primary" : "btn-outline-primary") ">
+                                          <span class="d-flex align-items-center text-left">
+                                            <span class="fa-2x me-3 text-black">#@(wish.Priority + 1)</span>
+                                            <span>
+                                              <span class="d-block"><b>Bewerbung-Nr: @application.ApplicationId</b></span>
+                                              <span class="d-block fs-12px opacity-7">Personen @(application.CountOfUsers)</span>
+                                            </span>
+                                          </span>
+                                        </a>
+                                    }
+                                    else if (application.IsAccepted && wish.Accepted)
+                                    {
+                                        if (wish.Priority == 0)
+                                        {
+                                            <span class="badge bg-success" @onclick="() => WishSelected.InvokeAsync(wish)">Angenommen Erstwunsch</span>
+                                        }
+                                        else if (wish.Priority == 1)
+                                        {
+                                            <span class="badge bg-success" @onclick="() => WishSelected.InvokeAsync(wish)">Angenommen Zweitwunsch</span>
+                                        }
+                                        else if (wish.Priority == 2)
+                                        {
+                                            <span class="badge bg-success" @onclick="() => WishSelected.InvokeAsync(wish)">Angenommen Drittwunsch</span>
+                                        }
+
+                                    }
+                                    else if (application.IsAccepted && !wish.Accepted)
+                                    {
+                                        if (wish.Priority == 0)
+                                        {
+                                            <span class="badge bg-danger" @onclick="() => WishSelected.InvokeAsync(wish)">Abgelehnt Erstwunsch</span>
+                                        }
+                                        else if (wish.Priority == 1 && !wish.Accepted)
+                                        {
+                                            <span class="badge bg-danger" @onclick="() => WishSelected.InvokeAsync(wish)">Abgelehnt Zweitwunsch</span>
+                                        }
+                                        else if (wish.Priority == 2 && !wish.Accepted)
+                                        {
+                                            <span class="badge bg-danger" @onclick="() => WishSelected.InvokeAsync(wish)">Abgelehnt Drittwunsch</span>
+                                        }
+
+                                    }
+                                }
+                            }
+
+                        }
+
+                        
                     </td>
                 </tr>
             }
-
-            @*@foreach(var delegation in dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId).Select(a => a.Delegation).Distinct())
-            {
-                <tr>
-                    <td>@delegation.Name</td>
-                    <td>
-                        @foreach(var application in dbContext.DelegationApplicationPickedDelegations.Where(n => n.Delegation.DelegationId == delegation.DelegationId))
-                        {
-                            <span class="badge bg-primary">Prio: @application.Priority</span>
-                        }
-                    </td>
-                </tr>
-            }*@
         </tbody>
     </table>
 
@@ -56,4 +106,22 @@
 
 @code {
     [Parameter] public string ConferenceId { get; set; }
+
+    [Parameter] public ApplicationSortingSession Session { get; set; }
+
+    [Parameter] public EventCallback WishChanged { get; set; }
+
+    [Parameter] public EventCallback<DelegationWish> WishSelected { get; set; }
+
+    private async Task AcceptWish(DelegationWish wish)
+    {
+        wish.Accepted = true;
+        await this.WishChanged.InvokeAsync();
+    }
+
+    private async Task ReverseWish(DelegationWish wish)
+    {
+        wish.Accepted = false;
+        await this.WishChanged.InvokeAsync();
+    }
 }

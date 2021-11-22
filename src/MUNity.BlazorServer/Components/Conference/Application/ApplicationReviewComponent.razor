@@ -1,4 +1,5 @@
 ﻿@inject MUNity.Database.Context.MunityContext context
+@inject Services.UserConferenceAuthService conferenceAuthService
 
 @page "/conference/application/review/{ApplicationId:int}"
 
@@ -173,6 +174,16 @@
             </div>
         }
         
+        <h5>Formula</h5>
+        @foreach(var inputs in Application.FormulaInputs)
+        {
+            <p>
+                <b>@inputs.Field.FieldName</b>
+                <br>
+            @inputs.Value
+            </p>
+            
+        }
 
         <div class="invoice-note">
             * Die zu der Bewerbung eingeladenen Benutzer müssen bis zum Ende der Anmeldephase die Bewerbung bestätigen. Hierfür die Webseite öffnen, einloggen und auf Meine Bewerbungen gehen.<br>
@@ -235,8 +246,11 @@ else
             .ThenInclude(n => n.Delegation)
             .Include(n => n.Users)
             .ThenInclude(n => n.User)
+            .Include(n => n.FormulaInputs)
+            .ThenInclude(n => n.Field)
             .FirstOrDefaultAsync(n => n.DelegationApplicationId == ApplicationId);
 
+        this.ApplicationId = Application.DelegationApplicationId;
         CheckApplication();
 
     }
@@ -262,16 +276,29 @@ else
             if (Application != null)
             {
                 this.isAllowedAccess = Application.Users.Any(n => n.User.UserName == claim.Identity.Name);
+
+                if (!this.isAllowedAccess.Value)
+                {
+                    this.isAllowedAccess = await conferenceAuthService.IsUserTeamMember(ConferenceId, claim);
+
+                }
                 CheckApplication();
             }
             else
             {
                 this.isAllowedAccess = await context.DelegationApplicationUserEntries
                     .AnyAsync(n => n.User.UserName == claim.Identity.Name && n.Application.DelegationApplicationId == ApplicationId);
+
+                // Check if Team Member
+                if (!this.isAllowedAccess.Value)
+                {
+                    this.isAllowedAccess = await conferenceAuthService.IsUserTeamMember(ConferenceId, claim);
+
+                }
             }
         }
 
-        if (this.isAllowedAccess.HasValue && this.isAllowedAccess.Value && this.Application == null)
+        if (this.isAllowedAccess.HasValue && this.isAllowedAccess.Value && (this.Application == null || this.Application.DelegationApplicationId != this.ApplicationId))
         {
             await LoadApplication();
         }
