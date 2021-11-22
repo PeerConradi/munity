@@ -10,21 +10,31 @@
             <tr>
                 <th>Eigenschaft</th>
                 <th>Wert</th>
+                <th>Hinweise</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Bewerbung auf Delegation</td>
-                <td>@((dbContext.ConferenceApplicationOptions.Any(a => a.Conference.ConferenceId == ConferenceId && a.AllowDelegationApplication) ? "aktiv" : "deaktiviert"))</td>
-            </tr>
-            <tr>
-                <td>Bewerbung auf Rollen</td>
-                <td>@((dbContext.ConferenceApplicationOptions.Any(a => a.Conference.ConferenceId == ConferenceId && a.AllowRoleApplication) ? "aktiv" : "deaktiviert"))</td>
-            </tr>
-            <tr>
-                <td>Bewerbung auf Team-Rollen</td>
-                <td>@((dbContext.ConferenceApplicationOptions.Any(a => a.Conference.ConferenceId == ConferenceId && a.AllowTeamApplication) ? "aktiv" : "deaktiviert"))</td>
-            </tr>
+            @if (options != null)
+            {
+                <tr>
+                    <td>Bewerbung auf Delegation</td>
+                    <td><RadzenSwitch @bind-Value=@options.AllowDelegationApplication /></td>
+                    <td><small>Über diese Art der Bewerbung können andere Personen sich in Gruppen auf mehrere Wunschdelegationen bewerben.</small></td>
+                </tr>
+
+                <tr>
+                    <td>Start-Datum</td>
+                    <td><RadzenDatePicker TValue="DateTime?" @bind-Value=options.ApplicationStartDate ShowTime=true /></td>
+                    <td><small>Hier kann das Startdatum für die Anmeldephase eingegeben werden.</small></td>
+                </tr>
+
+                <tr>
+                    <td>End-Datum</td>
+                    <td><RadzenDatePicker TValue=DateTime? @bind-Value=options.ApplicationEndDate ShowTime=true /></td>
+                    <td><small>Mit dieser Einstellung kann festgelegt werden, wann die Anmeldephase geschlossen wird. Bewerbungen können dann nicht mehr eingereicht oder bearbeitet werden.</small></td>
+                </tr>
+            }
+            
             <tr>
                 <td>Anzahl Delegation-Slots</td>
                 <td>@dbContext.Delegates.Count(n => n.Conference.ConferenceId == ConferenceId && n.ApplicationState == EApplicationStates.DelegationApplication)</td>
@@ -96,6 +106,8 @@ else
 
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
+    private Database.Models.Conference.ConferenceApplicationOptions options;
+
     private bool isAuthorized = false;
 
 
@@ -106,6 +118,7 @@ else
         if (claim != null)
         {
             this.isAuthorized = await conferenceAuthService.IsUserAllowedToEditConference(ConferenceId, claim);
+            this.options = dbContext.ConferenceApplicationOptions.FirstOrDefault(n => n.ConferenceId == ConferenceId);
         }
     }
 

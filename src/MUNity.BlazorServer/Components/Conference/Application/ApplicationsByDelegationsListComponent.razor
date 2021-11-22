@@ -1,0 +1,59 @@
+﻿@inject MunityContext dbContext
+
+@if (!string.IsNullOrEmpty(ConferenceId))
+{
+    <p>@ConferenceId</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Delegation</th>
+                <th>WÜnsche</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var delegation in dbContext.Delegations.Where(n => n.Conference.ConferenceId == ConferenceId))
+            {
+                <tr>
+                    <td>@delegation.Name</td>
+                    <td>
+                        @foreach(var application in dbContext.DelegationApplicationPickedDelegations.Where(n => n.Delegation.DelegationId == delegation.DelegationId))
+                        {
+                            @if (application.Priority == 0)
+                            {
+                                <span class="badge bg-success">Erstwunsch</span>
+                            }
+                            else if (application.Priority == 1)
+                            {
+                                <span class="badge bg-primary">Zweitwunsch</span>
+                                
+                            }
+                            else if (application.Priority == 2)
+                            {
+                                <span class="badge bg-info">Drittwunsch</span>
+                                
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+
+            @*@foreach(var delegation in dbContext.Delegates.Where(n => n.Conference.ConferenceId == ConferenceId).Select(a => a.Delegation).Distinct())
+            {
+                <tr>
+                    <td>@delegation.Name</td>
+                    <td>
+                        @foreach(var application in dbContext.DelegationApplicationPickedDelegations.Where(n => n.Delegation.DelegationId == delegation.DelegationId))
+                        {
+                            <span class="badge bg-primary">Prio: @application.Priority</span>
+                        }
+                    </td>
+                </tr>
+            }*@
+        </tbody>
+    </table>
+
+}
+
+@code {
+    [Parameter] public string ConferenceId { get; set; }
+}
