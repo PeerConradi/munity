@@ -35,4 +35,9 @@ public class ConferenceApplicationFormula
     public int? MaxWishes { get; set; }
 
     public ICollection<ConferenceApplicationField> Fields { get; set; }
+
+    /// <summary>
+    /// Input fields that can be used by each user
+    /// </summary>
+    public ICollection<ConferenceDelegationApplicationUserUserField> UserFields { get; set; }
 }

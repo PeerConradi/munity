@@ -1,5 +1,6 @@
 ﻿using MUNity.Base;
 using MUNity.Database.Models.User;
+using System.Collections.Generic;
 
 namespace MUNity.Database.Models.Conference
 {
@@ -16,5 +17,7 @@ namespace MUNity.Database.Models.Conference
         public bool CanWrite { get; set; }
 
         public string Message { get; set; }
+
+        public ICollection<ConferenceDelegationApplicationUserFieldInput> CustomUserInputs { get; set; }
     }
 }

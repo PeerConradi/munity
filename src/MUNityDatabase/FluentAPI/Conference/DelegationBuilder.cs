@@ -130,7 +130,7 @@ namespace MUNity.Database.FluentAPI
                     if (!isCountryRepresentedInsideCommittee)
                         msg += $" The country {_dbContext.Countries.Find((short)_countryId)?.Name} is not represented inside the committee!";
                     else
-                        msg += $" The country seems to be represented inside the given committee, but it seems to already be assigned to delegation {_dbContext.Delegates.Where(n => n.DelegateCountry.CountryId == _countryId && n.Committee.CommitteeShort == committeeShort && n.Delegation != null).Select(n => n.Delegation.Name).FirstOrDefault()}";
+                        msg = $"Unable to map a role for the country {_dbContext.Countries.Where(n => n.CountryId == _countryId).Select(n => $"{n.Name} ({n.CountryId})").FirstOrDefault()} seems to be represented inside the given committee, but it seems to already be assigned to delegation: {_dbContext.Delegates.Where(n => n.DelegateCountry.CountryId == _countryId && n.Committee.CommitteeShort == committeeShort && n.Delegation != null).Select(n => n.Delegation.Name).FirstOrDefault()}";
                     throw new ConferenceRoleNotFoundException(msg);
                 }
                 else

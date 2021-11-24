@@ -43,6 +43,7 @@ public partial class FullMUNBW22Tests
         };
 
         formula.Fields = new List<ConferenceApplicationField>();
+        formula.UserFields = new List<ConferenceDelegationApplicationUserUserField>();
 
         formula.Fields.Add(new ConferenceApplicationField()
         {
@@ -64,6 +65,16 @@ public partial class FullMUNBW22Tests
             Forumula = formula
         });
 
+        formula.UserFields.Add(new ConferenceDelegationApplicationUserUserField()
+        {
+            FieldDescription = "Ernährungshinweis",
+            FieldName = "Ernährungshinweis",
+            FieldType= ConferenceApplicationFieldTypes.MultiLineText,
+            DefaultValue = null,
+            Forumula = formula,
+            IsRequired = false
+        });
+
         _context.ConferenceApplicationFormulas.Add(formula);
         _context.SaveChanges();
         Assert.IsTrue(_context.ConferenceApplicationFormulas.Any(n => n.Options.Conference.ConferenceId == "munbw22"));
@@ -76,25 +87,6 @@ public partial class FullMUNBW22Tests
         Assert.NotNull(formulaReload.Fields);
         Assert.AreEqual(2, formulaReload.Fields.Count);
         Assert.IsTrue(_context.ConferenceApplicationOptions.Any(n => n.ConferenceId == "munbw22"));
-    }
-
-    [Test]
-    [Order(601)]
-    public void CheckDelegationForApplicationCount()
-    {
-        var allDelegationsAtLocation = _context.Fluent.ForConference("munbw22").DelegationsWithOnlyAtLocationSlots().ToList();
-        Assert.AreEqual(27, allDelegationsAtLocation.Count, "Expected another total of Delegations at location!");
-
-
-        // Delegationsgrößen Test
-        //Assert.AreEqual(1, _context.Fluent.ForConference("munbw22").DelegationsWithOnlyAtLocationAndRoleCount(6).Count());
-        //Assert.AreEqual(2, _context.Fluent.ForConference("munbw22").DelegationsWithOnlyAtLocationAndRoleCount(5).Count());
-        //Assert.AreEqual(3, _context.Fluent.ForConference("munbw22").DelegationsWithOnlyAtLocationAndRoleCount(4).Count());
-
-        // Should have 2 Delegations that are online only
-        //Assert.AreEqual(2, _context.Fluent.ForConference("munbw22").DelegationsWithOnlyOnlineRoles().Count(), "Expected 2 online committees");
-
-
     }
 
     [Test]

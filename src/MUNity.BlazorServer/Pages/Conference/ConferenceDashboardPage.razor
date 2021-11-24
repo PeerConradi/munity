@@ -37,7 +37,7 @@
                     <p>@dbContext.Conferences.Where(n => n.ConferenceId == Id).Select(n => n.Roles.Count).FirstOrDefault()  </p>
                 </div>
                 <div class="stats-link">
-                    <a href="javascript:;">Rollen bearbeiten <i class="fa fa-arrow-alt-circle-right"></i></a>
+                    <a href="/c/manageroles/@Id">Rollen bearbeiten <i class="fa fa-arrow-alt-circle-right"></i></a>
                 </div>
             </div>
         </div>
