@@ -53,4 +53,9 @@ public class Speaker : ISpeaker
     {
         return this.GetHashCode() - other.GetHashCode();
     }
+
+    public Speaker()
+    {
+        this.Id = Guid.NewGuid().ToString();
+    }
 }

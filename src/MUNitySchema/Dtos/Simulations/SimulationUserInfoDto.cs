@@ -1,5 +1,5 @@
 ﻿using MUNity.Base;
-using MUNity.Schema.Simulation;
+using MUNity.VirtualCommittee.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

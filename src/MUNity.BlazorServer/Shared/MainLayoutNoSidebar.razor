@@ -1,0 +1,13 @@
+﻿@inherits LayoutComponentBase
+
+<div id="app" class="app app-header-fixed app-sidebar-fixed app-without-sidebar">
+    <MUNity.BlazorServer.Shared.Header.HeaderComponent />
+    <div id="content" class="app-content">
+        @Body
+    </div>
+</div>
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenContextMenu />
+<RadzenTooltip />

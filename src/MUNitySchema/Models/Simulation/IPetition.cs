@@ -9,7 +9,7 @@ namespace MUNity.Models.Simulation
     /// <summary>
     /// The overall implementation of a petition.
     /// A Petition is a request that can be made by a SimulationUser and is regarding an agendaItem.
-    /// The Petition is referencing a petition Type <see cref="PetitionTypeId"/> <see cref="MUNity.Schema.Simulation.PetitionTypeDto"/>
+    /// The Petition is referencing a petition Type <see cref="PetitionTypeId"/> <see cref="MUNity.VirtualCommittee.Dtos.PetitionTypeDto"/>
     /// </summary>
     public interface IPetition
     {
@@ -21,7 +21,7 @@ namespace MUNity.Models.Simulation
 
         /// <summary>
         /// References a Petition Type.
-        /// <see cref="MUNity.Schema.Simulation.PetitionTypeDto"/>
+        /// <see cref="MUNity.VirtualCommittee.Dtos.PetitionTypeDto"/>
         /// </summary>
         int PetitionTypeId { get; set; }
 

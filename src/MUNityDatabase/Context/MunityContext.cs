@@ -25,6 +25,7 @@ using MUNity.Database.Models.Website;
 using MUNity.Database.Models.General;
 using MUNity.Database.FluentAPI;
 using System.Diagnostics;
+using MUNity.Database.Models.VirtualCommittee;
 
 namespace MUNity.Database.Context
 {
@@ -185,6 +186,13 @@ namespace MUNity.Database.Context
         public DbSet<UserFriend> UserFriends { get; set; }
 
         public DbSet<UserBlocked> UserBlockedUsers { get; set; }
+
+        #region Virtual Committees (Simulations)
+        public DbSet<VirtualCommittee> VirtualCommittees { get; set; }
+
+        public DbSet<VirtualCommitteeSlot> VirtualCommitteeSlots { get; set; }
+
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

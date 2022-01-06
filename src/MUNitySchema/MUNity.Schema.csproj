@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Converter\" />
+    <Folder Include="Schema\Simulation\" />
   </ItemGroup>
 
 </Project>

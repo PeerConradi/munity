@@ -1,0 +1,107 @@
+﻿@inject MunityContext dbContext
+@inject Services.ListOfSpeakersService losService
+
+
+
+@if (ViewModel != null)
+{
+    <div class="row">
+        <div class="col-2">
+            <div class="form-group">
+                <label>Redezeit</label>
+                <RadzenMask Mask="**:**" CharacterPattern="[0-9]" Placeholder="03:00" Name="SSN" @bind-Value=@inputSpeakerTime Style="width: 100%;" />
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group">
+                <label>Fragezeit</label>
+                <RadzenMask Mask="**:**" CharacterPattern="[0-9]" Placeholder="03:00" Name="SSN" @bind-Value=@inputQuestionTime Style="width: 100%;" />
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group">
+                <label>Redebeiträge offen</label>
+                <RadzenSwitch @bind-Value=speakersOpened />
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group">
+                <label>Fragen offen</label>
+                <RadzenSwitch />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Name</label>
+        <RadzenAutoComplete Data=@dbContext.Countries TextProperty="Name" Style="width: 100%;" @bind-Value=@newSpeakerName />
+        <div class="btn-group">
+            <button class="btn btn-sm btn-default" @onclick="AddToSpeakers">Auf die Redeliste</button>
+            <button class="btn btn-sm btn-default" @onclick="AddToQuestions">Auf Fragen und Kurzbemerkungen</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <ul>
+                @foreach(var speaker in ViewModel.Speakers)
+                {
+                    <li>@speaker.Name</li>
+                }
+            </ul>
+        </div>
+
+        <div class="col-6">
+            <ul>
+                @foreach(var question in ViewModel.Questions)
+                {
+                    <li>@question.Name</li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <p>No ViewModel was supplied to this view!</p>
+}
+
+
+
+@code {
+    [Parameter] public ViewModels.ListOfSpeakers.ListOfSpeakersViewModel ViewModel { get; set; }
+
+    private string newSpeakerName = "";
+
+    private string inputSpeakerTime;
+
+    private string inputQuestionTime;
+
+    private bool speakersOpened
+    {
+        get
+        {
+            return !ViewModel.ListClosed;
+        }
+        set
+        {
+            ViewModel.ListClosed = !value;
+        }
+    }
+
+    private void AddToSpeakers()
+    {
+        if (ViewModel != null && !string.IsNullOrEmpty(newSpeakerName))
+        {
+            losService.AddSpeaker(ViewModel.ListOfSpeakersId, newSpeakerName, "un");  
+        }
+    }
+
+    private void AddToQuestions()
+    {
+        if (ViewModel != null && !string.IsNullOrEmpty(newSpeakerName))
+        {
+            losService.AddQuestion(ViewModel.ListOfSpeakersId, newSpeakerName, "un");  
+        }
+    }
+}

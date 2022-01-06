@@ -1,0 +1,33 @@
+﻿@page "/los/{Id}"
+
+@inject Services.ListOfSpeakersService listOfSpeaerService
+
+@if (viewModel != null)
+{
+    <MUNity.BlazorServer.Components.ListOfSpeakers.LoSManagerComponent ViewModel=@viewModel />
+
+}
+else
+{
+    <p>No List of Speakers is loaded</p>
+}
+
+@code {
+
+    [Parameter] public string Id { get; set; }
+
+    private ViewModels.ListOfSpeakers.ListOfSpeakersViewModel viewModel;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (!string.IsNullOrEmpty(Id))
+        {
+            viewModel = listOfSpeaerService.GetViewModel(Id);
+            if (viewModel == null)
+            {
+                this.viewModel = listOfSpeaerService.CreateList(Id);
+            }
+        }
+    }
+}

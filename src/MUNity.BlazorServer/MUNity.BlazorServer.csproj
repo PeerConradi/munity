@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-MUNity.BlazorServer-D5D9D744-C064-475D-866E-51888C925800</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>

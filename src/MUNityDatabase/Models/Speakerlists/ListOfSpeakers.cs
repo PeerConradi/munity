@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using MUNityBase.Interfances;
 using MUNity.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MUNity.Database.Models.LoS;
 
@@ -86,27 +87,17 @@ public class ListOfSpeakers : IListOfSpeakers
     /// </summary>
     public DateTime StartQuestionTime { get; set; }
 
+    [NotMapped]
     public ISpeaker CurrentSpeaker => throw new NotImplementedException();
 
+    [NotMapped]
     public TimeSpan RemainingSpeakerTime => throw new NotImplementedException();
 
+    [NotMapped]
     public TimeSpan RemainingQuestionTime => throw new NotImplementedException();
 
+    [NotMapped]
     public ISpeaker CurrentQuestion => throw new NotImplementedException();
-
-    /// <summary>
-    /// Will create a new ListOfSpeakers and generate a new GUID for it, will also init the Speakers and Questions
-    /// as an empty collection and set the default SpeakerTime to 3 minutes and the QuestionTime to 30 seconds.
-    /// </summary>
-    public ListOfSpeakers()
-    {
-        this.ListOfSpeakersId = Guid.NewGuid().ToString();
-        this.SpeakerTime = new TimeSpan(0, 3, 0);
-        this.QuestionTime = new TimeSpan(0, 0, 30);
-        this.PausedSpeakerTime = this.SpeakerTime;
-        this.PausedQuestionTime = this.QuestionTime;
-        AllSpeakers = new List<Speaker>();
-    }
 
     public ISpeaker AddSpeaker(string name, string iso = "")
     {
@@ -168,4 +159,17 @@ public class ListOfSpeakers : IListOfSpeakers
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Will create a new ListOfSpeakers and generate a new GUID for it, will also init the Speakers and Questions
+    /// as an empty collection and set the default SpeakerTime to 3 minutes and the QuestionTime to 30 seconds.
+    /// </summary>
+    public ListOfSpeakers()
+    {
+        this.ListOfSpeakersId = Guid.NewGuid().ToString();
+        this.SpeakerTime = new TimeSpan(0, 3, 0);
+        this.QuestionTime = new TimeSpan(0, 0, 30);
+        this.PausedSpeakerTime = this.SpeakerTime;
+        this.PausedQuestionTime = this.QuestionTime;
+        AllSpeakers = new List<Speaker>();
+    }
 }

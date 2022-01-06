@@ -1,6 +1,6 @@
 ﻿using MUNity.Base;
-using MUNity.Schema.Simulation;
-using MUNity.Schema.Simulation.Voting;
+using MUNity.VirtualCommittee.Dtos;
+using MUNity.VirtualCommittee.Dtos.Voting;
 using System;
 using System.Collections.Generic;
 using System.Text;

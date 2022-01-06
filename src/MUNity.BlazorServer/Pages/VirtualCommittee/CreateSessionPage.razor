@@ -1,0 +1,50 @@
+﻿@using MUNity.Schema.VirtualCommittee.ViewModels
+
+@page "/createvirtualcommittee"
+@layout MainLayoutNoSidebar
+
+@inject Services.VirtualCommitteeService virtualCommitteeService
+
+<h1 class="page-header">Virtuelles Gremium verwalten</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="panel panel-inverse">
+            <div class="panel-heading">
+                <h4 class="panel-title">Einstellungen</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control fs-15px" id="inputName" @bind="virtualCommittee.Name" />
+                  <label for="inputName" class="d-flex align-items-center fs-13px">
+                    Raumname
+                  </label>
+                </div>
+
+                <div class="form-floating mb-3">
+                  <input type="password" class="form-control fs-15px" id="inputPassword" @bind="virtualCommittee.AdminPassword" />
+                  <label for="inputPassword" class="d-flex align-items-center fs-13px">
+                    Passwort
+                  </label>
+                </div>
+
+                <button class="btn btn-default">Erstellen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private VirtualCommitteeViewModel virtualCommittee;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.virtualCommittee = new VirtualCommitteeViewModel();
+    }
+
+    private void Save()
+    {
+        this.virtualCommitteeService.AddVirtualCommittee(virtualCommittee);
+    }
+}
