@@ -6,74 +6,53 @@
 
 @if (ViewModel != null)
 {
-    @if (ViewModel.Status == ESpeakerListStatus.Speaking || ViewModel.Status == ESpeakerListStatus.Question)
+    <label>Bearbeitungsmodus</label>
+    <RadzenSwitch @bind-Value="@allowEdit" />
+
+    @if (allowEdit)
     {
-        <button class="btn btn-warning" @onclick="@ViewModel.Pause">Redner pausieren</button>
-    }
-    else
-    {
-        if (ViewModel.CurrentSpeaker != null)
+        @if (ViewModel.Status == ESpeakerListStatus.Speaking || ViewModel.Status == ESpeakerListStatus.Question || ViewModel.Status == ESpeakerListStatus.Answer)
         {
-            <button class="btn btn-success" @onclick="@ViewModel.ResumeSpeaker">Redezeit starten</button>
+            <button class="btn btn-warning" @onclick="@ViewModel.Pause">Redner/in pausieren</button>
         }
-
-        if (ViewModel.CurrentQuestion != null)
+        else
         {
-            <button class="btn btn-success" @onclick="@ViewModel.ResumeQuestion">Frage starten</button>
-        }
-
-        if (ViewModel.Speakers.Any())
-        {
-            <button class="btn btn-primary" @onclick="() => ViewModel.NextSpeaker()">Nächste/r RednerIn</button>
-        }
-
-        @if (ViewModel.Questions.Any())
-        {
-            <button class="btn btn-primary" @onclick="() => ViewModel.NextQuestion()">Nächste Frage</button>
-        }
-
-    }
-
-    <div class="row">
-        <div class="col-2">
-            <div class="form-group">
-                <label>Redezeit</label>
-                <RadzenMask Mask="**:**" CharacterPattern="[0-9]" Placeholder="03:00" Name="SSN" @bind-Value=@inputSpeakerTime Style="width: 100%;" />
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label>Fragezeit</label>
-                <RadzenMask Mask="**:**" CharacterPattern="[0-9]" Placeholder="03:00" Name="SSN" @bind-Value=@inputQuestionTime Style="width: 100%;" />
-            </div>
-        </div>
-
-    </div>
-
-    <div class="form-group mb-3">
-        <label>Name</label>
-        
-        <div class="btn-group">
-            <button class="btn btn-sm btn-default" @onclick="AddToSpeakers">Auf die Redeliste</button>
-            <button class="btn btn-sm btn-default" @onclick="AddToQuestions">Auf Fragen und Kurzbemerkungen</button>
-        </div>
-    </div>
-
-    <div class="row">
-
-        <div class="col-6">
-            <ul>
-                @foreach(var question in ViewModel.Questions)
+            if (ViewModel.CurrentSpeaker != null)
+            {
+                @if (ViewModel.Status == ESpeakerListStatus.Stopped || ViewModel.Status == ESpeakerListStatus.QuestionPaused)
                 {
-                    <li><img src="@($"/img/flags/small/{question.Iso}.png")" > @question.Name</li>
+                    <button class="btn btn-success" @onclick="@ViewModel.ResumeSpeaker">Redezeit starten</button>
+                    <button class="btn btn-default" @onclick="@ViewModel.StartAnswer">Antwort starten</button>
                 }
-            </ul>
-        </div>
-    </div>
+                else if (ViewModel.Status == ESpeakerListStatus.AnswerPaused)
+                {
+                    <button class="btn btn-success" @onclick="@ViewModel.ResumeSpeaker">Antwort fortsetzen</button>
+                    <button class="btn btn-default" @onclick="@ViewModel.StartAnswer">Neue Antwort starten</button>
+                }
+                else if (ViewModel.Status == ESpeakerListStatus.SpeakerPaused)
+                {
+                    <button class="btn btn-success" @onclick="@ViewModel.ResumeSpeaker">Rede fortsetzen</button>
+                    <button class="btn btn-default" @onclick="@ViewModel.StartAnswer">Antwort starten</button>
+                }
+            }
+
+            if (ViewModel.CurrentQuestion != null)
+            {
+                <button class="btn btn-success" @onclick="@ViewModel.ResumeQuestion">
+                    @((ViewModel.Status == ESpeakerListStatus.Stopped || ViewModel.Status == ESpeakerListStatus.AnswerPaused || ViewModel.Status == ESpeakerListStatus.SpeakerPaused) ? "Frage starten" : "Frage fortsetzen")
+                </button>
+            }
+        }
+    }
+    
 
     <div class="row">
         <div class="col-6">
-            <LoSSpeakersComponent ViewModel="@ViewModel" KnownCountries="@knownCountries" />
+            <LoSSpeakersComponent ViewModel="@ViewModel" KnownCountries="@knownCountries" AllowEdit="@allowEdit" />
+        </div>
+
+        <div class="col-6">
+            <LoSQuestionsComponent ViewModel="@ViewModel" KnownCountries="@knownCountries" AllowEdit="@allowEdit" />
         </div>
     </div>
 }
@@ -89,7 +68,7 @@ else
 
     private string newSpeakerName = "";
 
-    private string inputSpeakerTime;
+    private bool allowEdit = false;
 
     private string inputQuestionTime;
 

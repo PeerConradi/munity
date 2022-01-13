@@ -7,19 +7,41 @@
 	<div class="card-body" style="@bgFlagStype">
 		<!-- BEGIN title -->
 		<div class="mb-3 text-gray-500 ">
-			<b>@(ViewModel.CurrentSpeaker?.Name ?? "-")</b>
-			@if (ViewModel.CurrentSpeaker != null)
+			<b>@(ViewModel.CurrentSpeaker?.Name ?? "-") 
+			@if (ViewModel.CurrentSpeaker != null && AllowEdit)
 			{
-				<i class="fa fa-times-circle cursor-pointer" @onclick="ViewModel.ClearCurrentSpeaker"></i>	
+				<i class="ml-3 fa fa-times-circle cursor-pointer" @onclick="ViewModel.ClearCurrentSpeaker"></i>	
 			}
+			</b>
 		</div>
-		<!-- END title -->
-		<!-- BEGIN sales -->
-		<h3 class="mb-10px">@ViewModel.RemainingSpeakerTime.Minutes.ToString("D2"):@ViewModel.RemainingSpeakerTime.Seconds.ToString("D2")</h3>
-		<!-- END sales -->
-		<!-- BEGIN percentage -->
-		<div class="text-gray-500 mb-1px">@ViewModel.SpeakerTime.Minutes.ToString("D2"):@ViewModel.SpeakerTime.Seconds.ToString("D2")</div>
-		<!-- END percentage -->
+		<!-- Remaining speaker time -->
+		@if (AllowEdit && ViewModel.Status == ESpeakerListStatus.Speaking)
+		{
+			<span class="text-danger cursor-pointer" @onclick="() => ViewModel.AddSpeakerSeconds(-10)">-00:10</span>	
+		}
+		<span class="mb-10px" style="font-size: 24px">@ViewModel.RemainingSpeakerTime.Minutes.ToString("D2"):@ViewModel.RemainingSpeakerTime.Seconds.ToString("D2")</span>
+		
+		@if (AllowEdit && ViewModel.Status == ESpeakerListStatus.Speaking)
+		{
+			<span class="text-success cursor-pointer" @onclick="() => ViewModel.AddSpeakerSeconds(10)">+00:10</span>
+		}
+
+		<br />
+		<!-- Total available speaker time -->
+
+		@if (AllowEdit && !editSpeakerTime)
+		{
+			<a href="javascript:;" class="editable editable-click" @onclick="() => editSpeakerTime = true">@speakerTimeString</a>
+		}
+		else if (AllowEdit && editSpeakerTime)
+		{
+			<input class="form-control" @bind=@inputSpeakerTime />
+		}
+		else 
+		{
+			<div class="text-gray-500 mb-1px">@speakerTimeString</div>
+		}
+
 	</div>
 	<!-- END card-body -->
 	<!-- BEGIN widget-list -->
@@ -36,13 +58,17 @@
 				<div class="widget-list-content">
 					<div class="widget-list-title">@speaker.Name</div>
 				</div>
-				<div class="widget-list-action text-nowrap text-gray-500">
-					@if (ViewModel.Speakers.First() == speaker)
-					{
-						<button class="btn btn-sm btn-inverse" @onclick="() => ViewModel.NextSpeaker()"><i class="fa fa-arrow-up"></i></button>	
-					}
-					<button class="btn btn-sm btn-danger" @onclick="() => ViewModel.RemoveSpeaker(speaker.Id)"><i class="fa fa-trash"></i></button>
-				</div>
+				@if (AllowEdit)
+				{
+					<div class="widget-list-action text-nowrap text-gray-500">
+						@if (ViewModel.Speakers.First() == speaker)
+						{
+							<button class="btn btn-sm btn-inverse" @onclick="() => ViewModel.NextSpeaker()"><i class="fa fa-arrow-up"></i></button>	
+						}
+						<button class="btn btn-sm btn-danger" @onclick="() => ViewModel.RemoveSpeaker(speaker.Id)"><i class="fa fa-trash"></i></button>
+					</div>
+				}
+				
 			</div>
 		}
 
@@ -53,20 +79,27 @@
 				<div class="widget-list-content">
 					<div class="widget-list-title">Status</div>
 				</div>
-				<div class="widget-list-action text-nowrap text-gray-500">
-					<RadzenSwitch @bind-Value=speakersOpened />
-				</div>
+				@if (AllowEdit)
+				{
+					<div class="widget-list-action text-nowrap text-gray-500">
+						<RadzenSwitch @bind-Value=speakersOpened />
+					</div>
+				}
 			</div>
 
-			<div class="widget-list-item rounded-0 pt-3px bg-black-800">
-				<div class="widget-list-media icon" @onclick="AddToSpeakers">
-					<i class="fa fa-plus bg-success text-white"></i>
+			@if (AllowEdit)
+			{
+				<div class="widget-list-item rounded-0 pt-3px bg-black-800">
+					<div class="widget-list-media icon" @onclick="AddToSpeakers">
+						<i class="fa fa-plus bg-success text-white"></i>
+					</div>
+					<div class="widget-list-content">
+						<RadzenAutoComplete Data=@KnownCountries TextProperty="Name" Style="width: 100%;" @bind-Value=@newSpeakerName 
+						@onkeyup="selectCountryKey" />
+					</div>
 				</div>
-				<div class="widget-list-content">
-					<RadzenAutoComplete Data=@KnownCountries TextProperty="Name" Style="width: 100%;" @bind-Value=@newSpeakerName 
-					@onkeyup="selectCountryKey" />
-				</div>
-			</div>
+			}
+			
 
 		
 		<!-- END widget-list-item -->
@@ -79,8 +112,15 @@
 
 	[Parameter] public List<Country> KnownCountries { get; set; }
 
+	[Parameter] public bool AllowEdit { get; set; } = true;
+
 	private string newSpeakerName = "";
 
+	private bool editSpeakerTime = false;
+
+	private string inputSpeakerTime;
+
+	private string speakerTimeString => $"{ViewModel.SpeakerTime.Minutes.ToString("D2")}:{ViewModel.SpeakerTime.Seconds.ToString("D2")}";
 	private void selectCountryKey(KeyboardEventArgs args)
 	{
 		if (args.Key == "Enter")
@@ -132,4 +172,10 @@
             ViewModel.ListClosed = !value;
         }
     }
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		this.inputSpeakerTime = speakerTimeString;
+	}
 }
