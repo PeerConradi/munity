@@ -1,10 +1,39 @@
-﻿@inject MunityContext dbContext
+﻿@using MUNity.Database.General
+@inject MunityContext dbContext
 @inject Services.ListOfSpeakersService losService
 
 
 
 @if (ViewModel != null)
 {
+    @if (ViewModel.Status == ESpeakerListStatus.Speaking || ViewModel.Status == ESpeakerListStatus.Question)
+    {
+        <button class="btn btn-warning" @onclick="@ViewModel.Pause">Redner pausieren</button>
+    }
+    else
+    {
+        if (ViewModel.CurrentSpeaker != null)
+        {
+            <button class="btn btn-success" @onclick="@ViewModel.ResumeSpeaker">Redezeit starten</button>
+        }
+
+        if (ViewModel.CurrentQuestion != null)
+        {
+            <button class="btn btn-success" @onclick="@ViewModel.ResumeQuestion">Frage starten</button>
+        }
+
+        if (ViewModel.Speakers.Any())
+        {
+            <button class="btn btn-primary" @onclick="() => ViewModel.NextSpeaker()">Nächste/r RednerIn</button>
+        }
+
+        @if (ViewModel.Questions.Any())
+        {
+            <button class="btn btn-primary" @onclick="() => ViewModel.NextQuestion()">Nächste Frage</button>
+        }
+
+    }
+
     <div class="row">
         <div class="col-2">
             <div class="form-group">
@@ -18,23 +47,12 @@
                 <RadzenMask Mask="**:**" CharacterPattern="[0-9]" Placeholder="03:00" Name="SSN" @bind-Value=@inputQuestionTime Style="width: 100%;" />
             </div>
         </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label>Redebeiträge offen</label>
-                <RadzenSwitch @bind-Value=speakersOpened />
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label>Fragen offen</label>
-                <RadzenSwitch />
-            </div>
-        </div>
+
     </div>
 
     <div class="form-group mb-3">
         <label>Name</label>
-        <RadzenAutoComplete Data=@dbContext.Countries TextProperty="Name" Style="width: 100%;" @bind-Value=@newSpeakerName />
+        
         <div class="btn-group">
             <button class="btn btn-sm btn-default" @onclick="AddToSpeakers">Auf die Redeliste</button>
             <button class="btn btn-sm btn-default" @onclick="AddToQuestions">Auf Fragen und Kurzbemerkungen</button>
@@ -42,22 +60,20 @@
     </div>
 
     <div class="row">
-        <div class="col-6">
-            <ul>
-                @foreach(var speaker in ViewModel.Speakers)
-                {
-                    <li>@speaker.Name</li>
-                }
-            </ul>
-        </div>
 
         <div class="col-6">
             <ul>
                 @foreach(var question in ViewModel.Questions)
                 {
-                    <li>@question.Name</li>
+                    <li><img src="@($"/img/flags/small/{question.Iso}.png")" > @question.Name</li>
                 }
             </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <LoSSpeakersComponent ViewModel="@ViewModel" KnownCountries="@knownCountries" />
         </div>
     </div>
 }
@@ -77,23 +93,18 @@ else
 
     private string inputQuestionTime;
 
-    private bool speakersOpened
-    {
-        get
-        {
-            return !ViewModel.ListClosed;
-        }
-        set
-        {
-            ViewModel.ListClosed = !value;
-        }
-    }
+    private List<Country> knownCountries;
+
+    private Timer updateTimer;
+
+    
 
     private void AddToSpeakers()
     {
         if (ViewModel != null && !string.IsNullOrEmpty(newSpeakerName))
         {
-            losService.AddSpeaker(ViewModel.ListOfSpeakersId, newSpeakerName, "un");  
+            var foundCountry = knownCountries.FirstOrDefault(n => n.Name == newSpeakerName);
+            losService.AddSpeaker(ViewModel.ListOfSpeakersId, newSpeakerName, foundCountry?.Iso ?? "un");  
         }
     }
 
@@ -101,7 +112,22 @@ else
     {
         if (ViewModel != null && !string.IsNullOrEmpty(newSpeakerName))
         {
-            losService.AddQuestion(ViewModel.ListOfSpeakersId, newSpeakerName, "un");  
+            var foundCountry = knownCountries.FirstOrDefault(n => n.Name == newSpeakerName);
+            losService.AddQuestion(ViewModel.ListOfSpeakersId, newSpeakerName, foundCountry?.Iso ?? "un");  
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.knownCountries = dbContext.Countries.ToList();
+        InvokeAsync(RefreshIfNeeded);
+    }
+
+    private async Task RefreshIfNeeded()
+    {
+        await InvokeAsync(StateHasChanged);
+        await Task.Delay(1000);
+        await RefreshIfNeeded();
     }
 }

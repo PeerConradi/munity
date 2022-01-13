@@ -1,0 +1,135 @@
+﻿@using MUNity.Database.General
+
+@inject Services.ListOfSpeakersService losService
+
+<div class="card border-0 mb-3 bg-gray-900 text-white">
+	<!-- BEGIN card-body -->
+	<div class="card-body" style="@bgFlagStype">
+		<!-- BEGIN title -->
+		<div class="mb-3 text-gray-500 ">
+			<b>@(ViewModel.CurrentSpeaker?.Name ?? "-")</b>
+			@if (ViewModel.CurrentSpeaker != null)
+			{
+				<i class="fa fa-times-circle cursor-pointer" @onclick="ViewModel.ClearCurrentSpeaker"></i>	
+			}
+		</div>
+		<!-- END title -->
+		<!-- BEGIN sales -->
+		<h3 class="mb-10px">@ViewModel.RemainingSpeakerTime.Minutes.ToString("D2"):@ViewModel.RemainingSpeakerTime.Seconds.ToString("D2")</h3>
+		<!-- END sales -->
+		<!-- BEGIN percentage -->
+		<div class="text-gray-500 mb-1px">@ViewModel.SpeakerTime.Minutes.ToString("D2"):@ViewModel.SpeakerTime.Seconds.ToString("D2")</div>
+		<!-- END percentage -->
+	</div>
+	<!-- END card-body -->
+	<!-- BEGIN widget-list -->
+	<div class="widget-list rounded-bottom inverse-mode">
+		<!-- BEGIN widget-list-item -->
+	
+
+		@foreach(var speaker in ViewModel.Speakers)
+		{
+			<div class="widget-list-item rounded-0 pt-3px">
+				<div class="widget-list-media icon">
+					<div class="widget-img widget-img-xs rounded bg-inverse me-2 w-40px" style="background-image: url(@($"/img/flags/small/{speaker.Iso}.png"))"></div>	
+				</div>
+				<div class="widget-list-content">
+					<div class="widget-list-title">@speaker.Name</div>
+				</div>
+				<div class="widget-list-action text-nowrap text-gray-500">
+					@if (ViewModel.Speakers.First() == speaker)
+					{
+						<button class="btn btn-sm btn-inverse" @onclick="() => ViewModel.NextSpeaker()"><i class="fa fa-arrow-up"></i></button>	
+					}
+					<button class="btn btn-sm btn-danger" @onclick="() => ViewModel.RemoveSpeaker(speaker.Id)"><i class="fa fa-trash"></i></button>
+				</div>
+			</div>
+		}
+
+		<div class="widget-list-item rounded-0 pt-3px bg-black-800">
+				<div class="widget-list-media icon">
+					<i class="fa @((ViewModel.ListClosed) ? "fa-lock " : "fa-lock-open") bg-indigo text-white"></i>
+				</div>
+				<div class="widget-list-content">
+					<div class="widget-list-title">Status</div>
+				</div>
+				<div class="widget-list-action text-nowrap text-gray-500">
+					<RadzenSwitch @bind-Value=speakersOpened />
+				</div>
+			</div>
+
+			<div class="widget-list-item rounded-0 pt-3px bg-black-800">
+				<div class="widget-list-media icon" @onclick="AddToSpeakers">
+					<i class="fa fa-plus bg-success text-white"></i>
+				</div>
+				<div class="widget-list-content">
+					<RadzenAutoComplete Data=@KnownCountries TextProperty="Name" Style="width: 100%;" @bind-Value=@newSpeakerName 
+					@onkeyup="selectCountryKey" />
+				</div>
+			</div>
+
+		
+		<!-- END widget-list-item -->
+	</div>
+	<!-- END widget-list -->
+</div>
+
+@code {
+	[Parameter] public ViewModels.ListOfSpeakers.ListOfSpeakersViewModel ViewModel { get; set; }
+
+	[Parameter] public List<Country> KnownCountries { get; set; }
+
+	private string newSpeakerName = "";
+
+	private void selectCountryKey(KeyboardEventArgs args)
+	{
+		if (args.Key == "Enter")
+		{
+			AddToSpeakers();
+		}
+	}
+
+	private void AddToSpeakers()
+	{
+		if (ViewModel != null && !string.IsNullOrEmpty(newSpeakerName))
+		{
+			var foundCountry = KnownCountries.FirstOrDefault(n => n.Name == newSpeakerName);
+			losService.AddSpeaker(ViewModel.ListOfSpeakersId, newSpeakerName, foundCountry?.Iso ?? "un");
+			newSpeakerName = "";
+		}
+	}
+
+	private int randomImageIndex = -1;
+
+	private string bgFlagStype
+	{
+		get
+		{
+			if (ViewModel?.CurrentSpeaker == null)
+			{
+				if (randomImageIndex == -1)
+				{
+					randomImageIndex = new Random().Next(1, 70);
+				}
+				return $"background: no-repeat bottom right; background-image: url(/img/gallery/gallery-{randomImageIndex}.jpg); background-size: auto 100%;";
+			}
+			else
+			{
+				return $"background: no-repeat bottom right; background-image: url(/img/flags/medium/{ViewModel.CurrentSpeaker.Iso}.png); background-size: auto 100%;";
+				
+			}
+		}
+	}
+
+	private bool speakersOpened
+    {
+        get
+        {
+            return !ViewModel.ListClosed;
+        }
+        set
+        {
+            ViewModel.ListClosed = !value;
+        }
+    }
+}
