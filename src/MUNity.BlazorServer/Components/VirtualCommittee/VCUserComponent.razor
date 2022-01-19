@@ -1,0 +1,49 @@
+﻿
+<div class="d-flex mb-2">
+	<div class="d-flex align-items-center">
+		<!-- icon for online: fa-signal text-lime -->
+		<!-- icon if offline: fa-ban text-red-->
+		<i class="fa @((new Random().Next(0, 2) == 0) ? "fa-signal text-lime" : "fa-ban text-red")  fs-8px me-2"></i>
+		<img class="me-2" src="@($"/img/flags/small/{Country.Iso.ToLower()}.png")" style="width: 36px; height: 18px"/>
+		@Country.Name
+	</div>
+	<div class="d-flex align-items-center ms-auto">
+		<!-- Has hand raised-->
+		<div class="@(raisesHand ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-hand-paper"></i></div>
+		<div class="w-10px"></div>
+		<!-- Has an amendment/request on the top -->
+		<div class="@(hasProposition ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-bookmark"></i></div>
+		<div class="w-10px"></div>
+		<!-- Is currently speaking -->
+		<div class="@(wantsTpSpeak ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-bullhorn"></i></div>
+		<div class="w-10px"></div>
+		<!-- Marked as present -->
+		<div class="@(isPresentChecked ? "text-white" : "text-gray-500")  fs-13px"><i class="fa fa-check"></i></div>
+	</div>
+</div>
+
+
+
+@code {
+	[Parameter] public Database.General.Country Country { get; set; }
+
+	private bool raisesHand;
+
+	private bool hasProposition;
+
+	private bool wantsTpSpeak;
+
+	private bool isPresentChecked;
+
+	private Random rnd = new Random();
+
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		raisesHand = (rnd.Next(0, 10) >= 7);
+		hasProposition = rnd.Next(0, 10) >= 7;
+		wantsTpSpeak = rnd.Next(0, 10) >= 7;
+		isPresentChecked = rnd.Next(0, 10) >= 7;
+	}
+}

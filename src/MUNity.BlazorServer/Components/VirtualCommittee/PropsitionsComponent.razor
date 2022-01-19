@@ -1,0 +1,196 @@
+﻿<ul class="nav nav-tabs nav-tabs-inverse nav-justified cursor-pointer">
+	<li class="nav-item"><a @onclick="() => selectedPanel = 0" class="nav-link @((selectedPanel == 0) ? "active" : null)"><i class="fa fa-camera fa-lg me-5px"></i> <span class="d-none d-md-inline">Positionen</span></a></li>
+	<li class="nav-item"><a @onclick="() => selectedPanel = 1" class="nav-link @((selectedPanel == 1) ? "active" : null)"><i class="fa fa-archive fa-lg me-5px"></i> <span class="d-none d-md-inline">Anträge</span></a></li>
+	<li class="nav-item"><a @onclick="() => selectedPanel = 2" class="nav-link @((selectedPanel == 2) ? "active" : null)"><i class="fa fa-envelope fa-lg me-5px"></i> <span class="d-none d-md-inline">Email</span></a></li>
+</ul>
+
+<div class="tab-content bg-white rounded-bottom mb-20px">
+	<div class="tab-pane fade @((selectedPanel == 0) ? "active show" : null)">
+		<div class="p-3 h-600px" style="max-height: 80%; overflow-y: scroll;">
+			<div class="d-sm-flex">
+				<a href="javascript:;" class="w-sm-200px">
+					<img class="mw-100 rounded" src="/img/flags/medium/de.png" alt="">
+				</a>
+				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+					<h5>Deutschland</h5>
+					Nullam at risus metus. Quisque nisl purus, pulvinar ut mauris vel, elementum suscipit eros. Praesent ornare ante massa, egestas pellentesque orci convallis ut. Curabitur consequat convallis est, id luctus mauris lacinia vel. Nullam tristique lobortis mauris, ultricies fermentum lacus bibendum id. Proin non ante tortor. Suspendisse pulvinar ornare tellus nec pulvinar. Nam pellentesque accumsan mi, non pellentesque sem convallis sed. Quisque rutrum erat id auctor gravida.
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-sm-flex">
+				<a href="javascript:;" class="w-sm-200px">
+					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-10.jpg" alt="">
+				</a>
+				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+					<h5>Vestibulum vitae diam nec odio dapibus placerat. Ut ut lorem justo.</h5>
+					Fusce bibendum augue nec fermentum tempus. Sed laoreet dictum tempus. Aenean ac sem quis nulla malesuada volutpat. Nunc vitae urna pulvinar velit commodo cursus. Nullam eu felis quis diam adipiscing hendrerit vel ac turpis. Nam mattis fringilla euismod. Donec eu ipsum sit amet mauris iaculis aliquet. Quisque sit amet feugiat odio. Cras convallis lorem at libero lobortis, placerat lobortis sapien lacinia. Duis sit amet elit bibendum sapien dignissim bibendum.
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-sm-flex">
+				<a href="javascript:;" class="w-sm-200px">
+					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-7.jpg" alt="">
+				</a>
+				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+					<h5>Maecenas eget turpis luctus, scelerisque arcu id, iaculis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus.</h5>
+					Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque. Nam augue nulla, accumsan quis nisi a, facilisis eleifend nulla. Praesent aliquet odio non imperdiet fringilla. Morbi a porta nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-sm-flex">
+				<a href="javascript:;" class="w-sm-200px">
+					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
+				</a>
+				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
+					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-sm-flex">
+				<a href="javascript:;" class="w-sm-200px">
+					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
+				</a>
+				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
+					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-sm-flex">
+				<a href="javascript:;" class="w-sm-200px">
+					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
+				</a>
+				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
+					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-sm-flex">
+				<a href="javascript:;" class="w-sm-200px">
+					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
+				</a>
+				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
+					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-sm-flex">
+				<a href="javascript:;" class="w-sm-200px">
+					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
+				</a>
+				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
+					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
+				</div>
+			</div>
+		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 300px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 120px;"></div></div></div>
+	</div>
+	<div class="tab-pane fade @((selectedPanel == 1) ? "active show" : null)" id="purchase">
+		<div class="h-300px ps" data-scrollbar="true" data-init="true">
+			<table class="table table-panel mb-0">
+				<thead>
+					<tr>
+						<th>Zeitpunkt</th>
+						<th class="hidden-sm text-center">Land</th>
+						<th>Art</th>
+						<th>Annehmen</th>
+						<th>Zurückziehen/Verwerfen</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Active Proposition -->
+					<tr class="table-info">
+						<td class="fw-bold text-muted">13/02/2021</td>
+						<td class="hidden-sm">
+							<img src="/img/flags/small/es.png" alt="" width="32px">
+							Spanien
+						</td>
+						<td class="text-nowrap">
+							<h6>Antrag auf FooBar</h6>
+						</td>
+						<td class="text-blue fw-bold"></td>
+						<td class="text-nowrap"><button class="btn btn-sm btn-danger">Antrag ablehnen</button></td>
+					</tr>
+
+					<!-- Waiting Proposition -->
+					<tr>
+						<td class="fw-bold text-muted">13/02/2021</td>
+						<td class="hidden-sm">
+							<img src="/img/flags/small/de.png" alt="" width="32px">
+							Deutschland
+						</td>
+						<td class="text-nowrap">
+							<h6> Antrag auf BLUB</h6>
+						</td>
+						<td class="text-blue fw-bold"><button class="btn btn-sm btn-success">Antrag bearbeiten</button></td>
+						<td class="text-nowrap"><button class="btn btn-sm btn-danger">Antrag ablehnen</button></td>
+					</tr>
+					
+					
+				</tbody>
+			</table>
+		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+	</div>
+	<div class="tab-pane fade @((selectedPanel == 2) ? "active show" : null)" id="email">
+		<div class="h-300px p-3 ps" data-scrollbar="true" data-init="true" >
+			<div class="d-flex">
+				<a class="w-60px" href="javascript:;">
+					<img src="../assets/img/user/user-1.jpg" alt="" class="mw-100 rounded-pill">
+				</a>
+				<div class="flex-1 ps-3">
+					<a href="javascript:;" class="text-inverse text-decoration-none"><h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h5></a>
+					<p class="mb-5px">
+						Aenean mollis arcu sed turpis accumsan dignissim. Etiam vel tortor at risus tristique convallis. Donec adipiscing euismod arcu id euismod. Suspendisse potenti. Aliquam lacinia sapien ac urna placerat, eu interdum mauris viverra.
+					</p>
+					<span class="text-muted fs-11px fw-bold">Received on 04/16/2021, 12.39pm</span>
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-flex">
+				<a class="w-60px" href="javascript:;">
+					<img src="../assets/img/user/user-2.jpg" alt="" class="mw-100 rounded-pill">
+				</a>
+				<div class="flex-1 ps-3">
+					<a href="javascript:;" class="text-inverse text-decoration-none"><h5>Praesent et sem porta leo tempus tincidunt eleifend et arcu.</h5></a>
+					<p class="mb-5px">
+						Proin adipiscing dui nulla. Duis pharetra vel sem ac adipiscing. Vestibulum ut porta leo. Pellentesque orci neque, tempor ornare purus nec, fringilla venenatis elit. Duis at est non nisl dapibus lacinia.
+					</p>
+					<span class="text-muted fs-11px fw-bold">Received on 04/16/2021, 12.39pm</span>
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-flex">
+				<a class="w-60px" href="javascript:;">
+					<img src="../assets/img/user/user-3.jpg" alt="" class="mw-100 rounded-pill">
+				</a>
+				<div class="flex-1 ps-3">
+					<a href="javascript:;" class="text-inverse text-decoration-none"><h5>Ut mi eros, varius nec mi vel, consectetur convallis diam.</h5></a>
+					<p class="mb-5px">
+						Ut mi eros, varius nec mi vel, consectetur convallis diam. Nullam eget hendrerit eros. Duis lacinia condimentum justo at ultrices. Phasellus sapien arcu, fringilla eu pulvinar id, mattis quis mauris.
+					</p>
+					<span class="text-muted fs-11px fw-bold">Received on 04/16/2021, 12.39pm</span>
+				</div>
+			</div>
+			<hr class="bg-gray-500">
+			<div class="d-flex">
+				<a class="w-60px" href="javascript:;">
+					<img src="../assets/img/user/user-4.jpg" alt="" class="mw-100 rounded-pill">
+				</a>
+				<div class="flex-1 ps-3">
+					<a href="javascript:;" class="text-inverse text-decoration-none"><h5>Aliquam nec dolor vel nisl dictum ullamcorper.</h5></a>
+					<p class="mb-5px">
+						Aliquam nec dolor vel nisl dictum ullamcorper. Duis vel magna enim. Aenean volutpat a dui vitae pulvinar. Nullam ligula mauris, dictum eu ullamcorper quis, lacinia nec mauris.
+					</p>
+					<span class="text-muted fs-11px fw-bold">Received on 04/16/2021, 12.39pm</span>
+				</div>
+			</div>
+		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+	</div>
+</div>
+
+@code {
+	private int selectedPanel = 0;
+}
