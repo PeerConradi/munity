@@ -1,8 +1,10 @@
-﻿@page "/session"
+﻿@page "/session/{SessionId}"
+@page "/session/{SessionId}/top/{TopId}"
+@page "/session/{SessionId}/resolution/{ResolutionId}"
 
 @layout Shared.MobileGameLayout
 
-<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu />
+<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu SessionId=@SessionId />
 
 <div class="d-flex flex-row justify-content-between bg-dark-800">
     <div class="d-flex align-items-center">
@@ -25,12 +27,32 @@
         <MUNity.BlazorServer.Components.VirtualCommittee.VCUsersComponent />
     </div>
     <div class="col-9">
-        <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent />
+        @if (!string.IsNullOrEmpty(TopId))
+        {
+            <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent />
+        }
+        else if (!string.IsNullOrEmpty(ResolutionId))
+        {
+            <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent />
+        }
+        else {
+            <h1>Willkommen</h1>
+            <p>Dies ist lediglich eine Demo für ein virtuelles Gremium, weshalb Änderungen ggf. nicht korrekt gespeichert werden.</p>
+            <p>Mit dieser Seite sollen lediglich Komponenten getestet und gezeigt werden, wie die oben zu sehende Redeliste.</p>
+            <p>Im Menü oben können verschiedene weitere Funktionen wie der Tagesordnungspunkt, Resolutionen und Abstimmungen angesehen werden.</p>
+            <p>Ebenfalls sind Tools angedacht, welche das Zusammenarbeiten zwischen den verschiedenen Gremien erleichtern soll.</p>
+            <MUNity.BlazorServer.Components.VirtualCommittee.ProcedureComponent />
+        }
     </div>
     
 </div>
 
 
 @code {
-    
+    [Parameter] public string SessionId { get; set; } = "demo";
+
+    [Parameter] public string TopId { get; set; }
+
+    [Parameter] public string ResolutionId { get; set; }
+
 }

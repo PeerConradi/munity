@@ -14,7 +14,7 @@
 						<div class="ms-3 menu-text text-theme">Dieses Gremien</div>
 					</div>
 					<div class="menu-item">
-						<a href="#" class="menu-link"><div class="menu-text">Anwesenheit feststellen</div></a>
+						<a href="@($"/session/{SessionId}")" class="menu-link"><div class="menu-text">Anwesenheit feststellen</div></a>
 					</div>
 
 					<div class="menu-item">
@@ -22,15 +22,15 @@
 					</div>
 
 					<div class="menu-item">
-						<a href="#" class="menu-link"><div class="menu-text">Generalversammlung</div></a>
+						<a href="@($"/session/{SessionId}")" class="menu-link"><div class="menu-text">Generalversammlung</div></a>
 					</div>
 
 					<div class="menu-item">
-						<a href="#" class="menu-link"><div class="menu-text">Menschenrechtsrat</div></a>
+						<a href="@($"/session/{SessionId}")" class="menu-link"><div class="menu-text">Menschenrechtsrat</div></a>
 					</div>
 
 					<div class="menu-item">
-						<a href="#" class="menu-link"><div class="menu-text">Gremienchat</div></a>
+						<a href="@($"/session/{SessionId}")" class="menu-link"><div class="menu-text">Gremienchat</div></a>
 					</div>
 
 					
@@ -46,17 +46,17 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="email_inbox.html" class="menu-link">
+						<a href="@($"/session/{SessionId}/top/demo")" class="menu-link">
 							<div class="menu-text">Tagesordnungspunkt 1 <span class="badge bg-teal">3 Anträge</span></div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="email_compose.html" class="menu-link">
+						<a href="@($"/session/{SessionId}/top/demo")" class="menu-link">
 							<div class="menu-text">Tagesordnungspunkt 2</div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="email_detail.html" class="menu-link">
+						<a href="@($"/session/{SessionId}/top/demo")" class="menu-link">
 							<div class="menu-text">Tagesordnungspunkt 3</div>
 						</a>
 					</div>
@@ -73,17 +73,17 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="email_inbox.html" class="menu-link">
+						<a href="@($"/session/{SessionId}/resolution/demo")" class="menu-link">
 							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="email_compose.html" class="menu-link">
+						<a href="@($"/session/{SessionId}/resolution/demo")" class="menu-link">
 							<div class="menu-text">Resolution 1</div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="email_detail.html" class="menu-link">
+						<a href="@($"/session/{SessionId}/resolution/demo")" class="menu-link">
 							<div class="menu-text">Resolution 2</div>
 						</a>
 					</div>
@@ -100,25 +100,25 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="ui_typography.html" class="menu-link">
+						<a href="@($"/session/{SessionId}")" class="menu-link">
 							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
 						</a>
 					</div>
 
 					<div class="menu-item">
-						<a href="ui_general.html" class="menu-link">
+						<a href="@($"/session/{SessionId}")" class="menu-link">
 							<div class="menu-text">Laufende Abstimmung 1 <i class="fa fa-clock text-warning"></i></div>
 						</a>
 					</div>
 
 					<div class="menu-item">
-						<a href="ui_general.html" class="menu-link">
+						<a href="@($"/session/{SessionId}")" class="menu-link">
 							<div class="menu-text">Angenommene Abstimmung 1 <i class="fa fa-check text-success"></i></div>
 						</a>
 					</div>
 					
 					<div class="menu-item">
-						<a href="ui_general.html" class="menu-link">
+						<a href="@($"/session/{SessionId}")" class="menu-link">
 							<div class="menu-text">Abgelehnte Abstimmung 1 <i class="fa fa-ban text-danger"></i></div>
 						</a>
 					</div>
@@ -170,5 +170,5 @@
 		<!-- END menu -->
 	</div>
 @code {
-
+	[Parameter] public string SessionId { get; set; }
 }
