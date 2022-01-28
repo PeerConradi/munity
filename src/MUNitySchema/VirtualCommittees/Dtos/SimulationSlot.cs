@@ -1,17 +1,17 @@
 ﻿using MUNity.Base;
-using MUNity.VirtualCommittees.Dtos;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace MUNityCore.Dtos.Simulations
+namespace MUNity.VirtualCommittees.Dtos
 {
-    public class SimulationUserInfoDto
+    public class SimulationSlotDto
     {
         public int SimulationUserId { get; set; }
 
         public string DisplayName { get; set; }
+
+        public int RoleId { get; set; }
 
         public string RoleName { get; set; }
 
@@ -20,5 +20,13 @@ namespace MUNityCore.Dtos.Simulations
         public RoleTypes RoleType { get; set; }
 
         public bool IsOnline { get; set; }
+
+        public bool CanCreateRole { get; set; }
+
+        public bool CanSelectRole { get; set; }
+
+        public bool CanEditResolution { get; set; }
+
+        public bool CanEditListOfSpeakers { get; set; }
     }
 }

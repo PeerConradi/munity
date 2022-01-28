@@ -1,6 +1,7 @@
 ﻿@page "/session/{SessionId}"
 @page "/session/{SessionId}/top/{TopId}"
 @page "/session/{SessionId}/resolution/{ResolutionId}"
+@page "/session/{SessionId}/visit/{VisitCommitteeId}"
 
 @layout Shared.MobileGameLayout
 
@@ -35,6 +36,10 @@
         {
             <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent />
         }
+        else if (!string.IsNullOrEmpty(VisitCommitteeId))
+        {
+            <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent />
+        }
         else {
             <h1>Willkommen</h1>
             <p>Dies ist lediglich eine Demo für ein virtuelles Gremium, weshalb Änderungen ggf. nicht korrekt gespeichert werden.</p>
@@ -54,5 +59,7 @@
     [Parameter] public string TopId { get; set; }
 
     [Parameter] public string ResolutionId { get; set; }
+
+    [Parameter] public string VisitCommitteeId { get; set; }
 
 }

@@ -52,7 +52,9 @@ public class TestHelpers
         services.AddSingleton(mail);
         services.AddIdentityCore<MunityUser>()
             .AddRoles<MunityRole>()
-            .AddEntityFrameworkStores<MunityContext>();
+            .AddEntityFrameworkStores<MunityContext>(
+            );
+        services.AddSingleton<VirtualCommitteeService>();
         services.AddLogging();
         var provider = services.BuildServiceProvider();
 

@@ -25,7 +25,7 @@ using MUNity.Database.Models.Website;
 using MUNity.Database.Models.General;
 using MUNity.Database.FluentAPI;
 using System.Diagnostics;
-using MUNity.Database.Models.VirtualCommittee;
+using MUNity.Database.Models.VirtualCommittees;
 
 namespace MUNity.Database.Context
 {
@@ -188,6 +188,8 @@ namespace MUNity.Database.Context
         public DbSet<UserBlocked> UserBlockedUsers { get; set; }
 
         #region Virtual Committees (Simulations)
+        public DbSet<VirtualCommitteeGroup> VirtualCommitteeGroups { get; set; }
+
         public DbSet<VirtualCommittee> VirtualCommittees { get; set; }
 
         public DbSet<VirtualCommitteeSlot> VirtualCommitteeSlots { get; set; }

@@ -1,0 +1,4 @@
+﻿namespace MUNity.VirtualCommittees.Dtos
+{
+    
+}
