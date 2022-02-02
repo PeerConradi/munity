@@ -25,7 +25,6 @@ using MUNity.Database.Models.Website;
 using MUNity.Database.Models.General;
 using MUNity.Database.FluentAPI;
 using System.Diagnostics;
-using MUNity.Database.Models.VirtualCommittees;
 
 namespace MUNity.Database.Context
 {
@@ -74,7 +73,6 @@ namespace MUNity.Database.Context
 
         public DbSet<AttendanceCheck> AttendanceChecks { get; set; }
 
-        public DbSet<CommitteeSession> CommitteeSessions { get; set; }
 
         public DbSet<Participation> Participations { get; set; }
 
@@ -106,19 +104,21 @@ namespace MUNity.Database.Context
 
         //public DbSet<SimulationUser> SimulationUser { get; set; }
 
-        //public DbSet<SimulationVoting> SimulationVotings { get; set; }
+        public DbSet<CommitteeSession> CommitteeSessions { get; set; }
 
-        //public DbSet<SimulationVotingSlot> VotingSlots { get; set; }
+        public DbSet<SessionVoting> SimulationVotings { get; set; }
+
+        public DbSet<SessionVotingSlot> VotingSlots { get; set; }
 
         //public DbSet<SimulationLog> SimulationLog { get; set; }
 
         //public DbSet<SimulationInvite> SimulationInvites { get; set; }
 
-        //public DbSet<AgendaItem> AgendaItems { get; set; }
+        public DbSet<AgendaItem> AgendaItems { get; set; }
 
-        //public DbSet<PetitionType> PetitionTypes { get; set; }
+        public DbSet<PetitionType> PetitionTypes { get; set; }
 
-        //public DbSet<Petition> Petitions { get; set; }
+        public DbSet<Petition> Petitions { get; set; }
 
         //public DbSet<PetitionTypeSimulation> SimulationPetitionTypes { get; set; }
 
@@ -187,14 +187,13 @@ namespace MUNity.Database.Context
 
         public DbSet<UserBlocked> UserBlockedUsers { get; set; }
 
-        #region Virtual Committees (Simulations)
-        public DbSet<VirtualCommitteeGroup> VirtualCommitteeGroups { get; set; }
+        public DbSet<RuleOfProcedure> RuleOfProcedures { get; set; }
 
-        public DbSet<VirtualCommittee> VirtualCommittees { get; set; }
+        public DbSet<RuleOfProcedureSection> RuleOfProcedureSections { get; set; }
 
-        public DbSet<VirtualCommitteeSlot> VirtualCommitteeSlots { get; set; }
+        public DbSet<RuleOfProcedureParagraph> RuleOfProcedureParagraphs { get; set; }
 
-        #endregion
+        public DbSet<RuleOfProcedureSubParagraph> RuleOfProcedureSubParagraphs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -280,10 +279,6 @@ namespace MUNity.Database.Context
                 .HasMany(n => n.Users).WithOne(n => n.Auth);
 
 
-            modelBuilder.Entity<ResolutionAuth>()
-                .HasOne(n => n.Simulation)
-                .WithMany(n => n.Resolutions);
-
             modelBuilder.Entity<ResaElement>()
                 .HasMany(n => n.PreambleParagraphs)
                 .WithOne(n => n.ResaElement)
@@ -324,19 +319,6 @@ namespace MUNity.Database.Context
             modelBuilder.Entity<ResaElement>()
                 .HasMany(n => n.AddAmendments)
                 .WithOne(n => n.Resolution);
-
-            // Simulations
-            modelBuilder.Entity<SimulationRole>().HasOne(n => n.Simulation).WithMany(n =>
-                n.Roles);
-
-            modelBuilder.Entity<Simulation>().HasMany(n => n.Users).WithOne(n => n.Simulation);
-
-
-            modelBuilder.Entity<SimulationPresents>()
-                .HasMany(n => n.CheckedUsers)
-                .WithOne(n => n.SimulationPresents);
-
-            modelBuilder.Entity<Simulation>().HasMany(n => n.PresentChecks).WithOne(n => n.Simulation);
         }
 
         public MunityContext(DbContextOptions<MunityContext> options) : base(options)

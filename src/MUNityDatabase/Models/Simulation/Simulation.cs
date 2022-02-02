@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace MUNity.Database.Models.Simulation;
 
+[Obsolete("Simulation should no longer be used. Use the Session insted")]
 public class Simulation
 {
 
@@ -35,9 +36,6 @@ public class Simulation
 
     public ICollection<SimulationStatus> Statuses { get; set; }
 
-    public ICollection<AgendaItem> AgendaItems { get; set; }
-
-    public ICollection<PetitionTypeSimulation> PetitionTypes { get; set; }
 
     /// <summary>
     /// Die Redner in diesem Gremium.

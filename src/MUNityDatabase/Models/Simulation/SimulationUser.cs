@@ -34,9 +34,7 @@ public class SimulationUser
 
     public string LastKnownConnectionId { get; set; }
 
-    public Simulation Simulation { get; set; }
-
-    public ICollection<Petition> Petitions { get; set; }
+    //public Simulation Simulation { get; set; }
 
     public SimulationUser()
     {

@@ -49,8 +49,6 @@ public class ResolutionAuth
     /// </summary>
     public Conference.Committee Committee { get; set; }
 
-    public Simulation.Simulation Simulation { get; set; }
-
     public ResaElement Resolution { get; set; }
 
     public ResolutionAuth()

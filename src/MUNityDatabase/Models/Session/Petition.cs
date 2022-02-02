@@ -1,10 +1,12 @@
 ﻿using MUNity.Base;
+using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Conference.Roles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Simulation;
+namespace MUNity.Database.Models.Session;
 
 /// <summary>
 /// A Petition is a request inside a simulation made by any instance of a simulation user.
@@ -41,7 +43,7 @@ public class Petition
     /// <summary>
     /// The Slot of the simulation (Simulation User) that made this petition.
     /// </summary>
-    public SimulationUser SimulationUser { get; set; }
+    public ConferenceDelegateRole User { get; set; }
 
     /// <summary>
     /// The parent agendaitem that this petition refers to.

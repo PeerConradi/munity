@@ -72,7 +72,6 @@ builder.Services.AddScoped<ConferenceApplicationService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<ConferenceWebsiteService>();
 builder.Services.AddSingleton<ConferenceApplicationSortingService>();
-builder.Services.AddSingleton<VirtualCommitteeService>();
 builder.Services.AddSingleton<ListOfSpeakersService>();
 
 builder.Services.AddLogging();

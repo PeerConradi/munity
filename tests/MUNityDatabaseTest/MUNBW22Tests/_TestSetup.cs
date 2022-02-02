@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MUNity.Database.Test.MUNBW22Tests;
 
-public partial class FullMUNBW22Tests
+public partial class FullDMUN2022Tests
 {
     private MunityContext _context;
 
@@ -26,8 +26,7 @@ public partial class FullMUNBW22Tests
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddDbContext<MunityContext>(options =>
-            options.UseSqlite("Data Source=testmunbw.db")
-            .EnableSensitiveDataLogging().LogTo(Console.WriteLine));
+            options.UseSqlite("Data Source=testmunbw.db"));
 
         serviceCollection.AddIdentity<MunityUser, MunityRole>(options =>
         {

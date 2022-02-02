@@ -98,6 +98,17 @@ public abstract class AbstractConferenceRole
 
     public string RoleType { get; [Obsolete("This is the concurrencyToken please only read")]set; }
 
+    /// <summary>
+    /// A long key for the role that can be used to identify this role in a longer fashion than
+    /// an Id. To use it to access the role in case of a virtual committee that is not using the 
+    /// MUNity Sign-In
+    /// </summary>
+    public string RoleSecret { get; set; }
 
     public ICollection<Participation> Participations { get; set; }
+
+    public AbstractConferenceRole()
+    {
+        RoleSecret = Util.IdGenerator.RandomString(32);
+    }
 }

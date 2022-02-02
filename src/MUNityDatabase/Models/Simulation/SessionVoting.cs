@@ -5,24 +5,24 @@ using System.Threading.Tasks;
 
 namespace MUNity.Database.Models.Simulation;
 
-public class SimulationVoting
+public class SessionVoting
 {
-    public string SimulationVotingId { get; set; }
+    public string SessionVotingId { get; set; }
 
     public string Name { get; set; }
 
     public string Description { get; set; }
 
-    public Simulation Simulation { get; set; }
+    public Session.CommitteeSession Session { get; set; }
 
-    public ICollection<SimulationVotingSlot> VoteSlots { get; set; }
+    public ICollection<SessionVotingSlot> VoteSlots { get; set; }
 
     public bool IsActive { get; set; }
 
     public bool AllowAbstention { get; set; }
 
-    public SimulationVoting()
+    public SessionVoting()
     {
-        SimulationVotingId = Guid.NewGuid().ToString();
+        SessionVotingId = Guid.NewGuid().ToString();
     }
 }

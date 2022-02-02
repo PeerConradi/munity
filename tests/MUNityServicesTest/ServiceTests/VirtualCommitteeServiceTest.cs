@@ -50,9 +50,11 @@ namespace MUNity.Services.Test.ServiceTests
         }
 
         [Test]
-        [Order(2)]
+        [Order(3)]
         public void TestAddSlot()
         {
+            var context = provider.GetRequiredService<MunityContext>();
+
             var service = provider.GetRequiredService<VirtualCommitteeService>();
             var group = service.GetGroupByName("MUN-SH 2022");
             var gvViewModel = group.VirtualCommittees.FirstOrDefault();
@@ -60,7 +62,9 @@ namespace MUNity.Services.Test.ServiceTests
 
             var newSlot = service.AddSlot(gvViewModel, "de", "Deutschland");
             Assert.NotNull(newSlot);
-
+            Assert.AreEqual(1, context.VirtualCommitteeSlots.Count());
         }
+
+        
     }
 }

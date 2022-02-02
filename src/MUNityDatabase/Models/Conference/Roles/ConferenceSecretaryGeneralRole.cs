@@ -22,4 +22,8 @@ public class ConferenceSecretaryGeneralRole : AbstractConferenceRole
     [MaxLength(250)]
     public string Title { get; set; }
 
+    public ConferenceSecretaryGeneralRole() : base()
+    {
+
+    }
 }

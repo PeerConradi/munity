@@ -23,7 +23,14 @@ public class AttendanceState
 
     public AttendanceTypes Type { get; set; } = AttendanceTypes.NotChecked;
 
+    /// <summary>
+    /// use either Role or Participant. If the user has a munity account
+    /// rather use the Participant of not and you have some sort of anonymous conference
+    /// use the Role.
+    /// </summary>
     public Conference.Participation Participant { get; set; }
+
+    public Conference.Roles.ConferenceDelegateRole Role { get; set; }
 
     public string Comment { get; set; }
 }

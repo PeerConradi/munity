@@ -64,6 +64,7 @@
                 <a href="/myconferences" class="dropdown-item">Meine Konferenzen</a>
                 <a href="/myresolutions" class="dropdown-item">Meine Resolutionen</a>
                 <a href="/myapplications" class="dropdown-item">Meine Bewerbungen</a>
+                <a href="/myvirtualcommittees" class="dropdown-item">Meine Virtuellen Gremien</a>
                 @if (context.User.IsInRole("Head-Admin") || context.User.IsInRole("Admin"))
                 {
                     <div class="dropdown-divider"></div>
@@ -82,7 +83,7 @@
 
     public bool ShowUserSubMenu { get; set; }
 
-    private string SubMenuStyle = "position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(-20px, 52px);";
+    private string SubMenuStyle = "position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(-30px, 52px);";
 
     public bool ShowNotifications { get; set; }
 

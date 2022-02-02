@@ -18,6 +18,32 @@ public class CommitteeSpecificTools
 
     private string _committeeId;
 
+    public ConferenceDelegateRole AddNonGovernmentSeat(string name, string iso, string authTypeName = "Participant")
+    {
+        var committee = _dbContext.Committees
+            .Include(n => n.Conference)
+            .FirstOrDefault(n => n.CommitteeId == _committeeId);
+
+        var participantAuth = _dbContext.ConferenceRoleAuthorizations.FirstOrDefault(n =>
+            n.RoleAuthName == authTypeName && n.Conference.ConferenceId == committee.Conference.ConferenceId);
+
+        var role = new ConferenceDelegateRole()
+        {
+            Committee = committee,
+            Conference = committee.Conference,
+            ConferenceRoleAuth = participantAuth,
+            RoleName = name,
+            DelegateCountry = null,
+            RoleFullName = name,
+            DelegateType = "NA",
+            RoleShort = iso
+        };
+
+        _dbContext.Delegates.Add(role);
+        _dbContext.SaveChanges();
+        return role;
+    }
+
     public ConferenceDelegateRole AddSeatByCountryName(string countryName, string authTypeName = "Participant")
     {
         var committee = _dbContext.Committees

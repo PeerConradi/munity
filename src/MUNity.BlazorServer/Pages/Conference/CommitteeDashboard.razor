@@ -1,0 +1,82 @@
+﻿@page "/c/committee/{Id}"
+@using MUNity.Database.Models.Conference
+
+@inject MunityContext dbContext
+@inject Services.UserConferenceAuthService confAuthService
+
+<AuthorizeView>
+    <Authorized>
+        @if (isHeadUser && committee != null)
+        {
+            <h1>@committee.Name</h1>
+            <h4>@committee.FullName</h4>
+
+            <h5>Delegierte</h5>
+            <ul>
+                @foreach(var del in dbContext.Delegates.Where(n => n.Committee.CommitteeId == Id).OrderBy(n => n.DelegateType).ThenBy(n => n.RoleName))
+                {
+                    <li>@del.RoleName</li>
+                }
+            </ul>
+
+            <h5>Themen</h5>
+            <ul>
+                @foreach(var topic in committee.Topics)
+                {
+                    <li>@topic.TopicName</li>
+                }
+            </ul>
+
+            <h5>Antragsarten</h5>
+            <ol>
+                @if (committee.AllowedPetitionTypes != null)
+                {
+                    foreach(var petitionType in committee.AllowedPetitionTypes.OrderBy(n => n.SortOrder))
+                    {
+                        <li>@petitionType.Name</li>
+                    }
+                }
+            </ol>
+
+            <h5>Sessions</h5>
+            <ul>
+                @foreach(var session in dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == Id))
+                {
+                    <li>@session.StartDate - @session.EndDate</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Keine Berechtigung</p>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>Sie müssen für diese Seite angemeldet sein.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private Committee committee;
+
+    private bool isHeadUser;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        var claim = (await AuthStateTask)?.User;
+        isHeadUser = await confAuthService.IsUserTeamMemberForCommitteeOrHigher(Id, claim);
+        if (isHeadUser)
+        {
+            this.committee = dbContext.Committees
+            .AsNoTracking()
+            .Include(n => n.Topics)
+            .Include(n => n.AllowedPetitionTypes)
+            .FirstOrDefault(n => n.CommitteeId == Id);
+        }
+    }
+}

@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace MUNity.Database.Test.MUNBW22Tests;
 
-public partial class FullMUNBW22Tests
+public partial class FullDMUN2022Tests
 {
     [Test]
     [Order(700)]

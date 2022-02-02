@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace MUNity.Database.Test.MUNBW22Tests;
 
-public partial class FullMUNBW22Tests
+public partial class FullDMUN2022Tests
 {
     [Test]
     [Order(300)]
-    public void TestAddConference()
+    public void TestAddMUNBW2022Conference()
     {
         var tonyStark = _context.Users.FirstOrDefault(n => n.UserName == "tonystark");
         Assert.NotNull(tonyStark);

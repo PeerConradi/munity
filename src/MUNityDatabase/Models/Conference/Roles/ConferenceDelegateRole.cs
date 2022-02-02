@@ -54,4 +54,8 @@ public class ConferenceDelegateRole : AbstractConferenceRole
     /// </summary>
     public string DelegateType { get; set; }
 
+    public ConferenceDelegateRole() : base()
+    {
+
+    }
 }

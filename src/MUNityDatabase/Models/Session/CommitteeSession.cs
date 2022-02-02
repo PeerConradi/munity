@@ -1,4 +1,5 @@
 ﻿using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Simulation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -23,6 +24,10 @@ public class CommitteeSession
     public DateTime StartDate { get; set; }
 
     public DateTime EndDate { get; set; }
+
+    public ICollection<SessionVoting> Votings { get; set; }
+
+    public ICollection<AgendaItem> AgendaItems { get; set; }
 
     public CommitteeSession()
     {

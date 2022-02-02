@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\" />
+    <Folder Include="Models\VirtualCommittee\" />
   </ItemGroup>
 
 </Project>

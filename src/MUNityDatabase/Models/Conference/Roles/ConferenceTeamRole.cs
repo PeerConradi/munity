@@ -35,7 +35,7 @@ public class ConferenceTeamRole : AbstractConferenceRole
     /// </summary>
     public TeamRoleGroup TeamRoleGroup { get; set; }
 
-    public ConferenceTeamRole()
+    public ConferenceTeamRole() : base()
     {
         this.AllowMultipleParticipations = true;
     }

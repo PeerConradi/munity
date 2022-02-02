@@ -17,4 +17,8 @@ public class ConferenceVisitorRole : AbstractConferenceRole
     [MaxLength(100)]
     public string Organization { get; set; }
 
+    public ConferenceVisitorRole() : base()
+    {
+
+    }
 }

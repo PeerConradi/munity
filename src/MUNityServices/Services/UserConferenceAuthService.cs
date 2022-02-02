@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.User;
@@ -67,6 +68,25 @@ namespace MUNity.Services
                 return false;
 
             return context.Participations.Any(n => n.Role is ConferenceTeamRole && n.User == user && n.Role.Conference.ConferenceId == conferenceId);
+        }
+
+        public async Task<bool> IsUserTeamMemberForCommitteeOrHigher(string committeeId, ClaimsPrincipal claim)
+        {
+            var user = await userManager.GetUserAsync(claim);
+            if (user == null)
+                return false;
+
+            var conferenceId = context.Committees
+                .AsNoTracking()
+                .Where(n => n.CommitteeId == committeeId).Select(n => n.Conference.ConferenceId).FirstOrDefault();
+
+
+            var isTeamMember = context.Participations.Any(n => n.Role is ConferenceTeamRole && n.User == user && n.Role.Conference.ConferenceId == conferenceId);
+            if (isTeamMember)
+                return true;
+
+            var isOwner = context.Conferences.Any(n => n.ConferenceId == conferenceId && n.CreationUser == user);
+            return isOwner;
         }
 
         public Task<MunityUser> GetUserAsync(ClaimsPrincipal claim)

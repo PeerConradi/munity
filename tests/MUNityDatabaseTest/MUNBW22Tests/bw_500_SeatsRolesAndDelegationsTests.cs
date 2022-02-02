@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MUNity.Database.Test.MUNBW22Tests;
 
-public partial class FullMUNBW22Tests
+public partial class FullDMUN2022Tests
 {
     [Test]
     [Order(500)]
@@ -281,7 +281,7 @@ public partial class FullMUNBW22Tests
 
     [Test]
     [Order(511)]
-    public void TestCreateDelegations()
+    public void TestCreateMUNBW2022Delegations()
     {
         // Afrika
         // Save after every insert, otherwise the change-tracker that assignes the easy ids cant handle it...

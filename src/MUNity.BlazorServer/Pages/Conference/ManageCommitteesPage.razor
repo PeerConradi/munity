@@ -34,7 +34,7 @@
                                     {
                                         <tr>
                                             <td>@committee.CommitteeId</td>
-                                            <td>@committee.CommitteeName</td>
+                                            <td><a href="/c/committee/@committee.CommitteeId">@committee.CommitteeName</a></td>
                                             <td>@committee.CommitteeShort</td>
                                             <td>@committee.ParentCommitteeName</td>
                                             <td>@committee.SeatCount <button class="btn btn-primary btn-sm" @onclick="() => selectedCommitteeId = committee.CommitteeId">Sitze verwalten</button></td>

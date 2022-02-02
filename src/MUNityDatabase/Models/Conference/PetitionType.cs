@@ -1,10 +1,11 @@
 ﻿using MUNity.Base;
+using MUNity.Database.Models.Conference;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Simulation;
+namespace MUNity.Database.Models.Conference;
 
 public class PetitionType
 {
@@ -12,6 +13,8 @@ public class PetitionType
     /// The identifier of the Petition type.
     /// </summary>
     public int PetitionTypeId { get; set; }
+
+    public int SortOrder { get; set; }
 
     /// <summary>
     /// A Name to Display this petition. For example: Right of information.
@@ -38,4 +41,13 @@ public class PetitionType
     /// A category for the petitiontype
     /// </summary>
     public string Category { get; set; }
+
+    public bool AllowCountyDelegates { get; set; }
+
+    public bool AllowNonCountryDelegates { get; set; }
+
+    public ICollection<Committee> AllowedCommittees { get; set; }
+
+    public RuleOfProcedure RuleOfProcedure { get; set; }
+
 }

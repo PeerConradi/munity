@@ -1,10 +1,11 @@
 ﻿using MUNity.Base;
+using MUNity.Database.Models.Session;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Simulation;
+namespace MUNity.Database.Models.Session;
 
 /// <summary>
 /// A Simulation (virtual Committee) can have multiple AgendaItems. Each AgendaItem can have multiple petitions.
@@ -28,7 +29,7 @@ public class AgendaItem
     public int OrderIndex { get; set; }
     public ICollection<Petition> Petitions { get; set; }
 
-    public Simulation Simulation { get; set; }
+    public CommitteeSession Session { get; set; }
 
     public AgendaItem()
     {

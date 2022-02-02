@@ -56,6 +56,8 @@ namespace MUNity.Database.Models.Conference
 
         public Project ConferenceProject { get; set; }
 
+        public RuleOfProcedure RuleOfProcedure { get; set; }
+
         public EConferenceVisibilityMode Visibility { get; set; }
 
         public decimal GeneralParticipationCost { get; set; }

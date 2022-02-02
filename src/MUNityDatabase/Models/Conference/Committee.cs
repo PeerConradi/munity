@@ -1,4 +1,5 @@
 ﻿using MUNity.Base;
+using MUNity.Database.Models.Simulation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -80,6 +81,7 @@ public class Committee
 
     public ICollection<Resolution.ResolutionAuth> Resolutions { get; set; }
 
+    public ICollection<PetitionType> AllowedPetitionTypes { get; set; }
 
     public Committee()
     {
