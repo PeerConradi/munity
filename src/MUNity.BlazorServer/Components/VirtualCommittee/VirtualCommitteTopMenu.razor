@@ -41,25 +41,19 @@
 					<div class="menu-icon">
 						<i class="fa fa-hdd"></i>
 					</div>
-					<div class="menu-text">Tagesordnung</div>
+					<div class="menu-text">Sitzungsblöcke</div>
 					<div class="menu-badge ms-3">10</div>
 				</a>
-				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
-					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}/top/demo")" class="menu-link">
-							<div class="menu-text">Tagesordnungspunkt 1 <span class="badge bg-teal">3 Anträge</span></div>
-						</a>
-					</div>
-					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}/top/demo")" class="menu-link">
-							<div class="menu-text">Tagesordnungspunkt 2</div>
-						</a>
-					</div>
-					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}/top/demo")" class="menu-link">
-							<div class="menu-text">Tagesordnungspunkt 3</div>
-						</a>
-					</div>
+				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;width: auto;">
+					@foreach(var session in dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == CommitteeId).OrderBy(n => n.StartDate))
+					{
+						<div class="menu-item">
+							<a href="@($"/session/{CommitteeId}/top/demo")" class="menu-link">
+								<div class="menu-text">@session.Name <span class="badge bg-teal">@session.StartDate - @session.EndDate</span></div>
+							</a>
+						</div>
+					}
+					
 				</div>
 			</div>
 
