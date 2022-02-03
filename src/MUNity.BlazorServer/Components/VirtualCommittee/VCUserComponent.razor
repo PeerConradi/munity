@@ -1,11 +1,12 @@
-﻿
+﻿@using MUNity.Database.Models.Conference.Roles
+
 <div class="d-flex mb-2">
 	<div class="d-flex align-items-center">
 		<!-- icon for online: fa-signal text-lime -->
 		<!-- icon if offline: fa-ban text-red-->
 		<i class="fa @((new Random().Next(0, 2) == 0) ? "fa-signal text-lime" : "fa-ban text-red")  fs-8px me-2"></i>
-		<img class="me-2" src="@($"/img/flags/small/{Country.Iso.ToLower()}.png")" style="width: 36px; height: 18px"/>
-		@Country.Name
+		<img class="me-2" src="@($"/img/flags/small/{Role?.DelegateCountry?.Iso.ToLower()}.png")" style="width: 36px; height: 18px"/>
+		@Role?.RoleName
 	</div>
 	<div class="d-flex align-items-center ms-auto">
 		<!-- Has hand raised-->
@@ -25,7 +26,7 @@
 
 
 @code {
-	[Parameter] public Database.General.Country Country { get; set; }
+	[Parameter] public ConferenceDelegateRole Role { get; set; }
 
 	private bool raisesHand;
 

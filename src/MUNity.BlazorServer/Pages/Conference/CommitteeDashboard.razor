@@ -11,40 +11,66 @@
             <h1>@committee.Name</h1>
             <h4>@committee.FullName</h4>
 
-            <h5>Delegierte</h5>
-            <ul>
-                @foreach(var del in dbContext.Delegates.Where(n => n.Committee.CommitteeId == Id).OrderBy(n => n.DelegateType).ThenBy(n => n.RoleName))
-                {
-                    <li>@del.RoleName</li>
-                }
-            </ul>
+            <div class="row">
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-body">
+	                         <h5>Themen</h5>
+                            <ul>
+                                @foreach(var topic in committee.Topics)
+                                {
+                                    <li>@topic.TopicName</li>
+                                }
+                            </ul>
 
-            <h5>Themen</h5>
-            <ul>
-                @foreach(var topic in committee.Topics)
-                {
-                    <li>@topic.TopicName</li>
-                }
-            </ul>
+                            <h5>Antragsarten</h5>
+                            <ol>
+                                @if (committee.AllowedPetitionTypes != null)
+                                {
+                                    foreach(var petitionType in committee.AllowedPetitionTypes.OrderBy(n => n.SortOrder))
+                                    {
+                                        <li>@petitionType.Name</li>
+                                    }
+                                }
+                            </ol>
 
-            <h5>Antragsarten</h5>
-            <ol>
-                @if (committee.AllowedPetitionTypes != null)
-                {
-                    foreach(var petitionType in committee.AllowedPetitionTypes.OrderBy(n => n.SortOrder))
-                    {
-                        <li>@petitionType.Name</li>
-                    }
-                }
-            </ol>
+                            <h5>Sessions</h5>
+                            <ul>
+                                @foreach(var session in dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == Id))
+                                {
+                                    <li><a href="/committee/session/@session.CommitteeSessionId">@session.StartDate - @session.EndDate</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card border-0 mb-3 bg-gray-800 text-white">
+                        <div class="card-body">
+                            <div class="mb-2 text-gray-500">
+                                <b>Delegierte</b>
+                            </div>
+                            <MUNity.BlazorServer.Components.General.VectorMapComponent IsoToColor="@dbContext.Delegates.Where(n => n.Committee.CommitteeId == Id && n.DelegateCountry != null).Select(n => n.DelegateCountry.Iso).ToList()" />
+                            <div class="mt-2">
+                                @foreach(var del in dbContext.Delegates.AsNoTracking().Include(n => n.DelegateCountry).Where(n => n.Committee.CommitteeId == Id).OrderBy(n => n.DelegateType).ThenBy(n => n.RoleName))
+                                {
+                                    <div class="d-flex align-items-center text-white mb-2">
+                                        <div class="widget-img widget-img-xs rounded bg-inverse me-2 w-40px" style="background-image: url(@($"/img/flags/small/{del.DelegateCountry?.Iso}.png"))"></div>
+                                        <div class="d-flex w-100">
+                                            <div>@del.RoleName</div>
+                                        </div>
+                                    </div>
+                                }
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <h5>Sessions</h5>
-            <ul>
-                @foreach(var session in dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == Id))
-                {
-                    <li>@session.StartDate - @session.EndDate</li>
-                }
-            </ul>
+           
+
+            
         }
         else
         {
@@ -77,6 +103,7 @@
             .Include(n => n.Topics)
             .Include(n => n.AllowedPetitionTypes)
             .FirstOrDefault(n => n.CommitteeId == Id);
+            await InvokeAsync(StateHasChanged);
         }
     }
 }

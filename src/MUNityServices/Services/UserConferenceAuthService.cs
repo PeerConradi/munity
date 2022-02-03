@@ -67,7 +67,12 @@ namespace MUNity.Services
             if (user == null)
                 return false;
 
-            return context.Participations.Any(n => n.Role is ConferenceTeamRole && n.User == user && n.Role.Conference.ConferenceId == conferenceId);
+            var participates = context.Participations.Any(n => n.Role is ConferenceTeamRole && n.User == user && n.Role.Conference.ConferenceId == conferenceId);
+            if (participates)
+                return true;
+
+            var isOwner = context.Conferences.Any(n => n.ConferenceId == conferenceId && n.CreationUser.UserName == claim.Identity.Name);
+            return isOwner;
         }
 
         public async Task<bool> IsUserTeamMemberForCommitteeOrHigher(string committeeId, ClaimsPrincipal claim)

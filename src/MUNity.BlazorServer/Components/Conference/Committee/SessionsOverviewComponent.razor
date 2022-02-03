@@ -1,0 +1,56 @@
+﻿@using MUNity.Database.Models.Session
+@inject MunityContext dbContext
+
+<div class="panel panel-inverse">
+	<div class="panel-heading">
+		<h4 class="panel-title">Sitzungsblöcke</h4>
+	</div>
+	<div class="panel-body">
+        @if (sessions != null)
+        {
+            @foreach(var session in sessions)
+            {
+                <h3><span>@session.Name</span> <span class="badge bg-info">@session.StartDate - @session.EndDate</span></h3>
+            }
+
+            <label>Neuen Sitzungsblock erstellen</label> <br>
+            <RadzenDatePicker TValue="DateTime" @bind-Value=startDate ShowTime=true Placeholder="Start" />
+            <RadzenDatePicker TValue="DateTime?" @bind-Value=endDate ShowTime=true Placeholder="Ende" />
+            <RadzenTextBox @bind-Value=name Placeholder="Name" />
+            <button class="btn btn-info" @onclick=CreateNew>Erstellen</button>
+        }
+        
+	</div>
+</div>
+@code {
+    [Parameter] public string CommitteeId { get; set; }
+
+    private List<CommitteeSession> sessions;
+
+    private DateTime startDate;
+
+    private DateTime? endDate;
+
+    private string name;
+
+    private void CreateNew()
+    {
+        var gv = dbContext.Committees.FirstOrDefault(n => n.CommitteeId == CommitteeId);
+        var session = new CommitteeSession()
+        {
+            Committee = gv,
+            StartDate = startDate,
+            EndDate = endDate,
+            Name = name
+        };
+        dbContext.CommitteeSessions.Add(session);
+        dbContext.SaveChanges();
+        this.sessions.Add(session);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.sessions = dbContext.CommitteeSessions.AsNoTracking().Where(n => n.Committee.CommitteeId == CommitteeId).ToList();
+    }
+}

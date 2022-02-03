@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MUNity.Services
 {
-    internal class ListOfSpeakersDatabaseService : IDisposable
+    public class ListOfSpeakersDatabaseService : IDisposable
     {
         private readonly MunityContext dbContext;
 

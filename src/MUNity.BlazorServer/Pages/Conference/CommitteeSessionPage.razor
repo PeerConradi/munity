@@ -1,0 +1,43 @@
+﻿@page "/committee/session/{Id}"
+@using MUNity.Database.Models.Session
+
+@inject MunityContext dbContext
+
+<AuthorizeView>
+    <Authorized>
+        <h1>@session.Name</h1>
+        <h2>von @session?.StartDate bis @session?.EndDate</h2>
+        <h3>Tagesordnungspunkte</h3>
+        <ul>
+            @foreach(var agendaItem in dbContext.AgendaItems.Include(n => n.Petitions).ThenInclude(n => n.PetitionType).Include(n => n.Petitions).ThenInclude(n => n.User).Where(n => n.Session.CommitteeSessionId == Id))
+            {
+                <li>@agendaItem.Name
+                    <ul>
+                        @foreach(var petition in agendaItem.Petitions)
+                        {
+                            <li>@petition.PetitionType.Name - @petition.User.RoleName</li>
+                        }
+                    </ul>
+                </li>
+            }
+        </ul>
+        
+    </Authorized>
+    <NotAuthorized>
+        <p>You need to be logged in for this page!</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public string Id { get; set; }
+
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private CommitteeSession session;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        this.session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == Id);
+    }
+}

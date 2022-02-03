@@ -1,48 +1,53 @@
-﻿@inject MunityContext dbContext
+﻿@using MUNity.Database.Models.Conference.Roles
+@inject MunityContext dbContext
 
 <div class="card border-0 text-truncate mb-3 bg-gray-800 text-white">
 	<!-- BEGIN card-body -->
 	<div class="card-body">
 		<!-- BEGIN title -->
 		<div class="mb-3 text-gray-500">
-			<b class="mb-3">Teilnehmende</b> 
+			<b class="mb-3">Delegationen</b> 
 		</div>
 		<!-- END title -->
 		<!-- BEGIN conversion-rate -->
 		<div class="d-flex align-items-center mb-1">
-			<h2 class="text-white mb-0"><span>3 online</span></h2>
+			<h2 class="text-white mb-0"><span>? online</span></h2>
 		</div>
 		<!-- END conversion-rate -->
 		<!-- BEGIN percentage -->
 		<div class="mb-4 text-gray-500 ">
-			<span>12 Insgesamt</span><br />
-			<span>3 Für einfache Mehrheit</span><br />
+			<span>@roles?.Count Insgesamt</span><br />
+			@if (roles != null)
+			{
+				<span>@(Math.Ceiling(@roles.Count * 0.66)) Für 2/3 Mehrheit</span><br />
+				<span>@(Math.Ceiling(@roles.Count * 0.5) + 1) Für einfache Mehrheit</span><br />
+			}
 		</div>
-		
-		@foreach(var country in countries.OrderBy(n => n.Name))
+		@if (roles != null)
 		{
-			<VCUserComponent Country="@country" />
+			foreach(var role in roles)
+			{
+				<VCUserComponent Role="@role" />
+			}
 		}
+		
 	</div>
 	<!-- END card-body -->
 </div>
 
 @code {
+	[Parameter] public string CommitteeId { get; set; }
+
+	private List<ConferenceDelegateRole> roles;
+
 	private Random rnd;
 
 	private List<Database.General.Country> countries = new();
 
 	protected override void OnInitialized()
 	{
-		this.rnd = new Random();
 		base.OnInitialized();
-		var tmpCountries = dbContext.Countries.ToList();
-		for (int i=0;i<rnd.Next(10,40);i++)
-		{
-			var rndPick = rnd.Next(0, tmpCountries.Count);
-			this.countries.Add(tmpCountries[rndPick]);
-			tmpCountries.RemoveAt(rndPick);
-		}
+		roles = dbContext.Delegates.Include(n => n.DelegateCountry).Where(n => n.Committee.CommitteeId == CommitteeId).ToList();
 	}
 
 

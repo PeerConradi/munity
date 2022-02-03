@@ -1,4 +1,6 @@
-﻿<div id="top-menu" class="app-top-menu mt-4" style="position: absolute">
+﻿@inject MunityContext dbContext
+
+<div id="top-menu" class="app-top-menu mt-4" style="position: absolute">
 		<!-- BEGIN menu -->
 		<div class="menu">
 			<div class="menu-item has-sub">
@@ -9,29 +11,27 @@
 					<div class="menu-text">Konferenz</div>
 					<div class="menu-caret"></div>
 				</a>
-				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
+				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black; width: auto">
 					<div class="menu-item">
 						<div class="ms-3 menu-text text-theme">Dieses Gremien</div>
 					</div>
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/visit/demo")" class="menu-link"><div class="menu-text">Anwesenheit feststellen</div></a>
+						<a href="@($"/session/{CommitteeId}")" class="menu-link"><div class="menu-text">Startseite</div></a>
 					</div>
 
 					<div class="menu-item">
-						<div class="ms-3 menu-text text-theme">Alle Gremien</div>
+						<div class="ms-3 menu-text text-theme">Andere Gremien</div>
 					</div>
 
-					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/visit/demo")" class="menu-link"><div class="menu-text">Generalversammlung</div></a>
-					</div>
-
-					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/visit/demo")" class="menu-link"><div class="menu-text">Menschenrechtsrat</div></a>
-					</div>
-
-					<div class="menu-item">
-						<a href="@($"/session/{SessionId}")" class="menu-link"><div class="menu-text">Gremienchat</div></a>
-					</div>
+					@if (!string.IsNullOrEmpty(conferenceId))
+					{
+						foreach(var committee in dbContext.Committees.AsNoTracking().Where(n => n.Conference.ConferenceId == conferenceId && n.CommitteeId != CommitteeId).Select(a => new {Id = a.CommitteeId, Name = a.Name}))
+						{
+							<div class="menu-item">
+								<a href="@($"/session/{CommitteeId}/visit/{committee.Id}")" class="menu-link"><div class="menu-text">@committee.Name</div></a>
+							</div>
+						}
+					}
 
 					
 				</div>
@@ -46,17 +46,17 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/top/demo")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}/top/demo")" class="menu-link">
 							<div class="menu-text">Tagesordnungspunkt 1 <span class="badge bg-teal">3 Anträge</span></div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/top/demo")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}/top/demo")" class="menu-link">
 							<div class="menu-text">Tagesordnungspunkt 2</div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/top/demo")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}/top/demo")" class="menu-link">
 							<div class="menu-text">Tagesordnungspunkt 3</div>
 						</a>
 					</div>
@@ -73,17 +73,17 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/resolution/demo")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}/resolution/demo")" class="menu-link">
 							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/resolution/demo")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}/resolution/demo")" class="menu-link">
 							<div class="menu-text">Resolution 1</div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}/resolution/demo")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}/resolution/demo")" class="menu-link">
 							<div class="menu-text">Resolution 2</div>
 						</a>
 					</div>
@@ -100,25 +100,25 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}")" class="menu-link">
 							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
 						</a>
 					</div>
 
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}")" class="menu-link">
 							<div class="menu-text">Laufende Abstimmung 1 <i class="fa fa-clock text-warning"></i></div>
 						</a>
 					</div>
 
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}")" class="menu-link">
 							<div class="menu-text">Angenommene Abstimmung 1 <i class="fa fa-check text-success"></i></div>
 						</a>
 					</div>
 					
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}")" class="menu-link">
 							<div class="menu-text">Abgelehnte Abstimmung 1 <i class="fa fa-ban text-danger"></i></div>
 						</a>
 					</div>
@@ -135,7 +135,7 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="@($"/session/{SessionId}")" class="menu-link">
+						<a href="@($"/session/{CommitteeId}")" class="menu-link">
 							<div class="menu-text">Redeliste bearbeiten</div>
 						</a>
 					</div>
@@ -188,5 +188,15 @@
 		<!-- END menu -->
 	</div>
 @code {
-	[Parameter] public string SessionId { get; set; }
+	[Parameter] public string CommitteeId { get; set; }
+
+	private string conferenceId;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		this.conferenceId = dbContext.Committees.AsNoTracking()
+		.Where(n => n.CommitteeId == CommitteeId)
+		.Select(n => n.Conference.ConferenceId).FirstOrDefault();
+	}
 }

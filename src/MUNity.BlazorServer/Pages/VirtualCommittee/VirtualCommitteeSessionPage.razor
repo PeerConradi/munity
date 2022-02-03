@@ -1,15 +1,18 @@
-﻿@page "/session/{SessionId}"
-@page "/session/{SessionId}/top/{TopId}"
-@page "/session/{SessionId}/resolution/{ResolutionId}"
-@page "/session/{SessionId}/visit/{VisitCommitteeId}"
+﻿@page "/session/{CommitteeId}"
+@page "/session/{CommitteeId}/top/{TopId}"
+@page "/session/{CommitteeId}/resolution/{ResolutionId}"
+@page "/session/{CommitteeId}/visit/{VisitCommitteeId}"
+@using MUNity.Database.Models.Conference
 
 @layout Shared.MobileGameLayout
 
-<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu SessionId=@SessionId />
+@inject MunityContext dbContext
+
+<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu CommitteeId=@CommitteeId />
 
 <div class="d-flex flex-row justify-content-between bg-dark-800">
     <div class="d-flex align-items-center">
-            <h1 class="fs-1 text-blue-400">Gremienname</h1>
+            <h1 class="fs-1 text-blue-400">@committee?.Name</h1>
         
     </div>
     <div class="mt-5px">
@@ -22,12 +25,12 @@
 
 
 
-<div class="row mt-5">
+<div class="row mt-5 me-2">
 
-    <div class="col-3 animate__animated animate__bounceInLeft">
-        <MUNity.BlazorServer.Components.VirtualCommittee.VCUsersComponent />
+    <div class="col-lg-3 col-sm-12 animate__animated animate__bounceInLeft">
+        <MUNity.BlazorServer.Components.VirtualCommittee.VCUsersComponent CommitteeId=@CommitteeId />
     </div>
-    <div class="col-9">
+    <div class="col-lg-9 col-sm-12">
         @if (!string.IsNullOrEmpty(TopId))
         {
             <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent />
@@ -41,11 +44,18 @@
             <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent />
         }
         else {
-            <h1>Willkommen</h1>
-            <p>Dies ist lediglich eine Demo für ein virtuelles Gremium, weshalb Änderungen ggf. nicht korrekt gespeichert werden.</p>
-            <p>Mit dieser Seite sollen lediglich Komponenten getestet und gezeigt werden, wie die oben zu sehende Redeliste.</p>
-            <p>Im Menü oben können verschiedene weitere Funktionen wie der Tagesordnungspunkt, Resolutionen und Abstimmungen angesehen werden.</p>
-            <p>Ebenfalls sind Tools angedacht, welche das Zusammenarbeiten zwischen den verschiedenen Gremien erleichtern soll.</p>
+            <h1 class="page-header">Willkommen</h1>
+            <div class="panel panel-inverse">
+				<div class="panel-heading">
+					<h4 class="panel-title">Information</h4>
+				</div>
+				<div class="panel-body">
+					Bei dieser Seite handelt es sich um eine technische Demo für MUNity. Diese Seite zeigt lediglich den Funktionsumfang von MUNity.
+                    Vorgenommene Änderungen werden nicht gespeichert.
+				</div>
+			</div>
+
+            <MUNity.BlazorServer.Components.Conference.Committee.SessionsOverviewComponent CommitteeId=@CommitteeId />
             <MUNity.BlazorServer.Components.VirtualCommittee.ProcedureComponent />
         }
     </div>
@@ -54,7 +64,7 @@
 
 
 @code {
-    [Parameter] public string SessionId { get; set; } = "demo";
+    [Parameter] public string CommitteeId { get; set; }
 
     [Parameter] public string TopId { get; set; }
 
@@ -62,4 +72,12 @@
 
     [Parameter] public string VisitCommitteeId { get; set; }
 
+    private Committee committee;
+
+    protected override async Task OnInitializedAsync()
+    {
+        committee = dbContext.Committees.FirstOrDefault(n => n.CommitteeId == CommitteeId);
+        await base.OnInitializedAsync();
+        await InvokeAsync(StateHasChanged);
+    }
 }

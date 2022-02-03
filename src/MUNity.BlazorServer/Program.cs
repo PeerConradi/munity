@@ -73,6 +73,7 @@ builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<ConferenceWebsiteService>();
 builder.Services.AddSingleton<ConferenceApplicationSortingService>();
 builder.Services.AddSingleton<ListOfSpeakersService>();
+builder.Services.AddScoped<ListOfSpeakersDatabaseService>();
 
 builder.Services.AddLogging();
 

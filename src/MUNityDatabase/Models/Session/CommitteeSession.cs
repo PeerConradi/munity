@@ -23,7 +23,7 @@ public class CommitteeSession
 
     public DateTime StartDate { get; set; }
 
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     public ICollection<SessionVoting> Votings { get; set; }
 

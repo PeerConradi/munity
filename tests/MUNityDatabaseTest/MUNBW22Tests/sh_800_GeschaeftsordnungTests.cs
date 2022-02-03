@@ -394,7 +394,7 @@ public partial class FullDMUN2022Tests
             Committee = gv,
             StartDate = new DateTime(2022, 2, 2, 12, 0, 0),
             EndDate = new DateTime(2022, 2, 2, 19, 0, 0),
-            Name = "Erste Setzung"
+            Name = "Erster Sitzungsblock"
         };
         _context.CommitteeSessions.Add(session);
         _context.SaveChanges();
