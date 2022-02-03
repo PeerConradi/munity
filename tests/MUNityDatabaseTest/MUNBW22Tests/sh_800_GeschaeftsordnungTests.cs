@@ -413,5 +413,6 @@ public partial class FullDMUN2022Tests
         };
         session.AgendaItems.Add(agendaItem);
         _context.SaveChanges();
+        Assert.AreEqual(1, _context.AgendaItems.Count(n => n.Session.Committee.CommitteeId == "munsh22-gv"));
     }
 }

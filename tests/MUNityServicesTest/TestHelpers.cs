@@ -54,7 +54,6 @@ public class TestHelpers
             .AddRoles<MunityRole>()
             .AddEntityFrameworkStores<MunityContext>(
             );
-        services.AddSingleton<VirtualCommitteeService>();
         services.AddLogging();
         var provider = services.BuildServiceProvider();
 
