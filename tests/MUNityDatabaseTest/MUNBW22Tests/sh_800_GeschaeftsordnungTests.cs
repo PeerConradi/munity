@@ -397,6 +397,7 @@ public partial class FullDMUN2022Tests
             Name = "Erste Setzung"
         };
         _context.CommitteeSessions.Add(session);
+        _context.SaveChanges();
         Assert.AreEqual(1, _context.CommitteeSessions.Where(n => n.Committee.CommitteeId == "munsh22-gv").Count());
     }
 
@@ -414,5 +415,30 @@ public partial class FullDMUN2022Tests
         session.AgendaItems.Add(agendaItem);
         _context.SaveChanges();
         Assert.AreEqual(1, _context.AgendaItems.Count(n => n.Session.Committee.CommitteeId == "munsh22-gv"));
+    }
+
+    [Test]
+    [Order(2822)]
+    public void TestCreateAPetition()
+    {
+        var agendaItem = _context.AgendaItems.FirstOrDefault(n => n.Session.Committee.CommitteeId == "munsh22-gv");
+        var petitionType = _context.PetitionTypes.FirstOrDefault(n => n.AllowedCommittees.Any(a => a.CommitteeId == "munsh22-gv"));
+        var role = _context.Delegates.FirstOrDefault(n => n.Committee.CommitteeId == "munsh22-gv");
+
+        Assert.NotNull(agendaItem, "This tests needs an agenda item to create the petition on.");
+        Assert.NotNull(petitionType, "This test needs an allowed petition type to use.");
+        Assert.NotNull(role, "This test needs a role");
+        var petition = new Petition()
+        {
+            AgendaItem = agendaItem,
+            PetitionDate = DateTime.Now,
+            PetitionType = petitionType,
+            Status = Base.EPetitionStates.Unkown,
+            Text = "",
+            User = role
+        };
+        _context.Petitions.Add(petition);
+        _context.SaveChanges();
+        Assert.AreEqual(1, _context.Petitions.Count());
     }
 }
