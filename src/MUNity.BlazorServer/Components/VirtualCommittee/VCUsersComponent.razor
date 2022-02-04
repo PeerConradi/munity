@@ -27,7 +27,7 @@
 		{
 			foreach(var role in roles)
 			{
-				<VCUserComponent Role="@role" />
+				<VCUserComponent Role="@role" Highlight="@(role.RoleId == MyRoleId)" />
 			}
 		}
 		
@@ -37,6 +37,8 @@
 
 @code {
 	[Parameter] public string CommitteeId { get; set; }
+
+	[Parameter] public int MyRoleId { get; set; }
 
 	private List<ConferenceDelegateRole> roles;
 

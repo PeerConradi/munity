@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using MUNity.Database.Context;
 using MUNity.Database.Models.User;
 using Microsoft.EntityFrameworkCore;
+using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,8 @@ builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
+
+builder.Services.AddBlazoredLocalStorage();
 
 // MUNity Services
 builder.Services.AddScoped<UserConferenceAuthService>();

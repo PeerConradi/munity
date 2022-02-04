@@ -3,64 +3,74 @@
 @page "/session/{CommitteeId}/resolution/{ResolutionId}"
 @page "/session/{CommitteeId}/visit/{VisitCommitteeId}"
 @using MUNity.Database.Models.Conference
+@using MUNity.Database.Models.Conference.Roles
 
 @layout Shared.MobileGameLayout
 
 @inject MunityContext dbContext
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
 
-<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu CommitteeId=@CommitteeId />
+@if(myRole != null && committee != null)
+{
+    <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu CommitteeId=@CommitteeId />
 
-<div class="d-flex flex-row justify-content-between bg-dark-800">
-    <div class="d-flex align-items-center">
-            <h1 class="fs-1 text-blue-400">@committee?.Name</h1>
+    <div class="d-flex flex-row justify-content-between bg-dark-800">
+        <div class="d-flex align-items-center">
+                <h1 class="fs-1 text-blue-400">@committee?.Name</h1>
         
+        </div>
+        <div class="mt-5px">
+            <MUNity.BlazorServer.Components.ListOfSpeakers.ListOfSpeakersHeaderComponent />
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="btn btn-primary align-middle" style="margin-right: 15px">Test</button>
+        </div>
     </div>
-    <div class="mt-5px">
-        <MUNity.BlazorServer.Components.ListOfSpeakers.ListOfSpeakersHeaderComponent />
-    </div>
-    <div class="d-flex align-items-center">
-        <button class="btn btn-primary align-middle" style="margin-right: 15px">Test</button>
-    </div>
-</div>
 
 
 
-<div class="row mt-5 me-2">
+    <div class="row mt-5 me-2">
 
-    <div class="col-lg-3 col-sm-12 animate__animated animate__bounceInLeft">
-        <MUNity.BlazorServer.Components.VirtualCommittee.VCUsersComponent CommitteeId=@CommitteeId />
-    </div>
-    <div class="col-lg-9 col-sm-12">
-        @if (!string.IsNullOrEmpty(TopId))
-        {
-            <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent />
-        }
-        else if (!string.IsNullOrEmpty(ResolutionId))
-        {
-            <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent />
-        }
-        else if (!string.IsNullOrEmpty(VisitCommitteeId))
-        {
-            <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent />
-        }
-        else {
-            <h1 class="page-header">Willkommen</h1>
-            <div class="panel panel-inverse">
-				<div class="panel-heading">
-					<h4 class="panel-title">Information</h4>
-				</div>
-				<div class="panel-body">
-					Bei dieser Seite handelt es sich um eine technische Demo für MUNity. Diese Seite zeigt lediglich den Funktionsumfang von MUNity.
-                    Vorgenommene Änderungen werden nicht gespeichert.
-				</div>
-			</div>
+        <div class="col-lg-3 col-sm-12 animate__animated animate__bounceInLeft">
+            <MUNity.BlazorServer.Components.VirtualCommittee.VCUsersComponent MyRoleId=@myRole.RoleId CommitteeId=@CommitteeId />
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            @if (!string.IsNullOrEmpty(TopId))
+            {
+                <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent />
+            }
+            else if (!string.IsNullOrEmpty(ResolutionId))
+            {
+                <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent />
+            }
+            else if (!string.IsNullOrEmpty(VisitCommitteeId))
+            {
+                <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent />
+            }
+            else {
+                <h1 class="page-header">Willkommen @myRole.RoleName</h1>
+                <div class="panel panel-inverse">
+				    <div class="panel-heading">
+					    <h4 class="panel-title">Information</h4>
+				    </div>
+				    <div class="panel-body">
+					    Bei dieser Seite handelt es sich um eine technische Demo für MUNity. Diese Seite zeigt lediglich den Funktionsumfang von MUNity.
+                        Vorgenommene Änderungen werden nicht gespeichert.
+				    </div>
+			    </div>
 
-            <MUNity.BlazorServer.Components.Conference.Committee.SessionsOverviewComponent CommitteeId=@CommitteeId />
-            <MUNity.BlazorServer.Components.VirtualCommittee.ProcedureComponent />
-        }
-    </div>
+                <MUNity.BlazorServer.Components.Conference.Committee.SessionsOverviewComponent CommitteeId=@CommitteeId />
+                <MUNity.BlazorServer.Components.VirtualCommittee.ProcedureComponent />
+            }
+        </div>
     
-</div>
+    </div>
+}
+
+@if(accessDenied)
+{
+    <p>Zugriff verweigert!</p>
+}
 
 
 @code {
@@ -74,10 +84,35 @@
 
     private Committee committee;
 
+    private ConferenceDelegateRole myRole;
+
+    private bool accessDenied = false;
+
     protected override async Task OnInitializedAsync()
     {
-        committee = dbContext.Committees.FirstOrDefault(n => n.CommitteeId == CommitteeId);
         await base.OnInitializedAsync();
+
+        var accessKey = await localStorageService.GetItemAsStringAsync($"munity-access-{CommitteeId}");
+
+        if (accessKey != null)
+        {
+            myRole = dbContext.Delegates.FirstOrDefault(n => n.Committee.CommitteeId == CommitteeId &&
+            n.RoleSecret == accessKey);
+            if (myRole != null)
+            {
+                committee = dbContext.Committees.FirstOrDefault(n => n.CommitteeId == CommitteeId);
+
+            }
+            else
+            {
+                accessDenied = true;
+            }
+        }
+        else
+        {
+            accessDenied = true;
+        }
         await InvokeAsync(StateHasChanged);
+        
     }
 }

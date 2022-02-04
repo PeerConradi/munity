@@ -1,6 +1,6 @@
 ﻿@using MUNity.Database.Models.Conference.Roles
 
-<div class="d-flex mb-2">
+<div class="d-flex mb-2  @((Highlight) ? "font-weight-bolder bg-teal-800 p-2" : null)">
 	<div class="d-flex align-items-center">
 		<!-- icon for online: fa-signal text-lime -->
 		<!-- icon if offline: fa-ban text-red-->
@@ -27,6 +27,8 @@
 
 @code {
 	[Parameter] public ConferenceDelegateRole Role { get; set; }
+
+	[Parameter] public bool Highlight { get; set; }
 
 	private bool raisesHand;
 

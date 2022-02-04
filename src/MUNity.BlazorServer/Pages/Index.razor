@@ -2,7 +2,7 @@
 @page "/"
 @using MUNity.Schema.Conference
 @inject Services.ConferenceService conferenceService
-@inject MUNity.Database.Context.MunityContext context
+@inject MUNity.Database.Context.MunityContext dbContext
 
 @*<div class="card border-0 text-white bg-dark-900 mb-3">
     <div class="h-250px rounded-top card-img" 
@@ -14,7 +14,7 @@
 </div>*@
 
 <div class="row">
-    @foreach (var conferenceCard in context.ConferenceDashboardCards
+    @foreach (var conferenceCard in dbContext.ConferenceDashboardCards
         .Include(n => n.Conference)
         .Where(n => n.Active))
     {
@@ -43,7 +43,16 @@
             </div>
             <div class="card-body">
                 <p>Entdecken Sie jetzt die virtuellen Gremien. In diesen können Sie online mit anderen Delegierten zusammenarbeiten.</p>
-                <a class="btn btn-primary" href="/session/munsh22-gv">Demo für MUN-SH 2022 GV ansehen</a>
+                <a class="btn btn-primary" href="/session/munsh22-gv">Direkt in den Raum...</a>
+                <div class="row">
+                    <div class="btn-group-vertical">
+                        @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-gv"))
+                        {
+                            <a class="btn btn-default" href="/session/join/@role.RoleSecret">Als <b>@role.RoleName</b> beitreten</a>
+                        }
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>

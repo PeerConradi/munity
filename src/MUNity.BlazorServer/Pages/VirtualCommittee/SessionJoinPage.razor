@@ -1,0 +1,22 @@
+﻿@page "/session/join/{Secret}"
+
+@inject MunityContext dbContext
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navManager
+
+@code {
+    [Parameter] public string Secret { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        var committeeId = dbContext.Delegates.Where(n => n.RoleSecret == Secret)
+        .Select(n => n.Committee.CommitteeId).FirstOrDefault();
+
+        if (committeeId != null)
+        {
+            await localStorage.SetItemAsStringAsync($"munity-access-{committeeId}", Secret);
+            navManager.NavigateTo($"/session/{committeeId}");
+        }
+    }
+}
