@@ -1,4 +1,4 @@
-﻿@page "/session/join/{Secret}"
+﻿@page "/oc/join/{Secret}"
 
 @inject MunityContext dbContext
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -16,7 +16,7 @@
         if (committeeId != null)
         {
             await localStorage.SetItemAsStringAsync($"munity-access-{committeeId}", Secret);
-            navManager.NavigateTo($"/session/{committeeId}");
+            navManager.NavigateTo($"/oc/{committeeId}");
         }
     }
 }

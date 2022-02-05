@@ -1,95 +1,40 @@
-﻿<ul class="nav nav-tabs nav-tabs-inverse nav-justified cursor-pointer">
-	<li class="nav-item"><a @onclick="() => selectedPanel = 0" class="nav-link @((selectedPanel == 0) ? "active" : null)"><i class="fa fa-camera fa-lg me-5px"></i> <span class="d-none d-md-inline">Positionen</span></a></li>
+﻿@using MUNity.Database.Models.Conference
+@using MUNity.Database.Models.Session
+@inject MunityContext dbContext
+
+<h1 class="page-title">@dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId)?.Name</h1>
+
+<ul class="nav nav-tabs nav-tabs-inverse nav-justified cursor-pointer">
+	<li class="nav-item"><a @onclick="() => selectedPanel = 0" class="nav-link @((selectedPanel == 0) ? "active" : null)"><i class="fa fa-camera fa-lg me-5px"></i> <span class="d-none d-md-inline">Tagesordnungspunkte</span></a></li>
 	<li class="nav-item"><a @onclick="() => selectedPanel = 1" class="nav-link @((selectedPanel == 1) ? "active" : null)"><i class="fa fa-archive fa-lg me-5px"></i> <span class="d-none d-md-inline">Anträge</span></a></li>
 	<li class="nav-item"><a @onclick="() => selectedPanel = 2" class="nav-link @((selectedPanel == 2) ? "active" : null)"><i class="fa fa-envelope fa-lg me-5px"></i> <span class="d-none d-md-inline">Email</span></a></li>
 </ul>
 
+
 <div class="tab-content bg-white rounded-bottom mb-20px">
 	<div class="tab-pane fade @((selectedPanel == 0) ? "active show" : null)">
-		<div class="p-3 h-600px" style="max-height: 80%; overflow-y: scroll;">
-			<div class="d-sm-flex">
-				<a href="javascript:;" class="w-sm-200px">
-					<img class="mw-100 rounded" src="/img/flags/medium/de.png" alt="">
-				</a>
-				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-					<h5>Deutschland</h5>
-					Nullam at risus metus. Quisque nisl purus, pulvinar ut mauris vel, elementum suscipit eros. Praesent ornare ante massa, egestas pellentesque orci convallis ut. Curabitur consequat convallis est, id luctus mauris lacinia vel. Nullam tristique lobortis mauris, ultricies fermentum lacus bibendum id. Proin non ante tortor. Suspendisse pulvinar ornare tellus nec pulvinar. Nam pellentesque accumsan mi, non pellentesque sem convallis sed. Quisque rutrum erat id auctor gravida.
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-sm-flex">
-				<a href="javascript:;" class="w-sm-200px">
-					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-10.jpg" alt="">
-				</a>
-				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-					<h5>Vestibulum vitae diam nec odio dapibus placerat. Ut ut lorem justo.</h5>
-					Fusce bibendum augue nec fermentum tempus. Sed laoreet dictum tempus. Aenean ac sem quis nulla malesuada volutpat. Nunc vitae urna pulvinar velit commodo cursus. Nullam eu felis quis diam adipiscing hendrerit vel ac turpis. Nam mattis fringilla euismod. Donec eu ipsum sit amet mauris iaculis aliquet. Quisque sit amet feugiat odio. Cras convallis lorem at libero lobortis, placerat lobortis sapien lacinia. Duis sit amet elit bibendum sapien dignissim bibendum.
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-sm-flex">
-				<a href="javascript:;" class="w-sm-200px">
-					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-7.jpg" alt="">
-				</a>
-				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-					<h5>Maecenas eget turpis luctus, scelerisque arcu id, iaculis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus.</h5>
-					Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque. Nam augue nulla, accumsan quis nisi a, facilisis eleifend nulla. Praesent aliquet odio non imperdiet fringilla. Morbi a porta nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-sm-flex">
-				<a href="javascript:;" class="w-sm-200px">
-					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
-				</a>
-				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
-					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-sm-flex">
-				<a href="javascript:;" class="w-sm-200px">
-					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
-				</a>
-				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
-					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-sm-flex">
-				<a href="javascript:;" class="w-sm-200px">
-					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
-				</a>
-				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
-					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-sm-flex">
-				<a href="javascript:;" class="w-sm-200px">
-					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
-				</a>
-				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
-					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-sm-flex">
-				<a href="javascript:;" class="w-sm-200px">
-					<img class="mw-100 rounded" src="../assets/img/gallery/gallery-8.jpg" alt="">
-				</a>
-				<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-					<h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor accumsan rutrum.</h5>
-					Fusce augue diam, vestibulum a mattis sit amet, vehicula eu ipsum. Vestibulum eu mi nec purus tempor consequat. Vestibulum porta non mi quis cursus. Fusce vulputate cursus magna, tincidunt sodales ipsum lobortis tincidunt. Mauris quis lorem ligula. Morbi placerat est nec pharetra placerat. Ut laoreet nunc accumsan orci aliquam accumsan. Maecenas volutpat dolor vitae sapien ultricies fringilla. Suspendisse vitae orci sed nibh ultrices tristique. Aenean in ante eget urna semper imperdiet. Pellentesque sagittis a nulla at scelerisque.
-				</div>
-			</div>
+		<div class="p-3 h-600px" style="overflow-y: scroll;">
+			
+			@foreach(var agendaItem in dbContext.AgendaItems.Where(n => n.Session.CommitteeSessionId == SessionId))
+				{
+					<div class="d-sm-flex">
+						<a href="javascript:;" class="w-sm-200px">
+							<img class="mw-100 rounded" src="/img/flags/medium/de.png" alt="">
+						</a>
+						<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
+								<h5>@agendaItem.Name</h5>
+								@agendaItem.Description
+							</div>
+				
+					</div>
+					<hr class="bg-gray-500">
+					
+				}
+			
 		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 300px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 120px;"></div></div></div>
 	</div>
-	<div class="tab-pane fade @((selectedPanel == 1) ? "active show" : null)" id="purchase">
-		<div class="h-300px ps" data-scrollbar="true" data-init="true">
+	<div class="tab-pane fade @((selectedPanel == 1) ? "active show" : null)">
+		<div class="ps" data-scrollbar="true" data-init="true">
 			<table class="table table-panel mb-0">
 				<thead>
 					<tr>
@@ -101,6 +46,23 @@
 					</tr>
 				</thead>
 				<tbody>
+					@foreach(var petition in petitions)
+					{
+						<!-- Waiting Proposition -->
+						<tr>
+							<td class="fw-bold text-muted ">@petition.PetitionDate</td>
+							<td class="hidden-sm">
+								<img src="@($"/img/flags/small/{petition.User.DelegateCountry?.Iso}.png")" alt="" width="32px">
+								@petition.User.RoleName
+							</td>
+							<td class="text-nowrap">
+								<h6>@petition.PetitionType.Name</h6>
+							</td>
+							<td class="text-blue fw-bold"><button class="btn btn-sm btn-success">Antrag hervorheben</button></td>
+							<td class="text-nowrap"><button class="btn btn-sm btn-danger">Antrag ablehnen</button></td>
+						</tr>
+					}
+
 					<!-- Active Proposition -->
 					<tr class="table-info">
 						<td class="fw-bold text-muted">13/02/2021</td>
@@ -132,6 +94,15 @@
 					
 				</tbody>
 			</table>
+
+			@if (committeeId != null)
+			{
+					@foreach(var petitionType in dbContext.Committees.Where(n => n.CommitteeId == committeeId).Select(n => n.AllowedPetitionTypes).FirstOrDefault())
+					{
+						<button class="btn m-1 btn-primary">@petitionType.Name</button>
+					}
+			}
+			
 		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
 	</div>
 	<div class="tab-pane fade @((selectedPanel == 2) ? "active show" : null)" id="email">
@@ -192,5 +163,31 @@
 </div>
 
 @code {
+	[Parameter] public string SessionId { get; set; }
+
 	private int selectedPanel = 0;
+
+	private string committeeId;
+
+	private List<Petition> petitions;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		this.petitions = dbContext.Petitions.AsNoTracking()
+							.Include(n => n.PetitionType)
+							.Include(n => n.User).ThenInclude(n => n.DelegateCountry)
+						.Where(n => n.AgendaItem.Session.CommitteeSessionId == SessionId)
+					.OrderBy(n => n.PetitionType.SortOrder).ToList();
+
+		this.committeeId = dbContext.CommitteeSessions.AsNoTracking().Where(n => n.CommitteeSessionId == SessionId)
+		.Select(n => n.Committee.CommitteeId).FirstOrDefault();
+	}
+
+	private async Task AddPetition(PetitionType type)
+	{
+		
+	}
+
 }

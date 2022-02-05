@@ -4,7 +4,7 @@
 	<div class="d-flex align-items-center">
 		<!-- icon for online: fa-signal text-lime -->
 		<!-- icon if offline: fa-ban text-red-->
-		<i class="fa @((new Random().Next(0, 2) == 0) ? "fa-signal text-lime" : "fa-ban text-red")  fs-8px me-2"></i>
+		<i class="fa @((IsOnline) ? "fa-signal text-lime" : "fa-ban text-red")  fs-8px me-2"></i>
 		<img class="me-2" src="@($"/img/flags/small/{Role?.DelegateCountry?.Iso.ToLower()}.png")" style="width: 36px; height: 18px"/>
 		@Role?.RoleName
 	</div>
@@ -29,6 +29,8 @@
 	[Parameter] public ConferenceDelegateRole Role { get; set; }
 
 	[Parameter] public bool Highlight { get; set; }
+
+	[Parameter] public bool IsOnline { get; set; }
 
 	private bool raisesHand;
 

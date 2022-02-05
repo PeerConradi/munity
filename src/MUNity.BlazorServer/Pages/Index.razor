@@ -43,12 +43,12 @@
             </div>
             <div class="card-body">
                 <p>Entdecken Sie jetzt die virtuellen Gremien. In diesen können Sie online mit anderen Delegierten zusammenarbeiten.</p>
-                <a class="btn btn-primary" href="/session/munsh22-gv">Direkt in den Raum...</a>
+                <a class="btn btn-primary" href="/oc/munsh22-gv">Direkt in den Raum...</a>
                 <div class="row">
                     <div class="btn-group-vertical">
                         @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-gv"))
                         {
-                            <a class="btn btn-default" href="/session/join/@role.RoleSecret">Als <b>@role.RoleName</b> beitreten</a>
+                            <a class="btn btn-default" href="/oc/join/@role.RoleSecret">Als <b>@role.RoleName</b> beitreten</a>
                         }
                     </div>
                 </div>

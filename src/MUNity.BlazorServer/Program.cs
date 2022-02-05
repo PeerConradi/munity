@@ -15,6 +15,7 @@ using MUNity.Database.Context;
 using MUNity.Database.Models.User;
 using Microsoft.EntityFrameworkCore;
 using Blazored.LocalStorage;
+using MUNity.BlazorServer.BServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +78,9 @@ builder.Services.AddScoped<ConferenceWebsiteService>();
 builder.Services.AddSingleton<ConferenceApplicationSortingService>();
 builder.Services.AddSingleton<ListOfSpeakersService>();
 builder.Services.AddScoped<ListOfSpeakersDatabaseService>();
+
+builder.Services.AddSingleton<VirtualCommitteeExchangeService>();
+builder.Services.AddScoped<VirtualCommiteeParticipationService>();
 
 builder.Services.AddLogging();
 

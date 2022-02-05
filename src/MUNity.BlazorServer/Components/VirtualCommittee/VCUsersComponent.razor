@@ -1,5 +1,6 @@
 ﻿@using MUNity.Database.Models.Conference.Roles
 @inject MunityContext dbContext
+@inject BServices.VirtualCommitteeExchangeService exchangeService
 
 <div class="card border-0 text-truncate mb-3 bg-gray-800 text-white">
 	<!-- BEGIN card-body -->
@@ -27,8 +28,10 @@
 		{
 			foreach(var role in roles)
 			{
-				<VCUserComponent Role="@role" Highlight="@(role.RoleId == MyRoleId)" />
+				<VCUserComponent IsOnline=@(exchange.connectedRoles.ContainsKey(role.RoleId)) Role="@role" Highlight="@(role.RoleId == MyRoleId)" />
 			}
+
+			<p>TTT: @string.Join(",", exchange.connectedRoles)</p>
 		}
 		
 	</div>
@@ -46,10 +49,19 @@
 
 	private List<Database.General.Country> countries = new();
 
+	private BServices.VirtualCommitteeExchange exchange;
+
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		this.exchange = exchangeService.GetExchange(CommitteeId);
+		if (this.exchange != null)
+		{
+			this.exchange.UserConnected += (s, a) => InvokeAsync(StateHasChanged);
+			this.exchange.UserDisconnected += (s, a) => InvokeAsync(StateHasChanged);
+		}
 		roles = dbContext.Delegates.Include(n => n.DelegateCountry).Where(n => n.Committee.CommitteeId == CommitteeId).ToList();
+
 	}
 
 

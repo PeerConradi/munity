@@ -16,7 +16,7 @@
 						<div class="ms-3 menu-text text-theme">Dieses Gremien</div>
 					</div>
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}")" class="menu-link"><div class="menu-text">Startseite</div></a>
+						<a href="@($"/oc/{CommitteeId}")" class="menu-link"><div class="menu-text">Startseite</div></a>
 					</div>
 
 					<div class="menu-item">
@@ -28,7 +28,7 @@
 						foreach(var committee in dbContext.Committees.AsNoTracking().Where(n => n.Conference.ConferenceId == conferenceId && n.CommitteeId != CommitteeId).Select(a => new {Id = a.CommitteeId, Name = a.Name}))
 						{
 							<div class="menu-item">
-								<a href="@($"/session/{CommitteeId}/visit/{committee.Id}")" class="menu-link"><div class="menu-text">@committee.Name</div></a>
+								<a href="@($"/oc/{CommitteeId}/visit/{committee.Id}")" class="menu-link"><div class="menu-text">@committee.Name</div></a>
 							</div>
 						}
 					}
@@ -48,7 +48,7 @@
 					@foreach(var session in dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == CommitteeId).OrderBy(n => n.StartDate))
 					{
 						<div class="menu-item">
-							<a href="@($"/session/{CommitteeId}/top/demo")" class="menu-link">
+							<a href="@($"/oc/{CommitteeId}/session/{session.CommitteeSessionId}")" class="menu-link">
 								<div class="menu-text">@session.Name <span class="badge bg-teal">@session.StartDate - @session.EndDate</span></div>
 							</a>
 						</div>
@@ -67,17 +67,17 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}/resolution/demo")" class="menu-link">
+						<a href="@($"/oc/{CommitteeId}/resolution/demo")" class="menu-link">
 							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}/resolution/demo")" class="menu-link">
+						<a href="@($"/oc/{CommitteeId}/resolution/demo")" class="menu-link">
 							<div class="menu-text">Resolution 1</div>
 						</a>
 					</div>
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}/resolution/demo")" class="menu-link">
+						<a href="@($"/oc/{CommitteeId}/resolution/demo")" class="menu-link">
 							<div class="menu-text">Resolution 2</div>
 						</a>
 					</div>
@@ -94,25 +94,25 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}")" class="menu-link">
+						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
 							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
 						</a>
 					</div>
 
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}")" class="menu-link">
+						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
 							<div class="menu-text">Laufende Abstimmung 1 <i class="fa fa-clock text-warning"></i></div>
 						</a>
 					</div>
 
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}")" class="menu-link">
+						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
 							<div class="menu-text">Angenommene Abstimmung 1 <i class="fa fa-check text-success"></i></div>
 						</a>
 					</div>
 					
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}")" class="menu-link">
+						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
 							<div class="menu-text">Abgelehnte Abstimmung 1 <i class="fa fa-ban text-danger"></i></div>
 						</a>
 					</div>
@@ -129,7 +129,7 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="@($"/session/{CommitteeId}")" class="menu-link">
+						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
 							<div class="menu-text">Redeliste bearbeiten</div>
 						</a>
 					</div>
