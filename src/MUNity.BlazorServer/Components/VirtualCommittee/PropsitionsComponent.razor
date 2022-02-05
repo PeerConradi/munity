@@ -1,12 +1,14 @@
 ﻿@using MUNity.Database.Models.Conference
 @using MUNity.Database.Models.Session
 @inject MunityContext dbContext
+@inject BServices.VirtualCommiteeParticipationService vcService
+@inject BServices.VirtualCommitteeExchangeService vcExchangeService
 
 <h1 class="page-title">@dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId)?.Name</h1>
 
 <ul class="nav nav-tabs nav-tabs-inverse nav-justified cursor-pointer">
 	<li class="nav-item"><a @onclick="() => selectedPanel = 0" class="nav-link @((selectedPanel == 0) ? "active" : null)"><i class="fa fa-camera fa-lg me-5px"></i> <span class="d-none d-md-inline">Tagesordnungspunkte</span></a></li>
-	<li class="nav-item"><a @onclick="() => selectedPanel = 1" class="nav-link @((selectedPanel == 1) ? "active" : null)"><i class="fa fa-archive fa-lg me-5px"></i> <span class="d-none d-md-inline">Anträge</span></a></li>
+	<li class="nav-item"><a @onclick="() => selectedPanel = 1" class="nav-link @((selectedPanel == 1) ? "active" : null)"><i class="fa fa-archive fa-lg me-5px"></i> <span class="d-none d-md-inline">Anträge (@petitions?.Count)</span></a></li>
 	<li class="nav-item"><a @onclick="() => selectedPanel = 2" class="nav-link @((selectedPanel == 2) ? "active" : null)"><i class="fa fa-envelope fa-lg me-5px"></i> <span class="d-none d-md-inline">Email</span></a></li>
 </ul>
 
@@ -17,9 +19,9 @@
 			
 			@foreach(var agendaItem in dbContext.AgendaItems.Where(n => n.Session.CommitteeSessionId == SessionId))
 				{
-					<div class="d-sm-flex">
+					<div class="d-sm-flex" @onclick="() => LoadPetitionsForAgendaItem(agendaItem.AgendaItemId)">
 						<a href="javascript:;" class="w-sm-200px">
-							<img class="mw-100 rounded" src="/img/flags/medium/de.png" alt="">
+							<img class="mw-100 rounded" src="/img/gallery/gallery-1.jpg" alt="">
 						</a>
 						<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
 								<h5>@agendaItem.Name</h5>
@@ -46,61 +48,64 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach(var petition in petitions)
+					@if (selectedAgendaItem == null)
 					{
-						<!-- Waiting Proposition -->
-						<tr>
-							<td class="fw-bold text-muted ">@petition.PetitionDate</td>
-							<td class="hidden-sm">
-								<img src="@($"/img/flags/small/{petition.User.DelegateCountry?.Iso}.png")" alt="" width="32px">
-								@petition.User.RoleName
-							</td>
-							<td class="text-nowrap">
-								<h6>@petition.PetitionType.Name</h6>
-							</td>
-							<td class="text-blue fw-bold"><button class="btn btn-sm btn-success">Antrag hervorheben</button></td>
-							<td class="text-nowrap"><button class="btn btn-sm btn-danger">Antrag ablehnen</button></td>
-						</tr>
+						<p>Kein Tagesordnungspunkt ausgewählt</p>
 					}
-
-					<!-- Active Proposition -->
-					<tr class="table-info">
-						<td class="fw-bold text-muted">13/02/2021</td>
-						<td class="hidden-sm">
-							<img src="/img/flags/small/es.png" alt="" width="32px">
-							Spanien
-						</td>
-						<td class="text-nowrap">
-							<h6>Antrag auf FooBar</h6>
-						</td>
-						<td class="text-blue fw-bold"></td>
-						<td class="text-nowrap"><button class="btn btn-sm btn-danger">Antrag ablehnen</button></td>
-					</tr>
-
-					<!-- Waiting Proposition -->
-					<tr>
-						<td class="fw-bold text-muted">13/02/2021</td>
-						<td class="hidden-sm">
-							<img src="/img/flags/small/de.png" alt="" width="32px">
-							Deutschland
-						</td>
-						<td class="text-nowrap">
-							<h6> Antrag auf BLUB</h6>
-						</td>
-						<td class="text-blue fw-bold"><button class="btn btn-sm btn-success">Antrag bearbeiten</button></td>
-						<td class="text-nowrap"><button class="btn btn-sm btn-danger">Antrag ablehnen</button></td>
-					</tr>
+					else
+					{
+						if (petitions != null && petitions.Count > 0)
+						{
+							foreach(var petition in petitions)
+							{
+								<!-- Waiting Proposition -->
+								<tr class="@((petition.Status == EPetitionStates.Active) ? "table-info" : null)">
+									<td class="fw-bold text-muted ">@petition?.PetitionDate</td>
+									<td class="hidden-sm">
+										<img src="@($"/img/flags/small/{petition?.User?.DelegateCountry?.Iso}.png")" alt="" width="32px">
+										@petition?.User?.RoleName
+									</td>
+									<td class="text-nowrap">
+										<h6>@petition?.PetitionType?.Name</h6>
+									</td>
+									<AuthorizeView>
+										<Authorized>
+											@if (petition.Status != EPetitionStates.Active)
+											{
+												<td class="text-blue fw-bold"><button class="btn btn-sm btn-success" @onclick="() => ActivatePetition(petition.PetitionId)">Antrag hervorheben</button></td>
+											}
+											else
+											{
+												<td></td>
+											}
+											<td class="text-nowrap"><button class="btn btn-sm @((petition.Status == EPetitionStates.Queued) ? "btn-danger" : "btn-indigo")" @onclick="() => RemovePetition(petition.PetitionId)">@((petition.Status == EPetitionStates.Queued) ? "Antrag ablehnen" : "Antrag fertig")</button></td>
+										</Authorized>
+										<NotAuthorized>
+											<td></td>
+											<td>
+												@if (petition.User.RoleId == vcService.RoleId && petition.Status != EPetitionStates.Active)
+												{
+													<button class="btn btn-sm btn-danger" @onclick="() => RemovePetition(petition.PetitionId)">Antrag zurückziehen</button>
+												}
+											</td>
+										</NotAuthorized>
+									</AuthorizeView>
+									
+								</tr>
+							}
+						}
+					}
 					
 					
 				</tbody>
 			</table>
 
-			@if (committeeId != null)
+			@if (committeeId != null && selectedAgendaItem != null)
 			{
-					@foreach(var petitionType in dbContext.Committees.Where(n => n.CommitteeId == committeeId).Select(n => n.AllowedPetitionTypes).FirstOrDefault())
-					{
-						<button class="btn m-1 btn-primary">@petitionType.Name</button>
-					}
+				@foreach(var petitionType in dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == committeeId).SelectMany(n => n.AllowedPetitionTypes).OrderBy(n => n.SortOrder).Select(n => new { Id = n.PetitionTypeId, Name = n.Name}))
+				{
+						<button class="btn m-1 btn-primary @((petitions.Any(n => n.PetitionType.PetitionTypeId == petitionType.Id && n.User.RoleId == vcService.RoleId)) ? "disabled" : null)" @onclick="() => AddPetition(petitionType.Id)">@petitionType.Name</button>
+				}
 			}
 			
 		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
@@ -171,23 +176,95 @@
 
 	private List<Petition> petitions;
 
+	private int? selectedAgendaItem = null;
+
+	private bool alreadyMakingThisRequest = false;
+
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
+		this.committeeId = dbContext.CommitteeSessions.AsNoTracking().Where(n => n.CommitteeSessionId == SessionId)
+		.Select(n => n.Committee.CommitteeId).FirstOrDefault();
+
+		this.selectedAgendaItem = null;
+		this.petitions = null;
+
+		if (committeeId != null)
+		{
+			var exchange = vcExchangeService.GetExchange(committeeId);
+			if (exchange != null)
+			{
+				exchange.PetitionAdded += (s, p) => 
+				{ 
+					if (petitions != null && petitions.All(n => n.PetitionId != p.PetitionId) && p != null) 
+					{
+						int bestIndex = 0;
+						for (int i=0;i<petitions.Count;i++)
+						{
+							if (petitions[i].PetitionType != null && p.PetitionType != null)
+							{
+								if (petitions[i].PetitionType.SortOrder > p.PetitionType.SortOrder &&
+								petitions[i].PetitionType.SortOrder == p.PetitionType.SortOrder)
+								{
+									break;
+								}
+
+								if (petitions[i].PetitionType.SortOrder == p.PetitionType.SortOrder &&
+								p.PetitionDate > petitions[i].PetitionDate)
+								{
+									bestIndex = i + 1;
+									break;
+								}
+							}
+
+							bestIndex = i;
+						}
+						petitions?.Insert(bestIndex, p); 
+						InvokeAsync(StateHasChanged); 
+					} 
+				};
+				exchange.PetitionRemoved += (s, p) => { petitions?.RemoveAll(n => n.PetitionId == p.PetitionId); InvokeAsync(StateHasChanged); };
+				exchange.PetitionUpdated += (s, p) =>
+				{
+					var item = petitions?.FirstOrDefault(n => n.PetitionId == p.PetitionId);
+					if (item != null)
+					{
+						item.Status = p.Status;
+						InvokeAsync(StateHasChanged);
+					}
+
+				};
+			}
+		}
+	}
+
+	private void LoadPetitionsForAgendaItem(int agendaItemId)
+	{
+		this.selectedAgendaItem = agendaItemId;
 		this.petitions = dbContext.Petitions.AsNoTracking()
 							.Include(n => n.PetitionType)
 							.Include(n => n.User).ThenInclude(n => n.DelegateCountry)
-						.Where(n => n.AgendaItem.Session.CommitteeSessionId == SessionId)
-					.OrderBy(n => n.PetitionType.SortOrder).ToList();
-
-		this.committeeId = dbContext.CommitteeSessions.AsNoTracking().Where(n => n.CommitteeSessionId == SessionId)
-		.Select(n => n.Committee.CommitteeId).FirstOrDefault();
+						.Where(n => n.AgendaItem.AgendaItemId == agendaItemId && (n.Status == EPetitionStates.Active || n.Status == EPetitionStates.Queued))
+					.OrderBy(n => n.PetitionType.SortOrder).ThenBy(n => n.PetitionDate).ToList();
 	}
 
-	private async Task AddPetition(PetitionType type)
+	private void AddPetition(int type)
 	{
-		
+		if (vcService.IsActiveForCommittee(committeeId) && selectedAgendaItem != null)
+		{
+			vcService.MakePetition(selectedAgendaItem.Value, type);
+		}
+	}
+
+	private void ActivatePetition(string petitionId)
+	{
+		vcService.ActivatePetition(petitionId);
+	}
+
+	private void RemovePetition(string petitionId)
+	{
+		vcService.RemovePetition(petitionId);
 	}
 
 }

@@ -6,7 +6,7 @@
     public enum EPetitionStates
     {
         /// <summary>
-        /// Known Status
+        /// Unkown/Unhandled Status
         /// </summary>
         Unkown,
         /// <summary>
@@ -25,6 +25,18 @@
         /// is currently in review for example the chairs are taking a look at it, before adding it 
         /// to the offical list of petitions that are waiting.
         /// </summary>
-        InReview
+        InReview,
+        /// <summary>
+        /// Is part of the list
+        /// </summary>
+        Queued,
+        /// <summary>
+        /// If the petition was removed
+        /// </summary>
+        Removed,
+        /// <summary>
+        /// When the petition was active and is now resolved.
+        /// </summary>
+        Resolved,
     }
 }

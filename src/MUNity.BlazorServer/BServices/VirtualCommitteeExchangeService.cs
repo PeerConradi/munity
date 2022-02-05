@@ -9,11 +9,6 @@ namespace MUNity.BlazorServer.BServices
 
         private List<VirtualCommitteeExchange> _exchanges;
 
-        public void NotifyPetitionAdded(Petition petition)
-        {
-
-        }
-
         public VirtualCommitteeExchange GetExchange(string committeeId)
         {
             var exchange = _exchanges.FirstOrDefault(n => n.CommitteeId == committeeId);
@@ -42,7 +37,12 @@ namespace MUNity.BlazorServer.BServices
 
         public event EventHandler UserDisconnected;
 
-        public event EventHandler<Petition> PetitionCreated;
+        public event EventHandler<Petition> PetitionAdded;
+
+        public event EventHandler<Petition> PetitionRemoved;
+
+        public event EventHandler<Petition> PetitionUpdated;
+
 
         public ConcurrentDictionary<int, bool> connectedRoles = new ConcurrentDictionary<int, bool>();
 
@@ -54,6 +54,21 @@ namespace MUNity.BlazorServer.BServices
         public void NotifyUserDisconnected()
         {
             UserDisconnected?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void NotifyPetitionAdded(Petition petition)
+        {
+            PetitionAdded?.Invoke(this, petition);
+        }
+
+        public void NotifyPetitionRemoved(Petition petition)
+        {
+            PetitionRemoved?.Invoke(this, petition);
+        }
+
+        public void NotifyPetitionUpdated(Petition petition)
+        {
+            PetitionUpdated?.Invoke(this, petition);
         }
 
         public VirtualCommitteeExchange(string committeeId)
