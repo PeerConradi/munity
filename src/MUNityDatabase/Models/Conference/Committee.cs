@@ -1,4 +1,5 @@
 ﻿using MUNity.Base;
+using MUNity.Database.Models.LoS;
 using MUNity.Database.Models.Simulation;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,8 @@ public class Committee
     /// The conference of this committee.
     /// </summary>
     public Conference Conference { get; set; }
+
+    public ListOfSpeakers ListOfSpeakers { get; set; }
 
     /// <summary>
     /// Topics of this committee.

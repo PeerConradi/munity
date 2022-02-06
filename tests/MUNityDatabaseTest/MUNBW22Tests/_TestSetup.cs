@@ -49,6 +49,13 @@ public partial class FullDMUN2022Tests
         _context.Database.EnsureCreated();
     }
 
+    [OneTimeTearDown]
+    public async Task TearDownDatabase()
+    {
+        Console.WriteLine("DMUN-Test completed. Wait for some time to let the test runner clean up the test file.");
+        await Task.Delay(2000);
+    }
+
     [SetUp]
     public void ReloadContextToClearBuffer()
     {

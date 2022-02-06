@@ -30,8 +30,6 @@
 			{
 				<VCUserComponent IsOnline=@(exchange.connectedRoles.ContainsKey(role.RoleId)) Role="@role" Highlight="@(role.RoleId == MyRoleId)" />
 			}
-
-			<p>TTT: @string.Join(",", exchange.connectedRoles)</p>
 		}
 		
 	</div>
@@ -41,7 +39,7 @@
 @code {
 	[Parameter] public string CommitteeId { get; set; }
 
-	[Parameter] public int MyRoleId { get; set; }
+	[Parameter] public int? MyRoleId { get; set; }
 
 	private List<ConferenceDelegateRole> roles;
 

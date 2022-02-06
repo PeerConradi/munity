@@ -5,21 +5,21 @@
 		<!-- icon for online: fa-signal text-lime -->
 		<!-- icon if offline: fa-ban text-red-->
 		<i class="fa @((IsOnline) ? "fa-signal text-lime" : "fa-ban text-red")  fs-8px me-2"></i>
-		<img class="me-2" src="@($"/img/flags/small/{Role?.DelegateCountry?.Iso.ToLower()}.png")" style="width: 36px; height: 18px"/>
+		<img class="me-2"  src="@($"/img/flags/small/{Role?.DelegateCountry?.Iso.ToLower()}.png")" style="width: 36px; height: 18px"/>
 		@Role?.RoleName
 	</div>
 	<div class="d-flex align-items-center ms-auto">
 		<!-- Has hand raised-->
-		<div class="@(raisesHand ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-hand-paper"></i></div>
+		<div class="@(raisesHand ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-hand-paper" title="..."></i></div>
 		<div class="w-10px"></div>
 		<!-- Has an amendment/request on the top -->
-		<div class="@(hasProposition ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-bookmark"></i></div>
+		<div class="@(hasProposition ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-bookmark" title="Stellt einen Antrag"></i></div>
 		<div class="w-10px"></div>
 		<!-- Is currently speaking -->
-		<div class="@(wantsTpSpeak ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-bullhorn"></i></div>
+		<div class="@(wantsTpSpeak ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-bullhorn" title="Steht auf der Redeliste/Fragen"></i></div>
 		<div class="w-10px"></div>
 		<!-- Marked as present -->
-		<div class="@(isPresentChecked ? "text-white" : "text-gray-500")  fs-13px"><i class="fa fa-check"></i></div>
+		<div class="@(isPresentChecked ? "text-white" : "text-gray-500")  fs-13px"><i class="fa fa-check" title="Markiert als Anwesend/Abwesend"></i></div>
 	</div>
 </div>
 
