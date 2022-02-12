@@ -1,0 +1,48 @@
+﻿@inject BServices.ScopedSessionNotificationService notificationService
+
+@if (show)
+{
+	<div class="toast-container">
+		<div id="liveToast" class="toast fade show">
+			<div class="toast-header">
+				<div class="bg-blue rounded w-25px h-25px d-flex align-items-center justify-content-center text-white">
+					<i class="fa fa-bell"></i>
+				</div>
+				<strong class="me-auto ms-2">@title</strong>
+				<small>@timestamp</small>
+				<button type="button" class="btn-close" aria-label="Close" @onclick="() => show = false"></button>
+			</div>
+			<div class="toast-body">
+				@text
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	private bool show = false;
+
+	private string title = "";
+
+	private string text = "";
+
+	private DateTimeOffset timestamp;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		if (notificationService != null)
+		{
+			notificationService.NotificationCreated += OnNotificationCreated;
+		}
+	}
+
+	private void OnNotificationCreated(object sender, BServices.Notification notification)
+	{
+		this.title = notification.Title;
+		this.text = notification.Text;
+		this.timestamp = notification.Timestamp;
+		this.show = true;
+		InvokeAsync(StateHasChanged);
+	}
+}

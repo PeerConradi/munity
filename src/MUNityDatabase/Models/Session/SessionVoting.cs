@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Simulation;
+namespace MUNity.Database.Models.Session;
 
 public class SessionVoting
 {

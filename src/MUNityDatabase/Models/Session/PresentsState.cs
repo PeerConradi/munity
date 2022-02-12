@@ -1,6 +1,7 @@
-﻿using System;
+﻿using MUNity.Database.Models.Conference.Roles;
+using System;
 
-namespace MUNity.Database.Models.Simulation;
+namespace MUNity.Database.Models.Session;
 
 public class PresentsState
 {
@@ -14,9 +15,9 @@ public class PresentsState
 
     public int PresentsStateId { get; set; }
 
-    public SimulationPresents SimulationPresents { get; set; }
+    public SessionPresents SessionPresents { get; set; }
 
-    public SimulationUser SimulationUser { get; set; }
+    public ConferenceDelegateRole Role{ get; set; }
 
     public PresentsStates State { get; set; }
 

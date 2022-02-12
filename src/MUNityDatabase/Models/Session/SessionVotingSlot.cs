@@ -2,7 +2,7 @@
 using MUNity.Database.Models.Conference.Roles;
 using System;
 
-namespace MUNity.Database.Models.Simulation;
+namespace MUNity.Database.Models.Session;
 
 public class SessionVotingSlot
 {

@@ -13,7 +13,7 @@ namespace MUNity.Services.Extensions.CastExtensions
     {
         public static ListOfSpeakersViewModel ToViewModel(this ListOfSpeakers source)
         {
-            var model = new ViewModels.ListOfSpeakers.ListOfSpeakersViewModel()
+            var model = new ListOfSpeakersViewModel()
             {
                 AllSpeakers = source.AllSpeakers.Select(a => new ViewModels.ListOfSpeakers.SpeakerViewModel()
                 {

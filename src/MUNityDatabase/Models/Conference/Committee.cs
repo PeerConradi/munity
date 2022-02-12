@@ -82,6 +82,8 @@ public class Committee
     /// </summary>
     public ICollection<Session.CommitteeSession> Sessions { get; set; }
 
+    public Session.CommitteeSession CurrentSession { get; set; }
+
     public ICollection<Resolution.ResolutionAuth> Resolutions { get; set; }
 
     public ICollection<PetitionType> AllowedPetitionTypes { get; set; }

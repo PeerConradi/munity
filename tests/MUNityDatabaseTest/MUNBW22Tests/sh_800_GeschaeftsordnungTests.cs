@@ -397,6 +397,7 @@ public partial class FullDMUN2022Tests
             Name = "Erster Sitzungsblock"
         };
         _context.CommitteeSessions.Add(session);
+        gv.CurrentSession = session;
         _context.SaveChanges();
         Assert.AreEqual(1, _context.CommitteeSessions.Where(n => n.Committee.CommitteeId == "munsh22-gv").Count());
     }
@@ -405,23 +406,23 @@ public partial class FullDMUN2022Tests
     [Order(2821)]
     public void TestCreateAnAgendaItem()
     {
-        var session = _context.CommitteeSessions.Include(n => n.AgendaItems).FirstOrDefault(n => n.Committee.CommitteeId == "munsh22-gv");
+        var session = _context.CommitteeSessions.FirstOrDefault(n => n.Committee.CommitteeId == "munsh22-gv");
         Assert.NotNull(session);
 
         var agendaItem = new AgendaItem()
         {
             Name = "Test Tagesordnungspunkt"
         };
-        session.AgendaItems.Add(agendaItem);
+        session.CurrentAgendaItem = agendaItem;
         _context.SaveChanges();
-        Assert.AreEqual(1, _context.AgendaItems.Count(n => n.Session.Committee.CommitteeId == "munsh22-gv"));
+        Assert.NotNull(_context.CommitteeSessions.Include(n => n.CurrentAgendaItem).FirstOrDefault(n => n.Committee.CommitteeId == "munsh22-gv").CurrentAgendaItem);
     }
 
     [Test]
     [Order(2822)]
     public void TestCreateAPetition()
     {
-        var agendaItem = _context.AgendaItems.FirstOrDefault(n => n.Session.Committee.CommitteeId == "munsh22-gv");
+        var agendaItem = _context.AgendaItems.FirstOrDefault();
         var petitionType = _context.PetitionTypes.FirstOrDefault(n => n.AllowedCommittees.Any(a => a.CommitteeId == "munsh22-gv"));
         var role = _context.Delegates.FirstOrDefault(n => n.Committee.CommitteeId == "munsh22-gv");
 
@@ -440,5 +441,12 @@ public partial class FullDMUN2022Tests
         _context.Petitions.Add(petition);
         _context.SaveChanges();
         Assert.AreEqual(1, _context.Petitions.Count());
+    }
+
+    [Test]
+    [Order(2823)]
+    public void TestCreateAListOfSpeakersForMUNBWGV()
+    {
+
     }
 }

@@ -10,7 +10,7 @@
 	</div>
 	<div class="d-flex align-items-center ms-auto">
 		<!-- Has hand raised-->
-		<div class="@(raisesHand ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-hand-paper" title="..."></i></div>
+		<div class="@(RaisesHand ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-hand-paper" title="..."></i></div>
 		<div class="w-10px"></div>
 		<!-- Has an amendment/request on the top -->
 		<div class="@(hasProposition ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-bookmark" title="Stellt einen Antrag"></i></div>
@@ -19,7 +19,7 @@
 		<div class="@(wantsTpSpeak ? "text-white" : "text-gray-500") fs-13px"><i class="fa fa-bullhorn" title="Steht auf der Redeliste/Fragen"></i></div>
 		<div class="w-10px"></div>
 		<!-- Marked as present -->
-		<div class="@(isPresentChecked ? "text-white" : "text-gray-500")  fs-13px"><i class="fa fa-check" title="Markiert als Anwesend/Abwesend"></i></div>
+		<div class="@(IsPresent ? "text-white" : "text-gray-500")  fs-13px"><i class="fa fa-check" title="Markiert als Anwesend/Abwesend"></i></div>
 	</div>
 </div>
 
@@ -32,23 +32,12 @@
 
 	[Parameter] public bool IsOnline { get; set; }
 
-	private bool raisesHand;
+	[Parameter] public bool RaisesHand { get; set; }
 
-	private bool hasProposition;
+	[Parameter] public bool hasProposition { get; set; }
 
-	private bool wantsTpSpeak;
+	[Parameter] public bool wantsTpSpeak { get; set; }
 
-	private bool isPresentChecked;
+	[Parameter] public bool IsPresent { get; set; }
 
-	private Random rnd = new Random();
-
-
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		raisesHand = (rnd.Next(0, 10) >= 7);
-		hasProposition = rnd.Next(0, 10) >= 7;
-		wantsTpSpeak = rnd.Next(0, 10) >= 7;
-		isPresentChecked = rnd.Next(0, 10) >= 7;
-	}
 }

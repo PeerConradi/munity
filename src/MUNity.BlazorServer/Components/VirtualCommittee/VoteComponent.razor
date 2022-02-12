@@ -1,0 +1,102 @@
+﻿@using MUNity.Database.Models.Session
+
+@inject BServices.VotingExchangeService voteExchangeService
+@inject MunityContext dbContext
+@inject BServices.VirtualCommiteeParticipationService vcPartService
+@inject ILogger<VoteComponent> logger
+
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Abstimmung</h4>
+    </div>
+    <div class="panel-body">
+        @if (voting != null)
+        {
+            <h3>@voting.Name</h3>
+            <h5>@voting.Description</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Delegation</th>
+                        <th>Stimme</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var slot in voting.VoteSlots)
+                    {
+                        <tr>
+                            <td>@slot.User.RoleName</td>
+                            <td>
+                                @if (slot.User.RoleId == vcPartService.RoleId && slot.Choice == EVoteStates.NotVoted) 
+                                {
+                                    <button class="btn btn-success" @onclick="() => Vote(EVoteStates.Pro)">Dafür</button>
+                                    <button class="btn btn-danger" @onclick="() => Vote(EVoteStates.Con)">Dagegen</button>
+                                    @if (voting.AllowAbstention)
+                                    {
+                                        <button class="btn btn-primary" @onclick="() => Vote(EVoteStates.Abstention)">Enthaltung</button>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>@slot.Choice</p>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        
+    </div>
+</div>
+
+@code {
+    [Parameter] public string VoteId { get; set; }
+
+    private SessionVoting voting;
+
+    private BServices.VotingExchange exchange;
+
+    private int? myRoleId;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        vcPartService.Registered += delegate { InvokeAsync(StateHasChanged); };
+        exchange = voteExchangeService.GetExchange(VoteId);
+        voting = dbContext.SessionVotings.Include(n => n.VoteSlots).ThenInclude(n => n.User)
+        .FirstOrDefault(n => n.SessionVotingId == VoteId);
+        if (exchange != null)
+        {
+            exchange.UserVoted += OnUserVoted;
+        }
+    }
+
+    private void OnUserVoted(object sender, BServices.UserVotedEventArgs args)
+    {
+        var slot = this.voting.VoteSlots.FirstOrDefault(n => n.User.RoleId == args.RoleId);
+        if (slot != null)
+        {
+            slot.Choice = args.Choice;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void Vote(EVoteStates choice)
+    {
+        if (vcPartService?.RoleId != null)
+        {
+            var mySlot = voting.VoteSlots.FirstOrDefault(n => n.User.RoleId == vcPartService?.RoleId);
+            if (mySlot != null)
+            {
+                mySlot.Choice = choice;
+                dbContext.SaveChanges();
+                exchange.NotifyUserVoted(vcPartService.RoleId, mySlot.Choice);
+            }
+            else
+            {
+                logger?.LogError($"Tried to vote with the RoleId: {vcPartService.RoleId} but no slot was found that could be used in voting {VoteId}");
+            }
+        }
+    }
+}

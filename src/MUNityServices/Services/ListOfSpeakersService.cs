@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MUNity.Database.Context;
 using MUNity.Database.Models.LoS;
 using MUNity.Services.Extensions.CastExtensions;
@@ -17,6 +18,8 @@ namespace MUNity.Services
         private readonly IServiceScopeFactory serviceScopeFactory;
 
         private readonly ObservableCollection<ListOfSpeakersViewModel> cachedLists;
+
+        private ILogger<ListOfSpeakersService> logger;
 
         public ListOfSpeakersViewModel GetViewModel(string id)
         {
@@ -46,7 +49,7 @@ namespace MUNity.Services
         {
             using var scope = serviceScopeFactory.CreateScope();
             using var service = scope.ServiceProvider.GetRequiredService<ListOfSpeakersDatabaseService>();
-            var list = service.CreateList(id);
+            var list = service.CreateList(id ?? Guid.NewGuid().ToString());
             var viewModel = list.ToViewModel();
             this.cachedLists.Add(viewModel);
             return viewModel;
@@ -84,11 +87,16 @@ namespace MUNity.Services
                 Mode = Base.SpeakerModes.WaitToSpeak,
                 OrdnerIndex = context.Speakers.Count(n => n.ListOfSpeakers.ListOfSpeakersId == speakerListId && n.Mode == Base.SpeakerModes.WaitToSpeak)
             });
-            context.SaveChanges();
+            var changes = context.SaveChanges();
 
             listViewModel.AddSpeaker(name, iso);
 
-            return true;
+            if (changes != 1)
+            {
+                logger?.LogError($"Expected one (1) change to be performed when a new speaker should have been added to list {speakerListId} but was {changes}.");
+            }
+
+            return changes == 1;
         }
 
         public bool AddQuestion(string speakerListId, string name, string iso)
@@ -105,6 +113,9 @@ namespace MUNity.Services
         {
             this.serviceScopeFactory = scopeFactory;
             cachedLists = new ObservableCollection<ListOfSpeakersViewModel>();
+
+            using var scope = scopeFactory.CreateScope();
+            this.logger = scope.ServiceProvider.GetRequiredService<ILogger<ListOfSpeakersService>>();
         }
     }
 }

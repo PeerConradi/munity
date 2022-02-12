@@ -28,7 +28,12 @@
 		{
 			foreach(var role in roles)
 			{
-				<VCUserComponent IsOnline=@(exchange.connectedRoles.ContainsKey(role.RoleId)) Role="@role" Highlight="@(role.RoleId == MyRoleId)" />
+				<VCUserComponent IsOnline=@(exchange.connectedRoles.ContainsKey(role.RoleId)) 
+				Role="@role" 
+				Highlight="@(role.RoleId == MyRoleId)"
+				RaisesHand="@exchange.CurrentSessionExchange.Petitions.Any(n => n.PetitionUserId == role.RoleId && n.PetitionCategoryName == "Persönlicher Antrag")"
+				hasProposition="@exchange.CurrentSessionExchange.Petitions.Any(n => n.PetitionUserId == role.RoleId && n.PetitionCategoryName != "Persönlicher Antrag")" 
+				IsPresent="@presentRoles.Any(n => n.RoleId == role.RoleId && n.IsPresent)" />
 			}
 		}
 		
@@ -47,6 +52,8 @@
 
 	private List<Database.General.Country> countries = new();
 
+	private List<PresentRole> presentRoles = new();
+
 	private BServices.VirtualCommitteeExchange exchange;
 
 	protected override void OnInitialized()
@@ -57,10 +64,27 @@
 		{
 			this.exchange.UserConnected += (s, a) => InvokeAsync(StateHasChanged);
 			this.exchange.UserDisconnected += (s, a) => InvokeAsync(StateHasChanged);
+			this.exchange.CurrentSessionChanged += delegate { InvokeAsync(StateHasChanged); };
+			this.exchange.CurrentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
+			if (this.exchange.CurrentSessionExchange != null)
+			{
+				this.presentRoles = dbContext.PresentStates.Where(n => n.SessionPresents.Session.CommitteeSessionId == this.exchange.CurrentSessionExchange.SessionId)
+				.Select(n => new PresentRole()
+					{
+						RoleId = n.Role.RoleId,
+						IsPresent = n.State == Database.Models.Session.PresentsState.PresentsStates.Present || n.State == Database.Models.Session.PresentsState.PresentsStates.Late
+					}).ToList();
+			}
 		}
 		roles = dbContext.Delegates.Include(n => n.DelegateCountry).Where(n => n.Committee.CommitteeId == CommitteeId).ToList();
 
 	}
 
+	private class PresentRole
+	{
+		public int RoleId { get; set; }
+
+		public bool IsPresent { get; set; }
+	}
 
 }

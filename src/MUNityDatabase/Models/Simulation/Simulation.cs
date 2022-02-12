@@ -46,8 +46,6 @@ public class Simulation
 
     public ICollection<Resolution.ResolutionAuth> Resolutions { get; set; }
 
-    public ICollection<SimulationPresents> PresentChecks { get; set; }
-
 
     public Simulation()
     {

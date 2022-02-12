@@ -13,11 +13,16 @@
                 <h3><span>@session.Name</span> <span class="badge bg-info">@session.StartDate - @session.EndDate</span></h3>
             }
 
-            <label>Neuen Sitzungsblock erstellen</label> <br>
-            <RadzenDatePicker TValue="DateTime" @bind-Value=startDate ShowTime=true Placeholder="Start" />
-            <RadzenDatePicker TValue="DateTime?" @bind-Value=endDate ShowTime=true Placeholder="Ende" />
-            <RadzenTextBox @bind-Value=name Placeholder="Name" />
-            <button class="btn btn-info" @onclick=CreateNew>Erstellen</button>
+            <AuthorizeView>
+                <Authorized>
+                    <label>Neuen Sitzungsblock erstellen</label> <br>
+                    <RadzenDatePicker TValue="DateTime" @bind-Value=startDate ShowTime=true Placeholder="Start" />
+                    <RadzenDatePicker TValue="DateTime?" @bind-Value=endDate ShowTime=true Placeholder="Ende" />
+                    <RadzenTextBox @bind-Value=name Placeholder="Name" />
+                    <button class="btn btn-info" @onclick=CreateNew>Erstellen</button>
+                </Authorized>
+            </AuthorizeView>
+            
         }
         
 	</div>

@@ -10,7 +10,7 @@ namespace MUNity.VirtualCommittees.Dtos
     /// <summary>
     /// Users inside the Simulation can make Petition that can be accepted or denied by the Leader.
     /// </summary>
-    public class PetitionDto : MUNity.Models.Simulation.IPetition
+    public class PetitionDto : IPetition
     {
 
         /// <summary>
@@ -22,6 +22,10 @@ namespace MUNity.VirtualCommittees.Dtos
         /// References a Petition Type.
         /// </summary>
         public int PetitionTypeId { get; set; }
+
+        public string PetitionCategoryName { get; set; }
+
+        public string PetitionTypeName { get; set; }
 
         /// <summary>
         /// The current Status of the petition.
@@ -43,10 +47,16 @@ namespace MUNity.VirtualCommittees.Dtos
         /// </summary>
         public int PetitionUserId { get; set; }
 
+        public string PetitionUserIso { get; set; }
+
+        public string PetitionUserName { get; set; }
+
         /// <summary>
         /// The AgendaItem that this petition is refering to.
         /// </summary>
         public int TargetAgendaItemId { get; set; }
+
+        public int PetitionTypeSortOrder { get; set; }
 
         /// <summary>
         /// Creates a new Petition and generates a new Guid, Text will be string.Empty and the PetitionDate the current DateTime.

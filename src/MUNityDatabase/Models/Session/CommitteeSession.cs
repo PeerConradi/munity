@@ -27,7 +27,9 @@ public class CommitteeSession
 
     public ICollection<SessionVoting> Votings { get; set; }
 
-    public ICollection<AgendaItem> AgendaItems { get; set; }
+    public AgendaItem CurrentAgendaItem { get; set; }
+
+    public ICollection<CommitteeSessionLogEntry> SessionLog { get; set; }
 
     public CommitteeSession()
     {

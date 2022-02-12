@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MUNity.Database.Models.Simulation;
+namespace MUNity.Database.Models.Session;
 
-public class SimulationPresents
+public class SessionPresents
 {
-    public int SimulationPresentsId { get; set; }
+    public int SessionPresentsId { get; set; }
 
-    public Simulation Simulation { get; set; }
+    public CommitteeSession Session { get; set; }
 
     public DateTime CreatedTime { get; set; }
 
@@ -19,7 +19,7 @@ public class SimulationPresents
 
     public bool MarkedFinished { get; set; }
 
-    public SimulationPresents()
+    public SessionPresents()
     {
         CreatedTime = DateTime.Now;
     }

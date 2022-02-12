@@ -1,4 +1,8 @@
-﻿@inject MunityContext dbContext
+﻿@using MUNity.Database.Models.Session
+@inject MunityContext dbContext
+@inject NavigationManager navManager
+@inject BServices.ScopedSessionNotificationService notificationService
+@inject ILogger<VirtualCommitteTopMenu> logger
 
 <div id="top-menu" class="app-top-menu mt-4" style="position: absolute;">
 		<!-- BEGIN menu -->
@@ -93,29 +97,43 @@
 					<div class="menu-caret"></div>
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
-					<div class="menu-item">
-						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
-							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
-						</a>
-					</div>
+					<AuthorizeView>
+						<Authorized>
+							<div class="menu-item">
+								<a class="menu-link cursor-pointer" @onclick=CreateVoting>
+									<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
+								</a>
+							</div>
 
-					<div class="menu-item">
-						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
-							<div class="menu-text">Laufende Abstimmung 1 <i class="fa fa-clock text-warning"></i></div>
-						</a>
-					</div>
-
-					<div class="menu-item">
-						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
-							<div class="menu-text">Angenommene Abstimmung 1 <i class="fa fa-check text-success"></i></div>
-						</a>
-					</div>
+							@foreach(var voting in dbContext.SessionVotings)
+							{
+								<div class="menu-item">
+									<a class="menu-link" href="@($"/oc/{CommitteeId}/managevote/{voting.SessionVotingId}")" >
+										<div class="menu-text">
+											@voting.Name 
+											<i class="fa @(((voting.IsActive) ? "fa-clock text-warning" : "fa-check text-success")) "></i>
+										</div>
+									</a>
+								</div>
+							}
+						</Authorized>
+						<NotAuthorized>
+							@foreach(var voting in dbContext.SessionVotings)
+							{
+								<div class="menu-item">
+									<a class="menu-link" href="@($"/oc/{CommitteeId}/vote/{voting.SessionVotingId}")" >
+										<div class="menu-text">
+											@voting.Name 
+											<i class="fa @(((voting.IsActive) ? "fa-clock text-warning" : "fa-check text-success")) "></i>
+										</div>
+									</a>
+								</div>
+							}
+						</NotAuthorized>
+					</AuthorizeView>
 					
-					<div class="menu-item">
-						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
-							<div class="menu-text">Abgelehnte Abstimmung 1 <i class="fa fa-ban text-danger"></i></div>
-						</a>
-					</div>
+					
+				
 				</div>
 			</div>
 
@@ -130,11 +148,23 @@
 					<div class="menu-caret"></div>
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
-					<div class="menu-item">
-						<a href="@($"/oc/{CommitteeId}")" class="menu-link">
-							<div class="menu-text">Redeliste bearbeiten</div>
-						</a>
-					</div>
+					@if (listOfSpeakersId != null)
+					{
+						<div class="menu-item">
+							<a href="@($"/oc/{CommitteeId}/los/{listOfSpeakersId}")" class="menu-link">
+								<div class="menu-text">Redeliste bearbeiten</div>
+							</a>
+							</div>
+					}
+					else
+					{
+						<div class="menu-item">
+							<a class="menu-link">
+								<div class="menu-text">Keine Redeliste</div>
+							</a>
+						</div>
+					}
+
 				</div>
 			</div>
 
@@ -189,7 +219,11 @@
 @code {
 	[Parameter] public string CommitteeId { get; set; }
 
+	[Parameter] public string CurrentSessionId { get; set; }
+
 	private string conferenceId;
+
+	private string listOfSpeakersId;
 
 	protected override void OnParametersSet()
 	{
@@ -197,5 +231,49 @@
 		this.conferenceId = dbContext.Committees.AsNoTracking()
 		.Where(n => n.CommitteeId == CommitteeId)
 		.Select(n => n.Conference.ConferenceId).FirstOrDefault();
+
+		this.listOfSpeakersId = dbContext.Committees
+			.AsNoTracking()
+			.Where(n => n.CommitteeId == CommitteeId)
+			.Select(n => n.ListOfSpeakers.ListOfSpeakersId)
+			.FirstOrDefault();
+	}
+
+	private void CreateVoting()
+	{
+		if (!string.IsNullOrEmpty(CurrentSessionId))
+		{
+			var newVoting = new SessionVoting()
+			{
+				Name = "Neues Abstimmung",
+				Session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == CurrentSessionId)
+			};
+			var presentsCheckId = dbContext.PresentChecks.FirstOrDefault(n => n.Session.CommitteeSessionId == CurrentSessionId)?.SessionPresentsId;
+			if (presentsCheckId != null)
+			{
+				newVoting.VoteSlots = dbContext.PresentStates.Where(n => n.SessionPresents.SessionPresentsId == presentsCheckId)
+				.Select(n => new SessionVotingSlot()
+					{
+						Choice = EVoteStates.NotVoted,
+						User = n.Role,
+						Voting = newVoting
+					}).ToList();
+
+				dbContext.SessionVotings.Add(newVoting);
+				dbContext.SaveChanges();
+				navManager.NavigateTo($"/oc/{CommitteeId}/managevote/{newVoting.SessionVotingId}");
+			}
+			else
+			{
+				logger?.LogWarning("Unable to create a new voting because there was no presents check found!");
+				notificationService?.Notify("Nicht möglich", "Bevor eine Abstimmung angelegt werden kann, muss die Anwesenheit festgestellt werden.");
+			}
+		}
+		else
+		{
+			logger?.LogWarning("Unable to create a new voting because there was no current Session!");
+			notificationService?.Notify("Nicht möglich", "Es kann derzeit keine Abstimmung erstellt werden, es wurde keine aktueller Sitzungsblock gefunden welcher als referenz für die Anwesenheit genutzt werden kann.");
+		}
+
 	}
 }

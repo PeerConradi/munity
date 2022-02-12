@@ -29,8 +29,6 @@ public class AgendaItem
     public int OrderIndex { get; set; }
     public ICollection<Petition> Petitions { get; set; }
 
-    public CommitteeSession Session { get; set; }
-
     public AgendaItem()
     {
         this.Petitions = new List<Petition>();

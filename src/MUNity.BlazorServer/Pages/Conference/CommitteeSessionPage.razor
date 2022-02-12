@@ -9,17 +9,7 @@
         <h2>von @session?.StartDate bis @session?.EndDate</h2>
         <h3>Tagesordnungspunkte</h3>
         <ul>
-            @foreach(var agendaItem in dbContext.AgendaItems.Include(n => n.Petitions).ThenInclude(n => n.PetitionType).Include(n => n.Petitions).ThenInclude(n => n.User).Where(n => n.Session.CommitteeSessionId == Id))
-            {
-                <li>@agendaItem.Name
-                    <ul>
-                        @foreach(var petition in agendaItem.Petitions)
-                        {
-                            <li>@petition.PetitionType.Name - @petition.User.RoleName</li>
-                        }
-                    </ul>
-                </li>
-            }
+            
         </ul>
         
     </Authorized>

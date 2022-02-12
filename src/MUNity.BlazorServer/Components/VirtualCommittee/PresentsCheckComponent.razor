@@ -1,0 +1,150 @@
+﻿@using MUNity.Database.Models.Session
+@inject MunityContext dbContext
+@inject ILogger<PresentsCheckComponent> logger
+
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Anwesenheit</h4>
+        <div class="panel-heading-btn">
+			<a href="javascript:;" class="btn btn-xs btn-icon btn-warning" @onclick="() => showBody = !showBody"><i class="fa fa-minus"></i></a>
+		</div>
+    </div>
+    @if (showBody)
+    {
+        @*<div class="alert alert-success alert-dismissible fade show rounded-0 mb-0">
+		    <div class="d-flex">
+			    <i class="fa fa-check fa-2x me-1"></i>
+			    <div class="mb-0 ps-2">
+				    Anwesenheit noch schneller feststellen mit den Tasten a für Anwesend und e für Abwesend.
+			    </div>
+		    </div>
+		    <button type="button" class="btn-close ms-3" data-bs-dismiss="alert"></button>
+	    </div>*@
+    <div class="panel-body">
+        @if (!string.IsNullOrEmpty(SessionId))
+        {
+            if (presentsCheck == null)
+            {
+                <p>Es wurde noch keine Anwesenheit festgestellt.</p>
+                <button class="btn btn-default" @onclick="StartCheck">Anwesenheit feststellen.</button>
+            }
+            else
+            {
+                @if (presentsCheck.MarkedFinished)
+                    {
+                        <p>Total: @presentsCheck.CheckedUsers.Count</p>
+                        <p>Anwesend: @presentsCheck.CheckedUsers.Count(n => n.State == PresentsState.PresentsStates.Present || n.State == PresentsState.PresentsStates.Late)</p>
+                        <p>Abwesend: @presentsCheck.CheckedUsers.Count(n => n.State == PresentsState.PresentsStates.Absent)</p>
+                        <p>Nicht geprüft: @presentsCheck.CheckedUsers.Count(n => n.State == PresentsState.PresentsStates.NotChecked)</p>
+                        <button class="btn btn-sm btn-default" @onclick="() => presentsCheck.MarkedFinished = false">bearbeiten</button>
+                    }
+                    else
+                    {
+                        <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Anwesend</th>
+                            <th>Abwesend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var check in presentsCheck.CheckedUsers)
+                        {
+                            <tr class="@((check.State == PresentsState.PresentsStates.Present ||check.State == PresentsState.PresentsStates.Late) ? "table-success" : null) @((check.State == PresentsState.PresentsStates.Absent) ? "table-danger" : null)">
+                                <td>@check.Role.RoleName</td>
+                                @if (check.State == PresentsState.PresentsStates.NotChecked)
+                                {
+                                    <td><button class="btn btn-success" @onclick="() => check.State = PresentsState.PresentsStates.Present">Anwesend</button></td>
+                                    <td><button class="btn btn-danger" @onclick="() => check.State = PresentsState.PresentsStates.Absent">Abwesend</button></td>
+                                }
+                                else if (check.State == PresentsState.PresentsStates.Absent)
+                                {
+                                    <td><button class="btn btn-outline-success" @onclick="() => check.State = PresentsState.PresentsStates.Late">Anwesend (verspätet)</button></td>
+                                    <td><h3 class="text-danger">Abwesend</h3></td>
+                                }
+                                else if (check.State == PresentsState.PresentsStates.Present)
+                                {
+                                    <td><h3 class="text-success">Anwesend</h3></td>
+                                    <td><button class="btn btn-outline-danger" @onclick="() => check.State = PresentsState.PresentsStates.Absent">Abwesend</button></td>
+                                }
+                                else if (check.State == PresentsState.PresentsStates.Late)
+                                {
+                                    <td><button class="btn btn-outline-success" @onclick="() => check.State = PresentsState.PresentsStates.Present">Anwesend (pünktlich)</button></td>
+                                    <td><button class="btn btn-outline-danger" @onclick="() => check.State = PresentsState.PresentsStates.Absent">Abwesend</button></td>
+                                }
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" @onclick="FinishCheck">Fertig</button>
+                    }
+                    
+                
+            }
+        }
+        else
+        {
+            <p>Invalid SessionId passed to PresentsCheckComponent</p>
+        }
+    </div>
+    }
+    
+</div>
+
+@code {
+    [Parameter] public string SessionId { get; set; }
+
+    private SessionPresents presentsCheck;
+
+    private bool showBody = true;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.presentsCheck = dbContext.PresentChecks.Include(n => n.CheckedUsers).FirstOrDefault(n => n.Session.CommitteeSessionId == SessionId);
+    }
+
+    private void StartCheck()
+    {
+        var committeeId = dbContext.CommitteeSessions.AsNoTracking().Where(n => n.CommitteeSessionId == SessionId)
+        .Select(n => n.Committee.CommitteeId).FirstOrDefault();
+        if (committeeId != null)
+        {
+            var rolesToCheck = dbContext.Delegates
+            .Where(n => n.Committee.CommitteeId == committeeId)
+            .Select(n => new PresentsState()
+            {
+                Role = n,
+                State = PresentsState.PresentsStates.NotChecked,
+            }).ToList();
+            var presentsCheck = new SessionPresents()
+                {
+                    CheckedDate = DateTime.Now,
+                    CheckedUsers = rolesToCheck,
+                    CreatedTime = DateTime.Now,
+                    Session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId),
+                    MarkedFinished = false
+                };
+            this.presentsCheck = presentsCheck;
+            InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            logger?.LogError($"unable to find the committee for session: {SessionId}");
+        }
+
+    }
+
+    private void FinishCheck()
+    {
+        if (this.presentsCheck == null)
+            return;
+
+        this.presentsCheck.MarkedFinished = true;
+        if (dbContext.PresentChecks.All(n => n.SessionPresentsId != this.presentsCheck.SessionPresentsId))
+            this.dbContext.PresentChecks.Add(this.presentsCheck);
+        this.dbContext.SaveChanges();
+    }
+}

@@ -2,6 +2,11 @@
 @page "/oc/{CommitteeId}/session/{SessionId}"
 @page "/oc/{CommitteeId}/resolution/{ResolutionId}"
 @page "/oc/{CommitteeId}/visit/{VisitCommitteeId}"
+@page "/oc/{CommitteeId}/los/{ManageListOfSpeakersId}"
+@page "/oc/{CommitteeId}/managevote/{ManageVotingId}"
+@page "/oc/{CommitteeId}/vote/{VoteId}"
+
+@using MUNity.BlazorServer.BServices
 @using MUNity.Database.Models.Conference
 @using MUNity.Database.Models.Conference.Roles
 
@@ -10,30 +15,49 @@
 @inject MunityContext dbContext
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService
 @inject BServices.VirtualCommiteeParticipationService virtualCommitteeParticipation
+@inject BServices.VirtualCommitteeExchangeService vcExchangeService
 @inject Services.UserConferenceAuthService conferenceAuthService
 @inject Services.ListOfSpeakersService listOfSpeakersService
+@inject ILogger<VirtualCommitteeSessionPage> logger
 
 @if (!accessDenied)
 {
-    <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu CommitteeId=@CommitteeId />
+    <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu CommitteeId=@CommitteeId CurrentSessionId=@exchange?.CurrentSessionExchange?.SessionId />
 
     <div class="d-flex flex-row justify-content-between bg-dark-800" style="min-height: 90px">
         <div class="d-flex align-items-center">
-                <h1 class="fs-1 text-blue-400">@committeeName</h1>
+            <h1 class="fs-1 text-blue-400 ml-3">@committeeName</h1>
         </div>
         <div class="mt-5px">
             @if(listOfSpeakersId != null)
             {
-                <MUNity.BlazorServer.Components.ListOfSpeakers.ListOfSpeakersHeaderComponent />
+                <MUNity.BlazorServer.Components.ListOfSpeakers.ListOfSpeakersHeaderComponent 
+                ListOfSpeakersId=@listOfSpeakersId 
+                MyRoleName=@myRole.RoleName
+                MyIso=@myRole.DelegateCountry?.Iso />
             }
             else
             {
                 <span class="text-white">Es wurde noch keine Redeliste erstellt</span>
-                <button class="btn btn-sm btn-default">Jetzt erstellen</button>
+                <button class="btn btn-sm btn-default" @onclick="CreateListOfSpeakers">Jetzt erstellen</button>
             }
         </div>
         <div class="d-flex align-items-center">
-            <button class="btn btn-primary align-middle" style="margin-right: 15px">Test</button>
+            @if (exchange != null)
+            {
+                if (exchange.CurrentSessionExchange != null)
+                {
+                    <h3 class="me-3 text-default">@exchange.CurrentSessionExchange.SessionName</h3>
+                }
+                else
+                {
+                    <h3 class="me-3 text-default">Kein Sitzungsblock</h3>
+                }
+            }
+            else
+            {
+                <small class="text-danger">Exchange error!</small>
+            }
         </div>
     </div>
 
@@ -47,6 +71,13 @@
         <div class="col-lg-9 col-sm-12">
             @if (!string.IsNullOrEmpty(SessionId))
             {
+                <h1 class="page-header">@(dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId)?.Name)</h1>
+                <AuthorizeView>
+                    <Authorized>
+                        <MUNity.BlazorServer.Components.VirtualCommittee.PresentsCheckComponent SessionId=@SessionId />
+                    </Authorized>
+                </AuthorizeView>
+                
                 <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent SessionId=@SessionId />
             }
             else if (!string.IsNullOrEmpty(ResolutionId))
@@ -56,6 +87,18 @@
             else if (!string.IsNullOrEmpty(VisitCommitteeId))
             {
                 <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent />
+            }
+            else if (!string.IsNullOrEmpty(ManageListOfSpeakersId))
+            {
+                <MUNity.BlazorServer.Components.ListOfSpeakers.LoSManagerComponent ViewModel=@listOfSpeakersService.GetViewModel(ManageListOfSpeakersId) />
+            }
+            else if (!string.IsNullOrEmpty(ManageVotingId))
+            {
+                <MUNity.BlazorServer.Components.VirtualCommittee.ManageVotingComponent VotingId=@ManageVotingId />
+            }
+            else if (!string.IsNullOrEmpty(VoteId))
+            {
+                <MUNity.BlazorServer.Components.VirtualCommittee.VoteComponent VoteId=@VoteId />
             }
             else {
                 <h1 class="page-header">Willkommen @((isTeam) ? "Teammitglied" : myRole?.RoleName)</h1>
@@ -87,6 +130,8 @@
             }
         </div>
     </div>
+
+    <MUNity.BlazorServer.Components.VirtualCommittee.VCNotificationsComponent />
 }
 else
 {
@@ -103,6 +148,12 @@ else
 
     [Parameter] public string VisitCommitteeId { get; set; }
 
+    [Parameter] public string ManageListOfSpeakersId { get; set; }
+
+    [Parameter] public string ManageVotingId { get; set; }
+
+    [Parameter] public string VoteId { get; set; }
+
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
     private string committeeName;
@@ -114,6 +165,8 @@ else
     private bool accessDenied = false;
 
     private bool isTeam = false;
+
+    private VirtualCommitteeExchange exchange;
 
     protected override async Task OnInitializedAsync()
     {
@@ -156,11 +209,33 @@ else
             committeeName = committeeInfo.Name;
             listOfSpeakersId = committeeInfo.ListOfSpeakersId;
         }
+        this.exchange = vcExchangeService.GetExchange(CommitteeId);
+        if (exchange != null)
+        {
+            this.exchange.CurrentSessionChanged += (n,a) => InvokeAsync(StateHasChanged);
+        }
         await InvokeAsync(StateHasChanged);
     }
 
     private void CreateListOfSpeakers()
     {
-        
+        var viewModel = listOfSpeakersService.CreateList($"los_{CommitteeId}_{Guid.NewGuid().ToString().Substring(0,5)}");
+        var committee = dbContext.Committees.FirstOrDefault(n => n.CommitteeId == CommitteeId);
+        if (committee != null)
+        {
+            var listInstance = dbContext.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId == viewModel.ListOfSpeakersId);
+            if (listInstance == null)
+            {
+                logger?.LogError($"Unable to find a list of speakers with the id '{viewModel.ListOfSpeakersId}' the list can't be loaded correctly!");
+            }
+            else
+            {
+                committee.ListOfSpeakers = listInstance;
+                this.listOfSpeakersId = viewModel.ListOfSpeakersId;
+                dbContext.SaveChanges();
+            }
+            
+        }
     }
+
 }

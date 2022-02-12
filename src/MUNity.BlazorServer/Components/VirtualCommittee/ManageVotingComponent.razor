@@ -1,0 +1,92 @@
+﻿@using MUNity.Database.Models.Session
+@inject MunityContext dbContext
+
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Abstimmung verwalten</h4>
+    </div>
+    <div class="panel-body">
+        @if (voting != null)
+        {
+            @if (voting.IsActive)
+            {
+                <button class="btn btn-primary" @onclick="() => { voting.IsActive = false; dbContext.SaveChanges();}">Abstimmung bearbeiten</button>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label>Titel</label>
+                    <input @bind=voting.Name class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Text</label>
+                    <input @bind=voting.Description class="form-control" />
+                </div>
+
+                <h3>Stimmberechtigt</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var slot in voting.VoteSlots)
+                        {
+                            <tr>
+                                <td>@slot.User.RoleName</td>
+                                <td><button class="btn btn-sm btn-danger" @onclick="() => RemoveSlot(slot)"> <i class="fa fa-trash"></i> entfernen</button> </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <button class="btn btn-primary" @onclick="ActivateVoting">Aktivieren</button>
+            }
+            
+        }
+        else
+        {
+            if (loaded == true)
+            {
+                <p>Fehler beim Laden der Abstimmung: @VotingId In den @dbContext.SessionVotings.Count() Abstimmungen nicht gefunden!</p>
+            }
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter] public string VotingId { get; set; }
+
+    private SessionVoting voting;
+
+    private bool loaded = false;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.voting = dbContext.SessionVotings
+        .Include(n => n.VoteSlots)
+        .ThenInclude(n => n.User)
+        .FirstOrDefault(n => n.SessionVotingId == VotingId);
+        loaded = true;
+    }
+
+    private void RemoveSlot(SessionVotingSlot slot)
+    {
+        voting.VoteSlots.Remove(slot);
+        dbContext.SaveChanges();
+    }
+
+    private void ActivateVoting()
+    {
+        if (voting != null)
+        {
+            voting.IsActive = true;
+            dbContext.SaveChanges();
+        }
+    }
+}

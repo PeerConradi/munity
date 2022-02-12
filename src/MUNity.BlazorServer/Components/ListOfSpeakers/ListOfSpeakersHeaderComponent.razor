@@ -1,71 +1,341 @@
-﻿<div class="d-flex">
-    <!-- Upcoming speakers -->
-    <div class="d-flex flex-column" style="text-align: right;">
-        <div class="animate__animated  animate__backInLeft">
-            <span class="text-white">Belgien</span>
-            <img src="/img/flags/small/be.png" />
-            <span class="badge bg-primary">1</span>
-        </div>
-        <div class="animate__animated animate__delay-1s animate__backInLeft">
-            <span class="text-white ">Deutschland</span>
-            <img src="/img/flags/small/de.png" />
-            <span class="badge bg-primary">2</span>
-        </div>
-        <div class="animate__animated animate__delay-2s animate__backInLeft">
-            <span class="text-white">Frankreich</span>
-            <img src="/img/flags/small/fr.png" />
-            <span class="badge bg-primary">3</span>
-        </div>
+﻿@using MUNity.Schema.ListOfSpeakers
+@using MUNity.Schema.VirtualCommittee.ViewModels
+@using MUNity.ViewModels.ListOfSpeakers
+
+@inject Services.ListOfSpeakersService listService
+@inject ILogger<ListOfSpeakersHeaderComponent> logger
+
+<div class="d-flex">
+
+    <!-- Add me to speakers-->
+    <div class="d-flex flex-column justify-content-center me-2">
+        @if (viewModel != null && viewModel.ListClosed)
+        {
+            <button class="btn btn-warning disabled"><i class="fa fa-lock"></i></button>
+        }
+        else if (viewModel != null && !viewModel.ListClosed)
+        {
+            if (viewModel.Speakers.Any(n => n.Name == MyRoleName) || viewModel.CurrentSpeaker != null && viewModel.CurrentSpeaker.Name == MyRoleName)
+            {
+                <button class="btn btn-success disabled" disabled><i class="fa fa-plus"></i></button>
+            }
+            else
+            {
+                <button class="btn btn-success" @onclick="AddMeToSpeakers"><i class="fa fa-plus"></i></button>
+            }
+        }
     </div>
 
-    <!-- Current Speaker and Time box-->
+
+    <!-- Upcoming speakers -->
+    <div class="d-flex flex-column" style="text-align: right;">
+        @{
+            int index = 0;
+            foreach(var nextSpeaker in nextSpeakers)
+            {
+                index++;
+                <div class="animate__animated  animate__backInLeft">
+                    <span class="text-white">@nextSpeaker.Name</span>
+                    <img src="@($"/img/flags/small/{nextSpeaker.Iso}.png")" />
+                    @if (index == 1)
+                    {
+                        <button class="badge bg-primary" @onclick="NextSpeaker">@index</button>
+                        
+                    }
+                    else
+                    {
+                        <span class="badge bg-primary">@index</span>
+                    }
+                </div>
+            }
+        }
+        
+        @if (mySpeakingIndex > 2)
+        {
+            <div class="animate__animated animate__delay-1s animate__backInLeft">
+                <span class="text-white ">@MyRoleName</span>
+                <img src="@($"/img/flags/small/{MyIso}.png")" />
+                <span class="badge bg-success">@(mySpeakingIndex + 1)</span>
+            </div>
+        }
+    </div>
+
+    <!-- Current Speaker and Quests and Time box-->
     <div class="d-flex justify-content-center">
         <div class="col-3 p-1 mt-5px text-center">
-
-            <img src="/img/flags/medium/ae.png" class="border border-3 border-primary" style="height: 50px" />
-            <h6 class="text-white">Afgahnistan</h6>
+            @if (viewModel?.CurrentSpeaker != null)
+            {
+                <img src="@($"/img/flags/medium/{viewModel.CurrentSpeaker.Iso}.png")" 
+                class="border border-2 @((viewModel.Status == ESpeakerListStatus.Speaking || viewModel.Status == ESpeakerListStatus.Answer) ? "border-primary" : null) " style="height: 50px"
+                @onclick="ToggleSpeakerMode" />
+                <h6 class="text-white">@viewModel.CurrentSpeaker.Name</h6>
+            }
+            else
+            {
+                <img src="/img/flags/medium/un.png" class="border border-3 border-dark" style="height: 50px" />
+                <h6 class="text-white">-</h6>
+            }
+            
         </div>
         <div class="col-3 p-3 ">
-            <h3 class="text-white">03:00</h3>
-            <h6 class="text-white-600">03:00</h6>
+            <h3 class="text-white">@viewModel.RemainingSpeakerTime.Minutes.ToString("D2"):@viewModel.RemainingSpeakerTime.Seconds.ToString("D2")</h3>
+            <h6 class="text-white-600">@viewModel.SpeakerTime.Minutes.ToString("D2"):@viewModel.SpeakerTime.Seconds.ToString("D2")</h6>
         </div>
-            <div class="col-3 p-3 text-right" style="text-align: right">
-            <h3 class="text-white">03:00</h3>
-            <h6 class="text-white-600">03:00</h6>
+
+        <!-- Question times-->
+        <div class="col-3 p-3 text-right" style="text-align: right">
+            <h3 class="text-white">@viewModel.RemainingQuestionTime.Minutes.ToString("D2"):@viewModel.RemainingQuestionTime.Seconds.ToString("D2")</h3>
+            <h6 class="text-white-600">@viewModel.QuestionTime.Minutes.ToString("D2"):@viewModel.QuestionTime.Seconds.ToString("D2")</h6>
         </div>
+
+        <!-- Current Question-->
         <div class="col-3 p-1 mt-5px text-center">
-            <img src="/img/flags/medium/un.png" style="height: 50px" />
-            <h6 class="text-white">Gast</h6>
+        @if (viewModel?.CurrentQuestion != null)
+        {
+            <img src="@($"/img/flags/medium/{viewModel.CurrentQuestion.Iso}.png")" 
+            class="border border-2 @((viewModel.Status == ESpeakerListStatus.Question) ? "border-primary" : null) " style="height: 50px"
+            @onclick="ToggleQuestionMode" />
+            <h6 class="text-white">@viewModel.CurrentQuestion.Name</h6>
+        }
+        else
+        {
+            <img src="/img/flags/medium/un.png" class="border border-3 border-dark" style="height: 50px" />
+            <h6 class="text-white">-</h6>
+        }
         </div>
     </div>
 
     <!-- Upcoming questions-->
     <div class="d-flex flex-column" style="text-align: left;">
-        <div class="animate__animated animate__backInRight">
-            <span class="badge bg-primary">1</span>
+        @{
+            int questionIndex = 0;
+            foreach(var nextQuestion in nextQuestions)
+            {
+                questionIndex++;
+                <div class="animate__animated animate__backInRight">
+                    @if (questionIndex == 1)
+                    {
+                        <button class="badge bg-primary" @onclick="NextQuestion">@index</button>
+                    }
+                    else
+                    {
+                        <span class="badge bg-primary">@questionIndex</span>
+                    }
+                    <img src="@($"/img/flags/small/{nextQuestion.Iso}.png")" />
+                    <span class="text-white">@nextQuestion.Name</span>
+                    
+                    
+                </div>
+            }
+        }
+        
+        @if (myQuestionIndex >= 2)
+        {
+            <div class="animate__animated animate__delay-1s animate__backInRight">
+                <span class="badge bg-success">@(myQuestionIndex + 1)</span>
+                <img src="@($"/img/flags/small/{MyIso}.png")" />
+                <span class="text-white ">@MyRoleName</span>
+            </div>
+        }
 
-            <img src="/img/flags/small/be.png" />
-            <span class="text-white">Belgien</span>
-        </div>
-        <div class="animate__animated animate__delay-1s animate__backInRight">
-            <span class="badge bg-primary">2</span>
-
-            <img src="/img/flags/small/de.png" />
-            <span class="text-white ">Deutschland</span>
-                
-        </div>
-        <div class="animate__animated animate__delay-2s animate__backInRight">
-            <span class="badge bg-primary">3</span>
-
-            <img src="/img/flags/small/fr.png" />
-            <span class="text-white">Frankreich</span>
-        </div>
     </div>
 
-    <!-- Members icon-->
+    <!-- Add me to questions -->
+    <div class="d-flex flex-column justify-content-center ml-2" style="margin-left: 10px">
+        @if (viewModel != null && viewModel.QuestionsClosed)
+        {
+            <button class="btn btn-warning disabled"><i class="fa fa-lock"></i></button>
+        }
+        else if (viewModel != null && !viewModel.QuestionsClosed)
+        {
+            if (viewModel.Questions.Any(n => n.Name == MyRoleName) || viewModel.CurrentQuestion != null && viewModel.CurrentQuestion.Name == MyRoleName)
+            {
+                <button class="btn btn-success disabled" disabled><i class="fa fa-plus"></i></button>
+            }
+            else
+            {
+                <button class="btn btn-success" @onclick="AddMeToQuestions"><i class="fa fa-plus"></i></button>
+            }
+        }
+    </div>
+
 </div>
 
 
 @code {
+    [Parameter] public string ListOfSpeakersId { get; set; }
 
+    [Parameter] public string MyRoleName { get; set; }
+
+    [Parameter] public string MyIso { get; set; }
+
+    private ListOfSpeakersViewModel viewModel;
+
+    private int mySpeakingIndex
+    {
+        get
+        {
+            var myElement = viewModel.Speakers.FirstOrDefault(n => n.Name == MyRoleName);
+            if (myElement != null)
+            {
+                int index = 0;
+                foreach(var speaker in viewModel.Speakers)
+                {
+                    if (speaker == myElement)
+                        break;
+                    index++;
+                }
+                return index;
+            }
+            return -1;
+        }
+    }
+
+    private int myQuestionIndex
+    {
+        get
+        {
+            if (viewModel?.Questions == null)
+                return -1;
+            var myElement = viewModel.Questions.FirstOrDefault(n => n.Name == MyRoleName);
+            if (myElement != null)
+            {
+                int index = 0;
+                foreach(var question in viewModel.Questions)
+                {
+                    if (question == myElement)
+                        break;
+                    index++;
+                }
+                return index;
+            }
+            return -1;
+        }
+    }
+
+    private IEnumerable<SpeakerViewModel> nextSpeakers
+    {
+        get
+        {
+            var list = new List<ListOfSpeakersViewModel>();
+            if (viewModel.Speakers.All(n => n.Name != MyRoleName))
+                return viewModel.Speakers.Take(3);
+
+            return viewModel.Speakers.Take(2);
+        }
+    }
+
+    private IEnumerable<SpeakerViewModel> nextQuestions
+    {
+        get
+        {
+            var list = new List<ListOfSpeakersViewModel>();
+            if (viewModel.Questions.All(n => n.Name != MyRoleName))
+                return viewModel.Questions.Take(3);
+
+            return viewModel.Questions.Take(2);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.viewModel = listService.GetViewModel(ListOfSpeakersId);
+        if (this.viewModel != null)
+        {
+            viewModel.PropertyChanged += delegate { InvokeAsync(StateHasChanged); };
+            viewModel.AllSpeakers.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
+            InvokeAsync(RefreshIfNeeded);
+        }
+    }
+
+    private void AddMeToSpeakers()
+    {
+        if (!string.IsNullOrEmpty(ListOfSpeakersId) && !string.IsNullOrEmpty(ListOfSpeakersId) &&
+        viewModel.Speakers.All(n => n.Name != MyRoleName))
+        {
+            string iso = MyIso;
+            if (string.IsNullOrEmpty(iso))
+                iso = "un";
+
+            var result = listService.AddSpeaker(ListOfSpeakersId, MyRoleName, iso);
+            if (result == false)
+            {
+                logger?.LogError($"Unable to add me ({MyRoleName} {MyIso}) to list of speakers correctly.");
+            }
+        }
+    }
+
+    private void AddMeToQuestions()
+    {
+        if (!string.IsNullOrEmpty(ListOfSpeakersId) && !string.IsNullOrEmpty(ListOfSpeakersId) &&
+        viewModel.Questions.All(n => n.Name != MyRoleName))
+        {
+            string iso = MyIso;
+            if (string.IsNullOrEmpty(iso))
+                iso = "un";
+
+            var result = listService.AddQuestion(ListOfSpeakersId, MyRoleName, iso);
+            if (result == false)
+            {
+                logger?.LogError($"Unable to add me ({MyRoleName} {MyIso}) to list of questions correctly.");
+            }
+        }
+    }
+
+    private async Task RefreshIfNeeded()
+    {
+        await InvokeAsync(StateHasChanged);
+        await Task.Delay(1000);
+        await RefreshIfNeeded();
+    }
+
+    private void NextSpeaker()
+    {
+        viewModel?.NextSpeaker();
+    }
+
+    private void NextQuestion()
+    {
+        viewModel?.NextQuestion();
+    }
+
+    private void ToggleSpeakerMode()
+    {
+        if (viewModel != null)
+        {
+            if (viewModel.Status == ESpeakerListStatus.Speaking ||
+            viewModel.Status == ESpeakerListStatus.Answer)
+            {
+                viewModel.Pause();
+            }
+            else if (viewModel.Status == ESpeakerListStatus.SpeakerPaused || 
+            viewModel.Status == ESpeakerListStatus.Stopped || 
+            viewModel.Status == ESpeakerListStatus.AnswerPaused)
+            {
+                viewModel.ResumeSpeaker();
+            }
+            else if (viewModel.Status == ESpeakerListStatus.Question ||
+            viewModel.Status == ESpeakerListStatus.QuestionPaused)
+            {
+                viewModel.StartAnswer();
+            }
+        }
+    }
+
+    private void ToggleQuestionMode()
+    {
+        if (viewModel != null)
+        {
+            if (viewModel.Status == ESpeakerListStatus.Question)
+            {
+                viewModel.Pause();
+            }
+            else
+            {
+                viewModel.ResumeQuestion();
+            }
+
+        }
+    }
 }

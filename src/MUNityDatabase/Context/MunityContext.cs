@@ -106,9 +106,13 @@ namespace MUNity.Database.Context
 
         public DbSet<CommitteeSession> CommitteeSessions { get; set; }
 
-        public DbSet<SessionVoting> SimulationVotings { get; set; }
+        public DbSet<SessionVoting> SessionVotings { get; set; }
 
         public DbSet<SessionVotingSlot> VotingSlots { get; set; }
+
+        public DbSet<SessionPresents> PresentChecks { get; set; }
+
+        public DbSet<PresentsState> PresentStates { get; set; }
 
         //public DbSet<SimulationLog> SimulationLog { get; set; }
 
@@ -124,9 +128,7 @@ namespace MUNity.Database.Context
 
         //public DbSet<SimulationStatus> SimulationStatuses { get; set; }
 
-        //public DbSet<SimulationPresents> PresentChecks { get; set; }
-
-        //public DbSet<PresentsState> PresentStates { get; set; }
+        
 
         public DbSet<ListOfSpeakers> ListOfSpeakers { get; set; }
 

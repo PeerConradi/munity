@@ -1,171 +1,108 @@
-﻿@using MUNity.Database.Models.Conference
+﻿@using MUNity.BlazorServer.BServices
+@using MUNity.Database.Models.Conference
 @using MUNity.Database.Models.Session
 @inject MunityContext dbContext
 @inject BServices.VirtualCommiteeParticipationService vcService
 @inject BServices.VirtualCommitteeExchangeService vcExchangeService
-
-<h1 class="page-title">@dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId)?.Name</h1>
-
-<ul class="nav nav-tabs nav-tabs-inverse nav-justified cursor-pointer">
-	<li class="nav-item"><a @onclick="() => selectedPanel = 0" class="nav-link @((selectedPanel == 0) ? "active" : null)"><i class="fa fa-camera fa-lg me-5px"></i> <span class="d-none d-md-inline">Tagesordnungspunkte</span></a></li>
-	<li class="nav-item"><a @onclick="() => selectedPanel = 1" class="nav-link @((selectedPanel == 1) ? "active" : null)"><i class="fa fa-archive fa-lg me-5px"></i> <span class="d-none d-md-inline">Anträge (@petitions?.Count)</span></a></li>
-	<li class="nav-item"><a @onclick="() => selectedPanel = 2" class="nav-link @((selectedPanel == 2) ? "active" : null)"><i class="fa fa-envelope fa-lg me-5px"></i> <span class="d-none d-md-inline">Email</span></a></li>
-</ul>
+@inject ILogger<PropsitionsComponent> logger
 
 
-<div class="tab-content bg-white rounded-bottom mb-20px">
-	<div class="tab-pane fade @((selectedPanel == 0) ? "active show" : null)">
-		<div class="p-3 h-600px" style="overflow-y: scroll;">
-			
-			@foreach(var agendaItem in dbContext.AgendaItems.Where(n => n.Session.CommitteeSessionId == SessionId))
-				{
-					<div class="d-sm-flex" @onclick="() => LoadPetitionsForAgendaItem(agendaItem.AgendaItemId)">
-						<a href="javascript:;" class="w-sm-200px">
-							<img class="mw-100 rounded" src="/img/gallery/gallery-1.jpg" alt="">
-						</a>
-						<div class="flex-1 ps-sm-3 pt-3 pt-sm-0">
-								<h5>@agendaItem.Name</h5>
-								@agendaItem.Description
-							</div>
-				
-					</div>
-					<hr class="bg-gray-500">
-					
-				}
-			
-		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 300px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 120px;"></div></div></div>
-	</div>
-	<div class="tab-pane fade @((selectedPanel == 1) ? "active show" : null)">
-		<div class="ps" data-scrollbar="true" data-init="true">
+
+@if (currentSessionExchange != null)
+{
+
+	<div class="panel panel-inverse">
+		<div class="panel-heading">
+			<h4 class="panel-title">Anträge</h4>
+		</div>
+		<div class="panel-body">
+			<button class="btn btn-sm btn-default" @onclick="ReloadSessionExchangesAndFindCurrent">Neu laden (behebt ggf. Fehler in der Reihenfolge)</button>
 			<table class="table table-panel mb-0">
 				<thead>
 					<tr>
 						<th>Zeitpunkt</th>
 						<th class="hidden-sm text-center">Land</th>
 						<th>Art</th>
+						<th>Antrag</th>
 						<th>Annehmen</th>
 						<th>Zurückziehen/Verwerfen</th>
 					</tr>
 				</thead>
 				<tbody>
-					@if (selectedAgendaItem == null)
+					@if (currentSessionExchange?.Petitions != null && currentSessionExchange.Petitions.Count > 0)
 					{
-						<p>Kein Tagesordnungspunkt ausgewählt</p>
-					}
-					else
-					{
-						if (petitions != null && petitions.Count > 0)
+						foreach (var petition in currentSessionExchange.Petitions.OrderBy(n => n.Status))
 						{
-							foreach(var petition in petitions)
-							{
-								<!-- Waiting Proposition -->
-								<tr class="@((petition.Status == EPetitionStates.Active) ? "table-info" : null)">
-									<td class="fw-bold text-muted ">@petition?.PetitionDate</td>
-									<td class="hidden-sm">
-										<img src="@($"/img/flags/small/{petition?.User?.DelegateCountry?.Iso}.png")" alt="" width="32px">
-										@petition?.User?.RoleName
-									</td>
-									<td class="text-nowrap">
-										<h6>@petition?.PetitionType?.Name</h6>
-									</td>
-									<AuthorizeView>
-										<Authorized>
-											@if (petition.Status != EPetitionStates.Active)
-											{
-												<td class="text-blue fw-bold"><button class="btn btn-sm btn-success" @onclick="() => ActivatePetition(petition.PetitionId)">Antrag hervorheben</button></td>
-											}
-											else
-											{
-												<td></td>
-											}
-											<td class="text-nowrap"><button class="btn btn-sm @((petition.Status == EPetitionStates.Queued) ? "btn-danger" : "btn-indigo")" @onclick="() => RemovePetition(petition.PetitionId)">@((petition.Status == EPetitionStates.Queued) ? "Antrag ablehnen" : "Antrag fertig")</button></td>
-										</Authorized>
-										<NotAuthorized>
+							<!-- Waiting Proposition -->
+							<tr class="@((petition.Status == EPetitionStates.Active) ? "table-info" : null)">
+								<td class="fw-bold text-muted ">@petition?.PetitionDate</td>
+								<td class="hidden-sm">
+									<img src="@($"/img/flags/small/{petition?.PetitionUserIso}.png")" alt="" width="32px">
+									@petition?.PetitionUserName
+								</td>
+								<td class="text-nowrap">
+									<h6>@petition?.PetitionCategoryName</h6>
+								</td>
+								<td class="text-nowrap">
+									<h6>@petition?.PetitionTypeName</h6>
+								</td>
+								<AuthorizeView>
+									<Authorized>
+										@if (petition.Status != EPetitionStates.Active)
+										{
+											<td class="text-blue fw-bold"><button class="btn btn-sm btn-success" @onclick="() => ActivatePetition(petition.PetitionId)">Antrag hervorheben</button></td>
+										}
+										else
+										{
 											<td></td>
-											<td>
-												@if (petition.User.RoleId == vcService.RoleId && petition.Status != EPetitionStates.Active)
-												{
-													<button class="btn btn-sm btn-danger" @onclick="() => RemovePetition(petition.PetitionId)">Antrag zurückziehen</button>
-												}
-											</td>
-										</NotAuthorized>
-									</AuthorizeView>
-									
-								</tr>
-							}
+										}
+										<td class="text-nowrap"><button class="btn btn-sm @((petition.Status == EPetitionStates.Queued) ? "btn-danger" : "btn-indigo")" @onclick="() => RemovePetition(petition.PetitionId)">@((petition.Status == EPetitionStates.Queued) ? "Antrag ablehnen" : "Antrag fertig")</button></td>
+									</Authorized>
+									<NotAuthorized>
+										<td></td>
+										<td>
+											@if (petition.PetitionUserId == vcService.RoleId && petition.Status != EPetitionStates.Active)
+											{
+												<button class="btn btn-sm btn-danger" @onclick="() => RemovePetition(petition.PetitionId)">Antrag zurückziehen</button>
+											}
+										</td>
+									</NotAuthorized>
+								</AuthorizeView>
+
+							</tr>
 						}
 					}
-					
-					
+
 				</tbody>
 			</table>
 
-			@if (committeeId != null && selectedAgendaItem != null)
-			{
-				@foreach(var petitionType in dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == committeeId).SelectMany(n => n.AllowedPetitionTypes).OrderBy(n => n.SortOrder).Select(n => new { Id = n.PetitionTypeId, Name = n.Name}))
+			<div class="mt-5">
+				@if (committeeId != null && currentSessionExchange?.Petitions != null && vcService != null && vcService.RoleId != 0)
 				{
-						<button class="btn m-1 btn-primary @((petitions.Any(n => n.PetitionType.PetitionTypeId == petitionType.Id && n.User.RoleId == vcService.RoleId)) ? "disabled" : null)" @onclick="() => AddPetition(petitionType.Id)">@petitionType.Name</button>
+					@foreach(var petitionCategory in dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == committeeId).SelectMany(n => n.AllowedPetitionTypes).OrderBy(n => n.SortOrder).Select(n => new { Category = n.Category, Id = n.PetitionTypeId, Name = n.Name}).ToList().GroupBy(n => n.Category))
+					{
+						<h3>@petitionCategory.Key</h3>
+						@foreach(var petitionType in petitionCategory)
+						{
+							<button class="btn m-1 btn-primary @((currentSessionExchange.Petitions.Any(n => n.PetitionTypeId == petitionType.Id && n.PetitionUserId == vcService.RoleId)) ? "disabled" : null)" @onclick="() => AddPetition(petitionType.Id)">@petitionType.Name</button>
+						}
+					}
 				}
-			}
+			</div>
 			
-		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+		</div>
 	</div>
-	<div class="tab-pane fade @((selectedPanel == 2) ? "active show" : null)" id="email">
-		<div class="h-300px p-3 ps" data-scrollbar="true" data-init="true" >
-			<div class="d-flex">
-				<a class="w-60px" href="javascript:;">
-					<img src="../assets/img/user/user-1.jpg" alt="" class="mw-100 rounded-pill">
-				</a>
-				<div class="flex-1 ps-3">
-					<a href="javascript:;" class="text-inverse text-decoration-none"><h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h5></a>
-					<p class="mb-5px">
-						Aenean mollis arcu sed turpis accumsan dignissim. Etiam vel tortor at risus tristique convallis. Donec adipiscing euismod arcu id euismod. Suspendisse potenti. Aliquam lacinia sapien ac urna placerat, eu interdum mauris viverra.
-					</p>
-					<span class="text-muted fs-11px fw-bold">Received on 04/16/2021, 12.39pm</span>
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-flex">
-				<a class="w-60px" href="javascript:;">
-					<img src="../assets/img/user/user-2.jpg" alt="" class="mw-100 rounded-pill">
-				</a>
-				<div class="flex-1 ps-3">
-					<a href="javascript:;" class="text-inverse text-decoration-none"><h5>Praesent et sem porta leo tempus tincidunt eleifend et arcu.</h5></a>
-					<p class="mb-5px">
-						Proin adipiscing dui nulla. Duis pharetra vel sem ac adipiscing. Vestibulum ut porta leo. Pellentesque orci neque, tempor ornare purus nec, fringilla venenatis elit. Duis at est non nisl dapibus lacinia.
-					</p>
-					<span class="text-muted fs-11px fw-bold">Received on 04/16/2021, 12.39pm</span>
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-flex">
-				<a class="w-60px" href="javascript:;">
-					<img src="../assets/img/user/user-3.jpg" alt="" class="mw-100 rounded-pill">
-				</a>
-				<div class="flex-1 ps-3">
-					<a href="javascript:;" class="text-inverse text-decoration-none"><h5>Ut mi eros, varius nec mi vel, consectetur convallis diam.</h5></a>
-					<p class="mb-5px">
-						Ut mi eros, varius nec mi vel, consectetur convallis diam. Nullam eget hendrerit eros. Duis lacinia condimentum justo at ultrices. Phasellus sapien arcu, fringilla eu pulvinar id, mattis quis mauris.
-					</p>
-					<span class="text-muted fs-11px fw-bold">Received on 04/16/2021, 12.39pm</span>
-				</div>
-			</div>
-			<hr class="bg-gray-500">
-			<div class="d-flex">
-				<a class="w-60px" href="javascript:;">
-					<img src="../assets/img/user/user-4.jpg" alt="" class="mw-100 rounded-pill">
-				</a>
-				<div class="flex-1 ps-3">
-					<a href="javascript:;" class="text-inverse text-decoration-none"><h5>Aliquam nec dolor vel nisl dictum ullamcorper.</h5></a>
-					<p class="mb-5px">
-						Aliquam nec dolor vel nisl dictum ullamcorper. Duis vel magna enim. Aenean volutpat a dui vitae pulvinar. Nullam ligula mauris, dictum eu ullamcorper quis, lacinia nec mauris.
-					</p>
-					<span class="text-muted fs-11px fw-bold">Received on 04/16/2021, 12.39pm</span>
-				</div>
-			</div>
-		<div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
-	</div>
-</div>
+}
+else
+{
+	<p>No Current exchange.</p>
+
+	@if (this.committeeExchange != null)
+	{
+		<button class="btn btn-primary" @onclick="ReloadSessionExchangesAndFindCurrent">Neu laden</button>
+	}
+}
+
 
 @code {
 	[Parameter] public string SessionId { get; set; }
@@ -174,9 +111,9 @@
 
 	private string committeeId;
 
-	private List<Petition> petitions;
+	private CommitteeSessionExchange currentSessionExchange;
 
-	private int? selectedAgendaItem = null;
+	private VirtualCommitteeExchange committeeExchange;
 
 	private bool alreadyMakingThisRequest = false;
 
@@ -187,73 +124,42 @@
 		this.committeeId = dbContext.CommitteeSessions.AsNoTracking().Where(n => n.CommitteeSessionId == SessionId)
 		.Select(n => n.Committee.CommitteeId).FirstOrDefault();
 
-		this.selectedAgendaItem = null;
-		this.petitions = null;
+		this.committeeExchange = vcExchangeService.GetExchange(committeeId);
+		this.currentSessionExchange = committeeExchange.SessionExchanges.FirstOrDefault(n => n.SessionId == SessionId);
 
-		if (committeeId != null)
+		if (currentSessionExchange != null)
 		{
-			var exchange = vcExchangeService.GetExchange(committeeId);
-			if (exchange != null)
-			{
-				exchange.PetitionAdded += (s, p) => 
-				{ 
-					if (petitions != null && petitions.All(n => n.PetitionId != p.PetitionId) && p != null) 
-					{
-						int bestIndex = 0;
-						for (int i=0;i<petitions.Count;i++)
-						{
-							if (petitions[i].PetitionType != null && p.PetitionType != null)
-							{
-								if (petitions[i].PetitionType.SortOrder > p.PetitionType.SortOrder &&
-								petitions[i].PetitionType.SortOrder == p.PetitionType.SortOrder)
-								{
-									break;
-								}
-
-								if (petitions[i].PetitionType.SortOrder == p.PetitionType.SortOrder &&
-								p.PetitionDate > petitions[i].PetitionDate)
-								{
-									bestIndex = i + 1;
-									break;
-								}
-							}
-
-							bestIndex = i;
-						}
-						petitions?.Insert(bestIndex, p); 
-						InvokeAsync(StateHasChanged); 
-					} 
-				};
-				exchange.PetitionRemoved += (s, p) => { petitions?.RemoveAll(n => n.PetitionId == p.PetitionId); InvokeAsync(StateHasChanged); };
-				exchange.PetitionUpdated += (s, p) =>
-				{
-					var item = petitions?.FirstOrDefault(n => n.PetitionId == p.PetitionId);
-					if (item != null)
-					{
-						item.Status = p.Status;
-						InvokeAsync(StateHasChanged);
-					}
-
-				};
-			}
+			currentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
 		}
+		else
+		{
+			logger?.LogWarning($"No exchange for the session found with id: {SessionId} inside sessions: {string.Join("", committeeExchange.SessionExchanges.Select(a => a.SessionId))}");
+		}
+		vcService.Registered += delegate { InvokeAsync(StateHasChanged); };
 	}
 
-	private void LoadPetitionsForAgendaItem(int agendaItemId)
+	private void ReloadSessionExchangesAndFindCurrent()
 	{
-		this.selectedAgendaItem = agendaItemId;
-		this.petitions = dbContext.Petitions.AsNoTracking()
-							.Include(n => n.PetitionType)
-							.Include(n => n.User).ThenInclude(n => n.DelegateCountry)
-						.Where(n => n.AgendaItem.AgendaItemId == agendaItemId && (n.Status == EPetitionStates.Active || n.Status == EPetitionStates.Queued))
-					.OrderBy(n => n.PetitionType.SortOrder).ThenBy(n => n.PetitionDate).ToList();
+		vcExchangeService.ReloadSessionExchangesForExchange(this.committeeExchange);
+		this.currentSessionExchange = committeeExchange.SessionExchanges.FirstOrDefault(n => n.SessionId == SessionId);
+
+		if (currentSessionExchange != null)
+		{
+			currentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
+			currentSessionExchange.PetitionStatusChanged += delegate { InvokeAsync(StateHasChanged); };
+		}
+		else
+		{
+			logger?.LogWarning($"No exchange for the session found with id: {SessionId} inside sessions: {string.Join("", committeeExchange.SessionExchanges.Select(a => a.SessionId))}");
+		}
+		InvokeAsync(StateHasChanged);
 	}
 
 	private void AddPetition(int type)
 	{
-		if (vcService.IsActiveForCommittee(committeeId) && selectedAgendaItem != null)
+		if (vcService.IsActiveForCommittee(committeeId) && currentSessionExchange != null)
 		{
-			vcService.MakePetition(selectedAgendaItem.Value, type);
+			vcService.MakePetition(currentSessionExchange.CurrentAgendaItemId, type);
 		}
 	}
 
@@ -266,5 +172,6 @@
 	{
 		vcService.RemovePetition(petitionId);
 	}
+
 
 }

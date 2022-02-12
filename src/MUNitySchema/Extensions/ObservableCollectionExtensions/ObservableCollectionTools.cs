@@ -28,5 +28,15 @@ namespace MUNity.Extensions.ObservableCollectionExtensions
             toDelete.Clear();
             return count;
         }
+
+        public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> query) where T : class
+        {
+            var list = new ObservableCollection<T>();
+            foreach (var item in query)
+            {
+                list.Add(item);
+            }
+            return list;
+        }
     }
 }

@@ -80,7 +80,10 @@ builder.Services.AddSingleton<ListOfSpeakersService>();
 builder.Services.AddScoped<ListOfSpeakersDatabaseService>();
 
 builder.Services.AddSingleton<VirtualCommitteeExchangeService>();
+builder.Services.AddSingleton<VotingExchangeService>();
 builder.Services.AddScoped<VirtualCommiteeParticipationService>();
+
+builder.Services.AddScoped<ScopedSessionNotificationService>();
 
 builder.Services.AddLogging();
 

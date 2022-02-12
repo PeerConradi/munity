@@ -1,5 +1,7 @@
-﻿using MUNity.Database.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using MUNity.Database.Context;
 using MUNity.Database.Models.Session;
+using MUNity.VirtualCommittees.Dtos;
 
 namespace MUNity.BlazorServer.BServices
 {
@@ -18,6 +20,8 @@ namespace MUNity.BlazorServer.BServices
 
         public int RoleId => _roleId;
 
+        public event EventHandler Registered;
+
         public bool IsActiveForCommittee(string committeeId)
         {
             return _committeeId == committeeId;
@@ -31,7 +35,10 @@ namespace MUNity.BlazorServer.BServices
 
         private void SignOff()
         {
-            if (_exchange?.connectedRoles.TryRemove(_roleId, out var t) == true)
+            if (_exchange == null)
+                return;
+
+            if (_exchange.connectedRoles.TryRemove(_roleId, out var t) == true)
             {
                 _exchange.NotifyUserDisconnected();
             }
@@ -73,8 +80,8 @@ namespace MUNity.BlazorServer.BServices
             _dbContext.SaveChanges();
             if (_exchange != null)
             {
-                _exchange.NotifyPetitionAdded(petition);
-
+                var ex = _exchange.SessionExchanges.FirstOrDefault(n => n.CurrentAgendaItemId == agendaItemId);
+                ex.AddPetition(petition);
             }
             else
             {
@@ -93,13 +100,30 @@ namespace MUNity.BlazorServer.BServices
             {
                 petition.Status = Base.EPetitionStates.Active;
                 this._dbContext.SaveChanges();
-                this._exchange?.NotifyPetitionUpdated(petition);
+                if (_exchange != null)
+                {
+                    var petitionDto = _exchange.SessionExchanges.SelectMany(n => n.Petitions).FirstOrDefault(n => n.PetitionId == petitionId);
+                    if (petitionDto != null)
+                    {
+                        petitionDto.Status = Base.EPetitionStates.Active;
+                    }
+                    else
+                    {
+                        _logger?.LogWarning($"Unable to find a dto for petition {petitionId}|{petition.PetitionId}");
+                    }
+                    var ex = _exchange.SessionExchanges.FirstOrDefault(n => n.Petitions.Any(a => a.PetitionId == petitionId));
+                    ex.NotifyPetitionStatusChanged();
+                }
+                else
+                {
+                    _logger?.LogWarning($"No exchange for the committee '{_committeeId}' of RoleId '{_roleId}' was found. View might not be in sync");
+                }
             }
         }
 
         public void RemovePetition(string petitionId)
         {
-            var petition = _dbContext.Petitions.FirstOrDefault(n => n.PetitionId == petitionId);
+            var petition = _dbContext.Petitions.Include(n => n.AgendaItem).FirstOrDefault(n => n.PetitionId == petitionId);
             if (petition == null)
             {
                 _logger?.LogWarning("No petition with the Id '{0}' found to remove.", petitionId);
@@ -112,7 +136,8 @@ namespace MUNity.BlazorServer.BServices
                     petition.Status = Base.EPetitionStates.Removed;
 
                 this._dbContext.SaveChanges();
-                this._exchange?.NotifyPetitionRemoved(petition);
+                var ex = _exchange.SessionExchanges.FirstOrDefault(n => n.CurrentAgendaItemId == petition.AgendaItem.AgendaItemId);
+                ex?.Petitions.Remove(ex.Petitions.FirstOrDefault(n => n.PetitionId == petitionId));
             }
         }
 
@@ -130,6 +155,7 @@ namespace MUNity.BlazorServer.BServices
                 _exchange.connectedRoles.TryAdd(myRoleId, true);
                 _exchange.NotifyUserConnected();
             }
+            this.Registered?.Invoke(this, EventArgs.Empty);
         }
 
         public VirtualCommiteeParticipationService(ILogger<VirtualCommiteeParticipationService> logger, 
