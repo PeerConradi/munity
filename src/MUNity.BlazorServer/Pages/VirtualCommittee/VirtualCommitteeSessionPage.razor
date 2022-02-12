@@ -20,7 +20,7 @@
 @inject Services.ListOfSpeakersService listOfSpeakersService
 @inject ILogger<VirtualCommitteeSessionPage> logger
 
-@if (!accessDenied)
+@if (!accessDenied && !errorOnInit)
 {
     <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu CommitteeId=@CommitteeId CurrentSessionId=@exchange?.CurrentSessionExchange?.SessionId />
 
@@ -136,6 +136,20 @@
 else
 {
     <p>Zugriff verweigert!</p>
+    
+}
+
+@if (errorOnInit)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-danger">
+                <h1>Kritischer Fehler</h1>
+                <p>Ein unerwarteter kritischer Fehler ist aufgetreten. Dieser führt dazu, dass die Plattform nicht korrekt verwendet werden kann!</p>
+                <p>@initError</p>
+            </div>
+        </div>
+    </div>
 }
 
 
@@ -166,17 +180,34 @@ else
 
     private bool isTeam = false;
 
+    private bool errorOnInit = false;
+
+    private string initError = "";
+
     private VirtualCommitteeExchange exchange;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        try
+        {
+            await Init();
+        }
+        catch (Exception ex)
+        {
+            errorOnInit = true;
+            initError = ex.Message;
+        }
+        
+    }
 
+    private async Task Init()
+    {
         var accessKey = await localStorageService.GetItemAsStringAsync($"munity-access-{CommitteeId}");
 
         if (accessKey != null)
         {
-            myRole = dbContext.Delegates.FirstOrDefault(n => n.Committee.CommitteeId == CommitteeId &&
+            myRole = dbContext.Delegates.AsNoTracking().FirstOrDefault(n => n.Committee.CommitteeId == CommitteeId &&
             n.RoleSecret == accessKey);
             if (myRole != null)
             {
