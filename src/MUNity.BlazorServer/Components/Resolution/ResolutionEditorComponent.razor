@@ -1,12 +1,24 @@
-﻿<div class="row">
+﻿@using MUNity.BlazorServer.BServices
+@inject BServices.ResolutionExchangeService resolutionExchangeService
+
+
+<div class="row">
     <div class="col-12">
-        <ResolutionHeaderEditorComponent />
+        <ResolutionHeaderEditorComponent Resolution=@exchange.Resolution />
     </div>
 </div>
 
-<PreambleEditorComponent />
+<PreambleEditorComponent Exchange=@exchange />
 <OperativeSectionComponent />
 
 @code {
+    [Parameter] public string ResolutionId { get; set; }
 
+    private ResolutionExchange exchange;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        exchange = resolutionExchangeService.GetResolution(ResolutionId);
+    }
 }

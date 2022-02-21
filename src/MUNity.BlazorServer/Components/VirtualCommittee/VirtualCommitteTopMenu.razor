@@ -3,6 +3,7 @@
 @inject NavigationManager navManager
 @inject BServices.ScopedSessionNotificationService notificationService
 @inject ILogger<VirtualCommitteTopMenu> logger
+@inject BServices.ResolutionExchangeService resolutionExchangeService
 
 <div id="top-menu" class="app-top-menu mt-4" style="position: absolute;">
 		<!-- BEGIN menu -->
@@ -71,18 +72,23 @@
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
 					<div class="menu-item">
-						<a href="@($"/oc/{CommitteeId}/resolution/demo")" class="menu-link">
+						<a @onclick="CreateResolution" class="menu-link cursor-pointer">
 							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
 						</a>
 					</div>
+					@foreach(var resolutionInfo in dbContext.ResolutionAuths.Where(n => n.Committee.CommitteeId == CommitteeId).OrderBy(n => n.Resolution.CreatedDate).Select(n => new { ResolutionId = n.Resolution.ResaElementId, Topic = n.Resolution.Topic}).Take(5))
+				{
 					<div class="menu-item">
-						<a href="@($"/oc/{CommitteeId}/resolution/demo")" class="menu-link">
-							<div class="menu-text">Resolution 1</div>
+						<a href="@($"/oc/{CommitteeId}/resolution/{resolutionInfo.ResolutionId}")" class="menu-link">
+							<div class="menu-text">@resolutionInfo.Topic</div>
 						</a>
 					</div>
+				}
+				
+					
 					<div class="menu-item">
 						<a href="@($"/oc/{CommitteeId}/resolution/demo")" class="menu-link">
-							<div class="menu-text">Resolution 2</div>
+							<div class="menu-text">Alle Anzeigen</div>
 						</a>
 					</div>
 				</div>
@@ -167,48 +173,6 @@
 
 				</div>
 			</div>
-
-			<div class="menu-item ">
-				<a href="bootstrap_5.html" class="menu-link">
-					<div class="menu-icon-img">
-						<img src="../assets/img/logo/logo-bs5.png" alt="">
-					</div>
-					<div class="menu-text">Statistik <span class="menu-label">NEW</span></div> 
-				</a>
-			</div>
-			<div class="menu-item has-sub">
-					<a href="javascript:;" class="menu-link">
-						<div class="menu-icon">
-							<i class="fa fa-align-left"></i>
-						</div>
-						<div class="menu-text">Platzhalter</div>
-						<div class="menu-caret"></div>
-					</a>
-					<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
-						<div class="menu-item has-sub expand">
-							<a href="javascript:;" class="menu-link">
-								<div class="menu-text">Menu 1.1</div>
-								<div class="menu-caret"></div>
-							</a>
-							<div class="menu-submenu" style="display: block;">
-								<div class="menu-item has-sub expand">
-									<a href="javascript:;" class="menu-link">
-										<div class="menu-text">Menu 2.1</div>
-										<div class="menu-caret"></div>
-									</a>
-									<div class="menu-submenu" style="display: block;">
-										<div class="menu-item"><a href="javascript:;" class="menu-link"><div class="menu-text">Menu 3.1</div></a></div>
-										<div class="menu-item"><a href="javascript:;" class="menu-link"><div class="menu-text">Menu 3.2</div></a></div>
-									</div>
-								</div>
-								<div class="menu-item"><a href="javascript:;" class="menu-link"><div class="menu-text">Menu 2.2</div></a></div>
-								<div class="menu-item"><a href="javascript:;" class="menu-link"><div class="menu-text">Menu 2.3</div></a></div>
-							</div>
-						</div>
-						<div class="menu-item"><a href="javascript:;" class="menu-link"><div class="menu-text">Menu 1.2</div></a></div>
-						<div class="menu-item"><a href="javascript:;" class="menu-link"><div class="menu-text">Menu 1.3</div></a></div>
-					</div>
-				</div>
 				</Authorized>
 			</AuthorizeView>
 			
@@ -251,7 +215,7 @@
 			var presentsCheckId = dbContext.PresentChecks.FirstOrDefault(n => n.Session.CommitteeSessionId == CurrentSessionId)?.SessionPresentsId;
 			if (presentsCheckId != null)
 			{
-				newVoting.VoteSlots = dbContext.PresentStates.Where(n => n.SessionPresents.SessionPresentsId == presentsCheckId)
+				newVoting.VoteSlots = dbContext.PresentStates.Where(n => n.SessionPresents.SessionPresentsId == presentsCheckId && n.State == PresentsState.PresentsStates.Present && n.Role.DelegateCountry != null)
 				.Select(n => new SessionVotingSlot()
 					{
 						Choice = EVoteStates.NotVoted,
@@ -275,5 +239,14 @@
 			notificationService?.Notify("Nicht möglich", "Es kann derzeit keine Abstimmung erstellt werden, es wurde keine aktueller Sitzungsblock gefunden welcher als referenz für die Anwesenheit genutzt werden kann.");
 		}
 
+	}
+
+	private void CreateResolution()
+	{
+		var exchange = resolutionExchangeService.CreateResolution(CommitteeId);
+		if (exchange != null)
+		{
+			navManager.NavigateTo($"/oc/{CommitteeId}/resolution/{exchange.Resolution.ResaElementId}");
+		}
 	}
 }

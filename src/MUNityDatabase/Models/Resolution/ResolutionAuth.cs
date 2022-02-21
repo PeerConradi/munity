@@ -17,8 +17,7 @@ namespace MUNity.Database.Models.Resolution;
 public class ResolutionAuth
 {
     [Key]
-    [ForeignKey(nameof(Resolution))]
-    public string ResolutionId { get; set; }
+    public int ResolutionAuthId { get; set; }
 
     public MunityUser CreationUser { get; set; }
 
@@ -48,6 +47,12 @@ public class ResolutionAuth
     /// Links to a MUN Core Committee
     /// </summary>
     public Conference.Committee Committee { get; set; }
+
+    /// <summary>
+    /// Links the document to a conference. It can be linked to a conference
+    /// but no committee.
+    /// </summary>
+    public Conference.Conference Conference { get; set; }
 
     public ResaElement Resolution { get; set; }
 

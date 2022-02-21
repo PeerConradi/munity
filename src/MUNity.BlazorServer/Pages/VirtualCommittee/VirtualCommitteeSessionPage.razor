@@ -82,7 +82,7 @@
             }
             else if (!string.IsNullOrEmpty(ResolutionId))
             {
-                <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent />
+                <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@ResolutionId />
             }
             else if (!string.IsNullOrEmpty(VisitCommitteeId))
             {
@@ -95,6 +95,7 @@
             else if (!string.IsNullOrEmpty(ManageVotingId))
             {
                 <MUNity.BlazorServer.Components.VirtualCommittee.ManageVotingComponent VotingId=@ManageVotingId />
+                <MUNity.BlazorServer.Components.VirtualCommittee.VoteComponent VoteId=@ManageVotingId />
             }
             else if (!string.IsNullOrEmpty(VoteId))
             {

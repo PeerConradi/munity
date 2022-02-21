@@ -1,13 +1,29 @@
-﻿
+﻿@using MUNity.BlazorServer.BServices
+
 <div class="panel panel-inverse mb-1">
 	<div class="panel-heading ui-sortable-handle">
 		<h4 class="panel-title">Präambel</h4>
 	</div>
 </div>
 
-<PreambleParagraphComponent />
-<PreambleParagraphComponent />
+@foreach(var paragraph in Exchange.Resolution.PreambleParagraphs)
+{
+	<PreambleParagraphComponent Exchange=@Exchange Paragraph=paragraph />
+}
+
+<button class="btn btn-success" @onclick="CreateParagraph">Präambelabsatz hinzufügen</button>
 
 @code {
+	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }
 
+	private void CreateParagraph()
+	{
+		Exchange.AddPreambleParagraph();
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		Exchange.ResolutionChanged += delegate { InvokeAsync(StateHasChanged); };
+	}
 }

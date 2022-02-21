@@ -1,0 +1,23 @@
+﻿@page "/admin/services"
+
+@inject IServiceProvider provider
+
+<AuthorizeView Roles="Admin,Head-Admin">
+    <Authorized>
+        <p>Found @serviceCount ScopedSessionNotificationService</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are not allowed to be here. Pealse leave</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private int serviceCount = -1;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        var services = provider.GetServices<BServices.ScopedSessionNotificationService>();
+        serviceCount = services.Count();
+    }
+}

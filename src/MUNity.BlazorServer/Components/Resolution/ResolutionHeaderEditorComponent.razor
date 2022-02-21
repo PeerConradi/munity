@@ -1,12 +1,30 @@
-﻿<div class="card border-0 mb-1">
+﻿@using MUNity.Database.Models.Resolution
+
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
+
+<div class="card border-0 mb-1">
 	<div class="card-body">
-		<h4 class="card-title">Resolutionstitel</h4>
-		<p class="card-text">Einbringer:</p>
-		<p class="card-text">Unterstützer:</p>
-		<p class="card-text">GREMIUM,</p>
+		<h4 class="card-title">@Resolution?.Topic</h4>
+		<p class="card-text">Einbringer: @Resolution?.SubmitterName</p>
+		<p class="card-text">Unterstützer: 
+			@if (vcParticipationService != null && vcParticipationService.RoleId != 0)
+			{
+				<button class="btn btn-sm btn-default">Unterstützen</button>
+			}
+		</p>
+		<p class="card-text">@Resolution?.CommitteeName.ToUpper(),</p>
 		<p class="card-text text-gray">Last updated 3 mins ago</p>
 	</div>
 </div>
 @code {
+	[Parameter] public ResaElement Resolution { get; set; }
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (vcParticipationService != null)
+		{
+			vcParticipationService.Registered += delegate { InvokeAsync(StateHasChanged); };
+		}
+	}
 }

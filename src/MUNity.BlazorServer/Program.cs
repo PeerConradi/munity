@@ -85,6 +85,9 @@ builder.Services.AddScoped<VirtualCommiteeParticipationService>();
 
 builder.Services.AddScoped<ScopedSessionNotificationService>();
 
+builder.Services.AddScoped<ResolutionService>();
+builder.Services.AddSingleton<ResolutionExchangeService>();
+
 builder.Services.AddLogging();
 
 var app = builder.Build();

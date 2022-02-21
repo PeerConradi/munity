@@ -127,8 +127,7 @@ public class BasicResolutionsTests : AbstractDatabaseTests
     {
         _context.Resolutions.Add(resolution);
         var remark = _context.SaveChanges();
-        // Two because the Auth is now created with this Resolution
-        Assert.AreEqual(2, remark);
+        Assert.AreEqual(1, remark);
     }
 
     [Test]
@@ -146,6 +145,31 @@ public class BasicResolutionsTests : AbstractDatabaseTests
         Assert.AreEqual(loadedResolution.CommitteeName, resolution.CommitteeName);
         Assert.AreEqual(loadedResolution.CreatedDate, resolution.CreatedDate);
         Assert.AreEqual(loadedResolution.SupporterNames, resolution.SupporterNames);
+    }
+
+    [Test]
+    [Order(16)]
+    public void TestCreatePreambleParagraph()
+    {
+        var paragraph = new ResaPreambleParagraph()
+        {
+            ResaElement = _context.Resolutions.First(),
+            OrderIndex = _context.PreambleParagraphs.Count(n => n.ResaElement.ResaElementId == resolution.ResaElementId)
+        };
+        _context.PreambleParagraphs.Add(paragraph);
+        _context.SaveChanges();
+        Assert.AreEqual(1, _context.PreambleParagraphs.Count());
+    }
+
+    [Test]
+    [Order(17)]
+    public void TestDeletePreambleParagraph()
+    {
+        var paragraph = _context.PreambleParagraphs.FirstOrDefault();
+        Assert.NotNull(paragraph);
+        _context.PreambleParagraphs.Remove(paragraph);
+        _context.SaveChanges();
+        Assert.AreEqual(0, _context.PreambleParagraphs.Count());
     }
 
     public BasicResolutionsTests() : base("resolutions.db")

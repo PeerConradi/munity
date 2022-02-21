@@ -28,13 +28,13 @@ public class RemoveTests : AbstractDatabaseTests
     {
         var resolution = new ResaElement();
         var auth = new ResolutionAuth();
-        resolution.Authorization = auth;
+        resolution.Authorizations.Add(auth);
         _context.Resolutions.Add(resolution);
         _context.SaveChanges();
         Assert.AreEqual(1, _context.Resolutions.Count());
         Assert.AreEqual(1, _context.ResolutionAuths.Count(), "Expected to have a resolution auth, but there were none...");
 
-        Assert.AreEqual(_context.Resolutions.First().ResaElementId, _context.ResolutionAuths.First().ResolutionId);
+        Assert.AreEqual(_context.Resolutions.First().ResaElementId, _context.ResolutionAuths.First().Resolution.ResaElementId);
 
         // Perform deletion
         _context.Resolutions.Remove(resolution);

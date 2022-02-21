@@ -292,7 +292,7 @@ namespace MUNity.Database.Context
                 .IsRequired();
 
             modelBuilder.Entity<ResaElement>()
-                .HasOne(n => n.Authorization)
+                .HasMany(n => n.Authorizations)
                 .WithOne(n => n.Resolution)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);

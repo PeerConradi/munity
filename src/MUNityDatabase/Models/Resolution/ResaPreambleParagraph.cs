@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +17,9 @@ public class ResaPreambleParagraph
     public bool IsCorrected { get; set; } = false;
 
     public string Comment { get; set; } = "";
+
+    [ForeignKey(nameof(ResaElement))]
+    public string ResolutionId { get; set; }
 
     public ResaElement ResaElement { get; set; }
     public int OrderIndex { get; set; }

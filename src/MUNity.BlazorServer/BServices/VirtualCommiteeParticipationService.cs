@@ -5,6 +5,11 @@ using MUNity.VirtualCommittees.Dtos;
 
 namespace MUNity.BlazorServer.BServices
 {
+
+    /// <summary>
+    /// This service handles the current state of the user that is inside a virtual committee.
+    /// Every user can only be inside one virtual committee.
+    /// </summary>
     public class VirtualCommiteeParticipationService : IDisposable
     {
         private ILogger<VirtualCommiteeParticipationService> _logger;
@@ -20,6 +25,9 @@ namespace MUNity.BlazorServer.BServices
 
         public int RoleId => _roleId;
 
+        /// <summary>
+        /// Callback event when the user is done with SignIn into the conference
+        /// </summary>
         public event EventHandler Registered;
 
         public bool IsActiveForCommittee(string committeeId)

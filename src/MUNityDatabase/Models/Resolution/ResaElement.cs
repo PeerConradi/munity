@@ -37,15 +37,17 @@ public class ResaElement
 
     public ICollection<ResaAddAmendment> AddAmendments { get; set; }
 
-    public ResolutionAuth Authorization { get; set; }
+    public ICollection<ResolutionAuth> Authorizations { get; set; }
+
+    public ICollection<ResaSupporter> Supporters { get; set; }
 
     public ResaElement()
     {
         this.ResaElementId = Guid.NewGuid().ToString();
         this.PreambleParagraphs = new List<ResaPreambleParagraph>();
         this.OperativeParagraphs = new List<ResaOperativeParagraph>();
-        //this.Supporters = new List<ResaSupporter>();
+        this.Supporters = new List<ResaSupporter>();
         this.AddAmendments = new List<ResaAddAmendment>();
-        this.Authorization = new ResolutionAuth();
+        this.Authorizations = new List<ResolutionAuth>();
     }
 }
