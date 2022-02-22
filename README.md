@@ -24,6 +24,6 @@ If you want to you can also install munity using docker. Find a tutorial for tha
 
 ## License Information
 
-You are not allowed to sell this project as a SaaS or PaaS without permission. You are allowed use it for development under GPL-3 or install it on your own servers for your Model United Nations Conference.
+From the 22.02.2022 forward the project is using the MIT License. You are free to use munity however you like :)
 
 
