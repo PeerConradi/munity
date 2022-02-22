@@ -1,6 +1,8 @@
 # munity
 A Model United Nations online software that offers functionality to organize MUNs and tools to use on the conference like a list of speakers, resolution editor.
 
+![Demo Image](Documentation/img/vcdemo.bmp)
+
 ## About
 MUNity is a work in progress to create and manage Model United Nations Conferences. It also contains a lot of software solutions for documents like resolutions, aswell as a solution to create speakerlists.
 
@@ -17,6 +19,14 @@ For the developer documentation see: [MUNity Documentation](Documentation/docs.m
 ## Setup Development Environment
 
 Check out the [Getting started](Documentation/GettingStarted.md) to learn how you can start developing munity.
+
+### Quickstart
+
+``` 
+https://github.com/PeerConradi/munity.git
+cd .\src\MUNity.BlazorServer
+dotnet watch run
+```
 
 ## Installing MUNity on Linux
 
