@@ -30,6 +30,22 @@ namespace MUNity.BlazorServer.BServices
         /// </summary>
         public event EventHandler Registered;
 
+        public event EventHandler<string> EditingPreambleParagraphChanged;
+
+        private string lastEditedPreambleParagraphId = null;
+        public string LastEditedPreambleParagraphId 
+        {
+            get => lastEditedPreambleParagraphId;
+            set
+            {
+                if (lastEditedPreambleParagraphId != value)
+                {
+                    lastEditedPreambleParagraphId = value;
+                    EditingPreambleParagraphChanged?.Invoke(this, value);
+                }
+            }
+        }
+
         public bool IsActiveForCommittee(string committeeId)
         {
             return _committeeId == committeeId;

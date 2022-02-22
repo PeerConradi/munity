@@ -83,7 +83,11 @@ namespace MUNity.Services
         public bool RemovePreambleParagraph(ResaPreambleParagraph paragraph)
         {
             _context.PreambleParagraphs.Remove(paragraph);
-            return _context.SaveChanges() == 1;
+            foreach(var pAfter in _context.PreambleParagraphs.Where(n => n.ResolutionId == paragraph.ResolutionId && n.OrderIndex > paragraph.OrderIndex))
+            {
+                pAfter.OrderIndex--;
+            }
+            return _context.SaveChanges() > 0;
         }
 
         public int UpdatePreambleParagraph(ResaPreambleParagraph paragraph)

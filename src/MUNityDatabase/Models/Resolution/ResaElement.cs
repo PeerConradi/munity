@@ -29,17 +29,17 @@ public class ResaElement
 
     public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-    public ICollection<ResaPreambleParagraph> PreambleParagraphs { get; set; }
+    public IList<ResaPreambleParagraph> PreambleParagraphs { get; set; }
 
-    public ICollection<ResaOperativeParagraph> OperativeParagraphs { get; set; }
+    public IList<ResaOperativeParagraph> OperativeParagraphs { get; set; }
 
     public string SupporterNames { get; set; }
 
-    public ICollection<ResaAddAmendment> AddAmendments { get; set; }
+    public IList<ResaAddAmendment> AddAmendments { get; set; }
 
-    public ICollection<ResolutionAuth> Authorizations { get; set; }
+    public IList<ResolutionAuth> Authorizations { get; set; }
 
-    public ICollection<ResaSupporter> Supporters { get; set; }
+    public IList<ResaSupporter> Supporters { get; set; }
 
     public ResaElement()
     {

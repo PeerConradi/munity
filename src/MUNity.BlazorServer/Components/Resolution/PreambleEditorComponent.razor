@@ -1,17 +1,25 @@
 ﻿@using MUNity.BlazorServer.BServices
 
 <div class="panel panel-inverse mb-1">
-	<div class="panel-heading ui-sortable-handle">
+	<div class="panel-heading">
 		<h4 class="panel-title">Präambel</h4>
+		<small>Doppelklick auf den Absatz zum Bearbeiten</small>
 	</div>
 </div>
 
-@foreach(var paragraph in Exchange.Resolution.PreambleParagraphs)
+@foreach(var paragraph in Exchange.Resolution.PreambleParagraphs.OrderBy(n => n.OrderIndex))
 {
-	<PreambleParagraphComponent Exchange=@Exchange Paragraph=paragraph />
+	<PreambleParagraphComponent Exchange=@Exchange 
+	Paragraph=paragraph 
+	IsFirst=@(paragraph == Exchange.Resolution.PreambleParagraphs.First()) 
+	IsLast=@(paragraph == Exchange.Resolution.PreambleParagraphs.Last()) />
 }
 
-<button class="btn btn-success" @onclick="CreateParagraph">Präambelabsatz hinzufügen</button>
+<div class="row d-flex justify-content-center mb-3 mt-2">
+	<button class="btn btn-success btn-icon btn-lg" @onclick="CreateParagraph"><i class="fa fa-plus"></i></button>
+</div>
+
+
 
 @code {
 	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }
