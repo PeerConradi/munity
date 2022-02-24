@@ -21,20 +21,22 @@ public class ResaOperativeParagraph
 
     public bool Corrected { get; set; } = false;
 
-    public ICollection<ResaOperativeParagraph> Children { get; set; }
+    public IList<ResaOperativeParagraph> Children { get; set; }
 
     public string Comment { get; set; } = "";
 
     public int OrderIndex { get; set; }
 
+    public bool AllowAmendments { get; set; } = true;
+
     public ResaElement Resolution { get; set; }
 
     public ResaOperativeParagraph Parent { get; set; }
 
-    public ICollection<ResaDeleteAmendment> DeleteAmendments { get; set; }
-    public ICollection<ResaChangeAmendment> ChangeAmendments { get; set; }
+    public IList<ResaDeleteAmendment> DeleteAmendments { get; set; }
+    public IList<ResaChangeAmendment> ChangeAmendments { get; set; }
 
-    public ICollection<ResaMoveAmendment> MoveAmendments { get; set; }
+    public IList<ResaMoveAmendment> MoveAmendments { get; set; }
 
     public ResaOperativeParagraph()
     {

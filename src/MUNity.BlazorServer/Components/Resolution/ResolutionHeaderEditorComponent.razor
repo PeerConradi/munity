@@ -7,7 +7,7 @@
 		<h4 class="card-title">@Resolution?.Topic</h4>
 		<p class="card-text">Einbringer: @Resolution?.SubmitterName</p>
 		<p class="card-text">Unterstützer: 
-			@if (vcParticipationService != null && vcParticipationService.RoleId != 0)
+			@if (vcParticipationService.RoleId != null && vcParticipationService.RoleId != @Resolution.SubmitterRole.RoleId)
 			{
 				<button class="btn btn-sm btn-default">Unterstützen</button>
 			}

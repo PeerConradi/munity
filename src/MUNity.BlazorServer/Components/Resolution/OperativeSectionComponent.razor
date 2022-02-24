@@ -1,13 +1,52 @@
-﻿<div class="panel panel-inverse mb-1">
+﻿@using MUNity.BlazorServer.BServices
+<div class="panel panel-inverse mb-1">
 	<div class="panel-heading ui-sortable-handle">
 		<h4 class="panel-title">Operativer Abschnitt</h4>
 	</div>
 </div>
 
-<OperativeParagraphComponent HasChild=true />
-<OperativeParagraphComponent />
-<OperativeParagraphComponent />
+@foreach(var operativeParagraph in Exchange.Resolution.OperativeParagraphs)
+{
+	
+	if (operativeParagraph.Visible && !operativeParagraph.IsVirtual)
+	{
+		paragraphIndex++;
+		<OperativeParagraphComponent 
+			Exchange=@Exchange 
+			Paragraph=@operativeParagraph
+			IsFirst=@(operativeParagraph == Exchange.Resolution.OperativeParagraphs.First()) 
+			IsLast=@(operativeParagraph == Exchange.Resolution.OperativeParagraphs.Last())
+			Index=@paragraphIndex
+			/>
+	}
+	
+}
+
+<div class="row d-flex justify-content-center mb-3 mt-2">
+	<button class="btn btn-success btn-icon btn-lg" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
+</div>
 
 @code {
+	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }
+
+	private int paragraphIndex = 0;
+
+
+	private void CreateOperativeParagraph()
+	{
+		Exchange.AddOperativeParagraph();
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		this.Exchange.ResolutionChanged += delegate { InvokeAsync(StateHasChanged); };
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		paragraphIndex = 0;
+	}
 
 }

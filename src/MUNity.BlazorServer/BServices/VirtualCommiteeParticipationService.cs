@@ -21,9 +21,9 @@ namespace MUNity.BlazorServer.BServices
 
         private string _committeeId;
         private string _secret;
-        private int _roleId;
+        private int? _roleId;
 
-        public int RoleId => _roleId;
+        public int? RoleId => _roleId;
 
         /// <summary>
         /// Callback event when the user is done with SignIn into the conference
@@ -31,6 +31,7 @@ namespace MUNity.BlazorServer.BServices
         public event EventHandler Registered;
 
         public event EventHandler<string> EditingPreambleParagraphChanged;
+        public event EventHandler<string> EditingOperativeParagraphChanged;
 
         private string lastEditedPreambleParagraphId = null;
         public string LastEditedPreambleParagraphId 
@@ -42,6 +43,20 @@ namespace MUNity.BlazorServer.BServices
                 {
                     lastEditedPreambleParagraphId = value;
                     EditingPreambleParagraphChanged?.Invoke(this, value);
+                }
+            }
+        }
+
+        private string lastEditedOperativeParagraphId = null;
+        public string LastEditedOperativeParagraphId
+        {
+            get => lastEditedOperativeParagraphId;
+            set
+            {
+                if (lastEditedOperativeParagraphId != value)
+                {
+                    lastEditedOperativeParagraphId = value;
+                    EditingOperativeParagraphChanged?.Invoke(this, value);
                 }
             }
         }
@@ -62,7 +77,7 @@ namespace MUNity.BlazorServer.BServices
             if (_exchange == null)
                 return;
 
-            if (_exchange.connectedRoles.TryRemove(_roleId, out var t) == true)
+            if (_roleId != null && _exchange.connectedRoles.TryRemove(_roleId.Value, out var t) == true)
             {
                 _exchange.NotifyUserDisconnected();
             }

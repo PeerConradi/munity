@@ -2,6 +2,7 @@
 @inject MunityContext dbContext
 @inject NavigationManager navManager
 @inject BServices.ScopedSessionNotificationService notificationService
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
 @inject ILogger<VirtualCommitteTopMenu> logger
 @inject BServices.ResolutionExchangeService resolutionExchangeService
 
@@ -243,7 +244,7 @@
 
 	private void CreateResolution()
 	{
-		var exchange = resolutionExchangeService.CreateResolution(CommitteeId);
+		var exchange = resolutionExchangeService.CreateResolution(CommitteeId, vcParticipationService.RoleId);
 		if (exchange != null)
 		{
 			navManager.NavigateTo($"/oc/{CommitteeId}/resolution/{exchange.Resolution.ResaElementId}");

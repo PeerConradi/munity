@@ -33,12 +33,28 @@ namespace MUNity.BlazorServer.BServices
             this.ResolutionChanged?.Invoke(this, Resolution);
         }
 
+        public void AddOperativeParagraph()
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            using var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            var paragraph = resolutionService.CreateOperativeParagraph(Resolution);
+            this.ResolutionChanged?.Invoke(this, Resolution);
+        }
+
         public void UpdatePreambleParagraph(ResaPreambleParagraph paragraph)
         {
             using var scope = serviceScopeFactory.CreateScope();
             var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
             resolutionService.UpdatePreambleParagraph(paragraph);
             PreambleParagraphChanged?.Invoke(this, paragraph);
+        }
+
+        public void UpdateOperativeParagraph(ResaOperativeParagraph paragraph)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.UpdateOperativeParagraph(paragraph);
+            OperativeParagraphChanged?.Invoke(this, paragraph);
         }
 
         public void MovePreambleParagraphUp(ResaPreambleParagraph paragraph)
@@ -48,11 +64,35 @@ namespace MUNity.BlazorServer.BServices
             var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
             resolutionService.MovePreambleParagraphUp(paragraph);
 
-            // Make update inexchange
+            // Make update in exchange
             var oldIndex = this.Resolution.PreambleParagraphs.IndexOf(paragraph);
             this.Resolution.PreambleParagraphs.Swap(oldIndex, oldIndex - 1);
             PreambleParagraphChanged?.Invoke(this, paragraph);
             ResolutionChanged?.Invoke(this, Resolution);
+        }
+
+        public void MoveOperativeParagraphUp(ResaOperativeParagraph paragraph)
+        {
+            // Make update in database
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.MoveOperativeParagraphUp(paragraph);
+
+            // Make update in exchange
+            if (paragraph.Parent == null)
+            {
+                var oldIndex = this.Resolution.OperativeParagraphs.IndexOf(paragraph);
+                this.Resolution.OperativeParagraphs.Swap(oldIndex, oldIndex - 1);
+                OperativeParagraphChanged?.Invoke(this, paragraph);
+                ResolutionChanged?.Invoke(this, Resolution);
+            }
+            else
+            {
+                var oldIndex = paragraph.Parent.Children.IndexOf(paragraph);
+                paragraph.Parent.Children.Swap(oldIndex, oldIndex - 1);
+                OperativeParagraphChanged?.Invoke(this, paragraph);
+                ResolutionChanged?.Invoke(this, Resolution);
+            }
         }
 
         public void MovePreambleParagraphDown(ResaPreambleParagraph paragraph)
@@ -69,6 +109,30 @@ namespace MUNity.BlazorServer.BServices
             ResolutionChanged?.Invoke(this, Resolution);
         }
 
+        public void MoveOperativeParagraphDown(ResaOperativeParagraph paragraph)
+        {
+            // Make update in database
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.MoveOperativeParagraphDown(paragraph);
+
+            // Make update in exchange
+            if (paragraph.Parent == null)
+            {
+                var oldIndex = this.Resolution.OperativeParagraphs.IndexOf(paragraph);
+                this.Resolution.OperativeParagraphs.Swap(oldIndex, oldIndex + 1);
+                OperativeParagraphChanged?.Invoke(this, paragraph);
+                ResolutionChanged?.Invoke(this, Resolution);
+            }
+            else
+            {
+                var oldIndex = paragraph.Parent.Children.IndexOf(paragraph);
+                paragraph.Parent.Children.Swap(oldIndex, oldIndex + 1);
+                OperativeParagraphChanged?.Invoke(this, paragraph);
+                ResolutionChanged?.Invoke(this, Resolution);
+            }
+        }
+
         public void RemovePreambleParagraph(ResaPreambleParagraph paragraph)
         {
             // Make update in database
@@ -80,6 +144,16 @@ namespace MUNity.BlazorServer.BServices
             PreambleParagraphChanged?.Invoke(this, paragraph);
             ResolutionChanged?.Invoke(this, Resolution);
         }
+
+        public void RemoveOperativeParagraph(ResaOperativeParagraph paragraph)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.RemoveOperativeParagraph(paragraph);
+
+            ResolutionChanged?.Invoke(this, Resolution);
+        }
+        
 
         public ResolutionExchange(IServiceScopeFactory scopeFactory)
         {

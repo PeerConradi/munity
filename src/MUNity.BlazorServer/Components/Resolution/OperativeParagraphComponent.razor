@@ -1,15 +1,38 @@
-﻿<div class="card border-0 mb-1"
+﻿@using MUNity.BlazorServer.BServices
+@using MUNity.Database.Models.Resolution
+
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
+
+<div class="card border-0 mb-1"
 	@onclick="() => { if (htmlText.Length == 0 && !isEditing) { isEditing = true;}}">
 	<div class="card-body">
 		<div class="row">
 			@if (isEditing == false)
 			{
-				<p @onclick="() => isEditing = true" class="card-text">@((MarkupString)htmlText)</p>
+				@if (!string.IsNullOrEmpty(Paragraph.Text))
+				{
+					<p @ondblclick="StartEdit" class="card-text"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+				}
+				else
+				{
+					<span>@(Index)</span> <button class="btn btn-sm btn-default" @onclick="StartEdit">Bearbeiten</button>
+				}
 			}
 			else
 			{
-				<button class="btn btn-default" @onclick="() => isEditing = false"><i class="fa fa-save"></i> Speichern</button>
-				<RadzenHtmlEditor @bind-Value="@htmlText" style="max-height: 300px; width: 100%; margin-bottom: 1rem;">
+				<RadzenHtmlEditor @bind-Value="@Paragraph.Text" style="max-height: 300px; width: 100%; margin-bottom: 1rem;">
+					<a @onclick="Save" class="btn btn-primary btn-icon btn-lg me-1">
+					  <i class="fa fa-save"></i>
+					</a>
+					<RadzenHtmlEditorSeparator />
+					<a @onclick="MoveUp" class="btn btn-info btn-icon btn-lg me-1 @((IsFirst) ? "disabled": null)">
+					  <i class="fa fa-arrow-up"></i>
+					</a>
+
+					<a @onclick="MoveDown" class="btn btn-info btn-icon btn-lg me-1 @((IsLast) ? "disabled": null)">
+					  <i class="fa fa-arrow-down"></i>
+					</a>
+					<RadzenHtmlEditorSeparator />
 					<RadzenHtmlEditorUndo />
 					<RadzenHtmlEditorRedo />
 					<RadzenHtmlEditorSeparator />
@@ -17,32 +40,116 @@
 					<RadzenHtmlEditorItalic />
 					<RadzenHtmlEditorUnderline />
 					<RadzenHtmlEditorStrikeThrough />
+					<RadzenHtmlEditorSeparator />
+					<a @onclick="Remove" class="btn btn-danger btn-icon btn-lg me-1">
+					  <i class="fa fa-trash"></i>
+					</a>
 				</RadzenHtmlEditor>
 			}
 
 		</div>
 		<div class="row">
 			<div class="col-12">
-				<span class="badge bg-danger">0 Anträge auf Steichung</span>
-				<span class="badge bg-warning">0 Anträge auf Textänderung</span>
+				@if (Paragraph.DeleteAmendments.Count > 0)
+				{
+					<span class="badge bg-danger me-2">@Paragraph.DeleteAmendments.Count Anträge auf Steichung</span>
+				}
+				
+				@if (Paragraph.ChangeAmendments.Count > 0)
+				{
+					<span class="badge bg-warning">@Paragraph.ChangeAmendments.Count Anträge auf Textänderung</span>
+				}
+				
 			</div>
 			
 		</div>
 
-		@if (HasChild)
+@*		@if (HasChild)
 		{
 			<div class="row">
 				<OperativeParagraphComponent />
 			</div>
-		}
+		}*@
 
 	</div>
 </div>
 
 @code {
-	[Parameter] public bool HasChild { get; set; }
+	[Parameter] public ResaOperativeParagraph Paragraph { get; set; }
+
+	[Parameter] public ResolutionExchange Exchange { get; set; }
+
+	[Parameter] public bool IsFirst { get; set; }
+
+	[Parameter] public bool IsLast { get; set; }
+
+	[Parameter] public int Index { get; set; }
 
 	private bool isEditing = false;
 
 	private string htmlText = "1. Operativ Paragraph <br />Mit mehreren Zeilen <br />Anklicken um zu bearbeiten.";
+
+	private void StartEdit()
+	{
+		vcParticipationService.LastEditedOperativeParagraphId = this.Paragraph.ResaOperativeParagraphId;
+		this.isEditing = true;
+	}
+
+	private void Save()
+	{
+		Exchange.UpdateOperativeParagraph(this.Paragraph);
+		vcParticipationService.LastEditedOperativeParagraphId = null;
+		this.isEditing = false;
+	}
+
+	private void MoveUp()
+	{
+		Exchange.MoveOperativeParagraphUp(this.Paragraph);
+		isEditing = false;
+	}
+
+	private void MoveDown()
+	{
+		Exchange.MoveOperativeParagraphDown(this.Paragraph);
+		isEditing = false;
+	}
+
+	private void Remove()
+	{
+		Exchange.RemoveOperativeParagraph(this.Paragraph);
+		isEditing = false;
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		Exchange.OperativeParagraphChanged += (sender, para) =>
+		{
+			if (para == this.Paragraph)
+			{
+				InvokeAsync(StateHasChanged);
+			}
+		};
+
+		if(vcParticipationService.LastEditedOperativeParagraphId == this.Paragraph.ResaOperativeParagraphId)
+		{
+			this.isEditing = true;
+		}
+
+		
+	}
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		vcParticipationService.EditingOperativeParagraphChanged += (sender, paraId) =>
+		{
+			if (paraId != this.Paragraph.ResaOperativeParagraphId)
+			{
+				this.isEditing = false;
+				InvokeAsync(StateHasChanged);
+			}
+
+		};
+	}
 }

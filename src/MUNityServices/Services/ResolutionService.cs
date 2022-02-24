@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MUNity.Database.Context;
+using MUNity.Database.Models.Conference;
+using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.Resolution;
 using System;
 using System.Collections.Generic;
@@ -26,16 +28,28 @@ namespace MUNity.Services
             return element;
         }
 
-        public ResaElement CreateResolutionForCommittee(string committeeId)
+        public ResaElement CreateResolutionForCommittee(string committeeId, int? roleId)
         {
+            ConferenceDelegateRole role = null;
+
+            if (roleId != null)
+            {
+                role = _context.Delegates.FirstOrDefault(n => n.RoleId == roleId.Value);
+            }
+
+            Committee committee = _context.Committees.FirstOrDefault(n => n.CommitteeId == committeeId);
+
             var element = new ResaElement()
             {
-                Topic = "Neuer Resolutionsentwurf"
+                Topic = "Neuer Resolutionsentwurf",
+                SubmitterName = role?.RoleName ?? "-",
+                SubmitterRole = role,
+                CommitteeName = committee?.Name ?? "-",
             };
             var auth = new ResolutionAuth()
             {
                 Resolution = element,
-                Committee = _context.Committees.Find(committeeId),
+                Committee = committee,
                 
             };
             _context.ResolutionAuths.Add(auth);
@@ -68,15 +82,32 @@ namespace MUNity.Services
             return paragraph;
         }
 
+        public ResaOperativeParagraph CreateOperativeParagraph([NotNull] ResaElement resolution, string text = "")
+        {
+            _context.Update(resolution);
+            var operativeParagraph = new ResaOperativeParagraph()
+            {
+                Resolution = resolution,
+                OrderIndex = _context.OperativeParagraphs.Count(n => n.Resolution.ResaElementId == resolution.ResaElementId),
+                Text = text
+            };
+            resolution.OperativeParagraphs.Add(operativeParagraph);
+            _context.OperativeParagraphs.Add(operativeParagraph);
+            _context.SaveChanges();
+            return operativeParagraph;
+        }
+
         public ResaElement GetResolution(string resolutionId)
         {
             var resolution = _context.Resolutions
+                .Include(n => n.SubmitterRole)
                 .FirstOrDefault(n => n.ResaElementId == resolutionId);
             if (resolution == null)
             {
                 return null;
             }
             resolution.PreambleParagraphs = GetPreambleParagraphs(resolutionId);
+            resolution.OperativeParagraphs = GetOperativeParagraphs(resolution);
             return resolution;
         }
 
@@ -90,7 +121,54 @@ namespace MUNity.Services
             return _context.SaveChanges() > 0;
         }
 
+        public void RemoveOperativeParagraph(ResaOperativeParagraph paragraph)
+        {
+            foreach (var child in paragraph.Children)
+            {
+                RemoveOperativeParagraph(child);
+            }
+            var addAmendemts = _context.ResolutionAddAmendments
+                .Where(n => n.VirtualParagraph.ResaOperativeParagraphId == paragraph.ResaOperativeParagraphId)
+                .ToList();
+
+            if (paragraph.Resolution != null)
+            {
+                paragraph.Resolution.OperativeParagraphs.Remove(paragraph);
+                if (addAmendemts.Count > 0)
+                {
+                    foreach (var addAmendment in addAmendemts)
+                    {
+                        paragraph.Resolution.AddAmendments.Remove(addAmendment);
+                    }
+                }
+            }
+
+            if (paragraph.Parent != null)
+            {
+                paragraph.Parent.Children.Remove(paragraph);
+            }
+
+            _context.ResolutionMoveAmendments.RemoveRange(paragraph.MoveAmendments);
+            _context.ResolutionDeleteAmendments.RemoveRange(paragraph.DeleteAmendments);
+            _context.ResolutionChangeAmendments.RemoveRange(paragraph.ChangeAmendments);
+
+            _context.RemoveRange(addAmendemts);
+            _context.OperativeParagraphs.Remove(paragraph);
+            _context.SaveChanges();
+
+            paragraph.MoveAmendments?.Clear();
+            paragraph.DeleteAmendments?.Clear();
+            paragraph.ChangeAmendments?.Clear();
+            paragraph.Children?.Clear();
+        }
+
         public int UpdatePreambleParagraph(ResaPreambleParagraph paragraph)
+        {
+            _context.Update(paragraph);
+            return _context.SaveChanges();
+        }
+
+        public int UpdateOperativeParagraph(ResaOperativeParagraph paragraph)
         {
             _context.Update(paragraph);
             return _context.SaveChanges();
@@ -102,7 +180,8 @@ namespace MUNity.Services
                 return false;
 
             var moveDownElement = _context.PreambleParagraphs
-                .FirstOrDefault(n => n.ResolutionId == paragraph.ResolutionId && n.OrderIndex == paragraph.OrderIndex - 1);
+                .FirstOrDefault(n => n.ResolutionId == paragraph.ResolutionId && 
+                n.OrderIndex == paragraph.OrderIndex - 1);
 
             if (moveDownElement != null)
             {
@@ -111,6 +190,24 @@ namespace MUNity.Services
             paragraph.OrderIndex = paragraph.OrderIndex - 1;
             _context.SaveChanges();
             return true;
+        }
+
+        public void MoveOperativeParagraphUp(ResaOperativeParagraph paragraph)
+        {
+            if (paragraph.OrderIndex == 0)
+                return;
+
+            var moveDownElement = _context.OperativeParagraphs
+                .FirstOrDefault(n => n.Resolution.ResaElementId == paragraph.Resolution.ResaElementId &&
+                n.Parent == paragraph.Parent &&
+                n.OrderIndex == paragraph.OrderIndex - 1);
+
+            if (moveDownElement != null)
+            {
+                moveDownElement.OrderIndex--;
+            }
+            paragraph.OrderIndex = paragraph.OrderIndex - 1;
+            _context.SaveChanges();
         }
 
         public bool MovePreambleParagraphDown(ResaPreambleParagraph paragraph)
@@ -130,6 +227,21 @@ namespace MUNity.Services
             return true;
         }
 
+        public void MoveOperativeParagraphDown(ResaOperativeParagraph paragraph)
+        {
+            var moveUpElement = _context.OperativeParagraphs
+                .FirstOrDefault(n => n.Resolution.ResaElementId == paragraph.Resolution.ResaElementId &&
+                n.Parent == paragraph.Parent &&
+                n.OrderIndex == paragraph.OrderIndex + 1);
+
+            if (moveUpElement != null)
+            {
+                moveUpElement.OrderIndex--;
+            }
+            paragraph.OrderIndex = paragraph.OrderIndex + 1;
+            _context.SaveChanges();
+        }
+
         public int UpdateResaElement(ResaElement element)
         {
             _context.Update(element);
@@ -138,7 +250,26 @@ namespace MUNity.Services
 
         public IList<ResaPreambleParagraph> GetPreambleParagraphs(string resolutionId)
         {
-            return _context.PreambleParagraphs.Where(n => n.ResolutionId == resolutionId).OrderBy(n => n.OrderIndex).ToList();
+            return _context.PreambleParagraphs
+                .Where(n => n.ResolutionId == resolutionId)
+                .OrderBy(n => n.OrderIndex)
+                .ToList();
+        }
+
+        public IList<ResaOperativeParagraph> GetOperativeParagraphs(ResaElement resolution, ResaOperativeParagraph parent = null)
+        {
+            var paragraphs = _context.OperativeParagraphs
+                .Where(n => n.Resolution == resolution && n.Parent == parent)
+                .Include(n => n.ChangeAmendments)
+                .Include(n => n.MoveAmendments)
+                .Include(n => n.DeleteAmendments)
+                .OrderBy(n => n.OrderIndex)
+                .ToList();
+            foreach (var paragraph in paragraphs)
+            {
+                paragraph.Resolution = resolution;
+            }
+            return paragraphs;
         }
 
         public void Dispose()

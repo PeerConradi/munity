@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using MUNity.Base;
+using MUNity.Database.Models.Conference.Roles;
 using MUNity.Database.Models.User;
 
 namespace MUNity.Database.Models.Resolution;
@@ -28,6 +30,10 @@ public class ResaElement
     public string CommitteeName { get; set; } = "";
 
     public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+    public EResolutionStates State { get; set; }
+
+    public ConferenceDelegateRole SubmitterRole { get; set; }
 
     public IList<ResaPreambleParagraph> PreambleParagraphs { get; set; }
 

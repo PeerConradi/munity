@@ -11,11 +11,11 @@ namespace MUNity.BlazorServer.BServices
 
         public event EventHandler<ResolutionExchangeUpdatedEventArgs> ResolutionExchangeUpdated;
 
-        public ResolutionExchange CreateResolution(string committeeId)
+        public ResolutionExchange CreateResolution(string committeeId, int? roleId = null)
         {
             using var scope = _scopeFactory.CreateScope();
             using var service = scope.ServiceProvider.GetRequiredService<ResolutionService>();
-            var resolution = service.CreateResolutionForCommittee(committeeId);
+            var resolution = service.CreateResolutionForCommittee(committeeId, roleId);
             var exchange = new ResolutionExchange(_scopeFactory)
             {
                 Resolution = resolution,

@@ -91,7 +91,7 @@
             {
                 mySlot.Choice = choice;
                 dbContext.SaveChanges();
-                exchange.NotifyUserVoted(vcPartService.RoleId, mySlot.Choice);
+                exchange.NotifyUserVoted(vcPartService.RoleId.Value, mySlot.Choice);
             }
             else
             {
