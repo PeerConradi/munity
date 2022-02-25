@@ -1,7 +1,17 @@
 ﻿@using MUNity.BlazorServer.BServices
+@inject BServices.VirtualCommiteeParticipationService pcService
+
 <div class="panel panel-inverse mb-1">
 	<div class="panel-heading ui-sortable-handle">
 		<h4 class="panel-title">Operativer Abschnitt</h4>
+		@if (Exchange.Resolution.State == EResolutionStates.Private || Exchange.Resolution.State == EResolutionStates.Public)
+		{
+			<small>Doppelklick auf den Absatz zum Bearbeiten</small>
+		}
+		else
+		{
+			<small>Änderungen an der Präamble sind derzeit nur dem Vorsitz möglich</small>
+		}
 	</div>
 </div>
 
@@ -22,9 +32,24 @@
 	
 }
 
-<div class="row d-flex justify-content-center mb-3 mt-2">
-	<button class="btn btn-success btn-icon btn-lg" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
-</div>
+<AuthorizeView>
+	<Authorized>
+		<div class="row d-flex justify-content-center mb-3 mt-2">
+			<button class="btn btn-success btn-icon btn-lg" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		@if (Exchange.Resolution.State == EResolutionStates.Public ||
+		(Exchange.Resolution.State == EResolutionStates.Private && pcService.RoleId == Exchange.Resolution.SubmitterRole.RoleId))
+		{
+			<div class="row d-flex justify-content-center mb-3 mt-2">
+				<button class="btn btn-success btn-icon btn-lg" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
+			</div>
+		}
+	</NotAuthorized>
+</AuthorizeView>
+
+
 
 @code {
 	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }

@@ -1,6 +1,43 @@
 ﻿@using MUNity.BlazorServer.BServices
 @inject BServices.ResolutionExchangeService resolutionExchangeService
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
 
+<div class="row">
+    <div class="panel panel-inverse col-12">
+        <div class="panel-heading">
+            @if (((exchange.Resolution.State == EResolutionStates.Private || 
+            exchange.Resolution.State == EResolutionStates.Public) && exchange.Resolution.SubmitterRole?.RoleId == vcParticipationService.RoleId) ||
+            isAuthed)
+            {
+                <label class="me-2">Anderen erlauben mit zu schreiben</label>
+                <RadzenSwitch @bind-Value=@allowOthersToEdit class="me-2" />
+                <button class="btn btn-default" @onclick="SubmitResolution">Einreichen</button>
+            }
+            else if (exchange.Resolution.State == EResolutionStates.Submitted)
+            {
+                <h3 class="panel-title">Eingereichte Resolution</h3>
+            }
+            else if (exchange.Resolution.State == EResolutionStates.Discussion)
+            {
+                <h3 class="panel-title">Resolution wird behandelt. Änderungsanträge offen.</h3>
+            }
+            else
+            {
+                <h3>Resolution</h3>
+            }
+
+            <AuthorizeView>
+                <Authorized>
+                    @if (exchange.Resolution.State == EResolutionStates.Submitted)
+                    {
+                        <label class="me-2">Änderungsanträge erlauben</label>
+                        <RadzenSwitch @bind-Value=@setDiscussionMode />
+                    }
+                </Authorized>
+            </AuthorizeView>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-12">
@@ -14,10 +51,63 @@
 @code {
     [Parameter] public string ResolutionId { get; set; }
 
-    private ResolutionExchange exchange;
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
-    protected override void OnParametersSet()
+    private bool isAuthed = false;
+
+    private ResolutionExchange exchange;
+    private bool allowOthersToEdit
     {
+        get
+        {
+            return this.exchange.Resolution.State == EResolutionStates.Public;
+        }
+        set
+        {
+            if (value)
+            {
+                this.exchange.Resolution.State = EResolutionStates.Public;
+                this.exchange.UpdateResaElement();
+            }
+            else
+            {
+                this.exchange.Resolution.State = EResolutionStates.Private;
+                this.exchange.UpdateResaElement();
+            }
+        }
+    }
+
+    private bool setDiscussionMode
+    {
+        get
+        {
+            return this.exchange.Resolution.State == EResolutionStates.Discussion;
+        }
+        set
+        {
+            if (value)
+            {
+                this.exchange.Resolution.State = EResolutionStates.Discussion;
+                this.exchange.UpdateResaElement();
+            }
+            else
+            {
+                this.exchange.Resolution.State = EResolutionStates.Submitted;
+                this.exchange.UpdateResaElement();
+            }
+        }
+    }
+
+    private void SubmitResolution()
+    {
+        this.exchange.Resolution.State = EResolutionStates.Submitted;
+        this.exchange.UpdateResaElement();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var taskResult = await AuthStateTask;
+        isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
         base.OnParametersSet();
         exchange = resolutionExchangeService.GetResolution(ResolutionId);
     }

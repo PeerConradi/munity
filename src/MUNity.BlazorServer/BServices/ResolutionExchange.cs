@@ -49,6 +49,14 @@ namespace MUNity.BlazorServer.BServices
             PreambleParagraphChanged?.Invoke(this, paragraph);
         }
 
+        public void UpdateResaElement()
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.UpdateResaElement(this.Resolution);
+            ResolutionChanged?.Invoke(this, Resolution);
+        }
+
         public void UpdateOperativeParagraph(ResaOperativeParagraph paragraph)
         {
             using var scope = serviceScopeFactory.CreateScope();
@@ -154,6 +162,14 @@ namespace MUNity.BlazorServer.BServices
             ResolutionChanged?.Invoke(this, Resolution);
         }
         
+        public void AddRemoveAmendment(ResaOperativeParagraph paragraph, int roleId)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.AddRemoveAmendment(paragraph, roleId);
+
+            OperativeParagraphChanged?.Invoke(this, paragraph);
+        }
 
         public ResolutionExchange(IServiceScopeFactory scopeFactory)
         {

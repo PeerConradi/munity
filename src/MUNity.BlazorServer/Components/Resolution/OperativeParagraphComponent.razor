@@ -74,6 +74,48 @@
 	</div>
 </div>
 
+@if (showAmendmentModal)
+{
+	<div class="modal-backdrop" style="opacity: 25%"></div>
+	<div class="modal show" id="modal-without-animation" style="display: block;" aria-modal="true" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Änderungsantrag einreichen</h4>
+					<button type="button" class="btn-close" @onclick="() => showAmendmentModal = false"></button>
+				</div>
+				<div class="modal-body">
+					<div class="btn-group btn-group-horizontal w-100">
+						<button class="btn @((amendmentMode == AmendmentModes.Remove) ? "btn-primary" : "btn-outline-primary")" @onclick="() => amendmentMode = AmendmentModes.Remove"><i class="fa fa-strikethrough"></i> Streichen</button>
+						<button class="btn @((amendmentMode == AmendmentModes.Change) ? "btn-primary" : "btn-outline-primary")" @onclick="() => amendmentMode = AmendmentModes.Change"><i class="fa fa-pen"></i> Textänderung</button>
+						<button class="btn @((amendmentMode == AmendmentModes.Move) ? "btn-primary" : "btn-outline-primary")" @onclick="() => amendmentMode = AmendmentModes.Move"><i class="fa fa-sort"></i> Verschieben</button>
+					</div>
+
+					@if (amendmentMode == AmendmentModes.Change)
+					{
+						<RadzenHtmlEditor class="mt-2" @bind-Value="@newText" style="max-height: 300px; width: 100%; margin-bottom: 1rem;">
+						<RadzenHtmlEditorSeparator />
+						<RadzenHtmlEditorUndo />
+						<RadzenHtmlEditorRedo />
+						<RadzenHtmlEditorSeparator />
+						<RadzenHtmlEditorBold />
+						<RadzenHtmlEditorItalic />
+						<RadzenHtmlEditorUnderline />
+						<RadzenHtmlEditorStrikeThrough />
+						<RadzenHtmlEditorSeparator />
+					</RadzenHtmlEditor>
+					}
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" @onclick="AddAmendment">Einreichen</a>
+					<a href="javascript:;" class="btn btn-white" @onclick="() => showAmendmentModal = false">Abbrechen</a>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+
 @code {
 	[Parameter] public ResaOperativeParagraph Paragraph { get; set; }
 
@@ -85,20 +127,48 @@
 
 	[Parameter] public int Index { get; set; }
 
+	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+	private bool showAmendmentModal = false;
+
+	private enum AmendmentModes
+	{
+		Remove,
+		Change,
+		Move
+	}
+
+	private string newText;
+
+	private AmendmentModes amendmentMode;
+
 	private bool isEditing = false;
+
+	private bool isAuthed = false;
 
 	private string htmlText = "1. Operativ Paragraph <br />Mit mehreren Zeilen <br />Anklicken um zu bearbeiten.";
 
 	private void StartEdit()
 	{
-		vcParticipationService.LastEditedOperativeParagraphId = this.Paragraph.ResaOperativeParagraphId;
-		this.isEditing = true;
+		if (Exchange.Resolution.State == EResolutionStates.Public ||
+		Exchange.Resolution.State == EResolutionStates.Private && Exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId ||
+		isAuthed)
+		{
+			vcParticipationService.LastEditedOperativeParagraphId = this.Paragraph.ResaOperativeParagraphId;
+			this.isEditing = true;
+		}
+		else if (Exchange.Resolution.State == EResolutionStates.Discussion)
+		{
+			showAmendmentModal = true;
+		}
+
 	}
 
 	private void Save()
 	{
 		Exchange.UpdateOperativeParagraph(this.Paragraph);
 		vcParticipationService.LastEditedOperativeParagraphId = null;
+		this.newText = Paragraph.Text;
 		this.isEditing = false;
 	}
 
@@ -120,9 +190,12 @@
 		isEditing = false;
 	}
 
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
+		this.newText = Paragraph.Text;
+		var taskResult = await AuthStateTask;
+		isAuthed = taskResult?.User.Identity != null && taskResult.User.Identity.IsAuthenticated;
 		Exchange.OperativeParagraphChanged += (sender, para) =>
 		{
 			if (para == this.Paragraph)
@@ -136,7 +209,7 @@
 			this.isEditing = true;
 		}
 
-		
+
 	}
 
 	protected override void OnInitialized()
@@ -151,5 +224,22 @@
 			}
 
 		};
+	}
+
+	private void AddAmendment()
+	{
+		if (this.amendmentMode == AmendmentModes.Remove)
+		{
+			this.AddRemoveAmendment();
+		}
+	}
+
+	private void AddRemoveAmendment()
+	{
+		if (vcParticipationService?.RoleId != null)
+		{
+			Exchange.AddRemoveAmendment(this.Paragraph, vcParticipationService.RoleId.Value);
+			this.showAmendmentModal = false;
+		}
 	}
 }

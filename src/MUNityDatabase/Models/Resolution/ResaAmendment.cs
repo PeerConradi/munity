@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MUNity.Database.Models.Conference.Roles;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -25,8 +26,13 @@ public class ResaAmendment
 
     public DateTime SubmitTime { get; set; }
 
+    public ConferenceDelegateRole Submitter { get; set; }
+
+    public IList<ResaAmendmentSupporter> Supporters { get; set; }
+
     public ResaAmendment()
     {
         this.ResaAmendmentId = Guid.NewGuid().ToString();
+        this.Supporters = new List<ResaAmendmentSupporter>();
     }
 }

@@ -272,6 +272,19 @@ namespace MUNity.Services
             return paragraphs;
         }
 
+        public void AddRemoveAmendment(ResaOperativeParagraph paragraph, int roleId)
+        {
+            _context.Update(paragraph);
+            var amendment = new ResaDeleteAmendment()
+            {
+                Resolution = paragraph.Resolution,
+                Submitter = _context.Delegates.Find(roleId),
+                TargetParagraph = paragraph
+            };
+            paragraph.DeleteAmendments.Add(amendment);
+            _context.SaveChanges();
+        }
+
         public void Dispose()
         {
             this._context?.Dispose();

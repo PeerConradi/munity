@@ -15,7 +15,7 @@
 				}
 				else
 				{
-					<p @ondblclick="StartEdit" class="card-text">@((MarkupString)Paragraph.Text)</p>
+					<p @ondblclick="StartEdit" class="card-text">@((MarkupString)Paragraph.Text) </p>
 				}
 			}
 			else
@@ -67,17 +67,21 @@
 
 	[Parameter]public bool IsLast { get; set; }
 
+	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
 	private bool displayTools = false;
 
 	private bool isEditing = false;
 
 	private string htmlText = "Präambel Paragraph <br />Mit mehreren Zeilen <br />Anklicken um zu bearbeiten";
 
+	private bool isAuthed = false;
 
-
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
+		var taskResult = await AuthStateTask;
+		isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
 		if (vcParticipationService?.LastEditedPreambleParagraphId != null && this.Paragraph.ResaPreambleParagraphId == vcParticipationService.LastEditedPreambleParagraphId)
 		{
 			this.isEditing = true;
@@ -98,8 +102,13 @@
 
 	private void StartEdit()
 	{
-		this.isEditing = true;
-		vcParticipationService.LastEditedPreambleParagraphId = this.Paragraph.ResaPreambleParagraphId;
+		if (Exchange.Resolution.State == EResolutionStates.Public ||
+		(Exchange.Resolution.State == EResolutionStates.Private && Exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId) ||
+		isAuthed)
+		{
+			this.isEditing = true;
+			vcParticipationService.LastEditedPreambleParagraphId = this.Paragraph.ResaPreambleParagraphId;
+		}
 	}
 
 	private void Save()

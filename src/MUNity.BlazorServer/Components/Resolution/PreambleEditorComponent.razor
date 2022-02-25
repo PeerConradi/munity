@@ -1,9 +1,18 @@
 ﻿@using MUNity.BlazorServer.BServices
 
+@inject BServices.VirtualCommiteeParticipationService pcService
+
 <div class="panel panel-inverse mb-1">
 	<div class="panel-heading">
 		<h4 class="panel-title">Präambel</h4>
-		<small>Doppelklick auf den Absatz zum Bearbeiten</small>
+		@if (Exchange.Resolution.State == EResolutionStates.Private || Exchange.Resolution.State == EResolutionStates.Public)
+		{
+			<small>Doppelklick auf den Absatz zum Bearbeiten</small>
+		}
+		else
+		{
+			<small>Änderungen an der Präamble sind derzeit nur dem Vorsitz möglich</small>
+		}
 	</div>
 </div>
 
@@ -15,14 +24,31 @@
 	IsLast=@(paragraph == Exchange.Resolution.PreambleParagraphs.Last()) />
 }
 
-<div class="row d-flex justify-content-center mb-3 mt-2">
-	<button class="btn btn-success btn-icon btn-lg" @onclick="CreateParagraph"><i class="fa fa-plus"></i></button>
-</div>
+<AuthorizeView>
+	<Authorized>
+		<div class="row d-flex justify-content-center mb-3 mt-2">
+			<button class="btn btn-success btn-icon btn-lg" @onclick="CreateParagraph"><i class="fa fa-plus"></i></button>
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		@if (Exchange.Resolution.State == EResolutionStates.Public ||
+		(Exchange.Resolution.State == EResolutionStates.Private && pcService.RoleId == Exchange.Resolution.SubmitterRole.RoleId))
+		{
+			<div class="row d-flex justify-content-center mb-3 mt-2">
+				<button class="btn btn-success btn-icon btn-lg" @onclick="CreateParagraph"><i class="fa fa-plus"></i></button>
+			</div>
+		}
+	</NotAuthorized>
+</AuthorizeView>
+
+
 
 
 
 @code {
 	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }
+
+	[CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
 
 	private void CreateParagraph()
 	{
