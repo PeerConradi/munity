@@ -17,11 +17,11 @@
         {
             if (viewModel.Speakers.Any(n => n.Name == MyRoleName) || viewModel.CurrentSpeaker != null && viewModel.CurrentSpeaker.Name == MyRoleName)
             {
-                <button class="btn btn-success disabled" disabled><i class="fa fa-plus"></i></button>
+                <button class="btn btn-success disabled" disabled><i class="fa fa-plus"></i> @(viewModel.Speakers.Count()) wartend</button>
             }
             else
             {
-                <button class="btn btn-success" @onclick="AddMeToSpeakers" title="@($"Fügt '{MyRoleName}' ({MyIso}) der Warteliste hinzu")"><i class="fa fa-plus"></i></button>
+                <button class="btn btn-success" @onclick="AddMeToSpeakers" title="@($"Fügt '{MyRoleName}' ({MyIso}) der Warteliste hinzu")"><i class="fa fa-plus"></i> @(viewModel.Speakers.Count()) wartend</button>
             }
         }
     </div>
@@ -150,11 +150,11 @@
         {
             if (viewModel.Questions.Any(n => n.Name == MyRoleName) || viewModel.CurrentQuestion != null && viewModel.CurrentQuestion.Name == MyRoleName)
             {
-                <button class="btn btn-success disabled" disabled><i class="fa fa-plus"></i></button>
+                <button class="btn btn-success disabled" disabled><i class="fa fa-plus"></i> @(viewModel.Questions.Count()) wartend</button>
             }
             else
             {
-                <button class="btn btn-success" @onclick="AddMeToQuestions" title="@($"Fügt '{MyRoleName}' ({MyIso}) der Liste für Redebeträge hinzu")"><i class="fa fa-plus"></i></button>
+                <button class="btn btn-success" @onclick="AddMeToQuestions" title="@($"Fügt '{MyRoleName}' ({MyIso}) der Liste für Fragen oder Kurzbemerkungen hinzu")"><i class="fa fa-plus"></i> @(viewModel.Questions.Count()) wartend</button>
             }
         }
     </div>

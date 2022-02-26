@@ -52,12 +52,12 @@
 			<div class="col-12">
 				@if (Paragraph.DeleteAmendments.Count > 0)
 				{
-					<span class="badge bg-danger me-2 cursor-pointer" title="@($"Eingereicht durch: {string.Join(",", Paragraph.DeleteAmendments.Select(n => n.Submitter.RoleName))}")" @onclick="() => showDeleteAmendmentModal = true">@Paragraph.DeleteAmendments.Count Anträge auf Steichung</span>
+					<span class="badge bg-danger me-2 cursor-pointer" title="@($"Eingereicht durch: {string.Join(",", Paragraph.DeleteAmendments.Select(n => n.Submitter?.RoleName))}")" @onclick="() => showDeleteAmendmentModal = true">@Paragraph.DeleteAmendments.Count Anträge auf Steichung</span>
 				}
 				
 				@if (Paragraph.ChangeAmendments.Count > 0)
 				{
-					<span class="badge bg-warning">@Paragraph.ChangeAmendments.Count Anträge auf Textänderung</span>
+					<span class="badge bg-warning me-2 cursor-pointer" title="@($"Eingereicht durch: {string.Join(",", Paragraph.ChangeAmendments.Select(n => n.Submitter?.RoleName))}")" @onclick="() => showChangeAmendmentsModal = true">@Paragraph.ChangeAmendments.Count Anträge auf Textänderung</span>
 				}
 				
 			</div>
@@ -87,7 +87,7 @@
 				<div class="modal-body">
 					<div class="btn-group btn-group-horizontal w-100">
 						<button class="btn @((amendmentMode == AmendmentModes.Remove) ? "btn-primary" : "btn-outline-primary") @((!allowDeleteAmendement) ? "disabled" : null)" @onclick="() => amendmentMode = AmendmentModes.Remove"><i class="fa fa-strikethrough"></i> Streichen</button>
-						<button class="btn @((amendmentMode == AmendmentModes.Change) ? "btn-primary" : "btn-outline-primary")" @onclick="() => amendmentMode = AmendmentModes.Change"><i class="fa fa-pen"></i> Textänderung</button>
+						<button class="btn @((amendmentMode == AmendmentModes.Change) ? "btn-primary" : "btn-outline-primary")" @onclick="() => amendmentMode = AmendmentModes.Change" ><i class="fa fa-pen"></i> Textänderung</button>
 						<button class="btn @((amendmentMode == AmendmentModes.Move) ? "btn-primary" : "btn-outline-primary")" @onclick="() => amendmentMode = AmendmentModes.Move"><i class="fa fa-sort"></i> Verschieben</button>
 					</div>
 
@@ -198,6 +198,33 @@
 	</div>
 }
 
+@if (showChangeAmendmentsModal)
+{
+	<div class="modal-backdrop" style="opacity: 50%"></div>
+	<div class="modal show " style="display: block;" aria-modal="true" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Änderungsanträge auf Streichen</h4>
+					<button type="button" class="btn-close" @onclick="() => showChangeAmendmentsModal = false"></button>
+				</div>
+				<div class="modal-body">
+					<div class="accordion" id="accordion">
+						@foreach(var amendment in Paragraph.ChangeAmendments)
+						{
+							<ChangeAmendmentAccItem Amendment=@amendment />
+						}
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-white" @onclick="() => showChangeAmendmentsModal = false">Schließen</a>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
 
 @code {
 	[Parameter] public ResaOperativeParagraph Paragraph { get; set; }
@@ -215,6 +242,8 @@
 	private bool showAmendmentModal = false;
 
 	private bool showDeleteAmendmentModal = false;
+
+	private bool showChangeAmendmentsModal = false;
 
 	private bool showSecureRemoveAmendment = false;
 
@@ -337,6 +366,10 @@
 		{
 			this.AddRemoveAmendment();
 		}
+		else if (this.amendmentMode == AmendmentModes.Change)
+		{
+			AddChangeAmendment();
+		}
 	}
 
 	private void AddRemoveAmendment()
@@ -348,12 +381,26 @@
 		}
 	}
 
+	private void AddChangeAmendment()
+	{
+		if (vcParticipationService?.RoleId != null)
+		{
+			Exchange.AddChangeAmendment(this.Paragraph, vcParticipationService.RoleId.Value, newText);
+			this.showAmendmentModal = false;
+		}
+	}
+
 	private void RevokeDeleteAmendment(ResaDeleteAmendment amendment)
 	{
 		if (amendment != null)
 		{
 			Exchange.RevokeDeleteAmendment(amendment);
 		}
+	}
+
+	private void RevokeChangeAmendment(ResaChangeAmendment amendment)
+	{
+		throw new NotImplementedException();
 	}
 
 	private void SupportAmendment(ResaAmendment amendment)

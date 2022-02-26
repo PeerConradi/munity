@@ -219,6 +219,21 @@ namespace MUNity.Services
             _context.SaveChanges();
         }
 
+        public void AddChangeAmendment(ResaOperativeParagraph paragraph, int roleId, string newText)
+        {
+            _context.Update(paragraph);
+            var changeAmendment = new ResaChangeAmendment()
+            {
+                NewText = newText,
+                Resolution = paragraph.Resolution,
+                Submitter = _context.Delegates.Find(roleId),
+                TargetParagraph = paragraph
+            };
+            paragraph.ChangeAmendments.Add(changeAmendment);
+            _context.ResolutionChangeAmendments.Add(changeAmendment);
+            _context.SaveChanges();
+        }
+
         public bool MovePreambleParagraphDown(ResaPreambleParagraph paragraph)
         {
             if (paragraph.OrderIndex >= _context.PreambleParagraphs.Count(n => n.ResolutionId == paragraph.ResolutionId))

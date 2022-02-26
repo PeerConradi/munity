@@ -1,0 +1,65 @@
+﻿@using MUNity.Database.Models.Resolution
+
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
+
+<div class="accordion-item border-0">
+	<div class="accordion-header" @onclick="() => expand = !expand">
+		<div class="accordion-button bg-gray-900 text-white px-3 py-10px pointer-cursor @((expand) ? "" : "collapsed") d-flex justify-content-around" type="button" aria-expanded="true">
+			<div class="">
+				<i class="fa fa-circle fa-fw text-blue me-2 fs-8px"></i> <span class="">@Amendment.SubmitTime @Amendment?.Submitter?.RoleName</span>
+			</div>
+			 <div class="ms-2">
+				 @if (vcParticipationService.RoleId != null && Amendment.Submitter?.RoleId == vcParticipationService.RoleId)
+				{
+					<button class="btn btn-default btn-sm" @onclick="() => RevokeAmendment.InvokeAsync(Amendment)">Zurückziehen</button>
+				}
+				else
+				{
+
+					if (vcParticipationService?.RoleId != null && Amendment.Supporters.All(n => n.Role?.RoleId != vcParticipationService.RoleId))
+					{
+						<button class="btn btn-default btn-sm" @onclick="() => SupportAmendment.InvokeAsync(Amendment)">Unterstützen</button>
+					}
+					else if (vcParticipationService?.RoleId != null)
+					{
+						<button class="btn btn-default btn-sm" @onclick="() => RevokeSupport.InvokeAsync(Amendment)">Unterstützung zurückziehen</button>
+					}
+				}
+
+				<AuthorizeView>
+					<Authorized>
+						<div class="btn-group btn-group-horizontal">
+							<button class="btn btn-primary" @onclick="() => SubmitAmendment.InvokeAsync(Amendment)"><i class="fa fa-check"></i> Annehmen</button>
+							<button class="btn btn-default"><i class="fa fa-vote"></i> Zur Abstimmung stellen</button>
+							<button class="btn btn-danger"><i class="fa fa-trash"></i> Ablehnen</button>
+						</div>
+					</Authorized>
+				</AuthorizeView>
+			 </div>
+
+			
+		</div>
+	</div>
+	<div id="collapseOne" class="accordion-collapse collapse @((expand) ? "show" : "")" style="">
+		<div class="accordion-body bg-gray-800 text-white">
+			@Amendment.NewText
+			<br />
+			<small>Unterstützt durch: @string.Join(",", Amendment.Supporters?.Select(n => n.Role?.RoleName))</small>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	[Parameter] public ResaChangeAmendment Amendment { get; set; }
+
+	[Parameter] public EventCallback<ResaChangeAmendment> SubmitAmendment { get; set; }
+
+	[Parameter] public EventCallback<ResaChangeAmendment> SupportAmendment { get; set; }
+
+	[Parameter] public EventCallback<ResaChangeAmendment> RevokeSupport { get; set; }
+
+	[Parameter] public EventCallback<ResaChangeAmendment> RevokeAmendment { get; set; }
+
+	private bool expand = false;
+}
