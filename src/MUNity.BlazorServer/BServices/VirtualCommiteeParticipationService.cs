@@ -125,7 +125,7 @@ namespace MUNity.BlazorServer.BServices
             _dbContext.SaveChanges();
             if (_exchange != null)
             {
-                var ex = _exchange.SessionExchanges.FirstOrDefault(n => n.CurrentAgendaItemId == agendaItemId);
+                var ex = _exchange.CurrentSessionExchange;
                 ex.AddPetition(petition);
             }
             else
@@ -147,7 +147,7 @@ namespace MUNity.BlazorServer.BServices
                 this._dbContext.SaveChanges();
                 if (_exchange != null)
                 {
-                    var petitionDto = _exchange.SessionExchanges.SelectMany(n => n.Petitions).FirstOrDefault(n => n.PetitionId == petitionId);
+                    var petitionDto = _exchange.CurrentSessionExchange.Petitions.FirstOrDefault(n => n.PetitionId == petitionId);
                     if (petitionDto != null)
                     {
                         petitionDto.Status = Base.EPetitionStates.Active;
@@ -156,8 +156,7 @@ namespace MUNity.BlazorServer.BServices
                     {
                         _logger?.LogWarning($"Unable to find a dto for petition {petitionId}|{petition.PetitionId}");
                     }
-                    var ex = _exchange.SessionExchanges.FirstOrDefault(n => n.Petitions.Any(a => a.PetitionId == petitionId));
-                    ex.NotifyPetitionStatusChanged();
+                    _exchange.CurrentSessionExchange.NotifyPetitionStatusChanged();
                 }
                 else
                 {
@@ -181,8 +180,8 @@ namespace MUNity.BlazorServer.BServices
                     petition.Status = Base.EPetitionStates.Removed;
 
                 this._dbContext.SaveChanges();
-                var ex = _exchange.SessionExchanges.FirstOrDefault(n => n.CurrentAgendaItemId == petition.AgendaItem.AgendaItemId);
-                ex?.Petitions.Remove(ex.Petitions.FirstOrDefault(n => n.PetitionId == petitionId));
+                
+                _exchange.CurrentSessionExchange.Petitions.Remove(_exchange.CurrentSessionExchange.Petitions.FirstOrDefault(n => n.PetitionId == petitionId));
             }
         }
 

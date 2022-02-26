@@ -125,7 +125,7 @@ else
 		.Select(n => n.Committee.CommitteeId).FirstOrDefault();
 
 		this.committeeExchange = vcExchangeService.GetExchange(committeeId);
-		this.currentSessionExchange = committeeExchange.SessionExchanges.FirstOrDefault(n => n.SessionId == SessionId);
+		this.currentSessionExchange = committeeExchange.CurrentSessionExchange;
 
 		if (currentSessionExchange != null)
 		{
@@ -133,7 +133,7 @@ else
 		}
 		else
 		{
-			logger?.LogWarning($"No exchange for the session found with id: {SessionId} inside sessions: {string.Join("", committeeExchange.SessionExchanges.Select(a => a.SessionId))}");
+			logger?.LogWarning($"No current session. ");
 		}
 		vcService.Registered += delegate { InvokeAsync(StateHasChanged); };
 	}
@@ -141,7 +141,7 @@ else
 	private void ReloadSessionExchangesAndFindCurrent()
 	{
 		vcExchangeService.ReloadSessionExchangesForExchange(this.committeeExchange);
-		this.currentSessionExchange = committeeExchange.SessionExchanges.FirstOrDefault(n => n.SessionId == SessionId);
+		this.currentSessionExchange = committeeExchange.CurrentSessionExchange;
 
 		if (currentSessionExchange != null)
 		{
@@ -150,7 +150,7 @@ else
 		}
 		else
 		{
-			logger?.LogWarning($"No exchange for the session found with id: {SessionId} inside sessions: {string.Join("", committeeExchange.SessionExchanges.Select(a => a.SessionId))}");
+			logger?.LogWarning($"No exchange for the session found with id: {SessionId} inside sessions");
 		}
 		InvokeAsync(StateHasChanged);
 	}

@@ -3,6 +3,7 @@
 @inject NavigationManager navManager
 @inject BServices.ScopedSessionNotificationService notificationService
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject BServices.VirtualCommitteeExchangeService vcExchangeService
 @inject ILogger<VirtualCommitteTopMenu> logger
 @inject BServices.ResolutionExchangeService resolutionExchangeService
 
@@ -42,25 +43,14 @@
 					
 				</div>
 			</div>
-			<div class="menu-item has-sub">
-				<a href="javascript:;" class="menu-link">
+			<div class="menu-item">
+				<a href="@($"/oc/{CommitteeId}/session/{committeeExchange.CurrentSessionExchange.SessionId}")" class="menu-link">
 					<div class="menu-icon">
 						<i class="fa fa-hdd"></i>
 					</div>
-					<div class="menu-text">Sitzungsblöcke</div>
-					<div class="menu-badge ms-3">10</div>
+					<div class="menu-text">Anträge</div>
+					<div class="menu-badge ms-3">@committeeExchange.CurrentSessionExchange.Petitions.Count</div>
 				</a>
-				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;width: auto;">
-					@foreach(var session in dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == CommitteeId).OrderBy(n => n.StartDate))
-					{
-						<div class="menu-item">
-							<a href="@($"/oc/{CommitteeId}/session/{session.CommitteeSessionId}")" class="menu-link">
-								<div class="menu-text">@session.Name <span class="badge bg-teal">@session.StartDate - @session.EndDate</span></div>
-							</a>
-						</div>
-					}
-					
-				</div>
 			</div>
 
 			<div class="menu-item has-sub">
@@ -184,11 +174,11 @@
 @code {
 	[Parameter] public string CommitteeId { get; set; }
 
-	[Parameter] public string CurrentSessionId { get; set; }
-
 	private string conferenceId;
 
 	private string listOfSpeakersId;
+
+	private BServices.VirtualCommitteeExchange committeeExchange;
 
 	protected override void OnParametersSet()
 	{
@@ -202,18 +192,21 @@
 			.Where(n => n.CommitteeId == CommitteeId)
 			.Select(n => n.ListOfSpeakers.ListOfSpeakersId)
 			.FirstOrDefault();
+
+		this.committeeExchange = vcExchangeService.GetExchange(CommitteeId);
+		this.committeeExchange.CurrentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
 	}
 
 	private void CreateVoting()
 	{
-		if (!string.IsNullOrEmpty(CurrentSessionId))
+		if (!string.IsNullOrEmpty(committeeExchange.CurrentSessionExchange?.SessionId))
 		{
 			var newVoting = new SessionVoting()
 			{
 				Name = "Neues Abstimmung",
-				Session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == CurrentSessionId)
+				Session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == committeeExchange.CurrentSessionExchange.SessionId)
 			};
-			var presentsCheckId = dbContext.PresentChecks.FirstOrDefault(n => n.Session.CommitteeSessionId == CurrentSessionId)?.SessionPresentsId;
+			var presentsCheckId = dbContext.PresentChecks.FirstOrDefault(n => n.Session.CommitteeSessionId == committeeExchange.CurrentSessionExchange.SessionId)?.SessionPresentsId;
 			if (presentsCheckId != null)
 			{
 				newVoting.VoteSlots = dbContext.PresentStates.Where(n => n.SessionPresents.SessionPresentsId == presentsCheckId && n.State == PresentsState.PresentsStates.Present && n.Role.DelegateCountry != null)

@@ -22,7 +22,8 @@
 
 @if (!accessDenied && !errorOnInit)
 {
-    <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu CommitteeId=@CommitteeId CurrentSessionId=@exchange?.CurrentSessionExchange?.SessionId />
+    <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu 
+    CommitteeId=@CommitteeId />
 
     <div class="d-flex justify-content-center bg-dark-800" style="min-height: 90px">
         <div class="mt-5px">
@@ -113,9 +114,6 @@
 			    </div>
 
                 <div class="row">
-                    <div class="col-lg-6 col-sm-12">
-                        <MUNity.BlazorServer.Components.Conference.Committee.SessionsOverviewComponent CommitteeId=@CommitteeId />
-                    </div>
                     <div class="col-lg-6 col-sm-12">
                         <div class="panel panel-inverse">
                             <div class="panel-heading">

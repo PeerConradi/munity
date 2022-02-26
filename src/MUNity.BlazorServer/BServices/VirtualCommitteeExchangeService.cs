@@ -27,7 +27,7 @@ namespace MUNity.BlazorServer.BServices
                 ReloadSessionExchangesForExchange(exchange);
                 this._exchanges.Add(exchange);
 
-                _logger.LogInformation($"New exchange for committee: {committeeId} created. With {exchange.SessionExchanges.Count} session exchanges");
+                _logger.LogInformation($"New exchange for committee: {committeeId} created.");
 
             }
             return exchange;
@@ -37,7 +37,7 @@ namespace MUNity.BlazorServer.BServices
         {
             using var scope = scopeFactroy.CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<MunityContext>();
-            var sessions = context.CommitteeSessions.AsNoTracking().Where(n => n.Committee.CommitteeId == exchange.CommitteeId)
+            var session = context.CommitteeSessions.AsNoTracking().Where(n => n.Committee.CommitteeId == exchange.CommitteeId)
                     .Select(n => new CommitteeSessionExchange()
                     {
                         SessionId = n.CommitteeSessionId,
@@ -63,9 +63,9 @@ namespace MUNity.BlazorServer.BServices
                                 Text = p.Text
                             }
                         ).OrderBy(n => n.PetitionTypeSortOrder).ThenBy(n => n.PetitionDate).ToObservableCollection()
-                    }).ToObservableCollection();
-            exchange.SessionExchanges = sessions;
-            this._logger.LogInformation($"Reloaded sessions for exchange committee: {exchange.CommitteeId} total of {exchange.SessionExchanges.Count} were loaded. ({string.Join(",", exchange.SessionExchanges.Select(n => $"{n.SessionName} - {n.SessionId}"))})");
+                    }).FirstOrDefault();
+            exchange.CurrentSessionExchange = session;
+            this._logger.LogInformation($"Loaded Virutal committee exchange and added a session.");
         }
 
         public VirtualCommitteeExchangeService(ILogger<VirtualCommiteeParticipationService> logger, IServiceScopeFactory scopeFactory)
@@ -86,23 +86,9 @@ namespace MUNity.BlazorServer.BServices
 
         public event EventHandler CurrentSessionChanged;
 
-        private CommitteeSessionExchange _currentSessionExchange;
-        public CommitteeSessionExchange CurrentSessionExchange 
-        { 
-            get
-            {
-                if (_currentSessionExchange == null && SessionExchanges != null && SessionExchanges.Count > 0)
-                    _currentSessionExchange = SessionExchanges[0];
-                return _currentSessionExchange;
-            }
-            set
-            {
-                _currentSessionExchange = value;
-                CurrentSessionChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        public CommitteeSessionExchange CurrentSessionExchange { get; set; }
 
-        public ObservableCollection<CommitteeSessionExchange> SessionExchanges { get; set; } = new();
+        //public ObservableCollection<CommitteeSessionExchange> SessionExchanges { get; set; } = new();
 
 
         public ConcurrentDictionary<int, bool> connectedRoles = new ConcurrentDictionary<int, bool>();
