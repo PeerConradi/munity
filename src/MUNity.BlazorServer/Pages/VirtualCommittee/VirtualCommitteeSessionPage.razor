@@ -24,10 +24,7 @@
 {
     <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteTopMenu CommitteeId=@CommitteeId CurrentSessionId=@exchange?.CurrentSessionExchange?.SessionId />
 
-    <div class="d-flex flex-row justify-content-between bg-dark-800" style="min-height: 90px">
-        <div class="d-flex align-items-center">
-            <h1 class="fs-1 text-blue-400 ml-3">@committeeName</h1>
-        </div>
+    <div class="d-flex justify-content-center bg-dark-800" style="min-height: 90px">
         <div class="mt-5px">
             @if(listOfSpeakersId != null)
             {
@@ -42,7 +39,7 @@
                 <button class="btn btn-sm btn-default" @onclick="CreateListOfSpeakers">Jetzt erstellen</button>
             }
         </div>
-        <div class="d-flex align-items-center">
+        @*<div class="d-flex align-items-center hidden-md">
             @if (exchange != null)
             {
                 if (exchange.CurrentSessionExchange != null)
@@ -58,7 +55,7 @@
             {
                 <small class="text-danger">Exchange error!</small>
             }
-        </div>
+        </div>*@
     </div>
 
 
@@ -152,6 +149,18 @@ else
         </div>
     </div>
 }
+
+<style>
+    @@media (max-width: 993px)
+    {
+        .hidden-md
+        {
+            display: none;
+            visibility: collapse;
+        }
+        
+    }
+</style>
 
 
 @code {
