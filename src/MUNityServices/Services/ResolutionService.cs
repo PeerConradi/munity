@@ -234,6 +234,14 @@ namespace MUNity.Services
             _context.SaveChanges();
         }
 
+        public void RevokeChangeAmendment(ResaChangeAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.TargetParagraph.ChangeAmendments.Remove(amendment);
+            _context.ResolutionChangeAmendments.Remove(amendment);
+            _context.SaveChanges();
+        }
+
         public bool MovePreambleParagraphDown(ResaPreambleParagraph paragraph)
         {
             if (paragraph.OrderIndex >= _context.PreambleParagraphs.Count(n => n.ResolutionId == paragraph.ResolutionId))
@@ -345,6 +353,15 @@ namespace MUNity.Services
         {
             // Remove
             this.RemoveOperativeParagraph(amendment.TargetParagraph);
+        }
+
+        public void SubmitChangeAmendment(ResaChangeAmendment amendment)
+        {
+            _context.Update(amendment);
+            _context.Update(amendment.TargetParagraph);
+            amendment.TargetParagraph.Text = amendment.NewText;
+            amendment.TargetParagraph.ChangeAmendments.Remove(amendment);
+            _context.SaveChanges();
         }
 
         public IList<ResaPreambleParagraph> GetPreambleParagraphs(string resolutionId)

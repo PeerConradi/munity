@@ -8,7 +8,18 @@
 			<div class="">
 				<i class="fa fa-circle fa-fw text-blue me-2 fs-8px"></i> <span class="">@Amendment.SubmitTime @Amendment?.Submitter?.RoleName</span>
 			</div>
-			 <div class="ms-2">
+			 
+
+			
+		</div>
+	</div>
+	<div class="accordion-collapse collapse @((expand) ? "show" : "")" style="">
+		<div class="accordion-body bg-gray-800 text-white">
+			@Amendment.NewText
+			<br />
+			<small>Unterstützt durch: @string.Join(",", Amendment.Supporters?.Select(n => n.Role?.RoleName))</small>
+
+			<div class="ms-2 row">
 				 @if (vcParticipationService.RoleId != null && Amendment.Submitter?.RoleId == vcParticipationService.RoleId)
 				{
 					<button class="btn btn-default btn-sm" @onclick="() => RevokeAmendment.InvokeAsync(Amendment)">Zurückziehen</button>
@@ -31,20 +42,11 @@
 						<div class="btn-group btn-group-horizontal">
 							<button class="btn btn-primary" @onclick="() => SubmitAmendment.InvokeAsync(Amendment)"><i class="fa fa-check"></i> Annehmen</button>
 							<button class="btn btn-default"><i class="fa fa-vote"></i> Zur Abstimmung stellen</button>
-							<button class="btn btn-danger"><i class="fa fa-trash"></i> Ablehnen</button>
+							<button class="btn btn-danger" @onclick="() => RevokeAmendment.InvokeAsync(Amendment)"><i class="fa fa-trash"></i> Ablehnen</button>
 						</div>
 					</Authorized>
 				</AuthorizeView>
 			 </div>
-
-			
-		</div>
-	</div>
-	<div id="collapseOne" class="accordion-collapse collapse @((expand) ? "show" : "")" style="">
-		<div class="accordion-body bg-gray-800 text-white">
-			@Amendment.NewText
-			<br />
-			<small>Unterstützt durch: @string.Join(",", Amendment.Supporters?.Select(n => n.Role?.RoleName))</small>
 		</div>
 	</div>
 </div>

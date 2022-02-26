@@ -189,6 +189,15 @@ namespace MUNity.BlazorServer.BServices
             OperativeParagraphChanged?.Invoke(this, amendment.TargetParagraph);
         }
 
+        public void RevokeChangeAmendment(ResaChangeAmendment amendment)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.RevokeChangeAmendment(amendment);
+
+            OperativeParagraphChanged?.Invoke(this, amendment.TargetParagraph);
+        }
+
         public void SupportAmendment(ResaAmendment amendment, int roleId)
         {
             using var scope = serviceScopeFactory.CreateScope();
@@ -236,6 +245,13 @@ namespace MUNity.BlazorServer.BServices
                 resolutionService.SubmitDeleteAmendment(deleteAmendment);
 
                 ResolutionChanged?.Invoke(this, resolution);
+            }
+            else if (amendment is ResaChangeAmendment changeAmendment)
+            {
+                var scope = serviceScopeFactory.CreateScope();
+                var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+                resolutionService.SubmitChangeAmendment(changeAmendment);
+                OperativeParagraphChanged?.Invoke(this, changeAmendment.TargetParagraph);
             }
         }
 

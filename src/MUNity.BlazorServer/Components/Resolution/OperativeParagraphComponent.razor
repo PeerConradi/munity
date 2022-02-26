@@ -212,7 +212,11 @@
 					<div class="accordion" id="accordion">
 						@foreach(var amendment in Paragraph.ChangeAmendments)
 						{
-							<ChangeAmendmentAccItem Amendment=@amendment />
+							<ChangeAmendmentAccItem Amendment=@amendment 
+							RevokeAmendment=RevokeChangeAmendment 
+							RevokeSupport=RevokeSupport 
+							SubmitAmendment=SubmitAmendment 
+							SupportAmendment=SupportAmendment />
 						}
 					</div>
 
@@ -400,7 +404,10 @@
 
 	private void RevokeChangeAmendment(ResaChangeAmendment amendment)
 	{
-		throw new NotImplementedException();
+		if (amendment != null)
+		{
+			Exchange.RevokeChangeAmendment(amendment);
+		}
 	}
 
 	private void SupportAmendment(ResaAmendment amendment)
