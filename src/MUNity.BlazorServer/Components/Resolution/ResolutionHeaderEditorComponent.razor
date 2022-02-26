@@ -5,7 +5,18 @@
 
 <div class="card border-0 mb-1">
 	<div class="card-body">
-		<h4 class="card-title">@Exchange.Resolution?.Topic</h4>
+		@if (!editTopic)
+		{
+			<h4 class="card-title" @ondblclick="StartEditTopic">@Exchange.Resolution?.Topic</h4>
+		}
+		else
+		{
+			<div class="input-group">
+				<input type="text" class="form-control fs-4" @bind-value=@Exchange.Resolution.Topic>
+				<button type="button" class="btn btn-primary" @onclick="() => {Exchange.UpdateResaElement(); editTopic = false; }">Speichern</button>
+			</div>
+		}
+
 		<p class="card-text">Einbringer: @Exchange.Resolution?.SubmitterName</p>
 		<p class="card-text">Unterstützer:
 			@string.Join(",", Exchange.Resolution.Supporters.Select(n => n.Role.RoleName))
@@ -30,9 +41,28 @@
 
 	[Parameter] public ResolutionExchange Exchange { get; set; }
 
-	protected override void OnParametersSet()
+	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+	private bool canEdit = false;
+
+	private bool editTopic = false;
+
+
+
+	private void StartEditTopic()
 	{
-		base.OnParametersSet();
+		if (canEdit)
+		{
+			editTopic = true;
+		}
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		bool isAuthed = (await AuthStateTask)?.User.Identity.IsAuthenticated ?? false;
+		canEdit = isAuthed || Exchange.Resolution.State == EResolutionStates.Public ||
+		Exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId == Exchange.Resolution.SubmitterRole.RoleId;
 		if (vcParticipationService != null)
 		{
 			vcParticipationService.Registered += delegate { InvokeAsync(StateHasChanged); };
