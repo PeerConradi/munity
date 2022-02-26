@@ -30,8 +30,8 @@
             {
                 <MUNity.BlazorServer.Components.ListOfSpeakers.ListOfSpeakersHeaderComponent 
                 ListOfSpeakersId=@listOfSpeakersId 
-                MyRoleName=@myRole.RoleName
-                MyIso=@myRole.DelegateCountry?.Iso />
+                MyRoleName=@virtualCommitteeParticipation.RoleName
+                MyIso=@virtualCommitteeParticipation.RoleIso />
             }
             else
             {
@@ -58,12 +58,14 @@
         </div>*@
     </div>
 
+    <div class="row mt-5 ms-2 me-2">
+        <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBannerComponent />
+    </div>
 
-
-    <div class="row mt-5 me-2">
+    <div class="row mt-1 me-1">
 
         <div class="col-lg-3 col-sm-12 animate__animated animate__bounceInLeft">
-            <MUNity.BlazorServer.Components.VirtualCommittee.VCUsersComponent MyRoleId=@myRole?.RoleId CommitteeId=@CommitteeId />
+            <MUNity.BlazorServer.Components.VirtualCommittee.VCUsersComponent MyRoleId=@virtualCommitteeParticipation.RoleId CommitteeId=@CommitteeId />
         </div>
         <div class="col-lg-9 col-sm-12">
             @if (!string.IsNullOrEmpty(SessionId))
@@ -99,7 +101,7 @@
                 <MUNity.BlazorServer.Components.VirtualCommittee.VoteComponent VoteId=@VoteId />
             }
             else {
-                <h1 class="page-header">Willkommen @((isTeam) ? "Teammitglied" : myRole?.RoleName)</h1>
+                <h1 class="page-header">Willkommen @((isTeam) ? "Teammitglied" : virtualCommitteeParticipation.RoleName)</h1>
                 <div class="panel panel-inverse">
 				    <div class="panel-heading">
 					    <h4 class="panel-title">Information</h4>
@@ -184,8 +186,6 @@ else
 
     private string listOfSpeakersId;
 
-    private ConferenceDelegateRole myRole;
-
     private bool accessDenied = false;
 
     private bool isTeam = false;
@@ -208,7 +208,15 @@ else
             errorOnInit = true;
             initError = ex.Message;
         }
-        
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (this.virtualCommitteeParticipation.RoleId == null)
+        {
+            await Init();
+        }
     }
 
     private async Task Init()
@@ -217,13 +225,8 @@ else
 
         if (accessKey != null)
         {
-            myRole = dbContext.Delegates.AsNoTracking().FirstOrDefault(n => n.Committee.CommitteeId == CommitteeId &&
-            n.RoleSecret == accessKey);
-            if (myRole != null)
-            {
-                virtualCommitteeParticipation.SignIn(CommitteeId, accessKey, myRole.RoleId);
-            }
-            else
+            var signInSucces = virtualCommitteeParticipation.SignIn(CommitteeId, accessKey);
+            if (!signInSucces)
             {
                 accessDenied = true;
                 await localStorageService.RemoveItemAsync($"munity-access-{CommitteeId}");

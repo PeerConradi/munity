@@ -25,6 +25,12 @@ namespace MUNity.BlazorServer.BServices
 
         public int? RoleId => _roleId;
 
+        private string _roleName;
+        public string RoleName => _roleName;
+
+        private string _roleIso;
+        public string RoleIso => _roleIso;
+
         /// <summary>
         /// Callback event when the user is done with SignIn into the conference
         /// </summary>
@@ -181,20 +187,36 @@ namespace MUNity.BlazorServer.BServices
         }
 
 
-        public void SignIn(string committeeId, string secret, int myRoleId)
+        public bool SignIn(string committeeId, string secret)
         {
             SignOff();
+            var roleInfo = this._dbContext.Delegates
+                .Where(n => n.RoleSecret == secret)
+                .AsNoTracking()
+                .Select(n => new
+                {
+                    RoleId = n.RoleId,
+                    RoleName = n.RoleName,
+                    Iso = n.DelegateCountry.Iso
+                })
+                .FirstOrDefault();
+
+            if (roleInfo == null)
+                return false;
 
             this._committeeId = committeeId;
             this._secret = secret;
-            this._roleId = myRoleId;
+            this._roleId = roleInfo?.RoleId;
+            this._roleName = roleInfo?.RoleName;
+            this._roleIso = roleInfo?.Iso ?? "un";
             this._exchange = _committeeExchangeService.GetExchange(committeeId);
-            if (_exchange != null)
+            if (_exchange != null && this._roleId != null)
             {
-                _exchange.connectedRoles.TryAdd(myRoleId, true);
+                _exchange.connectedRoles.TryAdd(this._roleId.Value, true);
                 _exchange.NotifyUserConnected();
             }
             this.Registered?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
         public VirtualCommiteeParticipationService(ILogger<VirtualCommiteeParticipationService> logger, 

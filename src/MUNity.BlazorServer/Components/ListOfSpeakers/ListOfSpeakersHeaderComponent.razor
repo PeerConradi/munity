@@ -21,7 +21,7 @@
             }
             else
             {
-                <button class="btn btn-success" @onclick="AddMeToSpeakers"><i class="fa fa-plus"></i></button>
+                <button class="btn btn-success" @onclick="AddMeToSpeakers" title="@($"Fügt '{MyRoleName}' ({MyIso}) der Warteliste hinzu")"><i class="fa fa-plus"></i></button>
             }
         }
     </div>
@@ -154,7 +154,7 @@
             }
             else
             {
-                <button class="btn btn-success" @onclick="AddMeToQuestions"><i class="fa fa-plus"></i></button>
+                <button class="btn btn-success" @onclick="AddMeToQuestions" title="@($"Fügt '{MyRoleName}' ({MyIso}) der Liste für Redebeträge hinzu")"><i class="fa fa-plus"></i></button>
             }
         }
     </div>

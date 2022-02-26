@@ -6,8 +6,9 @@
 	<!-- BEGIN card-body -->
 	<div class="card-body">
 		<!-- BEGIN title -->
-		<div class="mb-3 text-gray-500">
-			<b class="mb-3">Delegationen</b> 
+		<div class="mb-3 text-gray-500 d-flex justify-content-between">
+			<b class="mb-3 d-flex align-self-center">Delegationen</b>
+			<button class="btn btn-default btn-icon btn-sm" @onclick="() => expand = !expand"><i class="fa @((expand) ? "fa-minus" : "fa-expand")"></i></button>
 		</div>
 		<!-- END title -->
 		<!-- BEGIN conversion-rate -->
@@ -24,7 +25,7 @@
 				<span>@(Math.Ceiling(@roles.Count * 0.5) + 1) Für einfache Mehrheit</span><br />
 			}
 		</div>
-		@if (roles != null)
+		@if (roles != null && expand)
 		{
 			foreach(var role in roles)
 			{
@@ -55,6 +56,8 @@
 	private List<PresentRole> presentRoles = new();
 
 	private BServices.VirtualCommitteeExchange exchange;
+
+	private bool expand = true;
 
 	protected override void OnInitialized()
 	{
