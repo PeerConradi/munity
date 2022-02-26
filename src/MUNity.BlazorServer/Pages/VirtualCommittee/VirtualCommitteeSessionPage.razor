@@ -27,11 +27,7 @@
             @if (!string.IsNullOrEmpty(SessionId))
             {
                 <h1 class="page-header">@(dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId)?.Name)</h1>
-                <AuthorizeView>
-                    <Authorized>
-                        <MUNity.BlazorServer.Components.VirtualCommittee.PresentsCheckComponent SessionId=@SessionId />
-                    </Authorized>
-                </AuthorizeView>
+                
                 
                 <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent SessionId=@SessionId />
             }

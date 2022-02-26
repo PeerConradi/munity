@@ -1,0 +1,18 @@
+﻿@page "/oc/{CommitteeId}/checkPresents"
+
+@layout MUNity.BlazorServer.Shared.MobileGameLayout
+
+<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap CommitteeId=@CommitteeId>
+    <AuthorizeView>
+        <Authorized>
+            <MUNity.BlazorServer.Components.VirtualCommittee.PresentsCheckComponent />
+        </Authorized>
+        <NotAuthorized>
+            <p>Zugriff auf diesen Bereich verweigert</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap>
+
+@code {
+    [Parameter] public string CommitteeId { get; set;}
+}

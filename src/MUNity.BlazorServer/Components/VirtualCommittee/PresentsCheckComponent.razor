@@ -21,7 +21,7 @@
 		    <button type="button" class="btn-close ms-3" data-bs-dismiss="alert"></button>
 	    </div>*@
     <div class="panel-body">
-        @if (!string.IsNullOrEmpty(SessionId))
+        @if (CommitteeExchange != null)
         {
             if (presentsCheck == null)
             {
@@ -86,7 +86,7 @@
         }
         else
         {
-            <p>Invalid SessionId passed to PresentsCheckComponent</p>
+            <p>There was no Committee Exchange passed down to this area.</p>
         }
     </div>
     }
@@ -94,7 +94,8 @@
 </div>
 
 @code {
-    [Parameter] public string SessionId { get; set; }
+
+    [CascadingParameter] public BServices.VirtualCommitteeExchange CommitteeExchange { get; set; }
 
     private SessionPresents presentsCheck;
 
@@ -103,12 +104,12 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        this.presentsCheck = dbContext.PresentChecks.Include(n => n.CheckedUsers).FirstOrDefault(n => n.Session.CommitteeSessionId == SessionId);
+        this.presentsCheck = dbContext.PresentChecks.Include(n => n.CheckedUsers).FirstOrDefault(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId);
     }
 
     private void StartCheck()
     {
-        var committeeId = dbContext.CommitteeSessions.AsNoTracking().Where(n => n.CommitteeSessionId == SessionId)
+        var committeeId = dbContext.CommitteeSessions.AsNoTracking().Where(n => n.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId)
         .Select(n => n.Committee.CommitteeId).FirstOrDefault();
         if (committeeId != null)
         {
@@ -124,7 +125,7 @@
                     CheckedDate = DateTime.Now,
                     CheckedUsers = rolesToCheck,
                     CreatedTime = DateTime.Now,
-                    Session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId),
+                    Session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId),
                     MarkedFinished = false
                 };
             this.presentsCheck = presentsCheck;
@@ -132,7 +133,7 @@
         }
         else
         {
-            logger?.LogError($"unable to find the committee for session: {SessionId}");
+            logger?.LogError($"unable to find the committee for session: {CommitteeExchange.CurrentSessionExchange.SessionId}");
         }
 
     }
