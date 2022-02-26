@@ -8,6 +8,6 @@ namespace MUNity.Database.Models.Resolution
         ResaAmendment Amendment { get; set; }
         string ResaAmendmentSupporterId { get; set; }
         ConferenceDelegateRole Role { get; set; }
-        DateTimeOffset SupportTimestamp { get; set; }
+        DateTime SupportTimestamp { get; set; }
     }
 }

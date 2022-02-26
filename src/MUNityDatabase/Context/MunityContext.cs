@@ -151,6 +151,8 @@ namespace MUNity.Database.Context
         public DbSet<ResaMoveAmendment> ResolutionMoveAmendments { get; set; }
         public DbSet<ResaAddAmendment> ResolutionAddAmendments { get; set; }
 
+        public DbSet<ResaAmendmentSupporter> ResolutionAmendmentsSupporters { get; set; }
+
         public DbSet<ConferenceWebPage> ConferenceWebPages { get; set; }
 
         public DbSet<ConferenceApplicationOptions> ConferenceApplicationOptions { get; set; }

@@ -171,6 +171,81 @@ namespace MUNity.BlazorServer.BServices
             OperativeParagraphChanged?.Invoke(this, paragraph);
         }
 
+        public void RevokeDeleteAmendment(ResaDeleteAmendment amendment)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.RevokeDeleteAmendment(amendment);
+
+            OperativeParagraphChanged?.Invoke(this, amendment.TargetParagraph);
+        }
+
+        public void SupportAmendment(ResaAmendment amendment, int roleId)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.SupportAmendment(amendment, roleId);
+
+            NotifyOnAmendentChange(amendment);
+        }
+
+        public void RevokeSupport(ResaAmendment amendment, int roleId)
+        {
+            var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.RevokeSupport(amendment, roleId);
+
+            NotifyOnAmendentChange(amendment);
+        }
+
+        public void SupportResolution(ResaElement resolution, int roleId)
+        {
+            var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.SupportResolution(resolution, roleId);
+
+            ResolutionChanged?.Invoke(this, resolution);
+        }
+
+        public void RevokeSupport(ResaElement resolution, int roleId)
+        {
+            var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.RevokeSupport(resolution, roleId);
+
+            ResolutionChanged?.Invoke(this, resolution);
+        }
+
+        public void SubmitAmendment(ResaAmendment amendment)
+        {
+            if (amendment is ResaDeleteAmendment deleteAmendment)
+            {
+                var resolution = amendment.Resolution;
+
+                var scope = serviceScopeFactory.CreateScope();
+                var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+                resolutionService.SubmitDeleteAmendment(deleteAmendment);
+
+                ResolutionChanged?.Invoke(this, resolution);
+            }
+        }
+
+        private void NotifyOnAmendentChange(ResaAmendment amendment)
+        {
+            if (amendment is ResaDeleteAmendment delete)
+            {
+                OperativeParagraphChanged?.Invoke(this, delete.TargetParagraph);
+            }
+            else if (amendment is ResaChangeAmendment change)
+            {
+                OperativeParagraphChanged?.Invoke(this, change.TargetParagraph);
+            }
+            else if (amendment is ResaMoveAmendment move)
+            {
+                OperativeParagraphChanged?.Invoke(this, move.SourceParagraph);
+            }
+        }
+
         public ResolutionExchange(IServiceScopeFactory scopeFactory)
         {
             serviceScopeFactory = scopeFactory;

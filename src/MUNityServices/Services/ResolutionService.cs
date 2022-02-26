@@ -148,6 +148,15 @@ namespace MUNity.Services
                 paragraph.Parent.Children.Remove(paragraph);
             }
 
+            var deleteSupporters = paragraph.DeleteAmendments.SelectMany(n => n.Supporters);
+            _context.ResolutionAmendmentsSupporters.RemoveRange(deleteSupporters);
+
+            var changeSupporters = paragraph.ChangeAmendments.SelectMany(n => n.Supporters);
+            _context.ResolutionAmendmentsSupporters.RemoveRange(changeSupporters);
+
+            var moveSupporters = paragraph.MoveAmendments.SelectMany(n => n.Supporters);
+            _context.ResolutionAmendmentsSupporters.RemoveRange(moveSupporters);
+
             _context.ResolutionMoveAmendments.RemoveRange(paragraph.MoveAmendments);
             _context.ResolutionDeleteAmendments.RemoveRange(paragraph.DeleteAmendments);
             _context.ResolutionChangeAmendments.RemoveRange(paragraph.ChangeAmendments);
@@ -227,6 +236,75 @@ namespace MUNity.Services
             return true;
         }
 
+        public void SupportAmendment(ResaAmendment amendment, int roleId)
+        {
+            _context.Update(amendment);
+            var support = new ResaAmendmentSupporter()
+            {
+                Amendment = amendment,
+                Role = _context.Delegates.Find(roleId),
+                SupportTimestamp = DateTime.Now,
+            };
+            amendment.Supporters.Add(support);
+            _context.SaveChanges();
+        }
+
+        public void RevokeDeleteAmendment(ResaDeleteAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.TargetParagraph.DeleteAmendments.Remove(amendment);
+            _context.ResolutionDeleteAmendments.Remove(amendment);
+            _context.SaveChanges();
+        }
+
+        public void SupportResolution(ResaElement resolution, int roleId)
+        {
+            _context.Update(resolution);
+            var support = new ResaSupporter()
+            {
+                Role = _context.Delegates.Find(roleId),
+                Resolution = resolution,
+            };
+            resolution.Supporters.Add(support);
+            _context.ResolutionSupporters.Add(support);
+            _context.SaveChanges();
+        }
+
+        public void RevokeSupport(ResaElement resolution, int roleId)
+        {
+            var support = resolution.Supporters.FirstOrDefault(n => n.Role.RoleId == roleId);
+            if (support != null)
+            {
+                resolution.Supporters.Remove(support);
+                _context.Update(support);
+                _context.ResolutionSupporters.Remove(support);
+                _context.SaveChanges();
+            }
+
+
+        }
+
+        public void RevokeSupport(ResaAmendment amendment, int roleId)
+        {
+            _context.Update(amendment);
+            var support = amendment.Supporters.FirstOrDefault(n => n.Role.RoleId == roleId);
+            if (support == null)
+            {
+                support = _context.ResolutionAmendmentsSupporters.FirstOrDefault(n => n.Role.RoleId == roleId);
+            }
+
+            if (support != null)
+            {
+                amendment.Supporters.Remove(support);
+                foreach(var toRemove in amendment.Supporters.Where(n => n.Role != null && n.Role.RoleId == roleId))
+                {
+                    amendment.Supporters.Remove(toRemove);
+                }
+                _context.SaveChanges();
+            }
+
+        }
+
         public void MoveOperativeParagraphDown(ResaOperativeParagraph paragraph)
         {
             var moveUpElement = _context.OperativeParagraphs
@@ -248,6 +326,12 @@ namespace MUNity.Services
             return _context.SaveChanges();
         }
 
+        public void SubmitDeleteAmendment(ResaDeleteAmendment amendment)
+        {
+            // Remove
+            this.RemoveOperativeParagraph(amendment.TargetParagraph);
+        }
+
         public IList<ResaPreambleParagraph> GetPreambleParagraphs(string resolutionId)
         {
             return _context.PreambleParagraphs
@@ -262,14 +346,23 @@ namespace MUNity.Services
                 .Where(n => n.Resolution == resolution && n.Parent == parent)
                 .Include(n => n.ChangeAmendments)
                 .Include(n => n.MoveAmendments)
-                .Include(n => n.DeleteAmendments)
                 .OrderBy(n => n.OrderIndex)
                 .ToList();
             foreach (var paragraph in paragraphs)
             {
                 paragraph.Resolution = resolution;
+                paragraph.DeleteAmendments = GetDeleteAmendments(paragraph);
             }
             return paragraphs;
+        }
+
+        public IList<ResaDeleteAmendment> GetDeleteAmendments(ResaOperativeParagraph paragraph)
+        {
+            return paragraph.DeleteAmendments = _context.ResolutionDeleteAmendments
+                .Where(n => n.TargetParagraph == paragraph)
+                .Include(n => n.Submitter)
+                .Include(n => n.Supporters).ThenInclude(n => n.Role)
+                .ToList();
         }
 
         public void AddRemoveAmendment(ResaOperativeParagraph paragraph, int roleId)

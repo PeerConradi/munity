@@ -6,8 +6,7 @@
     <div class="panel panel-inverse col-12">
         <div class="panel-heading">
             @if (((exchange.Resolution.State == EResolutionStates.Private || 
-            exchange.Resolution.State == EResolutionStates.Public) && exchange.Resolution.SubmitterRole?.RoleId == vcParticipationService.RoleId) ||
-            isAuthed)
+            exchange.Resolution.State == EResolutionStates.Public) && exchange.Resolution.SubmitterRole?.RoleId == vcParticipationService.RoleId))
             {
                 <label class="me-2">Anderen erlauben mit zu schreiben</label>
                 <RadzenSwitch @bind-Value=@allowOthersToEdit class="me-2" />
@@ -28,7 +27,7 @@
 
             <AuthorizeView>
                 <Authorized>
-                    @if (exchange.Resolution.State == EResolutionStates.Submitted)
+                    @if (exchange.Resolution.State == EResolutionStates.Submitted || exchange.Resolution.State == EResolutionStates.Discussion)
                     {
                         <label class="me-2">Änderungsanträge erlauben</label>
                         <RadzenSwitch @bind-Value=@setDiscussionMode />
@@ -41,7 +40,7 @@
 
 <div class="row">
     <div class="col-12">
-        <ResolutionHeaderEditorComponent Resolution=@exchange.Resolution />
+        <ResolutionHeaderEditorComponent Exchange=@exchange />
     </div>
 </div>
 

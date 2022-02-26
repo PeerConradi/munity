@@ -34,5 +34,6 @@ public class ResaAmendment
     {
         this.ResaAmendmentId = Guid.NewGuid().ToString();
         this.Supporters = new List<ResaAmendmentSupporter>();
+        this.SubmitTime = DateTime.Now;
     }
 }

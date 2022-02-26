@@ -1,23 +1,34 @@
-﻿@using MUNity.Database.Models.Resolution
+﻿@using MUNity.BlazorServer.BServices
+@using MUNity.Database.Models.Resolution
 
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
 
 <div class="card border-0 mb-1">
 	<div class="card-body">
-		<h4 class="card-title">@Resolution?.Topic</h4>
-		<p class="card-text">Einbringer: @Resolution?.SubmitterName</p>
-		<p class="card-text">Unterstützer: 
-			@if (vcParticipationService.RoleId != null && vcParticipationService.RoleId != @Resolution.SubmitterRole.RoleId)
+		<h4 class="card-title">@Exchange.Resolution?.Topic</h4>
+		<p class="card-text">Einbringer: @Exchange.Resolution?.SubmitterName</p>
+		<p class="card-text">Unterstützer:
+			@string.Join(",", Exchange.Resolution.Supporters.Select(n => n.Role.RoleName))
+			<br />
+			@if (vcParticipationService.RoleId != null && vcParticipationService.RoleId != Exchange.Resolution.SubmitterRole.RoleId)
 			{
-				<button class="btn btn-sm btn-default">Unterstützen</button>
+				if (Exchange.Resolution.Supporters.All(n => n.Role.RoleId != vcParticipationService.RoleId))
+				{
+					<button class="btn btn-sm btn-primary" @onclick="Support">Unterstützen</button>
+				}
+				else
+				{
+					<button class="btn btn-sm btn-outline-primary" @onclick="RevokeSupport">Unterstützung zurückziehen</button>
+				}
 			}
 		</p>
-		<p class="card-text">@Resolution?.CommitteeName.ToUpper(),</p>
+		<p class="card-text">@Exchange.Resolution?.CommitteeName.ToUpper(),</p>
 		<p class="card-text text-gray">Last updated 3 mins ago</p>
 	</div>
 </div>
 @code {
-	[Parameter] public ResaElement Resolution { get; set; }
+
+	[Parameter] public ResolutionExchange Exchange { get; set; }
 
 	protected override void OnParametersSet()
 	{
@@ -25,6 +36,22 @@
 		if (vcParticipationService != null)
 		{
 			vcParticipationService.Registered += delegate { InvokeAsync(StateHasChanged); };
+		}
+	}
+
+	private void Support()
+	{
+		if (vcParticipationService.RoleId != null)
+		{
+			Exchange.SupportResolution(Exchange.Resolution, vcParticipationService.RoleId.Value);
+		}
+	}
+
+	public void RevokeSupport()
+	{
+		if (vcParticipationService.RoleId != null)
+		{
+			Exchange.RevokeSupport(Exchange.Resolution, vcParticipationService.RoleId.Value);
 		}
 	}
 }

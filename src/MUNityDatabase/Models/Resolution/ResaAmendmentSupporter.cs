@@ -11,7 +11,7 @@ public class ResaAmendmentSupporter : IResaAmendmentSupporter
 
     public ResaAmendment Amendment { get; set; }
 
-    public DateTimeOffset SupportTimestamp { get; set; }
+    public DateTime SupportTimestamp { get; set; }
 
     public ConferenceDelegateRole Role { get; set; }
 
