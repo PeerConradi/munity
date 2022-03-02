@@ -30,7 +30,16 @@
         {
             var now = DateTime.Now;
             var timeLeft = CommitteeExchange.Banner.Time - new TimeOnly(now.Hour, now.Minute, now.Second);
-            return $"{timeLeft.Hours.ToString().PadLeft(2, '0')}:{timeLeft.Minutes.ToString().PadLeft(2, '0')}:{timeLeft.Seconds.ToString().PadLeft(2, '0')}";
+            if (timeLeft.TotalSeconds > 0)
+            {
+                return $"{timeLeft.Hours.ToString().PadLeft(2, '0')}:{timeLeft.Minutes.ToString().PadLeft(2, '0')}:{timeLeft.Seconds.ToString().PadLeft(2, '0')}";
+
+            }
+            else
+            {
+                return "Zeit ist um";
+            }
+
         }
     }
 

@@ -25,23 +25,27 @@
                 </div>
 
                 <h3>Stimmberechtigt</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Aktion</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach(var slot in voting.VoteSlots)
-                        {
-                            <tr>
-                                <td>@slot.User.RoleName</td>
-                                <td><button class="btn btn-sm btn-danger" @onclick="() => RemoveSlot(slot)"> <i class="fa fa-trash"></i> entfernen</button> </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+
+                @foreach(var cat in voting.VoteSlots.GroupBy(n => n.User.RoleName.Substring(0, 1)).OrderBy(n => n.Key))
+                {
+                    <h5>@cat.Key</h5>
+                    <h3>
+                    @foreach(var slot in cat)
+                    {
+                        
+                            <span class="badge bg-dark me-1 cursor-pointer" @onclick="() => RemoveSlot(slot)">
+                                <i class="fa fa-check me-1"></i>
+                                @if (slot.User.DelegateCountry != null)
+                                {
+                                    <img class="me-1" src="@($"/img/flags/small/{slot.User.DelegateCountry.Iso}.png")" />
+                                }
+                                @slot.User.RoleName
+                            </span>
+                        
+                        
+                    }
+                    </h3>
+                }
 
                 <button class="btn btn-primary" @onclick="ActivateVoting">Aktivieren</button>
             }

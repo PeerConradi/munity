@@ -21,8 +21,18 @@ public class SessionVoting
 
     public bool AllowAbstention { get; set; }
 
+   public VotingStates State { get; set; }
+
     public SessionVoting()
     {
         SessionVotingId = Guid.NewGuid().ToString();
     }
+}
+
+public enum VotingStates
+{
+    Creating,
+    Open,
+    Finished,
+    Deleted
 }
