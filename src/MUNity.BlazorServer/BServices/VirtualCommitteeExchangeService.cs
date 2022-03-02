@@ -86,10 +86,12 @@ namespace MUNity.BlazorServer.BServices
 
         public event EventHandler CurrentSessionChanged;
 
+        public event EventHandler BannerChanged;
+
         public CommitteeSessionExchange CurrentSessionExchange { get; set; }
 
         //public ObservableCollection<CommitteeSessionExchange> SessionExchanges { get; set; } = new();
-
+        public VirtualSessionBanner Banner { get; private set; }
 
         public ConcurrentDictionary<int, bool> connectedRoles = new ConcurrentDictionary<int, bool>();
 
@@ -103,10 +105,35 @@ namespace MUNity.BlazorServer.BServices
             UserDisconnected?.Invoke(this, EventArgs.Empty);
         }
 
+        public void NotifyBannerChanged()
+        {
+            BannerChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         public VirtualCommitteeExchange(string committeeId)
         {
             this.CommitteeId = committeeId;
+            this.Banner = new VirtualSessionBanner();
         }
+
+        public void SetBanner(VirtualSessionBanner banner)
+        {
+            this.Banner = banner;
+            BannerChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public class VirtualSessionBanner
+    {
+        public bool Active { get; set; }
+
+        public string Title { get; set; }
+
+        public string Text { get; set; }
+
+        public bool UseTimer { get; set; }
+
+        public TimeOnly Time { get; set; }
     }
 
     public class CommitteeSessionExchange

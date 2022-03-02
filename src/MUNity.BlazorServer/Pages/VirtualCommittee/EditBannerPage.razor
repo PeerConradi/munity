@@ -1,0 +1,30 @@
+﻿@page "/oc/{CommitteeId}/editBanner"
+
+@layout MUNity.BlazorServer.Shared.MobileGameLayout
+
+<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap CommitteeId=@CommitteeId>
+    <AuthorizeView>
+        <Authorized>
+            <h1 class="page-title">Banner bearbeiten</h1>
+
+            <MUNity.BlazorServer.Components.VirtualCommittee.EditBannerForm />
+        </Authorized>
+        <NotAuthorized>
+            <p>Zugriff auf diesen Bereich verweigert</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap>
+
+
+
+
+@code {
+    [Parameter] public string CommitteeId { get; set; }
+
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        StateHasChanged();
+    }
+}

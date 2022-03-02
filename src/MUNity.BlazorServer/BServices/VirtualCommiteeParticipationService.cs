@@ -31,6 +31,8 @@ namespace MUNity.BlazorServer.BServices
         private string _roleIso;
         public string RoleIso => _roleIso;
 
+        public bool IsTeamMember { get; set; }
+
         /// <summary>
         /// Callback event when the user is done with SignIn into the conference
         /// </summary>

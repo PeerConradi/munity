@@ -16,6 +16,7 @@
         CommitteeExchange=@exchange />
 }
 
+
 <div class="d-flex justify-content-center bg-dark-800" style="min-height: 90px">
     <div class="mt-5px">
         @if(listOfSpeakersId != null)
@@ -50,9 +51,13 @@
     </div>*@
 </div>
 
-<div class="row mt-5 ms-2 me-2">
-    <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBannerComponent />
-</div>
+@if (exchange != null)
+{
+    <div class="row mt-5 ms-2 me-2">
+        <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBannerComponent CommitteeExchange=@exchange />
+    </div>
+}
+
 
 <div class="row mt-1 me-1">
     <div class="col-lg-3 col-sm-12 animate__animated animate__bounceInLeft">
@@ -66,7 +71,6 @@
                 @ChildContent
             </CascadingValue>
         }
-        
     </div>
 </div>
 

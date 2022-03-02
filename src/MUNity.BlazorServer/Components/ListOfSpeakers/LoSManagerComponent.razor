@@ -3,7 +3,6 @@
 @inject Services.ListOfSpeakersService losService
 
 
-
 @if (ViewModel != null)
 {
     <label>Bearbeitungsmodus</label>
@@ -64,7 +63,9 @@ else
 
 
 @code {
-    [Parameter] public ViewModels.ListOfSpeakers.ListOfSpeakersViewModel ViewModel { get; set; }
+    [Parameter] public string ListOfSpeakersId { get; set; }
+
+    private ViewModels.ListOfSpeakers.ListOfSpeakersViewModel ViewModel;
 
     private string newSpeakerName = "";
 
@@ -97,6 +98,12 @@ else
         base.OnInitialized();
         this.knownCountries = dbContext.Countries.ToList();
         InvokeAsync(RefreshIfNeeded);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.ViewModel = losService.GetViewModel(this.ListOfSpeakersId);
     }
 
     private async Task RefreshIfNeeded()

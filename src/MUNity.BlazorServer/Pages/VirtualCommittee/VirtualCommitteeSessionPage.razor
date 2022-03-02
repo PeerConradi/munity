@@ -11,79 +11,60 @@
 @using MUNity.Database.Models.Conference.Roles
 
 @layout Shared.MobileGameLayout
-
 @inject MunityContext dbContext
-@inject Blazored.LocalStorage.ILocalStorageService localStorageService
 @inject BServices.VirtualCommiteeParticipationService virtualCommitteeParticipation
+
+@*
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+
 @inject BServices.VirtualCommitteeExchangeService vcExchangeService
 @inject Services.UserConferenceAuthService conferenceAuthService
-@inject Services.ListOfSpeakersService listOfSpeakersService
-@inject ILogger<VirtualCommitteeSessionPage> logger
 
-@if (true)
+@inject ILogger<VirtualCommitteeSessionPage> logger*@
+
+@if (isInited)
 {
     <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap CommitteeId=@CommitteeId>
         
-            @if (!string.IsNullOrEmpty(SessionId))
-            {
-                <h1 class="page-header">@(dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId)?.Name)</h1>
+        @if (!string.IsNullOrEmpty(SessionId))
+        {
+            <h1 class="page-header">@(dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == SessionId)?.Name)</h1>
                 
-                
-                <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent SessionId=@SessionId />
-            }
-            else if (!string.IsNullOrEmpty(ResolutionId))
-            {
-                <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@ResolutionId />
-            }
-            else if (!string.IsNullOrEmpty(VisitCommitteeId))
-            {
-                <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent />
-            }
-            else if (!string.IsNullOrEmpty(ManageListOfSpeakersId))
-            {
-                <MUNity.BlazorServer.Components.ListOfSpeakers.LoSManagerComponent ViewModel=@listOfSpeakersService.GetViewModel(ManageListOfSpeakersId) />
-            }
-            else if (!string.IsNullOrEmpty(ManageVotingId))
-            {
-                <MUNity.BlazorServer.Components.VirtualCommittee.ManageVotingComponent VotingId=@ManageVotingId />
-                <MUNity.BlazorServer.Components.VirtualCommittee.VoteComponent VoteId=@ManageVotingId />
-            }
-            else if (!string.IsNullOrEmpty(VoteId))
-            {
-                <MUNity.BlazorServer.Components.VirtualCommittee.VoteComponent VoteId=@VoteId />
-            }
-            else {
-                <h1 class="page-header">Willkommen @(virtualCommitteeParticipation.RoleName)</h1>
-                <div class="panel panel-inverse">
-				    <div class="panel-heading">
-					    <h4 class="panel-title">Information</h4>
-				    </div>
-				    <div class="panel-body">
-					    Bei dieser Seite handelt es sich um eine technische Demo für MUNity. Diese Seite zeigt lediglich den Funktionsumfang von MUNity.
-                        Vorgenommene Änderungen werden nicht gespeichert.
-				    </div>
-			    </div>
-
-                <div class="row">
-                    <div class="col-lg-6 col-sm-12">
-                        <div class="panel panel-inverse">
-                            <div class="panel-heading">
-					    <h4 class="panel-title">Information</h4>
-				    </div>
-				    <div class="panel-body">
-					    <MUNity.BlazorServer.Components.VirtualCommittee.ProcedureComponent />
-				    </div>
-                        </div>
-                    </div>
-                </div>
-            }
+            <MUNity.BlazorServer.Components.VirtualCommittee.PropsitionsComponent SessionId=@SessionId />
+        }
+        else if (!string.IsNullOrEmpty(ResolutionId))
+        {
+            <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@ResolutionId />
+        }
+        else if (!string.IsNullOrEmpty(VisitCommitteeId))
+        {
+            <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent />
+        }
+        else if (!string.IsNullOrEmpty(ManageListOfSpeakersId))
+        {
+            <MUNity.BlazorServer.Components.ListOfSpeakers.LoSManagerComponent ListOfSpeakersId=@ManageListOfSpeakersId />
+        }
+        else if (!string.IsNullOrEmpty(ManageVotingId))
+        {
+            <MUNity.BlazorServer.Components.VirtualCommittee.ManageVotingComponent VotingId=@ManageVotingId />
+            <MUNity.BlazorServer.Components.VirtualCommittee.VoteComponent VoteId=@ManageVotingId />
+        }
+        else if (!string.IsNullOrEmpty(VoteId))
+        {
+            <MUNity.BlazorServer.Components.VirtualCommittee.VoteComponent VoteId=@VoteId />
+        }
+        else {
+            <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeDashboardComponent />
+        }
     </MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap>
+    
+    <p>Page Result: @isTeamMember</p>
 
     <MUNity.BlazorServer.Components.VirtualCommittee.VCNotificationsComponent />
 }
 else
 {
-    <p>Zugriff verweigert!</p>
+    <p>Seite wird iniziirt</p>
     
 }
 
@@ -119,7 +100,19 @@ else
 
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
-    
-    
+    private bool isInited;
 
+    private bool isTeamMember;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        var authState = await AuthStateTask;
+        if (authState != null)
+        {
+            isTeamMember = authState.User.Identity.IsAuthenticated;
+        }
+        isInited = true;
+        virtualCommitteeParticipation.IsTeamMember = isTeamMember;
+    }
 }

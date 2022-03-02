@@ -1,0 +1,74 @@
+﻿@if (CommitteeExchange != null && CommitteeExchange.Banner == null)
+{
+    <p>Exchange steht bereit. Möglicherweise wurde noch kein Banner initialisiert.</p>
+    <button class="btn bt-default">Banner erstellen</button>
+}
+
+@if (CommitteeExchange?.Banner != null)
+{
+    <div class="row">
+        <div class="col-4">
+            <label>Banner anzeigen</label>
+        </div>
+        <div class="col-8">
+            <RadzenSwitch @bind-Value=@CommitteeExchange.Banner.Active />
+        </div>
+    </div>
+
+    <div class="row mt-1">
+        <div class="col-4">
+            <label>Banner Titel</label>
+        </div>
+        <div class="col-8">
+            <input class="form-control" @bind=@CommitteeExchange.Banner.Title />
+        </div>
+    </div>
+
+    <div class="row mt-1">
+        <div class="col-4">
+            <label>Banner Text</label>
+        </div>
+        <div class="col-8">
+            <input class="form-control"  @bind=@CommitteeExchange.Banner.Text/>
+        </div>
+    </div>
+
+    <div class="row mt-1">
+        <div class="col-4">
+            <label>Timer verwenden</label>
+        </div>
+        <div class="col-8">
+            <RadzenSwitch @bind-Value=@CommitteeExchange.Banner.UseTimer />
+        </div>
+    </div>
+
+    <div class="row mt-1">
+        <div class="col-4">
+            <label>Uhrzeit</label>
+        </div>
+        <div class="col-8">
+            <input type="time" @bind=CommitteeExchange.Banner.Time class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mt-1">
+        <div class="col-6">
+            <button class="btn btn-primary" @onclick=SaveBanner>Speichern</button>
+        </div>
+    </div>
+}
+
+@code {
+    [CascadingParameter] public BServices.VirtualCommitteeExchange CommitteeExchange { get; set; }
+
+    private void CreateBanner()
+    {
+        var banner = new BServices.VirtualSessionBanner();
+        this.CommitteeExchange.SetBanner(banner);
+    }
+
+    private void SaveBanner()
+    {
+        this.CommitteeExchange.NotifyBannerChanged();
+    }
+}

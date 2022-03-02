@@ -1,12 +1,65 @@
-﻿<!-- default -->
-<div class="note note-primary">
-  <div class="note-icon"><i class="fa fa-info"></i></div>
-  <div class="note-content">
-    <h4><b>Information</b></h4>
-    <p> Dies ist ein Informationsbanner. Dieser kann genutzt werden um ggf. Pausen, Informelle Sitzungen und anderes anzuzeigen. Dieses Feature ist noch nicht fertig. </p>
-  </div>
-</div>
+﻿@inject ILogger<VirtualCommitteeBannerComponent> log
+
+@if (CommitteeExchange?.Banner != null && CommitteeExchange.Banner.Active)
+{
+    <!-- default -->
+    <div class="note note-primary">
+      <div class="note-icon"><i class="fa fa-info"></i></div>
+      <div class="note-content">
+        <h4><b>@CommitteeExchange.Banner.Title</b></h4>
+        <p> @CommitteeExchange.Banner.Text </p>
+        @if (CommitteeExchange.Banner.UseTimer)
+            {
+                <p><b>Timer bis:</b> @CommitteeExchange.Banner.Time | @timeLeftString</p>
+            }
+            
+      </div>
+    </div>
+}
+
 
 @code {
+    [Parameter] public BServices.VirtualCommitteeExchange CommitteeExchange { get; set; }
 
+    private System.Timers.Timer timer;
+
+
+    private string timeLeftString
+    {
+        get
+        {
+            var now = DateTime.Now;
+            var timeLeft = CommitteeExchange.Banner.Time - new TimeOnly(now.Hour, now.Minute, now.Second);
+            return $"{timeLeft.Hours.ToString().PadLeft(2, '0')}:{timeLeft.Minutes.ToString().PadLeft(2, '0')}:{timeLeft.Seconds.ToString().PadLeft(2, '0')}";
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (CommitteeExchange != null)
+        {
+            CommitteeExchange.BannerChanged += BannerUpdated;
+        }
+        this.timer = new System.Timers.Timer(1000);
+        this.timer.AutoReset = true;
+        this.timer.Elapsed += delegate {
+            this.InvokeAsync(StateHasChanged);
+        };
+    }
+
+    private void BannerUpdated(object sender, EventArgs args)
+    {
+        if (CommitteeExchange.Banner.UseTimer)
+        {
+            this.timer.Enabled = true;
+            timer.Start();
+        }
+        else
+        {
+            this.timer.Enabled = false;
+            timer.Stop();
+        }
+        InvokeAsync(StateHasChanged);
+    }
 }
