@@ -27,6 +27,7 @@
 			IsFirst=@(operativeParagraph == Exchange.Resolution.OperativeParagraphs.First()) 
 			IsLast=@(operativeParagraph == Exchange.Resolution.OperativeParagraphs.Last())
 			Index=@paragraphIndex
+			CanEdit=@CanEdit
 			/>
 	}
 	
@@ -53,6 +54,8 @@
 
 @code {
 	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }
+
+	[EditorRequired][Parameter] public bool CanEdit { get; set; }
 
 	private int paragraphIndex = 0;
 

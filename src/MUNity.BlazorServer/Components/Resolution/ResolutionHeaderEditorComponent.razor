@@ -21,7 +21,7 @@
 		<p class="card-text">Unterstützer:
 			@string.Join(",", Exchange.Resolution.Supporters.Select(n => n.Role.RoleName))
 			<br />
-			@if (vcParticipationService.RoleId != null && vcParticipationService.RoleId != Exchange.Resolution.SubmitterRole.RoleId)
+			@if (vcParticipationService.RoleId != null && Exchange.Resolution.SubmitterRole != null && vcParticipationService.RoleId != Exchange.Resolution.SubmitterRole.RoleId)
 			{
 				if (Exchange.Resolution.Supporters.All(n => n.Role.RoleId != vcParticipationService.RoleId))
 				{
@@ -38,12 +38,11 @@
 	</div>
 </div>
 @code {
+	[EditorRequired][Parameter]public bool CanEdit { get; set; }
 
 	[Parameter] public ResolutionExchange Exchange { get; set; }
 
 	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
-
-	private bool canEdit = false;
 
 	private bool editTopic = false;
 
@@ -51,7 +50,7 @@
 
 	private void StartEditTopic()
 	{
-		if (canEdit)
+		if (CanEdit)
 		{
 			editTopic = true;
 		}
@@ -60,9 +59,6 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		bool isAuthed = (await AuthStateTask)?.User.Identity.IsAuthenticated ?? false;
-		canEdit = isAuthed || Exchange.Resolution.State == EResolutionStates.Public ||
-		Exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId == Exchange.Resolution.SubmitterRole.RoleId;
 		if (vcParticipationService != null)
 		{
 			vcParticipationService.Registered += delegate { InvokeAsync(StateHasChanged); };

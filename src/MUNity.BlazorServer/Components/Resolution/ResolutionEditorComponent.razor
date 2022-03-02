@@ -40,12 +40,12 @@
 
 <div class="row">
     <div class="col-12">
-        <ResolutionHeaderEditorComponent Exchange=@exchange />
+        <ResolutionHeaderEditorComponent Exchange=@exchange CanEdit=@canEdit />
     </div>
 </div>
 
-<PreambleEditorComponent Exchange=@exchange />
-<OperativeSectionComponent Exchange=@exchange />
+<PreambleEditorComponent Exchange=@exchange CanEdit=@canEdit />
+<OperativeSectionComponent Exchange=@exchange CanEdit=@canEdit />
 
 @code {
     [Parameter] public string ResolutionId { get; set; }
@@ -53,6 +53,8 @@
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
     private bool isAuthed = false;
+
+    private bool canEdit;
 
     private ResolutionExchange exchange;
     private bool allowOthersToEdit
@@ -103,11 +105,22 @@
         this.exchange.UpdateResaElement();
     }
 
+    private void LoadEditAuth()
+    {
+        this.canEdit = exchange.Resolution.State == EResolutionStates.Public ||
+            (exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId != null && exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId) ||
+            isAuthed;
+        InvokeAsync(StateHasChanged);
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         var taskResult = await AuthStateTask;
         isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
         base.OnParametersSet();
         exchange = resolutionExchangeService.GetResolution(ResolutionId);
+
+        LoadEditAuth();
+        vcParticipationService.Registered += delegate { LoadEditAuth(); };
     }
 }

@@ -231,9 +231,11 @@
 
 
 @code {
-	[Parameter] public ResaOperativeParagraph Paragraph { get; set; }
+	[EditorRequired][Parameter]public bool CanEdit { get; set; }
 
-	[Parameter] public ResolutionExchange Exchange { get; set; }
+	[EditorRequired][Parameter] public ResaOperativeParagraph Paragraph { get; set; }
+
+	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }
 
 	[Parameter] public bool IsFirst { get; set; }
 
@@ -288,9 +290,7 @@
 
 	private void StartEdit()
 	{
-		if (Exchange.Resolution.State == EResolutionStates.Public ||
-		Exchange.Resolution.State == EResolutionStates.Private && Exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId ||
-		isAuthed)
+		if (CanEdit)
 		{
 			vcParticipationService.LastEditedOperativeParagraphId = this.Paragraph.ResaOperativeParagraphId;
 			this.isEditing = true;

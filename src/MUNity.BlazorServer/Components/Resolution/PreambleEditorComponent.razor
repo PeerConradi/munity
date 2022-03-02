@@ -21,7 +21,8 @@
 	<PreambleParagraphComponent Exchange=@Exchange 
 	Paragraph=paragraph 
 	IsFirst=@(paragraph == Exchange.Resolution.PreambleParagraphs.First()) 
-	IsLast=@(paragraph == Exchange.Resolution.PreambleParagraphs.Last()) />
+	IsLast=@(paragraph == Exchange.Resolution.PreambleParagraphs.Last()) 
+	CanEdit=@CanEdit/>
 }
 
 <AuthorizeView>
@@ -47,6 +48,8 @@
 
 @code {
 	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }
+
+	[EditorRequired][Parameter]public bool CanEdit { get; set; }
 
 	[CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
 
