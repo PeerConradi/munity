@@ -8,7 +8,7 @@ namespace MUNity.BlazorServer.BServices
 
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public VotingExchange GetExchange(string votingId)
+        public VotingExchange GetExchange(string votingId, string title, string text)
         {
             var exchange = _exchanges.FirstOrDefault(n => n.VotingId == votingId);
             if (exchange == null)
@@ -19,6 +19,8 @@ namespace MUNity.BlazorServer.BServices
                 exchange = new VotingExchange()
                 {
                     VotingId = votingId,
+                    Title = title,
+                    Text = text
                 };
                 _exchanges.Add(exchange);
             }
@@ -33,6 +35,10 @@ namespace MUNity.BlazorServer.BServices
 
     public class VotingExchange
     {
+        public string Title { get; set; }
+
+        public string Text { get; set; }
+
         public string VotingId { get; set; }
 
         public event EventHandler<UserVotedEventArgs> UserVoted;
@@ -41,6 +47,7 @@ namespace MUNity.BlazorServer.BServices
         {
             UserVoted?.Invoke(this, new UserVotedEventArgs(roleId, choice));
         }
+
     }
 
     public class UserVotedEventArgs : EventArgs

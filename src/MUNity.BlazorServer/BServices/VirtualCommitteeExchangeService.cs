@@ -88,6 +88,8 @@ namespace MUNity.BlazorServer.BServices
 
         public event EventHandler BannerChanged;
 
+        public event EventHandler<VotingExchange> VoteNotified;
+
         public CommitteeSessionExchange CurrentSessionExchange { get; set; }
 
         //public ObservableCollection<CommitteeSessionExchange> SessionExchanges { get; set; } = new();
@@ -108,6 +110,11 @@ namespace MUNity.BlazorServer.BServices
         public void NotifyBannerChanged()
         {
             BannerChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void NotifyUsersToVote(VotingExchange exchange)
+        {
+            VoteNotified?.Invoke(this, exchange);
         }
 
         public VirtualCommitteeExchange(string committeeId)

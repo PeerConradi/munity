@@ -90,7 +90,7 @@
 					<div class="menu-icon">
 						<i class="fa fa-vote-yea"></i>
 					</div>
-					<div class="menu-text">Abstimmungen <span class="menu-label">NEW</span></div> 
+					<div class="menu-text">Abstimmungen</div> 
 					<div class="menu-caret"></div>
 				</a>
 				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
@@ -102,26 +102,26 @@
 								</a>
 							</div>
 
-							@foreach(var voting in dbContext.SessionVotings)
+							@foreach(var voting in dbContext.SessionVotings.Where(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId))
 							{
 								<div class="menu-item">
 									<a class="menu-link" href="@($"/oc/{CommitteeExchange.CommitteeId}/managevote/{voting.SessionVotingId}")" >
 										<div class="menu-text">
 											@voting.Name 
-											<i class="fa @(((voting.IsActive) ? "fa-clock text-warning" : "fa-check text-success")) "></i>
+											<i class="fa @((voting.State == VotingStates.Finished) ? "fa-check text-success" : null) @((voting.State == VotingStates.Creating) ? "fa-pen text-default" : null) @((voting.State == VotingStates.Open) ? "fa-clock text-warning" : null) "></i>
 										</div>
 									</a>
 								</div>
 							}
 						</Authorized>
 						<NotAuthorized>
-							@foreach(var voting in dbContext.SessionVotings)
+							@foreach(var voting in dbContext.SessionVotings.Where(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId && (n.State == VotingStates.Open || n.State == VotingStates.Finished)))
 							{
 								<div class="menu-item">
 									<a class="menu-link" href="@($"/oc/{CommitteeExchange.CommitteeId}/vote/{voting.SessionVotingId}")" >
 										<div class="menu-text">
 											@voting.Name 
-											<i class="fa @(((voting.IsActive) ? "fa-clock text-warning" : "fa-check text-success")) "></i>
+											<i class="fa @((voting.State == VotingStates.Finished) ? "fa-check text-success" : null) @((voting.State == VotingStates.Open) ? "fa-clock text-warning" : null)"></i>
 										</div>
 									</a>
 								</div>

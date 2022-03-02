@@ -1,5 +1,6 @@
 ﻿@using MUNity.Database.Models.Session
 @inject MunityContext dbContext
+@inject BServices.VotingExchangeService voteExchangeService
 
 <div class="panel panel-inverse">
     <div class="panel-heading">
@@ -10,7 +11,8 @@
         {
             @if (voting.IsActive)
             {
-                <button class="btn btn-primary" @onclick="() => { voting.IsActive = false; dbContext.SaveChanges();}">Abstimmung bearbeiten</button>
+                <button class="btn btn-primary" @onclick="StartEditing">Abstimmung bearbeiten</button>
+                <button class="btn btn-secondary ms-1" @onclick=NotifyToVote>Reminder zur Abstimmung noch offene senden</button>
             }
             else
             {
@@ -46,10 +48,8 @@
                     }
                     </h3>
                 }
-
                 <button class="btn btn-primary" @onclick="ActivateVoting">Aktivieren</button>
             }
-            
         }
         else
         {
@@ -64,6 +64,8 @@
 
 @code {
     [Parameter] public string VotingId { get; set; }
+
+    [CascadingParameter] public BServices.VirtualCommitteeExchange CommitteeExchange { get; set; }
 
     private SessionVoting voting;
 
@@ -90,7 +92,27 @@
         if (voting != null)
         {
             voting.IsActive = true;
+            voting.State = VotingStates.Open;
             dbContext.SaveChanges();
+        }
+    }
+
+    private void StartEditing()
+    {
+        if (voting != null)
+        {
+            voting.IsActive = false;
+            voting.State = VotingStates.Creating;
+            dbContext.SaveChanges();
+        }
+    }
+
+    private void NotifyToVote()
+    {
+        var exchage = voteExchangeService.GetExchange(this.VotingId, this.voting.Name, this.voting.Description);
+        if (exchage != null)
+        {
+            this.CommitteeExchange.NotifyUsersToVote(exchage);
         }
     }
 }

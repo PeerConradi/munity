@@ -63,9 +63,9 @@
     {
         base.OnParametersSet();
         vcPartService.Registered += delegate { InvokeAsync(StateHasChanged); };
-        exchange = voteExchangeService.GetExchange(VoteId);
         voting = dbContext.SessionVotings.Include(n => n.VoteSlots).ThenInclude(n => n.User)
         .FirstOrDefault(n => n.SessionVotingId == VoteId);
+        exchange = voteExchangeService.GetExchange(VoteId, voting.Name, voting.Description);
         if (exchange != null)
         {
             exchange.UserVoted += OnUserVoted;

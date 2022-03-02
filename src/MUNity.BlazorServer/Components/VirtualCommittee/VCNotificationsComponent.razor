@@ -1,4 +1,8 @@
-﻿@inject BServices.ScopedSessionNotificationService notificationService
+﻿@using MUNity.Database.Models.Session
+@inject BServices.ScopedSessionNotificationService notificationService
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject IServiceScopeFactory scopeFactory
+@inject ILogger<VCNotificationsComponent> log
 
 @if (show)
 {
@@ -19,7 +23,34 @@
 	</div>
 }
 
+@if (voteExchage != null && slot != null)
+{
+	<div class="toast-container">
+		<div id="liveToast" class="toast fade show">
+			<div class="toast-header">
+				<div class="bg-blue rounded w-25px h-25px d-flex align-items-center justify-content-center text-white">
+					<i class="fa fa-bell"></i>
+				</div>
+				<strong class="me-auto ms-2">@voteExchage.Title</strong>
+				<small></small>
+			</div>
+			<div class="toast-body">
+				@voteExchage.Text
+				<br />
+				<button class="btn btn-sm btn-success" @onclick=VotePro>Dafür</button>
+				<button class="btn btn-sm btn-danger ms-1" @onclick=VoteCon>Dagegen</button>
+			</div>
+		</div>
+	</div>
+}
+
 @code {
+	[Parameter] public BServices.VirtualCommitteeExchange CommitteeExchange { get; set; }
+
+	private BServices.VotingExchange voteExchage;
+
+	private SessionVotingSlot slot;
+
 	private bool show = false;
 
 	private string title = "";
@@ -27,6 +58,72 @@
 	private string text = "";
 
 	private DateTimeOffset timestamp;
+
+	private MunityContext dbContext;
+
+	private void VotePro()
+	{
+		if (this.voteExchage != null && slot != null)
+		{
+			slot.Choice = EVoteStates.Pro;
+			dbContext.SaveChanges();
+			voteExchage.NotifyUserVoted(vcParticipationService.RoleId.Value, EVoteStates.Pro);
+			this.voteExchage = null;
+			this.slot = null;
+		}
+	}
+
+	private void VoteCon()
+	{
+		if (this.voteExchage != null && slot != null)
+		{
+			slot.Choice = EVoteStates.Con;
+			dbContext.SaveChanges();
+			voteExchage.NotifyUserVoted(vcParticipationService.RoleId.Value, EVoteStates.Con);
+			this.voteExchage = null;
+			this.slot = null;
+		}
+	}
+
+	protected override void OnParametersSet()
+	{
+		var scope = scopeFactory.CreateScope();
+		this.dbContext = scope.ServiceProvider.GetService<MunityContext>();
+		base.OnParametersSet();
+		if (CommitteeExchange != null)
+		{
+			this.CommitteeExchange.VoteNotified += OnVotingNotified;
+		}
+		else
+		{
+			log?.LogWarning("No Committee Exchange was given to the VCNotificationsService. This is needed for the voting notification to work.");
+		}
+	}
+
+	private void OnVotingNotified(object sender, BServices.VotingExchange exchange)
+	{
+		try
+		{
+			if (vcParticipationService.RoleId != null)
+			{
+				this.slot = dbContext.VotingSlots.FirstOrDefault(n => n.User.RoleId == vcParticipationService.RoleId && 
+				n.Voting.SessionVotingId == exchange.VotingId &&
+				n.Choice == EVoteStates.NotVoted);
+				if (this.slot != null)
+				{
+					this.voteExchage = exchange;
+					InvokeAsync(StateHasChanged);
+					log?.LogInformation("Notified to vote!");
+				}
+			}
+			
+		}
+		catch (Exception ex)
+		{
+			log?.LogError(ex, "Unable to notify to vote. Notifications will not be shown.");
+		}
+
+	}
 
 	protected override void OnInitialized()
 	{

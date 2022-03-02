@@ -46,7 +46,12 @@
         }
         else if (!string.IsNullOrEmpty(ManageVotingId))
         {
-            <MUNity.BlazorServer.Components.VirtualCommittee.ManageVotingComponent VotingId=@ManageVotingId />
+            <AuthorizeView>
+                <Authorized>
+                    <MUNity.BlazorServer.Components.VirtualCommittee.ManageVotingComponent VotingId=@ManageVotingId />
+                </Authorized>
+            </AuthorizeView>
+            
             <MUNity.BlazorServer.Components.VirtualCommittee.VoteComponent VoteId=@ManageVotingId />
         }
         else if (!string.IsNullOrEmpty(VoteId))
@@ -56,11 +61,11 @@
         else {
             <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeDashboardComponent />
         }
-    </MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap>
-    
-    <p>Page Result: @isTeamMember</p>
 
-    <MUNity.BlazorServer.Components.VirtualCommittee.VCNotificationsComponent />
+        
+    </MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap>
+
+    
 }
 else
 {
