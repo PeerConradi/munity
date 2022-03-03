@@ -10,8 +10,23 @@
 
 @if (currentSessionExchange != null)
 {
+	<AuthorizeView>
+		<Authorized>
+			<div class="form-group">
+				<label>Tagesordnungspunkt</label>
+				<div class="input-group">
+					<input class="form-control" @bind=@currentSessionExchange.CurrentAgendaItemName />
+					<button type="button" class="btn btn-primary" @onclick="SaveCurrentAgendaItemName">Speichern</button>
+				</div>
+			</div>
+		</Authorized>
+		<NotAuthorized>
+			<h1 class="page-header">@currentSessionExchange.CurrentAgendaItemName</h1>
+		</NotAuthorized>
+	</AuthorizeView>
+	
 
-	<div class="panel panel-inverse">
+	<div class="panel panel-inverse mt-2">
 		<div class="panel-heading">
 			<h4 class="panel-title">Anträge</h4>
 		</div>
@@ -117,6 +132,23 @@ else
 
 	private bool alreadyMakingThisRequest = false;
 
+	private void SaveCurrentAgendaItemName()
+	{
+		try
+		{
+			var session = dbContext.AgendaItems.FirstOrDefault(n => n.AgendaItemId == currentSessionExchange.CurrentAgendaItemId);
+			if (session != null)
+			{
+				session.Name = currentSessionExchange.CurrentAgendaItemName;
+				dbContext.SaveChanges();
+			}
+		}
+		catch (Exception ex)
+		{
+			logger?.LogError("Was unable to save the current agenda item name into the database.");
+		}
+	}
+
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
@@ -130,6 +162,7 @@ else
 		if (currentSessionExchange != null)
 		{
 			currentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
+			currentSessionExchange.CurrentAgendaItemChanged += delegate { InvokeAsync(StateHasChanged); };
 		}
 		else
 		{

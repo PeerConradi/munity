@@ -157,6 +157,8 @@ namespace MUNity.BlazorServer.BServices
 
         public event EventHandler PresentsCheckedChanged;
 
+        public event EventHandler CurrentAgendaItemChanged;
+
         public ObservableCollection<PetitionDto> Petitions { get; set; } = new();
 
         public void AddPetition(Petition newPetition)
@@ -198,6 +200,11 @@ namespace MUNity.BlazorServer.BServices
         public void NotifyPetitionStatusChanged()
         {
             this.PetitionStatusChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void NotifyCurrentAgendaItemNameChanged()
+        {
+            CurrentAgendaItemChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
