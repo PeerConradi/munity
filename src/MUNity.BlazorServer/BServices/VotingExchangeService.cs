@@ -24,6 +24,11 @@ namespace MUNity.BlazorServer.BServices
                 };
                 _exchanges.Add(exchange);
             }
+            else
+            {
+                exchange.Title = title;
+                exchange.Text = text;
+            }
             return exchange;
         }
 
