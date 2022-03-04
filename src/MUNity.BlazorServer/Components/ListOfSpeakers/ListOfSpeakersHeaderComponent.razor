@@ -4,6 +4,7 @@
 
 @inject Services.ListOfSpeakersService listService
 @inject ILogger<ListOfSpeakersHeaderComponent> logger
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
 
 <div class="d-flex">
 
@@ -294,17 +295,24 @@
 
     private void NextSpeaker()
     {
-        viewModel?.NextSpeaker();
+        if (vcParticipationService.IsTeamMember)
+        {
+            viewModel?.NextSpeaker();   
+        }
     }
 
     private void NextQuestion()
     {
-        viewModel?.NextQuestion();
+        if (vcParticipationService.IsTeamMember)
+        {
+            viewModel?.NextQuestion();
+
+        }
     }
 
     private void ToggleSpeakerMode()
     {
-        if (viewModel != null)
+        if (viewModel != null && vcParticipationService.IsTeamMember)
         {
             if (viewModel.Status == ESpeakerListStatus.Speaking ||
             viewModel.Status == ESpeakerListStatus.Answer)
@@ -327,7 +335,7 @@
 
     private void ToggleQuestionMode()
     {
-        if (viewModel != null)
+        if (viewModel != null && vcParticipationService.IsTeamMember)
         {
             if (viewModel.Status == ESpeakerListStatus.Question)
             {
