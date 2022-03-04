@@ -234,6 +234,32 @@ namespace MUNity.Services
             _context.SaveChanges();
         }
 
+        public void AddAddAmendment(ResaElement resolution, int roleId, string newText)
+        {
+            _context.Update(resolution);
+            var paragraph = new ResaOperativeParagraph()
+            {
+                AllowAmendments = false,
+                IsVirtual = true,
+                IsLocked = true,
+                OrderIndex = resolution.OperativeParagraphs.Count,
+                Parent = null,
+                Resolution = resolution,
+                Text = newText
+            };
+            resolution.OperativeParagraphs.Add(paragraph);
+            _context.OperativeParagraphs.Add(paragraph);
+            var amendment = new ResaAddAmendment()
+            {
+                Resolution = resolution,
+                Submitter = _context.Delegates.Find(roleId),
+                VirtualParagraph = paragraph
+            };
+            resolution.AddAmendments.Add(amendment);
+            _context.ResolutionAddAmendments.Add(amendment);
+            _context.SaveChanges();
+        }
+
         public void RevokeChangeAmendment(ResaChangeAmendment amendment)
         {
             _context.Update(amendment);

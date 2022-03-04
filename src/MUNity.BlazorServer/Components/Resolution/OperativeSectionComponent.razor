@@ -30,7 +30,13 @@
 			CanEdit=@CanEdit
 			/>
 	}
-	
+}
+
+@if (pcService.RoleId != null && Exchange.Resolution.State == EResolutionStates.Discussion)
+{
+	<div class="row d-flex justify-content-center mb-3 mt-2">
+		<button class="btn btn-indigo btn-icon btn-lg" title="Absatz über einen Änderungsantrag hinzufügen" @onclick="() => showCreateAddAmendmentModal = true"><i class="fa fa-plus"></i></button>
+	</div>
 }
 
 <AuthorizeView>
@@ -50,6 +56,39 @@
 	</NotAuthorized>
 </AuthorizeView>
 
+@if (showCreateAddAmendmentModal)
+{
+	<div class="modal-backdrop" style="opacity: 50%"></div>
+	<div class="modal show " style="display: block;" aria-modal="true" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Hinzufügen eines neuen Absatz</h4>
+					<button type="button" class="btn-close" @onclick="() => showCreateAddAmendmentModal = false"></button>
+				</div>
+				<div class="modal-body">
+					<p>Die Resolution befindet sich bereits in der Debatte. Dieser Absatz wird mit einem Änderungsantrag eingereicht.
+						<RadzenHtmlEditor class="mt-2" @bind-Value="@newText" style="max-height: 300px; width: 100%; margin-bottom: 1rem;">
+							<RadzenHtmlEditorSeparator />
+							<RadzenHtmlEditorUndo />
+							<RadzenHtmlEditorRedo />
+							<RadzenHtmlEditorSeparator />
+							<RadzenHtmlEditorBold />
+							<RadzenHtmlEditorItalic />
+							<RadzenHtmlEditorUnderline />
+							<RadzenHtmlEditorStrikeThrough />
+							<RadzenHtmlEditorSeparator />
+						</RadzenHtmlEditor>
+					</p>
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" @onclick="CreateAddAmendment">Speichern</a>
+					<a class="btn btn-white" @onclick="() => showCreateAddAmendmentModal = false">Schließen</a>
+				</div>
+			</div>
+		</div>
+	</div>
+}
 
 
 @code {
@@ -59,6 +98,9 @@
 
 	private int paragraphIndex = 0;
 
+	private string newText;
+
+	private bool showCreateAddAmendmentModal = false;
 
 	private void CreateOperativeParagraph()
 	{
@@ -75,6 +117,15 @@
 	{
 		base.OnAfterRender(firstRender);
 		paragraphIndex = 0;
+	}
+
+	private void CreateAddAmendment()
+	{
+		if (pcService.RoleId != null)
+		{
+			Exchange.AddAddAmendment(this.pcService.RoleId.Value, newText);
+			this.showCreateAddAmendmentModal = false;
+		}
 	}
 
 }
