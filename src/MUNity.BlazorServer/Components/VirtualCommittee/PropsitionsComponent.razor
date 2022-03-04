@@ -163,6 +163,7 @@ else
 		{
 			currentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
 			currentSessionExchange.CurrentAgendaItemChanged += delegate { InvokeAsync(StateHasChanged); };
+			currentSessionExchange.PetitionStatusChanged += delegate { InvokeAsync(StateHasChanged); };
 		}
 		else
 		{
@@ -190,20 +191,20 @@ else
 
 	private void AddPetition(int type)
 	{
-		if (vcService.IsActiveForCommittee(committeeId) && currentSessionExchange != null)
+		if (vcService.IsActiveForCommittee(committeeId) && currentSessionExchange != null && vcService.RoleId != null)
 		{
-			vcService.MakePetition(currentSessionExchange.CurrentAgendaItemId, type);
+			currentSessionExchange.MakePetition(type, vcService.RoleId.Value);
 		}
 	}
 
 	private void ActivatePetition(string petitionId)
 	{
-		vcService.ActivatePetition(petitionId);
+		currentSessionExchange.ActivatePetition(petitionId);
 	}
 
 	private void RemovePetition(string petitionId)
 	{
-		vcService.RemovePetition(petitionId);
+		currentSessionExchange.RemovePetition(petitionId);
 	}
 
 

@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MUNity.Database.Context;
-using MUNity.Database.Models.Session;
 using MUNity.VirtualCommittees.Dtos;
 using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 using MUNity.Extensions.ObservableCollectionExtensions;
 
 namespace MUNity.BlazorServer.BServices
@@ -38,7 +36,7 @@ namespace MUNity.BlazorServer.BServices
             using var scope = scopeFactroy.CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<MunityContext>();
             var session = context.CommitteeSessions.AsNoTracking().Where(n => n.Committee.CommitteeId == exchange.CommitteeId)
-                    .Select(n => new CommitteeSessionExchange()
+                    .Select(n => new CommitteeSessionExchange(this.scopeFactroy)
                     {
                         SessionId = n.CommitteeSessionId,
                         CurrentAgendaItemName = n.CurrentAgendaItem.Name,
@@ -65,7 +63,6 @@ namespace MUNity.BlazorServer.BServices
                         ).OrderBy(n => n.PetitionTypeSortOrder).ThenBy(n => n.PetitionDate).ToObservableCollection()
                     }).FirstOrDefault();
             exchange.CurrentSessionExchange = session;
-            this._logger.LogInformation($"Loaded Virutal committee exchange and added a session.");
         }
 
         public VirtualCommitteeExchangeService(ILogger<VirtualCommiteeParticipationService> logger, IServiceScopeFactory scopeFactory)
@@ -141,70 +138,5 @@ namespace MUNity.BlazorServer.BServices
         public bool UseTimer { get; set; }
 
         public TimeOnly Time { get; set; }
-    }
-
-    public class CommitteeSessionExchange
-    {
-        public string SessionId { get; set; }
-
-        public string SessionName { get; set; }
-
-        public string CurrentAgendaItemName { get; set; }
-
-        public int CurrentAgendaItemId { get; set; }
-
-        public event EventHandler PetitionStatusChanged;
-
-        public event EventHandler PresentsCheckedChanged;
-
-        public event EventHandler CurrentAgendaItemChanged;
-
-        public ObservableCollection<PetitionDto> Petitions { get; set; } = new();
-
-        public void AddPetition(Petition newPetition)
-        {
-            var newIndex = 0;
-            foreach (var existingPetition in Petitions)
-            {
-                if (newPetition.PetitionType.SortOrder < existingPetition.PetitionTypeSortOrder)
-                    break;
-
-                if (newPetition.PetitionType.SortOrder == existingPetition.PetitionTypeSortOrder && newPetition.PetitionDate > existingPetition.PetitionDate)
-                {
-                    break;
-                }
-                newIndex++;
-            }
-
-            var dto = new PetitionDto()
-            {
-                PetitionTypeName = newPetition.PetitionType.Name,
-                PetitionCategoryName = newPetition.PetitionType.Category,
-                PetitionUserIso = newPetition.User.DelegateCountry.Iso,
-                PetitionUserName = newPetition.User.RoleName,
-                PetitionDate = newPetition.PetitionDate,
-                PetitionId = newPetition.PetitionId,
-                PetitionTypeId = newPetition.PetitionType.PetitionTypeId,
-                PetitionUserId = newPetition.User.RoleId,
-                Status = newPetition.Status,
-                TargetAgendaItemId = newPetition.AgendaItem.AgendaItemId,
-                Text = newPetition.Text,
-                PetitionTypeSortOrder = newPetition.PetitionType.SortOrder
-            };
-
-            
-            this.Petitions.Insert(newIndex, dto);
-            //PetitionAdded?.Invoke(this, petition);
-        }
-    
-        public void NotifyPetitionStatusChanged()
-        {
-            this.PetitionStatusChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void NotifyCurrentAgendaItemNameChanged()
-        {
-            CurrentAgendaItemChanged?.Invoke(this, EventArgs.Empty);
-        }
     }
 }
