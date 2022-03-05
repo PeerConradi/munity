@@ -1,6 +1,7 @@
 ﻿@using MUNity.Database.Models.Conference.Roles
 @inject MunityContext dbContext
 @inject BServices.VirtualCommitteeExchangeService exchangeService
+@inject ILogger<VCUsersComponent> logger
 
 <div class="card border-0 text-truncate mb-3 bg-gray-800 text-white">
 	<!-- BEGIN card-body -->
@@ -23,6 +24,10 @@
 			{
 				<span>@(Math.Ceiling(@roles.Count * 0.66)) Für 2/3 Mehrheit</span><br />
 				<span>@(Math.Ceiling(@roles.Count * 0.5) + 1) Für einfache Mehrheit</span><br />
+			}
+			else
+			{
+				<span>Rollen sind null. Fehler erkannt!</span>
 			}
 		</div>
 		@if (roles != null && expand)
@@ -68,18 +73,35 @@
 			this.exchange.UserConnected += (s, a) => InvokeAsync(StateHasChanged);
 			this.exchange.UserDisconnected += (s, a) => InvokeAsync(StateHasChanged);
 			this.exchange.CurrentSessionChanged += delegate { InvokeAsync(StateHasChanged); };
-			this.exchange.CurrentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
-			if (this.exchange.CurrentSessionExchange != null)
+			if (exchange.CurrentSessionExchange != null)
 			{
+				if (exchange.CurrentSessionExchange.Petitions == null)
+				{
+					this.exchange.CurrentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
+				}
+				else
+				{
+					logger?.LogError("Petitions are null");
+				}
+
 				this.presentRoles = dbContext.PresentStates.Where(n => n.SessionPresents.Session.CommitteeSessionId == this.exchange.CurrentSessionExchange.SessionId)
 				.Select(n => new PresentRole()
-					{
-						RoleId = n.Role.RoleId,
-						IsPresent = n.State == Database.Models.Session.PresentsState.PresentsStates.Present || n.State == Database.Models.Session.PresentsState.PresentsStates.Late
-					}).ToList();
+				{
+					RoleId = n.Role.RoleId,
+					IsPresent = n.State == Database.Models.Session.PresentsState.PresentsStates.Present || n.State == Database.Models.Session.PresentsState.PresentsStates.Late
+				}).ToList();
+			}
+			else
+			{
+				logger?.LogError("CurrentSession in exchange in null.");
 			}
 		}
+		else
+		{
+			logger?.LogError("No exchange for committee {0} found.", CommitteeId);
+		}
 		roles = dbContext.Delegates.Include(n => n.DelegateCountry).Where(n => n.Committee.CommitteeId == CommitteeId).ToList();
+		
 
 	}
 

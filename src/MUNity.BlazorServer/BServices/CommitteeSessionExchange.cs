@@ -167,6 +167,7 @@ namespace MUNity.BlazorServer.BServices
         public CommitteeSessionExchange(IServiceScopeFactory factory)
         {
             this.scopeFactory = factory;
+            this.Petitions = new ObservableCollection<PetitionDto>();
         }
     }
 }

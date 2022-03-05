@@ -444,9 +444,28 @@ public partial class FullDMUN2022Tests
     }
 
     [Test]
-    [Order(2823)]
+    [Order(2824)]
     public void TestCreateAListOfSpeakersForMUNBWGV()
     {
+        foreach(var committee in _context.Committees.Where(n => n.Conference.ConferenceId == "munsh22" && n.CommitteeId != "munsh22-gv"))
+        {
+            var session = new CommitteeSession()
+            {
+                Committee = committee,
+                StartDate = new DateTime(2022, 4, 10, 9, 0, 0),
+                EndDate = new DateTime(2022, 4, 13, 20, 0, 0),
+                Name = "Sitzungsblock"
+            };
+            _context.CommitteeSessions.Add(session);
+            committee.CurrentSession = session;
 
+            var agendaItem = new AgendaItem()
+            {
+                Name = "Tagesordnungspunkt"
+            };
+            session.CurrentAgendaItem = agendaItem;
+            _context.SaveChanges();
+        }
+        
     }
 }
