@@ -37,7 +37,7 @@
     </div>
 </div>
 
-<div class="row">
+@*<div class="row">
     @foreach (var conferenceCard in dbContext.ConferenceDashboardCards
         .Include(n => n.Conference)
         .Where(n => n.Active))
@@ -58,28 +58,33 @@
         </div>
     }
 </div>
+*@
 
 <div class="row">
-    <div class="col-6 mt-3">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Virtuelle Gremien</h3>
-            </div>
-            <div class="card-body">
-                <p>Entdecken Sie jetzt die virtuellen Gremien. In diesen können Sie online mit anderen Delegierten zusammenarbeiten.</p>
-                <a class="btn btn-primary" href="/oc/munsh22-gv">Direkt in den Raum...</a>
-                <div class="row">
-                    <div class="btn-group-vertical">
-                        @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-gv"))
-                        {
-                            <a class="btn btn-default" href="/oc/join/@role.RoleSecret">Als <b>@role.RoleName</b> beitreten</a>
-                        }
-                    </div>
+    @foreach(var committee in dbContext.Committees.AsNoTracking().Where(n => n.Conference.ConferenceId == "munsh22").Select(n => new { CommitteeId = n.CommitteeId, Name = n.Name }))
+    {
+        <div class="col-6 mt-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Virtuelles Gremium (@committee.Name)</h3>
                 </div>
+                <div class="card-body">
+                    <p>Entdecken Sie jetzt die virtuellen Gremien. In diesen können Sie online mit anderen Delegierten zusammenarbeiten.</p>
+                    <a class="btn btn-primary" href="/oc/munsh22-gv">Direkt in den Raum...</a>
+                    <div class="row">
+                        <div class="btn-group-vertical">
+                            @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == committee.CommitteeId))
+                            {
+                                <a class="btn btn-default" href="/oc/join/@role.RoleSecret">Als <b>@role.RoleName</b> beitreten</a>
+                            }
+                        </div>
+                    </div>
                 
+                </div>
             </div>
         </div>
-    </div>
+    }
+    
 
     <div class="col-6 mt-3">
         <div class="card">
