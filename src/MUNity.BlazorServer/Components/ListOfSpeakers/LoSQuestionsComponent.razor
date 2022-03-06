@@ -1,6 +1,7 @@
 ﻿@using MUNity.Database.General
 
 @inject Services.ListOfSpeakersService losService
+@inject ILogger<LoSQuestionsComponent> logger
 
 <div class="card border-0 mb-3 bg-gray-900 text-white">
 	<!-- BEGIN card-body -->
@@ -27,7 +28,7 @@
 		}
 
 		<br />
-		<!-- Total available speaker time -->
+		<!-- Total available question time -->
 
 		@if (AllowEdit && !editQuestionTime)
 		{
@@ -35,7 +36,10 @@
 		}
 		else if (AllowEdit && editQuestionTime)
 		{
-			<input class="form-control" @bind=@inputQuestionTime />
+			<div class="input-group w-50">
+				<input class="form-control" @bind=@inputQuestionTime />
+				<button class="btn btn-primary" @onclick=UpdateQuestionTime>Speichern</button>
+			</div>
 		}
 		else 
 		{
@@ -53,7 +57,7 @@
 		{
 			<div class="widget-list-item rounded-0 pt-3px">
 				<div class="widget-list-media icon">
-					<div class="widget-img widget-img-xs rounded bg-inverse me-2 w-40px" style="background-image: url(@($"/img/flags/small/{question.Iso}.png"))"></div>	
+					<div class="widget-img widget-img-xs rounded bg-inverse me-2 w-40px" style="background-image: url(@($"/img/flags/small/{question.Iso.ToLower()}.png"))"></div>	
 				</div>
 				<div class="widget-list-content">
 					<div class="widget-list-title">@question.Name</div>
@@ -129,6 +133,19 @@
 		}
 	}
 
+	private void UpdateQuestionTime()
+	{
+		if (TimeSpan.TryParseExact(inputQuestionTime, "m\\:ss",null, out var ts))
+		{
+			losService.UpdateQuestionsTime(ViewModel.ListOfSpeakersId, ts);
+			this.editQuestionTime = false;
+		}
+		else
+		{
+			logger?.LogWarning("Was unable to parse input Timespan '{0}'", inputQuestionTime);
+		}
+	}
+
 	private void AddToQuestions()
 	{
 		if (ViewModel != null && !string.IsNullOrEmpty(newQuestionName))
@@ -155,7 +172,7 @@
 			}
 			else
 			{
-				return $"background: no-repeat bottom right; background-image: url(/img/flags/medium/{ViewModel.CurrentQuestion.Iso}.png); background-size: auto 100%;";
+				return $"background: no-repeat bottom right; background-image: url(/img/flags/medium/{ViewModel.CurrentQuestion.Iso.ToLower()}.png); background-size: auto 100%;";
 				
 			}
 		}
@@ -177,5 +194,9 @@
 	{
 		base.OnParametersSet();
 		this.inputQuestionTime = questionTimeString;
+		if (this.ViewModel != null)
+		{
+			this.ViewModel.PropertyChanged += delegate { InvokeAsync(StateHasChanged); };
+		}
 	}
 }
