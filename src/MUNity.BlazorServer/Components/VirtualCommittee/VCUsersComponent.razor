@@ -30,7 +30,7 @@
 				<span>Rollen sind null. Fehler erkannt!</span>
 			}
 		</div>
-		@if (roles != null && expand)
+		@if (roles != null && expand && exchange?.CurrentSessionExchange?.Petitions != null)
 		{
 			foreach(var role in roles)
 			{
@@ -42,7 +42,11 @@
 				IsPresent="@presentRoles.Any(n => n.RoleId == role.RoleId && n.IsPresent)" />
 			}
 		}
-		
+		else
+		{
+			<p>Unable to generate list of users.</p>
+		}
+
 	</div>
 	<!-- END card-body -->
 </div>
@@ -64,9 +68,9 @@
 
 	private bool expand = true;
 
-	protected override void OnInitialized()
+	private void Init()
 	{
-		base.OnInitialized();
+
 		this.exchange = exchangeService.GetExchange(CommitteeId);
 		if (this.exchange != null)
 		{
@@ -101,8 +105,14 @@
 			logger?.LogError("No exchange for committee {0} found.", CommitteeId);
 		}
 		roles = dbContext.Delegates.Include(n => n.DelegateCountry).Where(n => n.Committee.CommitteeId == CommitteeId).ToList();
-		
 
+
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		Init();
 	}
 
 	private class PresentRole
