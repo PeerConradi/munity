@@ -1,8 +1,12 @@
 ﻿@layout MUNity.BlazorServer.Shared.FrontEndLayout
 @page "/"
+@using Blazored.LocalStorage
 @using MUNity.Schema.Conference
 @inject Services.ConferenceService conferenceService
 @inject MUNity.Database.Context.MunityContext dbContext
+@inject ILocalStorageService localStorage
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject NavigationManager navManager
 
 @*<div class="card border-0 text-white bg-dark-900 mb-3">
     <div class="h-250px rounded-top card-img" 
@@ -62,9 +66,15 @@
                 </div>
                 <div class="card-body">
                     <p>Entdecken Sie jetzt die virtuellen Gremien. In diesen können Sie online mit anderen Delegierten zusammenarbeiten.</p>
-                    <a class="btn btn-primary" href="/oc/munsh22-gv">Direkt in den Raum...</a>
+                    
+                    
                     <div class="row">
                         <div class="btn-group-vertical">
+                            <AuthorizeView>
+                                <Authorized>
+                                    <a class="btn btn-primary" @onclick="() => JoinAsTeam(committee.CommitteeId)">Also Vorsitz</a>
+                                </Authorized>
+                            </AuthorizeView>
                             @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == committee.CommitteeId))
                             {
                                 <a class="btn btn-default" href="/oc/join/@role.RoleSecret">Als <b>@role.RoleName</b> beitreten</a>
@@ -104,5 +114,11 @@
         {
             conferenceBoardInfos = await conferenceService.GetConferenceBoardInfosAsync(claim);
         }
+    }
+
+    private async Task JoinAsTeam(string committeeId)
+    {
+        await localStorage.RemoveItemAsync($"munity-access-{committeeId}");
+        navManager.NavigateTo($"/oc/{committeeId}");
     }
 }
