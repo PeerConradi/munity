@@ -14,6 +14,25 @@
         {
             <h3>@voting.Name</h3>
             <h5>@voting.Description</h5>
+
+            @if (Results != null)
+            {
+                @if (voting.VoteSlots.Any(n => n.Choice == EVoteStates.NotVoted))
+                {
+                    <h2><span class="badge bg-danger">Es haben @voting.VoteSlots.Count(n => n.Choice == EVoteStates.NotVoted) noch nicht abgestimmt</span></h2>
+                }
+                <h3>
+                @foreach(var result in Results)
+                {
+                    <span class="badge bg-dark ms-1">@result.Count @result.Name (@result.Percentage%)</span>
+                }
+                </h3>
+                <RadzenChart>
+                    <RadzenPieSeries Data="Results" Title="Ergebnis" CategoryProperty="Name" ValueProperty="Count" />
+                </RadzenChart>
+            }
+            
+
             <table class="table">
                 <thead>
                     <tr>
@@ -58,6 +77,38 @@
     private BServices.VotingExchange exchange;
 
     private int? myRoleId;
+
+    private List<VoteResult> Results
+    {
+        get
+        {
+            var total = voting.VoteSlots.Count(n => n.Choice != EVoteStates.NotVoted);
+            var proCount = voting.VoteSlots.Count(n => n.Choice == EVoteStates.Pro);
+            var conCount = voting.VoteSlots.Count(n => n.Choice == EVoteStates.Con);
+            var abstentCount = voting.VoteSlots.Count(n => n.Choice == EVoteStates.Abstention);
+            var list = new List<VoteResult>();
+            list.Add(new VoteResult("Dafür", proCount, proCount / total * 100));
+            list.Add(new VoteResult("Dagegen", conCount, conCount / total * 100));
+            list.Add(new VoteResult("Enthaltung", abstentCount, abstentCount / total * 100));
+            return list;
+        }
+    }
+
+    private class VoteResult
+    {
+        public string Name { get; set; }
+
+        public int Count { get; set; }
+
+        public double Percentage { get; set; }
+
+        public VoteResult(string name, int count, double percentage)
+        {
+            this.Name = name;
+            this.Count = count;
+            this.Percentage = Math.Round(percentage, 2);
+        }
+    }
 
     protected override void OnParametersSet()
     {
