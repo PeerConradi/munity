@@ -3,6 +3,8 @@ using MUNity.Database.Context;
 using MUNity.VirtualCommittees.Dtos;
 using System.Collections.Concurrent;
 using MUNity.Extensions.ObservableCollectionExtensions;
+using static MUNity.BlazorServer.Components.VirtualCommittee.VCUsersComponent;
+using MUNity.Database.Models.Session;
 
 namespace MUNity.BlazorServer.BServices
 {
@@ -87,6 +89,8 @@ namespace MUNity.BlazorServer.BServices
 
         public event EventHandler<VotingExchange> VoteNotified;
 
+        public event EventHandler<List<PresentRole>> PresentsChanged;
+
         public CommitteeSessionExchange CurrentSessionExchange { get; set; }
 
         //public ObservableCollection<CommitteeSessionExchange> SessionExchanges { get; set; } = new();
@@ -124,6 +128,16 @@ namespace MUNity.BlazorServer.BServices
         {
             this.Banner = banner;
             BannerChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void InvokePresentsChanged(SessionPresents presents)
+        {
+            var list = presents.CheckedUsers.Select(n => new PresentRole()
+            {
+                IsPresent = n.State == PresentsState.PresentsStates.Present || n.State == PresentsState.PresentsStates.Late,
+                RoleId = n.Role.RoleId
+            }).ToList();
+            this.PresentsChanged?.Invoke(this, list);
         }
     }
 

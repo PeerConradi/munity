@@ -147,5 +147,6 @@
         if (dbContext.PresentChecks.All(n => n.SessionPresentsId != this.presentsCheck.SessionPresentsId))
             this.dbContext.PresentChecks.Add(this.presentsCheck);
         this.dbContext.SaveChanges();
+        this.CommitteeExchange.InvokePresentsChanged(this.presentsCheck);
     }
 }

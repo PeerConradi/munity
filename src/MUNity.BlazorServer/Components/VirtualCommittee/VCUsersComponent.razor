@@ -20,10 +20,25 @@
 		<!-- BEGIN percentage -->
 		<div class="mb-4 text-gray-500 ">
 			<span>@roles?.Count Insgesamt</span><br />
-			@if (roles != null)
+			@if (roles != null && presentRoles == null)
 			{
 				<span>@(Math.Ceiling(@roles.Count * 0.66)) Für 2/3 Mehrheit</span><br />
 				<span>@(Math.Ceiling(@roles.Count * 0.5) + 1) Für einfache Mehrheit</span><br />
+			}
+			else if (presentRoles != null)
+			{
+				<span>@presentRoles.Count(n => n.IsPresent) Anwesend</span><br />
+				<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent) * 0.66)) Für 2/3 Mehrheit</span><br />
+				
+				@if (presentRoles.Count(n => n.IsPresent) % 2 == 0)
+				{
+					<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent) * 0.5 + 1d)) Für einfache Mehrheit</span><br />
+				}
+				else
+				{
+					<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent) * 0.5)) Für einfache Mehrheit</span><br />
+				}
+				
 			}
 			else
 			{
@@ -77,6 +92,7 @@
 			this.exchange.UserConnected += (s, a) => InvokeAsync(StateHasChanged);
 			this.exchange.UserDisconnected += (s, a) => InvokeAsync(StateHasChanged);
 			this.exchange.CurrentSessionChanged += delegate { InvokeAsync(StateHasChanged); };
+			this.exchange.PresentsChanged += (s, a) => { this.presentRoles = a; InvokeAsync(StateHasChanged); };
 			if (exchange.CurrentSessionExchange != null)
 			{
 				if (exchange.CurrentSessionExchange.Petitions == null)
@@ -115,7 +131,7 @@
 		Init();
 	}
 
-	private class PresentRole
+	public class PresentRole
 	{
 		public int RoleId { get; set; }
 
