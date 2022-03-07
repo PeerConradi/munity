@@ -2,6 +2,8 @@
 @inject BServices.ResolutionExchangeService resolutionExchangeService
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
 
+@if (exchange != null)
+{
 <div class="row">
     <div class="panel panel-inverse col-12">
         <div class="panel-heading">
@@ -38,14 +40,21 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <ResolutionHeaderEditorComponent Exchange=@exchange CanEdit=@canEdit />
-    </div>
-</div>
 
-<PreambleEditorComponent Exchange=@exchange CanEdit=@canEdit />
-<OperativeSectionComponent Exchange=@exchange CanEdit=@canEdit />
+    <div class="row">
+        <div class="col-12">
+            <ResolutionHeaderEditorComponent Exchange=@exchange CanEdit=@canEdit />
+        </div>
+    </div>
+
+    <PreambleEditorComponent Exchange=@exchange CanEdit=@canEdit />
+    <OperativeSectionComponent Exchange=@exchange CanEdit=@canEdit />
+}
+else
+{
+    <p>Resolution @ResolutionId wird vorbereitet oder nicht gefunden...</p>
+}
+
 
 @code {
     [Parameter] public string ResolutionId { get; set; }
