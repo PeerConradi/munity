@@ -1,5 +1,10 @@
 ﻿@page "/c/managecommittees/{Id}"
+@using Blazored.LocalStorage
 @inject Services.ConferenceService conferenceService
+@inject ILocalStorageService localStorage
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject NavigationManager navManager
+
 
 @if (info != null)
 {
@@ -24,7 +29,7 @@
                                     <th>Kürzel</th>
                                     <th>Beschlussfassendes Gremium</th>
                                     <th>Sitze</th>
-                                    <th>Löschen</th>
+                                    <th>Beitreten</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,7 +43,7 @@
                                             <td>@committee.CommitteeShort</td>
                                             <td>@committee.ParentCommitteeName</td>
                                             <td>@committee.SeatCount <button class="btn btn-primary btn-sm" @onclick="() => selectedCommitteeId = committee.CommitteeId">Sitze verwalten</button></td>
-                                            <td><a href="#">Gremium löschen</a></td>
+                                            <td><button class="btn btn-default" @onclick="() => JoinAsTeam(committee.CommitteeId)">Als Chair betreten</button></td>
                                         </tr>
                                     }
                                 }
@@ -92,5 +97,11 @@
     {
         this.info = conferenceService.GetManageInfo(Id);
         this.InvokeAsync(StateHasChanged);
+    }
+
+    private async Task JoinAsTeam(string committeeId)
+    {
+        await localStorage.RemoveItemAsync($"munity-access-{committeeId}");
+        navManager.NavigateTo($"/oc/{committeeId}");
     }
 }

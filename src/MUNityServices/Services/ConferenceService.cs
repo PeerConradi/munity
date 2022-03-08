@@ -314,6 +314,7 @@ namespace MUNity.Services
                     RoleId = n.RoleId,
                     RoleName = n.RoleName,
                     Subtypes = n.DelegateType,
+                    Secret = n.RoleSecret,
                     Participants = n.Participations.Select(a => new CommitteeParticipation()
                     {
                         DisplayName = a.User.Forename + " " + a.User.Lastname,

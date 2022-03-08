@@ -140,4 +140,28 @@ public partial class FullDMUN2022Tests
         Assert.AreEqual(8, _context.Committees.Where(n => n.Conference.ConferenceId == "munsh22").Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munsh22-uv"));
     }
+
+    [Test]
+    [Order(2305)]
+    public void TestAddMUNSH2022Gruppen()
+    {
+        for (int i = 1; i < 7; i++)
+        {
+            _context.Fluent.ForConference("munsh22").AddCommittee(kk => kk
+            .WithName($"Gruppe {i}")
+            .WithFullName($"Gruppe {i}")
+            .WithShort($"gr{i}")
+            .WithType(CommitteeTypes.Online));
+        }
+
+        // EGO
+        _context.Fluent.ForConference("munsh22").AddCommittee(kk => kk
+            .WithName($"EGO")
+            .WithFullName($"EGO")
+            .WithShort($"ego")
+            .WithType(CommitteeTypes.Online));
+
+        Assert.AreEqual(15, _context.Committees.Where(n => n.Conference.ConferenceId == "munsh22").Count());
+    }
+
 }

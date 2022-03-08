@@ -159,6 +159,38 @@ public partial class FullDMUN2022Tests
     }
 
     [Test]
+    [Order(2508)]
+    public void TestCreateGruppeAndEgo()
+    {
+        for (int i = 1; i < 7; i++)
+        {
+            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddSeatsByCountryNames(
+            "Afghanistan", "Ägypten", "Algerien", "Argentinien",
+            "Bahrain", "Belgien", "Brasilien", "Volksrepublik China",
+            "Dschibuti", "Frankreich", "Indonesien", "Italien",
+            "Japan", "Kenia", "Kolumbien", "Mali",
+            "Myanmar", "Norwegen", "Österreich", "Pakistan",
+            "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
+            "Vereinigte Staaten"
+            );
+            _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("IKRK", "IKRK");
+            _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Save the Children", "STC");
+        }
+
+        _context.Fluent.ForCommittee($"munsh22-ego").AddSeatsByCountryNames(
+            "Afghanistan", "Ägypten", "Algerien", "Argentinien",
+            "Bahrain", "Belgien", "Brasilien", "Volksrepublik China",
+            "Dschibuti", "Frankreich", "Indonesien", "Italien",
+            "Japan", "Kenia", "Kolumbien", "Mali",
+            "Myanmar", "Norwegen", "Österreich", "Pakistan",
+            "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
+            "Vereinigte Staaten"
+            );
+        _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("IKRK", "IKRK");
+        _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Save the Children", "STC");
+    }
+
+    [Test]
     [Order(2510)]
     public void TestCreateMUNSH2022Delegations()
     {

@@ -55,50 +55,23 @@
 </div>
 *@
 
-<div class="row">
-    @foreach(var committee in dbContext.Committees.AsNoTracking().Where(n => n.Conference.ConferenceId == "munsh22").Select(n => new { CommitteeId = n.CommitteeId, Name = n.Name }))
-    {
-        <div class="col-6 mt-3">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Virtuelles Gremium (@committee.Name)</h3>
-                </div>
-                <div class="card-body">
-                    <p>Entdecken Sie jetzt die virtuellen Gremien. In diesen können Sie online mit anderen Delegierten zusammenarbeiten.</p>
-                    
-                    
-                    <div class="row">
-                        <div class="btn-group-vertical">
-                            <AuthorizeView>
-                                <Authorized>
-                                    <a class="btn btn-primary" @onclick="() => JoinAsTeam(committee.CommitteeId)">Als Vorsitz</a>
-                                </Authorized>
-                            </AuthorizeView>
-                            @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == committee.CommitteeId))
-                            {
-                                <a class="btn btn-default" href="/oc/join/@role.RoleSecret">Als <b>@role.RoleName</b> beitreten</a>
-                            }
-                        </div>
+<AuthorizeView>
+    <Authorized>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>MUN-SH 2022 Beitritt</h5>
                     </div>
-                
+                    <div class="card-body">
+                        <p>Die Beitrittslinks sind nun versteckt worden und befinden sich jetzt <a href="/c/managecommittees/munsh22">hier</a></p>
+                    </div>
                 </div>
             </div>
         </div>
-    }
-    
+    </Authorized>
+</AuthorizeView>
 
-    <div class="col-6 mt-3">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Redelisten</h3>
-            </div>
-            <div class="card-body">
-                <p>Teste die Demo des neuen Redelisten-Tools.</p>
-                <a class="btn btn-primary" href="/los/test">Demo ansehen</a>
-            </div>
-        </div>
-    </div>
-</div>
 
 @code
 {

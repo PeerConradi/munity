@@ -37,6 +37,8 @@ namespace MUNity.Schema.Conference
 
         public string Subtypes { get; set; }
 
+        public string Secret { get; set; }
+
         public List<CommitteeParticipation> Participants { get; set; }
     }
 
