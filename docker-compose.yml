@@ -28,6 +28,8 @@ services:
     restart: unless-stopped
     build:
       context: .
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
     environment:
       - MYSQL_SERVER=mariadb
       - MYSQL_USER=root
