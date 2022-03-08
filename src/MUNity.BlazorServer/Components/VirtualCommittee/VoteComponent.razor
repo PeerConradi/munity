@@ -87,9 +87,19 @@
             var conCount = voting.VoteSlots.Count(n => n.Choice == EVoteStates.Con);
             var abstentCount = voting.VoteSlots.Count(n => n.Choice == EVoteStates.Abstention);
             var list = new List<VoteResult>();
-            list.Add(new VoteResult("Dafür", proCount, proCount / total * 100));
-            list.Add(new VoteResult("Dagegen", conCount, conCount / total * 100));
-            list.Add(new VoteResult("Enthaltung", abstentCount, abstentCount / total * 100));
+            if (total > 0)
+            {
+                list.Add(new VoteResult("Dafür", proCount, proCount / total * 100));
+                list.Add(new VoteResult("Dagegen", conCount, conCount / total * 100));
+                list.Add(new VoteResult("Enthaltung", abstentCount, abstentCount / total * 100));
+            }
+            else
+            {
+                list.Add(new VoteResult("Dafür", 0,0));
+                list.Add(new VoteResult("Dagegen", 0,0));
+                list.Add(new VoteResult("Enthaltung", 0, 0));
+            }
+
             return list;
         }
     }
