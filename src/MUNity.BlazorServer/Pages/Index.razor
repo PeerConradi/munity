@@ -72,7 +72,7 @@
                         <div class="btn-group-vertical">
                             <AuthorizeView>
                                 <Authorized>
-                                    <a class="btn btn-primary" @onclick="() => JoinAsTeam(committee.CommitteeId)">Also Vorsitz</a>
+                                    <a class="btn btn-primary" @onclick="() => JoinAsTeam(committee.CommitteeId)">Als Vorsitz</a>
                                 </Authorized>
                             </AuthorizeView>
                             @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == committee.CommitteeId))
