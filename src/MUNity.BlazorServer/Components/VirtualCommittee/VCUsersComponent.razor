@@ -22,21 +22,22 @@
 			<span>@roles?.Count Insgesamt</span><br />
 			@if (roles != null && presentRoles == null)
 			{
-				<span>@(Math.Ceiling(@roles.Count * 0.66)) Für 2/3 Mehrheit</span><br />
-				<span>@(Math.Ceiling(@roles.Count * 0.5) + 1) Für einfache Mehrheit</span><br />
+				<span>@(Math.Ceiling(@roles.Count(n => n.DelegateCountry != null) * 0.66)) Für 2/3 Mehrheit</span><br />
+				<span>@(Math.Ceiling(@roles.Count(n => n.DelegateCountry != null) * 0.5) + 1) Für einfache Mehrheit</span><br />
 			}
 			else if (presentRoles != null)
 			{
 				<span>@presentRoles.Count(n => n.IsPresent) Anwesend</span><br />
-				<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent) * 0.66)) Für 2/3 Mehrheit</span><br />
+				<span>@presentRoles.Count(n => n.IsPresent && n.IsCountry) Delegierte Anwesend</span><br />
+				<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent && n.IsCountry) * 0.66)) Für 2/3 Mehrheit</span><br />
 				
-				@if (presentRoles.Count(n => n.IsPresent) % 2 == 0)
+				@if (presentRoles.Count(n => n.IsPresent && n.IsCountry) % 2 == 0)
 				{
-					<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent) * 0.5 + 1d)) Für einfache Mehrheit</span><br />
+					<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent && n.IsCountry) * 0.5 + 1d)) Für einfache Mehrheit</span><br />
 				}
 				else
 				{
-					<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent) * 0.5)) Für einfache Mehrheit</span><br />
+					<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent && n.IsCountry) * 0.5)) Für einfache Mehrheit</span><br />
 				}
 				
 			}
@@ -108,7 +109,8 @@
 				.Select(n => new PresentRole()
 				{
 					RoleId = n.Role.RoleId,
-					IsPresent = n.State == Database.Models.Session.PresentsState.PresentsStates.Present || n.State == Database.Models.Session.PresentsState.PresentsStates.Late
+					IsPresent = n.State == Database.Models.Session.PresentsState.PresentsStates.Present || n.State == Database.Models.Session.PresentsState.PresentsStates.Late,
+					IsCountry = n.Role.DelegateCountry != null
 				}).ToList();
 			}
 			else
@@ -136,6 +138,8 @@
 		public int RoleId { get; set; }
 
 		public bool IsPresent { get; set; }
+
+		public bool IsCountry { get; set; }
 	}
 
 }

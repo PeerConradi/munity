@@ -135,7 +135,8 @@ namespace MUNity.BlazorServer.BServices
             var list = presents.CheckedUsers.Select(n => new PresentRole()
             {
                 IsPresent = n.State == PresentsState.PresentsStates.Present || n.State == PresentsState.PresentsStates.Late,
-                RoleId = n.Role.RoleId
+                RoleId = n.Role.RoleId,
+                IsCountry = n.Role.DelegateCountry != null
             }).ToList();
             this.PresentsChanged?.Invoke(this, list);
         }
