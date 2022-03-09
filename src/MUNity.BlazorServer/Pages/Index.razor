@@ -20,14 +20,8 @@
 <div class="row">
     <div class="col-12">
         <div class="alert alert-info">
-            <h3><img src="/img/flags/small/ua.png" /> Demo Version</h3>
-            <p>Derzeit ist MUNity in der Demo und deshalb stehen einige Funktionen nicht zur Verfügung und andere sind ohne die notwendige Berechtigung erreichbar. Demo: 08.03.2022</p>
-            <h5>Patchnodes:</h5>
-            <ul>
-                <li>Ein paar Fehler behoben.</li>
-            </ul>
-
-
+            <h3>MUNity MUN-SH 2022 Edition</h3>
+            <p>Willkommen bei MUNity. Der Open-Source Plattform für Model United Nations Konferenzen.</p>
         </div>
     </div>
 </div>
@@ -65,6 +59,13 @@
                     </div>
                     <div class="card-body">
                         <p>Die Beitrittslinks sind nun versteckt worden und befinden sich jetzt <a href="/c/managecommittees/munsh22">hier</a></p>
+                        <h5>Beitritt für Vorsitzende</h5>
+                        <div class="btn-group btn-group-vertical">
+                            @foreach(var committee in dbContext.Committees.Where(n => n.Conference.ConferenceId == "munsh22").Select(n => new { n.CommitteeId, n.Name}))
+                            {
+                                <button class="btn btn-default" @onclick="() => JoinAsTeam(committee.CommitteeId)">@committee.Name</button>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
