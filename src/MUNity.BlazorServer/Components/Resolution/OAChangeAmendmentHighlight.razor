@@ -1,0 +1,10 @@
+﻿@using MUNity.Database.Models.Resolution
+
+<p style="text-decoration: blink"> @((MarkupString)Paragraph.Text)</p>
+<p>@((MarkupString)Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated).NewText)</p>
+
+@code {
+    [EditorRequired][Parameter] public ResaOperativeParagraph Paragraph { get; set; }
+
+    [EditorRequired][Parameter] public ResaChangeAmendment Amendment { get; set; }
+}

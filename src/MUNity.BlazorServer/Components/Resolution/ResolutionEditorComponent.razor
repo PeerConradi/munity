@@ -116,10 +116,13 @@ else
 
     private void LoadEditAuth()
     {
-        this.canEdit = exchange.Resolution.State == EResolutionStates.Public ||
-            (exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId != null && exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId) ||
+        if (exchange?.Resolution != null && vcParticipationService != null)
+        {
+            this.canEdit = exchange.Resolution.State == EResolutionStates.Public ||
+            (exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId != null && exchange.Resolution.SubmitterRole != null && exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId) ||
             isAuthed;
-        InvokeAsync(StateHasChanged);
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     protected override async Task OnParametersSetAsync()
@@ -127,9 +130,13 @@ else
         var taskResult = await AuthStateTask;
         isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
         base.OnParametersSet();
-        exchange = resolutionExchangeService.GetResolution(ResolutionId);
+        if (resolutionExchangeService != null)
+        {
+            exchange = resolutionExchangeService.GetResolution(ResolutionId);
 
-        LoadEditAuth();
-        vcParticipationService.Registered += delegate { LoadEditAuth(); };
+            LoadEditAuth();
+            vcParticipationService.Registered += delegate { LoadEditAuth(); };
+        }
+        
     }
 }

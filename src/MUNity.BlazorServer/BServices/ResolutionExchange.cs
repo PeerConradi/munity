@@ -264,6 +264,21 @@ namespace MUNity.BlazorServer.BServices
             }
         }
 
+        public void ActivateAmendment(ResaAmendment amendment, bool active = true)
+        {
+            var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.ActivateAmendment(amendment, active);
+            if (amendment is ResaDeleteAmendment delAmendment)
+            {
+                OperativeParagraphChanged?.Invoke(this, delAmendment.TargetParagraph);
+            }
+            else if (amendment is ResaChangeAmendment changeAmendment)
+            {
+                OperativeParagraphChanged?.Invoke(this, changeAmendment.TargetParagraph);
+            }
+        }
+
         private void NotifyOnAmendentChange(ResaAmendment amendment)
         {
             if (amendment is ResaDeleteAmendment delete)

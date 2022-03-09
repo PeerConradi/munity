@@ -11,7 +11,19 @@
 			{
 				@if (!string.IsNullOrEmpty(Paragraph.Text))
 				{
-					<p @ondblclick="StartEdit" class="card-text"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+					@if (Paragraph.DeleteAmendments.Any(n => n.Activated))
+					{
+						<p style="text-decoration: dashed"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+					}
+					else if (Paragraph.ChangeAmendments.Any(n => n.Activated))
+					{
+						<OAChangeAmendmentHighlight Paragraph=@Paragraph Amendment=@Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated) />
+					}
+					else
+					{
+						<p @ondblclick="StartEdit" class="card-text"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+					}
+					
 				}
 				else
 				{
@@ -152,7 +164,7 @@
 									<td>
 										@if (vcParticipationService.RoleId != null && amendment.Submitter?.RoleId == vcParticipationService.RoleId)
 										{
-											<button class="btn btn-default btn-sm" @onclick="() => RevokeDeleteAmendment(amendment)">Zurückziehen</button>
+											@*<button class="btn btn-default btn-sm" @onclick="() => RevokeDeleteAmendment(amendment)">Zurückziehen</button>*@
 										}
 										else
 										{
@@ -205,7 +217,7 @@
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title">Änderungsanträge auf Streichen</h4>
+					<h4 class="modal-title">Anträge auf Textänderung</h4>
 					<button type="button" class="btn-close" @onclick="() => showChangeAmendmentsModal = false"></button>
 				</div>
 				<div class="modal-body">
@@ -216,7 +228,8 @@
 							RevokeAmendment=RevokeChangeAmendment 
 							RevokeSupport=RevokeSupport 
 							SubmitAmendment=SubmitAmendment 
-							SupportAmendment=SupportAmendment />
+							SupportAmendment=SupportAmendment
+							ActivateAmendment=ActivateAmendment/>
 						}
 					</div>
 
@@ -423,6 +436,29 @@
 		if (amendment != null && vcParticipationService.RoleId != null)
 		{
 			Exchange.RevokeSupport(amendment, vcParticipationService.RoleId.Value);
+		}
+	}
+
+	private void ActivateAmendment(ResaAmendment amendment)
+	{
+		@if (amendment != null)
+		{
+			foreach(var deleteAmendment in Paragraph.DeleteAmendments)
+			{
+				if (deleteAmendment.Activated)
+				{
+					Exchange.ActivateAmendment(deleteAmendment, false);
+				}
+			}
+
+			foreach(var changeAmendment in Paragraph.ChangeAmendments)
+			{
+				if (changeAmendment.Activated)
+				{
+					Exchange.ActivateAmendment(changeAmendment, false);
+				}
+			}
+			Exchange.ActivateAmendment(amendment);
 		}
 	}
 

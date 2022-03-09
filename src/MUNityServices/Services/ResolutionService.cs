@@ -390,6 +390,12 @@ namespace MUNity.Services
             _context.SaveChanges();
         }
 
+        public void ActivateAmendment(ResaAmendment amendment, bool active = true)
+        {
+            _context.Update(amendment);
+            amendment.Activated = active;
+        }
+
         public IList<ResaPreambleParagraph> GetPreambleParagraphs(string resolutionId)
         {
             return _context.PreambleParagraphs
