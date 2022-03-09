@@ -42,6 +42,8 @@
                     else
                     {
                         <button class="btn btn-default mb-3" @onclick="Reset">Zurücksetzen</button>
+                        <button class="btn btn-outline-success mb-3 ms-1" @onclick="() => presentsCheck.CheckedUsers.Select(n => {n.State = PresentsState.PresentsStates.Present; return n;}).ToList()">Alle Anwesend</button>
+                        <button class="btn btn-outline-success mb-3 ms-1" @onclick="() => presentsCheck.CheckedUsers.Where(n => n.State == PresentsState.PresentsStates.NotChecked).Select(n => {n.State = PresentsState.PresentsStates.Present; return n;}).ToList()">Rest anwesend</button>
                         <table class="table">
                     <thead>
                         <tr>
