@@ -11,13 +11,37 @@
 			{
 				@if (!string.IsNullOrEmpty(Paragraph.Text))
 				{
+					var deleteAmendment = Paragraph.DeleteAmendments.FirstOrDefault(n => n.Activated);
 					@if (Paragraph.DeleteAmendments.Any(n => n.Activated))
 					{
-						<p style="text-decoration: dashed"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+						<p class="text-danger text-decoration-line-through"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+						<AuthorizeView>
+							<Authorized>
+								<div class="row">
+									<div class="col-12">
+										<button class="btn btn-default" @onclick="DeactivateAllAmendments">Hervorheben beenden</button>
+										<button class="btn btn-default btn-success" @onclick="() => SubmitAmendment(deleteAmendment)">Änderung anwenden</button>
+										<button class="btn btn-default btn-danger" @onclick="() => RevokeDeleteAmendment(deleteAmendment)">Antrag verwerfen</button>
+									</div>
+								</div>
+							</Authorized>
+						</AuthorizeView>
 					}
 					else if (Paragraph.ChangeAmendments.Any(n => n.Activated))
 					{
-						<OAChangeAmendmentHighlight Paragraph=@Paragraph Amendment=@Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated) />
+						var amendment = Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated);
+						<OAChangeAmendmentHighlight Paragraph=@Paragraph Amendment=@amendment />
+							<AuthorizeView>
+								<Authorized>
+									<div class="row">
+										<div class="col-12">
+											<button class="btn btn-default" @onclick="DeactivateAllAmendments">Hervorheben beenden</button>
+											<button class="btn btn-default btn-success" @onclick="() => SubmitAmendment(amendment)">Änderung anwenden</button>
+											<button class="btn btn-default btn-danger" @onclick="() => RevokeChangeAmendment(amendment)">Antrag verwerfen</button>
+										</div>
+									</div>
+								</Authorized>
+							</AuthorizeView>
 					}
 					else
 					{
@@ -184,7 +208,7 @@
 												@if (!showSecureRemoveAmendment)
 												{
 													<button class="btn btn-primary" @onclick="() => showSecureRemoveAmendment = true"><i class="fa fa-check"></i> Annehmen</button>
-													<button class="btn btn-default"><i class="fa fa-vote"></i> Zur Abstimmung stellen</button>
+													<button class="btn btn-default" @onclick="() => ActivateAmendment(amendment)"><i class="fa fa-vote"></i> Hervorheben</button>
 													<button class="btn btn-danger"><i class="fa fa-trash"></i> Ablehnen</button>
 												}
 												else
@@ -443,22 +467,27 @@
 	{
 		@if (amendment != null)
 		{
-			foreach(var deleteAmendment in Paragraph.DeleteAmendments)
-			{
-				if (deleteAmendment.Activated)
-				{
-					Exchange.ActivateAmendment(deleteAmendment, false);
-				}
-			}
-
-			foreach(var changeAmendment in Paragraph.ChangeAmendments)
-			{
-				if (changeAmendment.Activated)
-				{
-					Exchange.ActivateAmendment(changeAmendment, false);
-				}
-			}
+			DeactivateAllAmendments();
 			Exchange.ActivateAmendment(amendment);
+		}
+	}
+
+	private void DeactivateAllAmendments()
+	{
+		foreach(var deleteAmendment in Paragraph.DeleteAmendments)
+		{
+			if (deleteAmendment.Activated)
+			{
+				Exchange.ActivateAmendment(deleteAmendment, false);
+			}
+		}
+
+		foreach(var changeAmendment in Paragraph.ChangeAmendments)
+		{
+			if (changeAmendment.Activated)
+			{
+				Exchange.ActivateAmendment(changeAmendment, false);
+			}
 		}
 	}
 

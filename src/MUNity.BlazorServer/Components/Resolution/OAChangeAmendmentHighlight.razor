@@ -1,10 +1,45 @@
 ﻿@using MUNity.Database.Models.Resolution
+@using DiffMatchPatch
 
-<p style="text-decoration: blink"> @((MarkupString)Paragraph.Text)</p>
-<p>@((MarkupString)Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated).NewText)</p>
+<h6>Original</h6>
+<p class="text-danger text-decoration-line-through"> @((MarkupString)Paragraph.Text)</p>
+<h6>Neu</h6>
+<p class="text-success">@((MarkupString)Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated).NewText)</p>
+
+<h6>Änderungen (Demo)</h6>
+<p>
+    @foreach(var diff in diffs)
+    {
+        @if (diff.operation == Operation.DELETE)
+        {
+            <span class="text-danger text-decoration-line-through"> @((MarkupString)diff.text) </span>
+        }
+        else if (diff.operation == Operation.EQUAL)
+        {
+            <span> @((MarkupString)diff.text) </span>
+        }
+        else if (diff.operation == Operation.INSERT)
+        {
+            <span class="text-success"> @((MarkupString)diff.text) </span>
+        }
+
+    }
+</p>
+
 
 @code {
     [EditorRequired][Parameter] public ResaOperativeParagraph Paragraph { get; set; }
 
     [EditorRequired][Parameter] public ResaChangeAmendment Amendment { get; set; }
+
+    private List<Diff> diffs;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        var dmp = new diff_match_patch();
+        var diff = dmp.diff_main(Paragraph.Text, Amendment.NewText);
+        dmp.diff_cleanupSemantic(diff);
+        diffs = diff;
+    }
 }

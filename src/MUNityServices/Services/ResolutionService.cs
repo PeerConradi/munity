@@ -394,6 +394,7 @@ namespace MUNity.Services
         {
             _context.Update(amendment);
             amendment.Activated = active;
+            _context.SaveChanges();
         }
 
         public IList<ResaPreambleParagraph> GetPreambleParagraphs(string resolutionId)
