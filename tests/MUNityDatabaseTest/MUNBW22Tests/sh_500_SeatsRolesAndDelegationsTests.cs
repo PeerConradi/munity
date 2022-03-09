@@ -173,8 +173,8 @@ public partial class FullDMUN2022Tests
             "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
             "Vereinigte Staaten"
             );
-            _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("IKRK", "IKRK");
-            _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Save the Children", "STC");
+            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddNonGovernmentSeat("IKRK", "IKRK");
+            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddNonGovernmentSeat("Save the Children", "STC");
         }
 
         _context.Fluent.ForCommittee($"munsh22-ego").AddSeatsByCountryNames(
@@ -186,8 +186,8 @@ public partial class FullDMUN2022Tests
             "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
             "Vereinigte Staaten"
             );
-        _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("IKRK", "IKRK");
-        _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Save the Children", "STC");
+        _context.Fluent.ForCommittee("munsh22-ego").AddNonGovernmentSeat("IKRK", "IKRK");
+        _context.Fluent.ForCommittee("munsh22-ego").AddNonGovernmentSeat("Save the Children", "STC");
     }
 
     [Test]

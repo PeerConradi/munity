@@ -44,6 +44,30 @@ public partial class FullDMUN2022Tests
         var kfk = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-kfk");
         var mrr = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-mrr");
         var uv = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-uv");
+        var gr1 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr1");
+        var gr2 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr2");
+        var gr3 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr3");
+        var gr4 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr4");
+        var gr5 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr5");
+        var gr6 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr6");
+        var ego = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-ego");
+
+        List<Committee> committees = new List<Committee>();
+        committees.Add(gv);
+        committees.Add(ha3);
+        committees.Add(wiso);
+        committees.Add(sek);
+        committees.Add(sr);
+        committees.Add(kfk);
+        committees.Add(mrr);
+        committees.Add(uv);
+        committees.Add(gr1);
+        committees.Add(gr2);
+        committees.Add(gr3);
+        committees.Add(gr4);
+        committees.Add(gr5);
+        committees.Add(gr6);
+        committees.Add(ego);
 
         // Persönliche Anträge
 
@@ -59,14 +83,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = true,
             AllowedCommittees = new List<Committee>()
         };
-        p1.AllowedCommittees.Add(gv);
-        p1.AllowedCommittees.Add(ha3);
-        p1.AllowedCommittees.Add(wiso);
-        p1.AllowedCommittees.Add(sek);
-        p1.AllowedCommittees.Add(sr);
-        p1.AllowedCommittees.Add(kfk);
-        p1.AllowedCommittees.Add(mrr);
-        p1.AllowedCommittees.Add(uv);
+
+        committees.ForEach(p => p1.AllowedCommittees.Add(p));
         
 
         var p2 = new PetitionType()
@@ -81,14 +99,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = true,
             AllowedCommittees = new List<Committee>()
         };
-        p2.AllowedCommittees.Add(gv);
-        p2.AllowedCommittees.Add(ha3);
-        p2.AllowedCommittees.Add(wiso);
-        p2.AllowedCommittees.Add(sek);
-        p2.AllowedCommittees.Add(sr);
-        p2.AllowedCommittees.Add(kfk);
-        p2.AllowedCommittees.Add(mrr);
-        p2.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p2.AllowedCommittees.Add(p));
+
 
         var p3 = new PetitionType()
         {
@@ -102,14 +114,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = true,
             AllowedCommittees = new List<Committee>()
         };
-        p3.AllowedCommittees.Add(gv);
-        p3.AllowedCommittees.Add(ha3);
-        p3.AllowedCommittees.Add(wiso);
-        p3.AllowedCommittees.Add(sek);
-        p3.AllowedCommittees.Add(sr);
-        p3.AllowedCommittees.Add(kfk);
-        p3.AllowedCommittees.Add(mrr);
-        p3.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p3.AllowedCommittees.Add(p));
+
 
 
         // Anträge an die Geschäftsordnung
@@ -126,14 +132,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = true,
             AllowedCommittees = new List<Committee>()
         };
-        p4.AllowedCommittees.Add(gv);
-        p4.AllowedCommittees.Add(ha3);
-        p4.AllowedCommittees.Add(wiso);
-        p4.AllowedCommittees.Add(sek);
-        p4.AllowedCommittees.Add(sr);
-        p4.AllowedCommittees.Add(kfk);
-        p4.AllowedCommittees.Add(mrr);
-        p4.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p4.AllowedCommittees.Add(p));
+
 
         var p5 = new PetitionType()
         {
@@ -147,14 +147,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p5.AllowedCommittees.Add(gv);
-        p5.AllowedCommittees.Add(ha3);
-        p5.AllowedCommittees.Add(wiso);
-        p5.AllowedCommittees.Add(sek);
-        p5.AllowedCommittees.Add(sr);
-        p5.AllowedCommittees.Add(kfk);
-        p5.AllowedCommittees.Add(mrr);
-        p5.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p5.AllowedCommittees.Add(p));
+
 
         var p6 = new PetitionType()
         {
@@ -168,14 +162,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = true,
             AllowedCommittees = new List<Committee>()
         };
-        p6.AllowedCommittees.Add(gv);
-        p6.AllowedCommittees.Add(ha3);
-        p6.AllowedCommittees.Add(wiso);
-        p6.AllowedCommittees.Add(sek);
-        p6.AllowedCommittees.Add(sr);
-        p6.AllowedCommittees.Add(kfk);
-        p6.AllowedCommittees.Add(mrr);
-        p6.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p6.AllowedCommittees.Add(p));
+
 
         var p7 = new PetitionType()
         {
@@ -203,14 +191,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p8.AllowedCommittees.Add(gv);
-        p8.AllowedCommittees.Add(ha3);
-        p8.AllowedCommittees.Add(wiso);
-        p8.AllowedCommittees.Add(sek);
-        p8.AllowedCommittees.Add(sr);
-        p8.AllowedCommittees.Add(kfk);
-        p8.AllowedCommittees.Add(mrr);
-        p8.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p8.AllowedCommittees.Add(p));
+
 
         var p9 = new PetitionType()
         {
@@ -224,14 +206,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p9.AllowedCommittees.Add(gv);
-        p9.AllowedCommittees.Add(ha3);
-        p9.AllowedCommittees.Add(wiso);
-        p9.AllowedCommittees.Add(sek);
-        p9.AllowedCommittees.Add(sr);
-        p9.AllowedCommittees.Add(kfk);
-        p9.AllowedCommittees.Add(mrr);
-        p9.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p9.AllowedCommittees.Add(p));
+
 
         var p10 = new PetitionType()
         {
@@ -245,14 +221,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p10.AllowedCommittees.Add(gv);
-        p10.AllowedCommittees.Add(ha3);
-        p10.AllowedCommittees.Add(wiso);
-        p10.AllowedCommittees.Add(sek);
-        p10.AllowedCommittees.Add(sr);
-        p10.AllowedCommittees.Add(kfk);
-        p10.AllowedCommittees.Add(mrr);
-        p10.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p10.AllowedCommittees.Add(p));
+
 
         var p11 = new PetitionType()
         {
@@ -266,14 +236,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p11.AllowedCommittees.Add(gv);
-        p11.AllowedCommittees.Add(ha3);
-        p11.AllowedCommittees.Add(wiso);
-        p11.AllowedCommittees.Add(sek);
-        p11.AllowedCommittees.Add(sr);
-        p11.AllowedCommittees.Add(kfk);
-        p11.AllowedCommittees.Add(mrr);
-        p11.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p11.AllowedCommittees.Add(p));
+
 
         var p12 = new PetitionType()
         {
@@ -287,14 +251,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p12.AllowedCommittees.Add(gv);
-        p12.AllowedCommittees.Add(ha3);
-        p12.AllowedCommittees.Add(wiso);
-        p12.AllowedCommittees.Add(sek);
-        p12.AllowedCommittees.Add(sr);
-        p12.AllowedCommittees.Add(kfk);
-        p12.AllowedCommittees.Add(mrr);
-        p12.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p12.AllowedCommittees.Add(p));
+
 
         var p13 = new PetitionType()
         {
@@ -308,14 +266,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p13.AllowedCommittees.Add(gv);
-        p13.AllowedCommittees.Add(ha3);
-        p13.AllowedCommittees.Add(wiso);
-        p13.AllowedCommittees.Add(sek);
-        p13.AllowedCommittees.Add(sr);
-        p13.AllowedCommittees.Add(kfk);
-        p13.AllowedCommittees.Add(mrr);
-        p13.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p13.AllowedCommittees.Add(p));
+
 
         var p14 = new PetitionType()
         {
@@ -329,14 +281,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p14.AllowedCommittees.Add(gv);
-        p14.AllowedCommittees.Add(ha3);
-        p14.AllowedCommittees.Add(wiso);
-        p14.AllowedCommittees.Add(sek);
-        p14.AllowedCommittees.Add(sr);
-        p14.AllowedCommittees.Add(kfk);
-        p14.AllowedCommittees.Add(mrr);
-        p14.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p14.AllowedCommittees.Add(p));
+
 
         var p15 = new PetitionType()
         {
@@ -350,14 +296,8 @@ public partial class FullDMUN2022Tests
             AllowNonCountryDelegates = false,
             AllowedCommittees = new List<Committee>()
         };
-        p15.AllowedCommittees.Add(gv);
-        p15.AllowedCommittees.Add(ha3);
-        p15.AllowedCommittees.Add(wiso);
-        p15.AllowedCommittees.Add(sek);
-        p15.AllowedCommittees.Add(sr);
-        p15.AllowedCommittees.Add(kfk);
-        p15.AllowedCommittees.Add(mrr);
-        p15.AllowedCommittees.Add(uv);
+        committees.ForEach(p => p15.AllowedCommittees.Add(p));
+
 
 
         _context.PetitionTypes.Add(p1);

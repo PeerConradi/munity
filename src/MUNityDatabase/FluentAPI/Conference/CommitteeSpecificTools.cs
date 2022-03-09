@@ -36,7 +36,8 @@ public class CommitteeSpecificTools
             DelegateCountry = null,
             RoleFullName = name,
             DelegateType = "NA",
-            RoleShort = iso
+            RoleShort = iso,
+            RoleSecret = Util.IdGenerator.SHA512($"{committee.CommitteeId}{name}").Substring(0,32)
         };
 
         _dbContext.Delegates.Add(role);
@@ -129,7 +130,8 @@ public class CommitteeSpecificTools
                 DelegateCountry = fittingCountry,
                 RoleFullName = fittingCountry.FullName,
                 DelegateType = "Delegate",
-                RoleShort = fittingCountry.Iso
+                RoleShort = fittingCountry.Iso,
+                RoleSecret = Util.IdGenerator.SHA512($"{committee.CommitteeId}{fittingCountry.Name}").Substring(0, 32)
             };
 
             _dbContext.Delegates.Add(role);
