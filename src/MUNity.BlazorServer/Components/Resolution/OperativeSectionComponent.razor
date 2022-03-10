@@ -1,4 +1,5 @@
 ﻿@using MUNity.BlazorServer.BServices
+@using MUNity.Database.Models.Resolution
 @inject BServices.VirtualCommiteeParticipationService pcService
 
 <div class="panel panel-inverse mb-1">
@@ -10,7 +11,7 @@
 		}
 		else
 		{
-			<small>Änderungen an der Präamble sind derzeit nur dem Vorsitz möglich</small>
+			<small>Änderungen am operativen Abschnitt sind derzeit nur dem Vorsitz möglich</small>
 		}
 	</div>
 </div>
@@ -28,7 +29,49 @@
 			IsLast=@(operativeParagraph == Exchange.Resolution.OperativeParagraphs.Last())
 			Index=@paragraphIndex
 			CanEdit=@CanEdit
+			Class="@((activatedMoveAmendment != null && activatedMoveAmendment.SourceParagraph != operativeParagraph) ? "ms-5" : "")"
 			/>
+	}
+	else
+	{
+		<!-- Create a new Operative Paragraph -->
+		@if (Exchange.Resolution.AddAmendments.Any(n => n.VirtualParagraph == operativeParagraph))
+		{
+			var addAmendment = Exchange.Resolution.AddAmendments.FirstOrDefault(n => n.VirtualParagraph == operativeParagraph);
+
+			@if (addAmendment.Activated)
+			{
+				<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
+					<AuthorizeView>
+						<Authorized>
+							<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment, false)">Hervorheben beenden</button>
+							<button class="btn btn-success" @onclick="() => Exchange.SubmitAmendment(addAmendment)">Anwenden</button>
+							<button class="btn btn-danger" @onclick="() => Exchange.RevokeAddAmendment(addAmendment)">Verwerfen</button>
+						</Authorized>
+					</AuthorizeView>
+				</div>
+			}
+			else
+			{
+			<AuthorizeView>
+				<Authorized>
+					<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
+						<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment)">Hervorheben</button>
+					</div>
+				</Authorized>
+			</AuthorizeView>
+			}
+		}
+		else
+		{
+			<!-- Move Amendment Target Paragraph -->
+			if (activatedMoveAmendment != null && activatedMoveAmendment.VirtualParagraph == operativeParagraph)
+			{
+				<div class="alert alert-info">@((MarkupString)operativeParagraph.Text) </div>
+			}
+			
+		}
+		
 	}
 }
 
@@ -101,6 +144,16 @@
 	private string newText;
 
 	private bool showCreateAddAmendmentModal = false;
+
+	private ResaMoveAmendment activatedMoveAmendment
+	{
+		get
+		{
+			return this.Exchange.Resolution.OperativeParagraphs
+			.SelectMany(n => n.MoveAmendments)
+			.FirstOrDefault(n => n.Activated);
+		}
+	}
 
 	private void CreateOperativeParagraph()
 	{

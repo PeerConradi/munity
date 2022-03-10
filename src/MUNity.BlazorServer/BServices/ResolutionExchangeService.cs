@@ -39,15 +39,28 @@ namespace MUNity.BlazorServer.BServices
                 using var scope = _scopeFactory.CreateScope();
                 using var service = scope.ServiceProvider.GetRequiredService<ResolutionService>();
 
-                exchange = new ResolutionExchange(_scopeFactory);
-                exchange.Resolution = service.GetResolution(resolutionId);
-                if (exchange.Resolution == null)
+                var resolution = service.GetResolution(resolutionId);
+                if (resolution == null)
                 {
-                    throw new ArgumentNullException($"Resolution with id {resolutionId} not found!");
+                    // Resolution not found!
+                    return null;
                 }
-                _resolutions.Add(exchange);
+                else
+                {
+                    exchange = new ResolutionExchange(_scopeFactory);
+                    exchange.Resolution = resolution;
+                    _resolutions.Add(exchange);
+                }
             }
             return exchange;
+        }
+
+        public void RemoveResolution(ResolutionExchange exchange)
+        {
+            this._resolutions.Add(exchange);
+            using var scope = _scopeFactory.CreateScope();
+            using var service = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            service.RemoveResolution(exchange.Resolution);
         }
 
         public void Dispose()

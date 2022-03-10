@@ -61,7 +61,7 @@
 					<div class="menu-text">Resolutionen</div>
 					@*<div class="menu-badge ms-3">10</div>*@
 				</a>
-				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
+				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black; width: auto">
 					<div class="menu-item">
 						<a @onclick="CreateResolution" class="menu-link cursor-pointer">
 							<div class="menu-text"><i class="fa fa-plus text-theme"></i> Neu erstellen</div>
@@ -93,7 +93,7 @@
 					<div class="menu-text">Abstimmungen</div> 
 					<div class="menu-caret"></div>
 				</a>
-				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
+				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black; width: auto">
 					<AuthorizeView>
 						<Authorized>
 							<div class="menu-item">
@@ -144,7 +144,7 @@
 					<div class="menu-text">Vorsitz</div> 
 					<div class="menu-caret"></div>
 				</a>
-				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black;">
+				<div class="menu-submenu" style="box-shadow: 0px 15px 15px black; width: auto">
 					@if (listOfSpeakersId != null)
 					{
 						<div class="menu-item">

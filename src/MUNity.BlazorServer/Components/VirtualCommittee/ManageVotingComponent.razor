@@ -13,6 +13,7 @@
             {
                 <button class="btn btn-primary" @onclick="StartEditing">Abstimmung bearbeiten</button>
                 <button class="btn btn-secondary ms-1" @onclick=NotifyToVote>Reminder zur Abstimmung noch offene senden</button>
+                <button class="btn btn-danger ms-4" @onclick=Delete><i class="fa fa-trash"></i> Löschen</button>
             }
             else
             {
@@ -119,5 +120,13 @@
         {
             this.CommitteeExchange.NotifyUsersToVote(exchage);
         }
+    }
+
+    private void Delete()
+    {
+        this.dbContext.VotingSlots.RemoveRange(voting.VoteSlots);
+        this.dbContext.SessionVotings.Remove(voting);
+        this.dbContext.SaveChanges();
+        this.voting = null;
     }
 }

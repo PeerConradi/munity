@@ -82,6 +82,35 @@ namespace MUNity.Services
             return paragraph;
         }
 
+        public void RemoveResolution(ResaElement resolution)
+        {
+            _context.Update(resolution);
+            _context.PreambleParagraphs.RemoveRange(resolution.PreambleParagraphs);
+            _context.ResolutionAddAmendments
+                .RemoveRange(_context.ResolutionAddAmendments
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.ResolutionChangeAmendments
+                .RemoveRange(_context.ResolutionChangeAmendments
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.ResolutionDeleteAmendments
+                .RemoveRange(_context.ResolutionDeleteAmendments
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.ResolutionMoveAmendments
+                .RemoveRange(_context.ResolutionMoveAmendments
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.OperativeParagraphs
+                .RemoveRange(_context.OperativeParagraphs
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.Resolutions.Remove(resolution);
+
+            _context.SaveChanges();
+        }
+
         public ResaOperativeParagraph CreateOperativeParagraph([NotNull] ResaElement resolution, string text = "")
         {
             _context.Update(resolution);
@@ -108,6 +137,7 @@ namespace MUNity.Services
             }
             resolution.PreambleParagraphs = GetPreambleParagraphs(resolutionId);
             resolution.OperativeParagraphs = GetOperativeParagraphs(resolution);
+            resolution.AddAmendments = _context.ResolutionAddAmendments.Where(n => n.Resolution.ResaElementId == resolutionId).ToList();
             return resolution;
         }
 
@@ -234,6 +264,29 @@ namespace MUNity.Services
             _context.SaveChanges();
         }
 
+        public void AddMoveAmendment(ResaOperativeParagraph paragraph, int roleId, int newIndex)
+        {
+            _context.Update(paragraph);
+            var virtualParagraph = new ResaOperativeParagraph()
+            {
+                IsVirtual = true,
+                AllowAmendments = false,
+                IsLocked = true,
+                OrderIndex = newIndex,
+                Resolution = paragraph.Resolution,
+                Text = paragraph.Text,
+            };
+            var moveAmendment = new ResaMoveAmendment()
+            {
+                SourceParagraph = paragraph,
+                VirtualParagraph = virtualParagraph,
+                Resolution = paragraph.Resolution,
+                Submitter = _context.Delegates.Find(roleId),
+            };
+            paragraph.MoveAmendments.Add(moveAmendment);
+            _context.SaveChanges();
+        }
+
         public void AddAddAmendment(ResaElement resolution, int roleId, string newText)
         {
             _context.Update(resolution);
@@ -265,6 +318,17 @@ namespace MUNity.Services
             _context.Update(amendment);
             amendment.TargetParagraph.ChangeAmendments.Remove(amendment);
             _context.ResolutionChangeAmendments.Remove(amendment);
+            _context.SaveChanges();
+        }
+
+        public void RevokeAddAmendment(ResaAddAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.Resolution.AddAmendments.Remove(amendment);
+            amendment.Resolution.OperativeParagraphs.Remove(amendment.VirtualParagraph);
+            _context.OperativeParagraphs.Remove(amendment.VirtualParagraph);
+            _context.ResolutionAddAmendments.Remove(amendment);
+
             _context.SaveChanges();
         }
 
@@ -387,6 +451,37 @@ namespace MUNity.Services
             _context.Update(amendment.TargetParagraph);
             amendment.TargetParagraph.Text = amendment.NewText;
             amendment.TargetParagraph.ChangeAmendments.Remove(amendment);
+            _context.SaveChanges();
+        }
+
+        public void SubmitMoveAmendment(ResaMoveAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.Resolution.OperativeParagraphs.Remove(amendment.SourceParagraph);
+            amendment.SourceParagraph.MoveAmendments.Remove(amendment);
+            _context.OperativeParagraphs.Remove(amendment.SourceParagraph);
+            amendment.VirtualParagraph.IsLocked = false;
+            amendment.VirtualParagraph.IsVirtual = false;
+            amendment.VirtualParagraph.Visible = true;
+
+            _context.SaveChanges();
+        }
+
+        public void SubmitAddAmendment(ResaAddAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.VirtualParagraph.IsLocked = false;
+            amendment.VirtualParagraph.IsVirtual = false;
+            amendment.VirtualParagraph.AllowAmendments = true;
+            amendment.Resolution.AddAmendments.Remove(amendment);
+
+            _context.SaveChanges();
+        }
+
+        public void ActivateAmendment(ResaAmendment amendment, bool active = true)
+        {
+            _context.Update(amendment);
+            amendment.Activated = active;
             _context.SaveChanges();
         }
 

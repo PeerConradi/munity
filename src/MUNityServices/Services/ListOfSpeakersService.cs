@@ -99,6 +99,53 @@ namespace MUNity.Services
             return changes == 1;
         }
 
+        public bool UpdateSpeakerTime(string speakerListId, TimeSpan newTime)
+        {
+            var listViewModel = GetViewModel(speakerListId);
+            if (listViewModel == null)
+                return false;
+
+            using var scope = serviceScopeFactory.CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<MunityContext>();
+            
+            listViewModel.SpeakerTime = newTime;
+            var sourceList = context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId.Equals(speakerListId));
+            if (sourceList != null)
+            {
+                sourceList.SpeakerTime = newTime;
+                context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool UpdateQuestionsTime(string speakerListId, TimeSpan newTime)
+        {
+            var listViewModel = GetViewModel(speakerListId);
+            if (listViewModel == null)
+                return false;
+
+            using var scope = serviceScopeFactory.CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<MunityContext>();
+
+            listViewModel.QuestionTime = newTime;
+            var sourceList = context.ListOfSpeakers.FirstOrDefault(n => n.ListOfSpeakersId.Equals(speakerListId));
+            if (sourceList != null)
+            {
+                sourceList.QuestionTime = newTime;
+                context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                logger?.LogError("Was unable  to update the questions time to {0} because the list of speakers '{1}' was not found",newTime, speakerListId);
+                return false;
+            }
+        }
+
         public bool AddQuestion(string speakerListId, string name, string iso)
         {
             var listViewModel = GetViewModel(speakerListId);

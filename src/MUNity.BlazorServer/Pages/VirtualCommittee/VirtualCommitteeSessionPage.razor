@@ -38,7 +38,7 @@
         }
         else if (!string.IsNullOrEmpty(VisitCommitteeId))
         {
-            <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent />
+            <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent VisitedCommitteeId=@VisitCommitteeId />
         }
         else if (!string.IsNullOrEmpty(ManageListOfSpeakersId))
         {

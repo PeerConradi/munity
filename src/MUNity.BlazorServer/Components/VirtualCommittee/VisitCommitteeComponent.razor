@@ -1,5 +1,96 @@
-﻿<h1 class="page-title">VisitCommitteeComponent</h1>
+﻿@using BServices
+@using MUNity.Database.Models.Conference
+@using MUNity.Services
+@using MUNity.ViewModels.ListOfSpeakers
+
+@inject VirtualCommitteeExchangeService virtualCommitteeExchangeService
+@inject MunityContext dbContext
+@inject ListOfSpeakersService losService
+
+<h1 class="page-title">Besuche Gremium</h1>
+
+@if (exchange != null)
+{
+    <h4>@committeeInfo?.Name</h4>
+
+    @if (exchange.Banner != null && exchange.Banner.Active)
+    {
+        <VirtualCommitteeBannerComponent CommitteeExchange=@exchange />
+    }
+
+    <div class="row">
+        <div class="col-6">
+            @if (exchange.CurrentSessionExchange?.Petitions != null)
+            {
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Anträge</h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            @foreach(var petition in exchange.CurrentSessionExchange.Petitions)
+                            {
+                                <li class="list-group-item">[@petition.PetitionDate] @petition.PetitionUserName: @petition.PetitionTypeName</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-6">
+            <div class="row">
+                @if (listOfSpeakersViewModel != null)
+                {
+                    <MUNity.BlazorServer.Components.ListOfSpeakers.LoSSpeakersComponent AllowEdit=false ViewModel=@listOfSpeakersViewModel />
+                    <MUNity.BlazorServer.Components.ListOfSpeakers.LoSQuestionsComponent AllowEdit=false ViewModel=@listOfSpeakersViewModel />
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Es wurde kein Exchange geladen/gefunden.</p>
+}
 
 @code {
+    [EditorRequired][Parameter]public string VisitedCommitteeId { get; set; }
 
+    private VirtualCommitteeExchange exchange;
+
+    private CommitteeInfo committeeInfo;
+
+    private ListOfSpeakersViewModel listOfSpeakersViewModel;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.exchange = virtualCommitteeExchangeService.GetExchange(VisitedCommitteeId);
+        if (exchange != null)
+        {
+            committeeInfo = dbContext.Committees.Where(n => n.CommitteeId == VisitedCommitteeId)
+            .Select(n => new CommitteeInfo()
+            {
+                ListOfSpeakersId = n.ListOfSpeakers.ListOfSpeakersId,
+                Name = n.Name
+            }).FirstOrDefault();
+
+            exchange.BannerChanged += delegate { InvokeAsync(StateHasChanged); };
+            if (committeeInfo.ListOfSpeakersId != null)
+            {
+                this.listOfSpeakersViewModel = losService.GetViewModel(committeeInfo.ListOfSpeakersId);
+                this.listOfSpeakersViewModel.PropertyChanged += delegate { InvokeAsync(StateHasChanged); };
+                this.listOfSpeakersViewModel.AllSpeakers.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
+            }
+        }
+    }
+
+    private class CommitteeInfo
+    {
+        public string Name { get; set; }
+
+        public List<string> Seats { get; set; }
+
+        public string ListOfSpeakersId { get; set; }
+    }
 }

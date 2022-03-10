@@ -23,10 +23,11 @@
                                 <th>Delegation</th>
                                 <th>Subtype</th>
                                 <th>Teilnehmende</th>
+                                <th>Beitritt</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (info != null)
+                            @if (info?.Seats != null && info.Countries != null && info.Delegations != null)
                             {
                                 @foreach (var seat in info.Seats)
                                 {
@@ -57,6 +58,11 @@
 
 }
 
+@if (!string.IsNullOrEmpty(errorText))
+{
+    <div class="alert alert-danger">Fehler @errorText</div>
+}
+
 @code {
     [Parameter] public string CommitteeId { get; set; }
 
@@ -66,6 +72,9 @@
 
     CreateCommitteeSeatModal createSeatModal;
 
+
+    private string errorText;
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -74,12 +83,20 @@
 
     public async Task LoadData()
     {
-        var claim = (await authStateTask)?.User;
-        if (claim != null && !string.IsNullOrEmpty(CommitteeId))
+        try
         {
-            this.info = await conferenceService.GetCommitteeSeatsInfo(CommitteeId, claim);
-            await this.InvokeAsync(this.StateHasChanged);
+            var claim = (await authStateTask)?.User;
+            if (claim != null && !string.IsNullOrEmpty(CommitteeId))
+            {
+                this.info = await conferenceService.GetCommitteeSeatsInfo(CommitteeId, claim);
+                await this.InvokeAsync(this.StateHasChanged);
+            }
         }
+        catch (Exception ex)
+        {
+            errorText = ex.Message;
+        }
+        
     }
 
 }

@@ -37,7 +37,7 @@
                 index++;
                 <div class="animate__animated  animate__backInLeft">
                     <span class="text-white">@nextSpeaker.Name</span>
-                    <img src="@($"/img/flags/small/{nextSpeaker.Iso}.png")" />
+                    <img src="@($"/img/flags/small/{nextSpeaker.Iso.ToLower()}.png")" />
                     @if (index == 1)
                     {
                         <button class="badge bg-primary" @onclick="NextSpeaker">@index</button>
@@ -66,7 +66,7 @@
         <div class="col-3 p-1 mt-5px text-center">
             @if (viewModel?.CurrentSpeaker != null)
             {
-                <img src="@($"/img/flags/medium/{viewModel.CurrentSpeaker.Iso}.png")" 
+                <img src="@($"/img/flags/medium/{viewModel.CurrentSpeaker.Iso.ToLower()}.png")" 
                 class="border border-2 @((viewModel.Status == ESpeakerListStatus.Speaking || viewModel.Status == ESpeakerListStatus.Answer) ? "border-primary" : null) " style="height: 50px"
                 @onclick="ToggleSpeakerMode" />
                 <h6 class="text-white">@viewModel.CurrentSpeaker.Name</h6>
@@ -93,7 +93,7 @@
         <div class="col-3 p-1 mt-5px text-center">
         @if (viewModel?.CurrentQuestion != null)
         {
-            <img src="@($"/img/flags/medium/{viewModel.CurrentQuestion.Iso}.png")" 
+            <img src="@($"/img/flags/medium/{viewModel.CurrentQuestion.Iso.ToLower()}.png")" 
             class="border border-2 @((viewModel.Status == ESpeakerListStatus.Question) ? "border-primary" : null) " style="height: 50px"
             @onclick="ToggleQuestionMode" />
             <h6 class="text-white">@viewModel.CurrentQuestion.Name</h6>
@@ -122,7 +122,7 @@
                     {
                         <span class="badge bg-primary">@questionIndex</span>
                     }
-                    <img src="@($"/img/flags/small/{nextQuestion.Iso}.png")" />
+                    <img src="@($"/img/flags/small/{nextQuestion.Iso.ToLower()}.png")" />
                     <span class="text-white">@nextQuestion.Name</span>
                     
                     
@@ -134,7 +134,7 @@
         {
             <div class="animate__animated animate__delay-1s animate__backInRight">
                 <span class="badge bg-success">@(myQuestionIndex + 1)</span>
-                <img src="@($"/img/flags/small/{MyIso}.png")" />
+                <img src="@($"/img/flags/small/{MyIso.ToLower()}.png")" />
                 <span class="text-white ">@MyRoleName</span>
             </div>
         }

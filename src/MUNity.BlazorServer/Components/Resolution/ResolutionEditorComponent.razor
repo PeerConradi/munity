@@ -2,6 +2,8 @@
 @inject BServices.ResolutionExchangeService resolutionExchangeService
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
 
+@if (exchange != null)
+{
 <div class="row">
     <div class="panel panel-inverse col-12">
         <div class="panel-heading">
@@ -38,14 +40,34 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <ResolutionHeaderEditorComponent Exchange=@exchange CanEdit=@canEdit />
-    </div>
-</div>
 
-<PreambleEditorComponent Exchange=@exchange CanEdit=@canEdit />
-<OperativeSectionComponent Exchange=@exchange CanEdit=@canEdit />
+    <div class="row">
+        <div class="col-12">
+            <ResolutionHeaderEditorComponent Exchange=@exchange CanEdit=@canEdit />
+        </div>
+    </div>
+
+    <PreambleEditorComponent Exchange=@exchange CanEdit=@canEdit />
+    <OperativeSectionComponent Exchange=@exchange CanEdit=@canEdit />
+
+    <AuthorizeView>
+        <Authorized>
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Entfernen</h4>
+                    </div>
+                    <div class="panel-body d-flex justify-content-end">
+                        <button class="btn btn-danger" @onclick="RemoveResolution">Resolution löschen</button>
+                    </div>
+                </div>
+        </Authorized>
+    </AuthorizeView>
+}
+else
+{
+    <p>Resolution @ResolutionId wird vorbereitet oder nicht gefunden...</p>
+}
+
 
 @code {
     [Parameter] public string ResolutionId { get; set; }
@@ -107,10 +129,19 @@
 
     private void LoadEditAuth()
     {
-        this.canEdit = exchange.Resolution.State == EResolutionStates.Public ||
-            (exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId != null && exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId) ||
+        if (exchange?.Resolution != null && vcParticipationService != null)
+        {
+            this.canEdit = exchange.Resolution.State == EResolutionStates.Public ||
+            (exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId != null && exchange.Resolution.SubmitterRole != null && exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId) ||
             isAuthed;
-        InvokeAsync(StateHasChanged);
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void RemoveResolution()
+    {
+        resolutionExchangeService.RemoveResolution(exchange);
+        this.exchange = null;
     }
 
     protected override async Task OnParametersSetAsync()
@@ -118,9 +149,13 @@
         var taskResult = await AuthStateTask;
         isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
         base.OnParametersSet();
-        exchange = resolutionExchangeService.GetResolution(ResolutionId);
+        if (resolutionExchangeService != null)
+        {
+            exchange = resolutionExchangeService.GetResolution(ResolutionId);
 
-        LoadEditAuth();
-        vcParticipationService.Registered += delegate { LoadEditAuth(); };
+            LoadEditAuth();
+            vcParticipationService.Registered += delegate { LoadEditAuth(); };
+        }
+        
     }
 }

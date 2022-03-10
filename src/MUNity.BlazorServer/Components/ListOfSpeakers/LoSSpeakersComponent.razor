@@ -1,6 +1,7 @@
 ﻿@using MUNity.Database.General
 
 @inject Services.ListOfSpeakersService losService
+@inject ILogger<LoSSpeakersComponent> logger
 
 <div class="card border-0 mb-3 bg-gray-900 text-white">
 	<!-- BEGIN card-body -->
@@ -35,7 +36,11 @@
 		}
 		else if (AllowEdit && editSpeakerTime)
 		{
-			<input class="form-control" @bind=@inputSpeakerTime />
+			<div class="input-group w-50">
+				<input class="form-control" type="text" @bind=@inputSpeakerTime />
+				<button class="btn btn-primary" @onclick="UpdateSpeakerTime">Speichern</button>
+			</div>
+			
 		}
 		else 
 		{
@@ -53,7 +58,7 @@
 		{
 			<div class="widget-list-item rounded-0 pt-3px">
 				<div class="widget-list-media icon">
-					<div class="widget-img widget-img-xs rounded bg-inverse me-2 w-40px" style="background-image: url(@($"/img/flags/small/{speaker.Iso}.png"))"></div>	
+					<div class="widget-img widget-img-xs rounded bg-inverse me-2 w-40px" style="background-image: url(@($"/img/flags/small/{speaker.Iso.ToLower()}.png"))"></div>	
 				</div>
 				<div class="widget-list-content">
 					<div class="widget-list-title">@speaker.Name</div>
@@ -120,6 +125,19 @@
 
 	private string inputSpeakerTime;
 
+	private void UpdateSpeakerTime()
+	{
+		if (TimeSpan.TryParseExact(inputSpeakerTime, "m\\:ss",null, out var ts))
+		{
+			losService.UpdateSpeakerTime(ViewModel.ListOfSpeakersId, ts);
+			this.editSpeakerTime = false;
+		}
+		else
+		{
+			logger?.LogWarning("Was unable to parse input Timespan '{0}'", inputSpeakerTime);
+		}
+	}
+
 	private string speakerTimeString => $"{ViewModel.SpeakerTime.Minutes.ToString("D2")}:{ViewModel.SpeakerTime.Seconds.ToString("D2")}";
 	private void selectCountryKey(KeyboardEventArgs args)
 	{
@@ -155,27 +173,31 @@
 			}
 			else
 			{
-				return $"background: no-repeat bottom right; background-image: url(/img/flags/medium/{ViewModel.CurrentSpeaker.Iso}.png); background-size: auto 100%;";
-				
+				return $"background: no-repeat bottom right; background-image: url(/img/flags/medium/{ViewModel.CurrentSpeaker.Iso.ToLower()}.png); background-size: auto 100%;";
+
 			}
 		}
 	}
 
 	private bool speakersOpened
-    {
-        get
-        {
-            return !ViewModel.ListClosed;
-        }
-        set
-        {
-            ViewModel.ListClosed = !value;
-        }
-    }
+	{
+		get
+		{
+			return !ViewModel.ListClosed;
+		}
+		set
+		{
+			ViewModel.ListClosed = !value;
+		}
+	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 		this.inputSpeakerTime = speakerTimeString;
+		if (this.ViewModel != null)
+		{
+			this.ViewModel.PropertyChanged += delegate { InvokeAsync(StateHasChanged); };
+		}
 	}
 }

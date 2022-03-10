@@ -1,8 +1,12 @@
 ﻿@layout MUNity.BlazorServer.Shared.FrontEndLayout
 @page "/"
+@using Blazored.LocalStorage
 @using MUNity.Schema.Conference
 @inject Services.ConferenceService conferenceService
 @inject MUNity.Database.Context.MunityContext dbContext
+@inject ILocalStorageService localStorage
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject NavigationManager navManager
 
 @*<div class="card border-0 text-white bg-dark-900 mb-3">
     <div class="h-250px rounded-top card-img" 
@@ -16,24 +20,8 @@
 <div class="row">
     <div class="col-12">
         <div class="alert alert-info">
-            <h3><img src="/img/flags/small/ua.png" /> Demo Version</h3>
-            <p>Derzeit ist MUNity in der Demo und deshalb stehen einige Funktionen nicht zur Verfügung und andere sind ohne die notwendige Berechtigung erreichbar. Demo: 04.03.2022</p>
-            <h5>Patchnodes:</h5>
-            <ul>
-                <li>Oberfläche zum Bearbeiten von Abstimmungen überarbeitet</li>
-                <li>Vorsitzende können Teilnehmende nun ,,Anstupsen" abzustimmen</li>
-                <li>Banner können nun durch Vorsitzende bearbeitet werden</li>
-                <li>Kleinere Bugfixes im Resolutionseditor</li>
-                <li>Abstimmungen erlauben jetzt Enthaltungen</li>
-                <li>Unter Anträge kann nun auch der Name für einen Tagesordnungspunkt angegeben werden.</li>
-                <li>Vorsitzende können nun die Beitrittslinks für Teilnehmende sehen und ändern falls notwendig.</li>
-                <li>Aktivierte Anträge werden jetzt gesynct</li>
-                <li>Nur noch Vorsitzende sind in der Lage die Redeliste über das Banner zu bedienen</li>
-                <li>Dialog zum Einbringen von Änderungsanträgen zum Hinzufügen eines Absatzes eingebaut (funktioniert noch nicht!)</li>
-                <li>Alle Gremien sind jetzt im Test Modus</li>
-            </ul>
-
-
+            <h3>MUNity MUN-SH 2022 Edition</h3>
+            <p>Willkommen bei MUNity. Der Open-Source Plattform für Model United Nations Konferenzen.</p>
         </div>
     </div>
 </div>
@@ -61,44 +49,30 @@
 </div>
 *@
 
-<div class="row">
-    @foreach(var committee in dbContext.Committees.AsNoTracking().Where(n => n.Conference.ConferenceId == "munsh22").Select(n => new { CommitteeId = n.CommitteeId, Name = n.Name }))
-    {
-        <div class="col-6 mt-3">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Virtuelles Gremium (@committee.Name)</h3>
-                </div>
-                <div class="card-body">
-                    <p>Entdecken Sie jetzt die virtuellen Gremien. In diesen können Sie online mit anderen Delegierten zusammenarbeiten.</p>
-                    <a class="btn btn-primary" href="/oc/munsh22-gv">Direkt in den Raum...</a>
-                    <div class="row">
-                        <div class="btn-group-vertical">
-                            @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == committee.CommitteeId))
+<AuthorizeView>
+    <Authorized>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>MUN-SH 2022 Beitritt</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Die Beitrittslinks sind nun versteckt worden und befinden sich jetzt <a href="/c/managecommittees/munsh22">hier</a></p>
+                        <h5>Beitritt für Vorsitzende</h5>
+                        <div class="btn-group btn-group-vertical">
+                            @foreach(var committee in dbContext.Committees.Where(n => n.Conference.ConferenceId == "munsh22").Select(n => new { n.CommitteeId, n.Name}))
                             {
-                                <a class="btn btn-default" href="/oc/join/@role.RoleSecret">Als <b>@role.RoleName</b> beitreten</a>
+                                <button class="btn btn-default" @onclick="() => JoinAsTeam(committee.CommitteeId)">@committee.Name</button>
                             }
                         </div>
                     </div>
-                
                 </div>
             </div>
         </div>
-    }
-    
+    </Authorized>
+</AuthorizeView>
 
-    <div class="col-6 mt-3">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Redelisten</h3>
-            </div>
-            <div class="card-body">
-                <p>Teste die Demo des neuen Redelisten-Tools.</p>
-                <a class="btn btn-primary" href="/los/test">Demo ansehen</a>
-            </div>
-        </div>
-    </div>
-</div>
 
 @code
 {
@@ -113,5 +87,11 @@
         {
             conferenceBoardInfos = await conferenceService.GetConferenceBoardInfosAsync(claim);
         }
+    }
+
+    private async Task JoinAsTeam(string committeeId)
+    {
+        await localStorage.RemoveItemAsync($"munity-access-{committeeId}");
+        navManager.NavigateTo($"/oc/{committeeId}");
     }
 }

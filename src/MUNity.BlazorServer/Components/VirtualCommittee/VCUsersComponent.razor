@@ -20,17 +20,33 @@
 		<!-- BEGIN percentage -->
 		<div class="mb-4 text-gray-500 ">
 			<span>@roles?.Count Insgesamt</span><br />
-			@if (roles != null)
+			@if (roles != null && presentRoles == null)
 			{
-				<span>@(Math.Ceiling(@roles.Count * 0.66)) Für 2/3 Mehrheit</span><br />
-				<span>@(Math.Ceiling(@roles.Count * 0.5) + 1) Für einfache Mehrheit</span><br />
+				<span>@(Math.Ceiling(@roles.Count(n => n.DelegateCountry != null) * 0.66)) Für 2/3 Mehrheit</span><br />
+				<span>@(Math.Ceiling(@roles.Count(n => n.DelegateCountry != null) * 0.5) + 1) Für einfache Mehrheit</span><br />
+			}
+			else if (presentRoles != null)
+			{
+				<span>@presentRoles.Count(n => n.IsPresent) Anwesend</span><br />
+				<span>@presentRoles.Count(n => n.IsPresent && n.IsCountry) Delegierte Anwesend</span><br />
+				<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent && n.IsCountry) * 0.66)) Für 2/3 Mehrheit</span><br />
+				
+				@if (presentRoles.Count(n => n.IsPresent && n.IsCountry) % 2 == 0)
+				{
+					<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent && n.IsCountry) * 0.5 + 1d)) Für einfache Mehrheit</span><br />
+				}
+				else
+				{
+					<span>@(Math.Ceiling(presentRoles.Count(n => n.IsPresent && n.IsCountry) * 0.5)) Für einfache Mehrheit</span><br />
+				}
+				
 			}
 			else
 			{
 				<span>Rollen sind null. Fehler erkannt!</span>
 			}
 		</div>
-		@if (roles != null && expand)
+		@if (roles != null && expand && exchange?.CurrentSessionExchange?.Petitions != null)
 		{
 			foreach(var role in roles)
 			{
@@ -42,7 +58,11 @@
 				IsPresent="@presentRoles.Any(n => n.RoleId == role.RoleId && n.IsPresent)" />
 			}
 		}
-		
+		else
+		{
+			<p>Unable to generate list of users.</p>
+		}
+
 	</div>
 	<!-- END card-body -->
 </div>
@@ -64,15 +84,16 @@
 
 	private bool expand = true;
 
-	protected override void OnInitialized()
+	private void Init()
 	{
-		base.OnInitialized();
+
 		this.exchange = exchangeService.GetExchange(CommitteeId);
 		if (this.exchange != null)
 		{
 			this.exchange.UserConnected += (s, a) => InvokeAsync(StateHasChanged);
 			this.exchange.UserDisconnected += (s, a) => InvokeAsync(StateHasChanged);
 			this.exchange.CurrentSessionChanged += delegate { InvokeAsync(StateHasChanged); };
+			this.exchange.PresentsChanged += (s, a) => { this.presentRoles = a; InvokeAsync(StateHasChanged); };
 			if (exchange.CurrentSessionExchange != null)
 			{
 				if (exchange.CurrentSessionExchange.Petitions == null)
@@ -88,7 +109,8 @@
 				.Select(n => new PresentRole()
 				{
 					RoleId = n.Role.RoleId,
-					IsPresent = n.State == Database.Models.Session.PresentsState.PresentsStates.Present || n.State == Database.Models.Session.PresentsState.PresentsStates.Late
+					IsPresent = n.State == Database.Models.Session.PresentsState.PresentsStates.Present || n.State == Database.Models.Session.PresentsState.PresentsStates.Late,
+					IsCountry = n.Role.DelegateCountry != null
 				}).ToList();
 			}
 			else
@@ -101,15 +123,23 @@
 			logger?.LogError("No exchange for committee {0} found.", CommitteeId);
 		}
 		roles = dbContext.Delegates.Include(n => n.DelegateCountry).Where(n => n.Committee.CommitteeId == CommitteeId).ToList();
-		
+
 
 	}
 
-	private class PresentRole
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		Init();
+	}
+
+	public class PresentRole
 	{
 		public int RoleId { get; set; }
 
 		public bool IsPresent { get; set; }
+
+		public bool IsCountry { get; set; }
 	}
 
 }

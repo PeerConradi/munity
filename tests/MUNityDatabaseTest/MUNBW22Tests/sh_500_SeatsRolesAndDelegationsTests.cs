@@ -24,8 +24,8 @@ public partial class FullDMUN2022Tests
             "Tansania", "Thailand", "Tunesien", "Türkei",
             "Ukraine", "Venezuela", "Vereinigte Arabische Emirate", "Vereinigte Staaten");
 
-        _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("Friends of the Earth", "FoE");
-        _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("Greenpeace International", "GP");
+        _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("Human rights watch", "HRW");
+        _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("World economic forum", "WEF");
         Assert.AreEqual(34, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-gv").Count());
     }
 
@@ -64,9 +64,9 @@ public partial class FullDMUN2022Tests
             "Tunesien", "Vereinigte Staaten"
             );
 
-        _context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("International Institute for Sustainable Development", "IISD");
-        _context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("World Wide Fund for Nature", "WWF");
-        Assert.AreEqual(40, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-wiso").Count());
+        //_context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("International Institute for Sustainable Development", "IISD");
+        //_context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("World Wide Fund for Nature", "WWF");
+        Assert.AreEqual(38, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-wiso").Count());
     }
 
     [Test]
@@ -80,9 +80,9 @@ public partial class FullDMUN2022Tests
             "Vereinigte Staaten"
             );
 
-        _context.Fluent.ForCommittee("munsh22-sek").AddNonGovernmentSeat("Weltbankgruppe", "WBG");
-        _context.Fluent.ForCommittee("munsh22-sek").AddNonGovernmentSeat("Welthungerhilfe", "WHH");
-        Assert.AreEqual(15, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sek").Count());
+        //_context.Fluent.ForCommittee("munsh22-sek").AddNonGovernmentSeat("Weltbankgruppe", "WBG");
+        //_context.Fluent.ForCommittee("munsh22-sek").AddNonGovernmentSeat("Welthungerhilfe", "WHH");
+        Assert.AreEqual(13, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sek").Count());
     }
 
     [Test]
@@ -95,7 +95,8 @@ public partial class FullDMUN2022Tests
             "Kenia", "Mexiko", "Nigeria", "Norwegen",
             "Russland", "Vereinigte Arabische Emirate", "Vereinigtes Königreich", "Vereinigte Staaten"
             );
-        Assert.AreEqual(16, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sr").Count());
+        _context.Fluent.ForCommittee("munsh22-sr").AddNonGovernmentSeat("Welthungerhilfe", "WHH");
+        Assert.AreEqual(17, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sr").Count());
     }
 
     [Test]
@@ -114,9 +115,9 @@ public partial class FullDMUN2022Tests
             "Thailand", "Vereinigte Arabische Emirate", "Vereinigtes Königreich", "Vereinigte Staaten"
             );
 
-        _context.Fluent.ForCommittee("munsh22-kfk").AddNonGovernmentSeat("Global Network of Women Peacebuilders", "gnwp");
-        _context.Fluent.ForCommittee("munsh22-kfk").AddNonGovernmentSeat("Islamic Relief Worldwide", "ISLAMIC");
-        Assert.AreEqual(38, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-kfk").Count());
+        //_context.Fluent.ForCommittee("munsh22-kfk").AddNonGovernmentSeat("Global Network of Women Peacebuilders", "gnwp");
+        //_context.Fluent.ForCommittee("munsh22-kfk").AddNonGovernmentSeat("Islamic Relief Worldwide", "ISLAMIC");
+        Assert.AreEqual(36, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-kfk").Count());
     }
 
     [Test]
@@ -153,9 +154,41 @@ public partial class FullDMUN2022Tests
             "Tansania", "Thailand", "Tunesien", "Türkei",
             "Ukraine", "Venezuela", "Vereinigte Arabische Emirate", "Vereinigte Staaten"
             );
-        _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Friends of the Earth", "FoE");
-        _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Greenpeace International", "GP");
-        Assert.AreEqual(34, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-uv").Count());
+        //_context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Friends of the Earth", "FoE");
+        //_context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Greenpeace International", "GP");
+        Assert.AreEqual(32, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-uv").Count());
+    }
+
+    [Test]
+    [Order(2508)]
+    public void TestCreateGruppeAndEgo()
+    {
+        for (int i = 1; i < 7; i++)
+        {
+            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddSeatsByCountryNames(
+            "Afghanistan", "Ägypten", "Algerien", "Argentinien",
+            "Bahrain", "Belgien", "Brasilien", "Volksrepublik China",
+            "Dschibuti", "Frankreich", "Indonesien", "Italien",
+            "Japan", "Kenia", "Kolumbien", "Mali",
+            "Myanmar", "Norwegen", "Österreich", "Pakistan",
+            "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
+            "Vereinigte Staaten"
+            );
+            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddNonGovernmentSeat("IKRK", "IKRK");
+            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddNonGovernmentSeat("Save the Children", "STC");
+        }
+
+        _context.Fluent.ForCommittee($"munsh22-ego").AddSeatsByCountryNames(
+            "Afghanistan", "Ägypten", "Algerien", "Argentinien",
+            "Bahrain", "Belgien", "Brasilien", "Volksrepublik China",
+            "Dschibuti", "Frankreich", "Indonesien", "Italien",
+            "Japan", "Kenia", "Kolumbien", "Mali",
+            "Myanmar", "Norwegen", "Österreich", "Pakistan",
+            "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
+            "Vereinigte Staaten"
+            );
+        _context.Fluent.ForCommittee("munsh22-ego").AddNonGovernmentSeat("IKRK", "IKRK");
+        _context.Fluent.ForCommittee("munsh22-ego").AddNonGovernmentSeat("Save the Children", "STC");
     }
 
     [Test]

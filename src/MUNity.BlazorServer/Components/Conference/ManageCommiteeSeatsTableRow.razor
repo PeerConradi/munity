@@ -1,10 +1,13 @@
-﻿<tr>
+﻿@inject NavigationManager navManager
+
+<tr>
     <td>@Seat.RoleId</td>
     <td>@Seat.RoleName</td>
     <td>@Seat.CountryId</td>
     <td>@Seat.DelegationId</td>
     <td>@Seat.Subtypes</td>
     <td>@string.Join(", ", Seat.Participants.Select(n => n.DisplayName))</td>
+    <td><a href=@joinLink>@joinLink</a></td>
 </tr>
 
 @code {
@@ -13,4 +16,6 @@
     [Parameter] public List<MUNity.Schema.Conference.CountryInfo> Countries { get; set; }
 
     [Parameter] public List<MUNity.Schema.Conference.DelegationInfo> Delegations { get; set; }
+
+    private string joinLink => $"{navManager.BaseUri}oc/join/{Seat.Secret}";
 }
