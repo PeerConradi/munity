@@ -417,10 +417,23 @@ namespace MUNity.Services
         {
             _context.Update(amendment);
             amendment.Resolution.OperativeParagraphs.Remove(amendment.SourceParagraph);
+            amendment.SourceParagraph.MoveAmendments.Remove(amendment);
             _context.OperativeParagraphs.Remove(amendment.SourceParagraph);
             amendment.VirtualParagraph.IsLocked = false;
             amendment.VirtualParagraph.IsVirtual = false;
             amendment.VirtualParagraph.Visible = true;
+
+            _context.SaveChanges();
+        }
+
+        public void SubmitAddAmendment(ResaAddAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.VirtualParagraph.IsLocked = false;
+            amendment.VirtualParagraph.IsVirtual = false;
+            amendment.VirtualParagraph.AllowAmendments = true;
+            amendment.Resolution.AddAmendments.Remove(amendment);
+
             _context.SaveChanges();
         }
 

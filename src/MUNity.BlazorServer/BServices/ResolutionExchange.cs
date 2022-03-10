@@ -279,6 +279,13 @@ namespace MUNity.BlazorServer.BServices
                 resolutionService.SubmitMoveAmendment(moveAmendment);
                 ResolutionChanged?.Invoke(this, Resolution);
             }
+            else if (amendment is ResaAddAmendment addAmendment)
+            {
+                var scope = serviceScopeFactory.CreateScope();
+                var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+                resolutionService.SubmitAddAmendment(addAmendment);
+                ResolutionChanged?.Invoke(this, Resolution);
+            }
         }
 
         public void ActivateAmendment(ResaAmendment amendment, bool active = true)
@@ -299,6 +306,11 @@ namespace MUNity.BlazorServer.BServices
                 OperativeParagraphChanged?.Invoke(this, moveAmendment.SourceParagraph);
                 OperativeParagraphChanged?.Invoke(this, moveAmendment.VirtualParagraph);
                 ResolutionChanged?.Invoke(this, Resolution);
+            }
+            else if (amendment is ResaAddAmendment addAmendment)
+            {
+                ResolutionChanged?.Invoke(this, Resolution);
+                OperativeParagraphChanged?.Invoke(this, addAmendment.VirtualParagraph);
             }
         }
 

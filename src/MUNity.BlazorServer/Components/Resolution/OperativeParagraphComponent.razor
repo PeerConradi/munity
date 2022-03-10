@@ -15,7 +15,7 @@
 					var deleteAmendment = Paragraph.DeleteAmendments.FirstOrDefault(n => n.Activated);
 					@if (Paragraph.DeleteAmendments.Any(n => n.Activated))
 					{
-						<p class="text-danger text-decoration-line-through"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+						<p @ondblclick="StartEdit" class="text-danger text-decoration-line-through"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
 						<AuthorizeView>
 							<Authorized>
 								<div class="row">
@@ -31,7 +31,7 @@
 					else if (Paragraph.ChangeAmendments.Any(n => n.Activated))
 					{
 						var amendment = Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated);
-						<OAChangeAmendmentHighlight Paragraph=@Paragraph Amendment=@amendment />
+						<OAChangeAmendmentHighlight @ondblclick="StartEdit" Paragraph=@Paragraph Amendment=@amendment />
 						<AuthorizeView>
 							<Authorized>
 								<div class="row">
@@ -47,7 +47,7 @@
 					else if (Paragraph.MoveAmendments.Any(n => n.Activated))
 					{
 						var moveAmendment = Paragraph.MoveAmendments.FirstOrDefault(n => n.Activated);
-						<p class="text-danger text-decoration-line-through"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+						<p @ondblclick="StartEdit" class="text-danger text-decoration-line-through"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
 						<AuthorizeView>
 							<Authorized>
 								<div class="row">
