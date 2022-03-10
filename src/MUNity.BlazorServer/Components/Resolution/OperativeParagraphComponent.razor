@@ -1,9 +1,10 @@
 ﻿@using MUNity.BlazorServer.BServices
 @using MUNity.Database.Models.Resolution
+@using System.Text
 
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
 
-<div class="card border-0 mb-1"
+<div class="card border-0 mb-1 @Class"
 	@onclick="() => { if (htmlText.Length == 0 && !isEditing) { isEditing = true;}}">
 	<div class="card-body">
 		<div class="row">
@@ -31,17 +32,33 @@
 					{
 						var amendment = Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated);
 						<OAChangeAmendmentHighlight Paragraph=@Paragraph Amendment=@amendment />
-							<AuthorizeView>
-								<Authorized>
-									<div class="row">
-										<div class="col-12">
-											<button class="btn btn-default" @onclick="DeactivateAllAmendments">Hervorheben beenden</button>
-											<button class="btn btn-default btn-success" @onclick="() => SubmitAmendment(amendment)">Änderung anwenden</button>
-											<button class="btn btn-default btn-danger" @onclick="() => RevokeChangeAmendment(amendment)">Antrag verwerfen</button>
-										</div>
+						<AuthorizeView>
+							<Authorized>
+								<div class="row">
+									<div class="col-12">
+										<button class="btn btn-default" @onclick="DeactivateAllAmendments">Hervorheben beenden</button>
+										<button class="btn btn-default btn-success" @onclick="() => SubmitAmendment(amendment)">Änderung anwenden</button>
+										<button class="btn btn-default btn-danger" @onclick="() => RevokeChangeAmendment(amendment)">Antrag verwerfen</button>
 									</div>
-								</Authorized>
-							</AuthorizeView>
+								</div>
+							</Authorized>
+						</AuthorizeView>
+					}
+					else if (Paragraph.MoveAmendments.Any(n => n.Activated))
+					{
+						var moveAmendment = Paragraph.MoveAmendments.FirstOrDefault(n => n.Activated);
+						<p class="text-danger text-decoration-line-through"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+						<AuthorizeView>
+							<Authorized>
+								<div class="row">
+									<div class="col-12">
+										<button class="btn btn-default" @onclick="DeactivateAllAmendments">Hervorheben beenden</button>
+										<button class="btn btn-default btn-success" @onclick="() => SubmitAmendment(moveAmendment)">Änderung anwenden</button>
+										<button class="btn btn-default btn-danger" @onclick="() => RevokeMoveAmendment(moveAmendment)">Antrag verwerfen</button>
+									</div>
+								</div>
+							</Authorized>
+						</AuthorizeView>
 					}
 					else
 					{
@@ -95,6 +112,11 @@
 				{
 					<span class="badge bg-warning me-2 cursor-pointer" title="@($"Eingereicht durch: {string.Join(",", Paragraph.ChangeAmendments.Select(n => n.Submitter?.RoleName))}")" @onclick="() => showChangeAmendmentsModal = true">@Paragraph.ChangeAmendments.Count Anträge auf Textänderung</span>
 				}
+
+				@if (Paragraph.MoveAmendments.Count > 0)
+				{
+					<span class="badge bg-dark me-2 cursor-pointer" title="@($"Eingereicht durch: {string.Join(",", Paragraph.MoveAmendments.Select(n => n.Submitter?.RoleName))}")" @onclick="() => showMoveAmendments = true">@Paragraph.MoveAmendments.Count Anträge auf verschieben</span>
+				}
 				
 			</div>
 			
@@ -140,6 +162,17 @@
 							<RadzenHtmlEditorStrikeThrough />
 							<RadzenHtmlEditorSeparator />
 						</RadzenHtmlEditor>
+					}
+
+					@if (amendmentMode == AmendmentModes.Move)
+					{
+						<select class="mt-3 form-control" @bind=@newMoveIndex>
+							<option value=0>An den Anfang</option>
+							@foreach(var paragaph in Exchange.Resolution.OperativeParagraphs)
+							{
+								<option value=@paragaph.OrderIndex>Unter: @((MarkupString)paragaph.Text)</option>
+							}
+						</select>
 					}
 				</div>
 				<div class="modal-footer">
@@ -266,6 +299,33 @@
 	</div>
 }
 
+@if (showMoveAmendments)
+{
+	<div class="modal-backdrop" style="opacity: 50%"></div>
+	<div class="modal show " style="display: block;" aria-modal="true" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Anträge auf verschieben</h4>
+					<button type="button" class="btn-close" @onclick="() => showMoveAmendments = false"></button>
+				</div>
+				<div class="modal-body">
+					@foreach(var moveAmendment in Paragraph.MoveAmendments)
+					{
+						<div class="row">
+							<p>Eingereicht durch: @moveAmendment.Submitter?.RoleName</p>
+							<button class="btn btn-default" @onclick="() => ActivateAmendment(moveAmendment)">Hervorheben</button>
+						</div>
+					}
+
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-white" @onclick="() => showMoveAmendments = false">Schließen</a>
+				</div>
+			</div>
+		</div>
+	</div>
+}
 
 @code {
 	[EditorRequired][Parameter]public bool CanEdit { get; set; }
@@ -280,6 +340,8 @@
 
 	[Parameter] public int Index { get; set; }
 
+	[Parameter] public string Class { get; set; }
+
 	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
 	private bool showAmendmentModal = false;
@@ -289,6 +351,10 @@
 	private bool showChangeAmendmentsModal = false;
 
 	private bool showSecureRemoveAmendment = false;
+
+	public bool showMoveAmendments = false;
+
+	private int newMoveIndex = 0;
 
 	private enum AmendmentModes
 	{
@@ -411,6 +477,10 @@
 		{
 			AddChangeAmendment();
 		}
+		else if (this.amendmentMode == AmendmentModes.Move)
+		{
+			AddMoveAmendment();
+		}
 	}
 
 	private void AddRemoveAmendment()
@@ -431,6 +501,15 @@
 		}
 	}
 
+	private void AddMoveAmendment()
+	{
+		if (vcParticipationService?.RoleId != null)
+		{
+			Exchange.AddMoveAmendment(this.Paragraph, vcParticipationService.RoleId.Value, newMoveIndex);
+			this.showAmendmentModal = false;
+		}
+	}
+
 	private void RevokeDeleteAmendment(ResaDeleteAmendment amendment)
 	{
 		if (amendment != null)
@@ -445,6 +524,11 @@
 		{
 			Exchange.RevokeChangeAmendment(amendment);
 		}
+	}
+
+	private void RevokeMoveAmendment(ResaMoveAmendment amendment)
+	{
+		// TODO.
 	}
 
 	private void SupportAmendment(ResaAmendment amendment)
@@ -487,6 +571,14 @@
 			if (changeAmendment.Activated)
 			{
 				Exchange.ActivateAmendment(changeAmendment, false);
+			}
+		}
+
+		foreach(var moveAmendment in Paragraph.MoveAmendments)
+		{
+			if (moveAmendment.Activated)
+			{
+				Exchange.ActivateAmendment(moveAmendment, false);
 			}
 		}
 	}

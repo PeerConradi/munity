@@ -180,6 +180,16 @@ namespace MUNity.BlazorServer.BServices
             OperativeParagraphChanged?.Invoke(this, paragraph);
         }
 
+        public void AddMoveAmendment(ResaOperativeParagraph paragraph, int roleId, int newIndex)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.AddMoveAmendment(paragraph, roleId, newIndex);
+
+            OperativeParagraphChanged?.Invoke(this, paragraph);
+            ResolutionChanged?.Invoke(this, Resolution);
+        }
+
         public void AddAddAmendment(int roleId, string newText)
         {
             using var scope = serviceScopeFactory.CreateScope();
@@ -262,6 +272,13 @@ namespace MUNity.BlazorServer.BServices
                 resolutionService.SubmitChangeAmendment(changeAmendment);
                 OperativeParagraphChanged?.Invoke(this, changeAmendment.TargetParagraph);
             }
+            else if (amendment is ResaMoveAmendment moveAmendment)
+            {
+                var scope = serviceScopeFactory.CreateScope();
+                var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+                resolutionService.SubmitMoveAmendment(moveAmendment);
+                ResolutionChanged?.Invoke(this, Resolution);
+            }
         }
 
         public void ActivateAmendment(ResaAmendment amendment, bool active = true)
@@ -276,6 +293,12 @@ namespace MUNity.BlazorServer.BServices
             else if (amendment is ResaChangeAmendment changeAmendment)
             {
                 OperativeParagraphChanged?.Invoke(this, changeAmendment.TargetParagraph);
+            }
+            else if (amendment is ResaMoveAmendment moveAmendment)
+            {
+                OperativeParagraphChanged?.Invoke(this, moveAmendment.SourceParagraph);
+                OperativeParagraphChanged?.Invoke(this, moveAmendment.VirtualParagraph);
+                ResolutionChanged?.Invoke(this, Resolution);
             }
         }
 

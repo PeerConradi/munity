@@ -234,6 +234,29 @@ namespace MUNity.Services
             _context.SaveChanges();
         }
 
+        public void AddMoveAmendment(ResaOperativeParagraph paragraph, int roleId, int newIndex)
+        {
+            _context.Update(paragraph);
+            var virtualParagraph = new ResaOperativeParagraph()
+            {
+                IsVirtual = true,
+                AllowAmendments = false,
+                IsLocked = true,
+                OrderIndex = newIndex,
+                Resolution = paragraph.Resolution,
+                Text = paragraph.Text,
+            };
+            var moveAmendment = new ResaMoveAmendment()
+            {
+                SourceParagraph = paragraph,
+                VirtualParagraph = virtualParagraph,
+                Resolution = paragraph.Resolution,
+                Submitter = _context.Delegates.Find(roleId),
+            };
+            paragraph.MoveAmendments.Add(moveAmendment);
+            _context.SaveChanges();
+        }
+
         public void AddAddAmendment(ResaElement resolution, int roleId, string newText)
         {
             _context.Update(resolution);
@@ -387,6 +410,17 @@ namespace MUNity.Services
             _context.Update(amendment.TargetParagraph);
             amendment.TargetParagraph.Text = amendment.NewText;
             amendment.TargetParagraph.ChangeAmendments.Remove(amendment);
+            _context.SaveChanges();
+        }
+
+        public void SubmitMoveAmendment(ResaMoveAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.Resolution.OperativeParagraphs.Remove(amendment.SourceParagraph);
+            _context.OperativeParagraphs.Remove(amendment.SourceParagraph);
+            amendment.VirtualParagraph.IsLocked = false;
+            amendment.VirtualParagraph.IsVirtual = false;
+            amendment.VirtualParagraph.Visible = true;
             _context.SaveChanges();
         }
 
