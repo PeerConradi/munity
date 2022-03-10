@@ -31,7 +31,7 @@
 					else if (Paragraph.ChangeAmendments.Any(n => n.Activated))
 					{
 						var amendment = Paragraph.ChangeAmendments.FirstOrDefault(n => n.Activated);
-						<OAChangeAmendmentHighlight @ondblclick="StartEdit" Paragraph=@Paragraph Amendment=@amendment />
+						<OAChangeAmendmentHighlight Paragraph=@Paragraph Amendment=@amendment />
 						<AuthorizeView>
 							<Authorized>
 								<div class="row">
