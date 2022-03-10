@@ -217,6 +217,15 @@ namespace MUNity.BlazorServer.BServices
             OperativeParagraphChanged?.Invoke(this, amendment.TargetParagraph);
         }
 
+        public void RevokeAddAmendment(ResaAddAmendment amendment)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.RevokeAddAmendment(amendment);
+
+            ResolutionChanged?.Invoke(this, Resolution);
+        }
+
         public void SupportAmendment(ResaAmendment amendment, int roleId)
         {
             using var scope = serviceScopeFactory.CreateScope();

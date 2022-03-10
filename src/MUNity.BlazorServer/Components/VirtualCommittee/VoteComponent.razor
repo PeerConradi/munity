@@ -27,7 +27,7 @@
                     <span class="badge bg-dark ms-1">@result.Count @result.Name (@result.Percentage%)</span>
                 }
                 </h3>
-                <RadzenChart>
+                <RadzenChart ColorScheme=@ColorScheme.Divergent>
                     <RadzenPieSeries Data="Results" Title="Ergebnis" CategoryProperty="Name" ValueProperty="Count" />
                 </RadzenChart>
             }

@@ -108,6 +108,7 @@ namespace MUNity.Services
             }
             resolution.PreambleParagraphs = GetPreambleParagraphs(resolutionId);
             resolution.OperativeParagraphs = GetOperativeParagraphs(resolution);
+            resolution.AddAmendments = _context.ResolutionAddAmendments.Where(n => n.Resolution.ResaElementId == resolutionId).ToList();
             return resolution;
         }
 
@@ -288,6 +289,17 @@ namespace MUNity.Services
             _context.Update(amendment);
             amendment.TargetParagraph.ChangeAmendments.Remove(amendment);
             _context.ResolutionChangeAmendments.Remove(amendment);
+            _context.SaveChanges();
+        }
+
+        public void RevokeAddAmendment(ResaAddAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.Resolution.AddAmendments.Remove(amendment);
+            amendment.Resolution.OperativeParagraphs.Remove(amendment.VirtualParagraph);
+            _context.OperativeParagraphs.Remove(amendment.VirtualParagraph);
+            _context.ResolutionAddAmendments.Remove(amendment);
+
             _context.SaveChanges();
         }
 

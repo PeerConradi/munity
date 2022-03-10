@@ -581,6 +581,14 @@
 				Exchange.ActivateAmendment(moveAmendment, false);
 			}
 		}
+
+		foreach(var addAmendment in Paragraph.Resolution.AddAmendments)
+		{
+			if (addAmendment.Activated)
+			{
+				Exchange.ActivateAmendment(addAmendment, false);
+			}
+		}
 	}
 
 	private void SubmitAmendment(ResaAmendment amendment)
