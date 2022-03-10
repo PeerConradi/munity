@@ -82,6 +82,35 @@ namespace MUNity.Services
             return paragraph;
         }
 
+        public void RemoveResolution(ResaElement resolution)
+        {
+            _context.Update(resolution);
+            _context.PreambleParagraphs.RemoveRange(resolution.PreambleParagraphs);
+            _context.ResolutionAddAmendments
+                .RemoveRange(_context.ResolutionAddAmendments
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.ResolutionChangeAmendments
+                .RemoveRange(_context.ResolutionChangeAmendments
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.ResolutionDeleteAmendments
+                .RemoveRange(_context.ResolutionDeleteAmendments
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.ResolutionMoveAmendments
+                .RemoveRange(_context.ResolutionMoveAmendments
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.OperativeParagraphs
+                .RemoveRange(_context.OperativeParagraphs
+                .Where(n => n.Resolution.ResaElementId == resolution.ResaElementId));
+
+            _context.Resolutions.Remove(resolution);
+
+            _context.SaveChanges();
+        }
+
         public ResaOperativeParagraph CreateOperativeParagraph([NotNull] ResaElement resolution, string text = "")
         {
             _context.Update(resolution);
