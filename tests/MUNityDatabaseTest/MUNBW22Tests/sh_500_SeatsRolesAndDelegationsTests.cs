@@ -95,8 +95,8 @@ public partial class FullDMUN2022Tests
             "Kenia", "Mexiko", "Nigeria", "Norwegen",
             "Russland", "Vereinigte Arabische Emirate", "Vereinigtes Königreich", "Vereinigte Staaten"
             );
-        _context.Fluent.ForCommittee("munsh22-sek").AddNonGovernmentSeat("Welthungerhilfe", "WHH");
-        Assert.AreEqual(16, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sr").Count());
+        _context.Fluent.ForCommittee("munsh22-sr").AddNonGovernmentSeat("Welthungerhilfe", "WHH");
+        Assert.AreEqual(17, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sr").Count());
     }
 
     [Test]
