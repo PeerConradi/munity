@@ -220,7 +220,7 @@
 		{
 			var newVoting = new SessionVoting()
 			{
-				Name = "Neues Abstimmung",
+				Name = "Neue Abstimmung",
 				Session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId)
 			};
 			var presentsCheckId = dbContext.PresentChecks.FirstOrDefault(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId)?.SessionPresentsId;
