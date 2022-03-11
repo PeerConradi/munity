@@ -21,7 +21,7 @@
 		<p class="card-text">Unterstützer:
 			@string.Join(",", Exchange.Resolution.Supporters.Select(n => n.Role.RoleName))
 			<br />
-			@if (vcParticipationService.RoleId != null && Exchange.Resolution.SubmitterRole != null && vcParticipationService.RoleId != Exchange.Resolution.SubmitterRole.RoleId)
+			@if (vcParticipationService.RoleId != null && Exchange.Resolution.SubmitterRole != null && vcParticipationService.RoleId != Exchange.Resolution.SubmitterRole.RoleId && vcParticipationService.DelegateType != "NA")
 			{
 				if (Exchange.Resolution.Supporters.All(n => n.Role.RoleId != vcParticipationService.RoleId))
 				{

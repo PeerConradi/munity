@@ -61,9 +61,9 @@
                         <p>Die Beitrittslinks sind nun versteckt worden und befinden sich jetzt <a href="/c/managecommittees/munsh22">hier</a></p>
                         <h5>Beitritt für Vorsitzende</h5>
                         <div class="btn-group btn-group-vertical">
-                            @foreach(var committee in dbContext.Committees.Where(n => n.Conference.ConferenceId == "munsh22").Select(n => new { n.CommitteeId, n.Name}))
+                            @foreach(var committee in dbContext.Committees.Where(n => n.Conference.ConferenceId == "munsh22").Select(n => new { n.CommitteeId, n.Name, n.CommitteeShort}))
                             {
-                                <button class="btn btn-default" @onclick="() => JoinAsTeam(committee.CommitteeId)">@committee.Name</button>
+                                <button class="btn @((committee.CommitteeShort == "SEK" || committee.CommitteeShort == "KFK") ? "btn-default" : "btn-primary")" @onclick="() => JoinAsTeam(committee.CommitteeId)">@committee.Name</button>
                             }
                         </div>
                     </div>

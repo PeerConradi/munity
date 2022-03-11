@@ -225,15 +225,18 @@
 										}
 										else
 										{
-
-											if (amendment.Supporters.All(n => n.Role?.RoleId != vcParticipationService.RoleId))
+											if (vcParticipationService.DelegateType != "NA")
 											{
-												<button class="btn btn-default btn-sm" @onclick="() => SupportAmendment(amendment)">Unterstützen</button>
+												if (amendment.Supporters.All(n => n.Role?.RoleId != vcParticipationService.RoleId))
+												{
+													<button class="btn btn-default btn-sm" @onclick="() => SupportAmendment(amendment)">Unterstützen</button>
+												}
+												else
+												{
+													<button class="btn btn-default btn-sm" @onclick="() => RevokeSupport(amendment)">Unterstützung zurückziehen</button>
+												}
 											}
-											else
-											{
-												<button class="btn btn-default btn-sm" @onclick="() => RevokeSupport(amendment)">Unterstützung zurückziehen</button>
-											}
+											
 										}
 
 										<AuthorizeView>
@@ -393,12 +396,13 @@
 
 	private void StartEdit()
 	{
+
 		if (CanEdit)
 		{
 			vcParticipationService.LastEditedOperativeParagraphId = this.Paragraph.ResaOperativeParagraphId;
 			this.isEditing = true;
 		}
-		else if (Exchange.Resolution.State == EResolutionStates.Discussion)
+		else if (Exchange.Resolution.State == EResolutionStates.Discussion && vcParticipationService.DelegateType != "NA")
 		{
 			showAmendmentModal = true;
 		}

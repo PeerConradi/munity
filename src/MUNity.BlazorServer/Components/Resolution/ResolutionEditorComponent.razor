@@ -131,8 +131,8 @@ else
     {
         if (exchange?.Resolution != null && vcParticipationService != null)
         {
-            this.canEdit = exchange.Resolution.State == EResolutionStates.Public ||
-            (exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId != null && exchange.Resolution.SubmitterRole != null && exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId) ||
+            this.canEdit = (exchange.Resolution.State == EResolutionStates.Public ||
+            (exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId != null && exchange.Resolution.SubmitterRole != null && exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId)) ||
             isAuthed;
             InvokeAsync(StateHasChanged);
         }

@@ -1,0 +1,40 @@
+﻿@page "/oc/{CommitteeId}/logs"
+
+@layout MUNity.BlazorServer.Shared.MobileGameLayout
+
+@inject MunityContext dbContext
+
+<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap CommitteeId=@CommitteeId>
+    <AuthorizeView>
+        <Authorized>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Zeitstempel</th>
+                        <th>Art</th>
+                        <th>Durch</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var petition in dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == CommitteeId).SelectMany(n => n.CurrentAgendaItem.Petitions).Select(n => new { n.PetitionDate, n.PetitionType.Name, n.User.RoleName, n.Status}).OrderByDescending(n => n.PetitionDate))
+                    {
+                        <tr>
+                            <td>@petition.PetitionDate</td>
+                            <td>@petition.Name</td>
+                            <td>@petition.RoleName</td>
+                            <td>@petition.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </Authorized>
+        <NotAuthorized>
+            <p>Zugriff auf diesen Bereich verweigert</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap>
+
+@code {
+    [Parameter] public string CommitteeId { get; set; }
+}
