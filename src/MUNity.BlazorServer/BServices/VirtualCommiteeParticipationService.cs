@@ -31,6 +31,8 @@ namespace MUNity.BlazorServer.BServices
         private string _roleIso;
         public string RoleIso => _roleIso;
 
+        public string DelegateType { get; private set; }
+
         public bool IsTeamMember { get; set; }
 
         /// <summary>
@@ -99,9 +101,11 @@ namespace MUNity.BlazorServer.BServices
                 .AsNoTracking()
                 .Select(n => new
                 {
-                    RoleId = n.RoleId,
-                    RoleName = n.RoleName,
-                    Iso = n.DelegateCountry.Iso
+                    n.RoleId,
+                    n.RoleName,
+                    n.DelegateCountry.Iso,
+                    n.RoleType,
+                    n.DelegateType
                 })
                 .FirstOrDefault();
 
@@ -113,6 +117,7 @@ namespace MUNity.BlazorServer.BServices
             this._roleId = roleInfo?.RoleId;
             this._roleName = roleInfo?.RoleName;
             this._roleIso = roleInfo?.Iso ?? "un";
+            this.DelegateType = roleInfo?.DelegateType;
             this._exchange = _committeeExchangeService.GetExchange(committeeId);
             if (_exchange != null && this._roleId != null)
             {

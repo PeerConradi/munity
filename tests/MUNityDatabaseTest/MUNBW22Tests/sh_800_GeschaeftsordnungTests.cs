@@ -44,13 +44,13 @@ public partial class FullDMUN2022Tests
         var kfk = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-kfk");
         var mrr = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-mrr");
         var uv = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-uv");
-        var gr1 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr1");
-        var gr2 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr2");
-        var gr3 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr3");
-        var gr4 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr4");
-        var gr5 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr5");
-        var gr6 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr6");
-        var ego = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-ego");
+        //var gr1 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr1");
+        //var gr2 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr2");
+        //var gr3 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr3");
+        //var gr4 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr4");
+        //var gr5 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr5");
+        //var gr6 = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-gr6");
+        //var ego = _context.Committees.FirstOrDefault(n => n.CommitteeId == "munsh22-ego");
 
         List<Committee> committees = new List<Committee>();
         committees.Add(gv);
@@ -61,13 +61,13 @@ public partial class FullDMUN2022Tests
         committees.Add(kfk);
         committees.Add(mrr);
         committees.Add(uv);
-        committees.Add(gr1);
-        committees.Add(gr2);
-        committees.Add(gr3);
-        committees.Add(gr4);
-        committees.Add(gr5);
-        committees.Add(gr6);
-        committees.Add(ego);
+        //committees.Add(gr1);
+        //committees.Add(gr2);
+        //committees.Add(gr3);
+        //committees.Add(gr4);
+        //committees.Add(gr5);
+        //committees.Add(gr6);
+        //committees.Add(ego);
 
         // Persönliche Anträge
 

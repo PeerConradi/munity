@@ -15,8 +15,8 @@ public partial class FullDMUN2022Tests
     public void TestAddMUNSH2022SeatsToGV()
     {
         _context.Fluent.ForCommittee("munsh22-gv").AddSeatsByCountryNames(
-            "Ägypten", "Bangladesch",
-            "Brasilien", "Bolivien", "Botsuana", "Volksrepublik China",
+            "Ägypten", "Bangladesch", "Bolivien", "Botswana",
+            "Volksrepublik China",
             "Deutschland",
             "Fidschi",
             "Indien", "Indonesien", "Irland", "Italien",
@@ -27,7 +27,8 @@ public partial class FullDMUN2022Tests
 
         _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("Human rights watch", "HRW");
         _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("World economic forum", "WEF");
-        Assert.AreEqual(25, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-gv").Count());
+        _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("Besucher:in", "UN");
+        Assert.AreEqual(26, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-gv").Count());
     }
 
     [Test]
@@ -42,7 +43,8 @@ public partial class FullDMUN2022Tests
 
         _context.Fluent.ForCommittee("munsh22-ha3").AddNonGovernmentSeat("Save the Children", "StC");
         _context.Fluent.ForCommittee("munsh22-ha3").AddNonGovernmentSeat("UN Women", "UNW");
-        Assert.AreEqual(16, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-ha3").Count());
+        _context.Fluent.ForCommittee("munsh22-ha3").AddNonGovernmentSeat("Besucher:in", "UN");
+        Assert.AreEqual(17, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-ha3").Count());
     }
 
     [Test]
@@ -58,8 +60,8 @@ public partial class FullDMUN2022Tests
             "Tansania", "Thailand", "Vereinigte Staaten", "Nigeria");
 
         //_context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("International Institute for Sustainable Development", "IISD");
-        //_context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("World Wide Fund for Nature", "WWF");
-        Assert.AreEqual(24, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-wiso").Count());
+        _context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("Besucher:in", "UN");
+        Assert.AreEqual(25, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-wiso").Count());
     }
 
     [Test]
@@ -74,8 +76,8 @@ public partial class FullDMUN2022Tests
             );
 
         //_context.Fluent.ForCommittee("munsh22-sek").AddNonGovernmentSeat("Weltbankgruppe", "WBG");
-        //_context.Fluent.ForCommittee("munsh22-sek").AddNonGovernmentSeat("Welthungerhilfe", "WHH");
-        Assert.AreEqual(13, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sek").Count());
+        _context.Fluent.ForCommittee("munsh22-sek").AddNonGovernmentSeat("Besucher:in", "UN");
+        Assert.AreEqual(14, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sek").Count());
     }
 
     [Test]
@@ -87,7 +89,8 @@ public partial class FullDMUN2022Tests
             "Russland", "Brasilien", "Volksrepublik China", "Norwegen",
             "Vereinigte Arabische Emirate", "Vereinigtes Königreich", "Vereinigte Staaten");
         _context.Fluent.ForCommittee("munsh22-sr").AddNonGovernmentSeat("Welthungerhilfe", "WHH");
-        Assert.AreEqual(12, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sr").Count());
+        _context.Fluent.ForCommittee("munsh22-sr").AddNonGovernmentSeat("Besucher:in", "UN");
+        Assert.AreEqual(13, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sr").Count());
     }
 
     [Test]
@@ -107,8 +110,8 @@ public partial class FullDMUN2022Tests
             );
 
         //_context.Fluent.ForCommittee("munsh22-kfk").AddNonGovernmentSeat("Global Network of Women Peacebuilders", "gnwp");
-        //_context.Fluent.ForCommittee("munsh22-kfk").AddNonGovernmentSeat("Islamic Relief Worldwide", "ISLAMIC");
-        Assert.AreEqual(36, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-kfk").Count());
+        _context.Fluent.ForCommittee("munsh22-kfk").AddNonGovernmentSeat("Besucher:in", "UN");
+        Assert.AreEqual(37, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-kfk").Count());
     }
 
     [Test]
@@ -127,7 +130,8 @@ public partial class FullDMUN2022Tests
             "Vereinigtes Königreich");
         _context.Fluent.ForCommittee("munsh22-mrr").AddNonGovernmentSeat("Amnesty International", "AI");
         _context.Fluent.ForCommittee("munsh22-mrr").AddNonGovernmentSeat("Reporter ohne Grenzen", "RoG");
-        Assert.AreEqual(35, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-mrr").Count());
+        _context.Fluent.ForCommittee("munsh22-mrr").AddNonGovernmentSeat("Besucher:in", "UN");
+        Assert.AreEqual(36, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-mrr").Count());
     }
 
     [Test]
@@ -145,41 +149,41 @@ public partial class FullDMUN2022Tests
             "Tunesien", "Türkei", "Venezuela", "Vereinigte Arabische Emirate",
             "Vereinigte Staaten", "Nigeria");
         //_context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Friends of the Earth", "FoE");
-        //_context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Greenpeace International", "GP");
-        Assert.AreEqual(26, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-uv").Count());
+        _context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Besucher:in", "UN");
+        Assert.AreEqual(27, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-uv").Count());
     }
 
-    [Test]
-    [Order(2508)]
-    public void TestCreateGruppeAndEgo()
-    {
-        for (int i = 1; i < 7; i++)
-        {
-            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddSeatsByCountryNames(
-            "Afghanistan", "Ägypten", "Algerien", "Argentinien",
-            "Bahrain", "Belgien", "Brasilien", "Volksrepublik China",
-            "Dschibuti", "Frankreich", "Indonesien", "Italien",
-            "Japan", "Kenia", "Kolumbien", "Mali",
-            "Myanmar", "Norwegen", "Österreich", "Pakistan",
-            "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
-            "Vereinigte Staaten"
-            );
-            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddNonGovernmentSeat("IKRK", "IKRK");
-            _context.Fluent.ForCommittee($"munsh22-gr{i}").AddNonGovernmentSeat("Save the Children", "STC");
-        }
+    //[Test]
+    //[Order(2508)]
+    //public void TestCreateGruppeAndEgo()
+    //{
+    //    for (int i = 1; i < 7; i++)
+    //    {
+    //        _context.Fluent.ForCommittee($"munsh22-gr{i}").AddSeatsByCountryNames(
+    //        "Afghanistan", "Ägypten", "Algerien", "Argentinien",
+    //        "Bahrain", "Belgien", "Brasilien", "Volksrepublik China",
+    //        "Dschibuti", "Frankreich", "Indonesien", "Italien",
+    //        "Japan", "Kenia", "Kolumbien", "Mali",
+    //        "Myanmar", "Norwegen", "Österreich", "Pakistan",
+    //        "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
+    //        "Vereinigte Staaten"
+    //        );
+    //        _context.Fluent.ForCommittee($"munsh22-gr{i}").AddNonGovernmentSeat("IKRK", "IKRK");
+    //        _context.Fluent.ForCommittee($"munsh22-gr{i}").AddNonGovernmentSeat("Save the Children", "STC");
+    //    }
 
-        _context.Fluent.ForCommittee($"munsh22-ego").AddSeatsByCountryNames(
-            "Afghanistan", "Ägypten", "Algerien", "Argentinien",
-            "Bahrain", "Belgien", "Brasilien", "Volksrepublik China",
-            "Dschibuti", "Frankreich", "Indonesien", "Italien",
-            "Japan", "Kenia", "Kolumbien", "Mali",
-            "Myanmar", "Norwegen", "Österreich", "Pakistan",
-            "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
-            "Vereinigte Staaten"
-            );
-        _context.Fluent.ForCommittee("munsh22-ego").AddNonGovernmentSeat("IKRK", "IKRK");
-        _context.Fluent.ForCommittee("munsh22-ego").AddNonGovernmentSeat("Save the Children", "STC");
-    }
+    //    _context.Fluent.ForCommittee($"munsh22-ego").AddSeatsByCountryNames(
+    //        "Afghanistan", "Ägypten", "Algerien", "Argentinien",
+    //        "Bahrain", "Belgien", "Brasilien", "Volksrepublik China",
+    //        "Dschibuti", "Frankreich", "Indonesien", "Italien",
+    //        "Japan", "Kenia", "Kolumbien", "Mali",
+    //        "Myanmar", "Norwegen", "Österreich", "Pakistan",
+    //        "Philippinen", "Saudi-Arabien", "Singapur", "Vereinigtes Königreich",
+    //        "Vereinigte Staaten"
+    //        );
+    //    _context.Fluent.ForCommittee("munsh22-ego").AddNonGovernmentSeat("IKRK", "IKRK");
+    //    _context.Fluent.ForCommittee("munsh22-ego").AddNonGovernmentSeat("Save the Children", "STC");
+    //}
 
     [Test]
     [Order(2510)]

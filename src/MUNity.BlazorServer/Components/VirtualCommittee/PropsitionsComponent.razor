@@ -94,12 +94,20 @@
 			<div class="mt-5">
 				@if (committeeId != null && currentSessionExchange?.Petitions != null && vcService != null && vcService.RoleId != 0)
 				{
-					@foreach(var petitionCategory in dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == committeeId).SelectMany(n => n.AllowedPetitionTypes).OrderBy(n => n.SortOrder).Select(n => new { Category = n.Category, Id = n.PetitionTypeId, Name = n.Name}).ToList().GroupBy(n => n.Category))
+					@foreach(var petitionCategory in dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == committeeId).SelectMany(n => n.AllowedPetitionTypes).OrderBy(n => n.SortOrder).Select(n => new { n.Category, n.PetitionTypeId, n.Name, n.AllowCountyDelegates, n.AllowNonCountryDelegates}).ToList().GroupBy(n => n.Category))
 					{
 						<h3>@petitionCategory.Key</h3>
 						@foreach(var petitionType in petitionCategory)
 						{
-							<button class="btn m-1 btn-primary @((currentSessionExchange.Petitions.Any(n => n.PetitionTypeId == petitionType.Id && n.PetitionUserId == vcService.RoleId)) ? "disabled" : null)" @onclick="() => AddPetition(petitionType.Id)">@petitionType.Name</button>
+							@if (petitionType.AllowCountyDelegates && vcService.DelegateType == "Delegate" || petitionType.AllowNonCountryDelegates && vcService.DelegateType == "NA" && vcService.RoleName != "Besucher:in")
+							{
+								<button class="btn m-1 btn-primary @((currentSessionExchange.Petitions.Any(n => n.PetitionTypeId == petitionType.PetitionTypeId && n.PetitionUserId == vcService.RoleId)) ? "disabled" : null)" @onclick="() => AddPetition(petitionType.PetitionTypeId)">@petitionType.Name</button>
+
+							}
+							else
+							{
+								<button class="btn m-1 btn-dark disabled">@petitionType.Name | @vcService.DelegateType</button>
+							}
 						}
 					}
 				}
