@@ -321,6 +321,15 @@ namespace MUNity.Services
             _context.SaveChanges();
         }
 
+        public void RevokeMoveAmendment(ResaMoveAmendment amendment)
+        {
+            _context.Update(amendment);
+            amendment.Resolution.OperativeParagraphs.Remove(amendment.VirtualParagraph);
+            amendment.SourceParagraph.MoveAmendments.Remove(amendment);
+            _context.ResolutionMoveAmendments.Remove(amendment);
+            _context.SaveChanges();
+        }
+
         public void RevokeAddAmendment(ResaAddAmendment amendment)
         {
             _context.Update(amendment);

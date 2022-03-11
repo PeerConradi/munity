@@ -528,7 +528,10 @@
 
 	private void RevokeMoveAmendment(ResaMoveAmendment amendment)
 	{
-		// TODO.
+		if (amendment != null)
+		{
+			Exchange.RevokeMoveAmendment(amendment);
+		}
 	}
 
 	private void SupportAmendment(ResaAmendment amendment)
