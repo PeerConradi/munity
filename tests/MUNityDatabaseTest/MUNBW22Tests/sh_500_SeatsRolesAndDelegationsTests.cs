@@ -15,18 +15,19 @@ public partial class FullDMUN2022Tests
     public void TestAddMUNSH2022SeatsToGV()
     {
         _context.Fluent.ForCommittee("munsh22-gv").AddSeatsByCountryNames(
-            "Ägypten", "Albanien", "Australien", "Bangladesch",
-            "Brasilien", "Bulgarien", "Chile", "Volksrepublik China",
-            "Fidschi", "Ghana", "Griechenland", "Haiti",
-            "Indien", "Japan", "Lettland", "Libanon",
-            "Madagaskar", "Mali", "Nicaragua", "Nigeria",
-            "Norwegen", "Papua-Neuguinea", "Seychellen", "Südafrika",
-            "Tansania", "Thailand", "Tunesien", "Türkei",
-            "Ukraine", "Venezuela", "Vereinigte Arabische Emirate", "Vereinigte Staaten");
+            "Ägypten", "Bangladesch",
+            "Brasilien", "Bolivien", "Botsuana", "Volksrepublik China",
+            "Deutschland",
+            "Fidschi",
+            "Indien", "Indonesien", "Irland", "Italien",
+            "Kanada", "Kasachstan", "Kolumbien", "Libyen",
+            "Niederlande", "Polen", "Ruanda",
+            "Salomonen", "Tschechische Republik", "Tunesien", "Ukraine",
+             "Venezuela");
 
         _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("Human rights watch", "HRW");
         _context.Fluent.ForCommittee("munsh22-gv").AddNonGovernmentSeat("World economic forum", "WEF");
-        Assert.AreEqual(34, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-gv").Count());
+        Assert.AreEqual(25, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-gv").Count());
     }
 
     [Test]
@@ -34,17 +35,14 @@ public partial class FullDMUN2022Tests
     public void TestAddMUNSH2022SeatsToHA3()
     {
         _context.Fluent.ForCommittee("munsh22-ha3").AddSeatsByCountryNames(
-            "Ägypten", "Armenien", "Äthiopien", "Bangladesch",
-            "Belarus", "Brasilien", "Volksrepublik China", "Deutschland",
-            "Frankreich", "Japan", "Kasachstan", "Kolumbien",
-            "Kuba", "Libanon", "Libyen", "Mexiko",
-            "Myanmar", "Nigeria", "Ruanda", "Russland",
-            "Sudan", "Syrien", "Türkei", "Venezuela",
-            "Vereinigtes Königreich", "Zentralafrikanische Republik");
+            "Armenien", "Äthiopien", "Bangladesch", "Kasachstan",
+            "Kuba", "Libanon", "Mexiko", "Myanmar",
+            "Russland", "Volksrepublik China", "Deutschland", "Sudan",
+            "Türkei", "Zentralafrikanische Republik");
 
         _context.Fluent.ForCommittee("munsh22-ha3").AddNonGovernmentSeat("Save the Children", "StC");
         _context.Fluent.ForCommittee("munsh22-ha3").AddNonGovernmentSeat("UN Women", "UNW");
-        Assert.AreEqual(28, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-ha3").Count());
+        Assert.AreEqual(16, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-ha3").Count());
     }
 
     [Test]
@@ -52,21 +50,16 @@ public partial class FullDMUN2022Tests
     public void TestAddMUNSH2022SeatsToWiSo()
     {
         _context.Fluent.ForCommittee("munsh22-wiso").AddSeatsByCountryNames(
-            "Argentinien", "Australien", "Bangladesch", "Bolivien",
-            "Botswana", "Bulgarien", "Chile", "Volksrepublik China",
-            "Elfenbeinküste", "Deutschland", "Eswatini", "Gabun",
-            "Indien", "Indonesien", "Italien", "Japan",
-            "Kasachstan", "Kolumbien", "Demokratische Republik Kongo", "Südkorea",
-            "Kroatien", "Lettland", "Libyen", "Madagaskar",
-            "Mexiko", "Nicaragua", "Nigeria", "Norwegen",
-            "Oman", "Portugal", "Russland", "Salomonen",
-            "Simbabwe", "Tansania", "Thailand", "Tschechische Republik",
-            "Tunesien", "Vereinigte Staaten"
-            );
+            "Argentinien", "Australien", "Bangladesch", "Gabun",
+            "Italien", "Japan", "Kasachstan", "Kroatien",
+            "Madagaskar", "Nicaragua", "Portugal", "Salomonen",
+            "Bolivien", "Botswana", "Volksrepublik China", "Indien",
+            "Lettland", "Norwegen", "Oman", "Simbabwe",
+            "Tansania", "Thailand", "Vereinigte Staaten", "Nigeria");
 
         //_context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("International Institute for Sustainable Development", "IISD");
         //_context.Fluent.ForCommittee("munsh22-wiso").AddNonGovernmentSeat("World Wide Fund for Nature", "WWF");
-        Assert.AreEqual(38, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-wiso").Count());
+        Assert.AreEqual(24, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-wiso").Count());
     }
 
     [Test]
@@ -90,13 +83,11 @@ public partial class FullDMUN2022Tests
     public void TestAddMUNSH2022SeatsToSR()
     {
         _context.Fluent.ForCommittee("munsh22-sr").AddSeatsByCountryNames(
-            "Albanien", "Brasilien", "Volksrepublik China", "Frankreich",
-            "Gabun", "Ghana", "Indien", "Irland",
-            "Kenia", "Mexiko", "Nigeria", "Norwegen",
-            "Russland", "Vereinigte Arabische Emirate", "Vereinigtes Königreich", "Vereinigte Staaten"
-            );
+            "Gabun", "Ghana", "Irland", "Mexiko",
+            "Russland", "Brasilien", "Volksrepublik China", "Norwegen",
+            "Vereinigte Arabische Emirate", "Vereinigtes Königreich", "Vereinigte Staaten");
         _context.Fluent.ForCommittee("munsh22-sr").AddNonGovernmentSeat("Welthungerhilfe", "WHH");
-        Assert.AreEqual(17, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sr").Count());
+        Assert.AreEqual(12, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-sr").Count());
     }
 
     [Test]
@@ -125,19 +116,18 @@ public partial class FullDMUN2022Tests
     public void TestAddMUNSH2022SeatsMRR()
     {
         _context.Fluent.ForCommittee("munsh22-mrr").AddSeatsByCountryNames(
-            "Argentinien", "Armenien", "Bangladesch", "Bolivien",
-            "Brasilien", "Burkina Faso", "Volksrepublik China", "Elfenbeinküste",
-            "Deutschland", "Eritrea", "Fidschi", "Indien",
-            "Indonesien", "Italien", "Japan", "Kamerun",
-            "Südkorea", "Kuba", "Libyen", "Malawi",
+            "Armenien", "Bangladesch", "Italien", "Japan",
+            "Kamerun", "Südkorea", "Libyen", "Malawi",
             "Mexiko", "Namibia", "Nepal", "Niederlande",
-            "Österreich", "Pakistan", "Philippinen", "Russland",
-            "Somalia", "Sudan", "Togo", "Tschechische Republik",
-            "Ukraine", "Usbekistan", "Venezuela", "Vereinigtes Königreich"
-            );
+            "Philippinen", "Russland", "Bolivien", "Brasilien",
+            "Burkina Faso", "Volksrepublik China", "Elfenbeinküste", "Deutschland",
+            "Eritrea", "Fidschi", "Indien", "Indonesien",
+            "Österreich", "Pakistan", "Somalia", "Sudan",
+            "Tschechische Republik", "Ukraine", "Usbekistan", "Venezuela",
+            "Vereinigtes Königreich");
         _context.Fluent.ForCommittee("munsh22-mrr").AddNonGovernmentSeat("Amnesty International", "AI");
         _context.Fluent.ForCommittee("munsh22-mrr").AddNonGovernmentSeat("Reporter ohne Grenzen", "RoG");
-        Assert.AreEqual(38, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-mrr").Count());
+        Assert.AreEqual(35, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-mrr").Count());
     }
 
     [Test]
@@ -145,18 +135,18 @@ public partial class FullDMUN2022Tests
     public void TestAddMUNSH2022SeatsUV()
     {
         _context.Fluent.ForCommittee("munsh22-uv").AddSeatsByCountryNames(
+
+
             "Ägypten", "Albanien", "Australien", "Bangladesch",
-            "Brasilien", "Bulgarien", "Chile", "Volksrepublik China",
-            "Fidschi", "Ghana", "Griechenland", "Haiti",
-            "Indien", "Japan", "Lettland", "Libanon",
-            "Madagaskar", "Mali", "Nicaragua", "Nigeria",
-            "Norwegen", "Papua-Neuguinea", "Seychellen", "Südafrika",
-            "Tansania", "Thailand", "Tunesien", "Türkei",
-            "Ukraine", "Venezuela", "Vereinigte Arabische Emirate", "Vereinigte Staaten"
-            );
+            "Ghana", "Griechenland", "Madagaskar", "Nicaragua",
+            "Papua-Neuguinea", "Brasilien", "Bulgarien", "Volksrepublik China",
+            "Fidschi", "Haiti", "Indien", "Lettland",
+            "Norwegen", "Südafrika", "Tansania", "Thailand",
+            "Tunesien", "Türkei", "Venezuela", "Vereinigte Arabische Emirate",
+            "Vereinigte Staaten", "Nigeria");
         //_context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Friends of the Earth", "FoE");
         //_context.Fluent.ForCommittee("munsh22-uv").AddNonGovernmentSeat("Greenpeace International", "GP");
-        Assert.AreEqual(32, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-uv").Count());
+        Assert.AreEqual(26, _context.Delegates.Where(n => n.Committee.CommitteeId == "munsh22-uv").Count());
     }
 
     [Test]
