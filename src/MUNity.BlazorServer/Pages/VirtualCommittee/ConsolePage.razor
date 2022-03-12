@@ -1,0 +1,130 @@
+﻿@page "/oc/{CommitteeId}/console"
+
+@layout MUNity.BlazorServer.Shared.MobileGameLayout
+
+<MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap CommitteeId=@CommitteeId>
+    <AuthorizeView>
+        <Authorized>
+            <h1>Gremium Konsole</h1>
+            <h5>Serverinformationen</h5>
+            <button class="btn btn-success" @onclick="ReloadProcess"><i class="fa fa-redo"></i> Neu laden</button>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Eigenschaft</th>
+                        <th>Wert</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (process != null)
+                    {
+                        <tr>
+                            <td>Id</td>
+                            <td>@process.Id</td>
+                        </tr>
+
+                        <tr>
+                            <td>Priority</td>
+                            <td>@process.BasePriority</td>
+                        </tr>
+
+                        <tr>
+                            <td>Handle</td>
+                            <td>@process.Handle</td>
+                        </tr>
+
+                        <tr>
+                            <td>Machine Name</td>
+                            <td>@process.MachineName</td>
+                        </tr>
+
+                        <tr>
+                            <td>Main Module</td>
+                            <td>@process.MainModule</td>
+                        </tr>
+
+                        <tr>
+                            <td>NonpagedSystemMemorySize64</td>
+                            <td>@process.NonpagedSystemMemorySize64</td>
+                        </tr> 
+
+                        <tr>
+                            <td>PagedMemorySize64</td>
+                            <td>@process.PagedMemorySize64</td>
+                        </tr>
+
+                        <tr>
+                            <td>PeakPagedMemorySize64</td>
+                            <td>@process.PeakPagedMemorySize64</td>
+                        </tr> 
+
+                        <tr>
+                            <td>VirtualMemorySize64</td>
+                            <td>@process.VirtualMemorySize64</td>
+                        </tr>
+
+                        <tr>
+                            <td>PeakVirtualMemorySize64</td>
+                            <td>@process.PeakVirtualMemorySize64</td>
+                        </tr> 
+
+                        <tr>
+                            <td>PeakWorkingSet64</td>
+                            <td>@process.PeakWorkingSet64</td>
+                        </tr>
+
+                        <tr>
+                            <td>PrivateMemorySize64</td>
+                            <td><b>@(process.PrivateMemorySize64 / 1024 / 1024)MB / 16GB</b>  (@process.PrivateMemorySize64 Bytes)</td>
+                        </tr> 
+
+                        <tr>
+                            <td>PrivilegedProcessorTime</td>
+                            <td>@process.PrivilegedProcessorTime</td>
+                        </tr>
+
+                        <tr>
+                            <td>Responding</td>
+                            <td>@process.Responding</td>
+                        </tr>
+
+                        <tr>
+                            <td>PriorityClass</td>
+                            <td>@process.PriorityClass</td>
+                        </tr>
+
+                        <tr>
+                            <td>StartTime</td>
+                            <td>@process.StartTime</td>
+                        </tr>
+
+                        <tr>
+                            <td>Thread Count</td>
+                            <td>@process.Threads?.Count</td>
+                        </tr>
+
+                        <tr>
+                            <td>Working set</td>
+                            <td>@process.WorkingSet64</td>
+                        </tr>
+                    }
+                    
+                </tbody>
+            </table>
+        </Authorized>
+        <NotAuthorized>
+            <p>Zugriff auf diesen Bereich verweigert</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBootstrap>
+
+@code {
+    [Parameter] public string CommitteeId { get; set;}
+
+    System.Diagnostics.Process process;
+
+    private void ReloadProcess()
+    {
+        process = System.Diagnostics.Process.GetCurrentProcess();
+    }
+}
