@@ -42,7 +42,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="list-group">
-                              @foreach(var resolution in dbContext.ResolutionAuths.Where(n => n.Committee.CommitteeId == VisitedCommitteeId).Select(n => new {n.Resolution.ResaElementId, n.Resolution.Topic}))
+                              @foreach(var resolution in dbContext.ResolutionAuths.AsNoTracking().Where(n => n.Committee.CommitteeId == VisitedCommitteeId && !string.IsNullOrEmpty(n.Resolution.Topic)).Select(n => new {n.Resolution.ResaElementId, n.Resolution.Topic}))
                                 {
                                     <a @onclick="() => showResolutionId = resolution.ResaElementId" class="cursor-pointer list-group-item list-group-item-action">@resolution.Topic</a>
                                 }
@@ -70,8 +70,8 @@ else
 
 @if (!string.IsNullOrEmpty(showResolutionId))
 {
-
-    <div class="panel panel-inverse panel-expand">
+    <div class="modal-backdrop" style="opacity: 50%"></div>
+    <div class="panel panel-inverse panel-expand m-5">
         <div class="panel-heading">
             <h4 class="panel-title">Resolution</h4>
             <div class="panel-heading-btn">
