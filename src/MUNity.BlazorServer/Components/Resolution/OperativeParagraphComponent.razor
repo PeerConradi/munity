@@ -225,7 +225,8 @@
 										}
 										else
 										{
-											if (vcParticipationService.DelegateType != "NA")
+											if (vcParticipationService.DelegateType != "NA" &&
+											(!string.IsNullOrEmpty(CommitteeContext) && !vcParticipationService.IsActiveForCommittee(CommitteeContext) != false))
 											{
 												if (amendment.Supporters.All(n => n.Role?.RoleId != vcParticipationService.RoleId))
 												{
@@ -345,6 +346,8 @@
 
 	[Parameter] public string Class { get; set; }
 
+	[Parameter] public string CommitteeContext { get; set; }
+
 	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
 	private bool showAmendmentModal = false;
@@ -396,6 +399,9 @@
 
 	private void StartEdit()
 	{
+		// Do not allow to make any changes when the user is just reading this resolution
+		if (!string.IsNullOrEmpty(CommitteeContext) && !vcParticipationService.IsActiveForCommittee(CommitteeContext))
+			return;
 
 		if (CanEdit)
 		{

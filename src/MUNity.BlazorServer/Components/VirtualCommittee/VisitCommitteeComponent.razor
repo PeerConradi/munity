@@ -35,6 +35,21 @@
                         </ul>
                     </div>
                 </div>
+
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Resolutionen</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="list-group">
+                              @foreach(var resolution in dbContext.ResolutionAuths.Where(n => n.Committee.CommitteeId == VisitedCommitteeId).Select(n => new {n.Resolution.ResaElementId, n.Resolution.Topic}))
+                                {
+                                    <a @onclick="() => showResolutionId = resolution.ResaElementId" class="cursor-pointer list-group-item list-group-item-action">@resolution.Topic</a>
+                                }
+                        </div>
+                        
+                    </div>
+                </div>
             }
         </div>
         <div class="col-6">
@@ -53,6 +68,24 @@ else
     <p>Es wurde kein Exchange geladen/gefunden.</p>
 }
 
+@if (!string.IsNullOrEmpty(showResolutionId))
+{
+
+    <div class="panel panel-inverse panel-expand">
+        <div class="panel-heading">
+            <h4 class="panel-title">Resolution</h4>
+            <div class="panel-heading-btn">
+				<a @onclick="() => editorRef?.Reload()" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload"><i class="fa fa-redo"></i></a>
+				<a @onclick="() => showResolutionId = null" class="btn btn-xs btn-icon btn-danger" data-toggle="panel-remove"><i class="fa fa-times"></i></a>
+			</div>
+        </div>
+        <div class="panel-body">
+            <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent @ref=editorRef
+            CommitteeContext=@VisitedCommitteeId CanEdit=false ResolutionId=@showResolutionId />
+        </div>
+    </div>
+}
+
 @code {
     [EditorRequired][Parameter]public string VisitedCommitteeId { get; set; }
 
@@ -61,6 +94,10 @@ else
     private CommitteeInfo committeeInfo;
 
     private ListOfSpeakersViewModel listOfSpeakersViewModel;
+
+    private string showResolutionId;
+
+    private MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent editorRef;
 
     protected override void OnParametersSet()
     {

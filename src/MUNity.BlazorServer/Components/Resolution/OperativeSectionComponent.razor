@@ -30,6 +30,7 @@
 			Index=@paragraphIndex
 			CanEdit=@CanEdit
 			Class="@((activatedMoveAmendment != null && activatedMoveAmendment.SourceParagraph != operativeParagraph) ? "ms-5" : "")"
+			CommitteeContext=@CommitteeContext
 			/>
 	}
 	else
@@ -77,9 +78,13 @@
 
 @if (pcService.RoleId != null && Exchange.Resolution.State == EResolutionStates.Discussion)
 {
-	<div class="row d-flex justify-content-center mb-3 mt-2">
-		<button class="btn btn-indigo btn-icon btn-lg" title="Absatz über einen Änderungsantrag hinzufügen" @onclick="() => showCreateAddAmendmentModal = true"><i class="fa fa-plus"></i></button>
-	</div>
+	if (CommitteeContext == null || CommitteeContext != null && pcService.IsActiveForCommittee(CommitteeContext))
+	{
+		<div class="row d-flex justify-content-center mb-3 mt-2">
+			<button class="btn btn-indigo btn-icon btn-lg" title="Absatz über einen Änderungsantrag hinzufügen" @onclick="() => showCreateAddAmendmentModal = true"><i class="fa fa-plus"></i></button>
+		</div>
+	}
+	
 }
 
 <AuthorizeView>
@@ -138,6 +143,8 @@
 	[EditorRequired][Parameter] public ResolutionExchange Exchange { get; set; }
 
 	[EditorRequired][Parameter] public bool CanEdit { get; set; }
+
+	[Parameter] public string CommitteeContext { get; set; }
 
 	private int paragraphIndex = 0;
 

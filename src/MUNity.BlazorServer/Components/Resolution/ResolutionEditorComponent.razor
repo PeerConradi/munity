@@ -43,12 +43,12 @@
 
     <div class="row">
         <div class="col-12">
-            <ResolutionHeaderEditorComponent Exchange=@exchange CanEdit=@canEdit />
+            <ResolutionHeaderEditorComponent Exchange=@exchange CanEdit=@CanEdit />
         </div>
     </div>
 
-    <PreambleEditorComponent Exchange=@exchange CanEdit=@canEdit />
-    <OperativeSectionComponent Exchange=@exchange CanEdit=@canEdit />
+    <PreambleEditorComponent Exchange=@exchange CanEdit=@CanEdit />
+    <OperativeSectionComponent Exchange=@exchange CanEdit=@CanEdit CommitteeContext=@CommitteeContext />
 
     <AuthorizeView>
         <Authorized>
@@ -74,9 +74,11 @@ else
 
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
+    [Parameter] public string CommitteeContext { get; set; }
+
     private bool isAuthed = false;
 
-    private bool canEdit;
+    [Parameter]public bool CanEdit { get; set; }
 
     private ResolutionExchange exchange;
     private bool allowOthersToEdit
@@ -131,7 +133,7 @@ else
     {
         if (exchange?.Resolution != null && vcParticipationService != null)
         {
-            this.canEdit = (exchange.Resolution.State == EResolutionStates.Public ||
+            this.CanEdit = (exchange.Resolution.State == EResolutionStates.Public ||
             (exchange.Resolution.State == EResolutionStates.Private && vcParticipationService.RoleId != null && exchange.Resolution.SubmitterRole != null && exchange.Resolution.SubmitterRole.RoleId == vcParticipationService.RoleId)) ||
             isAuthed;
             InvokeAsync(StateHasChanged);
@@ -149,13 +151,18 @@ else
         var taskResult = await AuthStateTask;
         isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
         base.OnParametersSet();
+        Reload();
+    }
+
+    public void Reload()
+    {
         if (resolutionExchangeService != null)
         {
             exchange = resolutionExchangeService.GetResolution(ResolutionId);
 
             LoadEditAuth();
             vcParticipationService.Registered += delegate { LoadEditAuth(); };
+            InvokeAsync(StateHasChanged);
         }
-        
     }
 }
