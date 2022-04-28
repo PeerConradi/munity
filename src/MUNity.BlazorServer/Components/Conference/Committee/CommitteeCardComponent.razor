@@ -1,0 +1,131 @@
+﻿@using MUNity.Database.Models.Session
+@inject MunityContext dbContext
+@inject NavigationManager navManger
+
+<div class="card border-0 mb-3 bg-gray-900 text-white">
+	<!-- BEGIN card-body -->
+	<div class="card-body cursor-pointer" 
+	style="background: no-repeat bottom right; background-image: url(/img/svg/img-4.svg); background-size: auto 60%;"
+	@onclick=OpenCommitteeDashboard>
+		<!-- BEGIN title -->
+		<div class="mb-3 text-gray-500 ">
+			<b>@info?.Name</b>
+		</div>
+		<!-- END title -->
+		<!-- BEGIN sales -->
+		<h3 class="mb-10px">@info?.DelegatesCount Delegierte</h3>
+		<!-- END sales -->
+		<!-- BEGIN percentage -->
+		<div class="text-gray-500 mb-1px">@CommitteeId @(CommitteeId.GetHashCode() % 256)</div>
+		<!-- END percentage -->
+	</div>
+	<!-- END card-body -->
+	<!-- BEGIN widget-list -->
+	<div class="widget-list rounded-bottom inverse-mode">
+
+		@if (currentSession != null)
+		{
+			<!-- BEGIN widget-list-item -->
+			<a href="/committee/session/@currentSession.CommitteeSessionId" class="widget-list-item rounded-0 pt-3px">
+				<div class="widget-list-media icon">
+					<i class="fa fa-clock bg-success text-white"></i>
+				</div>
+				<div class="widget-list-content">
+					<div class="widget-list-title">@currentSession.Name</div>
+				</div>
+				<div class="widget-list-action text-nowrap text-gray-500">
+					
+				</div>
+			</a>
+		}
+		else
+		{
+			<!-- END widget-list-item -->
+			<!-- BEGIN widget-list-item -->
+			<a href="#" class="widget-list-item">
+				<div class="widget-list-media icon">
+					<i class="fa fa-times bg-danger text-white"></i>
+				</div>
+				<div class="widget-list-content">
+					<div class="widget-list-title">Keine Sitzung erstellt</div>
+				</div>
+				<div class="widget-list-action text-nowrap text-gray-500">
+					-
+				</div>
+			</a>
+		}
+
+		@if (ListOfSpeakersId != null)
+		{
+			<!-- BEGIN widget-list-item -->
+			<a href="/los/@ListOfSpeakersId" class="widget-list-item rounded-0 pt-3px">
+				<div class="widget-list-media icon">
+					<i class="fa fa-list bg-success text-white"></i>
+				</div>
+				<div class="widget-list-content">
+					<div class="widget-list-title">Redeliste konfiguriert</div>
+				</div>
+				<div class="widget-list-action text-nowrap text-gray-500">
+					
+				</div>
+			</a>
+		}
+		else
+		{
+			<!-- END widget-list-item -->
+			<!-- BEGIN widget-list-item -->
+			<a href="#" class="widget-list-item">
+				<div class="widget-list-media icon">
+					<i class="fa fa-times bg-danger text-white"></i>
+				</div>
+				<div class="widget-list-content">
+					<div class="widget-list-title">Keine Redeliste</div>
+				</div>
+				<div class="widget-list-action text-nowrap text-gray-500">
+					-
+				</div>
+			</a>
+		}
+
+		
+	</div>
+	<!-- END widget-list -->
+</div>
+
+@code {
+	[Parameter] public string CommitteeId { get; set; }
+
+	private class Info
+	{
+		public string Name { get; set; }
+
+		public int DelegatesCount { get; set; }
+	}
+
+	private Info info;
+
+	private CommitteeSession currentSession = null;
+
+	private string ListOfSpeakersId = null;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		info = dbContext.Committees.Where(n => n.CommitteeId == CommitteeId)
+		.Select(n => new Info()
+			{
+				Name = n.Name,
+				DelegatesCount = dbContext.Delegates.Count(n => n.Committee.CommitteeId == CommitteeId)
+			}).FirstOrDefault();
+		if (info != null)
+		{
+			currentSession = dbContext.Committees.Where(n => n.CommitteeId == CommitteeId).Select(n => n.CurrentSession).FirstOrDefault();
+			this.ListOfSpeakersId = dbContext.Committees.Where(n => n.CommitteeId == CommitteeId).Select(n => n.ListOfSpeakers.ListOfSpeakersId).FirstOrDefault();
+		}
+	}
+
+	private void OpenCommitteeDashboard()
+	{
+		navManger.NavigateTo($"/c/committee/{CommitteeId}");
+	}
+}

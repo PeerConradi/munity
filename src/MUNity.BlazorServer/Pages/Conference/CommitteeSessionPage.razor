@@ -7,10 +7,15 @@
     <Authorized>
         <h1>@session.Name</h1>
         <h2>von @session?.StartDate bis @session?.EndDate</h2>
-        <h3>Tagesordnungspunkte</h3>
-        <ul>
-            
-        </ul>
+        <h3>Tagesordnungspunkt</h3>
+        @if (session.CurrentAgendaItem != null)
+        {
+            <h5>@session?.CurrentAgendaItem?.Name</h5>
+
+        }
+        else {
+            <button class="btn btn-default" @onclick=CreateAgendaItem>Kein Tagesordnungspunkt - jetzt erstellen</button>
+        }
         
     </Authorized>
     <NotAuthorized>
@@ -28,6 +33,18 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        this.session = dbContext.CommitteeSessions.FirstOrDefault(n => n.CommitteeSessionId == Id);
+        this.session = dbContext.CommitteeSessions.Include(n => n.CurrentAgendaItem).FirstOrDefault(n => n.CommitteeSessionId == Id);
+    }
+
+    private void CreateAgendaItem()
+    {
+        var agendaItem = new AgendaItem()
+        {
+            Name = "Neuer Tagesordnungspunkt",
+            Status = EAgendaItemStatuses.Active
+        };
+        this.session.CurrentAgendaItem = agendaItem;
+        dbContext.AgendaItems.Add(agendaItem);
+        dbContext.SaveChanges();
     }
 }

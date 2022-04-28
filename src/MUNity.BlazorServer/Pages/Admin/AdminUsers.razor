@@ -1,10 +1,24 @@
 ﻿@inject MunityContext dbContext
+@inject UserManager<MunityUser> userManager
+@inject SignInManager<MunityUser> signInManager
 
 @page "/admin/users"
+@using MUNity.Database.Models.User
+@using System.ComponentModel.DataAnnotations
 
 <AuthorizeView Roles="Head-Admin, Admin">
     <Authorized>
-        <table class="table">
+        
+
+
+        <div class="row">
+            <div class="col-8">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Benutzer</h4>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table">
             <thead>
                 <tr>
                     <th>Username</th>
@@ -25,7 +39,79 @@
                 }
             </tbody>
         </table>
+                    </div>
+                </div>
+            </div>
 
+            <div class="col-4">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Benutzer anlegen</h4>
+                    </div>
+                    <div class="panel-body">
+                        @if (createResult != null)
+                        {
+                            @if (createResult.Succeeded)
+                            {
+                                <div class="alert alert-success">
+                                    <h4>Account erstellt</h4>
+                                    <p>Der Account wurde erfolgreich erstellt.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger">
+                                    <h4>Fehler</h4>
+                                    <p>Bei der Erstellung sind Fehler aufgetreten</p>
+                                    @if (createResult.Errors.Any())
+                                    {
+                                        @foreach(var error in createResult.Errors)
+                                        {
+                                            <p>@error?.Code @error?.Description</p>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>Es wurde kein Fehlercode gefunden</p>
+                                    }
+
+                                </div>
+                            }
+                        }
+
+                        <EditForm Model=@newUser Context="c_name" OnValidSubmit=CreateAccount>
+                            <div class="form-group">
+                                <label>Benutzername</label>
+                                <InputText @bind-Value=@newUser.UserName class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Passwort</label>
+                                <InputText @bind-Value=@newUser.Password class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mail</label>
+                                <InputText @bind-Value=@newUser.EMail class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Vorname</label>
+                                <InputText @bind-Value=@newUser.Forename class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Nachname</label>
+                                <InputText @bind-Value=@newUser.LastName class="form-control" />
+                            </div>
+
+                            <button class="btn btn-success mt-2" type="submit">Account erstellen</button>
+                        </EditForm>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
     </Authorized>
     <NotAuthorized>
         <p>Zugriff verweigert!</p>
@@ -33,5 +119,50 @@
 </AuthorizeView>
 
 @code {
+    private class NewUserData
+    {
+        [Required]
+        [MinLength(3)]
+        public string UserName { get; set; }
 
+        [Required]
+        [MinLength(3)]
+        public string Password { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string EMail { get; set; }
+
+        [Required]
+        [MinLength(3)]
+        public string Forename { get; set; }
+
+        [Required]
+        [MinLength(3)]
+        public string LastName { get; set; }
+    }
+
+    private NewUserData newUser = new();
+
+    private IdentityResult createResult = null;
+
+    private async Task CreateAccount()
+    {
+        var user = new MunityUser()
+        {
+            UserName = newUser.UserName,
+            Email = newUser.EMail,
+            Forename = newUser.Forename,
+            Lastname = newUser.LastName
+        };
+        var result = await userManager.CreateAsync(user);
+        if (result.Succeeded)
+        {
+            createResult = await userManager.AddPasswordAsync(user, newUser.Password);
+        }
+        else
+        {
+            createResult = result;
+        }
+    }
 }

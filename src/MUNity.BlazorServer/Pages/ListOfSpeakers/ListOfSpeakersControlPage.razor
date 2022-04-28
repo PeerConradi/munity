@@ -4,10 +4,10 @@
 
 @inject Services.ListOfSpeakersService listOfSpeaerService
 
-@if (viewModel != null)
+@if (Id != null)
 {
-    <MUNity.BlazorServer.Components.ListOfSpeakers.ListOfSpeakersHeaderComponent />
-    <MUNity.BlazorServer.Components.ListOfSpeakers.LoSManagerComponent ViewModel=@viewModel />
+    @*<MUNity.BlazorServer.Components.ListOfSpeakers.ListOfSpeakersHeaderComponent ListOfSpeakersId=@Id />*@
+    <MUNity.BlazorServer.Components.ListOfSpeakers.LoSManagerComponent ListOfSpeakersId=@Id  />
 
 }
 else
@@ -24,13 +24,13 @@ else
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        if (!string.IsNullOrEmpty(Id))
-        {
-            viewModel = listOfSpeaerService.GetViewModel(Id);
-            if (viewModel == null)
-            {
-                this.viewModel = listOfSpeaerService.CreateList(Id);
-            }
-        }
+        //if (!string.IsNullOrEmpty(Id))
+        //{
+        //    viewModel = listOfSpeaerService.GetViewModel(Id);
+        //    if (viewModel == null)
+        //    {
+        //        this.viewModel = listOfSpeaerService.CreateList(Id);
+        //    }
+        //}
     }
 }

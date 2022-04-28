@@ -1,0 +1,53 @@
+﻿@page "/presentation/{CommitteeId}"
+@using MUNity.BlazorServer.Components.ListOfSpeakers
+
+@inject MunityContext dbContext
+@inject Services.ListOfSpeakersService losService
+
+@layout Shared.MobileGameLayout
+
+<h1 class="page-header">PresentationPage</h1>
+
+<div class="row">
+    <div class="col-8">
+
+    </div>
+    <div class="col-4">
+        @if (ViewModel != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <LoSSpeakersComponent ViewModel="@ViewModel" AllowEdit="false" />
+                </div>
+
+                <div class="col-12">
+                    <LoSQuestionsComponent ViewModel="@ViewModel" AllowEdit="false" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <p>Keine Redeliste initialisiert</p>
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter] public string CommitteeId { get; set; }
+
+    private string listOfSpeakersId;
+
+    private ViewModels.ListOfSpeakers.ListOfSpeakersViewModel ViewModel;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        listOfSpeakersId = dbContext.Committees.Where(n => n.CommitteeId == CommitteeId).Select(n => n.ListOfSpeakers.ListOfSpeakersId).FirstOrDefault();
+
+        if (listOfSpeakersId != null)
+        {
+            this.ViewModel = losService.GetViewModel(this.listOfSpeakersId);
+        }
+    }
+}

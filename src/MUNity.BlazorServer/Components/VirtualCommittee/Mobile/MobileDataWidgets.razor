@@ -1,0 +1,53 @@
+﻿@inject MunityContext dbContext
+
+<div class="row gx-2 mb-20px">
+	<!-- BEGIN col-4 -->
+	<div class="col-lg-4 col-sm-6">
+		<div class="widget widget-stats bg-teal mb-7px">
+			<div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>
+			<div class="stats-content">
+				<div class="stats-title">Delegierte</div>
+				<div class="stats-number">@dbContext.Delegates.Count(n => n.Committee.CommitteeId == CommitteeId)</div>
+				<div class="stats-progress progress">
+					<div class="progress-bar" style="width: 70.1%;"></div>
+				</div>
+				<div class="stats-desc">Anwesend sind...</div>
+			</div>
+		</div>
+	</div>
+	<!-- END col-4 -->
+	<!-- BEGIN col-4 -->
+	<div class="col-lg-4 col-sm-6">
+		<div class="widget widget-stats bg-blue mb-7px">
+			<div class="stats-icon stats-icon-lg"><i class="fa fa-file-alt fa-fw"></i></div>
+			<div class="stats-content">
+				<div class="stats-title">Resolutionen</div>
+				<div class="stats-number">@dbContext.ResolutionAuths.Count(n => n.Committee.CommitteeId == CommitteeId)</div>
+				<div class="stats-progress progress">
+					<div class="progress-bar" style="width: 40.5%;"></div>
+				</div>
+				<div class="stats-desc">Better than last week (40.5%)</div>
+			</div>
+		</div>
+	</div>
+	<!-- END col-4 -->
+	<!-- BEGIN col-4 -->
+	<div class="col-lg-4 col-sm-6">
+		<div class="widget widget-stats bg-black mb-7px">
+			<div class="stats-icon stats-icon-lg"><i class="fa fa-comment-alt fa-fw"></i></div>
+			<div class="stats-content">
+				<div class="stats-title">Redebeiträge</div>
+				<div class="stats-number">3,988</div>
+				<div class="stats-progress progress">
+					<div class="progress-bar" style="width: 54.9%;"></div>
+				</div>
+				<div class="stats-desc">Better than last week (54.9%)</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+@code {
+	[Parameter] public string CommitteeId { get; set; }
+}

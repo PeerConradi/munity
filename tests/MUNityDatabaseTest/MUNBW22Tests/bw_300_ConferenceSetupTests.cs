@@ -47,20 +47,12 @@ public partial class FullDMUN2022Tests
                 .WithShort("GV")
                 .WithType(CommitteeTypes.AtLocation)
                 .WithTopic("Nachhaltige soziale und wirtschaftliche Entwicklung nach Covid-19")
-                .WithTopic("Beschleunigung der Maßnahmen zur Umsetzung des Pariser Klimaabkommens")
+                .WithTopic("Beschleunigung der Maßnahmen zur Umsetzung des Pariser Klimaabkommens"));
 
-                .WithSubCommittee(ha3 => ha3.WithName("Hauptausschuss 3")
-                    .WithFullName("Ausschuss für soziale, humanitäre und kulturelle Fragen")
-                    .WithShort("HA3")
-                    .WithType(CommitteeTypes.AtLocation)
-                    .WithTopic("Implementierung der UN-Behindertenrechtskonvention")
-                    .WithTopic("Koordinierung internationaler Zusammenarbeit in der humanitären Hilfe")
-                    .WithTopic("Rückgabe von Kunstgegenständen und kulturellen Artefakten")));
         var recaff = _context.SaveChanges();
-        Assert.AreEqual(2, _context.Committees.Count());
+        Assert.AreEqual(1, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-gv"));
-        Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-ha3"));
-        Assert.AreEqual(5, _context.CommitteeTopics.Count());
+        Assert.AreEqual(2, _context.CommitteeTopics.Count());
     }
 
 
@@ -89,7 +81,7 @@ public partial class FullDMUN2022Tests
                 .WithTopic("Einsatz robuster Mandate in der Friedenssicherung")
                 .WithTopic("Langfristiger Frieden in Zypern")
                 .WithTopic("Internationale Kooperation in der Krisenprävention")));
-        Assert.AreEqual(4, _context.Committees.Count());
+        Assert.AreEqual(3, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-sr"));
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kfk"));
     }
@@ -115,7 +107,7 @@ public partial class FullDMUN2022Tests
             //    .WithTopic("Tourismus und nachhaltige Entwicklung")
             //    .WithTopic("Resiliente und nachhaltige Landwirtschaft"))
             );
-        Assert.AreEqual(5, _context.Committees.Count());
+        Assert.AreEqual(4, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-wiso"));
         //Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kbe"));
     }
@@ -132,7 +124,7 @@ public partial class FullDMUN2022Tests
             .WithTopic("Implementierung des UN-Migrationspakts")
             .WithTopic("Gesundheitsversorgung von Migrant*innen")
             .WithTopic("Umgang mit traumatisierten Geflüchteten"));
-        Assert.AreEqual(6, _context.Committees.Count());
+        Assert.AreEqual(5, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-iom"));
     }
 
@@ -148,35 +140,35 @@ public partial class FullDMUN2022Tests
             .WithTopic("Rolle der Jugend bei der Umsetzung des Pariser Klimaabkommens")
             .WithTopic("Adaption an den Meeresspiegelanstieg in tiefliegenden Gebieten und Inselstaaten")
             .WithTopic("Umsetzung von SDG 7: Nachhaltige Energie für alle"));
-        Assert.AreEqual(7, _context.Committees.Count());
+        Assert.AreEqual(6, _context.Committees.Count());
         Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-kk"));
     }
 
-    [Test]
-    [Order(315)]
-    public void TestAddMenschenrechtsrat()
-    {
-        _context.Fluent.ForConference("munbw22").AddCommittee(mrr => mrr
-            .WithName("Menschenrechtsrat")
-            .WithFullName("Menschenrechtsrat")
-            .WithShort("MRR")
-            .WithType(CommitteeTypes.Online)
-            .WithTopic("Menschenrechtslage in der Republik Myanmar")
-            .WithTopic("Bekämpfung der Diskriminierung aufgrund sexueller Orientierung und Identität")
-            .WithTopic("Pressefreiheit und Schutz von Journalist*innen"));
-        Assert.AreEqual(8, _context.Committees.Count());
-        Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-mrr"));
-    }
+    //[Test]
+    //[Order(315)]
+    //public void TestAddMenschenrechtsrat()
+    //{
+    //    _context.Fluent.ForConference("munbw22").AddCommittee(mrr => mrr
+    //        .WithName("Menschenrechtsrat")
+    //        .WithFullName("Menschenrechtsrat")
+    //        .WithShort("MRR")
+    //        .WithType(CommitteeTypes.Online)
+    //        .WithTopic("Menschenrechtslage in der Republik Myanmar")
+    //        .WithTopic("Bekämpfung der Diskriminierung aufgrund sexueller Orientierung und Identität")
+    //        .WithTopic("Pressefreiheit und Schutz von Journalist*innen"));
+    //    Assert.AreEqual(8, _context.Committees.Count());
+    //    Assert.IsTrue(_context.Committees.Any(n => n.CommitteeId == "munbw22-mrr"));
+    //}
 
     [Test]
     [Order(316)]
-    public void TestConferenceHas8Committees()
+    public void TestConferenceHas6Committees()
     {
         var conference = _context.Conferences
             .Include(n => n.Committees)
             .FirstOrDefault(n => n.ConferenceId == "munbw22");
 
-        Assert.AreEqual(8, conference.Committees.Count);
+        Assert.AreEqual(6, conference.Committees.Count);
     }
 
     [Test]

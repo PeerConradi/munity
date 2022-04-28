@@ -1,0 +1,112 @@
+﻿@page "/mobile/{CommitteeId}"
+@using MUNity.Database.Models.Resolution
+
+@layout Shared.MobileGameLayout
+
+@inject BServices.VirtualCommitteeExchangeService vcExchangeService
+@inject BServices.ResolutionExchangeService resolutionExchangeService
+@inject Services.ResolutionService resolutionService
+@inject MunityContext dbContext
+
+<h3>MobilePage</h3>
+<h5>@CommitteeId</h5>
+
+@if (exchange != null)
+{
+    @if (tab == 0)
+    {
+        <p>Exchange geladen</p>
+        <MUNity.BlazorServer.Components.VirtualCommittee.Mobile.MobileDataWidgets CommitteeId=@CommitteeId />
+    }
+    else if (tab == 1)
+    {
+        <p>Resolutionen</p>
+        @if (selectedResolution != null)
+        {
+            <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@selectedResolution.ResaElementId CanEdit=true />
+        }
+        else
+        {
+            <ul>
+            @foreach(var resolution in resolutions)
+            {
+                <li @onclick="() => selectedResolution = resolution">@resolution.Topic</li>
+            }
+        </ul>
+        <button class="btn btn-primary" @onclick=CreateResolution>Neue Resolution erstellen</button>
+
+        }
+        
+
+        
+    }
+    else if (tab == 2)
+    {
+        <p>Platzhalter</p>
+    }
+    else
+    {
+        <p>How did you get here?</p>
+    }
+
+}
+else
+{
+    <p>Kein Exchange geladen!</p>
+}
+
+<!-- Placeholder for the Footer -->
+<div style="height: 75px"></div>
+
+<nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+    <div class="container">
+        @*<a class="navbar-brand" href="#">
+          <img src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+          Bootstrap
+        </a>*@
+        <button class="btn @((tab == 0) ? "btn-primary" : null) text-white text-center" @onclick="() => tab = 0">
+            <span class="fa-2x"><i class="fa fa-home"></i></span>
+            <h5>Start</h5>
+        </button>
+
+        <button class="btn @((tab == 1) ? "btn-primary" : null) text-white text-center" @onclick="() => {tab = 1; selectedResolution = null; }">
+            <span class="fa-2x"><i class="fa fa-paperclip"></i></span>
+            <h5>Resolutionen</h5>
+        </button>
+
+        <button class="btn @((tab == 2) ? "btn-primary" : null) text-white text-center" @onclick="() => tab = 2">
+            <span class="fa-2x"><i class="fa fa-spell-check"></i></span>
+            <h5>Platzhalter1</h5>
+        </button>
+
+      </div>
+      
+    </nav>
+
+@code {
+    [Parameter] public string CommitteeId { get; set; }
+
+    private BServices.VirtualCommitteeExchange exchange;
+
+    private int tab = 0;
+
+    private List<ResaElement> resolutions;
+
+    private ResaElement selectedResolution;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        exchange = vcExchangeService.GetExchange(CommitteeId);
+        resolutions = dbContext.ResolutionAuths.Where(n => n.Committee.CommitteeId == CommitteeId).Select(n => n.Resolution).ToList();
+    }
+
+    private void CreateResolution()
+    {
+        var resolution = resolutionService.CreateResolutionForCommittee(CommitteeId, null);
+        if (resolution != null)
+        {
+            resolutions.Add(resolution);
+        }
+    }
+}
