@@ -56,6 +56,8 @@ public class Committee
     [MaxLength(10)]
     public string Article { get; set; }
 
+    public string JoinKey { get; set; }
+
     public CommitteeTypes CommitteeType { get; set; }
 
     /// <summary>

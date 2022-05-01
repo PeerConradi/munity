@@ -14,6 +14,12 @@ public class CommitteeOptionsBuilder
         return this;
     }
 
+    public CommitteeOptionsBuilder WithJoinKey(string key)
+    {
+        Committee.JoinKey = key;
+        return this;
+    }
+
     public CommitteeOptionsBuilder WithFullName(string fullName)
     {
         Committee.FullName = fullName;

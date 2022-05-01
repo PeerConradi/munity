@@ -87,22 +87,30 @@
 	
 }
 
-<AuthorizeView>
+@if (CanEdit)
+{
+	<div class="row d-flex justify-content-center mb-3 mt-2">
+		<button class="btn btn-primary btn-icon btn-lg" title="Präambelabsatz hinzufügen" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
+	</div>
+}
+
+@*<AuthorizeView>
 	<Authorized>
 		<div class="row d-flex justify-content-center mb-3 mt-2">
 			<button class="btn btn-primary btn-icon btn-lg" title="Präambelabsatz hinzufügen (Berechtigung durch Vorsitzposten)" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
 		</div>
 	</Authorized>
 	<NotAuthorized>
-		@if (Exchange.Resolution.State == EResolutionStates.Public ||
-		(Exchange.Resolution.State == EResolutionStates.Private && pcService.RoleId == Exchange.Resolution.SubmitterRole.RoleId))
+		@if (Exchange?.Resolution != null &&
+			(Exchange.Resolution.State == EResolutionStates.Public ||
+		(Exchange.Resolution.State == EResolutionStates.Private && pcService?.RoleId != null && pcService.RoleId == Exchange.Resolution.SubmitterRole.RoleId)))
 		{
 			<div class="row d-flex justify-content-center mb-3 mt-2">
 				<button class="btn btn-success btn-icon btn-lg" title="Präambelabsatz hinzufügen" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
 			</div>
 		}
 	</NotAuthorized>
-</AuthorizeView>
+</AuthorizeView>*@
 
 @if (showCreateAddAmendmentModal)
 {

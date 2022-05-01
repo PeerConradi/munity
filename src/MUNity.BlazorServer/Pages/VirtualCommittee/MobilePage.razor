@@ -7,33 +7,46 @@
 @inject BServices.ResolutionExchangeService resolutionExchangeService
 @inject Services.ResolutionService resolutionService
 @inject MunityContext dbContext
-
-<h3>MobilePage</h3>
-<h5>@CommitteeId</h5>
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
 
 @if (exchange != null)
 {
     @if (tab == 0)
     {
-        <p>Exchange geladen</p>
         <MUNity.BlazorServer.Components.VirtualCommittee.Mobile.MobileDataWidgets CommitteeId=@CommitteeId />
     }
     else if (tab == 1)
     {
-        <p>Resolutionen</p>
+        <h1 class="page-header">Resolutionen</h1>
         @if (selectedResolution != null)
         {
             <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@selectedResolution.ResaElementId CanEdit=true />
         }
         else
         {
+            <div class="widget-list rounded mb-4" data-id="widget">
+                @foreach(var resolution in resolutions)
+                {
+                    <div class="widget-list-item" @onclick="() => selectedResolution = resolution">
+					    <div class="widget-list-media icon">
+						    <i class="fa fa-paper-plane bg-inverse text-white"></i>
+					    </div>
+					    <div class="widget-list-content">
+						    <h4 class="widget-list-title">@resolution.Topic</h4>
+					    </div>
+					    <div class="widget-list-action text-end">
+						    <i class="fa fa-angle-right fa-lg text-gray-500"></i>
+					    </div>
+				    </div>
+                }
+			</div>
+
             <ul>
-            @foreach(var resolution in resolutions)
-            {
-                <li @onclick="() => selectedResolution = resolution">@resolution.Topic</li>
-            }
+            
         </ul>
-        <button class="btn btn-primary" @onclick=CreateResolution>Neue Resolution erstellen</button>
+        <div class="d-flex align-content-end">
+            <a class="btn btn-primary w-100" @onclick=CreateResolution>Neue Resolution erstellen</a>
+        </div>
 
         }
         
@@ -42,7 +55,15 @@
     }
     else if (tab == 2)
     {
-        <p>Platzhalter</p>
+        <h1 class="page-header">Einstellungen</h1>
+        <p>Eingeloggt mit: @vcParticipationService.RoleId @vcParticipationService.IsActiveForCommittee(CommitteeId)</p>
+        <select class="form-control" @onchange=ChangeContext>
+            <option value="">-</option>
+            @foreach(var slot in dbContext.Delegates.Where(n => n.Committee.CommitteeId == CommitteeId))
+            {
+                <option value="@slot.RoleSecret"> @slot.RoleName</option>
+            }
+        </select>
     }
     else
     {
@@ -52,7 +73,7 @@
 }
 else
 {
-    <p>Kein Exchange geladen!</p>
+    <p>Kein Exchange geladen! @CommitteeId</p>
 }
 
 <!-- Placeholder for the Footer -->
@@ -75,8 +96,8 @@ else
         </button>
 
         <button class="btn @((tab == 2) ? "btn-primary" : null) text-white text-center" @onclick="() => tab = 2">
-            <span class="fa-2x"><i class="fa fa-spell-check"></i></span>
-            <h5>Platzhalter1</h5>
+            <span class="fa-2x"><i class="fa fa-cogs"></i></span>
+            <h5>Einstellungen</h5>
         </button>
 
       </div>
@@ -103,10 +124,18 @@ else
 
     private void CreateResolution()
     {
-        var resolution = resolutionService.CreateResolutionForCommittee(CommitteeId, null);
+        var resolution = resolutionService.CreateResolutionForCommittee(CommitteeId, vcParticipationService.RoleId);
         if (resolution != null)
         {
             resolutions.Add(resolution);
+        }
+    }
+
+    private void ChangeContext(ChangeEventArgs args)
+    {
+        if (args.Value is string key && !string.IsNullOrEmpty(key))
+        {
+            vcParticipationService.SignIn(CommitteeId, key);
         }
     }
 }

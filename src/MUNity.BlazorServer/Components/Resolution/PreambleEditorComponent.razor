@@ -25,7 +25,14 @@
 	CanEdit=@CanEdit/>
 }
 
-<AuthorizeView>
+@if (CanEdit)
+{
+	<div class="row d-flex justify-content-center mb-3 mt-2">
+		<button class="btn btn-primary btn-icon btn-lg" @onclick="CreateParagraph"><i class="fa fa-plus"></i></button>
+	</div>
+}
+
+@*<AuthorizeView>
 	<Authorized>
 		<div class="row d-flex justify-content-center mb-3 mt-2">
 			<button class="btn btn-primary btn-icon btn-lg" @onclick="CreateParagraph"><i class="fa fa-plus"></i></button>
@@ -41,7 +48,7 @@
 		}
 	</NotAuthorized>
 </AuthorizeView>
-
+*@
 
 
 
@@ -61,6 +68,9 @@
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		Exchange.ResolutionChanged += delegate { InvokeAsync(StateHasChanged); };
+		if (Exchange != null)
+		{
+			Exchange.ResolutionChanged += delegate { InvokeAsync(StateHasChanged); };
+		}
 	}
 }

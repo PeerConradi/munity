@@ -148,10 +148,24 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        var taskResult = await AuthStateTask;
-        isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
+        exchange = resolutionExchangeService.GetResolution(ResolutionId);
+        if (!CanEdit)
+        {
+            var taskResult = await AuthStateTask;
+            isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
+            LoadEditAuth();
+        }
         base.OnParametersSet();
         Reload();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (vcParticipationService != null)
+        {
+            vcParticipationService.Registered += delegate { LoadEditAuth(); }; 
+        }
     }
 
     public void Reload()
@@ -161,7 +175,7 @@ else
             exchange = resolutionExchangeService.GetResolution(ResolutionId);
 
             LoadEditAuth();
-            vcParticipationService.Registered += delegate { LoadEditAuth(); };
+            
             InvokeAsync(StateHasChanged);
         }
     }
