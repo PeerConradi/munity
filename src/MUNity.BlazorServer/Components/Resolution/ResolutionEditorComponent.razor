@@ -17,6 +17,13 @@
             else if (exchange.Resolution.State == EResolutionStates.Submitted)
             {
                 <h3 class="panel-title">Eingereichte Resolution</h3>
+                <AuthorizeView>
+                    <Authorized>
+                        <button class="btn btn-default me-2" @onclick="() => exchange.ChangeState(EResolutionStates.Private)">An ErstellerIn zurückgeben</button>
+                        <button class="btn btn-default me-2" @onclick="() => exchange.ChangeState(EResolutionStates.Public)">Für alle öffnen</button>
+                    </Authorized>
+                </AuthorizeView>
+               
             }
             else if (exchange.Resolution.State == EResolutionStates.Discussion)
             {
@@ -125,8 +132,7 @@ else
 
     private void SubmitResolution()
     {
-        this.exchange.Resolution.State = EResolutionStates.Submitted;
-        this.exchange.UpdateResaElement();
+        this.exchange.ChangeState(EResolutionStates.Submitted);
     }
 
     private void LoadEditAuth()
@@ -170,10 +176,18 @@ else
 
     public void Reload()
     {
+        if (exchange != null)
+        {
+            exchange = null;
+            GC.Collect();
+        }
+
+
+
         if (resolutionExchangeService != null)
         {
             exchange = resolutionExchangeService.GetResolution(ResolutionId);
-
+            exchange.ResolutionStateChanged += delegate { InvokeAsync(StateHasChanged); };
             LoadEditAuth();
             
             InvokeAsync(StateHasChanged);

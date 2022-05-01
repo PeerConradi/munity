@@ -48,6 +48,15 @@
         if (listOfSpeakersId != null)
         {
             this.ViewModel = losService.GetViewModel(this.listOfSpeakersId);
+            _ = RefreshIfNeeded();
         }
+
+    }
+
+    private async Task RefreshIfNeeded()
+    {
+        await InvokeAsync(StateHasChanged);
+        await Task.Delay(1000);
+        await RefreshIfNeeded();
     }
 }

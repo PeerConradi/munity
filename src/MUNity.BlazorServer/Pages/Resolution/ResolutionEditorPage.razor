@@ -1,0 +1,7 @@
+﻿@page "/resolution/{ResolutionId}"
+
+<MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@ResolutionId />
+
+@code {
+    [Parameter] public string ResolutionId { get; set; }
+}

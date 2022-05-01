@@ -16,13 +16,15 @@
 	</div>
 </div>
 
+<ol>
+
 @foreach(var operativeParagraph in Exchange.Resolution.OperativeParagraphs)
 {
 	
 	if (operativeParagraph.Visible && !operativeParagraph.IsVirtual)
 	{
-		paragraphIndex++;
-		<OperativeParagraphComponent 
+		<li>
+			<OperativeParagraphComponent 
 			Exchange=@Exchange 
 			Paragraph=@operativeParagraph
 			IsFirst=@(operativeParagraph == Exchange.Resolution.OperativeParagraphs.First()) 
@@ -32,6 +34,8 @@
 			Class="@((activatedMoveAmendment != null && activatedMoveAmendment.SourceParagraph != operativeParagraph) ? "ms-5" : "")"
 			CommitteeContext=@CommitteeContext
 			/>
+		</li>
+		
 	}
 	else
 	{
@@ -42,23 +46,29 @@
 
 			@if (addAmendment.Activated)
 			{
-				<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
-					<AuthorizeView>
-						<Authorized>
-							<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment, false)">Hervorheben beenden</button>
-							<button class="btn btn-success" @onclick="() => Exchange.SubmitAmendment(addAmendment)">Anwenden</button>
-							<button class="btn btn-danger" @onclick="() => Exchange.RevokeAddAmendment(addAmendment)">Verwerfen</button>
-						</Authorized>
-					</AuthorizeView>
-				</div>
+				<li style="list-style-type: none">
+					<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
+						<AuthorizeView>
+							<Authorized>
+								<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment, false)">Hervorheben beenden</button>
+								<button class="btn btn-success" @onclick="() => Exchange.SubmitAmendment(addAmendment)">Anwenden</button>
+								<button class="btn btn-danger" @onclick="() => Exchange.RevokeAddAmendment(addAmendment)">Verwerfen</button>
+							</Authorized>
+						</AuthorizeView>
+					</div>
+				</li>
+				
 			}
 			else
 			{
 			<AuthorizeView>
 				<Authorized>
-					<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
-						<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment)">Hervorheben</button>
-					</div>
+					<li style="list-style-type: none">
+						<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
+							<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment)">Hervorheben</button>
+						</div>
+					</li>
+					
 				</Authorized>
 			</AuthorizeView>
 			}
@@ -68,13 +78,15 @@
 			<!-- Move Amendment Target Paragraph -->
 			if (activatedMoveAmendment != null && activatedMoveAmendment.VirtualParagraph == operativeParagraph)
 			{
-				<div class="alert alert-info">@((MarkupString)operativeParagraph.Text) </div>
+				<li class="alert alert-info">@((MarkupString)operativeParagraph.Text) </li>
 			}
 			
 		}
 		
 	}
 }
+
+</ol>
 
 @if (pcService.RoleId != null && Exchange.Resolution.State == EResolutionStates.Discussion)
 {

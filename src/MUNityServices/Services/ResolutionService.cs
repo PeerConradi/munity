@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MUNity.Base;
 using MUNity.Database.Context;
 using MUNity.Database.Models.Conference;
 using MUNity.Database.Models.Conference.Roles;
@@ -425,6 +426,13 @@ namespace MUNity.Services
                 _context.SaveChanges();
             }
 
+        }
+
+        public void ChangeState(ResaElement resolution, EResolutionStates newState)
+        {
+            _context.Update(resolution);
+            resolution.State = newState;
+            _context.SaveChanges();
         }
 
         public void MoveOperativeParagraphDown(ResaOperativeParagraph paragraph)

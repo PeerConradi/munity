@@ -43,15 +43,18 @@
 					
 				</div>
 			</div>
-			<div class="menu-item">
-				<a href="@($"/oc/{CommitteeExchange.CommitteeId}/session/{CommitteeExchange.CurrentSessionExchange.SessionId}")" class="menu-link">
-					<div class="menu-icon">
-						<i class="fa fa-bookmark"></i>
-					</div>
-					<div class="menu-text">Anträge</div>
-					<div class="menu-badge ms-3">@CommitteeExchange.CurrentSessionExchange.Petitions.Count</div>
-				</a>
-			</div>
+			@if (CommitteeExchange.CurrentSessionExchange != null)
+			{
+				<div class="menu-item">
+					<a href="@($"/oc/{CommitteeExchange.CommitteeId}/session/{CommitteeExchange.CurrentSessionExchange.SessionId}")" class="menu-link">
+						<div class="menu-icon">
+							<i class="fa fa-bookmark"></i>
+						</div>
+						<div class="menu-text">Anträge</div>
+						<div class="menu-badge ms-3">@CommitteeExchange.CurrentSessionExchange.Petitions.Count</div>
+					</a>
+				</div>
+			}
 
 			<div class="menu-item has-sub">
 				<a href="javascript:;" class="menu-link">
@@ -102,30 +105,38 @@
 								</a>
 							</div>
 
-							@foreach(var voting in dbContext.SessionVotings.Where(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId))
+							@if (CommitteeExchange.CurrentSessionExchange != null)
 							{
-								<div class="menu-item">
-									<a class="menu-link" href="@($"/oc/{CommitteeExchange.CommitteeId}/managevote/{voting.SessionVotingId}")" >
-										<div class="menu-text">
-											@voting.Name 
-											<i class="fa @((voting.State == VotingStates.Finished) ? "fa-check text-success" : null) @((voting.State == VotingStates.Creating) ? "fa-pen text-default" : null) @((voting.State == VotingStates.Open) ? "fa-clock text-warning" : null) "></i>
-										</div>
-									</a>
-								</div>
+								foreach(var voting in dbContext.SessionVotings.Where(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId))
+								{
+									<div class="menu-item">
+										<a class="menu-link" href="@($"/oc/{CommitteeExchange.CommitteeId}/managevote/{voting.SessionVotingId}")" >
+											<div class="menu-text">
+												@voting.Name 
+												<i class="fa @((voting.State == VotingStates.Finished) ? "fa-check text-success" : null) @((voting.State == VotingStates.Creating) ? "fa-pen text-default" : null) @((voting.State == VotingStates.Open) ? "fa-clock text-warning" : null) "></i>
+											</div>
+										</a>
+									</div>
+								}
 							}
+							
 						</Authorized>
 						<NotAuthorized>
-							@foreach(var voting in dbContext.SessionVotings.Where(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId && (n.State == VotingStates.Open || n.State == VotingStates.Finished)))
+							@if (CommitteeExchange.CurrentSessionExchange != null)
 							{
-								<div class="menu-item">
-									<a class="menu-link" href="@($"/oc/{CommitteeExchange.CommitteeId}/vote/{voting.SessionVotingId}")" >
-										<div class="menu-text">
-											@voting.Name 
-											<i class="fa @((voting.State == VotingStates.Finished) ? "fa-check text-success" : null) @((voting.State == VotingStates.Open) ? "fa-clock text-warning" : null)"></i>
-										</div>
-									</a>
-								</div>
+								foreach(var voting in dbContext.SessionVotings.Where(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId && (n.State == VotingStates.Open || n.State == VotingStates.Finished)))
+								{
+									<div class="menu-item">
+										<a class="menu-link" href="@($"/oc/{CommitteeExchange.CommitteeId}/vote/{voting.SessionVotingId}")" >
+											<div class="menu-text">
+												@voting.Name 
+												<i class="fa @((voting.State == VotingStates.Finished) ? "fa-check text-success" : null) @((voting.State == VotingStates.Open) ? "fa-clock text-warning" : null)"></i>
+											</div>
+										</a>
+									</div>
+								}
 							}
+						
 						</NotAuthorized>
 					</AuthorizeView>
 					
@@ -215,9 +226,15 @@
 			.Where(n => n.CommitteeId == CommitteeExchange.CommitteeId)
 			.Select(n => n.ListOfSpeakers.ListOfSpeakersId)
 			.FirstOrDefault();
-		this.CommitteeExchange.CurrentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
 
-
+		if (this.CommitteeExchange?.CurrentSessionExchange?.Petitions != null)
+		{
+			this.CommitteeExchange.CurrentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
+		}
+		else
+		{
+			logger?.LogWarning("The was not CurrentSessionExchange set.");
+		}
 	}
 
 	private void CreateVoting()

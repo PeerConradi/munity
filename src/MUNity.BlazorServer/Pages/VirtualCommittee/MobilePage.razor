@@ -8,6 +8,7 @@
 @inject Services.ResolutionService resolutionService
 @inject MunityContext dbContext
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
 
 @if (exchange != null)
 {
@@ -20,7 +21,22 @@
         <h1 class="page-header">Resolutionen</h1>
         @if (selectedResolution != null)
         {
-            <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@selectedResolution.ResaElementId CanEdit=true />
+            <div class="panel panel-inverse panel-expand">
+				<!-- BEGIN panel-heading -->
+				<div class="panel-heading ui-sortable-handle">
+					<h4 class="panel-title">Resulution: @selectedResolution?.Topic</h4>
+					<div class="panel-heading-btn">
+						<button @onclick="() => selectedResolution = null" class="btn btn-xs btn-icon btn-danger" data-toggle="panel-remove"><i class="fa fa-times"></i></button>
+					</div>
+				</div>
+				<!-- END panel-heading -->
+				<!-- BEGIN panel-body -->
+				<div class="panel-body">
+					<MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@selectedResolution.ResaElementId CanEdit=true />
+				</div>
+
+			</div>
+            
         }
         else
         {
@@ -56,14 +72,8 @@
     else if (tab == 2)
     {
         <h1 class="page-header">Einstellungen</h1>
-        <p>Eingeloggt mit: @vcParticipationService.RoleId @vcParticipationService.IsActiveForCommittee(CommitteeId)</p>
-        <select class="form-control" @onchange=ChangeContext>
-            <option value="">-</option>
-            @foreach(var slot in dbContext.Delegates.Where(n => n.Committee.CommitteeId == CommitteeId))
-            {
-                <option value="@slot.RoleSecret"> @slot.RoleName</option>
-            }
-        </select>
+        <p>Eingeloggt mit: @vcParticipationService.RoleId @vcParticipationService.IsActiveForCommittee(CommitteeId) @vcParticipationService.RoleName</p>
+        <button class="btn btn-primary" @onclick="() => showSelectRoleModal = true">Land wechseln</button>
     }
     else
     {
@@ -104,6 +114,36 @@ else
       
     </nav>
 
+
+    @if (showSelectRoleModal)
+{
+    <div class="modal-backdrop"></div>
+    <div class="modal modal-message fade show" id="modal-message" aria-modal="true" role="dialog" style="display: block;">
+        <div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Delegations auswählen</h4>
+					<button type="button" class="btn-close" @onclick="() => showSelectRoleModal = false"></button>
+				</div>
+				<div class="modal-body">
+					<p>Bitte geben Sie an, welche Delegation Sie in diesem Gremium vertreten.</p>
+					<select class="form-control" @bind="selectedRoleSecret">
+                        <option value="@string.Empty">Zuschauer*in</option>
+                        @foreach(var slot in dbContext.Delegates.AsNoTracking().Where(n => n.Committee.CommitteeId == CommitteeId))
+                        {
+                            <option value="@slot.RoleSecret"> @slot.RoleName</option>
+                        }
+                    </select>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-white" @onclick="() => showSelectRoleModal = false">Schließen</button>
+					<button class="btn btn-primary" @onclick="SelectRole">Speichern</button>
+				</div>
+			</div>
+		</div>
+    </div>
+}
+
 @code {
     [Parameter] public string CommitteeId { get; set; }
 
@@ -115,11 +155,29 @@ else
 
     private ResaElement selectedResolution;
 
-    protected override void OnInitialized()
+    private bool showSelectRoleModal = false;
+
+    private string selectedRoleSecret = null;
+
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
         exchange = vcExchangeService.GetExchange(CommitteeId);
         resolutions = dbContext.ResolutionAuths.Where(n => n.Committee.CommitteeId == CommitteeId).Select(n => n.Resolution).ToList();
+        await Init();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            if (!vcParticipationService.IsActiveForCommittee(CommitteeId))
+            {
+                showSelectRoleModal = true;
+                InvokeAsync(StateHasChanged);
+            }
+        }
     }
 
     private void CreateResolution()
@@ -131,11 +189,31 @@ else
         }
     }
 
-    private void ChangeContext(ChangeEventArgs args)
+
+    private async Task SelectRole()
     {
-        if (args.Value is string key && !string.IsNullOrEmpty(key))
+        if (!string.IsNullOrEmpty(selectedRoleSecret))
         {
-            vcParticipationService.SignIn(CommitteeId, key);
+            vcParticipationService.SignIn(CommitteeId, selectedRoleSecret);
+            await localStorageService.SetItemAsStringAsync($"munity-access-{CommitteeId}", selectedRoleSecret);
         }
+        else
+        {
+            vcParticipationService.SignOff();
+            await localStorageService.RemoveItemAsync($"munity-access-{CommitteeId}");
+        }
+        showSelectRoleModal = false;
+    }
+
+    private async Task Init()
+    {
+        var accessKey = await localStorageService.GetItemAsStringAsync($"munity-access-{CommitteeId}");
+
+        if (accessKey != null)
+        {
+            var signInSucces = vcParticipationService.SignIn(CommitteeId, accessKey);
+            
+        }
+        await InvokeAsync(StateHasChanged);
     }
 }

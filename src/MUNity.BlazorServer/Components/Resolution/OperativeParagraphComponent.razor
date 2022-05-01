@@ -15,7 +15,7 @@
 					var deleteAmendment = Paragraph.DeleteAmendments.FirstOrDefault(n => n.Activated);
 					@if (Paragraph.DeleteAmendments.Any(n => n.Activated))
 					{
-						<p @ondblclick="StartEdit" class="text-danger text-decoration-line-through"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+						<p @ondblclick="StartEdit" class="text-danger text-decoration-line-through"> @((MarkupString)Paragraph.Text)</p>
 						<AuthorizeView>
 							<Authorized>
 								<div class="row">
@@ -47,7 +47,7 @@
 					else if (Paragraph.MoveAmendments.Any(n => n.Activated))
 					{
 						var moveAmendment = Paragraph.MoveAmendments.FirstOrDefault(n => n.Activated);
-						<p @ondblclick="StartEdit" class="text-danger text-decoration-line-through"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+						<p @ondblclick="StartEdit" class="text-danger text-decoration-line-through"> @((MarkupString)Paragraph.Text)</p>
 						<AuthorizeView>
 							<Authorized>
 								<div class="row">
@@ -62,13 +62,13 @@
 					}
 					else
 					{
-						<p @ondblclick="StartEdit" class="card-text"><span>@(Index).</span> @((MarkupString)Paragraph.Text)</p>
+						<p @ondblclick="StartEdit" class="card-text"> @((MarkupString)Paragraph.Text)</p>
 					}
 					
 				}
 				else
 				{
-					<span>@(Index)</span> <button class="btn btn-sm btn-default" @onclick="StartEdit">Bearbeiten</button>
+					<button class="btn btn-sm btn-default" @onclick="StartEdit">Bearbeiten</button>
 				}
 			}
 			else

@@ -82,7 +82,7 @@ namespace MUNity.BlazorServer.BServices
             SignOff();
         }
 
-        private void SignOff()
+        public void SignOff()
         {
             if (_exchange == null)
                 return;
@@ -91,6 +91,9 @@ namespace MUNity.BlazorServer.BServices
             {
                 _exchange.NotifyUserDisconnected();
             }
+            this._roleId = null;
+            this._roleName = string.Empty;
+            this._roleIso = string.Empty;
         }
 
         public bool SignIn(string committeeId, string secret)

@@ -77,18 +77,46 @@
 									</div>
 								</a>
 
-                                <a href="/presentation/@Id" target="_blank" class="widget-list-item">
-									<div class="widget-list-media icon">
-										<i class="fa fa-tv bg-inverse text-white"></i>
-									</div>
-									<div class="widget-list-content">
-										<h4 class="widget-list-title">Redeliste führen</h4>
-									</div>
-									<div class="widget-list-action text-end">
-										<i class="fa fa-angle-right fa-lg text-gray-500"></i>
-									</div>
-								</a>
+                                @if (!string.IsNullOrEmpty(listOfSpeakersId))
+                                {
+                                    <a href="/los/@listOfSpeakersId" class="widget-list-item">
+									    <div class="widget-list-media icon">
+										    <i class="fa fa-tv bg-inverse text-white"></i>
+									    </div>
+									    <div class="widget-list-content">
+										    <h4 class="widget-list-title">Redeliste führen</h4>
+									    </div>
+									    <div class="widget-list-action text-end">
+										    <i class="fa fa-angle-right fa-lg text-gray-500"></i>
+									    </div>
+								    </a>
+                                }
+                                
 							</div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            Resolutionen
+                        </div>
+                        <div class="card-body">
+                            <div class="widget-list rounded mb-4" data-id="widget">
+                                @foreach(var resolution in dbContext.ResolutionAuths.Where(n => n.Committee.CommitteeId == Id).Select(n => new { n.Resolution.ResaElementId, n.Resolution.Topic}))
+                                {
+                                    <a href="/resolution/@resolution.ResaElementId" target="_blank" class="widget-list-item">
+									    <div class="widget-list-media icon">
+										    <i class="fa fa-fax bg-primary text-white"></i>
+									    </div>
+									    <div class="widget-list-content">
+										    <h4 class="widget-list-title">@resolution.Topic</h4>
+									    </div>
+									    <div class="widget-list-action text-end">
+										    <i class="fa fa-angle-right fa-lg text-gray-500"></i>
+									    </div>
+								    </a>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,6 +169,8 @@
 
     private bool isHeadUser;
 
+    private string listOfSpeakersId = string.Empty;
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -157,6 +187,7 @@
 
             await InvokeAsync(StateHasChanged);
         }
+        this.listOfSpeakersId = dbContext.Committees.Where(n => n.CommitteeId == Id).Select(n => n.ListOfSpeakers.ListOfSpeakersId).FirstOrDefault();
     }
 
     private void CreateSession()
