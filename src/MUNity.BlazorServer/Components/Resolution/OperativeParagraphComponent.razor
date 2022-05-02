@@ -170,10 +170,10 @@
 					@if (amendmentMode == AmendmentModes.Move)
 					{
 						<select class="mt-3 form-control" @bind=@newMoveIndex>
-							<option value=0>An den Anfang</option>
-							@foreach(var paragaph in Exchange.Resolution.OperativeParagraphs)
+							<option value=0>1. An den Anfang</option>
+							@foreach(var paragaph in Exchange.Resolution.OperativeParagraphs.Where(n => n.IsVirtual == false))
 							{
-								<option value=@paragaph.OrderIndex>Unter: @((MarkupString)paragaph.Text)</option>
+								<option value=@(paragaph.OrderIndex + 1)>@(paragaph.GetIndex() + 2). Unter: @(((paragaph.Text.Length < 50) ? ((MarkupString)paragaph.Text) : ((MarkupString)paragaph.Text.Substring(0, 50))))</option>
 							}
 						</select>
 					}
@@ -249,7 +249,7 @@
 												{
 													<button class="btn btn-primary" @onclick="() => showSecureRemoveAmendment = true"><i class="fa fa-check"></i> Annehmen</button>
 													<button class="btn btn-default" @onclick="() => ActivateAmendment(amendment)"><i class="fa fa-vote"></i> Hervorheben</button>
-													<button class="btn btn-danger"><i class="fa fa-trash"></i> Ablehnen</button>
+													<button class="btn btn-danger" @onclick="() => RevokeDeleteAmendment(amendment)"><i class="fa fa-trash"></i> Ablehnen</button>
 												}
 												else
 												{
@@ -321,7 +321,12 @@
 					{
 						<div class="row">
 							<p>Eingereicht durch: @moveAmendment.Submitter?.RoleName</p>
-							<button class="btn btn-default" @onclick="() => ActivateAmendment(moveAmendment)">Hervorheben</button>
+							<p>Neue Position: @moveAmendment.VirtualParagraph.GetIndex()</p>
+							<AuthorizeView>
+								<Authorized>
+									<button class="btn btn-default" @onclick="() => ActivateAmendment(moveAmendment)">Hervorheben</button>
+								</Authorized>
+							</AuthorizeView>
 						</div>
 					}
 
@@ -529,6 +534,11 @@
 		{
 			Exchange.RevokeDeleteAmendment(amendment);
 		}
+
+		if (showDeleteAmendmentModal && Paragraph.DeleteAmendments.Count == 0)
+		{
+			showDeleteAmendmentModal = false;
+		}
 	}
 
 	private void RevokeChangeAmendment(ResaChangeAmendment amendment)
@@ -565,8 +575,9 @@
 
 	private void ActivateAmendment(ResaAmendment amendment)
 	{
-		@if (amendment != null)
+		if (amendment != null)
 		{
+
 			DeactivateAllAmendments();
 			Exchange.ActivateAmendment(amendment);
 		}
@@ -574,7 +585,23 @@
 
 	private void DeactivateAllAmendments()
 	{
-		foreach(var deleteAmendment in Paragraph.DeleteAmendments)
+		if (Paragraph.Resolution != null)
+		{
+			foreach(var paragraph in Paragraph.Resolution.OperativeParagraphs)
+			{
+				DeactivateAllAmendmentsOnParagraph(paragraph);
+			}
+		}
+		else if (Paragraph != null)
+		{
+			DeactivateAllAmendmentsOnParagraph(this.Paragraph);
+		}
+	}
+
+	private void DeactivateAllAmendmentsOnParagraph(ResaOperativeParagraph paragraph)
+	{
+
+		foreach(var deleteAmendment in paragraph.DeleteAmendments)
 		{
 			if (deleteAmendment.Activated)
 			{
@@ -582,7 +609,7 @@
 			}
 		}
 
-		foreach(var changeAmendment in Paragraph.ChangeAmendments)
+		foreach(var changeAmendment in paragraph.ChangeAmendments)
 		{
 			if (changeAmendment.Activated)
 			{
@@ -590,7 +617,7 @@
 			}
 		}
 
-		foreach(var moveAmendment in Paragraph.MoveAmendments)
+		foreach(var moveAmendment in paragraph.MoveAmendments)
 		{
 			if (moveAmendment.Activated)
 			{
@@ -598,7 +625,7 @@
 			}
 		}
 
-		foreach(var addAmendment in Paragraph.Resolution.AddAmendments)
+		foreach(var addAmendment in paragraph.Resolution.AddAmendments)
 		{
 			if (addAmendment.Activated)
 			{

@@ -268,6 +268,11 @@ namespace MUNity.Services
         public void AddMoveAmendment(ResaOperativeParagraph paragraph, int roleId, int newIndex)
         {
             _context.Update(paragraph);
+            foreach(var moveDownParagraph in paragraph.Resolution.OperativeParagraphs.Where(n => n.Parent == paragraph.Parent && n.OrderIndex >= newIndex))
+            {
+                moveDownParagraph.OrderIndex++;
+            }
+
             var virtualParagraph = new ResaOperativeParagraph()
             {
                 IsVirtual = true,
@@ -277,6 +282,10 @@ namespace MUNity.Services
                 Resolution = paragraph.Resolution,
                 Text = paragraph.Text,
             };
+
+            paragraph.Resolution.OperativeParagraphs.Insert(newIndex, virtualParagraph);
+
+            // TODO: all operative Paragraphs that come below need to be moved down by one
             var moveAmendment = new ResaMoveAmendment()
             {
                 SourceParagraph = paragraph,
@@ -325,6 +334,27 @@ namespace MUNity.Services
         public void RevokeMoveAmendment(ResaMoveAmendment amendment)
         {
             _context.Update(amendment);
+            if (amendment.VirtualParagraph != null)
+            {
+                if (amendment.VirtualParagraph.Parent == null && amendment.SourceParagraph.Resolution != null)
+                {
+                    foreach (var paragraph in amendment.SourceParagraph.Resolution.OperativeParagraphs
+                        .Where(n => n.OrderIndex > amendment.VirtualParagraph.OrderIndex))
+                    {
+                        _context.Update(paragraph);
+                        paragraph.OrderIndex--;
+                    }
+                }
+                else if (amendment.VirtualParagraph.Parent != null)
+                {
+                    foreach(var paragraph in amendment.VirtualParagraph.Parent.Children
+                        .Where(n => n.OrderIndex > amendment.VirtualParagraph.OrderIndex))
+                    {
+                        _context.Update(paragraph);
+                        paragraph.OrderIndex--;
+                    }
+                }
+            }
             amendment.Resolution.OperativeParagraphs.Remove(amendment.VirtualParagraph);
             amendment.SourceParagraph.MoveAmendments.Remove(amendment);
             _context.ResolutionMoveAmendments.Remove(amendment);
@@ -474,9 +504,18 @@ namespace MUNity.Services
         public void SubmitMoveAmendment(ResaMoveAmendment amendment)
         {
             _context.Update(amendment);
+            _context.Update(amendment.SourceParagraph);
+            _context.Update(amendment.VirtualParagraph);
+            foreach (var paragraph in amendment.SourceParagraph.Resolution.OperativeParagraphs
+                .Where(n => n.OrderIndex > amendment.SourceParagraph.OrderIndex))
+            {
+                _context.Update(paragraph);
+                paragraph.OrderIndex--;
+            }
             amendment.Resolution.OperativeParagraphs.Remove(amendment.SourceParagraph);
             amendment.SourceParagraph.MoveAmendments.Remove(amendment);
             _context.OperativeParagraphs.Remove(amendment.SourceParagraph);
+            
             amendment.VirtualParagraph.IsLocked = false;
             amendment.VirtualParagraph.IsVirtual = false;
             amendment.VirtualParagraph.Visible = true;
