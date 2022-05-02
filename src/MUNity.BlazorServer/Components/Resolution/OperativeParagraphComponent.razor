@@ -18,7 +18,7 @@
 						<p @ondblclick="StartEdit" class="text-danger text-decoration-line-through"> @((MarkupString)Paragraph.Text)</p>
 						<AuthorizeView>
 							<Authorized>
-								<div class="row">
+								<div class="row mb-2">
 									<div class="col-12">
 										<button class="btn btn-default" @onclick="DeactivateAllAmendments">Hervorheben beenden</button>
 										<button class="btn btn-default btn-success" @onclick="() => SubmitAmendment(deleteAmendment)">Änderung anwenden</button>
@@ -34,7 +34,7 @@
 						<OAChangeAmendmentHighlight Paragraph=@Paragraph Amendment=@amendment />
 						<AuthorizeView>
 							<Authorized>
-								<div class="row">
+								<div class="row mb-2">
 									<div class="col-12">
 										<button class="btn btn-default" @onclick="DeactivateAllAmendments">Hervorheben beenden</button>
 										<button class="btn btn-default btn-success" @onclick="() => SubmitAmendment(amendment)">Änderung anwenden</button>
@@ -50,7 +50,7 @@
 						<p @ondblclick="StartEdit" class="text-danger text-decoration-line-through"> @((MarkupString)Paragraph.Text)</p>
 						<AuthorizeView>
 							<Authorized>
-								<div class="row">
+								<div class="row mb-2">
 									<div class="col-12">
 										<button class="btn btn-default" @onclick="DeactivateAllAmendments">Hervorheben beenden</button>
 										<button class="btn btn-default btn-success" @onclick="() => SubmitAmendment(moveAmendment)">Änderung anwenden</button>

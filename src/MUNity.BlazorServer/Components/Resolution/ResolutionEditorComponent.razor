@@ -61,10 +61,14 @@
         <Authorized>
                 <div class="panel panel-inverse">
                     <div class="panel-heading">
-                        <h4 class="panel-title">Entfernen</h4>
+                        <h4 class="panel-title">Admin</h4>
                     </div>
-                    <div class="panel-body d-flex justify-content-end">
-                        <button class="btn btn-danger" @onclick="RemoveResolution">Resolution löschen</button>
+                    <div class="panel-body">
+
+                        <div class="row d-flex justify-content-end">
+                            <button class="btn btn-danger" @onclick="() => showDeleteWarning = true">Resolution löschen</button>
+                        </div>
+                        
                     </div>
                 </div>
         </Authorized>
@@ -73,6 +77,37 @@
 else
 {
     <p>Resolution @ResolutionId wird vorbereitet oder nicht gefunden...</p>
+}
+
+@if (showDeleteWarning)
+{
+    <div class="swal-overlay swal-overlay--show-modal" tabindex="-1">
+  <div class="swal-modal" role="dialog" aria-modal="true"><div class="swal-icon swal-icon--error">
+    <div class="swal-icon--error__x-mark">
+      <span class="swal-icon--error__line swal-icon--error__line--left"></span>
+      <span class="swal-icon--error__line swal-icon--error__line--right"></span>
+    </div>
+  </div><div class="swal-title" style="">Resolution Löschen?</div><div class="swal-text" style="">Dieser Vorgang kann nicht rückgängig gemacht werden!</div><div class="swal-footer"><div class="swal-button-container">
+
+    <button class="swal-button swal-button--cancel btn btn-default" @onclick="() => showDeleteWarning = false">Abbrechen</button>
+
+    <div class="swal-button__loader">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+  </div><div class="swal-button-container">
+
+    <button class="swal-button swal-button--confirm btn btn-danger" @onclick="RemoveResolution">Löschen</button>
+
+    <div class="swal-button__loader">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+  </div></div></div></div>
 }
 
 
@@ -84,6 +119,7 @@ else
     [Parameter] public string CommitteeContext { get; set; }
 
     private bool isAuthed = false;
+    private bool showDeleteWarning = false;
 
     [Parameter]public bool CanEdit { get; set; }
 

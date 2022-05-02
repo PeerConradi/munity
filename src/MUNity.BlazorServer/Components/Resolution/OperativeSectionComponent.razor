@@ -42,36 +42,10 @@
 		<!-- Create a new Operative Paragraph -->
 		@if (Exchange.Resolution.AddAmendments.Any(n => n.VirtualParagraph == operativeParagraph))
 		{
-			var addAmendment = Exchange.Resolution.AddAmendments.FirstOrDefault(n => n.VirtualParagraph == operativeParagraph);
-
-			@if (addAmendment.Activated)
-			{
-				<li style="list-style-type: none">
-					<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
-						<AuthorizeView>
-							<Authorized>
-								<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment, false)">Hervorheben beenden</button>
-								<button class="btn btn-success" @onclick="() => Exchange.SubmitAmendment(addAmendment)">Anwenden</button>
-								<button class="btn btn-danger" @onclick="() => Exchange.RevokeAddAmendment(addAmendment)">Verwerfen</button>
-							</Authorized>
-						</AuthorizeView>
-					</div>
-				</li>
-				
-			}
-			else
-			{
-			<AuthorizeView>
-				<Authorized>
-					<li style="list-style-type: none">
-						<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
-							<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment)">Hervorheben</button>
-						</div>
-					</li>
-					
-				</Authorized>
-			</AuthorizeView>
-			}
+			<li style="list-style-type: none">
+				<AddAmendmentVirutalParagraphComponent Exchange=@Exchange OperativeParagraph=operativeParagraph />
+			</li>
+			
 		}
 		else
 		{
