@@ -1,4 +1,4 @@
-﻿@page "/mobile/{CommitteeId}"
+﻿@page "/mobile/{CommitteeSecret}"
 @using MUNity.Database.Models.Resolution
 
 @layout Shared.MobileGameLayout
@@ -10,29 +10,29 @@
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService
 
-@if (exchange != null)
+@if (exchange != null && !string.IsNullOrEmpty(committeeId))
 {
     @if (tab == 0)
     {
-        <MUNity.BlazorServer.Components.VirtualCommittee.Mobile.MobileDataWidgets CommitteeId=@CommitteeId />
+        <MUNity.BlazorServer.Components.VirtualCommittee.Mobile.MobileDataWidgets CommitteeId=@committeeId />
     }
     else if (tab == 1)
     {
         <h1 class="page-header">Resolutionen</h1>
-        @if (selectedResolution != null)
+        @if (selectedResolutionId != null)
         {
             <div class="panel panel-inverse panel-expand">
 				<!-- BEGIN panel-heading -->
 				<div class="panel-heading ui-sortable-handle">
-					<h4 class="panel-title">Resulution: @selectedResolution?.Topic</h4>
+					<h4 class="panel-title">Resolutioneditor</h4>
 					<div class="panel-heading-btn">
-						<button @onclick="() => selectedResolution = null" class="btn btn-xs btn-icon btn-danger" data-toggle="panel-remove"><i class="fa fa-times"></i></button>
+						<button @onclick="() => selectedResolutionId = null" class="btn btn-xs btn-icon btn-danger" data-toggle="panel-remove"><i class="fa fa-times"></i></button>
 					</div>
 				</div>
 				<!-- END panel-heading -->
 				<!-- BEGIN panel-body -->
 				<div class="panel-body">
-					<MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@selectedResolution.ResaElementId CanEdit=true />
+					<MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@selectedResolutionId CanEdit=true />
 				</div>
 
 			</div>
@@ -41,9 +41,9 @@
         else
         {
             <div class="widget-list rounded mb-4" data-id="widget">
-                @foreach(var resolution in resolutions)
+                @foreach(var resolution in dbContext.ResolutionAuths.AsNoTracking().Where(n => n.Committee.CommitteeId == committeeId).Select(n => new {n.Resolution.ResaElementId, n.Resolution.Topic}))
                 {
-                    <div class="widget-list-item" @onclick="() => selectedResolution = resolution">
+                    <div class="widget-list-item" @onclick="() => selectedResolutionId = resolution.ResaElementId">
 					    <div class="widget-list-media icon">
 						    <i class="fa fa-paper-plane bg-inverse text-white"></i>
 					    </div>
@@ -72,7 +72,7 @@
     else if (tab == 2)
     {
         <h1 class="page-header">Einstellungen</h1>
-        <p>Eingeloggt mit: @vcParticipationService.RoleId @vcParticipationService.IsActiveForCommittee(CommitteeId) @vcParticipationService.RoleName</p>
+        <p>Eingeloggt mit: @vcParticipationService.RoleId @vcParticipationService.IsActiveForCommittee(committeeId) @vcParticipationService.RoleName</p>
         <button class="btn btn-primary" @onclick="() => showSelectRoleModal = true">Land wechseln</button>
     }
     else
@@ -83,7 +83,7 @@
 }
 else
 {
-    <p>Kein Exchange geladen! @CommitteeId</p>
+    <p>Kein Exchange geladen! @CommitteeSecret @committeeId</p>
 }
 
 <!-- Placeholder for the Footer -->
@@ -100,7 +100,7 @@ else
             <h5>Start</h5>
         </button>
 
-        <button class="btn @((tab == 1) ? "btn-primary" : null) text-white text-center" @onclick="() => {tab = 1; selectedResolution = null; }">
+        <button class="btn @((tab == 1) ? "btn-primary" : null) text-white text-center" @onclick="() => {tab = 1; selectedResolutionId = null; }">
             <span class="fa-2x"><i class="fa fa-paperclip"></i></span>
             <h5>Resolutionen</h5>
         </button>
@@ -129,7 +129,7 @@ else
 					<p>Bitte geben Sie an, welche Delegation Sie in diesem Gremium vertreten.</p>
 					<select class="form-control" @bind="selectedRoleSecret">
                         <option value="@string.Empty">Zuschauer*in</option>
-                        @foreach(var slot in dbContext.Delegates.AsNoTracking().Where(n => n.Committee.CommitteeId == CommitteeId))
+                        @foreach(var slot in dbContext.Delegates.AsNoTracking().Where(n => n.Committee.CommitteeId == committeeId))
                         {
                             <option value="@slot.RoleSecret"> @slot.RoleName</option>
                         }
@@ -145,25 +145,25 @@ else
 }
 
 @code {
-    [Parameter] public string CommitteeId { get; set; }
+    [Parameter] public string CommitteeSecret { get; set; }
+
+    private string committeeId;
 
     private BServices.VirtualCommitteeExchange exchange;
 
     private int tab = 0;
 
-    private List<ResaElement> resolutions;
-
-    private ResaElement selectedResolution;
+    private string selectedResolutionId;
 
     private bool showSelectRoleModal = false;
 
     private string selectedRoleSecret = null;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await base.OnInitializedAsync();
-        exchange = vcExchangeService.GetExchange(CommitteeId);
-        resolutions = dbContext.ResolutionAuths.Where(n => n.Committee.CommitteeId == CommitteeId).Select(n => n.Resolution).ToList();
+        await base.OnParametersSetAsync();
+        this.committeeId = dbContext.Committees.AsNoTracking().Where(n => n.JoinKey == CommitteeSecret).Select(n => n.CommitteeId).FirstOrDefault();
+        exchange = vcExchangeService.GetExchange(committeeId);
         await Init();
     }
 
@@ -172,7 +172,7 @@ else
         base.OnAfterRender(firstRender);
         if (firstRender)
         {
-            if (!vcParticipationService.IsActiveForCommittee(CommitteeId))
+            if (!vcParticipationService.IsActiveForCommittee(committeeId))
             {
                 showSelectRoleModal = true;
                 InvokeAsync(StateHasChanged);
@@ -182,10 +182,10 @@ else
 
     private void CreateResolution()
     {
-        var resolution = resolutionService.CreateResolutionForCommittee(CommitteeId, vcParticipationService.RoleId);
+        var resolution = resolutionService.CreateResolutionForCommittee(committeeId, vcParticipationService.RoleId);
         if (resolution != null)
         {
-            resolutions.Add(resolution);
+            InvokeAsync(StateHasChanged);
         }
     }
 
@@ -194,24 +194,24 @@ else
     {
         if (!string.IsNullOrEmpty(selectedRoleSecret))
         {
-            vcParticipationService.SignIn(CommitteeId, selectedRoleSecret);
-            await localStorageService.SetItemAsStringAsync($"munity-access-{CommitteeId}", selectedRoleSecret);
+            vcParticipationService.SignIn(committeeId, selectedRoleSecret);
+            await localStorageService.SetItemAsStringAsync($"munity-access-{committeeId}", selectedRoleSecret);
         }
         else
         {
             vcParticipationService.SignOff();
-            await localStorageService.RemoveItemAsync($"munity-access-{CommitteeId}");
+            await localStorageService.RemoveItemAsync($"munity-access-{committeeId}");
         }
         showSelectRoleModal = false;
     }
 
     private async Task Init()
     {
-        var accessKey = await localStorageService.GetItemAsStringAsync($"munity-access-{CommitteeId}");
+        var accessKey = await localStorageService.GetItemAsStringAsync($"munity-access-{committeeId}");
 
         if (accessKey != null)
         {
-            var signInSucces = vcParticipationService.SignIn(CommitteeId, accessKey);
+            var signInSucces = vcParticipationService.SignIn(committeeId, accessKey);
             
         }
         await InvokeAsync(StateHasChanged);

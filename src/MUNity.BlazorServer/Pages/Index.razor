@@ -57,7 +57,7 @@
         <p>Einem Gremium über einen Code beitreten.</p>
         <div class="form-group">
             <label>Beitrittscode</label>
-            <input class="form-control" @bind-value="committeeSecret" />
+            <input type="number" class="form-control" @bind="committeeSecret" @bind:event="onchange" placeholder="00000" />
         </div>
         <a href="/mobile/@committeeSecret" class="btn btn-default mt-2">Beitreten</a>
     </div>
