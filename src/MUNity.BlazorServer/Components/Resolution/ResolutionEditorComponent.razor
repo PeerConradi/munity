@@ -7,14 +7,14 @@
 <div class="row">
     <div class="panel panel-inverse col-12">
         <div class="panel-heading">
-            @if (((exchange.Resolution.State == EResolutionStates.Private || 
+            @if (!IsReaderMode && ((exchange.Resolution.State == EResolutionStates.Private || 
             exchange.Resolution.State == EResolutionStates.Public) && exchange.Resolution.SubmitterRole?.RoleId == vcParticipationService.RoleId))
             {
                 <label class="me-2">Anderen erlauben mit zu schreiben</label>
                 <RadzenSwitch @bind-Value=@allowOthersToEdit class="me-2" />
                 <button class="btn btn-default" @onclick="SubmitResolution">Einreichen</button>
             }
-            else if (exchange.Resolution.State == EResolutionStates.Submitted)
+            else if (!IsReaderMode && exchange.Resolution.State == EResolutionStates.Submitted)
             {
                 <h3 class="panel-title">Eingereichte Resolution</h3>
                 <AuthorizeView>
@@ -25,7 +25,7 @@
                 </AuthorizeView>
                
             }
-            else if (exchange.Resolution.State == EResolutionStates.Discussion)
+            else if (!IsReaderMode && exchange.Resolution.State == EResolutionStates.Discussion)
             {
                 <h3 class="panel-title">Resolution wird behandelt. Änderungsanträge offen.</h3>
             }
@@ -34,15 +34,19 @@
                 <h3>Resolution</h3>
             }
 
-            <AuthorizeView>
-                <Authorized>
-                    @if (exchange.Resolution.State == EResolutionStates.Submitted || exchange.Resolution.State == EResolutionStates.Discussion)
-                    {
-                        <label class="me-2">Änderungsanträge erlauben</label>
-                        <RadzenSwitch @bind-Value=@setDiscussionMode />
-                    }
-                </Authorized>
-            </AuthorizeView>
+            @if (!IsReaderMode)
+            {
+                 <AuthorizeView>
+                    <Authorized>
+                        @if (exchange.Resolution.State == EResolutionStates.Submitted || exchange.Resolution.State == EResolutionStates.Discussion)
+                        {
+                            <label class="me-2">Änderungsanträge erlauben</label>
+                            <RadzenSwitch @bind-Value=@setDiscussionMode />
+                        }
+                    </Authorized>
+                </AuthorizeView>   
+            }
+                
         </div>
     </div>
 </div>
@@ -54,25 +58,29 @@
         </div>
     </div>
 
-    <PreambleEditorComponent Exchange=@exchange CanEdit=@CanEdit />
-    <OperativeSectionComponent Exchange=@exchange CanEdit=@CanEdit CommitteeContext=@CommitteeContext />
+    <PreambleEditorComponent Exchange=@exchange CanEdit=@CanEdit IsReaderMode=@IsReaderMode />
+    <OperativeSectionComponent Exchange=@exchange CanEdit=@CanEdit CommitteeContext=@CommitteeContext IsReaderMode=@IsReaderMode />
 
-    <AuthorizeView>
-        <Authorized>
-                <div class="panel panel-inverse">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">Admin</h4>
-                    </div>
-                    <div class="panel-body">
-
-                        <div class="row d-flex justify-content-end">
-                            <button class="btn btn-danger" @onclick="() => showDeleteWarning = true">Resolution löschen</button>
+    @if (!IsReaderMode)
+    {
+        <AuthorizeView>
+            <Authorized>
+                    <div class="panel panel-inverse">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Admin</h4>
                         </div>
+                        <div class="panel-body">
+
+                            <div class="row d-flex justify-content-end">
+                                <button class="btn btn-danger" @onclick="() => showDeleteWarning = true">Resolution löschen</button>
+                            </div>
                         
+                        </div>
                     </div>
-                </div>
-        </Authorized>
-    </AuthorizeView>
+            </Authorized>
+        </AuthorizeView>
+    }
+    
 }
 else
 {
@@ -117,6 +125,8 @@ else
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
     [Parameter] public string CommitteeContext { get; set; }
+
+    [Parameter] public bool IsReaderMode { get; set; }
 
     private bool isAuthed = false;
     private bool showDeleteWarning = false;

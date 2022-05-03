@@ -13,6 +13,7 @@
 @layout Shared.MobileGameLayout
 @inject MunityContext dbContext
 @inject BServices.VirtualCommiteeParticipationService virtualCommitteeParticipation
+@inject BServices.PresentationViewsService presentationViewService
 
 @*
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService
@@ -34,6 +35,11 @@
         }
         else if (!string.IsNullOrEmpty(ResolutionId))
         {
+            <AuthorizeView>
+                <Authorized>
+                    <button class="btn btn-primary" @onclick=SetResolutionToPresentation>Resolution auf die Präsentationsfolie setzen</button>
+                </Authorized>
+            </AuthorizeView>
             <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@ResolutionId />
         }
         else if (!string.IsNullOrEmpty(VisitCommitteeId))
@@ -119,5 +125,14 @@ else
         }
         isInited = true;
         virtualCommitteeParticipation.IsTeamMember = isTeamMember;
+    }
+
+    private void SetResolutionToPresentation()
+    {
+        var presentation = presentationViewService.GetPresentation(CommitteeId);
+        if (presentation != null)
+        {
+            presentation.ResolutionId = ResolutionId;
+        }
     }
 }

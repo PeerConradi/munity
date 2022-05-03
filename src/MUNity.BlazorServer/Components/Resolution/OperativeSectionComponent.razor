@@ -62,7 +62,7 @@
 
 </ol>
 
-@if (pcService.RoleId != null && Exchange.Resolution.State == EResolutionStates.Discussion)
+@if (pcService.RoleId != null && Exchange.Resolution.State == EResolutionStates.Discussion && !IsReaderMode)
 {
 	if (CommitteeContext == null || CommitteeContext != null && pcService.IsActiveForCommittee(CommitteeContext))
 	{
@@ -73,7 +73,7 @@
 	
 }
 
-@if (CanEdit)
+@if (CanEdit && !IsReaderMode)
 {
 	<div class="row d-flex justify-content-center mb-3 mt-2">
 		<button class="btn btn-primary btn-icon btn-lg" title="Präambelabsatz hinzufügen" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
@@ -139,6 +139,8 @@
 	[EditorRequired][Parameter] public bool CanEdit { get; set; }
 
 	[Parameter] public string CommitteeContext { get; set; }
+
+	[Parameter] public bool IsReaderMode { get; set; }
 
 	private int paragraphIndex = 0;
 

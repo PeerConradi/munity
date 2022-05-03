@@ -3,14 +3,44 @@
 
 @inject MunityContext dbContext
 @inject Services.ListOfSpeakersService losService
+@inject BServices.PresentationViewsService presentationViewService
+@inject BServices.VirtualCommitteeExchangeService vcExchangeService
 
 @layout Shared.MobileGameLayout
 
-<h1 class="page-header">PresentationPage</h1>
+@if (!string.IsNullOrEmpty(CommitteeId))
+{
+    <h1 class="page-header">@dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == CommitteeId).Select(n => $"{n.Name} ({n.JoinKey})").FirstOrDefault()</h1>
+}
+
+@if (exchange != null)
+{
+    <div class="row mt-5 ms-2 me-2">
+        <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBannerComponent CommitteeExchange=@exchange />
+    </div>
+}
+else
+{
+    <p>Exchange error</p>
+}
 
 <div class="row">
     <div class="col-8">
-
+        @if (presentationView != null)
+        {
+            if (!string.IsNullOrEmpty(presentationView.ResolutionId))
+            {
+                <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@presentationView.ResolutionId IsReaderMode=true />
+            }
+            else
+            {
+                <p>Keine Resolution gesetzt</p>
+            }
+        }
+        else
+        {
+            <p class="text-danger">Fehler beim Laden des Presentation Views.</p>
+        }
     </div>
     <div class="col-4">
         @if (ViewModel != null)
@@ -40,6 +70,10 @@
 
     private ViewModels.ListOfSpeakers.ListOfSpeakersViewModel ViewModel;
 
+    private BServices.PresentationView presentationView;
+
+    private BServices.VirtualCommitteeExchange exchange;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -51,6 +85,17 @@
             _ = RefreshIfNeeded();
         }
 
+        presentationView = presentationViewService.GetPresentation(CommitteeId);
+        if (presentationView != null)
+        {
+            presentationView.ResolutionIdChanged += (s, e) => InvokeAsync(StateHasChanged);
+        }
+
+        this.exchange = vcExchangeService.GetExchange(CommitteeId);
+        if (exchange != null)
+        {
+            exchange.BannerChanged += (s, e) => InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task RefreshIfNeeded()
