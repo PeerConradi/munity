@@ -3,6 +3,7 @@
 @using System.Text
 
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject ILogger<OperativeParagraphComponent> log
 
 <div class="card border-0 mb-1 @Class"
 	@onclick="() => { if (htmlText.Length == 0 && !isEditing) { isEditing = true;}}">
@@ -62,7 +63,7 @@
 					}
 					else
 					{
-						<p @ondblclick="StartEdit" @ontouchend=StartEdit class="card-text"> @((MarkupString)Paragraph.Text)</p>
+						<p @ondblclick="StartEdit" @ontouchstart=EditWithTouchStart @ontouchend=EditWithTouchEnd class="card-text"> @((MarkupString)Paragraph.Text)</p>
 					}
 					
 				}
@@ -389,6 +390,34 @@
 	private bool isAuthed = false;
 
 	private string htmlText = "1. Operativ Paragraph <br />Mit mehreren Zeilen <br />Anklicken um zu bearbeiten.";
+
+	private TouchPoint startPoint = null;
+
+	private void EditWithTouchStart(TouchEventArgs args)
+	{
+		if (args.Touches.Length > 0)
+		{
+			startPoint = args.Touches[0];
+		}
+	}
+
+	private void EditWithTouchEnd(TouchEventArgs args)
+	{
+		if (startPoint != null)
+		{
+			if (args.ChangedTouches.Length > 0)
+			{
+				var nowPoint = args.ChangedTouches[0];
+				if (nowPoint.ClientX > startPoint.ClientX - 10 && nowPoint.ClientX < startPoint.ClientX + 10 &&
+				nowPoint.ClientY > startPoint.ClientY - 10 && nowPoint.ClientY < startPoint.ClientY + 10)
+				{
+					StartEdit();
+				}
+			}
+			startPoint = null;
+		}
+
+	}
 
 	private bool allowDeleteAmendement
 	{
