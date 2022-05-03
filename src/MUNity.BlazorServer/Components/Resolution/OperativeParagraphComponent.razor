@@ -229,7 +229,7 @@
 										else
 										{
 											if (vcParticipationService.DelegateType != "NA" &&
-											(!string.IsNullOrEmpty(CommitteeContext) && !vcParticipationService.IsActiveForCommittee(CommitteeContext) != false))
+											(!string.IsNullOrEmpty(CommitteeContext) && vcParticipationService.IsActiveForCommittee(CommitteeContext) != false))
 											{
 												if (amendment.Supporters.All(n => n.Role?.RoleId != vcParticipationService.RoleId))
 												{
@@ -239,6 +239,9 @@
 												{
 													<button class="btn btn-default btn-sm" @onclick="() => RevokeSupport(amendment)">Unterstützung zurückziehen</button>
 												}
+											}
+											else {
+												<span class="badge bg-danger">Unterstützung nicht möglich (@CommitteeContext)</span>
 											}
 											
 										}
