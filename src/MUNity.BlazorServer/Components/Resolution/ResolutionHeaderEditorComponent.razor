@@ -24,7 +24,7 @@
 			@if (vcParticipationService.RoleId != null && Exchange.Resolution.SubmitterRole != null && 
 			vcParticipationService.RoleId != Exchange.Resolution.SubmitterRole.RoleId && 
 			vcParticipationService.DelegateType != "NA" &&
-			(!string.IsNullOrEmpty(CommitteeContext) && !vcParticipationService.IsActiveForCommittee(CommitteeContext) != false))
+			(!string.IsNullOrEmpty(CommitteeContext) && vcParticipationService.IsActiveForCommittee(CommitteeContext) != false))
 			{
 				if (Exchange.Resolution.Supporters.All(n => n.Role.RoleId != vcParticipationService.RoleId))
 				{
