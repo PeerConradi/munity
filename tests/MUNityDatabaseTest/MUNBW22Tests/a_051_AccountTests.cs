@@ -21,7 +21,7 @@ public partial class FullDMUN2022Tests
 
         foreach (var user in TestUsers.AllUsers)
         {
-            var creationResult = await userManager.CreateAsync(user, "Passwort123");
+            var creationResult = await userManager.CreateAsync(user, "Munity4BW2022");
             Assert.IsTrue(creationResult.Succeeded);
         }
     }
