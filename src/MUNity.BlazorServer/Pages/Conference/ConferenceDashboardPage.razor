@@ -70,7 +70,18 @@
             </div>
         </div>
         <!-- END col-3 -->
+    </div>
 
+    <div class="row">
+        @foreach(var committeeId in dbContext.Committees.AsNoTracking().Where(n => n.Conference.ConferenceId == Id).Select(n => n.CommitteeId))
+        {
+            <div class="col-4">
+                <MUNity.BlazorServer.Components.Conference.Committee.CommitteeCardComponent CommitteeId=@committeeId />
+            </div>
+        }
+    </div>
+
+    <div class="row">
         <div class="col-xl-4 col-lg-6">
             <TeamCardComponent ConferenceId=@this.Id />
         </div>

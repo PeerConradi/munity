@@ -1,0 +1,103 @@
+﻿@page "/presentation/{CommitteeId}"
+@using MUNity.BlazorServer.Components.ListOfSpeakers
+
+@inject MunityContext dbContext
+@inject Services.ListOfSpeakersService losService
+@inject BServices.PresentationViewsService presentationViewService
+@inject BServices.VirtualCommitteeExchangeService vcExchangeService
+
+@layout Shared.MobileGameLayout
+
+@if (!string.IsNullOrEmpty(CommitteeId))
+{
+    <h1 class="page-header">@dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == CommitteeId).Select(n => $"{n.Name} ({n.JoinKey})").FirstOrDefault()</h1>
+}
+
+@if (exchange != null)
+{
+    <div class="row mt-5 ms-2 me-2">
+        <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBannerComponent CommitteeExchange=@exchange />
+    </div>
+}
+
+<div class="row">
+    <div class="col-8">
+        @if (presentationView != null)
+        {
+            if (!string.IsNullOrEmpty(presentationView.ResolutionId))
+            {
+                <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@presentationView.ResolutionId IsReaderMode=true />
+            }
+            else
+            {
+                <p>Keine Resolution gesetzt</p>
+            }
+        }
+        else
+        {
+            <p class="text-danger">Fehler beim Laden des Presentation Views.</p>
+        }
+    </div>
+    <div class="col-4">
+        @if (ViewModel != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <LoSSpeakersComponent ViewModel="@ViewModel" AllowEdit="false" />
+                </div>
+
+                <div class="col-12">
+                    <LoSQuestionsComponent ViewModel="@ViewModel" AllowEdit="false" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <p>Keine Redeliste initialisiert</p>
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter] public string CommitteeId { get; set; }
+
+    private string listOfSpeakersId;
+
+    private ViewModels.ListOfSpeakers.ListOfSpeakersViewModel ViewModel;
+
+    private BServices.PresentationView presentationView;
+
+    private BServices.VirtualCommitteeExchange exchange;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        listOfSpeakersId = dbContext.Committees.Where(n => n.CommitteeId == CommitteeId).Select(n => n.ListOfSpeakers.ListOfSpeakersId).FirstOrDefault();
+
+        if (listOfSpeakersId != null)
+        {
+            this.ViewModel = losService.GetViewModel(this.listOfSpeakersId);
+            _ = RefreshIfNeeded();
+        }
+
+        presentationView = presentationViewService.GetPresentation(CommitteeId);
+        if (presentationView != null)
+        {
+            presentationView.ResolutionIdChanged += (s, e) => InvokeAsync(StateHasChanged);
+        }
+
+        this.exchange = vcExchangeService.GetExchange(CommitteeId);
+        if (exchange != null)
+        {
+            exchange.BannerChanged += (s, e) => InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task RefreshIfNeeded()
+    {
+        await InvokeAsync(StateHasChanged);
+        await Task.Delay(1000);
+        await RefreshIfNeeded();
+    }
+}

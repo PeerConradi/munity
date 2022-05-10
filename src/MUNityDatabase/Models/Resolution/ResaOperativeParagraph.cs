@@ -38,6 +38,31 @@ public class ResaOperativeParagraph
 
     public IList<ResaMoveAmendment> MoveAmendments { get; set; }
 
+    public int GetIndex()
+    {
+        int index = 0;
+        if (Parent == null && Resolution != null)
+        {
+            foreach (var paragraph in Resolution.OperativeParagraphs)
+            {
+                if (paragraph == this) break;
+                if (!paragraph.IsVirtual) index++;
+            }
+            return index;
+        }
+        else if (Parent != null)
+        {
+            foreach (var child in Parent.Children)
+            {
+                if (child == this) break;
+                if (!child.IsVirtual) index++;
+            }
+            return index;
+        }
+
+        return -1;
+    }
+
     public ResaOperativeParagraph()
     {
         ResaOperativeParagraphId = Guid.NewGuid().ToString();
@@ -45,5 +70,10 @@ public class ResaOperativeParagraph
         DeleteAmendments = new List<ResaDeleteAmendment>();
         ChangeAmendments = new List<ResaChangeAmendment>();
         MoveAmendments = new List<ResaMoveAmendment>();
+    }
+
+    public override string ToString()
+    {
+        return Text;
     }
 }

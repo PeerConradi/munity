@@ -1,5 +1,6 @@
 ﻿@page "/c/committee/{Id}"
 @using MUNity.Database.Models.Conference
+@using MUNity.Database.Models.Session
 
 @inject MunityContext dbContext
 @inject Services.UserConferenceAuthService confAuthService
@@ -8,8 +9,8 @@
     <Authorized>
         @if (isHeadUser && committee != null)
         {
-            <h1>@committee.Name</h1>
-            <h4>@committee.FullName</h4>
+            <h1 class="page-header">@committee.Name <small>@committee.FullName</small></h1>
+
 
             <div class="row">
                 <div class="col-8">
@@ -35,12 +36,87 @@
                             </ol>
 
                             <h5>Sessions</h5>
-                            <ul>
-                                @foreach(var session in dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == Id))
+                            @if (sessions != null)
+                            {
+
+                                @if (sessions.Count != 0)
                                 {
-                                    <li><a href="/committee/session/@session.CommitteeSessionId">@session.StartDate - @session.EndDate</a></li>
+                                    <ul>
+                                        @foreach(var session in sessions)
+                                        {
+                                            <li><a href="/committee/session/@session.CommitteeSessionId">@session.StartDate - @session.EndDate</a></li>
+                                        }
+                                    </ul>
                                 }
-                            </ul>
+                                else
+                                {
+                                    <button class="btn btn-primary" @onclick=CreateSession>Eine neue Session erstellen</button>
+                                }
+                                
+                            }
+ 
+
+                        </div>
+                    </div>
+
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            Tools
+                        </div>
+                        <div class="card-body">
+                            <div class="widget-list rounded mb-4" data-id="widget">
+								<a href="/presentation/@Id" target="_blank" class="widget-list-item">
+									<div class="widget-list-media icon">
+										<i class="fa fa-tv bg-inverse text-white"></i>
+									</div>
+									<div class="widget-list-content">
+										<h4 class="widget-list-title">Präsentationsfenster öffnen</h4>
+									</div>
+									<div class="widget-list-action text-end">
+										<i class="fa fa-angle-right fa-lg text-gray-500"></i>
+									</div>
+								</a>
+
+                                @if (!string.IsNullOrEmpty(listOfSpeakersId))
+                                {
+                                    <a href="/los/@listOfSpeakersId" class="widget-list-item">
+									    <div class="widget-list-media icon">
+										    <i class="fa fa-tv bg-inverse text-white"></i>
+									    </div>
+									    <div class="widget-list-content">
+										    <h4 class="widget-list-title">Redeliste führen</h4>
+									    </div>
+									    <div class="widget-list-action text-end">
+										    <i class="fa fa-angle-right fa-lg text-gray-500"></i>
+									    </div>
+								    </a>
+                                }
+                                
+							</div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            Resolutionen
+                        </div>
+                        <div class="card-body">
+                            <div class="widget-list rounded mb-4" data-id="widget">
+                                @foreach(var resolution in dbContext.ResolutionAuths.Where(n => n.Committee.CommitteeId == Id).Select(n => new { n.Resolution.ResaElementId, n.Resolution.Topic}))
+                                {
+                                    <a href="/resolution/@resolution.ResaElementId" target="_blank" class="widget-list-item">
+									    <div class="widget-list-media icon">
+										    <i class="fa fa-fax bg-primary text-white"></i>
+									    </div>
+									    <div class="widget-list-content">
+										    <h4 class="widget-list-title">@resolution.Topic</h4>
+									    </div>
+									    <div class="widget-list-action text-end">
+										    <i class="fa fa-angle-right fa-lg text-gray-500"></i>
+									    </div>
+								    </a>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,9 +163,13 @@
 
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
+    private List<CommitteeSession> sessions;
+
     private Committee committee;
 
     private bool isHeadUser;
+
+    private string listOfSpeakersId = string.Empty;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -99,11 +179,32 @@
         if (isHeadUser)
         {
             this.committee = dbContext.Committees
-            .AsNoTracking()
             .Include(n => n.Topics)
             .Include(n => n.AllowedPetitionTypes)
             .FirstOrDefault(n => n.CommitteeId == Id);
+
+            this.sessions = dbContext.CommitteeSessions.Where(n => n.Committee.CommitteeId == Id).ToList();
+
             await InvokeAsync(StateHasChanged);
         }
+        this.listOfSpeakersId = dbContext.Committees.Where(n => n.CommitteeId == Id).Select(n => n.ListOfSpeakers.ListOfSpeakersId).FirstOrDefault();
+    }
+
+    private void CreateSession()
+    {
+        var session = new CommitteeSession()
+            {
+                Committee = committee,
+                StartDate = DateTime.Now,
+                Name = "Neuer Sitzungsblock"
+            };
+        if (committee.CurrentSession == null)
+        {
+            committee.CurrentSession = session;
+        }
+
+        this.sessions.Add(session);
+        dbContext.CommitteeSessions.Add(session);
+        dbContext.SaveChanges();
     }
 }

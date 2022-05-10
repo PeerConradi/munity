@@ -1,12 +1,35 @@
 ﻿@inject BServices.VirtualCommiteeParticipationService virtualCommitteeParticipation
+@inject MunityContext dbContext
 
 <h1 class="page-header">Willkommen @(virtualCommitteeParticipation.RoleName)</h1>
-
+<h4></h4>
 <div class="row">
+	<div class="col-lg-6 col-sm-12">
+		<div class="panel panel-inverse">
+			<div class="panel-heading">
+				<h4 class="panel-title">Hinweise</h4>
+			</div>
+			<div class="panel-body">
+				@if (CommitteeExchange != null && CommitteeExchange.CurrentSessionExchange == null)
+				{
+					<div class="alert alert-warning">
+						<h4>Bereitstellungsfehler</h4>
+						<p>Das Gremium enthält keine aktive Sitzung. Diese wird benötigt um Anwesenheiten und Abstimmungen führen zu können. Sowie Anträge bearbeiten zu können.</p>
+					</div>
+				}
+
+				@if (CommitteeExchange != null)
+				{
+					<h5>Zugriffskey: @dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == CommitteeExchange.CommitteeId).Select(n => n.JoinKey).FirstOrDefault()</h5>
+				}
+				
+			</div>
+		</div>
+	</div>
     <div class="col-lg-6 col-sm-12">
         <div class="panel panel-inverse">
             <div class="panel-heading">
-				<h4 class="panel-title">Information</h4>
+				<h4 class="panel-title">Status</h4>
 			</div>
 			<div class="panel-body">
 				<MUNity.BlazorServer.Components.VirtualCommittee.ProcedureComponent />

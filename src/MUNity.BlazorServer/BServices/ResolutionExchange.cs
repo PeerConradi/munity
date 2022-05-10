@@ -23,6 +23,8 @@ namespace MUNity.BlazorServer.BServices
 
         public event EventHandler<ResaAddAmendment> AddAmendmentChanged;
 
+        public event EventHandler<EResolutionStates> ResolutionStateChanged;
+
         public ResaElement Resolution { get; set; }
 
         public void AddPreambleParagraph()
@@ -346,6 +348,14 @@ namespace MUNity.BlazorServer.BServices
             {
                 OperativeParagraphChanged?.Invoke(this, move.SourceParagraph);
             }
+        }
+
+        public void ChangeState(EResolutionStates newState)
+        {
+            var scope = serviceScopeFactory.CreateScope();
+            var resolutionService = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            resolutionService.ChangeState(this.Resolution, newState);
+            this.ResolutionStateChanged?.Invoke(this, newState);
         }
 
         public ResolutionExchange(IServiceScopeFactory scopeFactory)

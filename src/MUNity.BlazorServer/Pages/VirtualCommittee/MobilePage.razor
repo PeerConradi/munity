@@ -1,0 +1,223 @@
+﻿@page "/mobile/{CommitteeSecret}"
+@using MUNity.Database.Models.Resolution
+
+@layout Shared.MobileGameLayout
+
+@inject BServices.VirtualCommitteeExchangeService vcExchangeService
+@inject BServices.ResolutionExchangeService resolutionExchangeService
+@inject Services.ResolutionService resolutionService
+@inject MunityContext dbContext
+@inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+
+@if (exchange != null && !string.IsNullOrEmpty(committeeId))
+{
+    @if (tab == 0)
+    {
+        <div class="row mt-5 ms-2 me-2">
+            <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBannerComponent CommitteeExchange=@exchange />
+        </div>
+
+        <MUNity.BlazorServer.Components.VirtualCommittee.Mobile.MobileDataWidgets CommitteeId=@committeeId />
+    }
+    else if (tab == 1)
+    {
+        <h1 class="page-header">Resolutionen</h1>
+        @if (selectedResolutionId != null)
+        {
+            <div class="panel panel-inverse panel-expand">
+				<!-- BEGIN panel-heading -->
+				<div class="panel-heading ui-sortable-handle">
+					<h4 class="panel-title">Resolutioneditor</h4>
+					<div class="panel-heading-btn">
+						<button @onclick="() => selectedResolutionId = null" class="btn btn-sm btn-icon btn-danger" data-toggle="panel-remove"><i class="fa fa-times"></i></button>
+					</div>
+				</div>
+				<!-- END panel-heading -->
+				<!-- BEGIN panel-body -->
+				<div class="panel-body bg-black-100">
+					<MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@selectedResolutionId CanEdit=true CommitteeContext=@committeeId />
+				</div>
+
+			</div>
+            
+        }
+        else
+        {
+            <div class="widget-list rounded mb-4" data-id="widget">
+                @foreach(var resolution in dbContext.ResolutionAuths.AsNoTracking().Where(n => n.Committee.CommitteeId == committeeId).Select(n => new {n.Resolution.ResaElementId, n.Resolution.Topic}))
+                {
+                    <div class="widget-list-item" @onclick="() => selectedResolutionId = resolution.ResaElementId">
+					    <div class="widget-list-media icon">
+						    <i class="fa fa-paper-plane bg-inverse text-white"></i>
+					    </div>
+					    <div class="widget-list-content">
+						    <h4 class="widget-list-title">@resolution.Topic</h4>
+					    </div>
+					    <div class="widget-list-action text-end">
+						    <i class="fa fa-angle-right fa-lg text-gray-500"></i>
+					    </div>
+				    </div>
+                }
+			</div>
+
+            <ul>
+            
+        </ul>
+        <div class="d-flex align-content-end">
+            <a class="btn btn-primary w-100" @onclick=CreateResolution>Neue Resolution erstellen</a>
+        </div>
+
+        }
+        
+
+        
+    }
+    else if (tab == 2)
+    {
+        <h1 class="page-header">Einstellungen</h1>
+        <p>Eingeloggt mit: @vcParticipationService.RoleId @vcParticipationService.IsActiveForCommittee(committeeId) @vcParticipationService.RoleName</p>
+        <button class="btn btn-primary" @onclick="() => showSelectRoleModal = true">Land wechseln</button>
+    }
+    else
+    {
+        <p>How did you get here?</p>
+    }
+
+}
+else
+{
+    <p>Kein Exchange geladen! @CommitteeSecret @committeeId</p>
+}
+
+<!-- Placeholder for the Footer -->
+<div style="height: 75px"></div>
+
+<nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+    <div class="container">
+        @*<a class="navbar-brand" href="#">
+          <img src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+          Bootstrap
+        </a>*@
+        <button class="btn @((tab == 0) ? "btn-primary" : null) text-white text-center" @onclick="() => tab = 0">
+            <span class="fa-2x"><i class="fa fa-home"></i></span>
+            <h5>Start</h5>
+        </button>
+
+        <button class="btn @((tab == 1) ? "btn-primary" : null) text-white text-center" @onclick="() => {tab = 1; selectedResolutionId = null; }">
+            <span class="fa-2x"><i class="fa fa-paperclip"></i></span>
+            <h5>Resolutionen</h5>
+        </button>
+
+        <button class="btn @((tab == 2) ? "btn-primary" : null) text-white text-center" @onclick="() => tab = 2">
+            <span class="fa-2x"><i class="fa fa-cogs"></i></span>
+            <h5>Einstellungen</h5>
+        </button>
+
+      </div>
+      
+    </nav>
+
+
+    @if (showSelectRoleModal)
+{
+    <div class="modal-backdrop"></div>
+    <div class="modal modal-message fade show" id="modal-message" aria-modal="true" role="dialog" style="display: block;">
+        <div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Delegations auswählen</h4>
+					<button type="button" class="btn-close" @onclick="() => showSelectRoleModal = false"></button>
+				</div>
+				<div class="modal-body">
+					<p>Bitte geben Sie an, welche Delegation Sie in diesem Gremium vertreten.</p>
+					<select class="form-control" @bind="selectedRoleSecret">
+                        <option value="@string.Empty">Zuschauer*in</option>
+                        @foreach(var slot in dbContext.Delegates.AsNoTracking().Where(n => n.Committee.CommitteeId == committeeId))
+                        {
+                            <option value="@slot.RoleSecret"> @slot.RoleName</option>
+                        }
+                    </select>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-white" @onclick="() => showSelectRoleModal = false">Schließen</button>
+					<button class="btn btn-primary" @onclick="SelectRole">Speichern</button>
+				</div>
+			</div>
+		</div>
+    </div>
+}
+
+@code {
+    [Parameter] public string CommitteeSecret { get; set; }
+
+    private string committeeId;
+
+    private BServices.VirtualCommitteeExchange exchange;
+
+    private int tab = 0;
+
+    private string selectedResolutionId;
+
+    private bool showSelectRoleModal = false;
+
+    private string selectedRoleSecret = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        this.committeeId = dbContext.Committees.AsNoTracking().Where(n => n.JoinKey == CommitteeSecret).Select(n => n.CommitteeId).FirstOrDefault();
+        exchange = vcExchangeService.GetExchange(committeeId);
+        await Init();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            if (!vcParticipationService.IsActiveForCommittee(committeeId))
+            {
+                showSelectRoleModal = true;
+                InvokeAsync(StateHasChanged);
+            }
+        }
+    }
+
+    private void CreateResolution()
+    {
+        var resolution = resolutionService.CreateResolutionForCommittee(committeeId, vcParticipationService.RoleId);
+        if (resolution != null)
+        {
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+
+    private async Task SelectRole()
+    {
+        if (!string.IsNullOrEmpty(selectedRoleSecret))
+        {
+            vcParticipationService.SignIn(committeeId, selectedRoleSecret);
+            await localStorageService.SetItemAsStringAsync($"munity-access-{committeeId}", selectedRoleSecret);
+        }
+        else
+        {
+            vcParticipationService.SignOff();
+            await localStorageService.RemoveItemAsync($"munity-access-{committeeId}");
+        }
+        showSelectRoleModal = false;
+    }
+
+    private async Task Init()
+    {
+        var accessKey = await localStorageService.GetItemAsStringAsync($"munity-access-{committeeId}");
+
+        if (accessKey != null)
+        {
+            var signInSucces = vcParticipationService.SignIn(committeeId, accessKey);
+            
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+}

@@ -19,17 +19,17 @@ public class CommitteeSession
 
     public AttendanceCheck AttendanceCheck { get; set; }
 
-    public ICollection<ProtocolEntry> ProtocolEntries { get; set; }
+    public ICollection<ProtocolEntry> ProtocolEntries { get; set; } = new List<ProtocolEntry>();
 
     public DateTime StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
 
-    public ICollection<SessionVoting> Votings { get; set; }
+    public ICollection<SessionVoting> Votings { get; set; } = new List<SessionVoting>();
 
     public AgendaItem CurrentAgendaItem { get; set; }
 
-    public ICollection<CommitteeSessionLogEntry> SessionLog { get; set; }
+    public ICollection<CommitteeSessionLogEntry> SessionLog { get; set; } = new List<CommitteeSessionLogEntry>();
 
     public CommitteeSession()
     {

@@ -16,13 +16,15 @@
 	</div>
 </div>
 
+<ol>
+
 @foreach(var operativeParagraph in Exchange.Resolution.OperativeParagraphs)
 {
 	
 	if (operativeParagraph.Visible && !operativeParagraph.IsVirtual)
 	{
-		paragraphIndex++;
-		<OperativeParagraphComponent 
+		<li>
+			<OperativeParagraphComponent 
 			Exchange=@Exchange 
 			Paragraph=@operativeParagraph
 			IsFirst=@(operativeParagraph == Exchange.Resolution.OperativeParagraphs.First()) 
@@ -32,43 +34,25 @@
 			Class="@((activatedMoveAmendment != null && activatedMoveAmendment.SourceParagraph != operativeParagraph) ? "ms-5" : "")"
 			CommitteeContext=@CommitteeContext
 			/>
+		</li>
+		
 	}
 	else
 	{
 		<!-- Create a new Operative Paragraph -->
 		@if (Exchange.Resolution.AddAmendments.Any(n => n.VirtualParagraph == operativeParagraph))
 		{
-			var addAmendment = Exchange.Resolution.AddAmendments.FirstOrDefault(n => n.VirtualParagraph == operativeParagraph);
-
-			@if (addAmendment.Activated)
-			{
-				<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
-					<AuthorizeView>
-						<Authorized>
-							<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment, false)">Hervorheben beenden</button>
-							<button class="btn btn-success" @onclick="() => Exchange.SubmitAmendment(addAmendment)">Anwenden</button>
-							<button class="btn btn-danger" @onclick="() => Exchange.RevokeAddAmendment(addAmendment)">Verwerfen</button>
-						</Authorized>
-					</AuthorizeView>
-				</div>
-			}
-			else
-			{
-			<AuthorizeView>
-				<Authorized>
-					<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)operativeParagraph.Text)<br />
-						<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment)">Hervorheben</button>
-					</div>
-				</Authorized>
-			</AuthorizeView>
-			}
+			<li style="list-style-type: none">
+				<AddAmendmentVirutalParagraphComponent Exchange=@Exchange OperativeParagraph=operativeParagraph />
+			</li>
+			
 		}
 		else
 		{
 			<!-- Move Amendment Target Paragraph -->
 			if (activatedMoveAmendment != null && activatedMoveAmendment.VirtualParagraph == operativeParagraph)
 			{
-				<div class="alert alert-info">@((MarkupString)operativeParagraph.Text) </div>
+				<li class="alert alert-info">@((MarkupString)operativeParagraph.Text) </li>
 			}
 			
 		}
@@ -76,7 +60,9 @@
 	}
 }
 
-@if (pcService.RoleId != null && Exchange.Resolution.State == EResolutionStates.Discussion)
+</ol>
+
+@if (pcService.RoleId != null && Exchange.Resolution.State == EResolutionStates.Discussion && !IsReaderMode)
 {
 	if (CommitteeContext == null || CommitteeContext != null && pcService.IsActiveForCommittee(CommitteeContext))
 	{
@@ -87,22 +73,30 @@
 	
 }
 
-<AuthorizeView>
+@if (CanEdit && !IsReaderMode)
+{
+	<div class="row d-flex justify-content-center mb-3 mt-2">
+		<button class="btn btn-primary btn-icon btn-lg" title="Präambelabsatz hinzufügen" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
+	</div>
+}
+
+@*<AuthorizeView>
 	<Authorized>
 		<div class="row d-flex justify-content-center mb-3 mt-2">
 			<button class="btn btn-primary btn-icon btn-lg" title="Präambelabsatz hinzufügen (Berechtigung durch Vorsitzposten)" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
 		</div>
 	</Authorized>
 	<NotAuthorized>
-		@if (Exchange.Resolution.State == EResolutionStates.Public ||
-		(Exchange.Resolution.State == EResolutionStates.Private && pcService.RoleId == Exchange.Resolution.SubmitterRole.RoleId))
+		@if (Exchange?.Resolution != null &&
+			(Exchange.Resolution.State == EResolutionStates.Public ||
+		(Exchange.Resolution.State == EResolutionStates.Private && pcService?.RoleId != null && pcService.RoleId == Exchange.Resolution.SubmitterRole.RoleId)))
 		{
 			<div class="row d-flex justify-content-center mb-3 mt-2">
 				<button class="btn btn-success btn-icon btn-lg" title="Präambelabsatz hinzufügen" @onclick="CreateOperativeParagraph"><i class="fa fa-plus"></i></button>
 			</div>
 		}
 	</NotAuthorized>
-</AuthorizeView>
+</AuthorizeView>*@
 
 @if (showCreateAddAmendmentModal)
 {
@@ -145,6 +139,8 @@
 	[EditorRequired][Parameter] public bool CanEdit { get; set; }
 
 	[Parameter] public string CommitteeContext { get; set; }
+
+	[Parameter] public bool IsReaderMode { get; set; }
 
 	private int paragraphIndex = 0;
 

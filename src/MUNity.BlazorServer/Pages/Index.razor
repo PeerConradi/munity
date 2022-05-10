@@ -49,19 +49,33 @@
 </div>
 *@
 
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title">Mein Gremium</h4>
+    </div>
+    <div class="panel-body">
+        <p>Einem Gremium über einen Code beitreten.</p>
+        <div class="form-group">
+            <label>Beitrittscode</label>
+            <input type="number" class="form-control" @bind="committeeSecret" @bind:event="onchange" placeholder="00000" />
+        </div>
+        <a href="/mobile/@committeeSecret" class="btn btn-default mt-2">Beitreten</a>
+    </div>
+</div>
+
 <AuthorizeView>
     <Authorized>
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>MUN-SH 2022 Beitritt</h5>
+                        <h5>MUNBW 2022 Beitritt</h5>
                     </div>
                     <div class="card-body">
                         <p>Die Beitrittslinks sind nun versteckt worden und befinden sich jetzt <a href="/c/managecommittees/munsh22">hier</a></p>
                         <h5>Beitritt für Vorsitzende</h5>
                         <div class="btn-group btn-group-vertical">
-                            @foreach(var committee in dbContext.Committees.Where(n => n.Conference.ConferenceId == "munsh22").Select(n => new { n.CommitteeId, n.Name, n.CommitteeShort}))
+                            @foreach(var committee in dbContext.Committees.Where(n => n.Conference.ConferenceId == "munbw22").Select(n => new { n.CommitteeId, n.Name, n.CommitteeShort}))
                             {
                                 <button class="btn @((committee.CommitteeShort == "SEK" || committee.CommitteeShort == "KFK") ? "btn-default" : "btn-primary")" @onclick="() => JoinAsTeam(committee.CommitteeId)">@committee.Name</button>
                             }
@@ -79,6 +93,8 @@
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
     private List<ConferenceBoardInfo> conferenceBoardInfos;
+
+    private string committeeSecret = "";
 
     protected override async Task OnInitializedAsync()
     {

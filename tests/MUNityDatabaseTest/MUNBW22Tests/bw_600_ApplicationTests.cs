@@ -112,39 +112,39 @@ public partial class FullDMUN2022Tests
         var result = _context.SaveChanges();
     }
 
-    [Test]
-    [Order(620)]
-    [Description("This test show how a delegation Application can be created, that is targeting three different Delegations.")]
-    public void TestCreateDelegationApplication()
-    {
+    //[Test]
+    //[Order(620)]
+    //[Description("This test show how a delegation Application can be created, that is targeting three different Delegations.")]
+    //public void TestCreateDelegationApplication()
+    //{
 
-        var application = _context.Fluent
-            .ForConference("munbw22")
-            .CreateDelegationApplication()
-            .WithAuthor(TestUsers.XMen.OriginalMembers.ProfessorX.UserName)
-            .WithMember(TestUsers.XMen.OriginalMembers.Angel.UserName)
-            .WithPreferedDelegationByName("Elfenbeinküste")
-            .WithPreferedDelegationByName("Ghana")
-            .WithPreferedDelegationByName("Kenia")
-            .WithFieldInput("Motivation", "Wir sind sehr Motiviert bei dieser Konferenz dabei zu sein :)")
-            .IsOpenedToPublic()
-            .Submit();
+    //    var application = _context.Fluent
+    //        .ForConference("munbw22")
+    //        .CreateDelegationApplication()
+    //        .WithAuthor(TestUsers.XMen.OriginalMembers.ProfessorX.UserName)
+    //        .WithMember(TestUsers.XMen.OriginalMembers.Angel.UserName)
+    //        .WithPreferedDelegationByName("Elfenbeinküste")
+    //        .WithPreferedDelegationByName("Ghana")
+    //        .WithPreferedDelegationByName("Kenia")
+    //        .WithFieldInput("Motivation", "Wir sind sehr Motiviert bei dieser Konferenz dabei zu sein :)")
+    //        .IsOpenedToPublic()
+    //        .Submit();
 
 
-        Assert.NotNull(application);
-        Assert.AreEqual(1, _context.DelegationApplications.Count());
+    //    Assert.NotNull(application);
+    //    Assert.AreEqual(1, _context.DelegationApplications.Count());
 
-        var applications = _context.DelegationApplications
-            .Where(n => n.DelegationWishes
-                .Any(a => a.Delegation.Conference.ConferenceId == "munbw22"))
-            .ToList();
+    //    var applications = _context.DelegationApplications
+    //        .Where(n => n.DelegationWishes
+    //            .Any(a => a.Delegation.Conference.ConferenceId == "munbw22"))
+    //        .ToList();
 
-        Assert.AreEqual(1, applications.Count, "Should only have one application by now");
-        Assert.AreEqual(2, _context.DelegationApplicationUserEntries.Count(), "The application should have two users");
-        Assert.AreEqual(3, _context.DelegationApplicationPickedDelegations.Count());
-    }
+    //    Assert.AreEqual(1, applications.Count, "Should only have one application by now");
+    //    Assert.AreEqual(2, _context.DelegationApplicationUserEntries.Count(), "The application should have two users");
+    //    Assert.AreEqual(3, _context.DelegationApplicationPickedDelegations.Count());
+    //}
 
-    [Test]
+    //[Test]
     [Order(621)]
     [Description("This test should allow a user to become part of an application. This should only be allowed if the application is Open.")]
     public void TestUserCanApplyOnApplication()

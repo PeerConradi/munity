@@ -27,7 +27,7 @@
                     <span class="badge bg-dark ms-1">@result.Count @result.Name (@result.Percentage%)</span>
                 }
                 </h3>
-                <RadzenChart ColorScheme=@ColorScheme.Divergent>
+                <RadzenChart>
                     <RadzenPieSeries Data="Results" Title="Ergebnis" CategoryProperty="Name" ValueProperty="Count" />
                 </RadzenChart>
             }
@@ -38,6 +38,17 @@
                     <tr>
                         <th>Delegation</th>
                         <th>Stimme</th>
+                        <AuthorizeView>
+                            <Authorized>
+                                <th>Stimme dafür</th>
+                                <th>Stimme dagegen</th>
+                                @if (voting.AllowAbstention)
+                                {
+                                    <th>Enthalten</th>
+                                }
+                                <th>Reset</th>
+                            </Authorized>
+                        </AuthorizeView>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,9 +68,51 @@
                                 }
                                 else
                                 {
-                                    <p>@slot.Choice</p>
+                                    <h3>
+                                        @if (slot.Choice == EVoteStates.Pro)
+                                        {
+                                            <i class="fa fa-check text-success"></i>
+                                        }
+                                        else if (slot.Choice == EVoteStates.Con)
+                                        {
+                                            <i class="fa fa-times text-danger"></i>
+                                        }
+                                        else if (slot.Choice == EVoteStates.Abstention)
+                                        {
+                                            <i class="fa fa-cookie-bite text-primary"></i>
+                                        }
+                                    </h3>
                                 }
                             </td>
+                            <AuthorizeView>
+                            <Authorized>
+                                <td>
+                                    @if (slot.Choice != EVoteStates.Pro)
+                                    {
+                                        <button class="btn @((slot.Choice == EVoteStates.NotVoted) ? "btn-success" : "btn-outline-success")" @onclick="() => Vote(slot, EVoteStates.Pro)">Dafür</button>
+                                    }
+                                        
+                                </td>
+                                <td>
+                                    @if (slot.Choice != EVoteStates.Con)
+                                    {
+                                        <button class="btn  @((slot.Choice == EVoteStates.NotVoted) ? "btn-danger" : "btn-outline-danger")" @onclick="() => Vote(slot, EVoteStates.Con)">Dagegen</button>
+                                    }
+                                        
+                                </td>
+                                @if (voting.AllowAbstention)
+                                {
+                                    <td><button class="btn btn-primary" @onclick="() => Vote(slot, EVoteStates.Abstention)">Enthalten</button></td>
+                                }
+                                <td>
+                                    @if (slot.Choice != EVoteStates.NotVoted)
+                                        {
+                                            <button class="btn btn-default" @onclick="() => Vote(slot, EVoteStates.NotVoted)">Reset</button>
+                                        }
+                                        
+                                </td>
+                            </Authorized>
+                        </AuthorizeView>
                         </tr>
                     }
                 </tbody>
@@ -143,9 +196,9 @@
         }
         catch (Exception ex)
         {
-            
+
         }
-        
+
     }
 
     private void OnUserVoted(object sender, BServices.UserVotedEventArgs args)
@@ -162,17 +215,31 @@
     {
         if (vcPartService?.RoleId != null)
         {
-            var mySlot = voting.VoteSlots.FirstOrDefault(n => n.User.RoleId == vcPartService?.RoleId);
-            if (mySlot != null)
-            {
-                mySlot.Choice = choice;
-                dbContext.SaveChanges();
-                exchange.NotifyUserVoted(vcPartService.RoleId.Value, mySlot.Choice);
-            }
-            else
-            {
-                logger?.LogError($"Tried to vote with the RoleId: {vcPartService.RoleId} but no slot was found that could be used in voting {VoteId}");
-            }
+            Vote(vcPartService.RoleId.Value, choice);
         }
+    }
+
+    private void Vote(int roleId, EVoteStates choice)
+    {
+        var voteSlot = voting.VoteSlots.FirstOrDefault(n => n.User.RoleId == roleId);
+        if (voteSlot != null)
+        {
+            Vote(voteSlot, choice);
+        }
+        else
+        {
+            logger?.LogError($"Tried to vote with the RoleId: {vcPartService.RoleId} but no slot was found that could be used in voting {VoteId}");
+        }
+    }
+
+    private void Vote(SessionVotingSlot slot, EVoteStates choice)
+    {
+        slot.Choice = choice;
+        dbContext.SaveChanges();
+        if (slot.User != null)
+        {
+            exchange?.NotifyUserVoted(slot.User.RoleId, choice);
+        }
+        
     }
 }

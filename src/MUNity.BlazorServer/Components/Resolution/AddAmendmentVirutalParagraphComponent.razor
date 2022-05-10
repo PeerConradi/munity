@@ -1,0 +1,77 @@
+﻿@using MUNity.BlazorServer.BServices
+@using MUNity.Database.Models.Resolution
+
+@inject VirtualCommiteeParticipationService vcParticipationService
+
+@if (addAmendment != null)
+{
+    @if (addAmendment.Activated)
+	{
+		<div class="alert alert-info"><i class="fa fa-plus"></i> @((MarkupString)OperativeParagraph.Text)<br />
+			<AuthorizeView>
+				<Authorized>
+					<button class="btn btn-default" @onclick="() => Exchange.ActivateAmendment(addAmendment, false)">Hervorheben beenden</button>
+					<button class="btn btn-success" @onclick="() => Exchange.SubmitAmendment(addAmendment)">Anwenden</button>
+					<button class="btn btn-danger" @onclick="() => Exchange.RevokeAddAmendment(addAmendment)">Verwerfen</button>
+				</Authorized>
+			</AuthorizeView>
+		</div>
+				
+	}
+	else
+	{
+	
+
+	<div class="card border-primary">
+		<div class="card-body">
+			<h5 class="card-title">Antrag auf neuen Absatz</h5>
+			@((MarkupString)OperativeParagraph.Text)
+			<br>
+			<br>
+			Eingereicht durch: @addAmendment.Submitter?.RoleName
+		</div>
+				
+		@if (isAuthed || vcParticipationService?.RoleId != null && vcParticipationService.RoleId == addAmendment.Submitter?.RoleId)
+		{
+			<div class="card-footer">
+				@if (Exchange.Resolution.OperativeParagraphs.FirstOrDefault() != OperativeParagraph)
+				{
+					<button class="btn btn-default" @onclick="() => Exchange.MoveOperativeParagraphUp(OperativeParagraph)"><i class="fa fa-arrow-up"></i> Hochschieben</button>
+				}
+							
+				@if (Exchange.Resolution.OperativeParagraphs.Last() != OperativeParagraph)
+				{
+					<button class="btn btn-default ms-2" @onclick="() => Exchange.MoveOperativeParagraphDown(OperativeParagraph)"><i class="fa fa-arrow-down"></i> Runterschieben</button>
+				}
+
+				<AuthorizeView>
+					<Authorized>
+						<button class="btn btn-default ms-2" @onclick="() => Exchange.ActivateAmendment(addAmendment)"><i class="fa fa-eye"></i> Hervorheben</button>
+					</Authorized>
+				</AuthorizeView>
+			</div>
+					
+		}
+	</div>
+	}
+}
+
+@code {
+	[Parameter] public ResaOperativeParagraph OperativeParagraph { get; set; }
+
+	[Parameter] public ResolutionExchange Exchange { get; set; }
+
+	[CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+	private ResaAddAmendment addAmendment;
+
+	private bool isAuthed = false;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		this.addAmendment = Exchange.Resolution.AddAmendments.FirstOrDefault(n => n.VirtualParagraph == OperativeParagraph);
+		this.vcParticipationService.Registered += (s, e) => InvokeAsync(StateHasChanged);
+		this.isAuthed = (await AuthStateTask).User.Identity.IsAuthenticated;
+	}
+}
