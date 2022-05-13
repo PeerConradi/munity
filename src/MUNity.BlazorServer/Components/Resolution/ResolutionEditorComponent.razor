@@ -1,8 +1,9 @@
 ﻿@using MUNity.BlazorServer.BServices
 @inject BServices.ResolutionExchangeService resolutionExchangeService
 @inject BServices.VirtualCommiteeParticipationService vcParticipationService
+@inject ILogger<ResolutionEditorComponent> log
 
-@if (exchange != null)
+@if (exchange?.Resolution != null)
 {
 <div class="row">
     <div class="panel panel-inverse col-12">
@@ -130,6 +131,8 @@ else
 
     private bool isAuthed = false;
     private bool showDeleteWarning = false;
+    private bool hasError = false;
+    private string errorText = "";
 
     [Parameter]public bool CanEdit { get; set; }
 
@@ -200,15 +203,24 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        exchange = resolutionExchangeService.GetResolution(ResolutionId);
-        if (!CanEdit)
+        try
         {
-            var taskResult = await AuthStateTask;
-            isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
-            LoadEditAuth();
+            exchange = resolutionExchangeService.GetResolution(ResolutionId);
+            if (!CanEdit)
+            {
+                var taskResult = await AuthStateTask;
+                isAuthed = taskResult?.User?.Identity != null && taskResult.User.Identity.IsAuthenticated;
+                LoadEditAuth();
+            }
+            base.OnParametersSet();
+            Reload();
         }
-        base.OnParametersSet();
-        Reload();
+        catch (Exception ex)
+        {
+            log?.LogError(ex, "Unable to load resolution");
+            hasError = true;
+        }
+
     }
 
     protected override void OnInitialized()

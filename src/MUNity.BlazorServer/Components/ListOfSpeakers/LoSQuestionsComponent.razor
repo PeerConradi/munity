@@ -164,11 +164,7 @@
 		{
 			if (ViewModel?.CurrentQuestion == null)
 			{
-				if (randomImageIndex == -1)
-				{
-					randomImageIndex = new Random().Next(1, 70);
-				}
-				return $"background: no-repeat bottom right; background-image: url(/img/gallery/gallery-{randomImageIndex}.jpg); background-size: auto 100%;";
+				return $"background: no-repeat bottom right; background-image: url(/img/flags/medium/un.png); background-size: auto 100%;";
 			}
 			else
 			{

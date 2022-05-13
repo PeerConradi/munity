@@ -167,20 +167,23 @@ else
     {
         await base.OnParametersSetAsync();
         this.committeeId = dbContext.Committees.AsNoTracking().Where(n => n.JoinKey == CommitteeSecret).Select(n => n.CommitteeId).FirstOrDefault();
-        exchange = vcExchangeService.GetExchange(committeeId);
-        await Init();
+        if (!string.IsNullOrEmpty(committeeId))
+        {
+            exchange = vcExchangeService.GetExchange(committeeId);
+        }
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         base.OnAfterRender(firstRender);
         if (firstRender)
         {
+            await Init();
             if (!vcParticipationService.IsActiveForCommittee(committeeId))
             {
                 showSelectRoleModal = true;
-                InvokeAsync(StateHasChanged);
             }
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -216,7 +219,6 @@ else
         if (accessKey != null)
         {
             var signInSucces = vcParticipationService.SignIn(committeeId, accessKey);
-            
         }
         await InvokeAsync(StateHasChanged);
     }

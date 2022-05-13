@@ -371,7 +371,7 @@ namespace MUNity.Services
                 Delegation = delegation,
                 RoleName = request.RoleName,
                 RoleFullName = request.RoleName,
-                Title = request.RoleName
+                Title = request.RoleName,
             };
 
             context.Delegates.Add(role);

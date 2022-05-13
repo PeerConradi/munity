@@ -102,7 +102,9 @@
 				}
 				else
 				{
-					logger?.LogError("Petitions are null");
+					this.exchange.CurrentSessionExchange.Petitions = new System.Collections.ObjectModel.ObservableCollection<VirtualCommittees.Dtos.PetitionDto>();
+					this.exchange.CurrentSessionExchange.Petitions.CollectionChanged += delegate { InvokeAsync(StateHasChanged); };
+					logger?.LogError("Petitions were null and created a new list of petitions.");
 				}
 
 				this.presentRoles = dbContext.PresentStates.Where(n => n.SessionPresents.Session.CommitteeSessionId == this.exchange.CurrentSessionExchange.SessionId)

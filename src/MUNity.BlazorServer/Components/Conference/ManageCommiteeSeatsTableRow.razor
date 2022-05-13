@@ -1,14 +1,31 @@
 ﻿@inject NavigationManager navManager
+@inject MunityContext dbContext
+@inject ILogger<ManageCommiteeSeatsTableRow> log
 
 <tr>
     <td>@Seat.RoleId</td>
     <td>@Seat.RoleName</td>
     <td>@Seat.CountryId</td>
     <td>@Seat.DelegationId</td>
-    <td>@Seat.Subtypes</td>
+    <td>
+        @if (Seat.Subtypes != "Delegate")
+        {
+            <button class="btn btn-primary" @onclick="SetSubtypeDelegate">Setze Delegierter</button>
+        }
+        @Seat.Subtypes
+    </td>
     <td>@string.Join(", ", Seat.Participants.Select(n => n.DisplayName))</td>
     <td><a href=@joinLink>@joinLink</a></td>
 </tr>
+
+@if (errorSetDelegate)
+{
+    <tr>
+        <td colspan="7">
+            <div class="alert alert-danger">Änderung konnte nicht vorgenommen werden!</div>
+        </td>
+    </tr>
+}
 
 @code {
     [Parameter] public MUNity.Schema.Conference.CommitteeSeatInfo Seat { get; set; }
@@ -18,4 +35,25 @@
     [Parameter] public List<MUNity.Schema.Conference.DelegationInfo> Delegations { get; set; }
 
     private string joinLink => $"{navManager.BaseUri}oc/join/{Seat.Secret}";
+
+    private bool errorSetDelegate;
+
+    private void SetSubtypeDelegate()
+    {
+        try
+        {
+            var seat = dbContext.Delegates.FirstOrDefault(n => n.RoleId == Seat.RoleId);
+            if (seat != null)
+            {
+                seat.DelegateType = "Delegate";
+                this.dbContext.SaveChanges();
+            }
+            this.Seat.Subtypes = "Delegate";
+        }
+        catch (Exception ex)
+        {
+            log?.LogError(ex, "Unable to set the role to delegate");
+        }
+
+    }
 }

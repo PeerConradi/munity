@@ -6,6 +6,7 @@
 @inject BServices.VirtualCommitteeExchangeService vcExchangeService
 @inject ILogger<VirtualCommitteTopMenu> logger
 @inject BServices.ResolutionExchangeService resolutionExchangeService
+@inject BServices.PresentationViewsService presentationViewService
 
 <div id="top-menu" class="app-top-menu mt-4" style="position: absolute;">
 		<!-- BEGIN menu -->
@@ -203,6 +204,12 @@
 						</a>
 					</div>
 
+					<div class="menu-item">
+						<a @onclick="RemoveResolutionFromPresentation" class="menu-link">
+							<div class="menu-text"><i class="fa fa-user-times"></i> Resolution aus Präsentation entfernen</div>
+						</a>
+					</div>
+
 				</div>
 			</div>
 				</Authorized>
@@ -288,5 +295,18 @@
 		{
 			navManager.NavigateTo($"/oc/{CommitteeExchange.CommitteeId}/resolution/{exchange.Resolution.ResaElementId}");
 		}
+	}
+
+	private void RemoveResolutionFromPresentation()
+	{
+		if (CommitteeExchange?.CommitteeId != null)
+		{
+			var presentation = presentationViewService.GetPresentation(CommitteeExchange.CommitteeId);
+			if (presentation != null)
+			{
+				presentation.ResolutionId = null;
+			}
+		}
+		
 	}
 }

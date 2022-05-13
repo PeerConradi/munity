@@ -118,7 +118,7 @@
                 this.listOfSpeakersId = viewModel.ListOfSpeakersId;
                 dbContext.SaveChanges();
             }
-            
+
         }
     }
 
@@ -164,26 +164,22 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        try
-        {
-            await Init();
-        }
-        catch (Exception ex)
-        {
-            errorOnInit = true;
-            initError = ex.Message;
-        }
-    }
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnParametersSetAsync();
-        if (this.virtualCommitteeParticipation.RoleId == null)
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
         {
-            await Init();
+            try
+            {
+                await Init();
+            }
+            catch (Exception ex)
+            {
+                errorOnInit = true;
+                initError = ex.Message;
+            }
+            await InvokeAsync(StateHasChanged);
         }
     }
 }

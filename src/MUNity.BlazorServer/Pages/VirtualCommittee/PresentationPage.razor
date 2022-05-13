@@ -19,44 +19,55 @@
         <MUNity.BlazorServer.Components.VirtualCommittee.VirtualCommitteeBannerComponent CommitteeExchange=@exchange />
     </div>
 }
-
 <div class="row">
+
+
+@if (presentationView != null && !string.IsNullOrEmpty(presentationView.ResolutionId))
+{
     <div class="col-8">
-        @if (presentationView != null)
-        {
-            if (!string.IsNullOrEmpty(presentationView.ResolutionId))
-            {
-                <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@presentationView.ResolutionId IsReaderMode=true />
-            }
-            else
-            {
-                <p>Keine Resolution gesetzt</p>
-            }
-        }
-        else
-        {
-            <p class="text-danger">Fehler beim Laden des Presentation Views.</p>
-        }
+        <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@presentationView.ResolutionId IsReaderMode=true />
     </div>
-    <div class="col-4">
-        @if (ViewModel != null)
-        {
+    @if (ViewModel != null)
+    {
+        <div class="col-4">
             <div class="row">
-                <div class="col-12">
-                    <LoSSpeakersComponent ViewModel="@ViewModel" AllowEdit="false" />
-                </div>
-
-                <div class="col-12">
-                    <LoSQuestionsComponent ViewModel="@ViewModel" AllowEdit="false" />
-                </div>
+            <div class="col-12">
+                <LoSSpeakersComponent ViewModel="@ViewModel" AllowEdit="false" />
             </div>
-        }
-        else
-        {
-            <p>Keine Redeliste initialisiert</p>
-        }
 
-    </div>
+            <div class="col-12">
+                <LoSQuestionsComponent ViewModel="@ViewModel" AllowEdit="false" />
+            </div>
+        </div>
+        </div>
+        
+    }
+    else
+    {
+        <p>Keine Redeliste initialisiert</p>
+    }
+}
+else if (presentationView != null)
+{
+    @if (ViewModel != null)
+    {
+        <div class="col-6">
+            <LoSSpeakersComponent ViewModel="@ViewModel" AllowEdit="false" />
+        </div>
+
+        <div class="col-6">
+            <LoSQuestionsComponent ViewModel="@ViewModel" AllowEdit="false" />
+        </div>
+    }
+    else
+    {
+        <p>Keine Redeliste initialisiert</p>
+    }
+}
+else if (presentationView != null)
+{
+    <p>Keine Ansicht möglich.</p>
+}
 </div>
 
 @code {

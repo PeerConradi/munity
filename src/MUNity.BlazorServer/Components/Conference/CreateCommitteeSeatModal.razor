@@ -136,6 +136,7 @@
         var claim = (await authStateTask)?.User;
         if (claim != null)
         {
+            request.Subtype = "Delegate";
             this.response = await conferenceService.CreateCommitteeSeat(request, claim);
             if (!response.HasError)
                 await SeatCreated.InvokeAsync();
