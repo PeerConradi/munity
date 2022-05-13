@@ -262,7 +262,7 @@
 			var presentsCheckId = dbContext.PresentChecks.FirstOrDefault(n => n.Session.CommitteeSessionId == CommitteeExchange.CurrentSessionExchange.SessionId)?.SessionPresentsId;
 			if (presentsCheckId != null)
 			{
-				newVoting.VoteSlots = dbContext.PresentStates.Where(n => n.SessionPresents.SessionPresentsId == presentsCheckId && n.State == PresentsState.PresentsStates.Present && n.Role.DelegateCountry != null)
+				newVoting.VoteSlots = dbContext.PresentStates.Where(n => n.SessionPresents.SessionPresentsId == presentsCheckId && (n.State == PresentsState.PresentsStates.Present || n.State == PresentsState.PresentsStates.Late) && n.Role.DelegateCountry != null)
 				.Select(n => new SessionVotingSlot()
 					{
 						Choice = EVoteStates.NotVoted,

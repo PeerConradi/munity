@@ -1,0 +1,45 @@
+﻿@page "/admin/countries"
+@using MUNity.Database.General
+
+@inject MunityContext dbContext
+
+<AuthorizeView Roles="Head-Admin, Admin">
+    <Authorized>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Vollständiger Name</th>
+                    <th>Iso</th>
+                </tr>
+            </thead>
+            @if (countries != null)
+            {
+                <tbody>
+                    @foreach(var country in countries)
+                    {
+                        <tr>
+                            <td>@country.CountryId</td>
+                            <td><input class="form-control" @bind=country.Name /></td>
+                            <td><input class="form-control" @bind=country.FullName /></td>
+                            <td><input class="form-control" @bind=country.Iso /></td>
+                        </tr>
+                    }
+                </tbody>
+            }
+        </table>
+
+        <button class="btn btn-primary" @onclick="() => dbContext.SaveChanges()">Speichern</button>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private List<Country> countries;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        countries = dbContext.Countries.OrderBy(n => n.Name).ToList();
+    }
+}

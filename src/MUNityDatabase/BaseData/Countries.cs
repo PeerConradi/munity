@@ -91,7 +91,7 @@ public static class Countries
             yield return new Country(105, EContinent.Asia, "Malaysia", "Malaysia", "MY", true).AddTranslation("en-EN", "Malaysia");
             yield return new Country(106, EContinent.Asia, "Malediven", "Republik Malediven", "MV", true).AddTranslation("en-EN", "Maldives");
             yield return new Country(117, EContinent.Asia, "Mongolei", "Mongolei", "MN", true).AddTranslation("en-EN", "Mongolia");
-            yield return new Country(120, EContinent.Asia, "Myanmar", "Republik der Union Myanmar", "", true).AddTranslation("en-EN", "MM");
+            yield return new Country(120, EContinent.Asia, "Myanmar", "Republik der Union Myanmar", "MM", true).AddTranslation("en-EN", "MM");
             yield return new Country(123, EContinent.Asia, "Nepal", "Demokratische Bundesrepublik Nepal", "NP", true).AddTranslation("en-EN", "Nepal");
             yield return new Country(88, EContinent.Asia, "Nordkorea", "Demokratische Volksrepublik Korea", "KP", true).AddTranslation("en-EN", "Korea, Democratic People's Republic of (North Korea)");
             yield return new Country(133, EContinent.Asia, "Oman", "Sultanat Oman", "OM", true).AddTranslation("en-EN", "Oman");

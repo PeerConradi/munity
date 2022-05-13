@@ -28,8 +28,12 @@
         }
         else
         {
+        if (canCreateListOfSpeakers)
+        {
             <span class="text-white">Es wurde noch keine Redeliste erstellt</span>
             <button class="btn btn-sm btn-default" @onclick="CreateListOfSpeakers">Jetzt erstellen</button>
+        }
+            
         }
     </div>
     @*<div class="d-flex align-items-center hidden-md">
@@ -101,6 +105,8 @@
 
     private VirtualCommitteeExchange exchange;
 
+    private bool canCreateListOfSpeakers = false;
+
     private void CreateListOfSpeakers()
     {
         var viewModel = listOfSpeakersService.CreateList($"los_{CommitteeId}_{Guid.NewGuid().ToString().Substring(0,5)}");
@@ -155,6 +161,7 @@
             }).FirstOrDefault();
             committeeName = committeeInfo.Name;
             listOfSpeakersId = committeeInfo.ListOfSpeakersId;
+            canCreateListOfSpeakers = listOfSpeakersId == null && (await AuthStateTask).User.Identity.IsAuthenticated;
         }
         this.exchange = vcExchangeService.GetExchange(CommitteeId);
         if (exchange != null)
