@@ -14,6 +14,7 @@
 @inject MunityContext dbContext
 @inject BServices.VirtualCommiteeParticipationService virtualCommitteeParticipation
 @inject BServices.PresentationViewsService presentationViewService
+@inject Services.ResolutionService resolutionService
 
 @*
 @inject Blazored.LocalStorage.ILocalStorageService localStorageService
@@ -46,6 +47,43 @@
             }
             else
             {
+                <AuthorizeView>
+                    <Authorized>
+                        
+
+                        <div class="row">
+                            <div class="alert alert-info">
+                                <h3>Neue Resolution anlegen</h3>
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label>Im Namen des Landes/Rolle</label>
+                                            <select class="form-control" @bind=@newResolutionDelegate>
+                                                <option value="-1">-Ohne-</option>
+                                                @foreach(var role in dbContext.Delegates.Where(n => n.Committee.CommitteeId == CommitteeId).Select(n => new { n.RoleId, n.RoleName }))
+                                                {
+                                                    <option value="@role.RoleId">@role.RoleName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success" @onclick="CreateResolution">Erstellen</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(resolutionError))
+                        {
+                            <div class="alert alert-danger">
+                                <h1>Fehler beim Erstellen der Resolution</h1>
+                                <p>Es ist ein Fehler beim Erstellen aufgetreten mit folgender Meldung:</p>
+                                <p>@resolutionError</p>
+                            </div>
+                        }
+                    </Authorized>
+                </AuthorizeView>
                 <table class="table">
                     <thead>
                         <tr>
@@ -143,6 +181,10 @@ else
 
     private bool isTeamMember;
 
+    private int newResolutionDelegate = -1;
+
+    string resolutionError = string.Empty;
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -162,5 +204,43 @@ else
         {
             presentation.ResolutionId = ResolutionId;
         }
+    }
+
+    private void CreateResolution()
+    {
+        if (string.IsNullOrEmpty(CommitteeId))
+        {
+            resolutionError = "Es wurde keine GremiumId angegeben innerhalb dieser Sitzung.";
+            return;
+        }
+
+        if (newResolutionDelegate != -1)
+        {
+            var resolution = resolutionService.CreateResolutionForCommittee(CommitteeId, newResolutionDelegate);
+            if (resolution != null)
+            {
+                resolutionError = string.Empty;
+            }
+            else
+            {
+                resolutionError = "Es wurde versucht eine Resolution anzulegen aber intern muss etwas schief gelaufen sein.";
+            }
+        }
+        else
+        {
+            var resolution = resolutionService.CreateResolutionForCommittee(CommitteeId, null);
+            if (resolution != null)
+            {
+                resolutionError = string.Empty;
+
+            }
+            else
+            {
+                resolutionError = "Es wurde versucht eine Resolution anzulegen aber intern muss etwas schief gelaufen sein.";
+            }
+        }
+
+        InvokeAsync(StateHasChanged);
+
     }
 }
