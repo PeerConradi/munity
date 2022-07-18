@@ -26,6 +26,9 @@
 					<a @onclick="Save" class="btn btn-primary btn-icon btn-lg me-1">
 					  <i class="fa fa-save"></i>
 					</a>
+					<a @onclick="Cancel" class="btn btn-warning btn-icon btn-lg me-1">
+					  <i class="fa fa-times"></i>
+					</a>
 					<RadzenHtmlEditorSeparator />
 					<a @onclick="MoveUp" class="btn btn-info btn-icon btn-lg me-1 @((IsFirst) ? "disabled": null)">
 					  <i class="fa fa-arrow-up"></i>
@@ -80,6 +83,8 @@
 
 	private bool isAuthed = false;
 
+	private string originalText;
+
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
@@ -105,6 +110,7 @@
 
 	private void StartEdit()
 	{
+		originalText = Paragraph.Text;
 		if (Exchange?.Resolution != null)
 		{
 			if (CanEdit)
@@ -126,6 +132,13 @@
 
 		}
 
+	}
+
+	private void Cancel()
+	{
+		isEditing = false;
+		vcParticipationService.LastEditedPreambleParagraphId = null;
+		Paragraph.Text = originalText;
 	}
 
 	private void Save()

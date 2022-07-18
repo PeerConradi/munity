@@ -81,6 +81,9 @@
 					<a @onclick="Save" class="btn btn-primary btn-icon btn-lg me-1">
 					  <i class="fa fa-save"></i>
 					</a>
+					<a @onclick="Cancel" class="btn btn-warning btn-icon btn-lg me-1">
+					  <i class="fa fa-times"></i>
+					</a>
 					<RadzenHtmlEditorSeparator />
 					<a @onclick="MoveUp" class="btn btn-info btn-icon btn-lg me-1 @((IsFirst) ? "disabled": null)">
 					  <i class="fa fa-arrow-up"></i>
@@ -389,6 +392,8 @@
 
 	private bool isAuthed = false;
 
+	private string originalText;
+
 	private string htmlText = "1. Operativ Paragraph <br />Mit mehreren Zeilen <br />Anklicken um zu bearbeiten.";
 
 	private TouchPoint startPoint = null;
@@ -443,6 +448,8 @@
 		if (!string.IsNullOrEmpty(CommitteeContext) && !vcParticipationService.IsActiveForCommittee(CommitteeContext))
 			return;
 
+		this.originalText = Paragraph.Text;
+
 		if (CanEdit)
 		{
 			vcParticipationService.LastEditedOperativeParagraphId = this.Paragraph.ResaOperativeParagraphId;
@@ -462,6 +469,13 @@
 		vcParticipationService.LastEditedOperativeParagraphId = null;
 		this.newText = Paragraph.Text;
 		this.isEditing = false;
+	}
+
+	private void Cancel()
+	{
+		vcParticipationService.LastEditedOperativeParagraphId = null;
+		this.isEditing = false;
+		this.Paragraph.Text = originalText;
 	}
 
 	private void MoveUp()
