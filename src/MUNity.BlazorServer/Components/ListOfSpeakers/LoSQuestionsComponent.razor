@@ -1,4 +1,5 @@
 ﻿@using MUNity.Database.General
+@using MUNity.ViewModels.ListOfSpeakers
 
 @inject Services.ListOfSpeakersService losService
 @inject ILogger<LoSQuestionsComponent> logger
@@ -65,9 +66,17 @@
 				@if (AllowEdit)
 				{
 					<div class="widget-list-action text-nowrap text-gray-500">
-						@if (ViewModel.Questions.First() == question)
+						@if (ViewModel.Questions.Any() && ViewModel.Questions.First() == question)
 						{
 							<button class="btn btn-sm btn-inverse" @onclick="() => ViewModel.NextQuestion()"><i class="fa fa-arrow-up"></i></button>	
+						}
+						else 
+						{
+							<button class="btn btn-sm btn-inverse" @onclick="() => MoveUp(question)"><i class="fa fa-arrow-up"></i></button>	
+							@if (ViewModel.Questions.Any() && ViewModel.Questions.LastOrDefault() != question)
+							{
+								<button class="btn btn-sm btn-inverse" @onclick="() => MoveDown(question)"><i class="fa fa-arrow-down"></i></button>	
+							}
 						}
 						<button class="btn btn-sm btn-danger" @onclick="() => ViewModel.RemoveQuestion(question.Id)"><i class="fa fa-trash"></i></button>
 					</div>
@@ -153,6 +162,22 @@
 			var foundCountry = KnownCountries.FirstOrDefault(n => n.Name == newQuestionName);
 			losService.AddQuestion(ViewModel.ListOfSpeakersId, newQuestionName, foundCountry?.Iso ?? "un");
 			newQuestionName = "";
+		}
+	}
+
+	private void MoveUp(SpeakerViewModel speaker)
+	{
+		if (ViewModel != null)
+		{
+			losService.MoveSpeakerUp(ViewModel.ListOfSpeakersId, speaker);
+		}
+	}
+
+	private void MoveDown(SpeakerViewModel speaker)
+	{
+		if (ViewModel != null)
+		{
+			losService.MoveSpeakerDown(ViewModel.ListOfSpeakersId, speaker);
 		}
 	}
 

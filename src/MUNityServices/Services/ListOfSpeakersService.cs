@@ -4,6 +4,7 @@ using MUNity.Database.Context;
 using MUNity.Database.Models.LoS;
 using MUNity.Services.Extensions.CastExtensions;
 using MUNity.ViewModels.ListOfSpeakers;
+using MUNityBase.Interfances;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -97,6 +98,91 @@ namespace MUNity.Services
             }
 
             return changes == 1;
+        }
+
+        public bool MoveSpeakerUp(string listId, Speaker speaker)
+		{
+            var listViewModel = GetViewModel(listId);
+
+            using var scope = serviceScopeFactory.CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<MunityContext>();
+
+            var swappingEntry = listViewModel.AllSpeakers.FirstOrDefault(n => n.Mode == speaker.Mode && n.OrdnerIndex == speaker.OrdnerIndex - 1);
+            context.Update(swappingEntry);
+            context.Update(speaker);
+
+            swappingEntry.OrdnerIndex++;
+            speaker.OrdnerIndex--;
+
+            context.SaveChanges();
+            listViewModel.NotifyPropertyChanged(nameof(ListOfSpeakersViewModel.Speakers));
+            listViewModel.NotifyPropertyChanged(nameof(ListOfSpeakersViewModel.Questions));
+
+            return false;
+		}
+
+        public bool MoveSpeakerUp(string listId, SpeakerViewModel speaker)
+        {
+            var listViewModel = GetViewModel(listId);
+
+            using var scope = serviceScopeFactory.CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<MunityContext>();
+
+            var swappingEntry = listViewModel.AllSpeakers.FirstOrDefault(n => n.Mode == speaker.Mode && n.OrdnerIndex == speaker.OrdnerIndex - 1);
+            var original = context.Speakers.FirstOrDefault(n => n.Id == speaker.Id);
+            var swapEntry = context.Speakers.FirstOrDefault(n => n.Id == swappingEntry.Id);
+
+            speaker.OrdnerIndex--;
+            swappingEntry.OrdnerIndex++;
+
+            if (original != null)
+                original.OrdnerIndex--;
+
+            if (swapEntry != null)
+                swapEntry.OrdnerIndex++;
+            //swapEntry.OrdnerIndex++;
+            //original.OrdnerIndex--;
+
+            //context.SaveChanges();
+            listViewModel.NotifyPropertyChanged(nameof(ListOfSpeakersViewModel.Speakers));
+            listViewModel.NotifyPropertyChanged(nameof(ListOfSpeakersViewModel.Questions));
+
+            return false;
+        }
+
+        public bool MoveSpeakerDown(string listId, SpeakerViewModel speaker)
+        {
+            if (speaker == null)
+                return false;
+
+            var listViewModel = GetViewModel(listId);
+
+            using var scope = serviceScopeFactory.CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<MunityContext>();
+
+            var swappingEntry = listViewModel.AllSpeakers.FirstOrDefault(n => n.Mode == speaker.Mode && n.OrdnerIndex == speaker.OrdnerIndex + 1);
+            if (swappingEntry == null)
+                return false;
+
+            var original = context.Speakers.FirstOrDefault(n => n.Id == speaker.Id);
+            var swapEntry = context.Speakers.FirstOrDefault(n => n.Id == swappingEntry.Id);
+
+            speaker.OrdnerIndex++;
+            swappingEntry.OrdnerIndex--;
+
+            if (original != null)
+                original.OrdnerIndex++;
+
+            if (swapEntry != null)
+                swapEntry.OrdnerIndex--;
+            //swapEntry.OrdnerIndex++;
+            //original.OrdnerIndex--;
+
+            //context.SaveChanges();
+            listViewModel.NotifyPropertyChanged(nameof(ListOfSpeakersViewModel.Speakers));
+            listViewModel.NotifyPropertyChanged(nameof(ListOfSpeakersViewModel.Questions));
+
+            return false;
         }
 
         public bool UpdateSpeakerTime(string speakerListId, TimeSpan newTime)
