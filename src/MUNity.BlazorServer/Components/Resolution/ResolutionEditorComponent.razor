@@ -116,7 +116,19 @@ else
       <div></div>
     </div>
 
-  </div></div></div></div>
+                </div></div></div></div>
+}
+else
+{
+    @if (exchange == null)
+    {
+        <p>Es wurde kein Exchange für diese Resolution '@ResolutionId' erstellt.</p>
+    }
+    else if (exchange != null && exchange.Resolution == null)
+    {
+        <p>Ein Exchange für die Resolution wurde erstellt. Jedoch keine Resolution selbst geladen.</p>
+    }
+
 }
 
 

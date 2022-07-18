@@ -35,13 +35,41 @@
         }
         else if (!string.IsNullOrEmpty(ResolutionId))
         {
-            <AuthorizeView>
-                <Authorized>
-                    <button class="btn btn-primary" @onclick=SetResolutionToPresentation>Resolution auf die Präsentationsfolie setzen</button>
-                </Authorized>
-            </AuthorizeView>
-            <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@ResolutionId />
-        }
+            @if (ResolutionId != "demo" && ResolutionId != "all")
+            {
+                <AuthorizeView>
+                    <Authorized>
+                        <button class="btn btn-primary" @onclick=SetResolutionToPresentation>Resolution auf die Präsentationsfolie setzen</button>
+                    </Authorized>
+                </AuthorizeView>
+                <MUNity.BlazorServer.Components.Resolution.ResolutionEditorComponent ResolutionId=@ResolutionId />
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Thema</th>
+                            <th>EinbringerIn</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var resolution in dbContext.ResolutionAuths.AsNoTracking().Where(n => n.Committee.CommitteeId == CommitteeId).Select(n => new {n.Resolution.ResaElementId, n.Resolution.Topic, n.Resolution.SubmitterRole.RoleName, n.Resolution.State}))
+                        {
+                            <tr>
+                                <td>@resolution?.ResaElementId</td>
+                                <td><a href="@($"/oc/{CommitteeId}/resolution/{resolution?.ResaElementId}")">@resolution?.Topic</a> </td>
+                                <td>@resolution?.RoleName</td>
+                                <td>@resolution?.State</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+    }
         else if (!string.IsNullOrEmpty(VisitCommitteeId))
         {
             <MUNity.BlazorServer.Components.VirtualCommittee.VisitCommitteeComponent VisitedCommitteeId=@VisitCommitteeId />

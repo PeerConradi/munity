@@ -15,6 +15,7 @@ namespace MUNity.BlazorServer.BServices
         {
             using var scope = _scopeFactory.CreateScope();
             using var service = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<ResolutionExchangeService>>();
             var resolution = service.CreateResolutionForCommittee(committeeId, roleId);
             var exchange = new ResolutionExchange(_scopeFactory)
             {
@@ -36,23 +37,32 @@ namespace MUNity.BlazorServer.BServices
             var exchange = _resolutions.FirstOrDefault(n => n.Resolution.ResaElementId == resolutionId);
             if (exchange == null)
             {
-                using var scope = _scopeFactory.CreateScope();
-                using var service = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+                exchange = new ResolutionExchange(_scopeFactory);
+                _resolutions.Add(exchange);
+            }
 
-                var resolution = service.GetResolution(resolutionId);
-                if (resolution == null)
-                {
-                    // Resolution not found!
-                    return null;
-                }
-                else
-                {
-                    exchange = new ResolutionExchange(_scopeFactory);
-                    exchange.Resolution = resolution;
-                    _resolutions.Add(exchange);
-                }
+            if (exchange.Resolution == null)
+            {
+                LoadResolutionForExchange(exchange, resolutionId);
             }
             return exchange;
+        }
+
+        private void LoadResolutionForExchange(ResolutionExchange exchange, string resolutionId)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            using var service = scope.ServiceProvider.GetRequiredService<ResolutionService>();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<ResolutionExchangeService>>();
+            var resolution = service.GetResolution(resolutionId);
+            if (resolution == null)
+            {
+                logger?.LogInformation("No Resolution with id {0} was found", resolutionId);
+            }
+            else
+            {
+                exchange.Resolution = resolution;
+                _resolutions.Add(exchange);
+            }
         }
 
         public void RemoveResolution(ResolutionExchange exchange)
