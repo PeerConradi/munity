@@ -76,8 +76,8 @@
     else if (tab == 2)
     {
         <h1 class="page-header">Einstellungen</h1>
-        <p>Eingeloggt mit: @vcParticipationService.RoleId @vcParticipationService.IsActiveForCommittee(committeeId) @vcParticipationService.RoleName</p>
-        <button class="btn btn-primary" @onclick="() => showSelectRoleModal = true">Land wechseln</button>
+        <p>Sie sind angemeldet als: @vcParticipationService.RoleName</p>
+        <button class="btn btn-primary" @onclick="() => showSelectRoleModal = true">Land/Rolle wechseln</button>
     }
     else
     {
