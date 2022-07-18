@@ -47,6 +47,12 @@ namespace MUNity.Services
                 SubmitterRole = role,
                 CommitteeName = committee?.Name ?? "-",
             };
+
+            if (role != null && !string.IsNullOrEmpty(role.RoleName))
+            {
+                element.Topic = $"Resolutionsentwurf von {role.RoleName}";
+            }
+
             var auth = new ResolutionAuth()
             {
                 Resolution = element,
