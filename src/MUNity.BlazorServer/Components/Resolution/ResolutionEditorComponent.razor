@@ -33,6 +33,11 @@
             else
             {
                 <h3>Resolution</h3>
+                <AuthorizeView>
+                    <Authorized>
+                        <button class="btn btn-default btn-sm ms-3" @onclick="SubmitResolution">Einreichen durch Chair-Rechte</button>
+                    </Authorized>
+                </AuthorizeView>
             }
 
             @if (!IsReaderMode)

@@ -5,7 +5,7 @@ namespace MUNity.BlazorServer.BServices
 {
     public class ResolutionExchangeService : IDisposable
     {
-        private List<ResolutionExchange> _resolutions;
+        private List<ResolutionExchange> _resolutions = new();
 
         private readonly IServiceScopeFactory _scopeFactory;
 
@@ -81,7 +81,6 @@ namespace MUNity.BlazorServer.BServices
         public ResolutionExchangeService(IServiceScopeFactory scopeFactory)
         {
             this._scopeFactory = scopeFactory;
-            this._resolutions = new List<ResolutionExchange>();
         }
     }
 
