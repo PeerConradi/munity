@@ -10,7 +10,10 @@
 
 @if (!string.IsNullOrEmpty(CommitteeId))
 {
-    <h1 class="page-header">@dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == CommitteeId).Select(n => $"{n.Name} ({n.JoinKey})").FirstOrDefault()</h1>
+    <div class="page-header-fixed">
+        <h1 style="margin-top: 10px;margin-left: 10px">@dbContext.Committees.AsNoTracking().Where(n => n.CommitteeId == CommitteeId).Select(n => $"{n.Name} ({n.JoinKey})").FirstOrDefault()</h1>
+    </div>
+    <div style="height: 15px;"></div>
 }
 
 @if (exchange != null)
@@ -29,7 +32,7 @@
     </div>
     @if (ViewModel != null)
     {
-        <div class="col-4">
+        <div class="col-4" style="position: fixed; right: 0px;">
             <div class="row">
             <div class="col-12">
                 <LoSSpeakersComponent ViewModel="@ViewModel" AllowEdit="false" />
