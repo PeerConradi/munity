@@ -72,6 +72,10 @@
 						@if (ViewModel.Speakers.Any() && ViewModel.Speakers.First() == speaker)
 						{
 							<button class="btn btn-sm btn-primary" @onclick="() => ViewModel.NextSpeaker()"><i class="fa fa-arrow-up"></i></button>	
+							@if (ViewModel.Speakers.Any() && ViewModel.Speakers.Last() != speaker)
+							{
+								<button class="btn btn-sm btn-inverse" @onclick="() => MoveDown(speaker)"><i class="fa fa-arrow-down"></i></button>	
+							}
 						}
 						else 
 						{

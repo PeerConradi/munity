@@ -68,7 +68,11 @@
 					<div class="widget-list-action text-nowrap text-gray-500">
 						@if (ViewModel.Questions.Any() && ViewModel.Questions.First() == question)
 						{
-							<button class="btn btn-sm btn-inverse" @onclick="() => ViewModel.NextQuestion()"><i class="fa fa-arrow-up"></i></button>	
+							<button class="btn btn-sm btn-primary" @onclick="() => ViewModel.NextQuestion()"><i class="fa fa-arrow-up"></i></button>
+							@if (ViewModel.Questions.Any() && ViewModel.Questions.LastOrDefault() != question)
+							{
+								<button class="btn btn-sm btn-inverse" @onclick="() => MoveDown(question)"><i class="fa fa-arrow-down"></i></button>	
+							}	
 						}
 						else 
 						{
