@@ -8,14 +8,14 @@
 	<!-- BEGIN card-body -->
 	<div class="card-body" style="@bgFlagStype">
 		<!-- BEGIN title -->
-		<div class="mb-3 text-gray-500 ">
-			<b>@(ViewModel.CurrentQuestion?.Name ?? "-") 
+		<span class="mb-10px" style="font-size: 24px">
+			@(ViewModel.CurrentQuestion?.Name ?? "-") 
 			@if (ViewModel.CurrentQuestion != null && AllowEdit)
 			{
 				<i class="ml-3 fa fa-times-circle cursor-pointer" @onclick="ViewModel.ClearCurrentQuestion"></i>	
 			}
-			</b>
-		</div>
+		</span>
+		<br />
 		<!-- Remaining speaker time -->
 		@if (AllowEdit && ViewModel.Status == ESpeakerListStatus.Question)
 		{
