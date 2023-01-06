@@ -166,8 +166,9 @@
 	{
 		if (ViewModel != null && !string.IsNullOrEmpty(newSpeakerName))
 		{
-			var foundCountry = KnownCountries.FirstOrDefault(n => n.Name == newSpeakerName);
-			losService.AddSpeaker(ViewModel.ListOfSpeakersId, newSpeakerName, foundCountry?.Iso ?? "un");
+			var foundCountry = KnownCountries.Where(n => string.Equals(n.Name, newSpeakerName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+			var foundCountryName = KnownCountries.Where(n => string.Equals(n.Name, newSpeakerName, StringComparison.OrdinalIgnoreCase)).Select(n => n.Name).FirstOrDefault() ?? newSpeakerName;;
+			losService.AddSpeaker(ViewModel.ListOfSpeakersId, foundCountryName, foundCountry?.Iso ?? "un");
 			newSpeakerName = "";
 		}
 	}
