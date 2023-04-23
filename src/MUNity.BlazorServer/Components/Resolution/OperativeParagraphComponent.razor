@@ -504,10 +504,7 @@
 		isAuthed = taskResult?.User.Identity != null && taskResult.User.Identity.IsAuthenticated;
 		Exchange.OperativeParagraphChanged += (sender, para) =>
 		{
-			if (para == this.Paragraph)
-			{
-				InvokeAsync(StateHasChanged);
-			}
+			InvokeAsync(StateHasChanged);
 		};
 
 		if(vcParticipationService.LastEditedOperativeParagraphId == this.Paragraph.ResaOperativeParagraphId)

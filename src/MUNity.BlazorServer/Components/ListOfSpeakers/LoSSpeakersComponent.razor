@@ -10,14 +10,14 @@
 	<!-- BEGIN card-body -->
 	<div class="card-body" style="@bgFlagStype">
 		<!-- BEGIN title -->
-		<div class="mb-3 text-gray-500 ">
-			<b>@(ViewModel.CurrentSpeaker?.Name ?? "-") 
+		<span class="mb-10px" style="font-size: 24px">
+			@(ViewModel.CurrentSpeaker?.Name ?? "-") 
 			@if (ViewModel.CurrentSpeaker != null && AllowEdit)
 			{
 				<i class="ml-3 fa fa-times-circle cursor-pointer" @onclick="ViewModel.ClearCurrentSpeaker"></i>	
 			}
-			</b>
-		</div>
+		</span>
+		<br />
 		<!-- Remaining speaker time -->
 		@if (AllowEdit && ViewModel.Status == ESpeakerListStatus.Speaking)
 		{
@@ -72,6 +72,10 @@
 						@if (ViewModel.Speakers.Any() && ViewModel.Speakers.First() == speaker)
 						{
 							<button class="btn btn-sm btn-primary" @onclick="() => ViewModel.NextSpeaker()"><i class="fa fa-arrow-up"></i></button>	
+							@if (ViewModel.Speakers.Any() && ViewModel.Speakers.Last() != speaker)
+							{
+								<button class="btn btn-sm btn-inverse" @onclick="() => MoveDown(speaker)"><i class="fa fa-arrow-down"></i></button>	
+							}
 						}
 						else 
 						{
@@ -162,8 +166,9 @@
 	{
 		if (ViewModel != null && !string.IsNullOrEmpty(newSpeakerName))
 		{
-			var foundCountry = KnownCountries.FirstOrDefault(n => n.Name == newSpeakerName);
-			losService.AddSpeaker(ViewModel.ListOfSpeakersId, newSpeakerName, foundCountry?.Iso ?? "un");
+			var foundCountry = KnownCountries.Where(n => string.Equals(n.Name, newSpeakerName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+			var foundCountryName = KnownCountries.Where(n => string.Equals(n.Name, newSpeakerName, StringComparison.OrdinalIgnoreCase)).Select(n => n.Name).FirstOrDefault() ?? newSpeakerName;;
+			losService.AddSpeaker(ViewModel.ListOfSpeakersId, foundCountryName, foundCountry?.Iso ?? "un");
 			newSpeakerName = "";
 		}
 	}

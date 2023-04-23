@@ -22282,6 +22282,19 @@ code {
     font-weight: 300;
 }
 
+.page-header-fixed {
+    width: 100%;
+    position: fixed;
+    font-size: 28px;
+    margin: 0 0 20px;
+    padding: 0;
+    border: none;
+    line-height: 32px;
+    font-weight: 300;
+    background-color: #ECEFF1;
+    z-index: 10;
+}
+
     .page-header small, .page-header .small {
         line-height: 20px;
     }

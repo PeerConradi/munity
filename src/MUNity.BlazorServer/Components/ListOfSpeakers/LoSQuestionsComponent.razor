@@ -8,14 +8,14 @@
 	<!-- BEGIN card-body -->
 	<div class="card-body" style="@bgFlagStype">
 		<!-- BEGIN title -->
-		<div class="mb-3 text-gray-500 ">
-			<b>@(ViewModel.CurrentQuestion?.Name ?? "-") 
+		<span class="mb-10px" style="font-size: 24px">
+			@(ViewModel.CurrentQuestion?.Name ?? "-") 
 			@if (ViewModel.CurrentQuestion != null && AllowEdit)
 			{
 				<i class="ml-3 fa fa-times-circle cursor-pointer" @onclick="ViewModel.ClearCurrentQuestion"></i>	
 			}
-			</b>
-		</div>
+		</span>
+		<br />
 		<!-- Remaining speaker time -->
 		@if (AllowEdit && ViewModel.Status == ESpeakerListStatus.Question)
 		{
@@ -68,7 +68,11 @@
 					<div class="widget-list-action text-nowrap text-gray-500">
 						@if (ViewModel.Questions.Any() && ViewModel.Questions.First() == question)
 						{
-							<button class="btn btn-sm btn-inverse" @onclick="() => ViewModel.NextQuestion()"><i class="fa fa-arrow-up"></i></button>	
+							<button class="btn btn-sm btn-primary" @onclick="() => ViewModel.NextQuestion()"><i class="fa fa-arrow-up"></i></button>
+							@if (ViewModel.Questions.Any() && ViewModel.Questions.LastOrDefault() != question)
+							{
+								<button class="btn btn-sm btn-inverse" @onclick="() => MoveDown(question)"><i class="fa fa-arrow-down"></i></button>	
+							}	
 						}
 						else 
 						{
@@ -159,8 +163,9 @@
 	{
 		if (ViewModel != null && !string.IsNullOrEmpty(newQuestionName))
 		{
-			var foundCountry = KnownCountries.FirstOrDefault(n => n.Name == newQuestionName);
-			losService.AddQuestion(ViewModel.ListOfSpeakersId, newQuestionName, foundCountry?.Iso ?? "un");
+			var foundCountry = KnownCountries.Where(n => string.Equals(n.Name, newQuestionName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+			var foundCountryName = KnownCountries.Where(n => string.Equals(n.Name, newQuestionName, StringComparison.OrdinalIgnoreCase)).Select(n => n.Name).FirstOrDefault() ?? newQuestionName;;
+			losService.AddQuestion(ViewModel.ListOfSpeakersId, foundCountryName, foundCountry?.Iso ?? "un");
 			newQuestionName = "";
 		}
 	}
